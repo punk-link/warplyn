@@ -66,4 +66,3 @@ Closed issues, historical pull requests, and Skladno releases remain in [skladno
 | [skladno-legacy#245](https://github.com/punk-link/skladno-legacy/issues/245) | [warplyn#59](https://github.com/punk-link/warplyn/issues/59) |
 | [skladno-legacy#246](https://github.com/punk-link/skladno-legacy/issues/246) | [warplyn#60](https://github.com/punk-link/warplyn/issues/60) |
 | [skladno-legacy#247](https://github.com/punk-link/skladno-legacy/issues/247) | [warplyn#1](https://github.com/punk-link/warplyn/issues/1) |
-
