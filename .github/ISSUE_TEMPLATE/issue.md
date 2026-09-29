@@ -7,6 +7,7 @@ assignees: ""
 ---
 
 <!-- Search existing issues before opening a new one. -->
+<!-- LLM agents: Before creating an issue, search both open and closed repository issues for duplicates. Check that the request supports Skladno's core purpose as an AI editorial workspace; do not create issues for features unrelated to that purpose. -->
 
 ## What happened, or what would you like to change?
 
