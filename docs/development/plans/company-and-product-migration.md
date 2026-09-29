@@ -1,6 +1,6 @@
 # Company repository and product-name migration
 
-Status: execution in progress. Prepared 2026-09-28 against version 0.5.5. The original repository was transferred to `punk-link/skladno-legacy` on 2026-09-29. No release, issue move, or application migration has been performed.
+Status: execution in progress. Prepared 2026-09-28 against version 0.5.5. The original repository was transferred to `punk-link/skladno-legacy` on 2026-09-29, and all 60 open issues moved to the new `punk-link/warplyn` repository. No new release or application migration has been performed.
 
 ## Outcome and decisions
 
@@ -100,10 +100,10 @@ Owner: maintainer. Depends on phase 1 and confirmed organization/name inputs.
 - [ ] Check organization Actions policies, workflow permissions, deployment environments, and installed integrations. Existing secrets may transfer, but company access and policy still need validation.
 - [x] Verify the `Production` environment and `SKLADNO_POSTHOG_PROJECT_KEY` release configuration without printing secrets.
 - [ ] Verify Pages and the existing `warplyn.com` recovery/documentation routes separately. Repository redirects do not migrate Pages routing. Keep old recovery links functional.
-- [ ] Test the original GitHub release API URL and original download URLs for `RELEASES` and `.nupkg` from an actual packaged Skladno installation, including download and staged apply in a disposable profile.
+- [x] Waived by the maintainer on 2026-09-29: the installed legacy updater compatibility drill. Anonymous legacy API and asset downloads were verified separately.
 - [x] Do not recreate a repository at `kirillta/skladno`, even as a redirect placeholder.
 
-Gate: old installations still discover and download legacy releases after transfer. If redirects fail in the actual client, stop publication and diagnose that path. Do not send renamed packages through it as a workaround. Existing users can still receive manual legacy installer instructions.
+Gate: the repository transfer and anonymous legacy API/asset checks succeeded. The maintainer waived the installed legacy updater compatibility drill on 2026-09-29 and authorized Phase 3. Public documentation recovery and restricted policy/integration checks remain outstanding before publication.
 
 GitHub documents preserved repository assets and URL redirects, and warns that reusing the original location deletes redirects. This does not substitute for the native updater drill. [Repository transfer documentation](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository).
 
@@ -115,23 +115,23 @@ GitHub documents preserved repository assets and URL redirects, and warns that r
 - Repository Actions remain enabled with all actions allowed; workflow permissions remain read and cannot approve PRs. Both `Production` and `github-pages` environments remain present. `Production` contains a nonempty `SKLADNO_POSTHOG_PROJECT_KEY`; its value was not printed. Repository and Production secret listings are empty. Repository rulesets and webhooks remain empty; `main` remains unprotected. Organization Actions policy requires `admin:org` scope, and installed GitHub App integrations still require a separate authorized settings check.
 - Anonymous requests to the original release API, issue `168`, and release `v0.5.5` resolve successfully to the transferred repository. The original `v0.5.5/RELEASES` and full `.nupkg` download URLs work. Downloaded SHA-256 hashes exactly match the Phase 1 inventory: `e3410c0030fcf511105f8e20d049632885f5e2089826084585e3d54c35020cb7` and `0139206fe0e4d1950c4bc980159fdd830d7046eefe1bea07b833242b40f4623e` respectively.
 - Pages is disabled, matching the pre-transfer inventory. Site run `36445502932` failed on 2026-09-28 before transfer because Pages was not enabled. On 2026-09-29, the public update-recovery, backups-and-recovery, and migration routes all returned HTTP `421 Misdirected Request` through Cloudflare with an nginx response. Hosting/domain recovery remains outstanding; repository redirects do not repair it.
-- **Gate remains open:** run the actual installed Skladno update discovery, download, and staged-apply drill in a disposable profile, restore the public documentation routes, and finish the restricted organization-policy/integration checks. No installed Squirrel application was found for the native drill in this session. Successful anonymous downloads do not prove the installed updater path. No releases were published and no repository was recreated at the old location.
+- The maintainer waived the installed legacy updater compatibility drill on 2026-09-29 and authorized Phase 3. It was not executed. Public documentation recovery and restricted organization-policy/integration checks remain outstanding before publication. No releases were published and no repository was recreated at the old location.
 
 ## Phase 3: create the new repository and move active work
 
-Owner: maintainer. Depends on phase 2.
+Owner: maintainer. The repository transfer is complete; the installed updater compatibility drill was explicitly waived. Publication checks remain separate.
 
-- [ ] Create an empty public `COMPANY/NEW-REPO`. Disable Actions before importing refs so old workflows cannot publish legacy installers or deploy the old website from the new repository.
-- [ ] Push the existing Git history and intended branches/tags. Do not copy release assets or blindly mirror GitHub-owned refs. Mark historical tags as inherited history, not renamed-app downloads.
-- [ ] Keep license notices and contributor attribution. Update ownership metadata without rewriting history.
-- [ ] Copy labels with their descriptions/colors. Recreate milestones needed for active work with matching titles and exact due dates, preserving descriptions and state where applicable.
-- [ ] Test one approved active issue transfer. Verify its conversation, attachments, author attribution, assignment, labels, milestone, and old-URL redirect before transferring the rest.
-- [ ] Transfer remaining active issues and record an old-to-new issue URL map. Issue numbers can change. Native transfer requires both repositories to have the same owner.
-- [ ] Keep closed issues and historical PRs in the legacy repository. For active PRs, finish suitable legacy work there or reopen the branch in the new repository with a link to the original review. Do not represent recreated PRs as preserving review history.
-- [ ] Keep historical Discussions and wiki content accessible in legacy. Link them from the new repository; move ongoing discussion only if a separate move is needed and verified.
+- [x] Create an empty public `punk-link/warplyn`. Disable Actions before importing refs so old workflows cannot publish legacy installers or deploy the old website from the new repository.
+- [x] Push the existing Git history and intended branches/tags. Do not copy release assets or blindly mirror GitHub-owned refs. Mark historical tags as inherited history, not renamed-app downloads.
+- [x] Keep license notices and contributor attribution. Update ownership metadata without rewriting history.
+- [x] Copy labels with their descriptions/colors. Recreate milestones needed for active work with matching titles and exact due dates, preserving descriptions and state where applicable.
+- [x] Test one approved active issue transfer. Verify its conversation, attachments, author attribution, assignment, labels, milestone, and old-URL redirect before transferring the rest.
+- [x] Transfer remaining active issues and record an old-to-new issue URL map. Issue numbers can change. Native transfer requires both repositories to have the same owner.
+- [x] Keep closed issues and historical PRs in the legacy repository. No active PRs required reopening.
+- [x] Keep the historical repository linked from the new README. Discussions are disabled and no published wiki was found; no discussion or wiki content was moved.
 - [ ] Review Projects separately. User/organization Projects are not Git commits; verify transferred issues' project membership, fields, and access. Retain the existing board if usable rather than rebuilding it by default.
-- [ ] Rewrite active documentation references such as bare `#168` to mapped new issues or fully qualified legacy URLs. Do not edit old comments or commits solely to renumber references.
-- [ ] Configure branch protections, environments, collaborators, and required checks in the new repository before enabling its corrected workflows.
+- [x] Rewrite active documentation references such as bare `#168` to mapped new issues or fully qualified legacy URLs. Do not edit old comments or commits solely to renumber references.
+- [x] Configure branch protections, environments, collaborators, and required checks in the new repository. Actions remains disabled until the workflows are corrected in Phase 4.
 
 Example for an individually reviewed issue:
 
@@ -140,6 +140,17 @@ gh issue transfer https://github.com/COMPANY/skladno-legacy/issues/123 COMPANY/N
 ```
 
 Gate: every active issue is accounted for, comments remain attached to their authors, destination milestones are correct, and historical work remains reachable. GitHub preserves comments and assignees on native issue transfer, with label/milestone matching rules. [Issue transfer documentation](https://docs.github.com/en/issues/tracking-your-work-with-issues/administering-issues/transferring-an-issue-to-another-repository).
+
+### Phase 3 record, 2026-09-29
+
+- Created public `punk-link/warplyn`, repository ID `1396442300`, and disabled Actions before pushing any refs. Imported `main` at `77a83700c6664751bc33d8421438c32a9f3dd21c` and the legacy repository's 34 tags. One additional local-only tag was removed from the destination after reconciliation. Old feature branches and GitHub-owned refs remain in legacy; no release assets were copied. The new README identifies inherited tags as history and states that no Warplyn installers exist.
+- Copied all nine labels with exact descriptions and colors. Recreated the ten milestones referenced by open issues with matching titles, descriptions, states, and due dates. All ten source due dates were unset, and remain unset.
+- Pilot transfer `skladno-legacy#247` became `warplyn#1`; its attachment returned HTTP 200 and its legacy URL redirected correctly. Then transferred all remaining open issues natively. The [issue URL map](../guides/skladno-to-warplyn-issue-map.md) records all 60 mappings. All 60 authors, creation times, titles, labels, assignments, and milestone titles reconciled. None had comments. GitHub qualified or remapped issue references in bodies during transfer; all other body content matched. `warplyn#6` lost its milestone during native transfer and was restored to `P8 — Editorial intelligence` before final verification.
+- Legacy retains 96 closed issues, 92 historical PRs, and 30 releases. There were no open PRs to reopen. The private `phase3` archive contains before/after exports, the CSV URL map, and `verify-transfer.ps1`, which passed against the final exports.
+- The new repository inherits the same four collaborators and roles. `main` requires PRs, conversation resolution, and current `verify`, `verify-windows`, and `verify-linux` checks; force pushes and branch deletion are disabled. Administrator bypass remains available. Default workflow permissions are read and cannot approve PRs. Empty `Production` and `github-pages` environments exist; no credentials or telemetry configuration were copied. Actions remains disabled, with zero workflow runs and zero new releases. Enable corrected workflows only after Phase 4 release identity and feed changes.
+- The public legacy Projects page shows no linked open or closed projects. Private project membership and fields remain unverified because the token lacks `read:project`; do not claim private Projects were reconciled. Discussions are disabled, and no published wiki was found. Historical repository links remain in the new README.
+- Legacy organization issue URLs redirect to new issues, including `skladno-legacy#12` to `warplyn#2` and `skladno-legacy#168` to `warplyn#41`. Tested earlier `kirillta/skladno/issues/...` URLs returned HTTP 404 after issue transfer, including a closed historical issue. The original repository URL still redirects correctly. Active documentation uses direct new or legacy URLs; old comments and commits were not edited.
+- New-repository preparation is in `C:/Projects/warplyn`. The original checkout remains pointed at `punk-link/skladno-legacy`; switching the user's project is a separate step. Application branding, installer identity, provider namespaces, update feeds, and publication remain Phase 4 or later work.
 
 ## Phase 4: build the independently installed renamed app
 
@@ -219,7 +230,7 @@ Run `npm run product:docs` before verification when product records changed. Pac
 
 | Manual drill | Required result |
 | --- | --- |
-| Old installation after repository transfer | Old API and asset URLs resolve; legacy update downloads and applies |
+| Old installation after repository transfer | Installed compatibility drill waived by the maintainer on 2026-09-29; anonymous API and asset checks passed |
 | Stable-only and preview-inclusive checks | Final legacy stable release is discoverable; no new-app package appears |
 | Fresh new install with legacy environment override present | New app opens its own data, never the old database |
 | Default and custom legacy data source | Export contains the actual source profile; restored content is complete |

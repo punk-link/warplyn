@@ -4,14 +4,14 @@ Skladno works on Windows 11 x64 and Linux. Debian packages are available as prev
 
 ## Windows
 
-1. Open the [latest GitHub release](https://github.com/kirillta/skladno/releases/latest).
+1. Open the [latest Skladno release](https://github.com/punk-link/skladno-legacy/releases/latest).
 2. Under **Assets**, download the Windows setup `.exe` and run it.
 3. If Windows shows a SmartScreen warning, confirm that the installer came from this repository's release page. Releases are not digitally signed.
 4. Open Skladno from the Start menu.
 
 ## Debian and Debian-based distributions
 
-1. Open the [latest GitHub release](https://github.com/kirillta/skladno/releases/latest).
+1. Open the [latest Skladno release](https://github.com/punk-link/skladno-legacy/releases/latest).
 2. Under **Assets**, download the `skladno_VERSION_amd64.deb` package.
 3. Open a terminal in the folder where you downloaded it. If the folder contains only that Skladno package, install it with:
 

@@ -37,7 +37,7 @@ Record P, F, B, or N/A. A failure or block needs a reason and linked issue befor
 
 ## Screen-reader verification
 
-This procedure is manual. Playwright cannot verify spoken output, virtual-cursor order, or interruption behavior. Issue [#137](https://github.com/kirillta/skladno/issues/137) owns repeatable NVDA or equivalent verification.
+This procedure is manual. Playwright cannot verify spoken output, virtual-cursor order, or interruption behavior. Issue [skladno-legacy#137](https://github.com/punk-link/skladno-legacy/issues/137) owns repeatable NVDA or equivalent verification.
 
 Use Windows 11, current stable NVDA with default desktop keyboard layout and speech mode Talk, the release Chromium build without extensions, and 100% browser zoom. Record versions and changed settings. Run the deterministic tests before the manual pass.
 

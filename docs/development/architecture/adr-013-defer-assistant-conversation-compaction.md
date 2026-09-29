@@ -4,7 +4,7 @@
 - Date: 2026-09-24
 - Scope: Assistant conversation context
 - Depends on: [ADR-005](adr-005-article-state-and-consistency.md), [ADR-007](adr-007-completion-gated-editorial-engine.md), [ADR-011](adr-011-assistant-skills-and-bounded-capabilities.md)
-- Investigation: [issue #233](https://github.com/kirillta/skladno/issues/233)
+- Investigation: [skladno-legacy#233](https://github.com/punk-link/skladno-legacy/issues/233)
 
 ## Context
 
