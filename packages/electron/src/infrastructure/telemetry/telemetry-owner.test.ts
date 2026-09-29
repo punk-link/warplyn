@@ -58,7 +58,7 @@ function createOwner(runtimePath: string, { osVersion, environment = {} }: { osV
 
 
 // Product scenarios: settings.telemetry-consent
-test("telemetry requires fresh consent, reports trusted OS version, and clears identity on opt-out", async () => {
+test("beta telemetry starts enabled, reports trusted OS version, and clears identity on opt-out", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-telemetry-test-"));
     const runtimePath = join(root, "runtime-settings.json");
     const tasks = scheduler();
@@ -75,10 +75,6 @@ test("telemetry requires fresh consent, reports trusted OS version, and clears i
         },
     });
     try {
-        assert.deepEqual(owner.getConsent(), { enabled: false, supported: true });
-        owner.capture(createTelemetryEvent());
-        assert.equal(tasks.size, 0);
-        owner.setConsent(true);
         const firstIdentity = JSON.parse(readFileSync(runtimePath, "utf8")).telemetry.installationId;
         assert.deepEqual(owner.getConsent(), { enabled: true, supported: true, installationId: firstIdentity });
         owner.capture(createTelemetryEvent());
@@ -88,6 +84,9 @@ test("telemetry requires fresh consent, reports trusted OS version, and clears i
         assert.equal("title" in payload.batch[0]!.properties, false);
         assert.deepEqual(owner.setConsent(false), { enabled: false, supported: true });
         assert.deepEqual(JSON.parse(readFileSync(runtimePath, "utf8")).telemetry, { consent: "denied" });
+        const restarted = createOwner(runtimePath);
+        assert.deepEqual(restarted.getConsent(), { enabled: false, supported: true });
+        restarted.dispose();
         const enabled = owner.setConsent(true);
         assert.equal(enabled.enabled, true);
         assert.notEqual(enabled.installationId, firstIdentity);

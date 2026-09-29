@@ -18,6 +18,10 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
 }) {
     let state: OwnerState = { generation: 0, sessionStartedGeneration: -1, disposed: false };
 
+    // Public-beta default applies only to a fresh, supported installation.
+    if (delivery.supported && !readRuntimeSettings(runtimePath).telemetry)
+        updateRuntimeSettings(runtimePath, (runtime) => ({ ...runtime, telemetry: { consent: "granted", installationId: randomUUID() } }));
+
 
     function getTelemetryConsent(): TelemetryConsent {
         const telemetry = readRuntimeSettings(runtimePath).telemetry;

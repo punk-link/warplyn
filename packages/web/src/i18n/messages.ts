@@ -691,7 +691,7 @@ export const messages = {
     "settings.privacyAndDiagnostics": "Privacy & diagnostics",
     "settings.telemetry": "Share diagnostic and usage data",
     "settings.telemetryHint": "Help us improve Warplyn by sending pseudonymous reliability and usage events to PostHog. Article text, prompts, AI responses, and API keys are never included.",
-    "settings.telemetryDisclosure": "Disabled until you enable it. You can turn it off at any time; this stops future collection and cannot recall data already sent.",
+    "settings.telemetryDisclosure": "Enabled by default during the public beta so we can improve reliability and the editorial workflow. You can turn it off at any time; this stops future collection and cannot recall data already sent.",
     "settings.telemetryDetails": "Telemetry details",
     "settings.telemetryIdentifier": "Telemetry ID",
     "settings.telemetryIdentifierHint": "Include this ID when requesting deletion. Copy it before turning telemetry off, because turning it off deletes the ID.",
