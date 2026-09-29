@@ -24,7 +24,7 @@ test("Linux release discovery offers the newest Debian package without downloadi
         { runtimePath: join(root, "runtime-settings.json"), currentVersion: "0.1.0", supported: true, platform: "linux" },
         {
             fetchReleases: async () => new Response(JSON.stringify([
-                { tag_name: "v0.2.0", html_url: "https://example.test/release", prerelease: false, draft: false, assets: [{ name: "skladno_0.2.0_amd64.deb" }] },
+                { tag_name: "v0.2.0", html_url: "https://example.test/release", prerelease: false, draft: false, assets: [{ name: "warplyn_0.2.0_amd64.deb" }] },
             ])),
             openExternal: async () => {
                 opened = true;
@@ -63,11 +63,11 @@ test("update discovery selects the newest complete Windows release without downl
         { runtimePath, currentVersion: "0.1.0-preview.1", supported: true, platform: "win32" },
         {
             fetchReleases: async () => new Response(JSON.stringify([
-                { tag_name: "v0.3.0-preview.1", html_url: "https://example.test/future-preview", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "Skladno-full.nupkg" }] },
-                { tag_name: "v0.2.0", name: "Stable release", html_url: "https://example.test/stable", prerelease: false, draft: false, assets: [{ name: "RELEASES" }, { name: "Skladno-full.nupkg" }] },
-                { tag_name: "v0.2.0-preview.9", html_url: "https://example.test/preview", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "Skladno-full.nupkg" }] },
-                { tag_name: "v0.1.1-preview.1", html_url: "https://example.test/older", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "Skladno-full.nupkg" }] },
-                { tag_name: "v0.1.2-preview.1.security", name: "Security preview", body: "<b>Safe</b>", html_url: "https://example.test/newer", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "Skladno-full.nupkg" }] },
+                { tag_name: "v0.3.0-preview.1", html_url: "https://example.test/future-preview", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] },
+                { tag_name: "v0.2.0", name: "Stable release", html_url: "https://example.test/stable", prerelease: false, draft: false, assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] },
+                { tag_name: "v0.2.0-preview.9", html_url: "https://example.test/preview", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] },
+                { tag_name: "v0.1.1-preview.1", html_url: "https://example.test/older", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] },
+                { tag_name: "v0.1.2-preview.1.security", name: "Security preview", body: "<b>Safe</b>", html_url: "https://example.test/newer", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] },
             ])),
             openExternal: async () => undefined,
         },
@@ -100,7 +100,7 @@ test("update discovery requires persisted network access", async () => {
         {
             fetchReleases: async () => {
                 requests += 1;
-                return new Response(JSON.stringify([{ tag_name: "v0.1.1-preview.1", html_url: "https://example.test/release", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "Skladno-full.nupkg" }] }]));
+                return new Response(JSON.stringify([{ tag_name: "v0.1.1-preview.1", html_url: "https://example.test/release", prerelease: true, draft: false, assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] }]));
             },
             openExternal: async () => undefined,
         },
@@ -125,7 +125,7 @@ test("update discovery requires persisted network access", async () => {
 });
 
 
-test("automatic update discovery runs at startup and daily while Skladno remains open", async () => {
+test("automatic update discovery runs at startup and daily while Warplyn remains open", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-updates-test-"));
     const runtimePath = join(root, "runtime-settings.json");
     writeFileSync(runtimePath, JSON.stringify({ updateNetworkAccess: true, lastUpdateCheckAt: new Date().toISOString() }));
@@ -206,7 +206,7 @@ test("applying a downloaded update records its recovery snapshot outcome", async
     const coordinator = createDesktopUpdateCoordinator(
         { runtimePath, currentVersion: "0.1.0", supported: true, platform: "win32" },
         {
-            fetchReleases: async () => new Response(JSON.stringify([{ tag_name: "v0.1.1", html_url: "https://example.test/release", prerelease: false, draft: false, assets: [{ name: "RELEASES" }, { name: "Skladno-full.nupkg" }] }])),
+            fetchReleases: async () => new Response(JSON.stringify([{ tag_name: "v0.1.1", html_url: "https://example.test/release", prerelease: false, draft: false, assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] }])),
             openExternal: async () => undefined,
         },
         {

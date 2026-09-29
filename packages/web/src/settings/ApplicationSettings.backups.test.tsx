@@ -12,7 +12,7 @@ import { resetApplicationSettingsTestEnvironment, settingsSnapshot } from "./App
 import { saveWebBackup } from "./web-backups.js";
 
 vi.mock("./web-backups.js", () => ({
-    chooseBackupFolder: vi.fn().mockResolvedValue("Skladno backups"),
+    chooseBackupFolder: vi.fn().mockResolvedValue("Warplyn backups"),
     saveWebBackup: vi.fn().mockResolvedValue("skladno-manual.sqlite"),
     listWebBackups: vi.fn().mockResolvedValue(["skladno-manual.sqlite"]),
     restoreWebBackup: vi.fn().mockResolvedValue(undefined),
@@ -39,7 +39,7 @@ describe("ApplicationSettings backups", () => {
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         await user.click(await screen.findByRole("button", { name: getMessage("settings.dataBackups") }));
         await user.click(screen.getByRole("button", { name: getMessage("settings.chooseBackupFolder") }));
-        await screen.findByText("Using Skladno backups");
+        await screen.findByText("Using Warplyn backups");
         await user.click(screen.getByRole("button", { name: getMessage("settings.createBackup") }));
         await waitFor(() => expect(screen.getByText("Created skladno-manual.sqlite")).toBeTruthy());
     });

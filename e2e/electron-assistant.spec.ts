@@ -22,16 +22,17 @@ async function unusedPort(): Promise<number> {
 
 async function launchPackaged(root: string): Promise<{ process: ChildProcess; browser: Browser; page: Page }> {
     const port = await unusedPort();
-    const executablePath = resolve("packages/electron/out/Skladno-win32-x64/Skladno.exe");
+    const executable = process.platform === "win32" ? "Warplyn.exe" : "Warplyn";
+    const executablePath = process.env.WARPLYN_ELECTRON_EXECUTABLE || resolve(`packages/electron/out/Warplyn-${process.platform}-x64/${executable}`);
     const child = spawn(executablePath, ["--remote-debugging-address=127.0.0.1", `--remote-debugging-port=${port}`, `--user-data-dir=${join(root, "profile")}`], {
-        env: { ...process.env, SKLADNO_DATA_DIR: join(root, "data"), SKLADNO_AI_API_KEY: "" },
+        env: { ...process.env, WARPLYN_DATA_DIR: join(root, "data"), WARPLYN_AI_API_KEY: "" },
         stdio: "ignore",
     });
 
     try {
         await expect.poll(async () => {
             if (child.exitCode !== null)
-                throw new Error("Packaged Skladno exited before opening its window.");
+                throw new Error("Packaged Warplyn exited before opening its window.");
 
             try {
                 return (await fetch(`http://127.0.0.1:${port}/json/version`)).ok;
@@ -44,7 +45,7 @@ async function launchPackaged(root: string): Promise<{ process: ChildProcess; br
         await expect.poll(() => browser.contexts()[0]?.pages().length, { timeout: 30_000 }).toBeGreaterThan(0);
         const page = browser.contexts()[0]?.pages()[0];
         if (!page)
-            throw new Error("Packaged Skladno opened no renderer page.");
+            throw new Error("Packaged Warplyn opened no renderer page.");
 
         await page.waitForURL(/index\.html$/, { timeout: 30_000 });
         return { process: child, browser, page };

@@ -1,20 +1,20 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
-    title: "Skladno user guide",
-    description: "Installation, user guides, settings, and reference for Skladno.",
+    title: "Warplyn user guide",
+    description: "Installation, user guides, settings, and reference for Warplyn.",
     base: "/docs/",
     outDir: "../public/docs",
     themeConfig: {
         nav: [
             { text: "Guide index", link: "/" },
-            { text: "Skladno", link: "../" },
+            { text: "Warplyn", link: "../" },
         ],
         sidebar: [
             {
                 text: "Installation",
                 items: [
-                    { text: "Install Skladno", link: "/installation" },
+                    { text: "Install Warplyn", link: "/installation" },
                     { text: "Moving from Skladno", link: "/migration" },
                 ],
             },

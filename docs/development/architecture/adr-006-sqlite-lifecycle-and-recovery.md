@@ -27,3 +27,7 @@ Migrations stay small and auditable, and recovery does not require a second pers
 
 Database and backup tests cover ordered transactional migrations, repository recovery, snapshot creation, retention, and permissions where the platform exposes them. The release recovery drill verifies a real snapshot without using private production data.
 
+## Skladno backup compatibility in Warplyn
+
+Warplyn retains `skladno.sqlite`, the existing schema migrations, native `.sqlite` snapshots, Skill companion manifest format `1`, and browser `.skladno` bundles. Product-name prefixes are not restore validation criteria. Snapshot validation opens a private temporary copy because read-only SQLite connections can create WAL sidecars beside the source. Restore never rewrites the source backup or immutable Revisions. Database-only snapshots leave destination Skill files unchanged.
+

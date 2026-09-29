@@ -46,7 +46,7 @@
             "title": "AI connections and activation",
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/AiSettingsSection.tsx", "packages/server/src/application/settings/application-settings-service.ts", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"],
-            "contract": "Authors choose OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek before adding an environment-variable connection. In Electron, they first choose an environment variable or managed API key, which Skladno verifies then stores in Windows Credential Manager or Linux Secret Service. If Secret Service is unavailable or locked, managed credentials report unavailable without a plaintext fallback; environment-variable connections remain usable. Connections are active by default; authors can activate or deactivate each one independently, rename them, test them, or confirm deletion without exposing secret values.",
+            "contract": "Authors choose OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek before adding an environment-variable connection. In Electron, they first choose an environment variable or managed API key, which Warplyn verifies then stores in Windows Credential Manager or Linux Secret Service. If Secret Service is unavailable or locked, managed credentials report unavailable without a plaintext fallback; environment-variable connections remain usable. Connections are active by default; authors can activate or deactivate each one independently, rename them, test them, or confirm deletion without exposing secret values.",
             "persistence": "app_settings.application-ai-connections"
         },
         {
@@ -55,7 +55,7 @@
             "title": "Default, app, per-skill, reasoning, and favorite-model preferences",
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/AiSettingsSection.tsx", "packages/server/src/application/settings/application-settings-service.ts", "packages/server/src/application/settings/settings-store.ts"],
-            "contract": "Each selected model records its active connection as well as its provider model ID, so duplicate model names remain routable and an OpenCode Zen model can disclose its underlying vendor. Default, app, per-skill, reasoning, and favorite-model preferences apply globally. The optional app model is a separate model preference for Skladno features such as Proposal summaries, titles, and action-intent checks; it falls back to the default model. Authors can save favorite available models, search the available list, and filter it by recognized vendor. Low, medium, and high reasoning-level controls are offered only for selected OpenAI models. Presentation receives Settings through the application service, persistence uses focused repositories, and legacy preferences migrate to their formerly active connection without exposing unknown keys.",
+            "contract": "Imported managed connections without a Warplyn key report actionable Add connection guidance; deleting them leaves the legacy namespace untouched. Each selected model records its active connection as well as its provider model ID, so duplicate model names remain routable and an OpenCode Zen model can disclose its underlying vendor. Default, app, per-skill, reasoning, and favorite-model preferences apply globally. The optional app model is a separate model preference for Warplyn features such as Proposal summaries, titles, and action-intent checks; it falls back to the default model. Authors can save favorite available models, search the available list, and filter it by recognized vendor. Low, medium, and high reasoning-level controls are offered only for selected OpenAI models. Presentation receives Settings through the application service, persistence uses focused repositories, and legacy preferences migrate to their formerly active connection without exposing unknown keys.",
             "persistence": "Editorial preferences persist in app_settings.application-model-preferences; the independent app model persists in app_settings.application-app-model."
         },
         {
@@ -92,7 +92,7 @@
             "title": "Explicit Electron local-data deletion",
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/DataBackupsSettingsSection.tsx", "packages/shared/src/settings/settings.ts", "packages/electron/src/presentation/settings/desktop-settings.ts", "packages/electron/src/presentation/main.ts"],
-            "contract": "In Electron, an author can request deletion of the active resolved Skladno data directory through a no-argument native operation. The native confirmation explains the irreversible scope and always shows a Create a backup before deletion checkbox, checked only when a separate backup directory is configured. A requested backup must succeed before deletion continues and includes Author Skills with their immutable Skill Revision history. It cancels without changes, closes SQLite and background work before deletion, then exits only after successful removal. The renderer cannot supply a filesystem path.",
+            "contract": "In Electron, an author can request deletion of the active resolved Warplyn data directory through a no-argument native operation. The native confirmation explains the irreversible scope and always shows a Create a backup before deletion checkbox, checked only when a separate backup directory is configured. A requested backup must succeed before deletion continues and includes Author Skills with their immutable Skill Revision history. It cancels without changes, closes SQLite and background work before deletion, then exits only after successful removal. The renderer cannot supply a filesystem path.",
             "persistence": "The confirmed active local data directory is removed. Installer and uninstaller behavior remains data-preserving."
         },
         {
@@ -101,7 +101,7 @@
             "title": "Explicit local-backup restoration",
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/DataBackupsSettingsSection.tsx", "packages/web/src/settings/web-backups.ts", "packages/shared/src/settings/settings.ts", "packages/server/src/index.ts", "packages/server/src/presentation/routes/settings-route.ts", "packages/server/src/presentation/routes/backup-bundle-route.ts", "packages/server/src/infrastructure/persistence/backup-bundle.ts", "packages/server/src/infrastructure/persistence/browser-restore-recovery.ts", "packages/electron/src/presentation/settings/desktop-settings.ts", "packages/electron/src/infrastructure/recovery/pending-restore.ts", "packages/electron/src/infrastructure/recovery/author-skill-backup-manifest.ts", "packages/electron/src/presentation/main.ts", "packages/server/src/infrastructure/persistence/database.ts"],
-            "contract": "An author chooses a backup from the configured folder and explicitly confirms replacement. Browser restore uploads the selected manifest-bearing bundle through bounded local transfer sessions; the loopback service verifies file hashes and SQLite compatibility before replacing the database and exact saved Skill set, then reopens the application before browser reload. An interrupted browser switch rolls back from a startup recovery marker. Electron uses a staged native restart and verifies its Skill companion manifest before activation. Older database-only snapshots leave existing Skills unchanged. The renderer cannot provide an active-data path. Skladno retains a recovery copy of the database and Skill files and rolls back when restored data cannot open.",
+            "contract": "An author chooses a backup from the configured folder and explicitly confirms replacement. Browser restore uploads the selected manifest-bearing bundle through bounded local transfer sessions; the loopback service verifies file hashes and SQLite compatibility before replacing the database and exact saved Skill set, then reopens the application before browser reload. An interrupted browser switch rolls back from a startup recovery marker. Electron uses a staged native restart and verifies its Skill companion manifest before activation. Legacy Skladno backup names and manifest format 1 remain accepted. Validation opens a private copy to avoid writing SQLite sidecars beside the source. Older database-only snapshots leave existing Skills unchanged. The renderer cannot provide an active-data path. Warplyn retains a recovery copy of the database and Skill files and rolls back when restored data cannot open.",
             "persistence": "A bundle replaces the active SQLite database, Author Skills and Skill Revision history. A legacy database-only snapshot replaces only SQLite. A private recovery copy of the previous database and Skill files remains available."
         },
         {
@@ -160,7 +160,7 @@
             "capabilityIds": ["settings.telemetry-consent"],
             "preconditions": ["The author opens General Settings in the Electron app."],
             "event": "The author copies the Telemetry ID, then enables or disables diagnostic and usage data sharing.",
-            "expected": ["The main process confirms the persisted value before the switch changes.", "The enabled-only Telemetry ID can be copied for a deletion request before opt-out clears it.", "Each explicit Assistant or direct Editorial operation sends at most one finite terminal event, with no Article content.", "Draft save/discard persistence attempts that started with telemetry enabled are emitted only as a bounded aggregate, with no Article content.", "Electron snapshot creation emits one completed or failed finite backup event with no path or snapshot data.", "Native backup and Article revision restoration emit one completed or failed recovery event only after their terminal outcome, with no Article content.", "Opt-out clears the installation identity and future queued events."],
+            "expected": ["A fresh supported beta installation enables telemetry with a new installation ID; a saved opt-out remains disabled.", "The main process confirms the persisted value before the switch changes.", "The enabled-only Telemetry ID can be copied for a deletion request before opt-out clears it.", "Each explicit Assistant or direct Editorial operation sends at most one finite terminal event, with no Article content.", "Draft save/discard persistence attempts that started with telemetry enabled are emitted only as a bounded aggregate, with no Article content.", "Electron snapshot creation emits one completed or failed finite backup event with no path or snapshot data.", "Native backup and Article revision restoration emit one completed or failed recovery event only after their terminal outcome, with no Article content.", "Opt-out clears the installation identity and future queued events."],
             "forbidden": ["Copying consent or the Telemetry ID through Article backup or restore."],
             "evidence": { "kind": "automated", "path": "packages/server/src/presentation/editorial-integration.telemetry.test.ts" }
         },
@@ -190,7 +190,7 @@
             "capabilityIds": ["settings.ai-connections"],
             "preconditions": ["The author is in the AI Settings section."],
             "event": "The author adds, activates, deactivates, or confirms removal of a connection.",
-            "expected": ["Authors choose one of the six supported providers and an environment-variable or, in Electron, managed-credential method. Connections are active by default, may share an environment-variable name, and an API key can be verified and stored without being displayed or persisted in Skladno data."],
+            "expected": ["Authors choose one of the six supported providers and an environment-variable or, in Electron, managed-credential method. Connections are active by default, may share an environment-variable name, and an API key can be verified and stored without being displayed or persisted in Warplyn data."],
             "forbidden": ["Displaying or persisting API key values."],
             "evidence": { "kind": "automated", "path": "packages/web/src/settings/ApplicationSettings.ai-connections.test.tsx" }
         },
@@ -200,7 +200,7 @@
             "capabilityIds": ["settings.model-preferences"],
             "preconditions": ["A default model, app model, skill override, or reasoning effort is saved."],
             "event": "A new editorial request is prepared.",
-            "expected": ["Editorial work resolves the built-in-skill override or default model through its saved active connection, while Skladno features resolve the separate app model or default-model fallback. Each selected OpenAI model receives its saved reasoning effort."],
+            "expected": ["Editorial work resolves the built-in-skill override or default model through its saved active connection, while Warplyn features resolve the separate app model or default-model fallback. Each selected OpenAI model receives its saved reasoning effort."],
             "forbidden": ["Exposing unknown legacy override keys."],
             "evidence": { "kind": "human-reviewed", "path": "packages/server/src/presentation/server.ts" }
         },
@@ -250,7 +250,7 @@
             "capabilityIds": ["settings.delete-local-data"],
             "preconditions": ["The author uses the Electron Data & backups Settings section with a resolved local data directory."],
             "event": "The author cancels deletion, deletes after a native confirmation, or selects backup and deletion.",
-            "expected": ["Cancellation leaves the data unchanged.", "A requested backup must complete and be non-empty before deletion proceeds, including Author Skills and their immutable Skill Revision history.", "Only the active resolved Skladno data directory is deleted after background work and SQLite close, and Skladno exits after success."],
+            "expected": ["Cancellation leaves the data unchanged.", "A requested backup must complete and be non-empty before deletion proceeds, including Author Skills and their immutable Skill Revision history.", "Only the active resolved Warplyn data directory is deleted after background work and SQLite close, and Warplyn exits after success."],
             "forbidden": ["Deleting an unresolved or broad path.", "Continuing to deletion after backup failure.", "Deleting local author data during ordinary uninstall."],
             "evidence": { "kind": "automated", "path": "packages/electron/src/presentation/settings/desktop-settings.delete.test.ts" }
         },
@@ -258,10 +258,10 @@
             "id": "settings.restore-local-backup",
             "title": "Backup restoration is staged and recoverable",
             "capabilityIds": ["settings.restore-local-backup"],
-            "preconditions": ["The author has configured a backup folder containing a Skladno bundle or legacy SQLite snapshot."],
+            "preconditions": ["The author has configured a backup folder containing a Warplyn bundle or legacy SQLite snapshot."],
             "event": "The author selects a backup and confirms restoration.",
-            "expected": ["Cancellation leaves active data unchanged.", "Skladno validates the selected snapshot, retains a recovery snapshot, and opens the restored Articles, Revisions, Draft checkpoints, Assistant history, style data, Settings, and any backed-up Author Skills with immutable Skill Revision history after restart or browser reload.", "If restored startup fails, Skladno rolls back to the recovery snapshot once."],
-            "forbidden": ["The renderer supplies an active-data path.", "An invalid or incompatible snapshot replaces active data.", "Skladno claims success after a failed replacement or rollback."],
+            "expected": ["Cancellation leaves active data unchanged.", "Warplyn validates the selected snapshot, retains a recovery snapshot, and opens the restored Articles, Revisions, Draft checkpoints, Assistant history, style data, Settings, and any backed-up Author Skills with immutable Skill Revision history after restart or browser reload.", "If restored startup fails, Warplyn rolls back to the recovery snapshot once."],
+            "forbidden": ["The renderer supplies an active-data path.", "An invalid or incompatible snapshot replaces active data.", "Warplyn claims success after a failed replacement or rollback."],
             "evidence": { "kind": "automated", "path": "packages/electron/src/infrastructure/recovery/pending-restore.test.ts" }
         },
         {

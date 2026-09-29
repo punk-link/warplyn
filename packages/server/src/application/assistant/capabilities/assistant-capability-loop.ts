@@ -197,7 +197,7 @@ export class AssistantCapabilityLoop {
 
         tools.push({
             capability: "find_capabilities",
-            description: "Find only classified Skladno Editorial capabilities, Workspace handoffs, or exclusions for the requested outcome.",
+            description: "Find only classified Warplyn Editorial capabilities, Workspace handoffs, or exclusions for the requested outcome.",
             input: "capability-query",
             execute: async (input) => this.dependencies.capabilities!.discover(input.query ?? "", request.scope.kind),
         });

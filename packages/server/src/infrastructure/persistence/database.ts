@@ -1,6 +1,8 @@
 import { DatabaseSync } from "node:sqlite";
 import { migrations } from "./migrations.js";
-import { chmodSync, existsSync } from "node:fs";
+import { chmodSync, copyFileSync, existsSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 
 export type SqliteDatabase = DatabaseSync;
@@ -24,8 +26,14 @@ function readSnapshotRows(database: DatabaseSync, statement: string): Record<str
 
 export function validateDatabaseSnapshot(filename: string): void {
     let database: DatabaseSync | undefined;
+    let directory: string | undefined;
     try {
-        database = new DatabaseSync(filename, { readOnly: true });
+        // SQLite can create WAL sidecars even for a read-only connection.
+        directory = mkdtempSync(join(tmpdir(), "warplyn-snapshot-validation-"));
+        const snapshot = join(directory, "snapshot.sqlite");
+        copyFileSync(filename, snapshot);
+        restrictFilePermissions(snapshot);
+        database = new DatabaseSync(snapshot, { readOnly: true });
         const integrity = readSnapshotRows(database, "PRAGMA integrity_check");
         if (integrity.length !== 1 || integrity[0]?.integrity_check !== "ok")
             throw new DatabaseSnapshotError("integrity");
@@ -44,6 +52,8 @@ export function validateDatabaseSnapshot(filename: string): void {
         throw new DatabaseSnapshotError("integrity");
     } finally {
         database?.close();
+        if (directory)
+            rmSync(directory, { recursive: true, force: true });
     }
 }
 

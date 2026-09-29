@@ -14,7 +14,7 @@ test("local diagnostics redact private values and ignore writer failures", () =>
         stderr: (line) => {
             lines.push(line);
         },
-        environment: { SKLADNO_AI_API_KEY: "secret-key", CUSTOM_KEY: "custom-secret" },
+        environment: { WARPLYN_AI_API_KEY: "secret-key", CUSTOM_KEY: "custom-secret" },
     });
 
     diagnostics.write("service.started", {

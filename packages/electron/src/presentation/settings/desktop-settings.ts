@@ -39,7 +39,7 @@ type DesktopSettingsContext = Omit<DesktopSettingsAdapterOptions, "ipcMain" | "u
 
 
 function getLocations({ dataDirectory, runtime }: Pick<DesktopSettingsContext, "dataDirectory" | "runtime">): DesktopSettingsLocations {
-    return { dataDirectory, ...(runtime.backupDirectory ? { backupDirectory: runtime.backupDirectory } : {}), dataDirectoryExternallyControlled: Boolean(process.env.SKLADNO_DATA_DIR) };
+    return { dataDirectory, ...(runtime.backupDirectory ? { backupDirectory: runtime.backupDirectory } : {}), dataDirectoryExternallyControlled: Boolean(process.env.WARPLYN_DATA_DIR) };
 }
 
 

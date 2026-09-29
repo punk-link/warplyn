@@ -17,7 +17,7 @@ Use this guide to prepare and verify the browser-based local-first MVP and unsig
    ```
 
 3. Complete the [accessibility release walkthrough](accessibility-release-walkthrough.md). Its unresolved manual blockers must have an explicit release decision and linked follow-up.
-4. Run the clean-profile journey below using a new, empty `SKLADNO_DATA_DIR`. Use a disposable provider credential supplied outside the repository, or verify the non-AI steps without one.
+4. Run the clean-profile journey below using a new, empty `WARPLYN_DATA_DIR`. Use a disposable provider credential supplied outside the repository, or verify the non-AI steps without one.
 5. Create a manual backup in a private test folder and complete the recovery drill. Record only command results, versions, and pass/fail outcomes.
 
 ## Clean-profile manual author journey
@@ -59,7 +59,7 @@ The release target is Windows 11 x64. Stable releases and prereleases are unsign
 
 Build the unpacked application with `npm run package:electron`, or build the Squirrel.Windows installer with `npm run make:electron`. Both commands build the existing React application first. The packaged renderer uses local IPC and does not require the loopback HTTP server.
 
-The release workflow uses the `SKLADNO_POSTHOG_PROJECT_KEY` variable from the GitHub `Production` environment. Set it to the approved public capture key. The workflow fixes the endpoint to `https://us.i.posthog.com/batch`; it never packages an admin token. A missing variable blocks a telemetry-enabled release rather than making an installed app depend on a shell variable. Before release, manually verify the packaged Settings switch through opt-out, restart, re-enable, offline delivery, and shutdown with a pending Draft checkpoint. Verify PostHog account access, retention, IP handling, and stored payloads only in that authorized release workflow.
+The release workflow uses the `WARPLYN_POSTHOG_PROJECT_KEY` variable from the GitHub `Production` environment. Set it to the approved public capture key. The workflow fixes the endpoint to `https://us.i.posthog.com/batch`; it never packages an admin token. A missing variable blocks a telemetry-enabled release rather than making an installed app depend on a shell variable. Before release, manually verify the packaged Settings switch through opt-out, restart, re-enable, offline delivery, and shutdown with a pending Draft checkpoint. Verify PostHog account access, retention, IP handling, and stored payloads only in that authorized release workflow.
 
 Environment-variable credentials remain supported. Managed credentials use Windows Credential Manager and never enter SQLite, backup snapshots, or renderer responses. The installer does not create or import a `.env` file.
 
@@ -69,16 +69,16 @@ If a tag exists without a release, run `gh workflow run electron-windows.yml -f 
 
 ### Desktop acceptance scenario
 
-Run this pass with a disposable `SKLADNO_DATA_DIR` and no private content:
+Run this pass with a disposable `WARPLYN_DATA_DIR` and no private content:
 
-1. Install and launch the x64 preview. Record the expected unsigned-app warning. Confirm the Desktop and Start menu shortcuts are created, the workspace opens, then launch Skladno again and confirm the existing window restores and receives focus.
+1. Install and launch the x64 preview. Record the expected unsigned-app warning. Confirm the Desktop and Start menu shortcuts are created, the workspace opens, then launch Warplyn again and confirm the existing window restores and receives focus.
 2. Complete the clean-profile author journey above through Article creation, Draft checkpointing, Revision save and restore, Proposal acceptance, fact checking, translation, Settings, theme changes, keyboard navigation, and Copy. In Settings, add a managed API key, verify its connection, restart the app, verify it again, then remove the inactive connection. Confirm the key is held only in Windows Credential Manager and the app does not start the HTTP server.
 3. Open HTTP and HTTPS links and confirm they use the system browser. Confirm file and custom-scheme navigation does not open. Test light and dark themes and the Windows 11 keyboard accessibility pass.
 4. Remove the configured provider credential, retry an AI operation, and confirm the UI reports the unavailable configuration without exposing provider details. Repeat while offline, cancel an in-progress request, and confirm incomplete output does not change the Article.
 5. Edit the active Article and close the window before the normal checkpoint delay. Restart and confirm the Draft reopens. Exercise the failed-checkpoint dialog with a disposable unwritable or conflicted fixture and verify both returning to the Article and explicitly quitting without the latest checkpoint.
 6. Restart and confirm Articles, Drafts, Revisions, Settings, Findings, and completed Assistant output persist. Upgrade or reinstall over the same data directory and repeat the check.
 7. In Data & backups, request Delete all local data and cancel the native confirmation; verify the disposable data is unchanged. Repeat with Create backup and delete, confirm the app exits, and verify only the disposable data directory was removed. Restart to confirm a new empty local profile opens.
-8. With a separate disposable profile, uninstall Skladno. Confirm the installer removed the application but left that profile’s `.skladno` directory unchanged, then remove the disposable data manually.
+8. With a separate disposable profile, uninstall Warplyn. Confirm the installer removed the application but left that profile’s `.warplyn` directory unchanged, then remove the disposable data manually.
 
 ### Preview update drill
 
@@ -86,10 +86,18 @@ Create a public GitHub prerelease with the setup executable, `RELEASES`, and ful
 
 Exercise failed discovery, failed download, and failed snapshot paths. A failed checkpoint or snapshot must leave the existing preview open. For a failed upgraded startup, follow the public [update recovery guide](https://warplyn.com/docs/update-recovery.html): reinstall the previous preview and restore its matching pre-update snapshot. Record old and new versions, Windows architecture, pass/fail, recovery result, and remaining checks without private paths or Article content.
 
-Mark the desktop pass failed if the renderer gains Node, filesystem, database, credential, or unrestricted IPC access; if generated content changes an Article without approval; or if install, upgrade, reinstall, or uninstall changes `.skladno` data.
+Mark the desktop pass failed if the renderer gains Node, filesystem, database, credential, or unrestricted IPC access; if generated content changes an Article without approval; or if install, upgrade, reinstall, or uninstall changes `.warplyn` data.
 
 ## Debian Electron preview
 
 The release-validation target is Ubuntu 22.04 x64. Compatible Debian-based distributions may install the same package when their glibc and Secret Service environment are compatible, but become guaranteed targets only after this pass succeeds there. Build the Debian package with `npm run make:electron:linux`. Install the `.deb` through the system package manager; About Settings can, with the author's permission, check GitHub for a newer matching Debian release and open its release notes. Installation remains a manual package-manager upgrade or `.deb` reinstall.
 
-Run the Desktop acceptance scenario above on an installed `.deb`, using GNOME Keyring or the distribution's Secret Service for the managed-credential checks. Also verify locked and unavailable Secret Service states leave Article editing and environment-variable connections usable, launcher integration opens one focused window, file picking and folder reveal work, and upgrade, reinstall, and uninstall preserve the disposable `.skladno` data. Record the package version, distribution and version, architecture, pass/fail, and remaining checks without credentials, Article content, or private paths.
+Run the Desktop acceptance scenario above on an installed `.deb`, using GNOME Keyring or the distribution's Secret Service for the managed-credential checks. Also verify locked and unavailable Secret Service states leave Article editing and environment-variable connections usable, launcher integration opens one focused window, file picking and folder reveal work, and upgrade, reinstall, and uninstall preserve the disposable `.warplyn` data. Record the package version, distribution and version, architecture, pass/fail, and remaining checks without credentials, Article content, or private paths.
+
+## Warplyn migration release boundary
+
+`punk-link/warplyn` publishes only Warplyn packages. The inherited tags contain Skladno source and are not Warplyn releases; never dispatch a release against one. Current release workflows reject legacy product metadata before packaging. Continue the existing version sequence: the inherited stable baseline is `v0.5.5`, so the first published Warplyn version must be newer. Local migration test artifacts can use `0.5.5` without being published.
+
+Use the supported [migration procedure](https://warplyn.com/docs/migration.html): export through Skladno's manual backup, install Warplyn separately, restore with native replacement confirmation, re-add managed API keys, select replacement connection/model roles, and choose backup/network/telemetry preferences again. Never copy a live WAL database, runtime settings, `.env` values, or legacy credentials. Keep both profiles and source backup pairs available.
+
+Before publication, record independent install/launch/uninstall results for both apps, the installed Skladno `v0.5.5` and `v0.4.0-preview.3` backup journeys, and a second-version Warplyn update drill. Automated restore, credential, and packaging checks do not replace those installed acceptance gates. Publish Warplyn installers and the working migration page before the final legacy announcement. Do not enable site or release deployment while the public documentation routes remain broken.

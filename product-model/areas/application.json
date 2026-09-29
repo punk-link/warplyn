@@ -95,10 +95,10 @@
                 ".github/workflows/electron-windows.yml"
             ],
             "contract": "The unsigned Windows 11 x64 application runs the existing React application in one context-isolated, sandboxed Electron window without a native menu bar. Every former menu action is a configurable Key Binding: workspace actions run in the renderer, and editing, window, close, quit, and update actions cross only as allowlisted native command IDs. CI publishes stable tags as GitHub releases and preview tags as prereleases, each with the installer, RELEASES manifest, and full package. Its Squirrel installer creates Desktop and Start menu shortcuts. The main process composes local application services and exposes only allowlisted typed IPC operations. GitHub release discovery is optional, requires the author's stored network permission, and runs at every startup and then daily while the application remains open; the author chooses stable-only or prerelease-inclusive discovery, while download and restart remain explicit. Restart and update requires a Draft checkpoint and verified SQLite snapshot before native Squirrel apply.",
-            "persistence": "The desktop client uses the existing user-local .skladno SQLite data. Runtime settings retain the network-permission, automatic-check, and prerelease-channel preferences, staged version, prior version, and one recovery snapshot reference without Article content. Install, upgrade, reinstall, and uninstall do not delete or rewrite that directory.",
+            "persistence": "The desktop client uses the existing user-local .warplyn SQLite data. Runtime settings retain the network-permission, automatic-check, and prerelease-channel preferences, staged version, prior version, and one recovery snapshot reference without Article content. Install, upgrade, reinstall, and uninstall do not delete or rewrite that directory.",
             "limitations": [
-                "Stable and preview releases are unsigned and Windows-only; signing remains in #168.",
-                "Native backup pickers and other Electron-specific Settings work remain in #34."
+                "Windows releases are unsigned; signing remains in https://github.com/punk-link/warplyn/issues/41.",
+                "Independent installation and uninstallation acceptance remains required before publication."
             ]
         },
         {
@@ -113,7 +113,7 @@
                 ".github/workflows/electron-linux.yml"
             ],
             "contract": "The unsigned Debian x64 application runs the existing context-isolated, sandboxed Electron workspace and local services from one Debian package. Ubuntu 22.04 x64 is the release-validation baseline; compatible Debian-based distributions may install the same package. It preserves Article, Draft, Revision, backup, credential, renderer-isolation, single-window, native-dialog, and shutdown guarantees. After author-approved GitHub access, About Settings can show the newest matching Debian release and open its release notes. Package-manager upgrades or manual .deb reinstalls remain author-controlled; Linux exposes no in-app download or apply action.",
-            "persistence": "Electron runtime state uses Linux userData while Article data remains in the resolved user-local .skladno directory. Install, upgrade, reinstall, and uninstall do not delete or rewrite author data.",
+            "persistence": "Electron runtime state uses Linux userData while Article data remains in the resolved user-local .warplyn directory. Install, upgrade, reinstall, and uninstall do not delete or rewrite author data.",
             "limitations": [
                 "The installed Ubuntu 22.04 acceptance pass, including Secret Service, launcher, upgrade, reinstall, uninstall, and data-preservation evidence, remains required before any Linux target is guaranteed. Other compatible Debian-based distributions require the same pass; ARM64, RPM, Snap, Flatpak, AppImage, and in-app Linux updates require separate demand and acceptance evidence."
             ]
@@ -272,7 +272,7 @@
                 "application.electron-linux-preview"
             ],
             "preconditions": [
-                "An installed Ubuntu 22.04 x64 or compatible Debian-based preview has a disposable .skladno directory containing an Article, Draft, Revision, and Settings."
+                "An installed Ubuntu 22.04 x64 or compatible Debian-based preview has a disposable .warplyn directory containing an Article, Draft, Revision, and Settings."
             ],
             "event": "The author launches, upgrades or reinstalls, then uninstalls the Debian package."
             ,"expected": [
@@ -280,7 +280,7 @@
                 "The app exposes no in-app downloader or updater."
             ],
             "forbidden": [
-                "Squirrel or autoUpdater calls on Linux, or installer lifecycle actions deleting or rewriting the .skladno directory."
+                "Squirrel or autoUpdater calls on Linux, or installer lifecycle actions deleting or rewriting the .warplyn directory."
             ],
             "evidence": {
                 "kind": "human-reviewed",
@@ -306,10 +306,10 @@
             "preconditions": [
                 "The unsigned Windows 11 x64 preview is installed with a disposable local data directory."
             ],
-            "event": "The author launches Skladno and completes the desktop acceptance journey.",
+            "event": "The author launches Warplyn and completes the desktop acceptance journey.",
             "expected": [
                 "The existing React workspace opens and the typed Article, Settings, Assistant, editorial, and fact-check operations use local application services without an HTTP server.",
-                "Installation creates Desktop and Start menu shortcuts for Skladno."
+                "Installation creates Desktop and Start menu shortcuts for Warplyn."
             ],
             "forbidden": [
                 "A second React application or renderer access to privileged resources."
@@ -326,14 +326,14 @@
                 "application.electron-windows-preview"
             ],
             "preconditions": [
-                "The disposable .skladno directory contains an Article, Draft, Revision, and Settings."
+                "The disposable .warplyn directory contains an Article, Draft, Revision, and Settings."
             ],
             "event": "The preview is upgraded or reinstalled and then uninstalled.",
             "expected": [
                 "The existing data reopens after upgrade or reinstall and remains on disk after uninstall."
             ],
             "forbidden": [
-                "Installer lifecycle actions deleting or rewriting the .skladno directory."
+                "Installer lifecycle actions deleting or rewriting the .warplyn directory."
             ],
             "evidence": {
                 "kind": "human-reviewed",
@@ -399,7 +399,7 @@
             "title": "Quick start appears on first launch",
             "capabilityIds": ["application.quick-start-tutorial"],
             "preconditions": ["The local profile has no quick-start completion marker."],
-            "event": "The Author opens Skladno.",
+            "event": "The Author opens Warplyn.",
             "expected": ["The quick start opens with accessible controls and focus.", "An Author without a usable connection sees Add model key; an Author with one sees Start writing."],
             "forbidden": ["Blocking Article editing or storing credentials or Article data in browser storage."],
             "evidence": { "kind": "automated", "path": "packages/web/src/application/QuickStartDialog.test.tsx" }

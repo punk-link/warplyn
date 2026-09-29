@@ -18,10 +18,10 @@ export default defineConfig({
             url: "http://127.0.0.1:8787/api/health",
             reuseExistingServer: false,
             env: {
-                SKLADNO_DATA_DIR: ".e2e-data",
-                SKLADNO_SERVER_HOST: "127.0.0.1",
-                SKLADNO_SERVER_PORT: "8787",
-                SKLADNO_WEB_ORIGIN: "http://127.0.0.1:5173",
+                WARPLYN_DATA_DIR: ".e2e-data",
+                WARPLYN_SERVER_HOST: "127.0.0.1",
+                WARPLYN_SERVER_PORT: "8787",
+                WARPLYN_WEB_ORIGIN: "http://127.0.0.1:5173",
             },
         },
         {

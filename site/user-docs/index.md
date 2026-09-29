@@ -1,12 +1,12 @@
-# Skladno user guide
+# Warplyn user guide
 
-Skladno is a local-first writing workspace. Find installation steps, guides for writing workflows, help with settings, and reference material below.
+Warplyn is a local-first writing workspace. Find installation steps, guides for writing workflows, help with settings, and reference material below.
 
 AI output never changes an Article on its own. Review each Proposal before accepting it. Every accepted change creates an immutable Revision.
 
 ## Installation
 
-- [Install Skladno](installation.md)
+- [Install Warplyn](installation.md)
 
 ## Guides
 

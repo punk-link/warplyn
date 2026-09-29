@@ -1,6 +1,6 @@
 # Company repository and product-name migration
 
-Status: execution in progress. Prepared 2026-09-28 against version 0.5.5. The original repository was transferred to `punk-link/skladno-legacy` on 2026-09-29, and all 60 open issues moved to the new `punk-link/warplyn` repository. No new release or application migration has been performed.
+Status: execution in progress. Prepared 2026-09-28 against version 0.5.5. The original repository was transferred to `punk-link/skladno-legacy` on 2026-09-29, and all 60 open issues moved to the new `punk-link/warplyn` repository. Phase 4 and 5 implementation and automated compatibility checks are complete in the Warplyn checkout. Installed co-existence/uninstall and published-version acceptance remain pending. No release has been published.
 
 ## Outcome and decisions
 
@@ -10,8 +10,8 @@ Use two public repositories:
 
 | Repository | Purpose |
 | --- | --- |
-| `COMPANY/skladno-legacy` | The transferred original repository, historical issues and PRs, existing releases, and final Skladno announcement release |
-| `COMPANY/NEW-REPO` | Existing Git history plus renamed-product development, transferred active issues, and a separate release feed |
+| `punk-link/skladno-legacy` | The transferred original repository, historical issues and PRs, existing releases, and final Skladno announcement release |
+| `punk-link/warplyn` | Existing Git history plus renamed-product development, transferred active issues, and a separate release feed |
 
 The Author benefit is continuity of writing and recoverability without a fragile installer upgrade. The tradeoff is a manual installation, backup restore, and API-key setup. GitHub conversations remain accessible, although historical work stays in the legacy repository.
 
@@ -43,7 +43,7 @@ The maintainer supplies these values once; placeholders below are not commands t
 
 Planning does not authorize external changes. Execute those actions only when migration execution is requested. Prepare code and release evidence before publication. Native issue transfers notify participants; include them in the explicitly authorized execution scope.
 
-## Verified implementation and owners
+## Verified pre-migration baseline and owners
 
 Paths in this table are relative to the repository root.
 
@@ -156,16 +156,16 @@ Gate: every active issue is accounted for, comments remain attached to their aut
 
 Owner: implementation maintainer, in the new repository. Depends on identity decisions; can proceed while active issues are reconciled.
 
-- [ ] Change visible branding, icons if supplied, package metadata, installer filenames, shortcut labels, Debian metadata, site copy, and localized app references.
-- [ ] Set distinct Squirrel package identity, executable, app ID, Debian package/binary identity, Electron `userData` location, default data directory, and credential service identifier on both supported platforms.
-- [ ] Use the new environment prefix for the live data directory. Do not silently fall back to `SKLADNO_DATA_DIR`, which could make both apps open the same database. Document the new override and refuse known legacy-directory targets during migration.
-- [ ] Keep the database filename and schema compatible unless a functional need requires changing them. Storage-directory separation provides isolation without a schema rename.
-- [ ] Point both discovery call sites and the download base at `COMPANY/NEW-REPO`. Update recovery/help links, release workflow titles, Linux homepage assertions, and release asset checks.
-- [ ] Keep the ordinary author-controlled update flow in the new app, including channel selection, checkpoint, snapshot, and restart safeguards.
-- [ ] Give the new app fresh runtime update state and fresh network/telemetry consent. Never reuse the old telemetry installation ID or pending recovery records.
-- [ ] Configure the new repository's release environment explicitly. Do not turn inherited old tags into releases by rerunning unmodified legacy workflows.
+- [x] Change visible branding, icons if supplied, package metadata, installer filenames, shortcut labels, Debian metadata, site copy, and localized app references.
+- [x] Set distinct Squirrel package identity, executable, app ID, Debian package/binary identity, Electron `userData` location, default data directory, and credential service identifier on both supported platforms.
+- [x] Use the new environment prefix for the live data directory. Do not silently fall back to `SKLADNO_DATA_DIR`, which could make both apps open the same database. Document the new override and refuse known legacy-directory targets during migration.
+- [x] Keep the database filename and schema compatible unless a functional need requires changing them. Storage-directory separation provides isolation without a schema rename.
+- [x] Point both discovery call sites and the download base at `punk-link/warplyn`. Update recovery/help links, release workflow titles, Linux homepage assertions, and release asset checks.
+- [x] Keep the ordinary author-controlled update flow in the new app, including channel selection, checkpoint, snapshot, and restart safeguards.
+- [x] Give the new app fresh runtime update state and fresh network/telemetry consent. Never reuse the old telemetry installation ID or pending recovery records.
+- [x] Configure the new repository's release environment explicitly. Do not turn inherited old tags into releases by rerunning unmodified legacy workflows.
 
-Gate: both apps can be installed and launched independently, with separate profiles and credential namespaces. Uninstalling either leaves the other's installation and both sets of Author data intact. An update check in either app cannot select the other app's releases.
+Installed acceptance pending: both apps can be installed and launched independently, with separate profiles and credential namespaces. Uninstalling either leaves the other's installation and both sets of Author data intact. An update check in either app cannot select the other app's releases.
 
 ## Phase 5: migrate through the existing backup and restore flow
 
@@ -184,18 +184,31 @@ The supported beta journey is explicit and uses existing controls:
 
 Implementation work and checks:
 
-- [ ] Prove that the new app accepts legacy backup filenames, schema versions, and Skill manifests. Reuse `createNativeBackupRestoration` and the existing staged restore/rollback code.
-- [ ] Preserve legacy manifest format identifiers even when visible branding changes. Validate content and supported schema, not the new product-name prefix.
-- [ ] Test the native backup pair and older database-only snapshots. Explain that database-only backups cannot restore Skill files they never contained.
-- [ ] Preserve all compatible SQLite settings and history without rewriting immutable Revisions. Do not claim that machine/runtime preferences are included in the backup.
-- [ ] Verify imported managed connections without secrets report a useful missing-key state. Prefer the existing Add connection and role-selection flow over adding credential migration or a new secret editor.
-- [ ] Preserve environment-variable references as metadata, but never copy `.env` files or values. Document that environment-provided connections depend on the new process environment.
-- [ ] Leave legacy credential entries untouched, including when removing imported connections in the new app.
-- [ ] Ensure restore cancellation, invalid snapshots, corrupt Skill manifests, insufficient disk space, and failed startup leave the destination recoverable and the source backup unchanged.
-- [ ] Support migration into a fresh profile. If the new app already contains work, require its existing backup/replacement confirmation; do not attempt database merging.
-- [ ] Keep all filesystem operations and native pickers in Electron main. Any necessary UI changes use existing Settings layout, localized accessible controls, and stable actionable errors. Diagnostics contain no private content, credentials, or identifying paths.
+- [x] Prove that the new app accepts legacy backup filenames, schema versions, and Skill manifests. Reuse `createNativeBackupRestoration` and the existing staged restore/rollback code.
+- [x] Preserve legacy manifest format identifiers even when visible branding changes. Validate content and supported schema, not the new product-name prefix.
+- [x] Test the native backup pair and older database-only snapshots. Explain that database-only backups cannot restore Skill files they never contained.
+- [x] Preserve all compatible SQLite settings and history without rewriting immutable Revisions. Do not claim that machine/runtime preferences are included in the backup.
+- [x] Verify imported managed connections without secrets report a useful missing-key state. Prefer the existing Add connection and role-selection flow over adding credential migration or a new secret editor.
+- [x] Preserve environment-variable references as metadata, but never copy `.env` files or values. Document that environment-provided connections depend on the new process environment.
+- [x] Leave legacy credential entries untouched, including when removing imported connections in the new app.
+- [x] Ensure restore cancellation, invalid snapshots, corrupt Skill manifests, insufficient disk space, and failed startup leave the destination recoverable and the source backup unchanged.
+- [x] Support migration into a fresh profile. If the new app already contains work, require its existing backup/replacement confirmation; do not attempt database merging.
+- [x] Keep all filesystem operations and native pickers in Electron main. Any necessary UI changes use existing Settings layout, localized accessible controls, and stable actionable errors. Diagnostics contain no private content, credentials, or identifying paths.
 
-Gate: the full journey succeeds on disposable Windows and Ubuntu profiles, and source data/backup hashes remain unchanged by restore. There is no dependency on copying a live WAL-mode database or sharing its directory.
+Installed acceptance pending: the full journey succeeds on disposable Windows and Ubuntu profiles, and source data/backup hashes remain unchanged by restore. There is no dependency on copying a live WAL-mode database or sharing its directory.
+
+### Phase 4 and 5 implementation record, 2026-09-29
+
+- Confirmed identities: visible product/executable `Warplyn`, Squirrel/app/credential ID `com.warplyn.desktop`, Debian package `warplyn`, Electron profile `Warplyn`, default data folder `.warplyn`, configuration prefix `WARPLYN_`, and release repository `punk-link/warplyn`. Existing icons and contributor/license attribution remain; no replacement artwork was supplied. Internal workspace scopes, IPC names, protected translation tokens, database filename, schema migrations, and backup format identifiers remain compatible.
+- Warplyn ignores the legacy data override for live storage. A shared startup guard rejects known legacy default/override overlap in either direction, including canonical junction and symlink aliases. Runtime update state and telemetry consent are separate; beta telemetry starts enabled with a new installation ID, preserving any saved Warplyn opt-out. Both credential adapters use the new namespace. Native Windows Credential Manager and a disposable Ubuntu Secret Service session proved identical connection IDs cannot read or delete legacy entries.
+- Both GitHub discovery call sites and the download base use the new repository. Release selection rejects legacy package identities. Current release workflows reject checked-out legacy product metadata and validate new asset identities. `Production` has an explicitly configured `WARPLYN_POSTHOG_PROJECT_KEY`, without exposing its value. Actions remains disabled and there are zero Warplyn releases. Local test artifacts use version `0.5.5`; the first published Warplyn version must exceed inherited `v0.5.5`.
+- Reused native selection, checkpoint, staging, recovery snapshot, restart, validation, commit, and rollback. The disposable migration test restores a legacy-named backup pair and a database-only snapshot, including Article/Revision/Draft/Assistant records, publishing profiles, managed/environment connection metadata, and Skill files/history. It verifies missing managed-key guidance, unchanged source SHA-256 inventories, no `.env` import, no runtime consent/update-state import, and safe recovery-snapshot failure with an induced `ENOSPC` error. Existing tests cover cancellation, incompatible/corrupt snapshots, manifest corruption, and startup rollback. Older-schema validation/migration leaves the source schema unchanged.
+- The source-integrity check found that read-only SQLite validation could create WAL sidecars beside a backup. Validation now opens a private temporary copy and cleans it up. The restored destination uses the existing migrations; immutable Revisions are not rewritten. The legacy `v0.5.5` schema and recovery owners match the pre-change checkout; migration introduces no schema or format rename.
+- Windows: Squirrel setup executable, `RELEASES`, and `com.warplyn.desktop-0.5.5-full.nupkg` built successfully. The packaged Assistant IPC/failure/restart scenario passed. Ubuntu 22.04 x64 in WSL: server/Electron compatibility tests passed, `warplyn_0.5.5_amd64.deb` built, package/homepage/architecture/native-module checks passed, and the installed Debian application passed the same restart scenario with its installed sandbox helper. No sandbox protections were disabled. Native credential namespace checks passed on both platforms.
+- Verification: product records, complexity, lint, typecheck, script/server/shared/Electron tests, build, site build, 17 browser E2E cases, and packaged desktop checks passed. `npm run verify` passed once; later default-parallel runs hit an unrelated existing five-second Assistant UI timeout under concurrent build load. The full same 53-file/242-test UI suite passed with `vitest run --maxWorkers=2`; the focused final source checks passed. Private logs and SHA-256 artifact evidence are retained outside Git.
+- Removed the task-installed Ubuntu Warplyn package after its installed restart test. SHA-256 checks of disposable `.warplyn` and `.skladno` SQLite data passed after uninstall, and the Warplyn executable was removed. This proves new-package uninstall retention on Ubuntu; it does not claim the two-installed-products matrix or Windows uninstall pass.
+- Author instructions are in `site/user-docs/migration.md` at the confirmed public URL `https://warplyn.com/docs/migration.html`. The locally rendered page clearly says installers are unpublished. Site calls to action point to migration status. Deployment remains blocked by the previously recorded HTTP 421 hosting problem; no site or release publication occurred. Lasting storage, credential, consent, feed, and recovery contracts are recorded in ADR-006/009/010 and the release guide.
+- Remaining installed acceptance: both products installed together and independently uninstalled on disposable Windows/Ubuntu profiles; the full manual backup journey from installed stable `v0.5.5` and preview `v0.4.0-preview.3` (including custom-source locations); native-picker/keyboard/screen-reader acceptance; and a second-version Warplyn update drill. Automated compatibility and installed Ubuntu restart checks do not claim these passes. Keep the phase gates open until this evidence exists; the legacy updater compatibility drill alone was waived earlier.
 
 ## Phase 6: ship the final Skladno announcement release
 

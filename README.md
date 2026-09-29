@@ -1,4 +1,4 @@
-# Skladno
+# Warplyn
 
 This repository is maintained by [punk-link](https://github.com/punk-link) for Warplyn development. It contains Skladno's Git history and inherited tags. These tags do not identify Warplyn installers; no Warplyn release is available yet.
 
@@ -6,21 +6,21 @@ Historical issues, pull-request reviews, and Skladno releases remain in [skladno
 
 > Your ideas, in your voice.
 
-Skladno is an open-source, local-first desktop writing workspace for Authors. Work with an AI Editorial Assistant on your writing, in your voice. You decide what to ask for and which changes to keep.
+Warplyn is an open-source, local-first desktop writing workspace for Authors. Work with an AI Editorial Assistant on your writing, in your voice. You decide what to ask for and which changes to keep.
 
 ## Built around the Author
 
-Skladno is built around Authors' needs and the work that goes into their writing. The Author approves changes, keeps the revision history, and decides when and where to publish.
+Warplyn is built around Authors' needs and the work that goes into their writing. The Author approves changes, keeps the revision history, and decides when and where to publish.
 
-Skladno aims to make AI assistance approachable without requiring AI infrastructure expertise. To get started today, install the desktop app and connect a supported AI provider with your API key. Choose among supported providers and models to suit your work and budget; available editorial operations depend on the model's capabilities.
+Warplyn aims to make AI assistance approachable without requiring AI infrastructure expertise. To get started today, install the desktop app and connect a supported AI provider with your API key. Choose among supported providers and models to suit your work and budget; available editorial operations depend on the model's capabilities.
 
-Skladno is MIT-licensed, so you can inspect, modify, and share its source. Your Articles stay on your computer; AI requests send the relevant text and context to your chosen provider.
+Warplyn is MIT-licensed, so you can inspect, modify, and share its source. Your Articles stay on your computer; AI requests send the relevant text and context to your chosen provider.
 
 ## Write with help, stay in control
 
 Ask the Assistant to develop your talking points into a draft or improve the flow of an existing Article. Select a passage to focus the request, or work on the whole Article.
 
-Review the proposed changes before they enter your writing. Accept the edits you want and reject the rest. Skladno never changes your Article without your approval.
+Review the proposed changes before they enter your writing. Accept the edits you want and reject the rest. Warplyn never changes your Article without your approval.
 
 ## Keep your voice
 
@@ -40,15 +40,15 @@ Your Articles and autosaved drafts stay on your computer. Save Revisions as you 
 
 Choose a backup folder and create manual or daily automatic backups. See [Backups and recovery](https://warplyn.com/docs/backups-and-recovery.html) for details.
 
-AI assistance requires an internet connection and an AI provider connection. When you request it, Skladno sends the relevant text and context to your chosen provider, whose data policies apply.
+AI assistance requires an internet connection and an AI provider connection. When you request it, Warplyn sends the relevant text and context to your chosen provider, whose data policies apply.
 
 ## Prepare your Article for publishing
 
-Preview your writing against your publishing preferences and length guidance, then copy it as Markdown or plain text to the platform you use. Skladno does not publish directly. You handle the final publication.
+Preview your writing against your publishing preferences and length guidance, then copy it as Markdown or plain text to the platform you use. Warplyn does not publish directly. You handle the final publication.
 
-## Install Skladno
+## Install Warplyn
 
-Skladno works on **Windows 11 x64 and Linux**. Debian packages are available as previews and have been tested on Debian.
+Warplyn targets **Windows 11 x64 and Linux**. Installers have not been published yet. Keep using Skladno until the [migration page](https://warplyn.com/docs/migration.html) announces availability.
 
 For Debian installation steps, see the [installation guide](https://warplyn.com/docs/installation.html).
 
@@ -63,12 +63,14 @@ Currently supported AI providers:
 
 Through OpenCode Zen, Authors can also use models from additional vendors available in its catalog. Supported editorial operations depend on the chosen model's capabilities.
 
-1. Open the [latest Skladno release](https://github.com/punk-link/skladno-legacy/releases/latest) and download the Windows setup `.exe` from **Assets**.
-2. Run the installer and open Skladno.
+After Warplyn installers are published:
+
+1. Open [Warplyn releases](https://github.com/punk-link/warplyn/releases) and download the Windows setup `.exe` from **Assets**.
+2. Run the installer and open Warplyn.
 3. To use the Editorial Assistant, open **Settings > AI Assistant**, add your provider connection and API key, and verify the connection. Your provider's pricing applies.
 4. Create an Article and start writing. Set up a backup folder in **Settings > Data & backups** to protect your work.
 
-**Releases are not digitally signed.** Windows may show a SmartScreen warning. Check that you downloaded the installer from the legacy repository's release page before continuing.
+**Releases are not digitally signed.** Windows may show a SmartScreen warning. Check that you downloaded the installer from the Warplyn repository's release page before continuing.
 
 On Windows, you control update checks, downloads, and restarts in **Settings > About**. If an update causes trouble, follow the [update recovery guide](https://warplyn.com/docs/update-recovery.html).
 

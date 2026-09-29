@@ -1,10 +1,10 @@
 {
     "name": "@skladno/electron",
-    "version": "0.5.5",
+    "version": "0.6.0",
     "private": true,
     "type": "module",
     "main": "dist/main.js",
-    "productName": "Skladno",
+    "productName": "Warplyn",
     "description": "Local-first AI editorial workspace",
     "author": "Kirill Taran",
     "scripts": {

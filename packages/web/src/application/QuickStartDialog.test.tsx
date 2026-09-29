@@ -28,7 +28,7 @@ describe("Quick start", () => {
         const client = createFakeClient();
         const firstLaunch = render(<App client={client} />);
 
-        const dialog = await screen.findByRole("dialog", { name: "Welcome to Skladno" });
+        const dialog = await screen.findByRole("dialog", { name: "Welcome to Warplyn" });
         expect(showModal).toHaveBeenCalledWith();
         expect(document.activeElement).toBe(within(dialog).getByRole("button", { name: "Add model key" }));
         expect(within(dialog).getByRole("button", { name: "Close quick start" })).toBeTruthy();
@@ -46,12 +46,12 @@ describe("Quick start", () => {
         await user.selectOptions(screen.getByRole("combobox", { name: "Settings Navigation" }), "about");
         const openQuickStart = screen.getByRole("button", { name: "Open quick start" });
         await user.click(openQuickStart);
-        let reopenedDialog = await screen.findByRole("dialog", { name: "Welcome to Skladno" });
+        let reopenedDialog = await screen.findByRole("dialog", { name: "Welcome to Warplyn" });
         expect(document.activeElement).toBe(within(reopenedDialog).getByRole("button", { name: "Add model key" }));
         await user.click(within(reopenedDialog).getByRole("button", { name: "Close quick start" }));
         expect(document.activeElement).toBe(openQuickStart);
         await user.click(openQuickStart);
-        reopenedDialog = await screen.findByRole("dialog", { name: "Welcome to Skladno" });
+        reopenedDialog = await screen.findByRole("dialog", { name: "Welcome to Warplyn" });
         await user.click(within(reopenedDialog).getByRole("button", { name: "Add model key" }));
         expect(await screen.findByRole("heading", { name: "Connections" })).toBeTruthy();
         expect(client.updateArticle).not.toHaveBeenCalled();
@@ -68,7 +68,7 @@ describe("Quick start", () => {
         await user.click(screen.getByRole("button", { name: "Open quick start" }));
         await user.click(await screen.findByRole("button", { name: "Start writing" }));
         expect(await screen.findByRole("heading", { name: "First Article" })).toBeTruthy();
-        expect(screen.queryByRole("heading", { name: "About Skladno" })).toBeNull();
+        expect(screen.queryByRole("heading", { name: "About Warplyn" })).toBeNull();
     });
 
     it("does not choose an action before delayed Settings load", async () => {

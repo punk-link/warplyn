@@ -1,4 +1,4 @@
-name: Electron Linux release
+name: Warplyn Linux release
 
 on:
     pull_request:
@@ -30,6 +30,12 @@ jobs:
               run: node -e "require('@napi-rs/keyring')"
             - run: npm test --workspace @skladno/electron
             - run: npm run make:electron:linux
+            - name: Install Debian package
+              run: sudo apt-get install -y ./packages/electron/out/make/deb/x64/*.deb
+            - name: Smoke test packaged Assistant
+              env:
+                  WARPLYN_ELECTRON_EXECUTABLE: /usr/lib/warplyn/Warplyn
+              run: xvfb-run --auto-servernum npx playwright test --config playwright.electron.config.ts
             - name: Validate Debian package
               run: |
                   shopt -s nullglob
@@ -37,11 +43,11 @@ jobs:
                   test "${#assets[@]}" -eq 1
                   version="$(node -p "require('./package.json').version")"
                   dpkg-deb --info "${assets[0]}"
-                  dpkg-deb --info "${assets[0]}" | grep -q '^ Package: skladno$'
+                  dpkg-deb --info "${assets[0]}" | grep -q '^ Package: warplyn$'
                   dpkg-deb --info "${assets[0]}" | grep -q "^ Version: ${version}$"
                   dpkg-deb --info "${assets[0]}" | grep -q '^ Architecture: amd64$'
                   dpkg-deb --info "${assets[0]}" | grep -q '^ Maintainer: Kirill Taran$'
-                  dpkg-deb --info "${assets[0]}" | grep -q '^ Homepage: https://github.com/kirillta/skladno$'
+                  dpkg-deb --info "${assets[0]}" | grep -q '^ Homepage: https://github.com/punk-link/warplyn$'
                   dpkg-deb --contents "${assets[0]}" | tee contents.txt
                   grep -q '@napi-rs/keyring-linux-x64-gnu' contents.txt
                   ! grep -q '@napi-rs/keyring-win32-x64-msvc' contents.txt
@@ -69,13 +75,15 @@ jobs:
             - name: Verify release version
               env:
                   RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
-              run: node scripts/check-electron-release-tag.mjs "$RELEASE_TAG"
+              run: |
+                  node -e "if(require('./packages/electron/package.json').productName !== 'Warplyn') throw new Error('Inherited legacy tags cannot publish Warplyn releases')"
+                  node scripts/check-electron-release-tag.mjs "$RELEASE_TAG"
             - name: Package telemetry configuration
               env:
-                  SKLADNO_POSTHOG_PROJECT_KEY: ${{ vars.SKLADNO_POSTHOG_PROJECT_KEY }}
+                  WARPLYN_POSTHOG_PROJECT_KEY: ${{ vars.WARPLYN_POSTHOG_PROJECT_KEY }}
               run: |
-                  test -n "$SKLADNO_POSTHOG_PROJECT_KEY"
-                  printf '%s' "{\"endpoint\":\"https://us.i.posthog.com/batch\",\"projectKey\":\"$SKLADNO_POSTHOG_PROJECT_KEY\"}" > packages/electron/telemetry.json
+                  test -n "$WARPLYN_POSTHOG_PROJECT_KEY"
+                  printf '%s' "{\"endpoint\":\"https://us.i.posthog.com/batch\",\"projectKey\":\"$WARPLYN_POSTHOG_PROJECT_KEY\"}" > packages/electron/telemetry.json
             - run: npm run make:electron:linux
             - name: Validate Debian package
               run: |
@@ -84,11 +92,11 @@ jobs:
                   test "${#assets[@]}" -eq 1
                   version="$(node -p "require('./package.json').version")"
                   dpkg-deb --info "${assets[0]}"
-                  dpkg-deb --info "${assets[0]}" | grep -q '^ Package: skladno$'
+                  dpkg-deb --info "${assets[0]}" | grep -q '^ Package: warplyn$'
                   dpkg-deb --info "${assets[0]}" | grep -q "^ Version: ${version}$"
                   dpkg-deb --info "${assets[0]}" | grep -q '^ Architecture: amd64$'
                   dpkg-deb --info "${assets[0]}" | grep -q '^ Maintainer: Kirill Taran$'
-                  dpkg-deb --info "${assets[0]}" | grep -q '^ Homepage: https://github.com/kirillta/skladno$'
+                  dpkg-deb --info "${assets[0]}" | grep -q '^ Homepage: https://github.com/punk-link/warplyn$'
                   dpkg-deb --contents "${assets[0]}" | tee contents.txt
                   grep -q '@napi-rs/keyring-linux-x64-gnu' contents.txt
                   ! grep -q '@napi-rs/keyring-win32-x64-msvc' contents.txt
@@ -105,7 +113,7 @@ jobs:
                   assets=(packages/electron/out/make/deb/x64/*.deb)
                   test "${#assets[@]}" -eq 1
                   if [[ "$RELEASE_TAG" == *-preview.* ]]; then prerelease=--prerelease; else prerelease=; fi
-                  if ! gh release create "$RELEASE_TAG" $prerelease --title "Skladno $RELEASE_TAG" --notes "Unsigned Skladno preview release."; then
+                  if ! gh release create "$RELEASE_TAG" $prerelease --title "Warplyn $RELEASE_TAG" --notes "Unsigned Warplyn preview release."; then
                     gh release view "$RELEASE_TAG" >/dev/null
                   fi
                   gh release upload "$RELEASE_TAG" "${assets[0]}" --clobber

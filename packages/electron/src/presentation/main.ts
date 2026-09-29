@@ -52,7 +52,7 @@ async function loadRenderer(window: BrowserWindow): Promise<void> {
         await new Promise((resolve) => setTimeout(resolve, 250));
     }
 
-    throw new Error(`Could not load the Skladno renderer at ${rendererUrl}.`);
+    throw new Error(`Could not load the Warplyn renderer at ${rendererUrl}.`);
 }
 
 
@@ -159,6 +159,10 @@ async function createMainWindow(): Promise<void> {
 }
 
 
+app.setName("Warplyn");
+if (!app.commandLine.hasSwitch("user-data-dir"))
+    app.setPath("userData", join(app.getPath("appData"), "Warplyn"));
+
 if (supportsNativeUpdates() && squirrelStartup) {
     app.quit();
 } else if (!app.requestSingleInstanceLock()) {
@@ -167,11 +171,11 @@ if (supportsNativeUpdates() && squirrelStartup) {
     app.on("second-instance", focusMainWindow);
     app.whenReady().then(async () => {
         if (supportsNativeUpdates())
-            app.setAppUserModelId("io.github.kirillta.skladno");
+            app.setAppUserModelId("com.warplyn.desktop");
 
         loadServerEnvironment();
         const config = loadServerConfig();
-        process.env.SKLADNO_BUILT_IN_SKILLS_DIR = getBuiltInSkillRoot({ packaged: app.isPackaged, appPath: app.getAppPath(), resourcesPath: process.resourcesPath });
+        process.env.WARPLYN_BUILT_IN_SKILLS_DIR = getBuiltInSkillRoot({ packaged: app.isPackaged, appPath: app.getAppPath(), resourcesPath: process.resourcesPath });
         const runtimePath = join(app.getPath("userData"), "runtime-settings.json");
         const telemetryDelivery = createTelemetryDelivery({
             packaged: app.isPackaged,
@@ -207,7 +211,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             chooseDirectory: async () => (await dialog.showOpenDialog({ properties: ["openDirectory", "createDirectory"] })).filePaths[0],
             chooseBackupSnapshot: async (directory) => (await dialog.showOpenDialog({
                 defaultPath: directory,
-                filters: [{ name: "Skladno backups", extensions: ["sqlite"] }], properties: ["openFile"]
+                filters: [{ name: "Warplyn backups", extensions: ["sqlite"] }], properties: ["openFile"]
             })).filePaths[0],
             requestCheckpoint: () => mainWindow ? requestDraftCheckpoint(ipcMain, mainWindow.webContents) : Promise.resolve(false),
             closeApplication: () => {
@@ -237,7 +241,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             updates = createDesktopUpdateCoordinator(
                 { runtimePath, currentVersion: app.getVersion(), supported: app.isPackaged, platform: supportsNativeUpdates() ? "win32" : "linux" },
                 {
-                    fetchReleases: () => net.fetch("https://api.github.com/repos/kirillta/skladno/releases"),
+                    fetchReleases: () => net.fetch("https://api.github.com/repos/punk-link/warplyn/releases"),
                     openExternal: (url) => shell.openExternal(url),
                 },
                 {
@@ -266,7 +270,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
     }).catch((error: unknown) => {
         telemetry?.capture({ kind: "app_failure", source: "startup", failure: error instanceof PendingRestoreError ? "persistence" : "unknown" });
         if (!app.isPackaged)
-            console.error("Skladno startup failed.", error);
+            console.error("Warplyn startup failed.", error);
 
         const message = error instanceof PendingRestoreError
             ? nativeMessages["electron.restoreFailed.message"]

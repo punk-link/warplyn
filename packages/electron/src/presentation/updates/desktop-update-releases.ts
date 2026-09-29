@@ -79,8 +79,8 @@ export function getNewestCompatibleRelease(payload: unknown, currentVersion: str
             && hasSupportedVersion(item)
             && (!item.prerelease || updatePreferences(settings, currentVersion).includePrereleases)
             && (platform === "linux"
-                ? item.assets.some((asset) => /\.deb$/i.test(asset.name))
-                : item.assets.some((asset) => asset.name === "RELEASES") && item.assets.some((asset) => /-full\.nupkg$/i.test(asset.name)))
+                ? item.assets.some((asset) => /^warplyn_.+_amd64\.deb$/i.test(asset.name))
+                : item.assets.some((asset) => asset.name === "RELEASES") && item.assets.some((asset) => /^com\.warplyn\.desktop-.+-full\.nupkg$/i.test(asset.name)))
         );
 
     return candidates.sort((first, second) => isNewerThan(first.tag_name, second.tag_name) ? -1 : 1).find((item) => isNewerThan(item.tag_name, currentVersion));
@@ -93,7 +93,7 @@ export function getAvailableUpdateState(release: Release, currentVersion: string
         kind: "available",
         currentVersion,
         version: match[0].slice(1),
-        title: typeof release.name === "string" && release.name ? release.name : `Skladno ${match[0]}`,
+        title: typeof release.name === "string" && release.name ? release.name : `Warplyn ${match[0]}`,
         summary: typeof release.body === "string" ? release.body.replace(/<[^>]*>/g, "").trim().slice(0, 1000) : "",
         releaseNotesUrl: release.html_url,
         security: match[5] === ".security",

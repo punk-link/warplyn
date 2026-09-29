@@ -4,8 +4,8 @@ import { beginTimedTelemetryCapture, type DesktopUpdateState, type TelemetryCapt
 import { readRuntimeSettings, updateRuntimeSettings, writeRuntimeSettings, type RuntimeSettings } from "../../infrastructure/runtime/runtime-settings.js";
 import { getAvailableUpdateState, getNewestCompatibleRelease, updatePreferences, type Release } from "./desktop-update-releases.js";
 
-const releasesUrl = "https://api.github.com/repos/kirillta/skladno/releases";
-const releasesDownloadUrl = "https://github.com/kirillta/skladno/releases/download";
+const releasesUrl = "https://api.github.com/repos/punk-link/warplyn/releases";
+const releasesDownloadUrl = "https://github.com/punk-link/warplyn/releases/download";
 const recoveryGuideUrl = "https://warplyn.com/docs/update-recovery.html";
 const automaticUpdateCheckInitialDelay = 5_000;
 const automaticUpdateCheckInterval = 86_400_000;

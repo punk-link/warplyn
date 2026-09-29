@@ -1,10 +1,30 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { randomUUID } from "node:crypto";
+import { Entry } from "@napi-rs/keyring";
 
 import { APPLICATION_ERROR } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../../application/errors/application-service-error.js";
 import { LinuxCredentialStore } from "./linux-credential-store.js";
+
+
+test("native Linux credentials remain isolated from Skladno", { skip: process.platform !== "linux" || process.env.WARPLYN_NATIVE_CREDENTIAL_TEST !== "true" }, () => {
+    const id = `migration-test-${randomUUID()}`;
+    const legacy = new Entry("io.github.kirillta.skladno", id);
+    const store = new LinuxCredentialStore();
+    legacy.setPassword("disposable-legacy-key");
+    try {
+        assert.equal(store.get(id), undefined);
+        store.set(id, "disposable-warplyn-key");
+        assert.equal(store.get(id), "disposable-warplyn-key");
+        store.delete(id);
+        assert.equal(legacy.getPassword(), "disposable-legacy-key");
+    } finally {
+        new Entry("com.warplyn.desktop", id).deleteCredential();
+        legacy.deleteCredential();
+    }
+});
 
 
 test("Linux Secret Service stores credentials across adapter recreation", () => {

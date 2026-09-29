@@ -3,9 +3,6 @@ import { type TelemetryConsent, type TelemetryEvent } from "@skladno/shared";
 import { readRuntimeSettings, updateRuntimeSettings } from "../runtime/runtime-settings.js";
 import { type TelemetryDelivery } from "./telemetry-delivery.js";
 
-// Public-beta policy. Remove this default in the tracked post-beta follow-up.
-const betaTelemetryDefaultEnabled = true;
-
 
 interface OwnerState {
     readonly generation: number;
@@ -21,7 +18,8 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
 }) {
     let state: OwnerState = { generation: 0, sessionStartedGeneration: -1, disposed: false };
 
-    if (delivery.supported && betaTelemetryDefaultEnabled && !readRuntimeSettings(runtimePath).telemetry)
+    // Public-beta default applies only to a fresh, supported installation.
+    if (delivery.supported && !readRuntimeSettings(runtimePath).telemetry)
         updateRuntimeSettings(runtimePath, (runtime) => ({ ...runtime, telemetry: { consent: "granted", installationId: randomUUID() } }));
 
 

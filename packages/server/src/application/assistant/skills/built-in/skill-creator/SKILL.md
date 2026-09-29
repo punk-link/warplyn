@@ -8,7 +8,7 @@ version: 1
 
 Use this Skill when the Author explicitly asks to create, revise, restore, or delete a reusable Skill. For creation, infer a concise stable ID, name, description, and Markdown procedure from the request and conversation.
 
-Use the Skladno Glossary as the authority for domain terms. Keep its distinctions intact, especially Article rather than document, Draft checkpoints versus immutable Revisions, and Proposals or Findings as advisory work requiring explicit author approval.
+Use the Warplyn Glossary as the authority for domain terms. Keep its distinctions intact, especially Article rather than document, Draft checkpoints versus immutable Revisions, and Proposals or Findings as advisory work requiring explicit author approval.
 
 Ask a concise clarifying question when uncertainty about the purpose, triggers, procedure, or reference material would change the resulting Skill. Do not create a Skill for a suggestion, hypothetical, or ordinary editorial request.
 

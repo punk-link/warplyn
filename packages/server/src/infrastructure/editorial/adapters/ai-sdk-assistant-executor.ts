@@ -28,7 +28,7 @@ interface AssistantExecutionState {
 
 export function createAssistantInstructions(request: Pick<EditorialAssistantRequest, "instructions" | "skills" | "interfaceLocale">): string {
     return [
-        "You are Skladno's editorial assistant. Use only the supplied tools when an editorial result is needed.",
+        "You are Warplyn's editorial assistant. Use only the supplied tools when an editorial result is needed.",
         `Write service messages, including status updates, confirmations, errors, and summaries of tool or Skill work, in the Interface locale ${request.interfaceLocale ?? "en"}. For ordinary conversational answers that do not use or affect tools or Skills, answer in the language of the Author's question.`,
         "Never claim that a tool ran when it did not. Preserve author control. Finish with a concise response after the necessary work.",
         "When an Author request matches an available Skill, load that Skill before choosing capabilities.",

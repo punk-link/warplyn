@@ -12,7 +12,7 @@ test("telemetry IPC rejects unauthorized senders and unknown properties", async 
     let handler: ((event: { sender: unknown }, input: unknown) => Promise<unknown>) | undefined;
     const owner = createTelemetryOwner({
         runtimePath: join(root, "runtime-settings.json"),
-        delivery: createTelemetryDelivery({ packaged: true, appVersion: "0.1.0", delivery: { endpoint: "https://us.i.posthog.com/batch", projectKey: "test" } }),
+        delivery: createTelemetryDelivery({ packaged: true, appVersion: "0.1.0", delivery: { endpoint: "https://us.i.posthog.com/batch", projectKey: "test" }, environment: { fetch: async () => new Response(null, { status: 200 }) } }),
     });
     registerDesktopTelemetryAdapter({
         ipcMain: { handle: (_channel: string, listener: (event: { sender: unknown }, input: unknown) => Promise<unknown>) => {
@@ -30,6 +30,7 @@ test("telemetry IPC rejects unauthorized senders and unknown properties", async 
         assert.equal(result.value.enabled, true);
         assert.equal(result.value.supported, true);
         assert.equal(typeof result.value.installationId, "string");
+        assert.equal(typeof (await handler?.({ sender: "trusted" }, { method: "beginCapture" }) as { value: unknown }).value, "number");
     } finally {
         owner.dispose();
         rmSync(root, { recursive: true, force: true });
