@@ -5,7 +5,7 @@ import { UpdatesSettingsGroup } from "./UpdatesSettingsGroup.js";
 import { Button } from "../../ui/primitives.js";
 
 
-const repositoryUrl = "https://github.com/kirillta/skladno";
+const repositoryUrl = "https://github.com/punk-link/warplyn";
 
 
 export function AboutSettingsSection({ openQuickStart }: { openQuickStart?: () => void }) {

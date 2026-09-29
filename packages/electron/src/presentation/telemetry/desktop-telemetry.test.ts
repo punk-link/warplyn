@@ -12,7 +12,7 @@ test("telemetry IPC rejects unauthorized senders and unknown properties", async 
     let handler: ((event: { sender: unknown }, input: unknown) => Promise<unknown>) | undefined;
     const owner = createTelemetryOwner({
         runtimePath: join(root, "runtime-settings.json"),
-        delivery: createTelemetryDelivery({ packaged: true, appVersion: "0.1.0", delivery: { endpoint: "https://us.i.posthog.com/batch", projectKey: "test" } }),
+        delivery: createTelemetryDelivery({ packaged: true, appVersion: "0.1.0", delivery: { endpoint: "https://us.i.posthog.com/batch", projectKey: "test" }, environment: { fetch: async () => new Response(null, { status: 200 }) } }),
     });
     registerDesktopTelemetryAdapter({
         ipcMain: { handle: (_channel: string, listener: (event: { sender: unknown }, input: unknown) => Promise<unknown>) => {
@@ -24,12 +24,13 @@ test("telemetry IPC rejects unauthorized senders and unknown properties", async 
     try {
         assert.deepEqual(await handler?.({ sender: "other" }, { method: "getConsent" }), { ok: false, error: "invalid_request" });
         assert.deepEqual(await handler?.({ sender: "trusted" }, { method: "capture", event: { kind: "proposal_reviewed", decision: "accepted", articleId: "private" } }), { ok: false, error: "invalid_request" });
-        assert.equal(typeof (await handler?.({ sender: "trusted" }, { method: "beginCapture" }) as { value: unknown }).value, "number");
+        assert.equal((await handler?.({ sender: "trusted" }, { method: "beginCapture" }) as { value: unknown }).value, undefined);
         const result = await handler?.({ sender: "trusted" }, { method: "setConsent", enabled: true }) as { ok: boolean; value: { enabled: boolean; supported: boolean; installationId?: string } };
         assert.equal(result.ok, true);
         assert.equal(result.value.enabled, true);
         assert.equal(result.value.supported, true);
         assert.equal(typeof result.value.installationId, "string");
+        assert.equal(typeof (await handler?.({ sender: "trusted" }, { method: "beginCapture" }) as { value: unknown }).value, "number");
     } finally {
         owner.dispose();
         rmSync(root, { recursive: true, force: true });

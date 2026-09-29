@@ -23,7 +23,7 @@ Expose native Settings through a separate, context-isolated preload client. Elec
 
 Keep browser and native backup destinations outside SQLite. The browser retains its permission handle. Windows stores its native destination in a validated runtime configuration beneath the operating-system application-data directory.
 
-The same runtime configuration stores the selected live data directory and a discriminated pending restore or relocation record. `SKLADNO_DATA_DIR` has higher precedence and disables relocation. Runtime configuration contains no credentials or Article content and is written atomically.
+Runtime configuration stores the native backup folder and pending restore record, with no credentials or Article content, and is written atomically. Warplyn resolves live storage from `WARPLYN_DATA_DIR` or `~/.warplyn`; runtime-selected live-directory relocation is not implemented. The planned relocation flow must preserve the same recovery guarantees before it is exposed.
 
 Restore and relocation use staged SQLite snapshots and apply only during restart. Native backups include current Author Skills and Skill Revision history in a companion directory with an integrity manifest; a legacy database-only snapshot retains current Skills. Before restore, Skladno creates and retains a recovery snapshot with Skill files. Relocation retains the complete old data directory. Startup clears pending state only after the new database and application services open successfully. A failed switch attempts one automatic rollback and cannot enter a relaunch loop.
 
@@ -53,3 +53,9 @@ Other desktop platforms are not implemented by this decision. Their adapters can
 Contract and adapter tests must cover credential-source validation, no secret serialization, allowlisted IPC, retained picker selections, path containment, snapshot compatibility, configuration precedence, staged switching, one rollback attempt, and restart-loop prevention.
 
 The packaged Windows 11 x64 and Ubuntu 22.04 x64 acceptance drills must prove their managed credential behavior, native backup retention, successful restore and relocation, failure rollback, retained old data, and continued browser behavior. A compatible distribution becomes a guaranteed target only after the same pass succeeds there.
+
+## Independent Warplyn installation
+
+Warplyn uses application and credential service ID `com.warplyn.desktop`, Electron profile `Warplyn`, and default data directory `~/.warplyn`. Its configuration uses `WARPLYN_`; `SKLADNO_DATA_DIR` is used only to reject known legacy-directory overlap, never as a live-storage fallback. Canonical paths prevent junction or symlink aliases from bypassing that guard.
+
+Migration uses the existing explicit backup/replacement/restart flow. It copies compatible database records and backed-up Skills, without merging, reading legacy secrets, or copying `.env` files. Runtime backup folders, update preferences, telemetry consent and identity, and recovery records stay outside the backup. Telemetry begins disabled until the Author opts in. Imported managed connections without a key direct the Author to Add connection and model selection; deleting them touches only the Warplyn namespace.

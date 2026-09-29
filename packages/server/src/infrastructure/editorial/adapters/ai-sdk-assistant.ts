@@ -119,7 +119,7 @@ export function createAssistantTools(request: EditorialAssistantRequest, execute
     return {
         ...Object.fromEntries(request.tools.map((candidate) => [candidate.capability, createAssistantTool(candidate, execute)])),
         load_skill: tool({
-            description: "Load the full instructions for one relevant Skladno Skill.",
+            description: "Load the full instructions for one relevant Warplyn Skill.",
             inputSchema: z.object({ id: z.string().min(1) }),
             execute: ({ id }) => {
                 const skill = request.skills.find((candidate) => candidate.id === id);

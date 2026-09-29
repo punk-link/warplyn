@@ -4,7 +4,7 @@
     "private": true,
     "type": "module",
     "main": "dist/main.js",
-    "productName": "Skladno",
+    "productName": "Warplyn",
     "description": "Local-first AI editorial workspace",
     "author": "Kirill Taran",
     "scripts": {

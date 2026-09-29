@@ -7,9 +7,34 @@ import test from "node:test";
 
 import { DatabaseSnapshotError, openDatabase, validateDatabaseSnapshot } from "./database.js";
 import { SqliteBackupSnapshotCreator } from "./sqlite-backup-snapshot-creator.js";
+import { migrations } from "./migrations.js";
 
 
 // product: settings.backup-policy-human-reviewed
+test("an older database-only schema validates and migrates on its destination copy", () => {
+    const directory = mkdtempSync(join(tmpdir(), "warplyn-old-schema-"));
+    const source = join(directory, "skladno-old.sqlite");
+    const destination = join(directory, "warplyn.sqlite");
+    const legacy = new DatabaseSync(source);
+    legacy.exec("CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY, name TEXT NOT NULL, applied_at TEXT NOT NULL)");
+    legacy.exec(migrations[0]!.sql);
+    legacy.prepare("INSERT INTO schema_migrations VALUES (?,?,?)").run(1, migrations[0]!.name, "2026-01-01");
+    legacy.close();
+    try {
+        validateDatabaseSnapshot(source);
+        copyFileSync(source, destination);
+        const restored = openDatabase(destination);
+        assert.equal(restored.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get()?.count, migrations.length);
+        restored.close();
+        const unchanged = new DatabaseSync(source, { readOnly: true });
+        assert.equal(unchanged.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get()?.count, 1);
+        unchanged.close();
+    } finally {
+        rmSync(directory, { recursive: true, force: true });
+    }
+});
+
+
 test("creates a restorable temporary snapshot", () => {
     const directory = mkdtempSync(join(tmpdir(), "skladno-backup-"));
     const database = openDatabase(join(directory, "skladno.sqlite"));

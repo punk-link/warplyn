@@ -22,8 +22,8 @@ export default {
     },
     packagerConfig: {
         asar: { unpack: "**/*.node" },
-        appBundleId: "io.github.kirillta.skladno",
-        executableName: "Skladno",
+        appBundleId: "com.warplyn.desktop",
+        executableName: "Warplyn",
         icon: path.join(import.meta.dirname, "assets", "icon.ico"),
         extraResource: [
             path.join(import.meta.dirname, "..", "web", "dist"),
@@ -36,8 +36,8 @@ export default {
             name: "@electron-forge/maker-squirrel",
             platforms: ["win32"],
             config: {
-                name: "io.github.kirillta.skladno",
-                setupExe: `Skladno-${rootPackage.version}-win32-x64-setup.exe`,
+                name: "com.warplyn.desktop",
+                setupExe: `Warplyn-${rootPackage.version}-win32-x64-setup.exe`,
                 setupIcon: path.join(import.meta.dirname, "assets", "icon.ico"),
             },
         },
@@ -46,10 +46,10 @@ export default {
             platforms: ["linux"],
             config: {
                 options: {
-                    name: "skladno",
-                    bin: "Skladno",
+                    name: "warplyn",
+                    bin: "Warplyn",
                     maintainer: "Kirill Taran",
-                    homepage: "https://github.com/kirillta/skladno",
+                    homepage: "https://github.com/punk-link/warplyn",
                     categories: ["Office"],
                     icon: path.join(import.meta.dirname, "assets", "icon.png"),
                 },

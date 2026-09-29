@@ -5,7 +5,7 @@ import { ApplicationServiceError } from "../../application/errors/application-se
 import type { CredentialStore } from "../../application/settings/credential-store.js";
 
 
-const service = "io.github.kirillta.skladno";
+const service = "com.warplyn.desktop";
 
 
 type CredentialEntry = Pick<Entry, "getPassword" | "setPassword" | "deleteCredential">;

@@ -59,7 +59,7 @@ describe("ApplicationSettings general", () => {
         await user.selectOptions(await screen.findByRole("combobox", { name: getMessage("settings.navigation") }), "about");
         expect(screen.getByRole("heading", { name: getMessage("settings.about") })).toBeTruthy();
         expect(screen.getByText(getMessage("settings.aboutDescription"))).toBeTruthy();
-        expect(screen.getByRole("link", { name: getMessage("settings.sourceCode") }).getAttribute("href")).toBe("https://github.com/kirillta/skladno");
+        expect(screen.getByRole("link", { name: getMessage("settings.sourceCode") }).getAttribute("href")).toBe("https://github.com/punk-link/warplyn");
     });
 
     it("persists the Editorial Assistant send-key preference", async () => {

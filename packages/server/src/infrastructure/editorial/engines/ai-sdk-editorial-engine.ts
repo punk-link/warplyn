@@ -101,7 +101,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
     async *streamConversation(request: EditorialConversationRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
         const messages: ModelMessage[] = [{
             role: "system",
-            content: `You are Skladno's editorial assistant. Answer conversationally and help the author decide what to do next. ${authorControlInstruction} Do not turn the Article into a proposal unless the author explicitly asks for an editorial operation.`
+            content: `You are Warplyn's editorial assistant. Answer conversationally and help the author decide what to do next. ${authorControlInstruction} Do not turn the Article into a proposal unless the author explicitly asks for an editorial operation.`
         }];
 
         if (request.article)

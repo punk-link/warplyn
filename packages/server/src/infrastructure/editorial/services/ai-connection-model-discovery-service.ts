@@ -57,8 +57,10 @@ function getModelIds(body: unknown, provider: AiProvider): string[] {
 export class AiConnectionModelDiscoveryService {
     async list(connection: AiConnection, apiKey = connection.credentialSource.kind === "environment-variable" ? process.env[connection.credentialSource.environmentVariableName] : undefined, fetchImplementation: typeof fetch = fetch): Promise<string[]> {
         const provider = connection.provider;
-        if (!apiKey)
-            throw new ApplicationServiceError(APPLICATION_ERROR.ENVIRONMENT_VARIABLE_UNAVAILABLE, HTTP_STATUS.BAD_REQUEST);
+        if (!apiKey) {
+            const code = connection.credentialSource.kind === "managed" ? APPLICATION_ERROR.MANAGED_CREDENTIAL_MISSING : APPLICATION_ERROR.ENVIRONMENT_VARIABLE_UNAVAILABLE;
+            throw new ApplicationServiceError(code, HTTP_STATUS.BAD_REQUEST);
+        }
 
         const response = await fetchImplementation(modelsEndpoints[provider], createModelDiscoveryRequestOptions(provider, apiKey));
         if (!response.ok)

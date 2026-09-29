@@ -42,3 +42,7 @@ The release process becomes deliberately manual at publication. Linux packages u
 Focused tests cover tag validation, release metadata validation, update state transitions, 24-hour scheduling, security-warning presentation, reduced-motion behavior, renderer-safe failures, Draft and snapshot gates, shutdown reuse, and startup success marking.
 
 The Windows release drill installs the previous preview into a disposable data directory, creates an Article, Draft, Revision, and Settings, updates through the staged flow, and verifies that all local data reopens. It also exercises failed discovery, failed download, failed snapshot, deferred restart, and documented snapshot rollback without recording private paths or Article content.
+
+## Separate product feeds
+
+Warplyn discovers and downloads only from `punk-link/warplyn`; Skladno installers remain in `punk-link/skladno-legacy`. Warplyn requires its own `com.warplyn.desktop-…-full.nupkg` or `warplyn_…_amd64.deb` asset identity. Inherited tags identify historical source, not Warplyn downloads. Current release workflows reject checked-out legacy product metadata before packaging or publishing. Keep the existing Author-controlled network permission, channels, checkpoint, recovery snapshot, and restart gates.

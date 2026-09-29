@@ -1,4 +1,4 @@
-name: Electron Windows release
+name: Warplyn Windows release
 
 on:
     pull_request:
@@ -68,14 +68,17 @@ jobs:
             - name: Verify release version
               env:
                   RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
-              run: node scripts/check-electron-release-tag.mjs $env:RELEASE_TAG
+              run: |
+                  node -e "if(require('./packages/electron/package.json').productName !== 'Warplyn') throw new Error('Inherited legacy tags cannot publish Warplyn releases')"
+                  if ($LASTEXITCODE -ne 0) { throw 'Legacy release blocked.' }
+                  node scripts/check-electron-release-tag.mjs $env:RELEASE_TAG
 
             - name: Package telemetry configuration
               env:
-                  SKLADNO_POSTHOG_PROJECT_KEY: ${{ vars.SKLADNO_POSTHOG_PROJECT_KEY }}
+                  WARPLYN_POSTHOG_PROJECT_KEY: ${{ vars.WARPLYN_POSTHOG_PROJECT_KEY }}
               run: |
-                  if ([string]::IsNullOrWhiteSpace($env:SKLADNO_POSTHOG_PROJECT_KEY)) { throw 'The SKLADNO_POSTHOG_PROJECT_KEY repository variable is required to create a telemetry-enabled release.' }
-                  @{ endpoint = 'https://us.i.posthog.com/batch'; projectKey = $env:SKLADNO_POSTHOG_PROJECT_KEY } | ConvertTo-Json -Compress | Set-Content -NoNewline packages/electron/telemetry.json
+                  if ([string]::IsNullOrWhiteSpace($env:WARPLYN_POSTHOG_PROJECT_KEY)) { throw 'The WARPLYN_POSTHOG_PROJECT_KEY repository variable is required to create a telemetry-enabled release.' }
+                  @{ endpoint = 'https://us.i.posthog.com/batch'; projectKey = $env:WARPLYN_POSTHOG_PROJECT_KEY } | ConvertTo-Json -Compress | Set-Content -NoNewline packages/electron/telemetry.json
 
             - name: Build installer
               run: npm run make:electron
@@ -90,7 +93,8 @@ jobs:
                   $releases = $assets | Where-Object Name -eq 'RELEASES'
                   $package = $assets | Where-Object Name -match '-full\.nupkg$'
                   if ($setup.Count -ne 1 -or $releases.Count -ne 1 -or $package.Count -ne 1) { throw 'Expected exactly one setup executable, RELEASES manifest, and full nupkg.' }
-                  gh release create $env:RELEASE_TAG --prerelease=$($env:RELEASE_TAG -match '-preview\.') --title "Skladno $env:RELEASE_TAG" --notes "Unsigned Skladno preview release."
+                  if ($setup.Name -notmatch '^Warplyn-' -or $package.Name -notmatch '^com\.warplyn\.desktop-') { throw 'Legacy assets cannot publish in the Warplyn feed.' }
+                  gh release create $env:RELEASE_TAG --prerelease=$($env:RELEASE_TAG -match '-preview\.') --title "Warplyn $env:RELEASE_TAG" --notes "Unsigned Warplyn preview release."
                   if ($LASTEXITCODE -ne 0) {
                     gh release view $env:RELEASE_TAG
                     if ($LASTEXITCODE -ne 0) { throw 'Could not create or find the release.' }

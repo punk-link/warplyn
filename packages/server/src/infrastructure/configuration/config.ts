@@ -2,6 +2,7 @@ import { chmodSync, existsSync, mkdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveDataDirectory } from "./data-directory.js";
 
 
 export interface ServerConfig {
@@ -31,7 +32,7 @@ function readPort(value: string | undefined): number {
 
     const port = Number(value);
     if (!Number.isInteger(port) || port < 1 || port > 65_535)
-        throw new Error("SKLADNO_SERVER_PORT must be an integer from 1 to 65535.");
+        throw new Error("WARPLYN_SERVER_PORT must be an integer from 1 to 65535.");
 
     return port;
 }
@@ -52,18 +53,18 @@ function readBoolean(value: string | undefined, name: string): boolean {
 
 
 export function loadServerConfig(environment = process.env): ServerConfig {
-    const dataDirectory = environment.SKLADNO_DATA_DIR || join(homedir(), ".skladno");
+    const dataDirectory = resolveDataDirectory(environment, homedir());
     mkdirSync(dataDirectory, { recursive: true, mode: 0o700 });
     if (process.platform !== "win32")
         chmodSync(dataDirectory, 0o700);
 
     return {
-        host: environment.SKLADNO_SERVER_HOST || "127.0.0.1",
-        port: readPort(environment.SKLADNO_SERVER_PORT),
-        webOrigin: environment.SKLADNO_WEB_ORIGIN || "http://localhost:5173",
-        aiApiKey: environment.SKLADNO_AI_API_KEY || undefined,
-        aiModel: environment.SKLADNO_AI_MODEL || "gpt-5",
-        aiSessionContinuationEnabled: readBoolean(environment.SKLADNO_AI_SESSION_CONTINUATION, "SKLADNO_AI_SESSION_CONTINUATION"),
+        host: environment.WARPLYN_SERVER_HOST || "127.0.0.1",
+        port: readPort(environment.WARPLYN_SERVER_PORT),
+        webOrigin: environment.WARPLYN_WEB_ORIGIN || "http://localhost:5173",
+        aiApiKey: environment.WARPLYN_AI_API_KEY || undefined,
+        aiModel: environment.WARPLYN_AI_MODEL || "gpt-5",
+        aiSessionContinuationEnabled: readBoolean(environment.WARPLYN_AI_SESSION_CONTINUATION, "WARPLYN_AI_SESSION_CONTINUATION"),
         databasePath: join(dataDirectory, "skladno.sqlite"),
     };
 }

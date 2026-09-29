@@ -87,7 +87,7 @@ export default defineConfig(
             "project-style/no-untranslated-ui-copy": ["error", {
                 allowedLiterals: [
                     "S",
-                    "Skladno",
+                    "Warplyn",
                 ],
             }],
             "react-hooks/exhaustive-deps": "warn",

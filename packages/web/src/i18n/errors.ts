@@ -21,6 +21,7 @@ const errorMessages: Record<ApplicationErrorCode, MessageId> = {
     active_connection_removal_blocked: "errors.activeConnectionRemovalBlocked",
     ai_connection_verification_failed: "errors.aiConnectionVerificationFailed",
     managed_credentials_unavailable: "errors.managedCredentialsUnavailable",
+    managed_credential_missing: "errors.managedCredentialMissing",
     style_corpus_required: "errors.styleCorpusRequired",
     target_language_required: "errors.targetLanguageRequired",
     editorial_operation_unsupported: "errors.editorialOperationUnsupported",

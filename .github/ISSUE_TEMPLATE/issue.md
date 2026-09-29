@@ -1,6 +1,6 @@
 ---
 name: Report a problem or suggest an improvement
-about: Help us improve Skladno during beta
+about: Help us improve Warplyn during beta
 title: ""
 labels: ""
 assignees: ""
@@ -24,9 +24,9 @@ assignees: ""
 
 [Describe the result you expected.]
 
-## Skladno version and environment
+## Warplyn version and environment
 
-- Skladno version:
+- Warplyn version:
 - Windows version:
 - AI provider and model, if relevant:
 

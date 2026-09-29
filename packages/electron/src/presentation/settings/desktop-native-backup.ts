@@ -14,7 +14,7 @@ export function createNativeBackup(database: { exec(sql: string): void }, dataDi
     try {
         mkdirSync(backupDirectory, { recursive: true });
         const created = new Date();
-        const filename = `skladno-backup-${created.toISOString().replaceAll(/[:.]/g, "-")}-${randomUUID()}.sqlite`;
+        const filename = `warplyn-backup-${created.toISOString().replaceAll(/[:.]/g, "-")}-${randomUUID()}.sqlite`;
         temporary = join(backupDirectory, `.${filename}.${randomUUID()}.tmp`);
         path = join(backupDirectory, filename);
         const expectedInventory = captureAuthorSkillInventory(dataDirectory);

@@ -27,7 +27,7 @@ test("Skill Creator keeps its model instructions in the built-in package", () =>
 
     assert.equal(creator?.name, "Skill Creator");
     assert.match(catalog.load([creator!.reference])[0]?.instructions ?? "", /Ask a concise clarifying question/);
-    assert.match(catalog.load([creator!.reference])[0]?.instructions ?? "", /Use the Skladno Glossary as the authority for domain terms/);
+    assert.match(catalog.load([creator!.reference])[0]?.instructions ?? "", /Use the Warplyn Glossary as the authority for domain terms/);
 });
 
 

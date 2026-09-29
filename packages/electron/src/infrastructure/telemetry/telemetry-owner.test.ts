@@ -58,7 +58,7 @@ function createOwner(runtimePath: string, { osVersion, environment = {} }: { osV
 
 
 // Product scenarios: settings.telemetry-consent
-test("telemetry is enabled by default during beta, reports trusted OS version, and clears identity on opt-out", async () => {
+test("telemetry requires fresh consent, reports trusted OS version, and clears identity on opt-out", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-telemetry-test-"));
     const runtimePath = join(root, "runtime-settings.json");
     const tasks = scheduler();
@@ -75,6 +75,10 @@ test("telemetry is enabled by default during beta, reports trusted OS version, a
         },
     });
     try {
+        assert.deepEqual(owner.getConsent(), { enabled: false, supported: true });
+        owner.capture(createTelemetryEvent());
+        assert.equal(tasks.size, 0);
+        owner.setConsent(true);
         const firstIdentity = JSON.parse(readFileSync(runtimePath, "utf8")).telemetry.installationId;
         assert.deepEqual(owner.getConsent(), { enabled: true, supported: true, installationId: firstIdentity });
         owner.capture(createTelemetryEvent());
@@ -151,6 +155,7 @@ test("delivery retries network failures and rate limits once, then drops permane
         },
     });
     try {
+        owner.setConsent(true);
         owner.capture(createTelemetryEvent());
         await tasks.run();
         await tasks.run();
@@ -200,6 +205,7 @@ test("delivery expires old events, caps retained event rate, and stops an active
         },
     });
     try {
+        owner.setConsent(true);
         owner.capture(createTelemetryEvent());
         currentTime = 5 * 60_000 + 1;
         await tasks.run();
@@ -241,6 +247,7 @@ test("delivery retries a timed-out request once", async () => {
         },
     });
     try {
+        owner.setConsent(true);
         owner.capture(createTelemetryEvent());
         await tasks.run();
         await new Promise((resolve) => setTimeout(resolve, 5));

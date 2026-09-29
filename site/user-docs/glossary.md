@@ -1,10 +1,10 @@
-# Skladno glossary
+# Warplyn glossary
 
-These terms describe concepts visible to authors and the domain language used throughout Skladno.
+These terms describe concepts visible to authors and the domain language used throughout Warplyn.
 
 ## Articles and revisions
 
-- **Article**: an independently recoverable piece of editorial work. Skladno uses “Article” rather than “document.”
+- **Article**: an independently recoverable piece of editorial work. Warplyn uses “Article” rather than “document.”
 - **Article library**: the author's local collection of Articles. The **current Article** is open in the workspace; an **Article list** presents the collection.
 - **Draft**: Article text currently being edited but not yet saved as a Revision.
 - **Draft checkpoint**: recoverable, mutable Draft state saved locally and tied to a base Revision. It is not a Revision. A **Current Draft** is based on the Article's current Revision; a **stale Draft** is based on an older Revision.
@@ -18,8 +18,8 @@ These terms describe concepts visible to authors and the domain language used th
 
 ## Editorial work
 
-- **Editorial capability**: a validated Skladno operation that declares the Article context it may use, its prerequisites, and its result. Workspace Views and Assistant Skills can invoke the same capability.
-- **Skill**: a reusable instruction package that helps Assistant choose and sequence Editorial capabilities for an Author's request. A Skill grants no capability or permission. A **built-in Skill** ships with Skladno. An **Author-created Skill** is a local Markdown package created in Assistant chat and has a separate Skill Revision history.
+- **Editorial capability**: a validated Warplyn operation that declares the Article context it may use, its prerequisites, and its result. Workspace Views and Assistant Skills can invoke the same capability.
+- **Skill**: a reusable instruction package that helps Assistant choose and sequence Editorial capabilities for an Author's request. A Skill grants no capability or permission. A **built-in Skill** ships with Warplyn. An **Author-created Skill** is a local Markdown package created in Assistant chat and has a separate Skill Revision history.
 - **Editorial operation**: an author-requested assistant activity, such as composing, smoothing, fact-checking, style review, or translation.
 - **Editorial request**: one invocation of an Editorial operation.
 - **Editorial session**: the interaction sequence and activity history for Editorial requests.
@@ -30,24 +30,24 @@ These terms describe concepts visible to authors and the domain language used th
 ## Publishing and settings
 
 - **Publishing profile**: configurable platform guidance, including a character limit. Its default applies only to new Articles.
-- **Publishing copy**: Markdown or plain text explicitly copied from the current Article through the Article Status Bar. Skladno does not provide a Publishing Preview Workspace View.
+- **Publishing copy**: Markdown or plain text explicitly copied from the current Article through the Article Status Bar. Warplyn does not provide a Publishing Preview Workspace View.
 - **Application Settings**: workspace-level preferences, AI configuration, Publishing profiles, and local data management. Settings never belong to Article Revision history.
 - **AI connection**: a named server-side provider configuration with a Credential source. The **active AI connection** is used for new Editorial requests.
 - **Credential source**: the private source used by an AI connection. It is either an environment-variable reference or a Managed credential.
-- **Managed credential**: an API key held by the operating-system credential store. Skladno persists connection metadata but never writes the key to SQLite or a Backup snapshot.
+- **Managed credential**: an API key held by the operating-system credential store. Warplyn persists connection metadata but never writes the key to SQLite or a Backup snapshot.
 - **Model preference**: a default model identifier or an Editorial operation-specific override.
-- **Interface locale**: the language of the Skladno interface, separate from Article and translation languages.
+- **Interface locale**: the language of the Warplyn interface, separate from Article and translation languages.
 - **Default Article language**: the language assigned to a new Article when none is supplied.
 - **Default translation languages**: ordered languages offered first for translation requests. They never start translations automatically.
-- **Backup destination**: a local directory where Skladno writes Backup snapshots.
+- **Backup destination**: a local directory where Warplyn writes Backup snapshots.
 - **Backup snapshot**: a consistent point-in-time copy of local data, separate from the active database and excluding credentials.
-- **Data location**: the active local directory containing Skladno's SQLite data.
-- **Data relocation**: an author-confirmed copy and restart that switches Skladno to a new Data location while retaining the old copy for recovery.
-- **Recovery snapshot**: a Backup snapshot retained before Skladno replaces active data during restore.
-- **Application update**: a newer packaged Skladno version that the desktop client can check for, download, and apply only through author-controlled steps. An update never changes Article content by itself.
-- **Security update**: an Application update whose release tag carries the `.security` suffix. Skladno warns about it but never forces a check, download, or restart.
+- **Data location**: the active local directory containing Warplyn's SQLite data.
+- **Data relocation**: an author-confirmed copy and restart that switches Warplyn to a new Data location while retaining the old copy for recovery.
+- **Recovery snapshot**: a Backup snapshot retained before Warplyn replaces active data during restore.
+- **Application update**: a newer packaged Warplyn version that the desktop client can check for, download, and apply only through author-controlled steps. An update never changes Article content by itself.
+- **Security update**: an Application update whose release tag carries the `.security` suffix. Warplyn warns about it but never forces a check, download, or restart.
 - **Staged update**: a downloaded Application update waiting for the author to choose Restart and update. Ordinary close does not apply it.
-- **Pre-update snapshot**: a Backup snapshot of local data created before Skladno applies a staged update. Restoring it requires the matching earlier application version.
+- **Pre-update snapshot**: a Backup snapshot of local data created before Warplyn applies a staged update. Restoring it requires the matching earlier application version.
 - **Diagnostics event**: a redacted local service record written to the host process logs for startup or recoverable failure support. It never includes private Article content, model bodies, or environment-variable values.
 
 ## Interface
@@ -61,7 +61,7 @@ Editorial Workspace
 ┌──────────────────────────┬──────────────────────────────┬──────────────────────────┐
 │ Article Library Panel    │ Article Workspace            │ Editorial Assistant Panel│
 ├──────────────────────────┼──────────────────────────────┼──────────────────────────┤
-│ Skladno · New Article    │ Article Header               │ Assistant header         │
+│ Warplyn · New Article    │ Article Header               │ Assistant header         │
 │ Collapse control         │ Title and Article metadata   │ Collapse control         │
 ├──────────────────────────┼──────────────────────────────┼──────────────────────────┤
 │ Article search           │ Workspace Tab Bar            │ Conversation             │
