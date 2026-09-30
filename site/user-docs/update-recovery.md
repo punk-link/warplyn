@@ -4,6 +4,6 @@ Warplyn preview updates are optional and unsigned. If an update cannot start cle
 
 1. Reinstall the prior preview version from its GitHub release.
 2. Restore the matching pre-update SQLite snapshot recorded by Warplyn before the update.
-3. Start the prior preview and verify the expected Articles, Drafts, Revisions, and Settings.
+3. Start the prior preview and verify the expected *Articles*, *Drafts*, *Revisions*, and settings.
 
-Use a disposable profile for the release drill. Record only versions, Windows architecture, pass/fail, and recovery result; never include an Article, credential, or private path.
+Use a disposable profile for the release drill. Record only versions, Windows architecture, pass/fail, and recovery result; never include an *Article*, credential, or private path.

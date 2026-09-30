@@ -11,4 +11,8 @@ Use [the glossary](../../../site/user-docs/glossary.md) for domain terms and the
 
 Give each entity one name throughout an article. Repeat the same term when clarity needs it; do not alternate synonyms or pair two names for one entity. A heading about the **App model** setting should call it **App model**, matching the control, rather than renaming it “Text generation model for Skladno.” Distinguish genuinely different entities, such as the App model and the Default model.
 
+Use Markdown emphasis for application domain terms in prose, such as *Article*, *Draft*, and *Revision*. Format commands the Author types or runs in inline code, such as `npm run dev`; use fenced code blocks for multiline commands.
+
+Write the product name Warplyn in plain text. Use bold for menu item labels and separate menu-path levels with an arrow, such as **File** → **Settings**. Verify each label and path against the current interface.
+
 Before finishing, read the article from the Author's perspective: can every named control be found, does each term mean one thing, and do the steps match the current app? Fix related links and references when a label changes.

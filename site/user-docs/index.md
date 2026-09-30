@@ -1,12 +1,15 @@
+---
+prev: false
+---
+
 # Warplyn user guide
 
-Warplyn is a local-first writing workspace. Find installation steps, guides for writing workflows, help with settings, and reference material below.
-
-AI output never changes an Article on its own. Review each Proposal before accepting it. Every accepted change creates an immutable Revision.
+Warplyn gives you a local-first workspace for developing and refining *Articles*, from early drafts through review and revision. Use this guide to install the app, build writing workflows, configure settings, and look up reference material.
 
 ## Installation
 
 - [Install Warplyn](installation.md)
+- [Moving from Skladno](migration.md)
 
 ## Guides
 
