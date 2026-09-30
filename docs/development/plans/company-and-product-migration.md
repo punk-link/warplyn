@@ -1,6 +1,6 @@
 # Company repository and product-name migration
 
-Status: execution in progress. Prepared 2026-09-28 against version 0.5.5. The original repository was transferred to `punk-link/skladno-legacy` on 2026-09-29, and all 60 open issues moved to the new `punk-link/warplyn` repository. Phase 4 and 5 implementation and automated compatibility checks are complete in the Warplyn checkout. Installed co-existence/uninstall and published-version acceptance remain pending. No release has been published.
+Status: execution in progress. Prepared 2026-09-28 against version 0.5.5. The original repository was transferred to `punk-link/skladno-legacy` on 2026-09-29, and all 60 open issues moved to `punk-link/warplyn`. Warplyn v0.6.0 is published and Phase 6 implementation merged in legacy PR #249. Phase 7 rollout is in progress. Final legacy publication and archival remain blocked until installed and manual release checks are completed.
 
 ## Outcome and decisions
 
@@ -268,6 +268,14 @@ Publish in this order:
 Do not add code signing, a custom update service, automatic secret migration, or a database merge system to this project. Existing unsigned-distribution guidance remains accurate.
 
 ## Failure handling and completion
+
+### Phase 7 rollout record, 2026-09-30
+
+- Warplyn v0.6.0 has its separate Windows setup, RELEASES, full `com.warplyn.desktop` package, and Debian package. All four downloaded SHA-256 digests match GitHub metadata; anonymous RELEASES download returns HTTP 200. Private binaries and evidence remain outside Git.
+- Legacy PR #249 merged with Quality, Windows, and Linux checks successful. It prepares Skladno 0.5.6 without creating a release tag. Legacy PR #250 prepares the initial Amplify migration link and README handoff.
+- The Amplify landing works at `https://main.dhsgh2xsr7g3j.amplifyapp.com`; the initial migration route returns 404. This change fixes Amplify to run `npm ci` and `npm run build:site`, then deploy `site/dist` including compiled documentation. The site build passes and the migration instructions now link the actual v0.6.0 assets.
+- The maintainer permits starting with Amplify while `warplyn.com` certificate/domain verification completes. `https://warplyn.com/docs/migration.html` remains the eventual canonical URL; the initial announcement uses the Amplify migration route. Verify the live guide after deployment.
+- The maintainer explicitly keeps publication blocked until manual gates are checked. No final legacy tag/release, release-workflow retirement, or repository archival is authorized before those passes. Remaining checks include installed older-Windows update to the announcement, stable/preview discovery, both applications co-installed and independently uninstalled on Windows/Ubuntu, installed-version backup journeys including custom folders, a second Warplyn update, and native-picker/keyboard/screen-reader acceptance. Automated compatibility evidence does not substitute for these checks.
 
 If transfer redirects fail, pause the announcement rollout and keep manual legacy downloads available while fixing the observed problem. If new-app restore fails, keep the Author on Skladno; retain the failed destination for recovery only as needed and retry from the untouched backup after a fix. Do not point Skladno at a database migrated by the new app.
 
