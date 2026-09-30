@@ -1,10 +1,10 @@
 # Moving from Skladno to Warplyn
 
-Warplyn installers are not published yet. Keep using Skladno until this page announces availability. Do not uninstall it or move its data folder in preparation for migration.
+Warplyn v0.6.0 is available as a separate application. Keep Skladno and its data until you have verified your restored work. Do not move its live data folder into Warplyn.
 
-After installers are published, download them only from [Warplyn releases](https://github.com/punk-link/warplyn/releases). Your Skladno installation and data remain available.
+Download the [Windows 11 x64 installer](https://github.com/punk-link/warplyn/releases/download/v0.6.0/Warplyn-0.6.0-win32-x64-setup.exe) or [Debian x64 package](https://github.com/punk-link/warplyn/releases/download/v0.6.0/warplyn_0.6.0_amd64.deb) from the [v0.6.0 release](https://github.com/punk-link/warplyn/releases/tag/v0.6.0). Releases are unsigned. See [Installation](installation.md) for platform instructions.
 
-For now, choose a **Backup folder** in **Settings → Data & backups** and select **Create backup**. Keep each `.sqlite` backup with its neighboring `.sqlite.skills` folder. See [Backups and recovery](backups-and-recovery.md) for details.
+Before migrating, choose a **Backup folder** in **Settings → Data & backups** and select **Create backup**. Keep each `.sqlite` backup with its neighboring `.sqlite.skills` folder. See [Backups and recovery](backups-and-recovery.md) for details.
 
 ## Migration procedure
 
