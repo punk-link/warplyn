@@ -102,7 +102,7 @@
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/DataBackupsSettingsSection.tsx", "packages/web/src/settings/web-backups.ts", "packages/shared/src/settings/settings.ts", "packages/server/src/index.ts", "packages/server/src/presentation/routes/settings-route.ts", "packages/server/src/presentation/routes/backup-bundle-route.ts", "packages/server/src/infrastructure/persistence/backup-bundle.ts", "packages/server/src/infrastructure/persistence/browser-restore-recovery.ts", "packages/electron/src/presentation/settings/desktop-settings.ts", "packages/electron/src/infrastructure/recovery/pending-restore.ts", "packages/electron/src/infrastructure/recovery/author-skill-backup-manifest.ts", "packages/electron/src/presentation/main.ts", "packages/server/src/infrastructure/persistence/database.ts"],
             "contract": "An author chooses a backup from the configured folder and explicitly confirms replacement. Browser restore uploads the selected manifest-bearing bundle through bounded local transfer sessions; the loopback service verifies file hashes and SQLite compatibility before replacing the database and exact saved Skill set, then reopens the application before browser reload. An interrupted browser switch rolls back from a startup recovery marker. Electron uses a staged native restart and verifies its Skill companion manifest before activation. Legacy Skladno backup names and manifest format 1 remain accepted. Validation opens a private copy to avoid writing SQLite sidecars beside the source. Older database-only snapshots leave existing Skills unchanged. The renderer cannot provide an active-data path. Warplyn retains a recovery copy of the database and Skill files and rolls back when restored data cannot open.",
-            "persistence": "A bundle replaces the active SQLite database, Author Skills and Skill Revision history. A legacy database-only snapshot replaces only SQLite. A private recovery copy of the previous database and Skill files remains available."
+            "persistence": "A bundle replaces the active SQLite database, Author Skills and Skill Revision history. A legacy database-only snapshot replaces only SQLite. Native and browser restore clear AI connection metadata, environment-variable references, model preferences, and the app model on the private restored database. Other Settings are restored. Source backups and OS credentials remain unchanged. A private recovery copy of the previous database and Skill files, including previous AI settings, remains available for rollback."
         },
         {
             "id": "settings.preview-updates",
@@ -119,7 +119,7 @@
             "title": "Repository and license",
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/AboutSettingsSection.tsx"],
-            "contract": "About Settings provides compact external links to the GitHub source repository, issue tracker, and MIT License. It keeps these details read-only and opens links in the system browser.",
+            "contract": "About Settings provides compact external links to the user documentation, GitHub source repository, issue tracker, and MIT License. It keeps these details read-only and opens links in the system browser.",
             "persistence": "Static application metadata; no author data is stored."
         }
     ],
@@ -260,7 +260,7 @@
             "capabilityIds": ["settings.restore-local-backup"],
             "preconditions": ["The author has configured a backup folder containing a Warplyn bundle or legacy SQLite snapshot."],
             "event": "The author selects a backup and confirms restoration.",
-            "expected": ["Cancellation leaves active data unchanged.", "Warplyn validates the selected snapshot, retains a recovery snapshot, and opens the restored Articles, Revisions, Draft checkpoints, Assistant history, style data, Settings, and any backed-up Author Skills with immutable Skill Revision history after restart or browser reload.", "If restored startup fails, Warplyn rolls back to the recovery snapshot once."],
+            "expected": ["Cancellation leaves active data unchanged.", "Warplyn validates the selected snapshot, retains a recovery snapshot, and opens the restored Articles, Revisions, Draft checkpoints, Assistant history, style data, Settings, and any backed-up Author Skills with immutable Skill Revision history after restart or browser reload.", "Native and browser restore clear saved AI connections and connection-bound model selections; the Author adds connections and selects models again.", "Source backups and OS credentials remain unchanged.", "If restored startup fails, Warplyn rolls back to the recovery snapshot once, preserving the previous connections and model selections."],
             "forbidden": ["The renderer supplies an active-data path.", "An invalid or incompatible snapshot replaces active data.", "Warplyn claims success after a failed replacement or rollback."],
             "evidence": { "kind": "automated", "path": "packages/electron/src/infrastructure/recovery/pending-restore.test.ts" }
         },

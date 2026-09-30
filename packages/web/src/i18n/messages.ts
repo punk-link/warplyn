@@ -515,6 +515,7 @@ export const messages = {
     "settings.aboutDescription": "A local-first AI editorial workspace for technical authors.",
     "settings.projectResources": "Project resources",
     "settings.mitLicense": "MIT License",
+    "settings.documentation": "Documentation",
     "settings.sourceCode": "Source code",
     "settings.reportProblem": "Report a problem",
     "settings.quickStart": "Quick start",

@@ -60,6 +60,7 @@ describe("ApplicationSettings general", () => {
         expect(screen.getByRole("heading", { name: getMessage("settings.about") })).toBeTruthy();
         expect(screen.getByText(getMessage("settings.aboutDescription"))).toBeTruthy();
         expect(screen.getByRole("link", { name: getMessage("settings.sourceCode") }).getAttribute("href")).toBe("https://github.com/punk-link/warplyn");
+        expect(screen.getByRole("link", { name: getMessage("settings.documentation") }).getAttribute("href")).toBe("https://warplyn.com/docs/");
     });
 
     it("persists the Editorial Assistant send-key preference", async () => {

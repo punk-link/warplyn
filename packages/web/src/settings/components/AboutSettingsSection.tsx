@@ -18,6 +18,7 @@ export function AboutSettingsSection({ openQuickStart }: { openQuickStart?: () =
                 <a className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2" href={repositoryUrl} target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.sourceCode" })}</a>
                 <a className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2" href={`${repositoryUrl}/issues`} target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.reportProblem" })}</a>
                 <a className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2" href={`${repositoryUrl}/blob/main/LICENSE`} target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.mitLicense" })}</a>
+                <a className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2" href="https://warplyn.com/docs/" target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.documentation" })}</a>
             </div>
         </SettingsGroup>
         {openQuickStart && <SettingRow label={intl.formatMessage({ id: "settings.quickStart" })} hint={intl.formatMessage({ id: "settings.quickStartHint" })}>

@@ -96,7 +96,7 @@ test("legacy backup pairs and database-only snapshots restore without changing t
                 assert.equal(restored.prepare("SELECT content FROM article_revisions").get()?.content, "Immutable Revision");
                 assert.equal(restored.prepare("SELECT content FROM article_drafts").get()?.content, "Latest Draft");
                 assert.equal(restored.prepare("SELECT content FROM assistant_messages").get()?.content, "Legacy conversation");
-                assert.equal(restored.prepare("SELECT COUNT(*) AS count FROM app_settings").get()?.count, 2);
+                assert.deepEqual(restored.prepare("SELECT key FROM app_settings ORDER BY key").all().map((row) => row.key), ["publish-limit-profile"]);
             } finally {
                 restored.close();
             }
@@ -106,10 +106,7 @@ test("legacy backup pairs and database-only snapshots restore without changing t
             try {
                 assert.equal(application.services.publishing.getSettings().customProfiles[0]?.name, "Legacy publication");
                 const settings = await application.services.settings.getSnapshot();
-                assert.deepEqual(settings.connections.find((item) => item.id === "legacy-env")?.credentialSource, { kind: "environment-variable", environmentVariableName: "LEGACY_MODEL_KEY" });
-                const connection = await application.services.settings.testAiConnection("legacy-connection");
-                assert.equal(connection.status, "unavailable");
-                assert.equal(connection.diagnostic, "managed_credential_missing");
+                assert.deepEqual(settings.connections, []);
             } finally {
                 application.database.close();
             }

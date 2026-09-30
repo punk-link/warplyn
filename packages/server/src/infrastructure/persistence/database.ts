@@ -64,6 +64,19 @@ function restrictFilePermissions(path: string): void {
 }
 
 
+/** Resets installation-specific AI settings on a private restore copy, never a recovery snapshot. */
+export function resetRestoredConnectionSettings(filename: string): void {
+    const database = openDatabase(filename);
+    try {
+        database.exec(`DELETE FROM app_settings WHERE key IN (
+            'application-ai-connections', 'application-model-preferences', 'application-app-model'
+        )`);
+    } finally {
+        database.close();
+    }
+}
+
+
 function restrictDatabasePermissions(filename: string): void {
     for (const path of [filename, `${filename}-wal`, `${filename}-shm`, `${filename}-journal`])
         restrictFilePermissions(path);

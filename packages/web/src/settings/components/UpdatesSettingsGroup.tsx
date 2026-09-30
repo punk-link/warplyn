@@ -73,7 +73,7 @@ function UpdateActions({ client, state, status, details, onState, intl }: { clie
         {state.kind === "failed" && <Button variant="secondary" onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.retry" })}</Button>}
         {canCheckNow && <Button variant="secondary" state={state.kind === "checking" ? "loading" : "default"} onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.checkNow" })}</Button>}
         {details && <Button variant="quiet" onClick={() => void client.openReleaseNotes()}>{intl.formatMessage({ id: "settings.viewReleaseNotes" })}</Button>}
-        {state.recoveryAvailable && <Button variant="quiet" onClick={() => void client.openRecoveryGuide()}>{intl.formatMessage({ id: "settings.updateRecovery" })}</Button>}
+        {state.recoveryAvailable && <button type="button" className="col-span-2 inline-flex min-h-9 cursor-pointer items-center justify-self-start text-sm font-semibold text-brand underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:col-span-4" onClick={() => void client.openRecoveryGuide()}>{intl.formatMessage({ id: "settings.updateRecovery" })}</button>}
     </div>;
 }
 

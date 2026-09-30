@@ -77,6 +77,18 @@ describe("ApplicationSettings updates", () => {
         expect(screen.queryByRole("button", { name: getMessage("settings.checkNow") })).toBeNull();
     });
 
+    it("shows recovery as a left-aligned text link when available", async () => {
+        const openRecoveryGuide = vi.fn();
+        const updates: DesktopUpdateClient = { getState: vi.fn().mockResolvedValue({ kind: "current", currentVersion: "0.1.0", automaticChecks: true, includePrereleases: false, networkAccess: true, recoveryAvailable: true }), setNetworkAccess: vi.fn(), setAutomaticChecks: vi.fn(), setIncludePrereleases: vi.fn(), checkNow: vi.fn(), download: vi.fn(), restartAndUpdate: vi.fn(), openReleaseNotes: vi.fn(), openRecoveryGuide, rendererReady: vi.fn(), subscribe: () => () => undefined };
+        render(<IntlProvider locale="en" messages={messages}><UpdatesSettingsGroup client={updates} desktop /></IntlProvider>);
+        const recovery = await screen.findByRole("button", { name: getMessage("settings.updateRecovery") });
+        expect(recovery.className).toContain("justify-self-start");
+        expect(recovery.className).toContain("cursor-pointer");
+        expect(recovery.className).toContain("underline");
+        await userEvent.setup().click(recovery);
+        expect(openRecoveryGuide).toHaveBeenCalledOnce();
+    });
+
     it("offers Linux release notes without an in-app download", async () => {
         const openReleaseNotes = vi.fn();
         const updates: DesktopUpdateClient = { getState: vi.fn().mockResolvedValue({ kind: "available", currentVersion: "0.1.0", version: "0.1.1", title: "Release", summary: "", releaseNotesUrl: "https://example.test/release", security: false, downloadable: false, automaticChecks: true, includePrereleases: false, networkAccess: true, recoveryAvailable: false }), setNetworkAccess: vi.fn(), setAutomaticChecks: vi.fn(), setIncludePrereleases: vi.fn(), checkNow: vi.fn(), download: vi.fn(), restartAndUpdate: vi.fn(), openReleaseNotes, openRecoveryGuide: vi.fn(), rendererReady: vi.fn(), subscribe: () => () => undefined };

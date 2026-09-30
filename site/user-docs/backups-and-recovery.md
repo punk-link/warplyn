@@ -12,6 +12,8 @@ Set **Automatic backups** to **Daily** to create one snapshot the first time War
 
 Use **Restore a backup** in **Settings → Data & backups** to select a backup. Warplyn checks its files before replacing active data and retains a local recovery copy of the prior database and Skill files. Restoring a `.skladno` backup replaces both the database and the saved Skill set. Restoring an older `.sqlite` backup replaces only the database.
 
+Restoring through Settings clears saved AI connections and model selections, including environment-variable references. In **Settings → AI assistant**, add connections and select models again. Other Settings are restored. If restore fails and Warplyn rolls back, your previous connections and model selections return.
+
 For manual database-only recovery from a legacy `.sqlite` file while Warplyn is stopped:
 
 1. Keep a copy of your current local database as a precaution.

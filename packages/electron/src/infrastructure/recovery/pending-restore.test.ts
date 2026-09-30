@@ -32,6 +32,57 @@ function readSetting(path: string): string {
 }
 
 
+test("restore discards connection metadata and model selections while rollback preserves them", () => {
+    const root = mkdtempSync(join(tmpdir(), "warplyn-restore-connections-"));
+    const databasePath = join(root, "warplyn.sqlite");
+    const stagedSnapshotPath = join(root, "selected.sqlite");
+    const recoverySnapshotPath = join(root, "recovery.sqlite");
+    const runtimePath = join(root, "runtime-settings.json");
+    const keys = ["application-ai-connections", "application-model-preferences", "application-app-model"];
+    writeSetting(databasePath, "active");
+    const database = openDatabase(databasePath);
+    const connections = { connections: [
+        { id: "managed", label: "OpenAI", provider: "openai", credentialSource: { kind: "managed" }, active: true, status: "connected" },
+        { id: "environment", label: "Anthropic", provider: "anthropic", credentialSource: { kind: "environment-variable", environmentVariableName: "RESTORE_TEST_KEY" }, active: true, status: "connected" },
+    ] };
+    const model = JSON.stringify(["managed", "model"]);
+    const settings = [connections, { defaultModel: model, skillOverrides: {} }, { model }];
+    for (const [index, key] of keys.entries())
+        database.prepare("INSERT INTO app_settings (key, value_json, updated_at) VALUES (?, ?, ?)").run(key, JSON.stringify(settings[index]), "2026-09-30");
+
+    database.close();
+    copyFileSync(databasePath, recoverySnapshotPath);
+    copyFileSync(databasePath, stagedSnapshotPath);
+    const sourceSnapshot = readFileSync(stagedSnapshotPath);
+    writeRuntimeSettings(runtimePath, { pendingRestore: { stagedSnapshotPath, recoverySnapshotPath, phase: "ready" } });
+
+    try {
+        const restore = applyPendingRestore({ runtimePath, databasePath });
+        assert.ok(restore);
+        const restored = openDatabase(databasePath);
+        try {
+            for (const key of keys)
+                assert.equal(restored.prepare("SELECT value_json FROM app_settings WHERE key = ?").get(key), undefined);
+        } finally {
+            restored.close();
+        }
+
+        assert.equal(readSetting(databasePath), "active");
+        assert.deepEqual(readFileSync(stagedSnapshotPath), sourceSnapshot);
+        restore.rollback();
+        const recovered = openDatabase(databasePath);
+        try {
+            for (const [index, key] of keys.entries())
+                assert.deepEqual(JSON.parse(String(recovered.prepare("SELECT value_json FROM app_settings WHERE key = ?").get(key)?.value_json)), settings[index]);
+        } finally {
+            recovered.close();
+        }
+    } finally {
+        rmSync(root, { recursive: true, force: true });
+    }
+});
+
+
 // product: settings.restore-local-backup
 test("staged restoration replaces active data only until a rollback is needed", () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-restore-"));
