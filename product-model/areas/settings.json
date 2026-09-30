@@ -119,7 +119,7 @@
             "title": "Repository and license",
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/AboutSettingsSection.tsx"],
-            "contract": "About Settings provides compact external links to the GitHub source repository, issue tracker, and MIT License. It keeps these details read-only and opens links in the system browser.",
+            "contract": "About Settings provides compact external links to the user documentation, GitHub source repository, issue tracker, and MIT License. It keeps these details read-only and opens links in the system browser.",
             "persistence": "Static application metadata; no author data is stored."
         }
     ],
