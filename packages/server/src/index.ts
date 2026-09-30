@@ -6,7 +6,7 @@ import { createLocalDiagnostics } from "./infrastructure/diagnostics/local-diagn
 import { closeLocalService, listenForLocalService } from "./infrastructure/lifecycle/service-lifecycle.js";
 import { createLocalApplication } from "./local-application.js";
 import { createLocalService } from "./presentation/server.js";
-import { validateDatabaseSnapshot } from "./infrastructure/persistence/database.js";
+import { resetRestoredConnectionSettings, validateDatabaseSnapshot } from "./infrastructure/persistence/database.js";
 import { BackupBundleTransfers } from "./infrastructure/persistence/backup-bundle.js";
 import { completeBrowserRestoreRecovery, prepareBrowserRestoreRecovery, recoverPendingBrowserRestore, removeDatabaseFiles } from "./infrastructure/persistence/browser-restore-recovery.js";
 
@@ -44,6 +44,8 @@ async function start(): Promise<void> {
             try {
                 writeFileSync(staged, snapshot, { mode: 0o600 });
                 validateDatabaseSnapshot(staged);
+                resetRestoredConnectionSettings(staged);
+
                 const recovery = application.services.settings.createBackup();
                 const recoveryDirectory = mkdtempSync(join(dirname(config.databasePath), "recovery-"));
                 try {

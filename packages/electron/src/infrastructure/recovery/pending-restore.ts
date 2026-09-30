@@ -1,7 +1,7 @@
 import { copyFileSync, existsSync, renameSync, rmSync } from "node:fs";
 import { dirname } from "node:path";
 
-import { validateDatabaseSnapshot } from "@skladno/server/electron";
+import { resetRestoredConnectionSettings, validateDatabaseSnapshot } from "@skladno/server/electron";
 import { beginTelemetryCapture, type TelemetryCaptureSource } from "@skladno/shared";
 
 import { readRuntimeSettings, updateRuntimeSettings, writeRuntimeSettings } from "../runtime/runtime-settings.js";
@@ -51,6 +51,7 @@ function applyReadyRestore({ runtimePath, databasePath, pending }: { runtimePath
         validateAuthorSkillBackup(pending.recoverySnapshotPath);
 
         copyFileSync(pending.stagedSnapshotPath, temporary);
+        resetRestoredConnectionSettings(temporary);
         validateDatabaseSnapshot(temporary);
         removeDatabase(originalPath);
 

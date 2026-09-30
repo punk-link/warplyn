@@ -13,8 +13,8 @@ Before migrating, choose a **Backup folder** in **Settings → Data & backups** 
 3. Install and open Warplyn into its separate empty profile. Never point it at your live Skladno data directory.
 4. In **Settings → Data & backups**, choose the migration backup folder and select **Restore a backup**. Select the Skladno snapshot, confirm replacement, and let Warplyn restart. If Warplyn already contains work, create its own backup first: restore replaces work and does not merge databases.
 5. Check Articles, latest Drafts, Revision history, Assistant conversations, Settings, publishing profiles, and Author Skills before writing anything new.
-6. In **Settings → AI assistant**, add managed API-key connections again and select replacement connections and models for your roles. Imported connection metadata can remain, but legacy keys are unavailable. Remove obsolete imported connections after replacing them; this does not delete Skladno credentials.
-7. Environment-variable connection names remain metadata. They work only if that variable exists in Warplyn's process environment. Backups never copy `.env` files or their values.
+6. In **Settings → AI assistant**, add connections again and select models for your roles. Restore clears saved connections and model selections because credentials are not part of the backup. Skladno credentials remain unchanged.
+7. For environment-variable connections, add the variable name again and ensure that variable exists in Warplyn's process environment. Backups never copy `.env` files or their values.
 8. Choose a separate ongoing backup folder for Warplyn. Choose update-network and telemetry preferences again. Migration does not copy backup-folder preferences, telemetry identity, staged updates, or pending recovery records.
 
 Native backups with a `.sqlite.skills` folder restore current Author Skills and immutable Skill history. Older database-only `.sqlite` snapshots restore the database and leave destination Skills unchanged; they cannot restore files they never contained. Database filenames and manifest formats remain compatible with Skladno.
