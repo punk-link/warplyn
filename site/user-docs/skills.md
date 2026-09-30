@@ -4,6 +4,14 @@
 
 Ask the Assistant to create a reusable *Skill* in plain language. Explain the repeated job and any rules or references it needs. If a missing detail would change the *Skill*, the Assistant asks a short follow-up instead of guessing.
 
+::: tip Example
+If you often revise fiction, ask: “Create a *Skill* called ‘Fiction line edit’. Tighten sentences while preserving the narrator’s voice, character names, and events. Don’t add details; flag passages that are unclear instead.” The Assistant can reuse those instructions whenever you ask for a line edit.
+:::
+
+[![Warplyn’s Editorial Assistant with a fiction line-edit Skill creation request and Skill Creator selected.](/images/skill-creator-example.png)](/images/skill-creator-example.png)
+
+*Example Skill creation request in the Composer. Connect a provider before sending it.*
+
 After a successful creation, the *Skill* is available for new Assistant requests immediately. The creation request does not send your *Article* body to the model and does not change the *Article*, *Draft*, *Proposal*, or *Revision*.
 
 Each created *Skill* has a local, immutable *Skill Revision* history. This is separate from *Article* Revision history. You can also edit the local Markdown package directly. Warplyn refreshes the catalog for the next request. Removing its `SKILL.md` file removes it from the available *Skills* list.
