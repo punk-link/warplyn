@@ -1,6 +1,6 @@
 # Install Warplyn
 
-Warplyn targets Windows 11 x64 and Linux. Installers are not published yet; keep using Skladno. The steps below apply after availability is announced on the [migration page](migration.md).
+Warplyn v0.6.0 is available for Windows 11 x64 and Linux. Download installers from [Warplyn releases](https://github.com/punk-link/warplyn/releases). If you use Skladno, follow the [migration guide](migration.md) and keep its installation and backups until you verify your restored work.
 
 ## Windows
 

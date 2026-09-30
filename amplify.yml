@@ -1,12 +1,16 @@
 version: 1
 frontend:
   phases:
+    preBuild:
+      commands:
+        - npm ci
     build:
       commands:
-        - node scripts/copy-site-tokens.mjs
+        - npm run build:site
   artifacts:
-    baseDirectory: site
+    baseDirectory: site/dist
     files:
       - "**/*"
   cache:
-    paths: []
+    paths:
+      - node_modules/**/*

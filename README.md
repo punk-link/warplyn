@@ -48,7 +48,7 @@ Preview your writing against your publishing preferences and length guidance, th
 
 ## Install Warplyn
 
-Warplyn targets **Windows 11 x64 and Linux**. Installers have not been published yet. Keep using Skladno until the [migration page](https://warplyn.com/docs/migration.html) announces availability.
+Warplyn targets **Windows 11 x64 and Linux**. Download the unsigned installers from [Warplyn releases](https://github.com/punk-link/warplyn/releases). Skladno users should follow the [migration guide](site/user-docs/migration.md) and keep their original installation and backups until the restore is verified.
 
 For Debian installation steps, see the [installation guide](https://warplyn.com/docs/installation.html).
 
