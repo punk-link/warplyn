@@ -60,13 +60,8 @@ summary:focus-visible {
 .brand-mark {
   width: 38px;
   height: 38px;
-  display: grid;
-  place-items: center;
-  border-radius: 11px;
-  background: var(--teal);
-  color: white;
-  font-size: 19px;
-  letter-spacing: 0;
+  display: block;
+  flex: none;
 }
 .brand-beta {
   padding: 3px 7px;
@@ -1060,7 +1055,6 @@ p {
   .brand-mark {
     width: 34px;
     height: 34px;
-    border-radius: 9px;
   }
   .desktop-nav {
     display: none;

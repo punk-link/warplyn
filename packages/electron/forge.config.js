@@ -24,7 +24,7 @@ export default {
         asar: { unpack: "**/*.node" },
         appBundleId: "com.warplyn.desktop",
         executableName: "Warplyn",
-        icon: path.join(import.meta.dirname, "assets", "icon.ico"),
+        icon: path.join(import.meta.dirname, "assets", process.platform === "win32" ? "icon.ico" : "icon.png"),
         extraResource: [
             path.join(import.meta.dirname, "..", "web", "dist"),
             path.join(import.meta.dirname, "..", "server", "src", "application", "assistant", "skills", "built-in"),
@@ -51,7 +51,7 @@ export default {
                     maintainer: "Kirill Taran",
                     homepage: "https://github.com/punk-link/warplyn",
                     categories: ["Office"],
-                    icon: path.join(import.meta.dirname, "assets", "icon.png"),
+                    icon: path.join(import.meta.dirname, "..", "web", "src", "ui", "warplyn.svg"),
                 },
             },
         },

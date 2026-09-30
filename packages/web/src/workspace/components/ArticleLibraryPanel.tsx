@@ -7,6 +7,7 @@ import type { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
 import { getShortcutHint } from "../../key-bindings/shortcut-hint.js";
 import { UpdateController } from "./UpdateController.js";
 import type { Notifications } from "../../notifications/notifications.js";
+import { WarplynIcon } from "../../ui/WarplynIcon.js";
 
 
 function formatUpdatedAt(updatedAt: string, formatMessage: ReturnType<typeof useIntl>["formatMessage"]): string {
@@ -267,25 +268,54 @@ export function ArticleLibraryPanel({ data, navigation, mutations }: { data: Art
 
 
     return <aside data-workspace-panel="article-library" data-focus-area="library" onKeyDown={handleLibraryKeyDown} className={collapsed ? "flex h-full w-full flex-col border-r border-border bg-surface-supporting px-0.5 py-2" : "flex h-full w-full flex-col border-r border-border bg-surface-supporting"} aria-label={intl.formatMessage({ id: "navigation.articleLibrary" })}>
-        {collapsed ? <><header className="flex min-h-18 items-center justify-center"><IconButton className="text-base font-semibold text-brand" label={intl.formatMessage({ id: "navigation.expandArticleLibrary" })} onClick={() => setCollapsed(false)}>S</IconButton></header><footer className="mt-auto flex flex-col items-center gap-1 border-t border-border px-0.5 py-2"><IconButton label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={openStyleProfile}><UserIcon className="size-4" /></IconButton><IconButton label={intl.formatMessage({ id: "navigation.settings" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={openSettings}><SettingsIcon className="size-4" /></IconButton><UpdateController /></footer></> : <>
-            <header className="flex min-h-18 items-center justify-between border-b border-border px-4"><span className="flex items-center gap-2 text-base font-semibold text-brand"><span aria-hidden="true" className="text-lg leading-none">✢</span>Warplyn</span><div className="flex items-center gap-1"><IconButton label={intl.formatMessage({ id: "navigation.newArticle" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.newArticle" }), KEY_BINDING_COMMAND.NEW_ARTICLE, shortcutOverrides)} onClick={() => void createBlank()}>+</IconButton><IconButton label={intl.formatMessage({ id: "navigation.collapseArticleLibrary" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.collapseArticleLibrary" }), KEY_BINDING_COMMAND.TOGGLE_ARTICLE_LIBRARY, shortcutOverrides)} onClick={() => setCollapsed(true)}>‹</IconButton></div></header>
-            <div className="border-b border-border px-3 py-3"><div className="relative"><SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" /><Field ref={searchRef} className="min-h-9 py-1.5 pl-8 pr-2" aria-label={intl.formatMessage({ id: "navigation.searchArticles" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.searchArticles" }), KEY_BINDING_COMMAND.SEARCH_ARTICLES, shortcutOverrides)} value={query} onChange={(event) => setQuery(event.target.value)} placeholder={intl.formatMessage({ id: "navigation.searchArticles" })} /></div></div>
-            <ArticleLibraryNavigation pinnedRoots={pinnedRoots} recentRoots={recentRoots} archivedRoots={archivedRoots} archivedOpen={archivedOpen} setArchivedOpen={setArchivedOpen} query={query} archivedContent={archivedContent} archivedContentEmpty={archivedContent.length === 0} articles={articles} renderRoots={renderRoots} />
-            <footer className="border-t border-border px-2 py-2">
-                <Button className="flex w-full items-center justify-start text-left" variant="quiet" onClick={openStyleProfile}>
-                    <UserIcon className="size-4 shrink-0" />
-                    <span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span>
-                </Button>
-                <Button className="flex w-full items-center justify-start text-left" variant="quiet" title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={openSettings}>
-                    <SettingsIcon className="size-4 shrink-0" />
-                    <span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span>
-                </Button>
-                <div className="relative flex items-center justify-between px-2 pb-1 pt-2 pr-11 text-micro font-medium text-muted">
-                    <span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span>
-                    <UpdateController className="absolute right-2 top-1/2 -translate-y-1/2" />
+        {collapsed
+            ? <>
+                <header className="flex min-h-18 items-center justify-center">
+                    <IconButton className="text-base font-semibold text-brand" label={intl.formatMessage({ id: "navigation.expandArticleLibrary" })} onClick={() => setCollapsed(false)}><WarplynIcon />
+                    </IconButton>
+                </header>
+                <footer className="mt-auto flex flex-col items-center gap-1 border-t border-border px-0.5 py-2">
+                    <IconButton label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={openStyleProfile}>
+                        <UserIcon className="size-4" />
+                    </IconButton>
+                    <IconButton label={intl.formatMessage({ id: "navigation.settings" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={openSettings}>
+                        <SettingsIcon className="size-4" />
+                    </IconButton>
+                    <UpdateController />
+                </footer>
+            </>
+            : <>
+                <header className="flex min-h-18 items-center justify-between border-b border-border px-4">
+                    <span className="flex items-center gap-2 text-base font-semibold text-brand">
+                        <WarplynIcon />Warplyn
+                    </span>
+                    <div className="flex items-center gap-1">
+                        <IconButton label={intl.formatMessage({ id: "navigation.newArticle" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.newArticle" }), KEY_BINDING_COMMAND.NEW_ARTICLE, shortcutOverrides)} onClick={() => void createBlank()}>+</IconButton>
+                        <IconButton label={intl.formatMessage({ id: "navigation.collapseArticleLibrary" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.collapseArticleLibrary" }), KEY_BINDING_COMMAND.TOGGLE_ARTICLE_LIBRARY, shortcutOverrides)} onClick={() => setCollapsed(true)}>‹</IconButton>
+                    </div>
+                </header>
+                <div className="border-b border-border px-3 py-3">
+                    <div className="relative">
+                        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
+                        <Field ref={searchRef} className="min-h-9 py-1.5 pl-8 pr-2" aria-label={intl.formatMessage({ id: "navigation.searchArticles" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.searchArticles" }), KEY_BINDING_COMMAND.SEARCH_ARTICLES, shortcutOverrides)} value={query} onChange={(event) => setQuery(event.target.value)} placeholder={intl.formatMessage({ id: "navigation.searchArticles" })} />
+                    </div>
                 </div>
-            </footer>
-        </>}
+                <ArticleLibraryNavigation pinnedRoots={pinnedRoots} recentRoots={recentRoots} archivedRoots={archivedRoots} archivedOpen={archivedOpen} setArchivedOpen={setArchivedOpen} query={query} archivedContent={archivedContent} archivedContentEmpty={archivedContent.length === 0} articles={articles} renderRoots={renderRoots} />
+                <footer className="border-t border-border px-2 py-2">
+                    <Button className="flex w-full items-center justify-start text-left" variant="quiet" onClick={openStyleProfile}>
+                        <UserIcon className="size-4 shrink-0" />
+                        <span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span>
+                    </Button>
+                    <Button className="flex w-full items-center justify-start text-left" variant="quiet" title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={openSettings}>
+                        <SettingsIcon className="size-4 shrink-0" />
+                        <span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span>
+                    </Button>
+                    <div className="relative flex items-center justify-between px-2 pb-1 pt-2 pr-11 text-micro font-medium text-muted">
+                        <span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span>
+                        <UpdateController className="absolute right-2 top-1/2 -translate-y-1/2" />
+                    </div>
+                </footer>
+            </>}
         {deleteTarget && <Dialog className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl" open aria-labelledby="delete-library-article-title" onCancel={(event) => {
             event.preventDefault();
             setDeleteTarget(undefined);

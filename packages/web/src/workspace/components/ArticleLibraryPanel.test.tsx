@@ -50,6 +50,32 @@ describe("ArticleLibraryPanel", () => {
         window.skladnoUpdates = undefined;
     });
 
+
+    it("uses the same brand icon in the expanded library and accessible expand button", async () => {
+        const user = userEvent.setup();
+        const setCollapsed = vi.fn();
+        const panel = (collapsed: boolean) => <IntlProvider locale="en" messages={messages}>
+            <ArticleLibraryPanel articles={[]} selectedArticleId={undefined} selectArticle={vi.fn()} collapsed={collapsed} setCollapsed={setCollapsed} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+        </IntlProvider>;
+        const { container, rerender } = render(panel(false));
+        const expandedIcon = container.querySelector("header img");
+        expect(expandedIcon?.getAttribute("src")).toContain("warplyn-light.svg");
+        expect(expandedIcon?.classList.contains("dark:hidden")).toBe(true);
+        const darkIcon = container.querySelector("header img.hidden");
+        expect(darkIcon?.getAttribute("src")).toContain("warplyn.svg");
+        expect(darkIcon?.classList.contains("dark:block")).toBe(true);
+        expect(expandedIcon?.getAttribute("alt")).toBe("");
+        const iconSource = expandedIcon?.getAttribute("src");
+
+        rerender(panel(true));
+        const expand = screen.getByRole("button", { name: getMessage("navigation.expandArticleLibrary") });
+        expect(expand.querySelector("img")?.getAttribute("src")).toBe(iconSource);
+        expect(expand.querySelector("img.hidden")?.getAttribute("src")).toBe(darkIcon?.getAttribute("src"));
+        expect(expand.textContent).not.toContain("S");
+        await user.click(expand);
+        expect(setCollapsed).toHaveBeenCalledWith(false);
+    });
+
     it("lists translation Articles beneath their source and keeps them selectable during search", async () => {
         const user = userEvent.setup();
         const selectArticle = vi.fn();
