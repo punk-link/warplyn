@@ -8,7 +8,7 @@ export default defineConfig({
     themeConfig: {
         nav: [
             { text: "Guide index", link: "/" },
-            { text: "Warplyn", link: "../" },
+            { text: "Warplyn", link: "../", target: "_self" },
         ],
         sidebar: [
             {
