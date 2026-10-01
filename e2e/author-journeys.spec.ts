@@ -84,6 +84,7 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.getByRole("button", { name: "Restore this revision" }).click();
     await page.getByRole("button", { name: "Restore revision" }).click();
     await expect(page.getByText("Restored Revision").first()).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Revision history" }).getByText("Inactive")).toBeVisible();
 
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("fact check");
     await page.getByRole("button", { name: "Quick actions" }).click();
@@ -191,6 +192,24 @@ test("Ctrl+S saves while the Article Editor has focus", async ({ page }) => {
     await saved;
     await expect(editor).toContainText("Saved with shortcut.");
     await expect(page.getByRole("status").filter({ hasText: "Saved" })).toBeVisible();
+});
+
+
+test("saving from Revisions updates the open timeline and survives reload", async ({ page }) => {
+    await page.goto("/");
+    await createArticle(page);
+    await page.getByRole("textbox", { name: "Article draft" }).pressSequentially(" Saved from Revisions.");
+    await page.getByRole("tab", { name: "Revisions" }).click();
+    const timeline = page.getByRole("navigation", { name: "Revision history" });
+    await expect(timeline.getByRole("button")).toHaveCount(2);
+
+    await page.getByRole("button", { name: "Save revision" }).click();
+    await expect(timeline.getByRole("button")).toHaveCount(3);
+    await expect(timeline.getByRole("button").first()).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("region", { name: "Saved Article content" })).toContainText("Saved from Revisions.");
+    await page.reload();
+    await expect(timeline.getByRole("button")).toHaveCount(3);
+    await expect(page.getByRole("region", { name: "Saved Article content" })).toContainText("Saved from Revisions.");
 });
 
 

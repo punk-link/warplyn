@@ -1,9 +1,11 @@
 # Windows preview update recovery
 
-Warplyn preview updates are optional and unsigned. If an update cannot start cleanly after a restart, do not open the newer database with an older preview.
+Preview updates are optional. If Warplyn cannot start after an update, reinstall the previous preview and restore the matching pre-update snapshot.
 
-1. Reinstall the prior preview version from its GitHub release.
+::: warning Avoid opening the newer database
+Do not open a database created by a newer preview with an older version. Restore the snapshot recorded before the update first.
+:::
+
+1. Download and reinstall the previous preview from its [GitHub release](https://github.com/punk-link/warplyn/releases).
 2. Restore the matching pre-update SQLite snapshot recorded by Warplyn before the update.
-3. Start the prior preview and verify the expected Articles, Drafts, Revisions, and Settings.
-
-Use a disposable profile for the release drill. Record only versions, Windows architecture, pass/fail, and recovery result; never include an Article, credential, or private path.
+3. Start the previous preview and check your *Articles*, *Drafts*, *Revisions*, and settings.

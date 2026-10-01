@@ -1,31 +1,59 @@
 # Backups and recovery
 
-Choose a **Backup folder** in **Settings → Data & backups**, then select **Create backup**. In supported web browsers, Warplyn asks the browser for permission to write backups only in that folder. New `.skladno` backup folders contain the database, current Author Skills, their Skill Revision history, and a file manifest. They never include `.env` files or API keys.
+## Create a backup
 
-Browser bundle transfers support files up to 100 MB each and 500 MB per backup. Use the Electron app for larger local data.
+In **Settings** → **Data & backups**, choose a **Backup folder**, then select **Create backup**. In supported browsers, Warplyn asks permission to write backups only to that folder.
 
-In the Electron app, each database snapshot also has a neighboring `.sqlite.skills` folder containing current Author Skills, Skill Revision history, and a manifest. Keep the `.sqlite` file and its `.skills` folder together when copying or restoring a backup. Older database-only `.sqlite` backups remain selectable; restoring one retains the current Skill files and history.
+[![Data and backups settings showing the backup folder, Create backup and Restore a backup controls, and automatic backup options.](/images/backups-and-recovery.png)](/images/backups-and-recovery.png)
 
-Set **Automatic backups** to **Daily** to create one snapshot the first time Warplyn opens each day, while the browser still permits the chosen folder. **Automatic backup retention** removes only older automatic snapshots; manually created backups are always kept.
+*Data & backups settings in the desktop app.*
+
+::: tip What a backup contains
+A new `.skladno` backup includes the database, current Author *Skills*, their *Skill Revision* history, and a file manifest. Backups do not include `.env` files or API keys.
+:::
+
+::: tip Browser backup limits
+Browser backup transfers support files up to 100 MB each and 500 MB total. Use the desktop app for larger local data.
+:::
+
+In the desktop app, each database snapshot has a neighboring `.sqlite.skills` folder with current Author *Skills*, their *Skill Revision* history, and a manifest. Keep the `.sqlite` file and `.sqlite.skills` folder together when copying or restoring a snapshot.
+
+Older `.sqlite` backups contain only the database. Restoring one keeps your current *Skill* files and history.
+
+## Automatic backups
+
+Set **Automatic backups** to **Daily** to create one snapshot the first time Warplyn opens each day. In a browser, this requires permission to use the chosen folder.
+
+**Automatic backup retention** controls how many automatic snapshots Warplyn keeps. It removes only older automatic snapshots; backups you created manually are always kept.
 
 ## Restore a backup
 
-Use **Restore a backup** in **Settings → Data & backups** to select a backup. Warplyn checks its files before replacing active data and retains a local recovery copy of the prior database and Skill files. Restoring a `.skladno` backup replaces both the database and the saved Skill set. Restoring an older `.sqlite` backup replaces only the database.
+1. In **Settings** → **Data & backups**, select **Restore a backup**.
+2. Choose the backup you want to restore. Warplyn checks its files and keeps a local recovery copy of your current database and *Skill* files.
+3. When the restore finishes, check your *Articles* and *Revisions*.
 
-Restoring through Settings clears saved AI connections and model selections, including environment-variable references. In **Settings → AI assistant**, add connections and select models again. Other Settings are restored. If restore fails and Warplyn rolls back, your previous connections and model selections return.
+Restoring a `.skladno` backup replaces the database and saved *Skills*. Restoring an older `.sqlite` backup replaces only the database.
 
-For manual database-only recovery from a legacy `.sqlite` file while Warplyn is stopped:
+::: warning AI settings after restore
+Restoring clears saved AI connections and model selections, including environment-variable references. Add connections and choose models again in **Settings** → **AI assistant**. Other settings are restored. If a restore fails and Warplyn rolls back, your previous connections and model selections return.
+:::
 
-1. Keep a copy of your current local database as a precaution.
-2. Copy the selected backup `.sqlite` file over `skladno.sqlite` in your configured Warplyn data directory.
-3. Start Warplyn again and verify your Articles and Revisions.
+## Recover a database-only backup manually
 
-Use Settings to restore a backup that contains Skills so its manifest and Skill history are checked and restored together.
+Use these steps only for a legacy `.sqlite` backup. Keep Warplyn stopped until the database is back in place.
 
-If a backup cannot be created, Warplyn leaves the active database and your editing session unchanged. Check that the destination exists and that your account can write to it, then retry.
+1. Make a copy of your current local database.
+2. Copy the backup over `skladno.sqlite` in your configured Warplyn data folder.
+3. Start Warplyn and verify your *Articles* and *Revisions*.
+
+To restore a backup that includes *Skills*, use **Restore a backup** in **Settings** so Warplyn can check and restore its manifest and *Skill* history too.
+
+## If a backup cannot be created
+
+Warplyn leaves your active database and editing session unchanged. Check that the destination folder exists and that your account can write to it, then try again.
 
 ## File permissions
 
-By default, the local service stores its database in `~/.warplyn`; set `WARPLYN_DATA_DIR` to use another folder. Warplyn ignores `SKLADNO_DATA_DIR` for storage and refuses paths overlapping the old default or that known override. Use a separate folder and restore a backup instead. On POSIX systems, Warplyn restricts its data folder to the current user and its SQLite database files to that user only, including after an upgrade.
+By default, the local service stores its database in `~/.warplyn`. Set `WARPLYN_DATA_DIR` to choose another folder. Warplyn ignores `SKLADNO_DATA_DIR` and will not use a folder that overlaps Skladno's old data location. If you are moving from Skladno, choose a separate Warplyn folder and restore a backup.
 
-Windows uses its filesystem ACLs, which Node.js does not manage through POSIX file modes. Browser-created backup files likewise retain the permissions of the folder you choose. Store backups in a folder private to your account and review its sharing permissions before using a shared or synced location.
+On POSIX systems, Warplyn limits access to the data folder and SQLite files to your account, including after an upgrade. Windows uses filesystem permissions managed by Windows. Browser-created backup files use the permissions of the folder you choose, so keep backups in a private folder and check sharing settings before using a shared or synced location.

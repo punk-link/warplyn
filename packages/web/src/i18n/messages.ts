@@ -106,6 +106,7 @@ export const messages = {
     "revisions.historyNavigation": "Revision history",
     "revisions.select": "Select a Revision",
     "revisions.articleContent": "Saved Article content",
+    "revisions.inactive": "Inactive",
     "revisions.emptyContent": "This Revision has no saved Article text.",
     "revisions.characterCount": "{count} characters",
     "revisions.initial": "Initial Revision",

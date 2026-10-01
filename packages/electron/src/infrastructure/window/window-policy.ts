@@ -1,4 +1,5 @@
 import type { BrowserWindowConstructorOptions } from "electron";
+import { dirname, join } from "node:path";
 
 
 interface FocusableWindow {
@@ -15,6 +16,7 @@ export function createWindowOptions(preload: string, bounds: Electron.Rectangle,
         minWidth: 900,
         minHeight: 640,
         show: false,
+        icon: join(dirname(preload), "..", "assets", process.platform === "win32" ? "icon.ico" : "icon.png"),
         backgroundColor: "#f7f6f2",
         webPreferences: {
             preload,

@@ -1,15 +1,15 @@
 {
     "name": "skladno",
     "private": true,
-    "version": "0.6.1",
+    "version": "0.6.2",
     "workspaces": [
         "packages/*"
     ],
     "scripts": {
         "dev": "concurrently --kill-others -n server,web -c blue,green \"npm run dev --workspace @skladno/server\" \"npm run dev --workspace @skladno/web\"",
-        "predev:site": "node scripts/copy-site-tokens.mjs && npm run docs:build",
+        "predev:site": "node scripts/copy-site-assets.mjs && npm run docs:build",
         "dev:site": "vite site --host 127.0.0.1 --config site/vite.config.mjs",
-        "prebuild:site": "node scripts/copy-site-tokens.mjs",
+        "prebuild:site": "node scripts/copy-site-assets.mjs",
         "docs:dev": "vitepress dev site/user-docs",
         "docs:build": "vitepress build site/user-docs",
         "build:site": "npm run docs:build && vite build site --config site/vite.config.mjs",

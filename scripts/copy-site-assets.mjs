@@ -9,3 +9,8 @@ const destination = fileURLToPath(
 );
 
 await copyFile(source, destination);
+
+await copyFile(
+    fileURLToPath(new URL("../packages/web/src/ui/warplyn-light.svg", import.meta.url)),
+    fileURLToPath(new URL("../site/warplyn.svg", import.meta.url)),
+);

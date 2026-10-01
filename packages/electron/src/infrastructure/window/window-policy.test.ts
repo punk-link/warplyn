@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { basename, join } from "node:path";
 import { createWindowOptions, focusWindow, isExternalWebUrl, isRendererNavigation } from "./window-policy.js";
 
 
@@ -34,4 +37,17 @@ test("a second desktop launch restores and focuses the existing window", () => {
     });
 
     assert.deepEqual(calls, ["restore", "show", "focus"]);
+});
+
+
+test("desktop window resolves the bundled platform icon beside the application build", () => {
+    const appRoot = fileURLToPath(new URL("../../../", import.meta.url));
+    const options = createWindowOptions(join(appRoot, "dist", "preload.cjs"), { x: 0, y: 0, width: 1200, height: 800 });
+
+    assert.equal(typeof options.icon, "string");
+    if (typeof options.icon !== "string")
+        assert.fail("The window must use a bundled icon path");
+
+    assert.equal(basename(options.icon), process.platform === "win32" ? "icon.ico" : "icon.png");
+    assert.ok(existsSync(options.icon));
 });

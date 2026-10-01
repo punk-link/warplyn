@@ -11,7 +11,7 @@ export function useArticleRevisions(client: EditorialWorkspaceClient, article: A
     const [revisions, setRevisions] = useState<ArticleRevision[]>([]);
     const [candidate, setCandidate] = useState<ArticleRevision>();
     const articleId = article?.id;
-    const currentRevisionId = article?.currentRevisionId;
+    const currentRevision = article?.currentRevision;
 
     useEffect(() => {
         let cancelled = false;
@@ -21,6 +21,14 @@ export function useArticleRevisions(client: EditorialWorkspaceClient, article: A
                 cancelled = true;
             };
         }
+
+        setRevisions((items) => {
+            const history = items.filter((revision) => revision.articleId === articleId);
+            if (!currentRevision || history.some((revision) => revision.id === currentRevision.id))
+                return history;
+
+            return [...history, currentRevision];
+        });
 
         void client.listArticleRevisions(articleId).then((items) => {
             if (!cancelled)
@@ -33,7 +41,7 @@ export function useArticleRevisions(client: EditorialWorkspaceClient, article: A
         return () => {
             cancelled = true;
         };
-    }, [articleId, currentRevisionId, client, intl, notifyError]);
+    }, [articleId, currentRevision, client, intl, notifyError]);
 
 
     async function restore(mode: "keep" | "save" | "discard") {
@@ -49,7 +57,6 @@ export function useArticleRevisions(client: EditorialWorkspaceClient, article: A
 
             const revision = await client.restoreRevision(article.id, candidate.id);
             updateRevision(article.id, revision);
-            setRevisions((items) => [...items, revision]);
             setCandidate(undefined);
         } catch (error) {
             notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.restoreRevisionFailed" }) });

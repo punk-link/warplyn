@@ -21,7 +21,6 @@ export default defineConfig({
             {
                 text: "Guides",
                 items: [
-                    { text: "Overview", link: "/" },
                     { text: "Editorial Assistant", link: "/editorial-assistant" },
                     { text: "Skills", link: "/skills" },
                 ],

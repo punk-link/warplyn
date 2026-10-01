@@ -1,29 +1,40 @@
 # AI providers and models
 
-Warplyn sends AI requests to the provider configured in **Settings → AI assistant**. You need an account and API key from that provider. Provider charges may apply.
+Warplyn sends AI requests to the provider you configure in **Settings** → **AI assistant**. You need an account and API key from that provider. The provider may charge for API use.
 
 ## Add a connection
 
-In the desktop app, open **Settings → AI assistant**. Under **How would you like to provide your key?**, choose **Add an API key** or **Environment variable**.
+In the desktop app, open **Settings** → **AI assistant**. Under **How would you like to provide your key?**, choose **Add an API key** or **Environment variable**.
 
-For **API key**, choose a provider, enter a connection name and paste the key. Warplyn stores it in Windows Credential Manager on Windows or Secret Service on Linux. The key is not shown again or written to Warplyn's database or backups. Managed credentials require the desktop app and an available OS credential service. On Linux, its Secret Service must be unlocked.
+- **Add an API key:** Choose a provider, name the connection, and enter the key. Warplyn stores it in Windows Credential Manager or Linux Secret Service. The key is not shown again and is not stored in the Warplyn database or backups.
+- **Environment variable:** Choose a provider, name the connection, and enter the variable name that holds your key. Warplyn stores the name, not its value. The application service must start with that variable set.
 
-For **Environment variable**, choose a provider, enter a connection name and the variable name that contains your key, then add the connection. Warplyn stores the variable name, not its value. The application service must be launched with that variable set. The installer does not create or import a `.env` file.
+::: tip About credentials
+Managed API keys require the desktop app and an available operating system credential service. On Linux, Secret Service must be unlocked. The browser app supports environment-variable connections, but cannot manage operating system credentials. The installer does not create or import a `.env` file.
+:::
 
-The browser version supports environment-variable connections. It cannot create or manage OS-stored API keys.
+Adding an API-key connection verifies the key with the provider. Adding an environment-variable connection only saves its settings. Warplyn contacts the provider again when you refresh models or send an AI request. These checks do not include *Article* content.
 
-Adding an environment-variable connection only saves its settings. Adding an API-key connection verifies the key with the provider. Warplyn also contacts the provider when you refresh models or make an AI request. These checks do not send Article content. If model refresh fails, check that the connection is active, the variable is available to the application service or the saved key is valid, and the provider account can access its API.
+::: tip If model refresh fails
+Check that the connection is **Active**, the saved key is valid or the environment variable is available to the application service, and the provider account can access its API.
+:::
 
 ## Choose providers and models
 
-Warplyn supports OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, and DeepSeek. OpenCode Zen also offers models from vendors in its catalog.
+Warplyn supports OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, and DeepSeek. OpenCode Zen also offers models from other vendors in its catalog.
 
-Connections marked **Active** contribute models to the model list. In **Settings → AI assistant**, select **Refresh available models**, then choose a **Default model**. You can also assign models to individual Skills under **Models for specific tasks**. A task set to **Use default model** uses the Default model.
+In **Settings** → **AI assistant**, select **Refresh available models**, then choose a **Default model**. To use a different model for a particular *Skill*, choose it under **Models for specific tasks**. A task set to **Use default model** follows the Default model.
 
-Available Editorial Operations depend on the model. Sourced fact checking, structured output, and reasoning controls may be unavailable for some models. OpenCode Zen models use their catalog's capabilities and availability.
+::: tip Model availability
+Available Editorial Operations vary by model. Some models do not support sourced fact checking, structured output, or reasoning controls. OpenCode Zen models follow their catalog's capabilities and availability.
+:::
+
+[![AI assistant settings showing configured provider connections, key setup choices, and model controls.](/images/ai-providers-and-models.png)](/images/ai-providers-and-models.png)
+
+*AI assistant settings with provider connections and model controls.*
 
 ### App model
 
-The **App model** setting chooses a separate model for Warplyn's short helper tasks, such as Proposal summaries, titles, and understanding Assistant request intent. If you leave it unset, Warplyn uses the Default model.
+The **App model** handles short helper tasks, such as *Proposal* summaries, titles, and understanding Assistant request intent. If you leave it unset, Warplyn uses the Default model.
 
-Choose an efficient, lower-cost text model for this setting. **GPT-6 Luna** is a good OpenAI option for focused, high-volume tasks ([model details](https://developers.openai.com/api/docs/models/gpt-6-luna)). With another provider, choose a comparable efficient model. These short helper tasks usually do not need a more expensive model. If their results are poor, try a stronger model.
+Choose an efficient, lower-cost text model. **GPT-6 Luna** is one OpenAI option for these focused tasks ([model details](https://developers.openai.com/api/docs/models/gpt-6-luna)). With another provider, choose a comparable model. If the results are not good enough, try a stronger model.

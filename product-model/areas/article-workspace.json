@@ -34,7 +34,7 @@
                 "packages/web/src/workspace/EditorialWorkspace.tsx",
                 "packages/web/src/workspace/state/article-workspace-state.ts"
             ],
-            "contract": "Selected Article is restored locally, Article activity includes retained Draft checkpoints, and independently selectable translation Articles appear under the selected source group or during search while other source groups show a collapsed-child indicator. Context menus support archive and deletion for a complete source group, while only originals can be pinned and reordered.",
+            "contract": "Selected Article is restored locally, Article activity includes retained Draft checkpoints, and independently selectable translation Articles appear under the selected source group or during search while other source groups show a collapsed-child indicator. The expanded library header and collapsed expand button share the Warplyn spiral icon, using a deeper teal gradient in light appearance and the original mint-to-teal gradient in dark appearance. Context menus support archive and deletion for a complete source group, while only originals can be pinned and reordered.",
             "persistence": "Article service persists group archive state and original pin order plus local workspace preferences."
         },
         {
@@ -196,7 +196,7 @@
                 "packages/web/src/workspace/components/ArticleStatusBar.tsx",
                 "packages/web/src/workspace/editor/RevisionArticlePreview.tsx"
             ],
-            "contract": "Selecting a Revision from history or the compact Status Bar selector is local-only and opens a read-only preview; restoring creates a new Revision through the existing confirmation and Draft-conflict flow. When the first immutable Revision is empty, history labels it Empty Revision and presents the second saved Revision as Initial Revision while keeping both available.",
+            "contract": "Selecting a Revision from history or the compact Status Bar selector is local-only and opens a read-only preview; restoring creates a new Revision through the existing confirmation and Draft-conflict flow. Revision history mutes and labels Revisions bypassed by the current restore path as Inactive; they remain selectable and restorable, and restoring one recalculates the active path. When the first immutable Revision is empty, history labels it Empty Revision and presents the second saved Revision as Initial Revision while keeping both available.",
             "persistence": "Immutable Article Revisions and recoverable Draft checkpoints."
         },
         {

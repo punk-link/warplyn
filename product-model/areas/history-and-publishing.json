@@ -8,7 +8,7 @@
             "title": "Immutable Revision timeline and read-only preview",
             "status": "implemented",
             "owners": ["packages/web/src/workspace/views/RevisionHistoryView.tsx", "packages/web/src/workspace/components/ArticleStatusBar.tsx", "packages/web/src/workspace/editor/RevisionArticlePreview.tsx", "packages/server/src/infrastructure/persistence/repositories/articles-repository.ts"],
-            "contract": "The timeline and compact Status Bar selector distinguish initial, manual, AI-assisted, and restored Revisions. Conversational Assistant edits use the AI-assisted presentation and retain request and reply provenance. When the first immutable Revision is empty, the UI labels it Empty Revision and labels the second saved Revision Initial Revision; both remain selectable. New author, accepted-Proposal, and Assistant-edit Revisions use a concise configured-model summary of the changed context in the interface locale as their accessible history title, with a deterministic local fallback when generation fails or is cancelled. Selecting a Revision is local-only, opens a read-only preview, and does not alter the Article or Draft; restoration keeps the existing confirmation flow, and revision conflicts use an application contract rather than persistence types.",
+            "contract": "The timeline and compact Status Bar selector distinguish initial, manual, AI-assisted, and restored Revisions. Revision history mutes and labels Revisions bypassed by the current restore path as Inactive, including the mobile selector; they remain selectable and restorable, and restoring one recalculates the active path. Conversational Assistant edits use the AI-assisted presentation and retain request and reply provenance. When the first immutable Revision is empty, the UI labels it Empty Revision and labels the second saved Revision Initial Revision; both remain selectable. New author, accepted-Proposal, and Assistant-edit Revisions use a concise configured-model summary of the changed context in the interface locale as their accessible history title, with a deterministic local fallback when generation fails or is cancelled. Selecting a Revision is local-only, opens a read-only preview, and does not alter the Article or Draft; restoration keeps the existing confirmation flow, and revision conflicts use an application contract rather than persistence types.",
             "persistence": "Revisions are immutable local records ordered by creation. New content-changing Revisions persist their generated or fallback description only after completion; existing Revision records remain unchanged."
         },
         {
@@ -74,7 +74,7 @@
             "capabilityIds": ["history-and-publishing.revision-history"],
             "preconditions": ["An Article has initial and subsequent Revisions."],
             "event": "The author selects an earlier Revision in history.",
-            "expected": ["A formatted read-only preview and distinct provenance timeline icon are shown."],
+            "expected": ["A formatted read-only preview and distinct provenance timeline icon are shown.", "Revisions bypassed by the current restore path are muted and labeled Inactive while remaining available to preview and restore."],
             "forbidden": ["Selecting history alters the current Article or Draft."],
             "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/RevisionHistoryView.test.tsx" }
         },
