@@ -46,4 +46,6 @@ dist/
 packages/electron/telemetry.json
 /site/tokens.css
 /site/warplyn.svg
+/site/user-docs/public/warplyn.svg
+/site/user-docs/.vitepress/cache/
 /site/public/docs/

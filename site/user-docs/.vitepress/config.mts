@@ -5,7 +5,9 @@ export default defineConfig({
     description: "Installation, user guides, settings, and reference for Warplyn.",
     base: "/docs/",
     outDir: "../public/docs",
+    head: [["link", { rel: "icon", type: "image/svg+xml", href: "/docs/warplyn.svg" }]],
     themeConfig: {
+        logo: { src: "/warplyn.svg", alt: "" },
         nav: [
             { text: "Guide index", link: "/" },
             { text: "Warplyn", link: "../", target: "_self" },
