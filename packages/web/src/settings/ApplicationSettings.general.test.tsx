@@ -52,11 +52,20 @@ describe("ApplicationSettings general", () => {
         await waitFor(() => expect(updateGeneralSettings).toHaveBeenLastCalledWith({ ...defaultGeneralSettings, assistantRequestTimeoutMinutes: "unlimited" }));
     });
 
-    it("provides a compact section selector", async () => {
+    it("provides a compact section selector and resets content scrolling", async () => {
         const user = userEvent.setup();
         const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
-        await user.selectOptions(await screen.findByRole("combobox", { name: getMessage("settings.navigation") }), "about");
+        const navigation = await screen.findByRole("combobox", { name: getMessage("settings.navigation") });
+        const content = screen.getByRole("heading", { name: getMessage("settings.general") }).closest("section");
+        if (!content)
+            throw new Error("Settings content is missing");
+
+        content.scrollTop = 120;
+        await user.selectOptions(navigation, "general");
+        expect(content.scrollTop).toBe(120);
+        await user.selectOptions(navigation, "about");
+        expect(content.scrollTop).toBe(0);
         expect(screen.getByRole("heading", { name: getMessage("settings.about") })).toBeTruthy();
         expect(screen.getByText(getMessage("settings.aboutDescription"))).toBeTruthy();
         expect(screen.getByRole("link", { name: getMessage("settings.sourceCode") }).getAttribute("href")).toBe("https://github.com/punk-link/warplyn");

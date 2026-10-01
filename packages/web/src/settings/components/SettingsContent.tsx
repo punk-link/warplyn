@@ -13,7 +13,8 @@ export function SettingsContent({ section, settings, children }: {
     const content = useRef<HTMLElement>(null);
 
     useLayoutEffect(() => {
-        content.current?.scrollTo({ top: 0 });
+        if (content.current)
+            content.current.scrollTop = 0;
     }, [section]);
 
     return <section ref={content} data-focus-area="settings-content" className="min-h-0 min-w-0 flex-1 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
