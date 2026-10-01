@@ -6,8 +6,9 @@ import { RevisionArticlePreview } from "../editor/RevisionArticlePreview.js";
 import { getCharacterCount, getProvenanceMessageId, getRestoredRevisionTarget, getRevisionTitle } from "./revision-history-presentation.js";
 
 
-export function RevisionHistoryDetails({ revisions, selected, currentRevisionId, select, generalSettings }: {
+export function RevisionHistoryDetails({ revisions, bypassedRevisionIds, selected, currentRevisionId, select, generalSettings }: {
     revisions: ArticleRevision[];
+    bypassedRevisionIds: ReadonlySet<string>;
     selected: ArticleRevision;
     currentRevisionId: string;
     select: (revision: ArticleRevision) => void;
@@ -29,7 +30,7 @@ export function RevisionHistoryDetails({ revisions, selected, currentRevisionId,
                     {newestFirst.map((revision) => {
                         const target = getRestoredRevisionTarget(revisions, revision);
                         const title = target ? intl.formatMessage({ id: target.description ? "revisions.restoredTargetDescribed" : "revisions.restoredTarget" }, target) : getRevisionTitle(revision, intl.formatMessage({ id: getProvenanceMessageId(revision, revisions) }));
-                        return <option key={revision.id} value={revision.id}>{title} — {formatRevisionDate(revision.createdAt)}</option>;
+                        return <option key={revision.id} value={revision.id}>{title} — {formatRevisionDate(revision.createdAt)}{bypassedRevisionIds.has(revision.id) && ` · ${intl.formatMessage({ id: "revisions.inactive" })}`}</option>;
                     })}
                 </Select>
             </label>
@@ -40,6 +41,7 @@ export function RevisionHistoryDetails({ revisions, selected, currentRevisionId,
                     <p className="mt-1 text-xs text-muted">{formatRevisionDate(selected.createdAt)} · {intl.formatMessage({ id: "revisions.characterCount" }, { count: intl.formatNumber(getCharacterCount(selected.content)) })}</p>
                     {selected.restoredFromRevisionId && <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "revisions.restoredFromEarlier" })}</p>}
                     {selectedIsCurrent && <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "revisions.currentExplanation" })}</p>}
+                    {bypassedRevisionIds.has(selected.id) && <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "revisions.inactive" })}</p>}
                 </div>
                 {selectedIsCurrent
                     ? <Badge>{intl.formatMessage({ id: "revisions.currentRevision" })}</Badge>

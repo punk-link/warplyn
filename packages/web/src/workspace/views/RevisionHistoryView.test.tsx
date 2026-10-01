@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -6,6 +6,7 @@ import { defaultGeneralSettings, type ArticleRevision, type GeneralSettings } fr
 import { messages } from "../../i18n/messages.js";
 import { getMessage } from "../../i18n/test-message.js";
 import { RevisionHistoryView } from "./RevisionHistoryView.js";
+import { getBypassedRevisionIds } from "./revision-history-presentation.js";
 
 
 // Product scenarios: workspace.revisions.restore, history-and-publishing.revision-history-browsing
@@ -33,6 +34,43 @@ function renderHistory(revisions: ArticleRevision[], currentRevisionId = revisio
 
 describe("RevisionHistoryView", () => {
     afterEach(cleanup);
+
+    it.each([
+        ["third", []],
+        ["restored", ["third"]],
+        ["edited", ["third"]],
+        ["returned", ["restored", "edited"]],
+    ])("derives inactive Revisions from the current restore path at %s", (currentRevisionId, expected) => {
+        const revisions = [
+            createArticleRevision("first", "First", "initial", "2026-01-01T10:00:00.000Z"),
+            createArticleRevision("second", "Second", "author-draft", "2026-01-02T10:00:00.000Z"),
+            createArticleRevision("third", "Third", "author-draft", "2026-01-03T10:00:00.000Z"),
+            createArticleRevision("restored", "Second", "restore", "2026-01-04T10:00:00.000Z", "second"),
+            createArticleRevision("edited", "Edited second", "author-draft", "2026-01-05T10:00:00.000Z"),
+            createArticleRevision("returned", "Third", "restore", "2026-01-06T10:00:00.000Z", "third"),
+        ];
+        const currentIndex = revisions.findIndex((revision) => revision.id === currentRevisionId);
+        expect([...getBypassedRevisionIds(revisions.slice(0, currentIndex + 1), currentRevisionId)]).toEqual(expected);
+    });
+
+
+    it("mutes bypassed Revisions while keeping them available to preview and restore", async () => {
+        const target = createArticleRevision("target", "Target text", "initial", "2026-01-01T10:00:00.000Z");
+        const bypassed = createArticleRevision("bypassed", "Bypassed text", "author-draft", "2026-01-02T10:00:00.000Z", undefined, "Added two periods");
+        const restored = createArticleRevision("restored", "Target text", "restore", "2026-01-03T10:00:00.000Z", "target");
+        const { select } = renderHistory([target, bypassed, restored]);
+        const timeline = screen.getByRole("navigation", { name: "Revision history" });
+        const inactive = within(timeline).getByRole("button", { name: /Added two periods.*Inactive/ });
+        expect(within(inactive).getByTitle("Added two periods").classList.contains("text-muted")).toBe(true);
+        expect(within(timeline).getAllByText("Inactive")).toHaveLength(1);
+        expect(screen.getByRole("option", { name: /Added two periods.*Inactive/ })).toBeTruthy();
+
+        const user = userEvent.setup();
+        await user.click(inactive);
+        expect(screen.getByText("Bypassed text")).toBeTruthy();
+        await user.click(screen.getByRole("button", { name: getMessage("revisions.restore") }));
+        expect(select).toHaveBeenCalledWith(bypassed);
+    });
 
 
     it("selects the current Revision by default and shows history newest first", () => {

@@ -4,8 +4,9 @@ import { formatDateTime } from "../../i18n/formatting.js";
 import { getCharacterCount, getProvenanceMessageId, getRestoredRevisionTarget, getRevisionTitle, getTimelineKind, timelineIcons } from "./revision-history-presentation.js";
 
 
-export function RevisionHistoryNavigation({ revisions, selectedRevisionId, onSelect, generalSettings }: {
+export function RevisionHistoryNavigation({ revisions, bypassedRevisionIds, selectedRevisionId, onSelect, generalSettings }: {
     revisions: ArticleRevision[];
+    bypassedRevisionIds: ReadonlySet<string>;
     selectedRevisionId: string;
     onSelect: (revision: ArticleRevision) => void;
     generalSettings: GeneralSettings;
@@ -22,6 +23,8 @@ export function RevisionHistoryNavigation({ revisions, selectedRevisionId, onSel
         <ol className="min-h-0 flex-1 overflow-y-auto p-2 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
             {newestFirst.map((revision) => {
                 const selected = revision.id === selectedRevisionId;
+                const inactive = bypassedRevisionIds.has(revision.id);
+                const titleStyle = inactive && !selected ? "font-normal text-muted" : "font-medium text-ink";
                 const provenance = intl.formatMessage({ id: getProvenanceMessageId(revision, revisions) });
                 const target = getRestoredRevisionTarget(revisions, revision);
                 const title = getRevisionTitle(revision, provenance);
@@ -30,11 +33,12 @@ export function RevisionHistoryNavigation({ revisions, selectedRevisionId, onSel
                 const TimelineIcon = timelineIcons[kind];
 
                 return <li key={revision.id} className="relative pl-10 after:absolute after:-bottom-7 after:left-4 after:top-7 after:w-px after:bg-border last:after:hidden">
-                    <span className="absolute left-0 top-3 z-10 grid size-8 place-items-center rounded-full border border-border bg-surface-raised text-brand" data-revision-timeline-icon={kind}>
+                    <span className={`absolute left-0 top-3 z-10 grid size-8 place-items-center rounded-full border border-border bg-surface-raised ${inactive ? "text-muted" : "text-brand"}`} data-revision-timeline-icon={kind}>
                         <TimelineIcon className={kind === "ai" || kind === "restored" ? "size-3" : "size-4"} />
                     </span>
                     <button className={`w-full rounded-control border p-3 text-left focus:outline-none ${selected ? "border-brand bg-brand-soft" : "border-transparent hover:bg-surface"}`} type="button" aria-pressed={selected} onClick={() => onSelect(revision)}>
-                        <span className="line-clamp-2 text-sm font-medium text-ink" title={displayTitle}>{displayTitle}</span>
+                        <span className={`line-clamp-2 text-sm ${titleStyle}`} title={displayTitle}>{displayTitle}</span>
+                        {inactive && <span className="mt-1 block text-micro text-muted">{intl.formatMessage({ id: "revisions.inactive" })}</span>}
                         <span className="mt-1 block text-xs text-muted">{formatRevisionDate(revision.createdAt)} · {intl.formatMessage({ id: "revisions.characterCount" }, { count: intl.formatNumber(getCharacterCount(revision.content)) })}</span>
                     </button>
                 </li>;

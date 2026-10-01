@@ -41,6 +41,27 @@ export function getRevisionTitle(revision: ArticleRevision, provenance: string):
 }
 
 
+export function getBypassedRevisionIds(revisions: readonly ArticleRevision[], currentRevisionId: string): Set<string> {
+    const indices = new Map(revisions.map((revision, index) => [revision.id, index]));
+    let index = indices.get(currentRevisionId);
+    if (index === undefined)
+        return new Set();
+
+    const bypassed = new Set(revisions.map((revision) => revision.id));
+    while (index >= 0) {
+        const revision = revisions[index];
+        if (!revision)
+            break;
+
+        bypassed.delete(revision.id);
+        const targetIndex = indices.get(revision.restoredFromRevisionId ?? "");
+        index = targetIndex !== undefined && targetIndex < index ? targetIndex : index - 1;
+    }
+
+    return bypassed;
+}
+
+
 export function getRestoredRevisionTarget(revisions: ArticleRevision[], revision: ArticleRevision): { number: number; description?: string } | undefined {
     if (!revision.restoredFromRevisionId)
         return undefined;

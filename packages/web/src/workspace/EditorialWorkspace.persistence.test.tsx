@@ -1,4 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import type { ArticleRevision } from "@skladno/shared";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "../App.js";
@@ -10,6 +12,34 @@ import { createArticleFixture, createFakeClient, resetWorkspaceTestEnvironment }
 
 describe("Editorial Workspace persistence", () => {
     afterEach(resetWorkspaceTestEnvironment);
+
+    it("updates the open Revision timeline as soon as saving completes, before history reloads", async () => {
+        const client = createFakeClient();
+        const article = createArticleFixture("one", "First Article");
+        article.draft = { articleId: article.id, content: "Updated Article", baseRevisionId: article.currentRevisionId, version: 1, updatedAt: article.updatedAt };
+        const saved: ArticleRevision = { ...article.currentRevision, id: "saved-revision", content: article.draft.content, description: "Updated the Article", provenance: { kind: "author-draft" } };
+        let resolveHistory: (items: ArticleRevision[]) => void = () => undefined;
+        const history = new Promise<ArticleRevision[]>((resolve) => {
+            resolveHistory = resolve;
+        });
+        client.listArticles = vi.fn().mockResolvedValue([article]);
+        client.saveArticleDraft = vi.fn().mockResolvedValue(article.draft);
+        client.saveArticleRevision = vi.fn().mockResolvedValue(saved);
+        client.listArticleRevisions = vi.fn().mockResolvedValueOnce([article.currentRevision]).mockReturnValue(history);
+        localStorage.setItem("skladno-workspace-layout", JSON.stringify({ version: 4, selectedArticleId: article.id, view: "revisions" }));
+        const user = userEvent.setup();
+        render(<App client={client} />);
+        const timeline = await screen.findByRole("navigation", { name: "Revision history" });
+
+        await user.click(screen.getByRole("button", { name: "Save revision" }));
+        await waitFor(() => expect(client.listArticleRevisions).toHaveBeenCalledTimes(2));
+        expect(within(timeline).getByRole("button", { name: /Updated the Article/ }).getAttribute("aria-pressed")).toBe("true");
+        expect(screen.getByText("Updated Article")).toBeTruthy();
+
+        await act(async () => resolveHistory([article.currentRevision, saved]));
+        expect(within(timeline).getAllByRole("button", { name: /Updated the Article/ })).toHaveLength(1);
+        expect(within(timeline).getAllByRole("button")).toHaveLength(2);
+    });
 
     it("shows the restored Revision instead of a stale recoverable Draft", () => {
         const restored = createArticleFixture("one", "First Article");
