@@ -1,7 +1,34 @@
 # Share diagnostic and usage data
 
-Warplyn’s packaged Windows and Linux apps can send a small set of pseudonymous reliability and usage events to PostHog. It is enabled by default during the public beta. You can turn it off with **Share diagnostic and usage data** in **Settings** → **General** → **Privacy & diagnostics**. Enabling it creates a random installation identifier stored only in Electron’s runtime settings, outside the *Article* database, backups, and restore staging. Disabling it stops future collection, clears queued events and that identifier, and creates a new identifier if it is enabled again. Previously delivered events cannot be recalled by the switch.
+Warplyn's packaged Windows and Linux apps send pseudonymous reliability and usage events to PostHog Cloud in the United States (Virginia). Sharing is on by default during the public beta. You can turn it off in **Settings** → **General** → **Privacy & diagnostics**.
 
-The allowlisted events are process starts, completed/failed/cancelled AI operations, explicit *Proposal* reviews, aggregated *Draft* checkpoints, backup/recovery outcomes, and safe startup, renderer, or child-process failure categories. Event-specific fields are finite enums, non-negative counters, or bounded millisecond durations. Every event also has schema version, application version, platform, architecture, OS version, and timestamp. It never includes *Article* or *Revision* identifiers, titles, *Article* text, prompts, AI responses, API keys, environment values, paths, URLs, raw errors, exit details, or request/response bodies.
+Turning sharing off stops future collection and clears queued events and the local Telemetry ID. Turning it on later creates a new ID. It cannot recall events already sent.
 
-Warplyn uses one US (Virginia) PostHog Cloud project. To request deletion, use **Copy telemetry ID** in **Settings** → **General** → **Privacy & diagnostics**, email the ID to [kirill.taran@hotmail.com](mailto:kirill.taran@hotmail.com), then turn off **Share diagnostic and usage data**. Turning it off clears that ID locally, so copy it first. The project owner deletes the matching pseudonymous PostHog person and confirms completion by email.
+[![Privacy and diagnostics settings showing the sharing toggle and Telemetry ID controls with the ID obscured.](/images/diagnostic-and-usage-data.png)](/images/diagnostic-and-usage-data.png)
+
+*Privacy & diagnostics settings in the desktop app.*
+
+## What Warplyn collects
+
+Events cover:
+
+- app starts and safe startup, renderer, or child-process failure categories
+- completed, failed, or cancelled AI operations
+- explicit *Proposal* reviews and aggregated *Draft* checkpoints
+- backup and recovery outcomes
+
+Events do not include *Article* text, prompts, AI responses, or API keys.
+
+::: details Other event fields
+Each event includes a schema version, application version, platform, architecture, operating system version, and timestamp. Event-specific fields are limited to known categories, non-negative counters, or bounded durations.
+
+Events do not include *Article* or *Revision* IDs or titles, environment variable values, file paths, URLs, raw errors, process exit details, or request and response bodies.
+:::
+
+## Request deletion
+
+1. In **Settings** → **General** → **Privacy & diagnostics**, select **Copy telemetry ID**.
+2. Email the ID to [kirill.taran@hotmail.com](mailto:kirill.taran@hotmail.com) and request deletion.
+3. Turn off **Share diagnostic and usage data**.
+
+Copy the ID before turning sharing off. Turning it off clears the ID from your device. The project owner deletes the matching pseudonymous record and confirms by email.

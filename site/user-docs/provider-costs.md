@@ -1,19 +1,29 @@
 # AI provider costs
 
-AI assistance is optional. Warplyn does not bill you for AI requests. Your connected provider may charge your account when Warplyn sends a request.
+AI assistance is optional. Warplyn does not bill you for requests. Your AI provider may charge your account when Warplyn sends one.
 
 ## What affects the cost
 
-Each provider sets its own rates and billing rules. Charges can depend on the provider, model, amount of *Article* text and instructions sent, and the length of the response. A subscription to a provider's chat service may not cover API use. Check the provider's current API pricing and billing terms before connecting a key.
+Your provider sets its own rates. A request's cost can depend on:
 
-Warplyn sends the selected text when you make a request with a selection. Without a selection, the request may include the whole *Article* and relevant context. Choosing a smaller scope or a model with rates that fit your needs can reduce costs, depending on the provider's pricing rules.
+- the provider and model you choose
+- how much *Article* text and instruction context the request includes
+- how much text the model returns
 
-Routine *Article* work, such as smoothing a passage or making a focused revision, usually uses a modest amount of text and does not require an expensive model. Try a lower-cost model first. Use a more expensive model when a task's results show that it needs one.
+When you select text before sending a request, Warplyn sends that selection. Without a selection, the request may include the whole *Article* and relevant context. A narrower request can cost less, depending on provider rates.
+
+::: tip API billing
+A subscription to a provider's chat service may not include API use. Check the provider's current API pricing and billing terms before connecting a key.
+:::
+
+For routine work, such as smoothing a passage or making a focused revision, try a lower-cost model first. Use a more expensive model when the results show that the task needs one.
 
 ## Check your usage
 
-Use your provider's account to review API usage, charges, and any available alerts or spending limits. Warplyn does not show the provider's bill or enforce a spending limit. Contact the provider about its billing, refunds, or account charges.
+Review usage, charges, alerts, and spending limits in your provider's account. Warplyn does not show the provider's bill or enforce spending limits. Contact the provider about its billing, refunds, or account charges.
 
-In **Settings** → **AI assistant**, you can choose a **Default model**, an **App model**, and models for specific tasks. The model used for a request affects the provider's charges. See [AI providers and models](providers.md) for connection and model setup.
+The model used for a request affects its cost. In **Settings** → **AI assistant**, choose a **Default model**, an **App model**, and models for specific tasks. See [AI providers and models](providers.md) to set them up.
 
-You can write and manage *Articles* without connecting an AI provider. Editing, saving *Revisions*, and using local backups do not send AI requests.
+::: tip You can work without AI
+You can write and manage *Articles* without an AI connection. Editing, saving *Revisions*, and using local backups do not send AI requests.
+:::

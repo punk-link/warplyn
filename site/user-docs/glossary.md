@@ -78,18 +78,18 @@ Editorial Workspace
 │ utility area             │                              │ Composer                 │
 │ Style Profile · Settings ├──────────────────────────────┤ Editorial guidance       │
 │ Update, when relevant    │ Article Status Bar           │ and Send                 │
-│ Language/local · Save    │ Article metadata · Copy      │                          │
+│ Language · Local         │ Save status · Metadata · Copy │                          │
 └──────────────────────────┴──────────────────────────────┴──────────────────────────┘
 ```
 
-The footer at the bottom of the Library panel is the **Article Library utility area**. Its bottom row contains the language/local label and **save-state indicator**. The **Article Status Bar** sits beneath the central Article view.
+In the expanded layout, the footer at the bottom of the Library panel is the **Article Library utility area**. Its bottom row shows the current *Article* language code and the **Local** label. The **Article Status Bar**, beneath the central Article view, shows the save state.
 
 ### Interface terms
 
 - **Editorial Workspace**: the main authoring screen containing the Article Library Panel, Article Workspace, and Editorial Assistant Panel.
 - **Article Library Panel**: Article search, the Article list, and workspace-level entry points. Its collapsed form is the **Navigation Rail**; its temporary small-screen form is the **Navigation Drawer**.
-- **Article Library utility area**: the footer of the Article Library Panel containing Style Profile, Settings, an update control when relevant, and language/local and save-state indicators.
-- **Save-state indicator**: the save status at the bottom of the Article Library Panel. In the Navigation Rail, it appears as a status dot.
+- **Article Library utility area**: the footer of the expanded Article Library Panel containing Style Profile, Settings, an update control when relevant, and the current Article language code with the **Local** label.
+- **Save-state indicator**: the status in the Article Status Bar showing whether the current *Draft* is saved, being saved, or needs attention.
 - **Article Workspace**: the Article Header, Workspace Tab Bar, selected Workspace View, and Article Status Bar.
 - **Article Header**: the title and metadata controls above the Workspace Tab Bar.
 - **Workspace Tab Bar**: the tabs used to select a Workspace View.
