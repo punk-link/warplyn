@@ -90,7 +90,7 @@ function removeArticleValue<T>(setValue: Setter<Record<string, T>>, articleId: s
 }
 
 
-function clearNewRequestFeedback(store: AssistantRequestStore, articleId: string) {
+export function clearAssistantRequestFeedback(store: AssistantRequestStore, articleId: string) {
     removeArticleValue(store.setMessageByArticle, articleId);
     removeArticleValue(store.setErrorDetailsByArticle, articleId);
     removeArticleValue(store.setAiConnectionUnavailableByArticle, articleId);
@@ -160,7 +160,7 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
     const creatorRequest = explicitSkillId === BUILT_IN_SKILL.SKILL_CREATOR;
     const saved = creatorRequest ? undefined : await options.workspace.save(article.id);
     const revision = saved ?? article.currentRevision;
-    clearNewRequestFeedback(options.store, article.id);
+    clearAssistantRequestFeedback(options.store, article.id);
     options.store.setStateByArticle((states) => ({ ...states, [article.id]: "streaming" }));
     options.store.setFactCheckClaimsByArticle((claims) => ({ ...claims, [article.id]: [] }));
     options.store.controller.current = new AbortController();

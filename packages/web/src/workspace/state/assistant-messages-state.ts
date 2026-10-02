@@ -5,7 +5,7 @@ import type { EditorialWorkspaceClient } from "../../application/client.js";
 import type { ArticleWorkspaceState } from "./article-workspace-state.js";
 import { type AssistantSelectionScope } from "./assistant-selection.js";
 import { useAssistantMessageHistory } from "./assistant-message-history-state.js";
-import { useAssistantRequestActions, useAssistantRequestStore } from "./assistant-request-state.js";
+import { clearAssistantRequestFeedback, useAssistantRequestActions, useAssistantRequestStore } from "./assistant-request-state.js";
 import { useAssistantStreamEvents } from "./assistant-stream-events-state.js";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { useAssistantEdits } from "./assistant-edit-state.js";
@@ -58,6 +58,7 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
             const result = await client.restoreAssistantCheckpoint(article.id, checkpointPreview.messageId, { tailToken: checkpointPreview.tailToken, ...(draftMode ? { draftMode } : {}) });
             store.setMessagesByArticle((current) => ({ ...current, [article.id]: result.messages }));
             clearStream(article.id);
+            clearAssistantRequestFeedback(store, article.id);
             store.setStateByArticle((current) => ({ ...current, [article.id]: "idle" }));
 
             workspace.applyPersistedArticle(result.article);

@@ -169,7 +169,7 @@ test("an Author can reselect a claim before Fact Check finishes", async ({ page 
 });
 
 
-test("a provider failure does not change the Article", async ({ page }) => {
+test("a provider failure leaves the Article unchanged and clears after checkpoint restore", async ({ page }) => {
     await page.goto("/");
     await createArticle(page);
 
@@ -177,6 +177,15 @@ test("a provider failure does not change the Article", async ({ page }) => {
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await expect(page.getByRole("alert")).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Original fixture Article.");
+    await activateWithKeyboard(page, page.getByRole("button", { name: /Edit from Author message at/ }));
+    await page.getByRole("dialog", { name: "Edit from this message?" }).getByRole("button", { name: "Restore conversation" }).click();
+    await expect(page.getByRole("alert")).toHaveCount(0);
+    await expect(page.getByText("Error details")).toHaveCount(0);
+    await expect(page.getByRole("combobox", { name: "Editorial guidance" })).toContainText("provider error");
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Original fixture Article.");
+    await page.reload();
+    await expect(page.getByRole("alert")).toHaveCount(0);
+    await expect(page.getByText("Request failed", { exact: true })).toHaveCount(0);
 });
 
 
