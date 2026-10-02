@@ -74,6 +74,8 @@ The completion gate applies to the full run. New artifacts remain staged until t
 
 A run normally produces one primary artifact. It may produce an existing related set, such as style Findings with their correction Proposal, when the application workflow already defines that relationship. The implementation does not add general cross-artifact transactions.
 
+The catalog's artifact execution classification, rather than a Skill or workflow name, selects the shared terminal policy. Artifact tools coalesce identical calls within the foreground run and reject conflicting calls before generation. A validated artifact ends orchestration without a model-generated closing reply; its existing localized result card supplies the handoff. Reads and authorized actions run first. Full-stream validation and completion checks still precede the atomic persistence operation. Verification failures cannot authorize automatic Article edits; in review mode, an unavailable replacement check leaves the completed Proposal available through ordinary review. The request deadline covers these completion checks and stops before delivering an already committed completion.
+
 Conversation uses the configured Assistant model. Each invoked capability retains its purpose-specific Editorial model selection. Assistant requests and stored records use Skill IDs directly; Editorial operation IDs are not accepted as Skill IDs.
 
 ### Quiet progress and Workspace review

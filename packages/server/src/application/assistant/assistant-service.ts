@@ -141,19 +141,7 @@ export class AssistantService {
             initialized = true;
             yield* getAssistantInitialEvents(request);
 
-            const completedEvent = yield* this.consumeEditorialEvents(request, signal);
-
-            if (!completedEvent && !signal.aborted)
-                throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
-
-            if (signal.aborted) {
-                this.stores.assistant.failRequest(request.requestId, "cancelled", "request_cancelled");
-                this.captureStreamOutcome(observed, "cancelled", "cancelled");
-                return;
-            }
-
-            if (completedEvent)
-                yield* this.streamAssistantEvents(request, completedEvent, signal);
+            yield* streamWithAssistantDeadline((requestSignal) => this.streamRequestCompletion(request, requestSignal), signal, getAssistantRequestTimeoutMs(this.stores.settings));
 
             this.captureStreamOutcome(observed, "completed");
         } catch (error) {
@@ -188,11 +176,19 @@ export class AssistantService {
     }
 
 
+    private async *streamRequestCompletion(request: PreparedAssistantRequest, signal: AbortSignal): AsyncIterable<AssistantEvent> {
+        const completedEvent = yield* this.consumeEditorialEvents(request, signal);
+        signal.throwIfAborted();
+        if (!completedEvent)
+            throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
+
+        yield* this.streamAssistantEvents(request, completedEvent, signal);
+    }
+
+
     private async *consumeEditorialEvents(request: PreparedAssistantRequest, signal: AbortSignal): AsyncGenerator<AssistantEvent, EditorialEngineEvent | undefined> {
         let completedEvent: EditorialEngineEvent | undefined;
-        const timeoutMs = getAssistantRequestTimeoutMs(this.stores.settings);
-        const events = streamWithAssistantDeadline((requestSignal) => this.streamEditorialEvents(request, requestSignal), signal, timeoutMs);
-        for await (const event of events) {
+        for await (const event of this.streamEditorialEvents(request, signal)) {
             if (event.type === EDITORIAL_ENGINE_EVENT.COMPLETED)
                 completedEvent = event;
             else if (event.type === EDITORIAL_ENGINE_EVENT.FACT_CHECK_PROGRESS)
@@ -269,6 +265,7 @@ export class AssistantService {
         signal.throwIfAborted();
 
         await this.authorizeCompletedEdit(request, event, signal);
+        signal.throwIfAborted();
 
         const kind = request.directEditAuthorized && getEditCandidate(request, event) ? "edit_applied" : getResponseKind(request.completedCapability);
         for (const activity of request.capabilityActivities)
@@ -282,6 +279,9 @@ export class AssistantService {
         if (event.factCheck?.findings.length && !selectedEvent.factCheck?.findings.length)
             throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
+        if (!request.usesCapabilityLoop && request.operation)
+            yield { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.requestId, activity: { summary: getActivityForEditorialOperation(request.operation), status: "completed" } };
+
         yield { type: ASSISTANT_EVENT.STAGED_COMPLETION, requestId: request.requestId, completion: { responseKind: kind } };
         signal.throwIfAborted();
         const createdSkill = this.capabilityLoop.commitPendingSkill(request);
@@ -289,9 +289,6 @@ export class AssistantService {
 
         if (createdSkill)
             this.capabilityLoop.finishPendingSkill(request.requestId);
-
-        if (!request.usesCapabilityLoop && request.operation)
-            yield { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.requestId, activity: { summary: getActivityForEditorialOperation(request.operation), status: "completed" } };
 
         yield { type: ASSISTANT_EVENT.COMPLETED, requestId: request.requestId, ...completion };
     }

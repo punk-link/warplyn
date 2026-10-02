@@ -21,6 +21,8 @@ environment-variable values.
 The diagnostics boundary catches its own failures. It does not create a log
 file, retain logs, or add a renderer-visible settings control.
 
+Editorial adapters record provider-step and verification stages through this boundary. Stage records contain only fixed stage names, elapsed milliseconds, allowlisted finish reasons and failure categories, and validated HTTP failure status codes. They contain no request identifiers or provider payloads. These fixed public values are not scrubbed against arbitrary environment substrings, which could otherwise corrupt stage names and timestamps. SDK stream-error callbacks use these records instead of the SDK's default raw-error logger.
+
 ## Consequences
 
 During the public beta, the packaged Electron runtime may separately emit only the versioned, allowlisted remote telemetry contract with installation-local default-on consent that the author can revoke at any time. It must not forward local diagnostic context or stdout/stderr, and missing delivery configuration remains a no-op.

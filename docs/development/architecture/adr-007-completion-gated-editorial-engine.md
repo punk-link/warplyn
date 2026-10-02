@@ -24,6 +24,8 @@ Provider-side response storage is disabled by default where the provider exposes
 
 Application errors use stable safe categories. Raw provider messages, prompts, Article bodies, credentials, and SDK types do not cross the adapter boundary or enter diagnostics.
 
+All Assistant artifact capabilities share one execution and completion policy. Identical calls within a run reuse the same in-flight or completed generation; conflicting calls fail before a second generation. After a validated artifact tool completes, the orchestration step finishes the run without an additional model reply. The adapter still consumes and validates the full orchestration stream, including errors and finish reason, before application completion checks and persistence. Required reads and authorized actions precede the artifact. The configured Assistant deadline remains active through replacement validation, edit-intent verification, and Revision description generation. Once completion is committed, delivery cannot turn the request into a timeout or cancellation.
+
 ## Consequences
 
 The provider or SDK can change without rewriting application behavior. The adapter carries strict completion checks, and partial streamed text is presentation state rather than durable content. Continuation cannot leak between connections or models, and local artifact identity is never sent to a provider.

@@ -21,23 +21,12 @@ import { captureArtifactProgress } from "./assistant-artifact-progress.js";
 import type { AuthorSkillService } from "../skills/author-skill-service.js";
 import { AuthorSkillChatActions } from "../skills/author-skill-chat-actions.js";
 import type { CommittedAuthorSkillChange } from "../skills/committed-author-skill-change.js";
+import { AssistantArtifactExecution } from "./assistant-artifact-execution.js";
+import { getExactCharacterReplacement } from "./assistant-character-replacement.js";
 
 
 function isTransientReadFailure(error: unknown): boolean {
     return error instanceof ApplicationServiceError && error.code === APPLICATION_ERROR.EDITORIAL_PROVIDER_FAILED;
-}
-
-
-function getExactCharacterReplacement(request: PreparedAssistantRequest, source: string): string | undefined {
-    if (!request.editIntentAuthorized)
-        return undefined;
-
-    // ponytail: Handles explicit single-character substitutions; use structured parsing if longer literal edits need this path.
-    const match = /^(?:change|replace)\s+(\S)\s+(?:to|with)\s+(\S)$/iu.exec(request.authorMessage.trim());
-    const from = match?.[1];
-    const to = match?.[2];
-
-    return from && to && from !== to && source.includes(from) ? source.replaceAll(from, to) : undefined;
 }
 
 
@@ -70,8 +59,9 @@ export class AssistantCapabilityLoop {
             if (!verifier?.verifyReplacement)
                 return false;
 
-            return verifier.verifyReplacement(request.authorMessage, source, replacement, request.scope.kind, signal);
+            return await verifier.verifyReplacement(request.authorMessage, source, replacement, request.scope.kind, signal);
         } catch {
+            signal.throwIfAborted();
             return false;
         }
     }
@@ -83,8 +73,9 @@ export class AssistantCapabilityLoop {
             return false;
 
         try {
-            return verifier.verify(request.authorMessage, "apply_article_edit", { target: request.scope.kind }, signal);
+            return await verifier.verify(request.authorMessage, "apply_article_edit", { target: request.scope.kind }, signal);
         } catch {
+            signal.throwIfAborted();
             return false;
         }
     }
@@ -188,11 +179,16 @@ export class AssistantCapabilityLoop {
         const definitions = request.scope.kind === "selection"
             ? this.dependencies.capabilities.getDefinitions().filter((definition) => definition.execution === "artifact" && definition.selectionCompatible)
             : this.dependencies.capabilities.getDefinitions();
+        const artifact = new AssistantArtifactExecution();
         const tools: EditorialAssistantTool[] = definitions.map((definition) => ({
             capability: definition.id,
             description: definition.activity,
             input: definition.input,
-            execute: (input, signal) => this.executeCapability(request, excerpt, authorContext, definition, input, signal, primary, setPrimary, onProgress),
+            execution: definition.execution,
+            execute: (input, signal) => {
+                const run = () => this.executeCapability(request, excerpt, authorContext, definition, input, signal, primary, setPrimary, onProgress);
+                return definition.execution === "artifact" ? artifact.execute(definition.id, input, run) : run();
+            },
         }));
 
         tools.push({
@@ -312,6 +308,9 @@ export class AssistantCapabilityLoop {
         }
 
         signal.throwIfAborted();
+        if (!primary())
+            throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
+
         this.completeCapability(request, definition);
         return { status: "prepared" };
     }
