@@ -32,27 +32,35 @@ export function useAssistantStreamEvents({ articleId, workspace, store, onResult
     }, [articleId, setStreamedMessagesByArticle, streamBuffers]);
 
     const handleAssistantEvent = useCallback((event: AssistantEvent, id: string, revisionId: string, streamedId: string) => {
-        if (event.type === ASSISTANT_EVENT.ACCEPTED)
-            setActiveRequestIdByArticle((current) => ({ ...current, [id]: event.requestId }));
+        switch (event.type) {
+            case ASSISTANT_EVENT.ACCEPTED:
+                setActiveRequestIdByArticle((current) => ({ ...current, [id]: event.requestId }));
+                break;
+            case ASSISTANT_EVENT.CAPABILITY_ACTIVITY:
+                setActivityByArticle((current) => ({ ...current, [id]: event.activity }));
+                break;
+            case ASSISTANT_EVENT.TOOL_STATUS: {
+                if (!event.claims)
+                    break;
 
-        if (event.type === ASSISTANT_EVENT.CAPABILITY_ACTIVITY)
-            setActivityByArticle((current) => ({ ...current, [id]: event.activity }));
+                const { claims } = event;
+                setFactCheckClaimsByArticle((current) => ({ ...current, [id]: claims }));
+                setActivityByArticle((current) => ({ ...current, [id]: { summary: messages["assistant.checkingClaims"], status: "started" } }));
+                break;
+            }
+            case ASSISTANT_EVENT.COMPLETED: {
+                if (!event.result)
+                    break;
 
-        if (event.type === ASSISTANT_EVENT.TOOL_STATUS && event.claims) {
-            const { claims } = event;
-            setFactCheckClaimsByArticle((current) => ({ ...current, [id]: claims }));
-            setActivityByArticle((current) => ({ ...current, [id]: { summary: messages["assistant.checkingClaims"], status: "started" } }));
-        }
+                const result = event.result;
+                applyCompletedResult({ workspace, onResult }, id, revisionId, result, event.editorialArtifactId);
 
-        if (event.type === ASSISTANT_EVENT.COMPLETED && event.result) {
-            const result = event.result;
-            onResult(id, revisionId, result, event.editorialArtifactId);
-            if (result.metadataChanged || result.articleChanged)
-                void workspace.refreshArticle(id, Boolean(result.articleChanged)).catch(() => undefined);
+                if (result.factCheck) {
+                    const { factCheck } = result;
+                    setFactCheckClaimsByArticle((claims) => ({ ...claims, [id]: factCheck.findings.map(({ claim }) => ({ claim, checked: true })) }));
+                }
 
-            if (result.factCheck) {
-                const { factCheck } = result;
-                setFactCheckClaimsByArticle((claims) => ({ ...claims, [id]: factCheck.findings.map(({ claim }) => ({ claim, checked: true })) }));
+                break;
             }
         }
 
@@ -62,5 +70,13 @@ export function useAssistantStreamEvents({ articleId, workspace, store, onResult
         });
     }, [onResult, setActivityByArticle, setFactCheckClaimsByArticle, setActiveRequestIdByArticle, setStreamedMessagesByArticle, streamBuffers, workspace]);
 
+
     return { clearStream, handleAssistantEvent };
+}
+
+
+function applyCompletedResult({ workspace, onResult }: Pick<AssistantStreamEventsOptions, "workspace" | "onResult">, id: string, revisionId: string, result: AssistantEditorialResult, artifactId: string | undefined): void {
+    onResult(id, revisionId, result, artifactId);
+    if (result.metadataChanged || result.articleChanged)
+        void workspace.refreshArticle(id, Boolean(result.articleChanged)).catch(() => undefined);
 }

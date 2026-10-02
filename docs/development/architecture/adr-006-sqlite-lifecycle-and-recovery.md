@@ -2,32 +2,29 @@
 
 - Status: Accepted
 - Date: 2026-08-21
+- Updated: 2026-10-02
 - Scope: Local persistence, schema migration, backups, and recovery
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-005](adr-005-article-state-and-consistency.md), [ADR-009](adr-009-native-settings-credentials-and-data-switching.md)
 
 ## Context
 
-Skladno stores private author data locally and must upgrade it without a remote migration service. Schema changes, interrupted starts, and recovery must not rewrite Article history or expose credentials.
+Local private data must survive schema upgrades and interrupted recovery without rewriting Article history or exposing credentials.
 
 ## Decision
 
-SQLite is the local system of record. The service enables foreign keys and WAL mode. Schema changes are ordered, forward-only migrations recorded in `schema_migrations`; each unapplied migration runs in one immediate transaction.
+SQLite is the local system of record, with foreign keys and WAL enabled. Schema migrations are ordered and forward-only, recorded durably, and each unapplied migration runs in one immediate transaction. Supported schemas migrate without deleting the database; unsupported prototype databases are not detected or deleted automatically.
 
-The pre-Article prototype schema is no longer supported. Startup does not detect or delete prototype databases. Supported Article schemas migrate forward without deleting the database.
+Backups capture consistent database state and recoverable Author Skills and Skill history. Credentials and environment files are excluded. Automatic retention never deletes manual backups. Legacy database-only restore leaves destination Skill files unchanged.
 
-Backups include a consistent SQLite snapshot. New browser backup folders also contain current Author Skills, immutable Skill Revision history, and a manifest of file sizes and SHA-256 hashes; native snapshots use a manifest-bearing companion folder for those files. Environment files and credentials remain excluded. Automatic retention never deletes manual backups. Legacy database-only snapshots remain restorable without changing Skill files. Bundle restore verifies the manifest before replacing the active database and Skill directories, followed by application-level verification of Articles, Revisions, and Settings. The browser service retains a complete recovery copy of prior database and Skill files and uses a startup marker to roll back an interrupted switch.
+Validate backup integrity before replacing active data and verify application state afterward. Retain complete prior data for recovery and recover interrupted switches. Source backups and immutable Revisions remain unchanged.
 
-On POSIX, Skladno restricts its data directory and database files to the current user. Windows and browser-selected folder access use platform permissions. Native Windows Settings operations follow the restricted desktop boundary in ADR-009.
+Restrict data access to the current user where the platform supports it. Native restore authority and restart coordination follow [ADR-009](adr-009-native-settings-credentials-and-data-switching.md).
 
 ## Consequences
 
-Migrations stay small and auditable, and recovery does not require a second persistence format. Downgrade migrations, in-place restore, and upgrades from the pre-Article prototype are unsupported.
+Authors can recover through snapshots without a second persistence format. Downgrade migrations, replacing an open database, and upgrades from the pre-Article prototype are unsupported.
 
-## Verification
+## Verification and references
 
-Database and backup tests cover ordered transactional migrations, repository recovery, snapshot creation, retention, and permissions where the platform exposes them. The release recovery drill verifies a real snapshot without using private production data.
-
-## Skladno backup compatibility in Warplyn
-
-Warplyn retains `skladno.sqlite`, the existing schema migrations, native `.sqlite` snapshots, Skill companion manifest format `1`, and browser `.skladno` bundles. Product-name prefixes are not restore validation criteria. Snapshot validation opens a private temporary copy because read-only SQLite connections can create WAL sidecars beside the source. Restore never rewrites the source backup or immutable Revisions. Database-only snapshots leave destination Skill files unchanged.
+Test transactional migration, integrity validation, retention, interrupted-switch recovery, and supported permissions. [Local data compatibility and recovery](../reference/local-data-compatibility-and-recovery.md) owns formats and compatibility; the [release guide](../guides/mvp-release-and-recovery.md) owns disposable-profile recovery drills.
 

@@ -59,26 +59,27 @@ export function useFocusAreaNavigation(order: readonly string[]): { ref: RefObje
         if (!target || target.closest("dialog[open], [role=dialog], [role=menu], [role=listbox]"))
             return;
 
-        const current = target.closest<HTMLElement>("[data-focus-area]");
-        if (!current)
-            return;
-
-        const name = current.dataset.focusArea;
+        const name = target.closest<HTMLElement>("[data-focus-area]")?.dataset.focusArea;
         if (!name)
             return;
 
-        const areas = order.filter((areaName) => controlsFor(areaName).length > 0);
-        const index = areas.indexOf(name);
-        if (index < 0 || areas.length < 2)
-            return;
-
-        const next = areas[(index + (event.shiftKey ? areas.length - 1 : 1)) % areas.length];
-        const entry = next ? entryFor(next) : undefined;
+        const entry = nextAreaEntry(name, event.shiftKey);
         if (!entry)
             return;
 
         event.preventDefault();
         entry.focus();
+    }
+
+
+    function nextAreaEntry(name: string, backwards: boolean): HTMLElement | undefined {
+        const areas = order.filter((areaName) => controlsFor(areaName).length > 0);
+        const index = areas.indexOf(name);
+        if (index < 0 || areas.length < 2)
+            return undefined;
+
+        const next = areas[(index + (backwards ? areas.length - 1 : 1)) % areas.length];
+        return entryFor(next!);
     }
 
 

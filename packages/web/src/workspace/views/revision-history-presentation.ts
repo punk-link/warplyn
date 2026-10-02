@@ -20,19 +20,13 @@ export function getProvenanceMessageId(revision: Pick<ArticleRevision, "provenan
     if (revision.restoredFromRevisionId || revision.provenance.kind === REVISION_PROVENANCE_KIND.RESTORE)
         return "revisions.restored";
 
-    if (revision.provenance.kind === REVISION_PROVENANCE_KIND.INITIAL)
-        return "revisions.initial";
-
-    if (revision.provenance.kind === REVISION_PROVENANCE_KIND.AUTHOR_DRAFT)
-        return "revisions.author";
-
-    if (revision.provenance.kind === REVISION_PROVENANCE_KIND.ACCEPTED_PROPOSAL)
-        return "revisions.acceptedProposal";
-
-    if (revision.provenance.kind === REVISION_PROVENANCE_KIND.ASSISTANT_EDIT)
-        return "revisions.assistantEdit";
-
-    return "revisions.saved";
+    switch (revision.provenance.kind) {
+        case REVISION_PROVENANCE_KIND.INITIAL: return "revisions.initial";
+        case REVISION_PROVENANCE_KIND.AUTHOR_DRAFT: return "revisions.author";
+        case REVISION_PROVENANCE_KIND.ACCEPTED_PROPOSAL: return "revisions.acceptedProposal";
+        case REVISION_PROVENANCE_KIND.ASSISTANT_EDIT: return "revisions.assistantEdit";
+        default: return "revisions.saved";
+    }
 }
 
 

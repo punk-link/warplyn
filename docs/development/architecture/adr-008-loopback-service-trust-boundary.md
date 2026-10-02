@@ -2,35 +2,33 @@
 
 - Status: Accepted
 - Date: 2026-08-21
-- Updated: 2026-08-23
+- Updated: 2026-10-02
 - Scope: Browser, HTTP, Electron IPC, credentials, and privileged local access
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-009](adr-009-native-settings-credentials-and-data-switching.md)
 
 ## Context
 
-The browser renderer handles private Article content but cannot safely own API credentials, database handles, arbitrary filesystem access, or provider clients. Skladno also needs browser and Electron runtimes without two security models.
+The renderer handles private content but cannot safely own credentials, database handles, arbitrary filesystem access, or provider clients.
 
 ## Decision
 
-The local service listens on loopback by default and accepts browser requests only from the configured origin. It owns credentials, persistence, provider calls, web search, filesystem operations, and backup creation. The approved first-release provider destinations are `api.openai.com`, `opencode.ai`, `api.anthropic.com`, `generativelanguage.googleapis.com`, `api.x.ai`, and `api.deepseek.com`; each receives only the request for the explicitly selected connection. Sourced fact-check research runs only when the selected model has a supported research adapter.
+Keep the renderer an unprivileged client. The local service owns provider calls, research, persistence, credentials, and filesystem work. Browser HTTP listens on loopback by default and accepts only the configured origin. Electron composes the same application services without an HTTP listener and exposes finite, validated IPC through a sandboxed, context-isolated preload.
 
-The renderer uses the shared `EditorialWorkspaceClient`. The browser implementation adapts that client to HTTP. The Electron main process composes the same local application services without opening an HTTP listener, and its sandboxed, context-isolated preload exposes the allowlisted client through IPC. Neither renderer receives credential values, database or filesystem handles, raw server errors, or unrestricted IPC.
+Neither renderer receives credentials, privileged handles, raw server errors, or unrestricted IPC. Native Settings and telemetry use separate finite desktop clients with sender and request validation.
 
-The Electron window denies renderer-created windows and in-renderer navigation. It opens validated HTTP and HTTPS links in the system browser and rejects other schemes. Desktop close coordinates the active Draft checkpoint before cancelling streams and closing SQLite.
+Deny renderer-created windows and in-renderer navigation. Open only validated HTTP and HTTPS links in the system browser. Desktop close coordinates the active Draft checkpoint before cancelling streams and closing persistence.
 
-Browser directory handles used for author-selected backup destinations remain browser capabilities and do not grant general local-service filesystem access. Expanding hosts, origins, IPC operations, network destinations, persistence, permissions, or provider-side storage requires an explicit security review. Provider selection never transfers a credential to another provider, and model discovery sends credentials only to its selected provider's documented models endpoint.
+Author-selected browser directory handles grant only their browser capability. Native privileged paths remain controlled by Electron main under [ADR-009](adr-009-native-settings-credentials-and-data-switching.md).
 
-Windows-native Settings operations are exposed through their own finite, context-isolated desktop client; dialogs, Explorer reveal, credential storage, and native snapshots remain in Electron main as specified by ADR-009.
+Send credentials and minimum request context only to the explicitly selected provider. Model discovery uses that provider's documented endpoint; research requires a supported adapter. Approved destinations are defined in the [runtime privacy and network policy](../reference/runtime-privacy-and-network-policy.md).
 
-The packaged main process may expose finite telemetry consent and allowlisted event operations through a separate context-isolated desktop client. It validates the sender, request shape, and event schema, then rechecks consent in the main process; browser and development runtimes cannot fall back to remote telemetry.
-
-The loopback boundary limits network exposure but does not defend against another process already running as the same local user. Operating-system account security remains part of the trust model.
+Expanding hosts, origins, IPC, network destinations, persistence, permissions, or provider storage requires explicit security review. Loopback does not protect against another process running as the same OS user.
 
 ## Consequences
 
-Privileged behavior has one service-side implementation and two narrow transports. Browser development remains possible without making React a trusted process. Deployments that expose the service beyond loopback need authentication and a separate decision.
+Authors can use browser development and Electron without trusting React with local system authority. Exposing the service beyond loopback requires authentication and a separate decision.
 
-## Verification
+## Verification and references
 
-Configuration tests reject invalid hosts, origins, ports, and storage values. HTTP and Electron adapter tests validate request boundaries, allowlisted operations, renderer-safe errors, cancellation, and stream behavior.
+Test configuration and transport boundaries, sender validation, safe responses, allowlists, cancellation, and shutdown. Use the [runtime policy](../reference/runtime-privacy-and-network-policy.md) and [testing guide](../guides/testing.md).
 

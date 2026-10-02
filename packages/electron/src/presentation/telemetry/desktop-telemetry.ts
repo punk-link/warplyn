@@ -29,6 +29,11 @@ function request(value: unknown): { method: "getConsent" } | { method: "setConse
     if (candidate.method === "beginCapture" && Object.keys(candidate).every((key) => key === "method"))
         return { method: "beginCapture" };
 
+    return captureRequest(candidate);
+}
+
+
+function captureRequest(candidate: Record<string, unknown>): { method: "capture"; event: TelemetryEvent; generation?: number } | undefined {
     const generation = candidate.generation;
     if (candidate.method === "capture"
         && isTelemetryEvent(candidate.event)

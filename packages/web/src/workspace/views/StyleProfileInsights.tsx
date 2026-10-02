@@ -67,16 +67,7 @@ export function StyleProfileInsights({ data, actions }: { data: StyleProfileInsi
                 <dd>{formatDateTime(corpus.profile.updatedAt, intl.locale, generalSettings.dateFormat, generalSettings.timeFormat, generalSettings.timeZone)}</dd>
             </div>
             </dl>
-            <Button className="mt-2 inline-flex min-h-0 items-center px-0 py-1 text-xs" variant="quiet" aria-expanded={sourcesExpanded} aria-controls="style-profile-contributors" onClick={() => setSourcesExpanded((value) => !value)}>
-                <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                    <ChevronRightIcon className={`size-3 transition-transform motion-reduce:transition-none ${sourcesExpanded ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "styleProfile.showProfileSources" })}
-                </span>
-            </Button>
-            <div id="style-profile-contributors" aria-hidden={!sourcesExpanded} {...(!sourcesExpanded ? { inert: true } : {}) as Record<string, boolean>} className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${sourcesExpanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
-                <div className="overflow-hidden">
-                    <ul className="mt-1 space-y-1 border-l border-border pl-3 text-xs">{contributors.map((name) => <li className="break-words" key={name}>{name}</li>)}</ul>
-                </div>
-            </div>
+            <ProfileSourceDisclosure expanded={sourcesExpanded} toggle={() => setSourcesExpanded((value) => !value)} contributors={contributors} />
         </div>}
         <div className="space-y-4">{corpus?.profile?.traits.map((trait) => <div key={trait.id}>
             <h4 className="text-sm font-medium">{traitTitles[trait.id] ? intl.formatMessage({ id: traitTitles[trait.id] }) : trait.id}</h4>
@@ -99,4 +90,21 @@ export function StyleProfileInsights({ data, actions }: { data: StyleProfileInsi
         {findingsStale && <Banner className="mb-3" tone="warning" role="alert">{intl.formatMessage({ id: "styleProfile.staleReview" })}</Banner>}
         {findings?.findings.map((finding) => <div key={finding.divergence} className="mt-3 text-sm"><p>{finding.divergence}: {finding.suggestion}</p><p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.reviewEvidence" }, { sources: findingSupport(finding) })}</p></div>)}
     </section>;
+}
+
+
+function ProfileSourceDisclosure({ expanded, toggle, contributors }: { expanded: boolean; toggle: () => void; contributors: string[] }) {
+    const intl = useIntl();
+    return <>
+        <Button className="mt-2 inline-flex min-h-0 items-center px-0 py-1 text-xs" variant="quiet" aria-expanded={expanded} aria-controls="style-profile-contributors" onClick={toggle}>
+            <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                <ChevronRightIcon className={`size-3 transition-transform motion-reduce:transition-none ${expanded ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "styleProfile.showProfileSources" })}
+            </span>
+        </Button>
+        <div id="style-profile-contributors" aria-hidden={!expanded} {...(!expanded ? { inert: true } : {}) as Record<string, boolean>} className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
+            <div className="overflow-hidden">
+                <ul className="mt-1 space-y-1 border-l border-border pl-3 text-xs">{contributors.map((name) => <li className="break-words" key={name}>{name}</li>)}</ul>
+            </div>
+        </div>
+    </>;
 }

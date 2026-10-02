@@ -1,4 +1,4 @@
-type DiagnosticEvent = "service.started" | "service.start_failed" | "service.shutdown_failed" | "request.failed" | "backup.failed";
+type DiagnosticEvent = "service.started" | "service.start_failed" | "service.shutdown_failed" | "request.failed" | "backup.failed" | "ai.stage_finished" | "ai.stage_failed";
 
 type DiagnosticWriter = (line: string) => void;
 

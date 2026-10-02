@@ -49,11 +49,9 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
             const badge = badges[item.id];
             const label = intl.formatMessage({ id: item.label });
             const accessibleName = badge ? `${label}: ${badge.accessibleLabel}` : label;
-            const badgeClassName = badge?.tone === "error"
-                ? "border-danger bg-danger-soft text-danger"
-                : badge?.tone === "warning"
-                    ? "border-warning bg-warning-soft text-warning"
-                    : "border-border-strong bg-surface text-ink";
+            const badgeClasses = { error: "border-danger bg-danger-soft text-danger", warning: "border-warning bg-warning-soft text-warning", default: "border-border-strong bg-surface text-ink" };
+            const dotClasses = { warning: "bg-warning", error: "bg-danger", default: "bg-brand" };
+            const badgeClassName = badgeClasses[badge?.tone ?? "default"];
 
             return <Tab key={item.id}
                 id={`workspace-tab-${item.id}`}
@@ -66,7 +64,7 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
                 onClick={() => setView(item.id)}
                 onKeyDown={(event) => handleKeyDown(event, index)}>
                 {label}
-                {badge && <span aria-hidden="true" className={badge.display === "dot" ? `ml-1.5 inline-block size-2 rounded-full ${badge.tone === "warning" ? "bg-warning" : badge.tone === "error" ? "bg-danger" : "bg-brand"}` : `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`}>
+                {badge && <span aria-hidden="true" className={badge.display === "dot" ? `ml-1.5 inline-block size-2 rounded-full ${dotClasses[badge.tone]}` : `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`}>
                     {badge.display === "dot" ? undefined : badge.label}
                 </span>}
             </Tab>;

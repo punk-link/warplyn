@@ -58,6 +58,22 @@ export function applyAuthorSkillRestore({ dataDirectory, snapshotPath }: { dataD
             throw new Error("author_skill_restore_conflict");
     }
 
+    stageAuthorSkillRestore(dataDirectory, source);
+    writeFileSync(join(dataDirectory, restoreMarker), "", { flag: "wx" });
+    for (const directory of authorSkillDirectories) {
+        const active = join(dataDirectory, directory);
+        const previous = `${active}.before-restore`;
+        const staged = `${active}.restore`;
+        if (existsSync(active))
+            renameSync(active, previous);
+
+        if (existsSync(staged))
+            renameSync(staged, active);
+    }
+}
+
+
+function stageAuthorSkillRestore(dataDirectory: string, source: string): void {
     try {
         for (const directory of authorSkillDirectories) {
             const saved = join(source, directory);
@@ -69,18 +85,6 @@ export function applyAuthorSkillRestore({ dataDirectory, snapshotPath }: { dataD
             rmSync(join(dataDirectory, `${directory}.restore`), { recursive: true, force: true });
 
         throw error;
-    }
-
-    writeFileSync(join(dataDirectory, restoreMarker), "", { flag: "wx" });
-    for (const directory of authorSkillDirectories) {
-        const active = join(dataDirectory, directory);
-        const previous = `${active}.before-restore`;
-        const staged = `${active}.restore`;
-        if (existsSync(active))
-            renameSync(active, previous);
-
-        if (existsSync(staged))
-            renameSync(staged, active);
     }
 }
 

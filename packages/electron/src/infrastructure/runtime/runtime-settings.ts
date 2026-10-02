@@ -32,20 +32,27 @@ export function readRuntimeSettings(path: string): RuntimeSettings {
         const record = value as Record<string, unknown>;
         return {
             ...(typeof record.backupDirectory === "string" && record.backupDirectory ? { backupDirectory: record.backupDirectory } : {}),
-            ...(typeof record.updateNetworkAccess === "boolean" ? { updateNetworkAccess: record.updateNetworkAccess } : {}),
-            ...(typeof record.automaticUpdateChecks === "boolean" ? { automaticUpdateChecks: record.automaticUpdateChecks } : {}),
-            ...(typeof record.includePrereleaseUpdates === "boolean" ? { includePrereleaseUpdates: record.includePrereleaseUpdates } : {}),
-            ...(typeof record.lastUpdateCheckAt === "string" ? { lastUpdateCheckAt: record.lastUpdateCheckAt } : {}),
-            ...(typeof record.stagedUpdateVersion === "string" ? { stagedUpdateVersion: record.stagedUpdateVersion } : {}),
-            ...(typeof record.priorVersion === "string" ? { priorVersion: record.priorVersion } : {}),
-            ...(typeof record.recoverySnapshotPath === "string" ? { recoverySnapshotPath: record.recoverySnapshotPath } : {}),
-            ...(typeof record.startupSuccess === "boolean" ? { startupSuccess: record.startupSuccess } : {}),
+            ...parseUpdateSettings(record),
             ...(parsePendingRestore(record.pendingRestore) ? { pendingRestore: parsePendingRestore(record.pendingRestore) } : {}),
             ...(parseTelemetrySettings(record.telemetry) ? { telemetry: parseTelemetrySettings(record.telemetry) } : {}),
         };
     } catch {
         return {};
     }
+}
+
+
+function parseUpdateSettings(record: Record<string, unknown>): RuntimeSettings {
+    return {
+        ...(typeof record.updateNetworkAccess === "boolean" ? { updateNetworkAccess: record.updateNetworkAccess } : {}),
+        ...(typeof record.automaticUpdateChecks === "boolean" ? { automaticUpdateChecks: record.automaticUpdateChecks } : {}),
+        ...(typeof record.includePrereleaseUpdates === "boolean" ? { includePrereleaseUpdates: record.includePrereleaseUpdates } : {}),
+        ...(typeof record.lastUpdateCheckAt === "string" ? { lastUpdateCheckAt: record.lastUpdateCheckAt } : {}),
+        ...(typeof record.stagedUpdateVersion === "string" ? { stagedUpdateVersion: record.stagedUpdateVersion } : {}),
+        ...(typeof record.priorVersion === "string" ? { priorVersion: record.priorVersion } : {}),
+        ...(typeof record.recoverySnapshotPath === "string" ? { recoverySnapshotPath: record.recoverySnapshotPath } : {}),
+        ...(typeof record.startupSuccess === "boolean" ? { startupSuccess: record.startupSuccess } : {}),
+    };
 }
 
 

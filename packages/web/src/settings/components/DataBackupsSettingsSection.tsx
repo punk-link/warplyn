@@ -66,28 +66,34 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                 }
             </SettingRow>
         </SettingsGroup>
-        <SettingsGroup label={intl.formatMessage({ id: "settings.backupAutomation" })}>
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.automaticBackups" })} hint={intl.formatMessage({ id: "settings.automaticBackupsHint" })}>
-                <button type="button" role="switch" aria-checked={backupPolicy.schedule === "daily"} aria-label={intl.formatMessage({ id: "settings.automaticBackups" })} className="group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" onClick={() => void save({ ...backupPolicy, schedule: backupPolicy.schedule === "daily" ? "off" : "daily" })}>
-                    <span aria-hidden="true" className={`relative inline-flex h-5 w-9 items-center rounded-full border p-0.5 transition-colors group-hover:border-brand ${backupPolicy.schedule === "daily" ? "border-brand bg-brand" : "border-border-strong bg-surface-raised"}`}>
-                        <span className={`size-4 rounded-full border border-border-strong bg-surface transition-transform ${backupPolicy.schedule === "daily" ? "translate-x-4" : "translate-x-0"}`} />
-                    </span>
-                    <span>{intl.formatMessage({ id: backupPolicy.schedule === "daily" ? "settings.daily" : "settings.off" })}</span>
-                </button>
-            </SettingRow>
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.retention" })} hint={intl.formatMessage({ id: "settings.retentionHint" })}>
-                <Select value={backupPolicy.retention.mode === "unlimited" ? "unlimited" : String(backupPolicy.retention.count)} onChange={(event) => void save({ ...backupPolicy, retention: event.target.value === "unlimited" ? { mode: "unlimited" } : { mode: "count", count: Number(event.target.value) } })}>
-                    <option value="7">{intl.formatMessage({ id: "settings.keepBackups" }, { count: 7 })}</option>
-                    <option value="30">{intl.formatMessage({ id: "settings.keepBackups" }, { count: 30 })}</option>
-                    <option value="90">{intl.formatMessage({ id: "settings.keepBackups" }, { count: 90 })}</option>
-                    <option value="unlimited">{intl.formatMessage({ id: "settings.keepAllBackups" })}</option>
-                </Select>
-            </SettingRow>
-        </SettingsGroup>
+        <BackupAutomationSettings backupPolicy={backupPolicy} save={save} />
         {desktop && <SettingsGroup label={intl.formatMessage({ id: "settings.deleteData" })}>
             <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.deleteLocalData" })} hint={intl.formatMessage({ id: "settings.deleteLocalDataHint" })} status={deleteStatus}>
                 <Button variant="danger" onClick={() => void desktop.deleteLocalData().catch(() => setDeleteStatus(intl.formatMessage({ id: "settings.deleteLocalDataFailed" })))}>{intl.formatMessage({ id: "settings.deleteLocalData" })}</Button>
             </SettingRow>
         </SettingsGroup>}
     </>;
+}
+
+
+function BackupAutomationSettings({ backupPolicy, save }: { backupPolicy: BackupPolicy; save: (next: BackupPolicy) => Promise<void> }) {
+    const intl = useIntl();
+    return <SettingsGroup label={intl.formatMessage({ id: "settings.backupAutomation" })}>
+        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.automaticBackups" })} hint={intl.formatMessage({ id: "settings.automaticBackupsHint" })}>
+            <button type="button" role="switch" aria-checked={backupPolicy.schedule === "daily"} aria-label={intl.formatMessage({ id: "settings.automaticBackups" })} className="group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" onClick={() => void save({ ...backupPolicy, schedule: backupPolicy.schedule === "daily" ? "off" : "daily" })}>
+                <span aria-hidden="true" className={`relative inline-flex h-5 w-9 items-center rounded-full border p-0.5 transition-colors group-hover:border-brand ${backupPolicy.schedule === "daily" ? "border-brand bg-brand" : "border-border-strong bg-surface-raised"}`}>
+                    <span className={`size-4 rounded-full border border-border-strong bg-surface transition-transform ${backupPolicy.schedule === "daily" ? "translate-x-4" : "translate-x-0"}`} />
+                </span>
+                <span>{intl.formatMessage({ id: backupPolicy.schedule === "daily" ? "settings.daily" : "settings.off" })}</span>
+            </button>
+        </SettingRow>
+        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.retention" })} hint={intl.formatMessage({ id: "settings.retentionHint" })}>
+            <Select value={backupPolicy.retention.mode === "unlimited" ? "unlimited" : String(backupPolicy.retention.count)} onChange={(event) => void save({ ...backupPolicy, retention: event.target.value === "unlimited" ? { mode: "unlimited" } : { mode: "count", count: Number(event.target.value) } })}>
+                <option value="7">{intl.formatMessage({ id: "settings.keepBackups" }, { count: 7 })}</option>
+                <option value="30">{intl.formatMessage({ id: "settings.keepBackups" }, { count: 30 })}</option>
+                <option value="90">{intl.formatMessage({ id: "settings.keepBackups" }, { count: 90 })}</option>
+                <option value="unlimited">{intl.formatMessage({ id: "settings.keepAllBackups" })}</option>
+            </Select>
+        </SettingRow>
+    </SettingsGroup>;
 }

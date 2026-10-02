@@ -1,7 +1,6 @@
-import { APPLICATION_ERROR, HTTP_STATUS } from "@skladno/shared";
+import { APPLICATION_ERROR, ASSISTANT_EVENT, HTTP_STATUS, type AssistantEvent } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
-import type { EditorialEngineEvent } from "../../editorial/engine/editorial-engine-event.js";
 import { normalizeGeneralSettings } from "../../settings/application-settings-normalizers.js";
 import type { SettingsStore } from "../../settings/settings-store.js";
 
@@ -13,10 +12,10 @@ export function getAssistantRequestTimeoutMs(settings: SettingsStore): number | 
 
 
 export async function* streamWithAssistantDeadline(
-    stream: (signal: AbortSignal) => AsyncIterable<EditorialEngineEvent>,
+    stream: (signal: AbortSignal) => AsyncIterable<AssistantEvent>,
     signal: AbortSignal,
     timeoutMs: number | undefined,
-): AsyncIterable<EditorialEngineEvent> {
+): AsyncIterable<AssistantEvent> {
     const deadline = new AbortController();
     const combined = AbortSignal.any([signal, deadline.signal]);
     const timer = timeoutMs === undefined
@@ -37,11 +36,19 @@ export async function* streamWithAssistantDeadline(
             if (next.done)
                 return;
 
+            if (next.value.type === ASSISTANT_EVENT.COMPLETED) {
+                clearTimeout(timer);
+
+                combined.removeEventListener("abort", onAbort);
+                yield next.value;
+
+                return;
+            }
+
             yield next.value;
         }
     } finally {
-        if (timer)
-            clearTimeout(timer);
+        clearTimeout(timer);
 
         combined.removeEventListener("abort", onAbort);
         // Do not wait for a provider that ignores cancellation to close its iterator.

@@ -97,11 +97,7 @@ function prepareEditorialStream(articles: EditorialArticleStore, sessions: Edito
         throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
 
     const continuationScope = engine.continuationScope;
-    const session = !factCheck && !translation && sessionContinuationEnabled ? sessions.getEditorialSession(request.articleId) : undefined;
-    const previousResponseId = getMatchingContinuationToken(session, continuationScope);
-
-    if (!sessionContinuationEnabled || (session && !previousResponseId))
-        sessions.removeEditorialSession(request.articleId);
+    const previousResponseId = prepareContinuation(sessions, request.articleId, !factCheck && !translation, sessionContinuationEnabled, continuationScope);
 
     return {
         article,
@@ -109,11 +105,20 @@ function prepareEditorialStream(articles: EditorialArticleStore, sessions: Edito
         factCheck,
         translation,
         ...correction,
-        ...(styleProfile ? { styleProfile } : {}),
-        ...(styleProfile ? { articleStyleRules: styleCorpus.getArticleStyleRules(request.articleId) } : {}),
+        ...(styleProfile ? { styleProfile, articleStyleRules: styleCorpus.getArticleStyleRules(request.articleId) } : {}),
         ...(continuationScope ? { continuationScope } : {}),
         ...(previousResponseId ? { previousResponseId } : {}),
     };
+}
+
+
+function prepareContinuation(sessions: EditorialSessionStore, articleId: string, eligible: boolean, enabled: boolean, scope: EditorialStreamContext["continuationScope"]): string | undefined {
+    const session = eligible && enabled ? sessions.getEditorialSession(articleId) : undefined;
+    const token = getMatchingContinuationToken(session, scope);
+    if (!enabled || (session && !token))
+        sessions.removeEditorialSession(articleId);
+
+    return token;
 }
 
 
@@ -158,18 +163,33 @@ function createEngineRequest(request: EditorialServiceRequest, context: Editoria
         operation: request.operation,
         article: request.articleContent ?? context.article.currentRevision.content,
         articleTitle: context.article.title,
-        ...(request.articleSelection ? { articleSelection: true } : {}),
-        ...(request.surroundingArticleCharacterCount !== undefined ? { surroundingArticleCharacterCount: request.surroundingArticleCharacterCount } : {}),
+        ...selectionContext(request),
         authorContext: context.correctionContext ?? request.authorContext,
         ...(request.skillId ? { skillId: request.skillId } : {}),
         ...(request.targetArticleCharacterLimit ? { targetArticleCharacterLimit: request.targetArticleCharacterLimit } : {}),
-        ...(context.styleProfile ? { styleProfile: context.styleProfile } : {}),
-        ...(context.styleProfile ? { articleStyleRules: context.articleStyleRules } : {}),
+        ...(context.styleProfile ? { styleProfile: context.styleProfile, articleStyleRules: context.articleStyleRules } : {}),
         ...(request.targetLanguage ? { targetLanguage: request.targetLanguage } : {}),
         ...(context.previousResponseId ? { previousResponseId: context.previousResponseId } : {}),
-        ...(context.factCheck ? { reusableFactFindings: getReusableFactFindings(factChecks, request.articleId) } : {}),
-        ...(context.factCheck ? { skipFactCheckClaim: request.skipFactCheckClaim } : {}),
+        ...(context.factCheck ? { reusableFactFindings: getReusableFactFindings(factChecks, request.articleId), skipFactCheckClaim: request.skipFactCheckClaim } : {}),
     };
+}
+
+
+function selectionContext(request: EditorialServiceRequest) {
+    return {
+        ...(request.articleSelection ? { articleSelection: true } : {}),
+        ...(request.surroundingArticleCharacterCount !== undefined ? { surroundingArticleCharacterCount: request.surroundingArticleCharacterCount } : {}),
+    };
+}
+
+
+function captureOperationOutcome(observed: ReturnType<typeof beginTimedTelemetryCapture>, operation: EditorialOperation, aborted: boolean, failed = false): void {
+    if (aborted) {
+        observed.capture({ kind: "ai_operation_finished", operation, outcome: "cancelled", elapsedMs: observed.elapsedMs(), failure: "cancelled" });
+        return;
+    }
+
+    observed.capture({ kind: "ai_operation_finished", operation, outcome: failed ? "failed" : "completed", elapsedMs: observed.elapsedMs(), ...(failed ? { failure: "unknown" as const } : {}) });
 }
 
 
@@ -267,12 +287,12 @@ export class EditorialService {
                     yield event;
             }
 
-            observed.capture({ kind: "ai_operation_finished", operation: request.operation, outcome: signal.aborted ? "cancelled" : "completed", elapsedMs: observed.elapsedMs(), ...(signal.aborted ? { failure: "cancelled" as const } : {}) });
+            captureOperationOutcome(observed, request.operation, signal.aborted);
         } catch (error) {
             if (error instanceof EditorialEngineError && error.code === EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED)
                 this.stores.sessions.removeEditorialSession(request.articleId);
 
-            observed.capture({ kind: "ai_operation_finished", operation: request.operation, outcome: signal.aborted ? "cancelled" : "failed", elapsedMs: observed.elapsedMs(), failure: signal.aborted ? "cancelled" : "unknown" });
+            captureOperationOutcome(observed, request.operation, signal.aborted, true);
             throw error;
         }
     }

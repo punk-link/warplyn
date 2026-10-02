@@ -124,7 +124,7 @@ interface ModelSelectProps { value: string; models: AvailableAiModel[]; favorite
 function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false, disabled, label, "aria-describedby": describedBy, onChange, onFavoritesChange }: ModelSelectProps) {
     const intl = useIntl();
     const [query, setQuery] = useState(""); const [vendor, setVendor] = useState<ModelVendor | "favorites">(AI_PROVIDER.OPENAI); const [open, setOpen] = useState(false); const [opensUpward, setOpensUpward] = useState(false);
-    const select = useRef<HTMLDetailsElement>(null); const search = useRef<HTMLInputElement>(null); const selectedModel = models.find((model) => model.id === value || model.model === value); const selectedLabel = selectedModel ? getModelLabel(selectedModel.model) : placeholder;
+    const select = useRef<HTMLDetailsElement>(null); const search = useRef<HTMLInputElement>(null); const selectedModel = models.find((model) => model.id === value || model.model === value); const selectedLabel = getSelectedModelLabel(selectedModel, placeholder);
     const vendorTabs: ModelVendor[] = [AI_PROVIDER.OPENAI, AI_PROVIDER.ANTHROPIC, AI_PROVIDER.GOOGLE, AI_PROVIDER.XAI, AI_PROVIDER.DEEPSEEK, "other"]; const availableVendors = vendorTabs.filter((item) => models.some((model) => getModelVendor(model.provider) === item)); const sourceVendor = selectedModel ? getModelVendor(selectedModel.provider) : availableVendors[0] ?? AI_PROVIDER.OPENAI; const tabs: (ModelVendor | "favorites")[] = ["favorites", ...availableVendors]; const normalizedQuery = query.toLocaleLowerCase();
     const visibleModels = models.filter((model) => {
         const matchesVendor = vendor === "favorites" ? favorites.includes(model.id) || favorites.includes(model.model) : getModelVendor(model.provider) === vendor; return getModelLabel(model.model).toLocaleLowerCase().includes(normalizedQuery) && (normalizedQuery.length > 0 || (vendor === AI_PROVIDER.OPENAI && !selectedModel) || matchesVendor);
@@ -195,6 +195,11 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
             </div>
         </div>
     </details>;
+}
+
+
+function getSelectedModelLabel(model: ModelSelectProps["models"][number] | undefined, placeholder: string): string {
+    return model ? getModelLabel(model.model) : placeholder;
 }
 
 

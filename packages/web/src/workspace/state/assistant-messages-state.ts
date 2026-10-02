@@ -5,7 +5,7 @@ import type { EditorialWorkspaceClient } from "../../application/client.js";
 import type { ArticleWorkspaceState } from "./article-workspace-state.js";
 import { type AssistantSelectionScope } from "./assistant-selection.js";
 import { useAssistantMessageHistory } from "./assistant-message-history-state.js";
-import { useAssistantRequestActions, useAssistantRequestStore } from "./assistant-request-state.js";
+import { clearAssistantRequestFeedback, useAssistantRequestActions, useAssistantRequestStore } from "./assistant-request-state.js";
 import { useAssistantStreamEvents } from "./assistant-stream-events-state.js";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { useAssistantEdits } from "./assistant-edit-state.js";
@@ -58,6 +58,7 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
             const result = await client.restoreAssistantCheckpoint(article.id, checkpointPreview.messageId, { tailToken: checkpointPreview.tailToken, ...(draftMode ? { draftMode } : {}) });
             store.setMessagesByArticle((current) => ({ ...current, [article.id]: result.messages }));
             clearStream(article.id);
+            clearAssistantRequestFeedback(store, article.id);
             store.setStateByArticle((current) => ({ ...current, [article.id]: "idle" }));
 
             workspace.applyPersistedArticle(result.article);
@@ -72,20 +73,30 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
     }, [article, checkpointPreview, clearStream, client, intl, notifyError, store, workspace]);
 
     return {
-        messages: article ? store.messagesByArticle[article.id] : undefined,
-        state: article ? store.stateByArticle[article.id] ?? "idle" : "idle",
-        message: article ? store.messageByArticle[article.id] ?? "" : "",
-        errorDetails: article ? store.errorDetailsByArticle[article.id] : undefined,
-        hasUnavailableAiConnection: article ? store.aiConnectionUnavailableByArticle[article.id] ?? false : false,
-        activity: article ? store.activityByArticle[article.id] : undefined,
-        streamedMessage: article ? store.streamedMessagesByArticle[article.id] : undefined,
-        factCheckClaims: article ? store.factCheckClaimsByArticle[article.id] : undefined,
-        activeRequestId: article ? store.activeRequestIdByArticle[article.id] : undefined,
+        ...selectedMessageState(store, article?.id),
         setClaimSelected,
         request, retry, checkpointPreview, previewCheckpoint, restoreCheckpoint, closeCheckpoint: () => setCheckpointPreview(undefined), restoredComposer,
         ...edits,
         reload,
         cancel: () => store.controller.current?.abort(),
+    };
+}
+
+
+function selectedMessageState(store: ReturnType<typeof useAssistantRequestStore>, articleId: string | undefined) {
+    if (!articleId)
+        return { messages: undefined, state: "idle" as const, message: "", errorDetails: undefined, hasUnavailableAiConnection: false, activity: undefined, streamedMessage: undefined, factCheckClaims: undefined, activeRequestId: undefined };
+
+    return {
+        messages: store.messagesByArticle[articleId],
+        state: store.stateByArticle[articleId] ?? "idle",
+        message: store.messageByArticle[articleId] ?? "",
+        errorDetails: store.errorDetailsByArticle[articleId],
+        hasUnavailableAiConnection: store.aiConnectionUnavailableByArticle[articleId] ?? false,
+        activity: store.activityByArticle[articleId],
+        streamedMessage: store.streamedMessagesByArticle[articleId],
+        factCheckClaims: store.factCheckClaimsByArticle[articleId],
+        activeRequestId: store.activeRequestIdByArticle[articleId],
     };
 }
 

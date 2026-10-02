@@ -1,4 +1,4 @@
-import { isStepCount, ToolLoopAgent, type LanguageModel, type ToolSet } from "ai";
+import { isStepCount, ToolLoopAgent, type LanguageModel, type TextStreamPart, type ToolSet } from "ai";
 import { randomUUID } from "node:crypto";
 import type { AiProvider, ReasoningEffort } from "@skladno/shared";
 
@@ -8,7 +8,7 @@ import { EDITORIAL_ENGINE_ERROR } from "../../../application/editorial/engine/ed
 import { EDITORIAL_ENGINE_EVENT } from "../../../application/editorial/engine/editorial-engine-events.js";
 import { EditorialEngineError } from "../../../application/editorial/engine/editorial-engine-error.js";
 import { createAssistantConversationPrompt, getAssistantStepOptions, createAssistantTools } from "./ai-sdk-assistant.js";
-import { getContinuationToken, getEditorialProviderOptions, isAcceptedFinish } from "./ai-sdk-provider.js";
+import { createAiSdkGenerationOptions, getContinuationToken, getEditorialProviderOptions, isAcceptedFinish, createProviderError } from "./ai-sdk-provider.js";
 
 
 interface AiSdkAssistantExecutorOptions {
@@ -23,6 +23,7 @@ interface AssistantExecutionState {
     skillCapabilities: readonly string[];
     activeCapabilities?: readonly string[];
     failure?: { error: unknown };
+    completedArtifact?: string;
 }
 
 
@@ -31,6 +32,7 @@ export function createAssistantInstructions(request: Pick<EditorialAssistantRequ
         "You are Warplyn's editorial assistant. Use only the supplied tools when an editorial result is needed.",
         `Write service messages, including status updates, confirmations, errors, and summaries of tool or Skill work, in the Interface locale ${request.interfaceLocale ?? "en"}. For ordinary conversational answers that do not use or affect tools or Skills, answer in the language of the Author's question.`,
         "Never claim that a tool ran when it did not. Preserve author control. Finish with a concise response after the necessary work.",
+        "Perform necessary reads and explicitly authorized actions before producing the request's single artifact. A completed artifact ends the run; Warplyn supplies its result card without a closing model reply.",
         "When an Author request matches an available Skill, load that Skill before choosing capabilities.",
         "To reject a prepared translation, call inspect_translations first, use its artifactId with reject_translation, and never use inspect_linked_articles; that tool is only for created linked Articles.",
         `Available Skills:\n${request.skills.map((skill) => `${skill.id}: ${skill.name}. ${skill.description}`).join("\n")}`,
@@ -50,27 +52,43 @@ export class AiSdkAssistantExecutor {
             state.skillCapabilities = [...new Set([...state.skillCapabilities, ...capabilities])];
             state.activeCapabilities = [...new Set([...(state.activeCapabilities ?? []), ...capabilities])];
         };
-        const agent = this.createAgent(request, createAssistantTools(request, execute, loadSkill), state);
+        const agent = this.createAgent(request, createAssistantTools(request, execute, loadSkill), state, signal);
         const result = await agent.stream({ prompt: createAssistantConversationPrompt(request), abortSignal: signal });
-        let text = "";
-        for await (const delta of result.textStream) {
-            if (state.failure)
-                continue;
-
-            text += delta;
-            yield { type: EDITORIAL_ENGINE_EVENT.TEXT_DELTA, delta };
-        }
-
+        const text = yield* this.consumeModelStream(result.stream, state);
+        signal.throwIfAborted();
         const steps = await result.steps;
         const finalStep = await result.finalStep;
-        if (state.failure)
-            throw state.failure.error;
+        const exhausted = !state.completedArtifact && steps.length >= 6 && finalStep.finishReason === "tool-calls";
+        if (exhausted || !isAcceptedFinish(finalStep.finishReason))
+            throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
 
-        if (!text.trim() || signal.aborted || !isAcceptedFinish(finalStep.finishReason) || (steps.length >= 6 && finalStep.finishReason === "tool-calls"))
+        if (!text.trim() && !state.completedArtifact)
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
 
         const token = getContinuationToken({ provider: this.options.provider, storeResponses: this.options.storeResponses, metadata: finalStep.providerMetadata });
         yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: randomUUID(), ...(token ? { continuationToken: token } : {}), text };
+    }
+
+
+    private async *consumeModelStream(stream: AsyncIterable<TextStreamPart<ToolSet>>, state: AssistantExecutionState): AsyncGenerator<EditorialEngineEvent, string> {
+        let text = "";
+        for await (const part of stream) {
+            if (part.type === "error")
+                state.failure ??= { error: createProviderError(part.error, false) };
+
+            if (part.type === "tool-error")
+                state.failure ??= { error: new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT) };
+
+            if (part.type === "text-delta" && !state.failure) {
+                text += part.text;
+                yield { type: EDITORIAL_ENGINE_EVENT.TEXT_DELTA, delta: part.text };
+            }
+        }
+
+        if (state.failure)
+            throw state.failure.error;
+
+        return text;
     }
 
 
@@ -95,23 +113,24 @@ export class AiSdkAssistantExecutor {
             state.activeCapabilities = [...new Set([...state.skillCapabilities, ...discovered])];
         }
 
+        if (candidate.execution === "artifact")
+            state.completedArtifact = capability;
+
         return result;
     }
 
 
-    private createAgent(request: EditorialAssistantRequest, tools: ToolSet, state: AssistantExecutionState) {
+    private createAgent(request: EditorialAssistantRequest, tools: ToolSet, state: AssistantExecutionState, signal: AbortSignal) {
         const getActiveTools = () => state.activeCapabilities ? [...state.activeCapabilities, "load_skill"] : ["find_capabilities", "load_skill"];
         const providerOptions = getEditorialProviderOptions(this.options);
 
         return new ToolLoopAgent<never, ToolSet>({
-            model: this.options.languageModel,
+            ...createAiSdkGenerationOptions({ model: this.options.languageModel, signal, providerOptions, stage: "assistant_step" }),
             instructions: createAssistantInstructions(request),
             tools,
             activeTools: getActiveTools(),
             prepareStep: ({ stepNumber }) => getAssistantStepOptions(stepNumber, state.activeCapabilities),
-            stopWhen: [isStepCount(6), () => Boolean(state.failure)],
-            telemetry: { isEnabled: false },
-            ...(providerOptions ? { providerOptions } : {}),
+            stopWhen: [isStepCount(6), () => Boolean(state.failure || state.completedArtifact)],
         });
     }
 }

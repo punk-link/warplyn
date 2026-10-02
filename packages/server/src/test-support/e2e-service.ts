@@ -43,21 +43,27 @@ class E2eFixtureEngine implements EditorialEngine {
         else if (capabilities?.includes("generate_proposal") || request.message.startsWith("E2E edit") || request.message === "Change ё to е")
             capability = "generate_proposal";
 
-        if (capability) {
-            const tool = request.tools.find((candidate) => candidate.capability === capability);
-            if (!tool)
-                throw new Error(`E2E fixture expected ${capability} capability`);
-
-            const input: Record<string, string> = {};
-            if (capability === "generate_proposal")
-                input.operation = EDITORIAL_OPERATION.FLOW_REVISION;
-            else if (capability === "translate")
-                input.targetLanguage = "Spanish";
-
-            await tool.execute(input, signal);
-        }
+        await this.executeCapability(request, capability, signal);
 
         yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "e2e-assistant", text: "Fixture Assistant completed." };
+    }
+
+
+    private async executeCapability(request: EditorialAssistantRequest, capability: "fact_check" | "translate" | "generate_proposal" | undefined, signal: AbortSignal): Promise<void> {
+        if (!capability)
+            return;
+
+        const tool = request.tools.find((candidate) => candidate.capability === capability);
+        if (!tool)
+            throw new Error(`E2E fixture expected ${capability} capability`);
+
+        const input: Record<string, string> = {};
+        if (capability === "generate_proposal")
+            input.operation = EDITORIAL_OPERATION.FLOW_REVISION;
+        else if (capability === "translate")
+            input.targetLanguage = "Spanish";
+
+        await tool.execute(input, signal);
     }
 
 
@@ -77,46 +83,7 @@ class E2eFixtureEngine implements EditorialEngine {
         }
 
         if (request.operation === EDITORIAL_OPERATION.FACT_CHECK) {
-            yield {
-                type: EDITORIAL_ENGINE_EVENT.TOOL_STATUS,
-                tool: "claim_extraction", status: "started"
-            };
-            if (request.authorContext === "inspect pending claims" || request.authorContext === "restore pending claims") {
-                yield* streamSelectableFixtureClaims(request, signal);
-                return;
-            }
-
-            yield {
-                type: EDITORIAL_ENGINE_EVENT.TOOL_STATUS,
-                tool: "claim_extraction",
-                status: "completed",
-                claims: [{
-                    claim: "The fixture claim is supported.",
-                    checked: false
-                }]
-            };
-            yield {
-                type: EDITORIAL_ENGINE_EVENT.COMPLETED,
-                responseId: "e2e-fact-check",
-                text: "",
-                factCheck: {
-                    reviewedRevisionId: "",
-                    createdAt: "2026-01-01T00:00:00.000Z",
-                    findings: [{
-                        claim: "The fixture claim is supported.",
-                        status: FACT_CHECK_STATUS.SUPPORTED,
-                        rationale: "Deterministic fixture evidence.",
-                        uncertainty: "low",
-                        sources: [{
-                            url: "https://example.test/source",
-                            title: "Fixture source",
-                            excerpt: "Fixture evidence",
-                            quality: "primary"
-                        }]
-                    }],
-                },
-            };
-
+            yield* this.streamFactCheck(request, signal);
             return;
         }
 
@@ -137,6 +104,51 @@ class E2eFixtureEngine implements EditorialEngine {
 
         yield { type: EDITORIAL_ENGINE_EVENT.TEXT_DELTA, delta: "Original fixture Article.\n\nImproved " };
         yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "e2e-proposal", text: "Original fixture Article.\n\nImproved fixture note." };
+    }
+
+
+    private async *streamFactCheck(request: EditorialEngineRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+        yield {
+            type: EDITORIAL_ENGINE_EVENT.TOOL_STATUS,
+            tool: "claim_extraction", status: "started"
+        };
+        if (request.authorContext === "inspect pending claims" || request.authorContext === "restore pending claims") {
+            yield* streamSelectableFixtureClaims(request, signal);
+            return;
+        }
+
+        yield {
+            type: EDITORIAL_ENGINE_EVENT.TOOL_STATUS,
+            tool: "claim_extraction",
+            status: "completed",
+            claims: [{
+                claim: "The fixture claim is supported.",
+                checked: false
+            }]
+        };
+        yield {
+            type: EDITORIAL_ENGINE_EVENT.COMPLETED,
+            responseId: "e2e-fact-check",
+            text: "",
+            factCheck: {
+                reviewedRevisionId: "",
+                createdAt: "2026-01-01T00:00:00.000Z",
+                findings: [{
+                    claim: "The fixture claim is supported.",
+                    status: FACT_CHECK_STATUS.SUPPORTED,
+                    rationale: "Deterministic fixture evidence.",
+                    uncertainty: "low",
+                    sources: [{
+                        url: "https://example.test/source",
+                        title: "Fixture source",
+                        excerpt: "Fixture evidence",
+                        quality: "primary"
+                    }]
+                }],
+            },
+        };
+
+        return;
     }
 
 

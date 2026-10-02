@@ -7,24 +7,8 @@ interface Claim { claim: string }
 
 
 export async function matchFactCandidates(claims: Claim[], history: FactCheckFinding[], provider: FactCheckProvider, signal: AbortSignal): Promise<Map<number, FactCheckFinding>> {
-    const byClaim = new Map<string, FactCheckFinding>();
-    for (const finding of history) {
-        const key = normalizeClaim(finding.claim);
-        if (!byClaim.has(key))
-            byClaim.set(key, finding);
-    }
-
     const byId = new Map(history.flatMap((finding) => finding.factId ? [[finding.factId, finding] as const] : []));
-    const matched = new Map<number, FactCheckFinding>();
-    const used = new Set<string>();
-
-    for (const [index, { claim }] of claims.entries()) {
-        const finding = byClaim.get(normalizeClaim(claim));
-        if (finding?.factId && !used.has(finding.factId)) {
-            matched.set(index, finding);
-            used.add(finding.factId);
-        }
-    }
+    const { matched, used } = matchExactClaims(claims, history);
 
     if (!provider.matchClaims)
         return matched;
@@ -46,6 +30,28 @@ export async function matchFactCandidates(claims: Claim[], history: FactCheckFin
     }
 
     return matched;
+}
+
+
+function matchExactClaims(claims: Claim[], history: FactCheckFinding[]) {
+    const byClaim = new Map<string, FactCheckFinding>();
+    for (const finding of history) {
+        const key = normalizeClaim(finding.claim);
+        if (!byClaim.has(key))
+            byClaim.set(key, finding);
+    }
+
+    const matched = new Map<number, FactCheckFinding>();
+    const used = new Set<string>();
+    for (const [index, { claim }] of claims.entries()) {
+        const finding = byClaim.get(normalizeClaim(claim));
+        if (finding?.factId && !used.has(finding.factId)) {
+            matched.set(index, finding);
+            used.add(finding.factId);
+        }
+    }
+
+    return { matched, used };
 }
 
 

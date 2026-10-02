@@ -22,13 +22,8 @@ function requireArticle(articleId: string, articles: ArticleService): void {
 
 export async function createArticleRoute(request: IncomingMessage, response: ServerResponse, articles: ArticleService): Promise<void> {
     const body = parseObject(await readJson(request));
-    const publishingProfileId = body.publishingProfileId === undefined ? undefined : parseString(body.publishingProfileId, "publishingProfileId");
-    if (publishingProfileId !== undefined && !isPublishLimitProfileId(publishingProfileId))
-        throw new ApplicationServiceError(APPLICATION_ERROR.UNSUPPORTED_PUBLISHING_PROFILE, HTTP_STATUS.BAD_REQUEST);
-
-    const language = body.language === undefined ? undefined : parseString(body.language, "language");
-    if (language !== undefined && !isArticleLanguage(language))
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+    const publishingProfileId = parsePublishingProfile(body.publishingProfileId);
+    const language = parseLanguage(body.language);
 
     const input: CreateArticleInput = {
         title: parseString(body.title, "title"),
@@ -54,14 +49,8 @@ export async function updateArticleRoute(request: IncomingMessage, response: Ser
 
     const body = parseObject(await readJson(request));
     const title = body.title === undefined ? undefined : parseString(body.title, "title");
-    const language = body.language === undefined ? undefined : parseString(body.language, "language");
-    const publishingProfileId = body.publishingProfileId === undefined ? undefined : parseString(body.publishingProfileId, "publishingProfileId");
-
-    if (language !== undefined && !isArticleLanguage(language))
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-    if (publishingProfileId !== undefined && !isPublishLimitProfileId(publishingProfileId))
-        throw new ApplicationServiceError(APPLICATION_ERROR.UNSUPPORTED_PUBLISHING_PROFILE, HTTP_STATUS.BAD_REQUEST);
+    const language = parseLanguage(body.language);
+    const publishingProfileId = parsePublishingProfile(body.publishingProfileId);
 
     const input: UpdateArticleInput = {
         ...(title === undefined ? {} : { title }),
@@ -73,6 +62,30 @@ export async function updateArticleRoute(request: IncomingMessage, response: Ser
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
     writeJson(response, HTTP_STATUS.OK, articles.updateArticle(articleId, input));
+}
+
+
+function parseLanguage(value: unknown): CreateArticleInput["language"] {
+    if (value === undefined)
+        return undefined;
+
+    const language = parseString(value, "language");
+    if (!isArticleLanguage(language))
+        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
+    return language;
+}
+
+
+function parsePublishingProfile(value: unknown): CreateArticleInput["publishingProfileId"] {
+    if (value === undefined)
+        return undefined;
+
+    const profile = parseString(value, "publishingProfileId");
+    if (!isPublishLimitProfileId(profile))
+        throw new ApplicationServiceError(APPLICATION_ERROR.UNSUPPORTED_PUBLISHING_PROFILE, HTTP_STATUS.BAD_REQUEST);
+
+    return profile;
 }
 
 

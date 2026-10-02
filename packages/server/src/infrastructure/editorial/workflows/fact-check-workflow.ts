@@ -82,12 +82,10 @@ async function* researchClaims(request: FactCheckRequest, signal: AbortSignal, p
         const result = await Promise.race(pending.values());
         signal.throwIfAborted();
         pending.delete(result.index);
-        if ("error" in result) {
-            if (!request.skipFactCheckClaim?.(claimsToCheck[result.index]!.claim)) {
-                firstError ??= result.error;
-                failed = true;
-            }
-        } else {
+        if ("error" in result && !request.skipFactCheckClaim?.(claimsToCheck[result.index]!.claim)) {
+            firstError ??= result.error;
+            failed = true;
+        } else if (!("error" in result)) {
             checked.set(result.index, result.findings);
 
             responseId = result.responseId;

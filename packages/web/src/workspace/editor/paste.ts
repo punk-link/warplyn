@@ -24,10 +24,10 @@ function getWordListType(node: HTMLElement): "bullet" | "number" | undefined {
 
 
 function removeLeadingListMarker(node: HTMLElement, listType: "bullet" | "number") {
-    for (const element of [...node.querySelectorAll<HTMLElement>("*")]) {
+    node.querySelectorAll<HTMLElement>("*").forEach((element) => {
         if (WORD_PASTE.listMarkerIgnorePattern.test(element.getAttribute("style") ?? ""))
             element.remove();
-    }
+    });
 
     const walker = node.ownerDocument.createTreeWalker(node, NodeFilter.SHOW_TEXT);
     let textNode = walker.nextNode();
@@ -67,19 +67,27 @@ function convertWordLists(document: Document) {
         );
         candidate.before(list);
 
-        let current: HTMLElement | null = candidate;
-        while (current && getWordListType(current) === type) {
-            converted.add(current);
-            const next: HTMLElement | null = current.nextElementSibling instanceof HTMLElement
-                ? current.nextElementSibling
-                : null;
-            const item = document.createElement("li");
-            item.append(...current.childNodes);
-            removeLeadingListMarker(item, type);
-            list.append(item);
-            current.remove();
-            current = next;
-        }
+        appendWordListItems(list, candidate, type, converted);
+    }
+}
+
+
+function appendWordListItems(list: HTMLElement, candidate: HTMLElement, type: "bullet" | "number", converted: Set<HTMLElement>): void {
+    const document = candidate.ownerDocument;
+    let current: HTMLElement | null = candidate;
+    while (current && getWordListType(current) === type) {
+        converted.add(current);
+        const next: HTMLElement | null = current.nextElementSibling instanceof HTMLElement
+            ? current.nextElementSibling
+            : null;
+        const item = document.createElement("li");
+
+        item.append(...current.childNodes);
+        removeLeadingListMarker(item, type);
+        list.append(item);
+
+        current.remove();
+        current = next;
     }
 }
 
