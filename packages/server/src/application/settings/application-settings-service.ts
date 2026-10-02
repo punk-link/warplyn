@@ -22,29 +22,7 @@ export class ApplicationSettingsService {
 
     async getSnapshot(): Promise<ApplicationSettingsSnapshot> {
         const connections = normalizeAiConnections(this.settings.getSetting("application-ai-connections")?.value);
-        const rawPreferences = this.settings.getSetting("application-model-preferences")?.value;
-        const legacyPreferences = rawPreferences && typeof rawPreferences === "object" && !Array.isArray(rawPreferences)
-            ? (rawPreferences as { byConnection?: unknown }).byConnection
-            : undefined;
-        const preferences = legacyPreferences && typeof legacyPreferences === "object" && !Array.isArray(legacyPreferences)
-            ? normalizeModelPreferences((legacyPreferences as Record<string, unknown>)[connections.activeConnectionId ?? ""], connections.activeConnectionId)
-            : normalizeModelPreferences(rawPreferences, connections.activeConnectionId);
-        const appModelRecord = this.settings.getSetting("application-app-model");
-        const savedAppModel = normalizeAppModel(appModelRecord?.value, connections.activeConnectionId);
-        const legacyAppModel = appModelRecord ? undefined : normalizeAppModel(rawPreferences, connections.activeConnectionId);
-
-        const selectedAppModel = savedAppModel ?? legacyAppModel;
-
-        const hasLegacyModelIds = rawPreferences && typeof rawPreferences === "object" && !Array.isArray(rawPreferences)
-            && !legacyPreferences && typeof (rawPreferences as { defaultModel?: unknown }).defaultModel === "string"
-            && !parseAiModelPreferenceId((rawPreferences as { defaultModel: string }).defaultModel);
-
-        if (legacyPreferences || hasLegacyModelIds || legacyAppModel)
-            this.settings.saveSetting("application-model-preferences", preferences);
-
-        if (!savedAppModel && legacyAppModel)
-            this.settings.saveSetting("application-app-model", legacyAppModel);
-
+        const { preferences, selectedAppModel } = this.readModelSettings(connections.activeConnectionId);
         return {
             general: normalizeGeneralSettings(this.settings.getSetting("application-general")?.value),
             systemDateTimeFormat: await this.dateTimeFormat.read(),
@@ -54,6 +32,46 @@ export class ApplicationSettingsService {
             backupPolicy: normalizeBackupPolicy(this.settings.getSetting("application-backup-policy")?.value),
             keyBindingOverrides: normalizeStoredKeyBindingOverrides(this.settings.getSetting("application-key-bindings")?.value),
         };
+    }
+
+
+    private readModelSettings(activeConnectionId: string | undefined) {
+        const rawPreferences = this.settings.getSetting("application-model-preferences")?.value;
+        const legacyPreferences = this.readLegacyPreferences(rawPreferences);
+        const preferences = legacyPreferences && typeof legacyPreferences === "object" && !Array.isArray(legacyPreferences)
+            ? normalizeModelPreferences((legacyPreferences as Record<string, unknown>)[activeConnectionId ?? ""], activeConnectionId)
+            : normalizeModelPreferences(rawPreferences, activeConnectionId);
+        const appModelRecord = this.settings.getSetting("application-app-model");
+        const savedAppModel = normalizeAppModel(appModelRecord?.value, activeConnectionId);
+        const legacyAppModel = appModelRecord
+            ? undefined
+            : normalizeAppModel(rawPreferences, activeConnectionId);
+
+        const selectedAppModel = savedAppModel ?? legacyAppModel;
+
+        const hasLegacyModelIds = this.hasLegacyModelIds(rawPreferences, legacyPreferences);
+
+        if (legacyPreferences || hasLegacyModelIds || legacyAppModel)
+            this.settings.saveSetting("application-model-preferences", preferences);
+
+        if (!savedAppModel && legacyAppModel)
+            this.settings.saveSetting("application-app-model", legacyAppModel);
+
+        return { preferences, selectedAppModel };
+    }
+
+
+    private readLegacyPreferences(value: unknown): unknown {
+        return value && typeof value === "object" && !Array.isArray(value)
+            ? (value as { byConnection?: unknown }).byConnection
+            : undefined;
+    }
+
+
+    private hasLegacyModelIds(rawPreferences: unknown, legacyPreferences: unknown): boolean {
+        return Boolean(rawPreferences && typeof rawPreferences === "object" && !Array.isArray(rawPreferences)
+            && !legacyPreferences && typeof (rawPreferences as { defaultModel?: unknown }).defaultModel === "string"
+            && !parseAiModelPreferenceId((rawPreferences as { defaultModel: string }).defaultModel));
     }
 
 

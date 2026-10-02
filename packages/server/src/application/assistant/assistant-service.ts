@@ -15,6 +15,7 @@ import type { StyleCorpusStore } from "../editorial/style/style-corpus-store.js"
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import { getAssistantRequestTimeoutMs, streamWithAssistantDeadline } from "./requests/assistant-request-deadline.js";
 import { persistInterruptedFactCheck } from "./requests/interrupted-fact-check.js";
+import { selectCompletedFactCheck, selectFactCheckFindings } from "./requests/assistant-selected-fact-check.js";
 import { getAssistantRequestErrorCode } from "./requests/assistant-request-error-code.js";
 import { normalizeGeneralSettings } from "../settings/application-settings-normalizers.js";
 import type { SettingsStore } from "../settings/settings-store.js";
@@ -147,8 +148,7 @@ export class AssistantService {
         } catch (error) {
             let partial: ReturnType<AssistantCompletion["persistPartialFactCheck"]> | undefined;
             try {
-                if (request.partialFactCheck && request.skipFactCheckClaim)
-                    request.partialFactCheck = { ...request.partialFactCheck, findings: request.partialFactCheck.findings.filter(({ claim }) => !request.skipFactCheckClaim?.(claim)) };
+                request.partialFactCheck = selectFactCheckFindings(request.partialFactCheck, request.skipFactCheckClaim);
 
                 if (initialized)
                     partial = persistInterruptedFactCheck(error, request, signal, this.completion);
@@ -272,12 +272,7 @@ export class AssistantService {
             yield { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.requestId, activity };
 
         this.claimSelection.finish(request.requestId);
-        const selectedEvent = event.factCheck && request.skipFactCheckClaim
-            ? { ...event, factCheck: { ...event.factCheck, findings: event.factCheck.findings.filter(({ claim }) => !request.skipFactCheckClaim?.(claim)) } }
-            : event;
-
-        if (event.factCheck?.findings.length && !selectedEvent.factCheck?.findings.length)
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+        const selectedEvent = selectCompletedFactCheck(event, request.skipFactCheckClaim);
 
         if (!request.usesCapabilityLoop && request.operation)
             yield { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.requestId, activity: { summary: getActivityForEditorialOperation(request.operation), status: "completed" } };

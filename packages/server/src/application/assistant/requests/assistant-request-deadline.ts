@@ -37,8 +37,7 @@ export async function* streamWithAssistantDeadline(
                 return;
 
             if (next.value.type === ASSISTANT_EVENT.COMPLETED) {
-                if (timer)
-                    clearTimeout(timer);
+                clearTimeout(timer);
 
                 combined.removeEventListener("abort", onAbort);
                 yield next.value;
@@ -49,8 +48,7 @@ export async function* streamWithAssistantDeadline(
             yield next.value;
         }
     } finally {
-        if (timer)
-            clearTimeout(timer);
+        clearTimeout(timer);
 
         combined.removeEventListener("abort", onAbort);
         // Do not wait for a provider that ignores cancellation to close its iterator.

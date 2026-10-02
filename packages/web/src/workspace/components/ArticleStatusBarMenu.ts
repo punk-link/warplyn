@@ -17,7 +17,8 @@ export function openStatusMenu(event: KeyboardEvent<HTMLButtonElement>, open: ()
 export function handleStatusMenuKeyDown(event: KeyboardEvent<HTMLDivElement>, close: () => void) {
     const items = [...event.currentTarget.querySelectorAll<HTMLButtonElement>("[role^=menuitem]")];
     const index = document.activeElement instanceof HTMLButtonElement ? items.indexOf(document.activeElement) : -1;
-    const next = event.key === "ArrowDown" ? index + 1 : event.key === "ArrowUp" ? index - 1 : event.key === "Home" ? 0 : event.key === "End" ? items.length - 1 : undefined;
+    const positions: Record<string, number> = { ArrowDown: index + 1, ArrowUp: index - 1, Home: 0, End: items.length - 1 };
+    const next = positions[event.key];
 
     if (event.key === "Escape") {
         event.preventDefault();

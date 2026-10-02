@@ -144,14 +144,19 @@ export async function listWebBackups(): Promise<string[]> {
         if (entry.kind === "file" && entry.name.endsWith(".sqlite"))
             names.push(entry.name);
 
-        if (entry.kind === "directory" && entry.name.endsWith(".skladno")) {
-            const complete = await folder.getDirectoryHandle(entry.name).then((directory) => directory.getFileHandle("manifest.json").then(() => true, () => false), () => false);
-            if (complete)
-                names.push(entry.name);
-        }
+        if (await isCompleteBackupBundle(folder, entry))
+            names.push(entry.name);
     }
 
     return names.sort().reverse();
+}
+
+
+async function isCompleteBackupBundle(folder: BackupDirectoryHandle, entry: { kind: string; name: string }): Promise<boolean> {
+    if (entry.kind !== "directory" || !entry.name.endsWith(".skladno"))
+        return false;
+
+    return folder.getDirectoryHandle(entry.name).then((directory) => directory.getFileHandle("manifest.json").then(() => true, () => false), () => false);
 }
 
 

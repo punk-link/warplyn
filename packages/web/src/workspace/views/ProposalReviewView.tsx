@@ -41,7 +41,7 @@ function renderHighlightedText(original: string, proposed: string) {
             proposedParts.push({ changed: false, text: proposedTokens[proposedIndex]! });
             originalIndex += 1;
             proposedIndex += 1;
-        } else if (originalIndex < originalTokens.length && (proposedIndex === proposedTokens.length || matches[originalIndex + 1]![proposedIndex]! >= matches[originalIndex]![proposedIndex + 1]!)) {
+        } else if (shouldRemoveToken(originalIndex, proposedIndex, originalTokens.length, proposedTokens.length, matches)) {
             originalParts.push({ changed: true, text: originalTokens[originalIndex]! });
             originalIndex += 1;
         } else {
@@ -51,6 +51,11 @@ function renderHighlightedText(original: string, proposed: string) {
     }
 
     return { original: originalParts, proposed: proposedParts };
+}
+
+
+function shouldRemoveToken(originalIndex: number, proposedIndex: number, originalLength: number, proposedLength: number, matches: number[][]): boolean {
+    return originalIndex < originalLength && (proposedIndex === proposedLength || matches[originalIndex + 1]![proposedIndex]! >= matches[originalIndex]![proposedIndex + 1]!);
 }
 
 
@@ -182,28 +187,16 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
         <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
             <div className="mx-auto w-full max-w-6xl p-5 pb-6">
                 {accepted && <Status className="mb-4" label={intl.formatMessage({ id: "views.proposalAccepted" })} tone="success" />}
-                {presentation.warnings.length > 0 && !warningsDismissed && <div className="relative mb-4">
-                    <Status label={intl.formatMessage({ id: "views.preservationWarnings" })} tone="warning">
-                        <ul className="mt-1 list-disc pl-4 pr-8">
-                            {presentation.warnings.map((warning) => <li key={warning}>{intl.formatMessage({ id: `views.warning.${warning}` as never })}</li>)}
-                        </ul>
-                    </Status>
-                    <IconButton className="absolute right-2 top-2" label={intl.formatMessage({ id: "views.dismissPreservationWarnings" })} onClick={dismissWarnings}>
-                        <CloseIcon className="size-4" />
-                    </IconButton>
-                </div>}
-                {(!presentation.reliable || stale)
-                    && <div className="mt-4">{!presentation.reliable
-                        && <Banner className="mb-3" tone="warning">{intl.formatMessage({ id: "views.proposalFallback" })}</Banner>}
-                    <ProposalDiff original={review.baseContent} proposed={review.proposedContent} layout={displayMode === "side-by-side" ? "columns" : "stacked"} highlight={highlightChanges} />
-                    </div>}
+                <ProposalWarnings warnings={presentation.warnings} dismissed={warningsDismissed} dismiss={dismissWarnings} />
+                <ProposalFallbackDiff review={review} reliable={presentation.reliable} stale={stale} displayMode={displayMode} highlight={highlightChanges} />
                 {presentation.changes.length === 0
                     ? <EmptyState title={intl.formatMessage({ id: "views.proposalNoChanges" })}>
                         <Button variant="secondary" onClick={dismissProposal}>{intl.formatMessage({ id: "views.dismissProposal" })}</Button>
                     </EmptyState>
                     : presentation.reliable && !stale && <div className="mt-4 space-y-4">{presentation.changes.map((change, index) => {
                         const decision = decisions[change.id] ?? "pending";
-                        const decisionClasses = decision === "accepted" ? "border-success bg-success-soft" : decision === "rejected" ? "border-danger bg-danger-soft" : "border-border bg-surface-raised";
+                        const decisionStyles = { accepted: "border-success bg-success-soft", rejected: "border-danger bg-danger-soft", pending: "border-border bg-surface-raised" };
+                        const decisionClasses = decisionStyles[decision];
                         return <article key={change.id} ref={(element) => {
                             cards.current[index] = element;
                         }} tabIndex={-1} className={`rounded-panel border p-4 ${decisionClasses}`}>
@@ -229,5 +222,33 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                 }
             </div>
         </div>
+    </div>;
+}
+
+
+function ProposalFallbackDiff({ review, reliable, stale, displayMode, highlight }: { review: TextProposal; reliable: boolean; stale: boolean; displayMode: "side-by-side" | "stacked"; highlight: boolean }) {
+    const intl = useIntl();
+    if (reliable && !stale)
+        return null;
+
+    return <div className="mt-4">
+        {!reliable && <Banner className="mb-3" tone="warning">{intl.formatMessage({ id: "views.proposalFallback" })}</Banner>}
+        <ProposalDiff original={review.baseContent} proposed={review.proposedContent} layout={displayMode === "side-by-side" ? "columns" : "stacked"} highlight={highlight} />
+    </div>;
+}
+
+
+function ProposalWarnings({ warnings, dismissed, dismiss }: { warnings: ReturnType<typeof presentProposalReview>["warnings"]; dismissed: boolean; dismiss: () => void }) {
+    const intl = useIntl();
+    if (!warnings.length || dismissed)
+        return null;
+
+    return <div className="relative mb-4">
+        <Status label={intl.formatMessage({ id: "views.preservationWarnings" })} tone="warning">
+            <ul className="mt-1 list-disc pl-4 pr-8">
+                {warnings.map((warning) => <li key={warning}>{intl.formatMessage({ id: `views.warning.${warning}` as never })}</li>)}
+            </ul>
+        </Status>
+        <IconButton className="absolute right-2 top-2" label={intl.formatMessage({ id: "views.dismissPreservationWarnings" })} onClick={dismiss}><CloseIcon className="size-4" /></IconButton>
     </div>;
 }

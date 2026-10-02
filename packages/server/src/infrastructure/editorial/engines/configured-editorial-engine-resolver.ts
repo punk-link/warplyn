@@ -147,20 +147,8 @@ export class ConfiguredEditorialEngineResolver implements EditorialEngineResolve
     private resolveModel(preference: string): (ResolvedConnection & { model: string }) | undefined {
         const saved = this.settings.getSetting("application-ai-connections")?.value as { connections?: AiConnection[]; activeConnectionId?: string } | undefined;
         const selected = parseAiModelPreferenceId(preference);
-        if (!selected) {
-            const legacyConnection = saved?.connections?.find((item) => item.id === saved.activeConnectionId && item.active !== false);
-            const apiKey = legacyConnection ? this.connectionApiKey(legacyConnection) : this.config.aiApiKey;
-            if (!apiKey)
-                return undefined;
-
-            return {
-                apiKey,
-                provider: legacyConnection?.provider ?? AI_PROVIDER.OPENAI,
-                connectionId: legacyConnection?.id ?? "environment",
-                preferences: this.resolvePreferences(),
-                model: preference || this.config.aiModel
-            };
-        }
+        if (!selected)
+            return this.resolveLegacyModel(preference, saved);
 
         const connection = saved?.connections?.find((item) => item.id === selected.connectionId && item.active !== false);
         const apiKey = connection ? this.connectionApiKey(connection) : undefined;
@@ -168,6 +156,22 @@ export class ConfiguredEditorialEngineResolver implements EditorialEngineResolve
             return undefined;
 
         return { apiKey, provider: connection.provider, connectionId: connection.id, preferences: this.resolvePreferences(), model: selected.model };
+    }
+
+
+    private resolveLegacyModel(preference: string, saved: { connections?: AiConnection[]; activeConnectionId?: string } | undefined): (ResolvedConnection & { model: string }) | undefined {
+        const connection = saved?.connections?.find((item) => item.id === saved.activeConnectionId && item.active !== false);
+        const apiKey = connection ? this.connectionApiKey(connection) : this.config.aiApiKey;
+        if (!apiKey)
+            return undefined;
+
+        return {
+            apiKey,
+            provider: connection?.provider ?? AI_PROVIDER.OPENAI,
+            connectionId: connection?.id ?? "environment",
+            preferences: this.resolvePreferences(),
+            model: preference || this.config.aiModel
+        };
     }
 
 

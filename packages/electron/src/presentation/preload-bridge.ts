@@ -60,6 +60,24 @@ type ElectronStreamSubscription =
     };
 
 
+function deliverStreamEvent(subscription: ElectronStreamSubscription, payload: ElectronStreamEvent): boolean {
+    if (subscription.kind === "assistant" && payload.kind === "assistant") {
+        if (!isAssistantEvent(payload.event))
+            return false;
+
+        subscription.onEvent(payload.event);
+        return true;
+    }
+
+    if (subscription.kind === "editorial" && payload.kind === "editorial") {
+        subscription.onEvent(payload.event);
+        return true;
+    }
+
+    return false;
+}
+
+
 function createStream(
     ipcRenderer: ElectronIpcRenderer,
     subscription: ElectronStreamSubscription,
@@ -74,23 +92,8 @@ function createStream(
             if (payload.streamId !== subscription.request.streamId || payload.kind !== subscription.kind)
                 return;
 
-            switch (subscription.kind) {
-                case "assistant":
-                    if (payload.kind !== "assistant")
-                        return;
-
-                    if (!isAssistantEvent(payload.event))
-                        return;
-
-                    subscription.onEvent(payload.event);
-                    break;
-                case "editorial":
-                    if (payload.kind !== "editorial")
-                        return;
-
-                    subscription.onEvent(payload.event);
-                    break;
-            }
+            if (!deliverStreamEvent(subscription, payload))
+                return;
 
             if (payload.event.type === "error") {
                 const parameters = "parameters" in payload.event ? payload.event.parameters : undefined;

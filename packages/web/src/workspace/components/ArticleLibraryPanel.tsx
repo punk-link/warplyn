@@ -1,29 +1,14 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from "react";
 import { KEY_BINDING_COMMAND, type Article, type KeyBindingOverrides } from "@skladno/shared";
 import { Button, Dialog, Field, IconButton } from "../../ui/primitives.js";
-import { ArticleIcon, ChevronRightIcon, SearchIcon, SettingsIcon, UserIcon } from "../../ui/icons.js";
+import { ChevronRightIcon, SearchIcon, SettingsIcon, UserIcon } from "../../ui/icons.js";
 import { useIntl } from "react-intl";
 import type { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
 import { getShortcutHint } from "../../key-bindings/shortcut-hint.js";
 import { UpdateController } from "./UpdateController.js";
 import type { Notifications } from "../../notifications/notifications.js";
 import { WarplynIcon } from "../../ui/WarplynIcon.js";
-
-
-function formatUpdatedAt(updatedAt: string, formatMessage: ReturnType<typeof useIntl>["formatMessage"]): string {
-    const minutes = Math.max(0, Math.floor((Date.now() - new Date(updatedAt).getTime()) / 60_000));
-    if (minutes < 1)
-        return formatMessage({ id: "navigation.updatedJustNow" });
-
-    if (minutes < 60)
-        return formatMessage({ id: "navigation.updatedMinutes" }, { count: minutes });
-
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24)
-        return formatMessage({ id: "navigation.updatedHours" }, { count: hours });
-
-    return formatMessage({ id: "navigation.updatedDays" }, { count: Math.floor(hours / 24) });
-}
+import { ArticleLibraryRowLabel } from "./ArticleLibraryRowLabel.js";
 
 
 function getLanguageCode(language: string | undefined): string {
@@ -127,10 +112,11 @@ function ArticleLibraryNavigation({ pinnedRoots, recentRoots, archivedRoots, arc
     renderRoots: (items: Article[]) => ReactNode;
 }) {
     const intl = useIntl();
+    const archiveExpanded = archivedOpen || Boolean(query);
     return <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong" aria-label={intl.formatMessage({ id: "navigation.articleLibraryNav" })}>
         {pinnedRoots.length > 0 && <><p className="px-2 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "navigation.pinned" })}</p><div className="mt-2 space-y-1">{renderRoots(pinnedRoots)}</div></>}
         {recentRoots.length > 0 && <><p className="mt-4 px-2 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "navigation.recent" })}</p><div className="mt-2 space-y-1">{renderRoots(recentRoots)}</div></>}
-        {archivedRoots.length > 0 && <section className="mt-4"><button className="flex w-full items-center gap-2 px-2 text-micro font-semibold uppercase tracking-overline text-muted focus:outline-none" type="button" aria-expanded={archivedOpen || Boolean(query)} onClick={() => setArchivedOpen((open) => !open)}><ChevronRightIcon className={`size-3 transition-transform ${archivedOpen || query ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "navigation.archived" }, { count: archivedRoots.length })}</button><div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${archivedOpen || query ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`} aria-hidden={!archivedOpen && !query} {...(!archivedOpen && !query ? { inert: true } : {}) as Record<string, boolean>}><div className="min-h-0 overflow-hidden"><div className="mt-2 space-y-1">{archivedContent}</div></div></div></section>}
+        {archivedRoots.length > 0 && <section className="mt-4"><button className="flex w-full items-center gap-2 px-2 text-micro font-semibold uppercase tracking-overline text-muted focus:outline-none" type="button" aria-expanded={archiveExpanded} onClick={() => setArchivedOpen((open) => !open)}><ChevronRightIcon className={`size-3 transition-transform ${archiveExpanded ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "navigation.archived" }, { count: archivedRoots.length })}</button><div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${archiveExpanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`} aria-hidden={!archiveExpanded} {...(!archiveExpanded ? { inert: true } : {}) as Record<string, boolean>}><div className="min-h-0 overflow-hidden"><div className="mt-2 space-y-1">{archivedContent}</div></div></div></section>}
         {articles.length > 0 && pinnedRoots.length + recentRoots.length === 0 && archivedContentEmpty && <p className="px-2 py-5 text-sm text-muted">{intl.formatMessage({ id: "navigation.noArticlesMatch" })}</p>}
     </nav>;
 }
@@ -222,7 +208,10 @@ export function ArticleLibraryPanel({ data, navigation, mutations }: { data: Art
 
     const renderArticleRow = ({ article, child = false, childCount = 0, expanded = false, hidden = false }: { article: Article; child?: boolean; childCount?: number; expanded?: boolean; hidden?: boolean }) => {
         const selectedRow = article.id === selectedArticleId;
-        const tone = selectedRow ? "bg-brand-soft text-ink" : child ? "text-muted hover:bg-surface-raised" : "text-ink/85 hover:bg-surface-raised";
+        let tone = child ? "text-muted hover:bg-surface-raised" : "text-ink/85 hover:bg-surface-raised";
+        if (selectedRow)
+            tone = "bg-brand-soft text-ink";
+
         const canReorder = !child && article.pinOrder !== undefined && !article.archived;
         return <div key={article.id} draggable={canReorder} onDragStart={() => setDraggedArticleId(article.id)} onDragOver={(event) => canReorder && event.preventDefault()} onDrop={(event) => handlePinnedArticleDrop(event, article, draggedArticleId, pinnedRoots, reorderPinned, run)}>
             <button data-focus-area-entry={selectedRow || undefined} ref={(element) => {
@@ -237,7 +226,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations }: { data: Art
                     setMenuArticleId(article.id);
                 }
             }} className={`${child ? "ml-4 w-[calc(100%-1rem)] border-l border-border py-1.5" : "w-full py-2.5"} rounded-panel px-2 text-left transition-colors ${tone}`} aria-current={selectedRow ? "page" : undefined} aria-expanded={childCount > 0 ? expanded : undefined} tabIndex={hidden ? -1 : undefined}>
-                <span className="flex gap-2">{childCount > 0 ? <ChevronRightIcon className={`mt-1 size-3 shrink-0 text-muted transition-transform duration-150 motion-reduce:transition-none ${expanded ? "rotate-90" : ""}`} /> : <ArticleIcon className="mt-0.5 size-4 shrink-0 text-muted" />}<span className="min-w-0 flex-1"><span className={`block truncate font-medium ${child ? "text-xs leading-4" : "text-sm leading-5"}`} title={article.title}>{article.title}</span><span className="mt-0.5 block text-xs leading-4 text-muted">{[article.language, formatUpdatedAt(article.updatedAt, intl.formatMessage)].filter(Boolean).join(" · ")}</span></span></span>
+                <ArticleLibraryRowLabel article={article} child={child} childCount={childCount} expanded={expanded} />
             </button>
             {menuArticleId === article.id && <ArticleLibraryRowMenu article={article} canReorder={canReorder} pinnedRoots={pinnedRoots} menuRef={menuRef} handleMenuKeyDown={handleMenuKeyDown} movePinned={movePinned} run={run} setDeleteTarget={setDeleteTarget} closeMenu={closeMenu} setPinned={setPinned} setArchived={setArchived} />}
         </div>;
@@ -250,7 +239,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations }: { data: Art
     });
 
     const archivedContent = renderRoots(archivedRoots);
-    const groupCount = deleteTarget ? (deleteTarget.sourceArticleId ? 1 : getChildArticles(deleteTarget.id).length + 1) : 1;
+    const groupCount = deleteTarget && !deleteTarget.sourceArticleId ? getChildArticles(deleteTarget.id).length + 1 : 1;
 
 
     function handleLibraryKeyDown(event: KeyboardEvent<HTMLElement>) {

@@ -34,11 +34,7 @@ export function TranslationsHeader({ sourceArticle, translation, translationLang
             <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.translations" })}</h2>
             <div className="mt-1 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-xs text-muted">
                 <p>{translationLanguages.length ? intl.formatMessage({ id: "views.translationTargets" }) : intl.formatMessage({ id: "views.translationTargetsEmpty" })}</p>
-                {publishingGuidance && <p className="ml-auto flex flex-wrap items-center" aria-live="polite">
-                    <span className={publishingGuidance.length.state === "over-limit" ? "font-semibold text-danger" : publishingGuidance.length.state === "near-limit" ? "font-semibold text-warning" : undefined}>{publishingGuidance.profile.characterLimit === undefined
-                        ? intl.formatMessage({ id: "publishing.characterCount" }, { count: intl.formatNumber(publishingGuidance.length.count) })
-                        : intl.formatMessage({ id: "views.characterCount" }, { count: intl.formatNumber(publishingGuidance.length.count), limit: intl.formatNumber(publishingGuidance.profile.characterLimit) })}</span>
-                </p>}
+                {publishingGuidance && <TranslationLengthGuidance guidance={publishingGuidance} />}
             </div>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -61,4 +57,21 @@ export function TranslationsHeader({ sourceArticle, translation, translationLang
             </div>
         </div>
     </header>;
+}
+
+
+function TranslationLengthGuidance({ guidance: { length, profile } }: { guidance: NonNullable<TranslationsHeaderProps["publishingGuidance"]> }) {
+    const intl = useIntl();
+    let className: string | undefined;
+    if (length.state === "over-limit")
+        className = "font-semibold text-danger";
+    else if (length.state === "near-limit")
+        className = "font-semibold text-warning";
+
+    return <p className="ml-auto flex flex-wrap items-center" aria-live="polite">
+        <span className={className}>{profile.characterLimit === undefined
+            ? intl.formatMessage({ id: "publishing.characterCount" }, { count: intl.formatNumber(length.count) })
+            : intl.formatMessage({ id: "views.characterCount" }, { count: intl.formatNumber(length.count), limit: intl.formatNumber(profile.characterLimit) })}
+        </span>
+    </p>;
 }

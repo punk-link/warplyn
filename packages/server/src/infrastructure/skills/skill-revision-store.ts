@@ -1,4 +1,4 @@
-import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync, type Dirent } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { dirname, join, relative, resolve, sep } from "node:path";
 
@@ -198,21 +198,34 @@ export class SkillRevisionStore implements AuthorSkillRevisionStore {
         if (!existsSync(root))
             return;
 
+        const packageRoot = root.endsWith(`${sep}references`) ? dirname(root) : root;
         for (const entry of readdirSync(root, { withFileTypes: true })) {
             const path = join(root, entry.name);
-            if (entry.isDirectory()) {
-                if (entry.name !== "references")
-                    return;
-
-                this.readPackageFiles(path, files);
-                continue;
-            }
-
-            const relativePath = relative(root.endsWith(`${sep}references`) ? dirname(root) : root, path).replaceAll(sep, "/");
-            if (!entry.isFile() || lstatSync(path).isSymbolicLink() || !isPackageFile(relativePath))
+            if (!this.readPackageEntry(packageRoot, path, entry, files))
                 return;
-
-            files[relativePath] = readFileSync(path, "utf8");
         }
+    }
+
+
+    private readPackageEntry(root: string, path: string, entry: Dirent, files: Record<string, string>): boolean {
+        if (entry.isDirectory()) {
+            if (entry.name !== "references")
+                return false;
+
+            this.readPackageFiles(path, files);
+            return true;
+        }
+
+        return entry.isFile() && this.readPackageFile(root, path, files);
+    }
+
+
+    private readPackageFile(root: string, path: string, files: Record<string, string>): boolean {
+        const relativePath = relative(root, path).replaceAll(sep, "/");
+        if (lstatSync(path).isSymbolicLink() || !isPackageFile(relativePath))
+            return false;
+
+        files[relativePath] = readFileSync(path, "utf8");
+        return true;
     }
 }

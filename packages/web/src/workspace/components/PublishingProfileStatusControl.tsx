@@ -1,5 +1,5 @@
 import { useId, useRef } from "react";
-import { useIntl } from "react-intl";
+import { useIntl, type IntlShape } from "react-intl";
 import { PUBLISH_LIMIT_PROFILE, publishLimitProfiles, type CustomPublishLimitProfile, type PublishLimitProfile, type PublishLimitProfileId, type PublishingLength } from "@skladno/shared";
 import { ChevronDownIcon, StatusIcon } from "../../ui/icons.js";
 import { publishingProfileMessageId } from "../../i18n/publishing.js";
@@ -11,7 +11,8 @@ export function PublishingProfileStatusControl({ length, profile, customProfiles
     const trigger = useRef<HTMLButtonElement>(null);
     const menuId = useId();
     const profileOptions = [...publishLimitProfiles, ...customProfiles];
-    const tone = length.state === "over-limit" ? "error" : length.state === "near-limit" ? "warning" : "info";
+    const tone = publishingTone(length);
+    const toneClasses = { error: "font-semibold text-danger", warning: "font-semibold text-warning", info: "text-muted" };
 
 
     async function selectProfile(profileId: PublishLimitProfileId) {
@@ -22,7 +23,7 @@ export function PublishingProfileStatusControl({ length, profile, customProfiles
 
 
     return <div className="relative ml-auto">
-        <button ref={trigger} className={`inline-flex h-6 items-center gap-1 border-x border-border px-1.5 hover:bg-brand-soft hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${tone === "error" ? "font-semibold text-danger" : tone === "warning" ? "font-semibold text-warning" : "text-muted"}`} type="button" aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" aria-label={intl.formatMessage({ id: "status.characterCount.ariaLabel" }, { characterCount: intl.formatNumber(length.count), characterLimit: intl.formatNumber(profile.characterLimit ?? 0) })} title={length.remaining === undefined ? undefined : length.state === "over-limit" ? intl.formatMessage({ id: "publishing.charactersOverGuidance" }, { count: intl.formatNumber(Math.abs(length.remaining)) }) : intl.formatMessage({ id: "publishing.charactersRemaining" }, { count: intl.formatNumber(length.remaining) })} onClick={onToggle} onKeyDown={(event) => {
+        <button ref={trigger} className={`inline-flex h-6 items-center gap-1 border-x border-border px-1.5 hover:bg-brand-soft hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${toneClasses[tone]}`} type="button" aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" aria-label={intl.formatMessage({ id: "status.characterCount.ariaLabel" }, { characterCount: intl.formatNumber(length.count), characterLimit: intl.formatNumber(profile.characterLimit ?? 0) })} title={publishingTitle(length, intl)} onClick={onToggle} onKeyDown={(event) => {
             if (event.key === "Escape")
                 onClose();
 
@@ -42,4 +43,23 @@ export function PublishingProfileStatusControl({ length, profile, customProfiles
             </button>)}
         </div>}
     </div>;
+}
+
+
+function publishingTone(length: PublishingLength): "error" | "warning" | "info" {
+    if (length.state === "over-limit")
+        return "error";
+
+    return length.state === "near-limit" ? "warning" : "info";
+}
+
+
+function publishingTitle(length: PublishingLength, intl: IntlShape): string | undefined {
+    if (length.remaining === undefined)
+        return undefined;
+
+    if (length.state === "over-limit")
+        return intl.formatMessage({ id: "publishing.charactersOverGuidance" }, { count: intl.formatNumber(Math.abs(length.remaining)) });
+
+    return intl.formatMessage({ id: "publishing.charactersRemaining" }, { count: intl.formatNumber(length.remaining) });
 }

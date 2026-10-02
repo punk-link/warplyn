@@ -131,16 +131,7 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
         });
 
         try {
-            const response = await fetchReleases();
-            const payload: unknown = await response.json();
-            if (!response.ok || !Array.isArray(payload))
-                throw new Error("Release discovery failed.");
-
-            release = getNewestCompatibleRelease(payload, currentVersion, runtime, platform);
-            const nextRuntime = updateRuntimeSettings(runtimePath, (current) => ({ ...current, lastUpdateCheckAt: new Date().toISOString() }));
-            return release
-                ? setState(getAvailableUpdateState(release, currentVersion, nextRuntime, platform === "win32"))
-                : setState({ kind: "current", currentVersion, lastCheckedAt: nextRuntime.lastUpdateCheckAt, ...updatePreferences(nextRuntime, currentVersion) });
+            return await discoverUpdate(runtime);
         } catch {
             return setState({
                 kind: "failed",
@@ -150,6 +141,20 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
                 ...updatePreferences(runtime, currentVersion)
             });
         }
+    }
+
+
+    async function discoverUpdate(runtime: RuntimeSettings): Promise<DesktopUpdateState> {
+        const response = await fetchReleases();
+        const payload: unknown = await response.json();
+        if (!response.ok || !Array.isArray(payload))
+            throw new Error("Release discovery failed.");
+
+        release = getNewestCompatibleRelease(payload, currentVersion, runtime, platform);
+        const nextRuntime = updateRuntimeSettings(runtimePath, (current) => ({ ...current, lastUpdateCheckAt: new Date().toISOString() }));
+        return release
+            ? setState(getAvailableUpdateState(release, currentVersion, nextRuntime, platform === "win32"))
+            : setState({ kind: "current", currentVersion, lastCheckedAt: nextRuntime.lastUpdateCheckAt, ...updatePreferences(nextRuntime, currentVersion) });
     }
 
 

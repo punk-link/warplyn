@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync, type Dirent } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { dirname, resolve } from "node:path";
 
@@ -83,29 +83,33 @@ export class FileAssistantSkillSource {
 
         const reserved = this.reserved();
         const names = new Set<string>();
-        for (const entry of readdirSync(this.root, { withFileTypes: true }).sort((left, right) => left.name.localeCompare(right.name))) {
-            if (entry.name.endsWith(".staged") || entry.name.endsWith(".previous"))
-                continue;
+        for (const entry of readdirSync(this.root, { withFileTypes: true }).sort((left, right) => left.name.localeCompare(right.name)))
+            this.loadEntry(entry, reserved, names);
+    }
 
-            if (!entry.isDirectory()) {
-                this.invalid.push({ directory: entry.name, issues: [{ code: "unsafe_package", messageId: "skills.validation.unsafe_package" }] });
-                continue;
-            }
 
-            const parsed = parseSkillPackage({ root: resolve(this.root, entry.name), source: this.id, reservedIds: reserved.ids, reservedNames: reserved.names });
-            if (!parsed.ok) {
-                this.invalid.push({ directory: entry.name, issues: parsed.issues });
-                continue;
-            }
+    private loadEntry(entry: Dirent, reserved: { ids: readonly string[]; names: readonly string[] }, names: Set<string>): void {
+        if (entry.name.endsWith(".staged") || entry.name.endsWith(".previous"))
+            return;
 
-            if (this.packages.has(parsed.skillPackage.reference.id) || names.has(normalizeSkillName(parsed.skillPackage.name))) {
-                this.invalid.push({ directory: entry.name, issues: [{ code: "invalid_metadata", messageId: "skills.validation.invalid_metadata" }] });
-                continue;
-            }
-
-            this.packages.set(parsed.skillPackage.reference.id, parsed.skillPackage);
-            names.add(normalizeSkillName(parsed.skillPackage.name));
+        if (!entry.isDirectory()) {
+            this.invalid.push({ directory: entry.name, issues: [{ code: "unsafe_package", messageId: "skills.validation.unsafe_package" }] });
+            return;
         }
+
+        const parsed = parseSkillPackage({ root: resolve(this.root, entry.name), source: this.id, reservedIds: reserved.ids, reservedNames: reserved.names });
+        if (!parsed.ok) {
+            this.invalid.push({ directory: entry.name, issues: parsed.issues });
+            return;
+        }
+
+        if (this.packages.has(parsed.skillPackage.reference.id) || names.has(normalizeSkillName(parsed.skillPackage.name))) {
+            this.invalid.push({ directory: entry.name, issues: [{ code: "invalid_metadata", messageId: "skills.validation.invalid_metadata" }] });
+            return;
+        }
+
+        this.packages.set(parsed.skillPackage.reference.id, parsed.skillPackage);
+        names.add(normalizeSkillName(parsed.skillPackage.name));
     }
 
 

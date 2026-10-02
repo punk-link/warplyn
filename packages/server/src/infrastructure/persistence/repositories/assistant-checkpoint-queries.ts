@@ -33,8 +33,6 @@ export function createCheckpointPreview(database: SqliteDatabase, messageId: str
     const responseKinds = tail.messages.map((row) => String(row.response_kind ?? ""));
     const revisionId = anchor.base_revision_id === null ? undefined : String(anchor.base_revision_id);
     const revision = revisionId ? database.prepare("SELECT id, description, provenance_json, restored_from_revision_id, (SELECT COUNT(*) FROM article_revisions earlier WHERE earlier.article_id = r.article_id AND (earlier.created_at < r.created_at OR (earlier.created_at = r.created_at AND earlier.id <= r.id))) number FROM article_revisions r WHERE id = ? AND article_id = ?").get(revisionId, String(anchor.article_id)) as Row | undefined : undefined;
-    const storedSkillId = String(anchor.explicit_skill_id ?? anchor.resolved_skill_id ?? "");
-    const skillId = isBuiltInSkillId(storedSkillId) ? storedSkillId : undefined;
 
     return {
         messageId,
@@ -47,14 +45,26 @@ export function createCheckpointPreview(database: SqliteDatabase, messageId: str
             translations: responseKinds.filter((kind) => kind === "translation_proposal_prepared").length,
             retries: tail.requests.filter((row) => row.retry_of_request_id !== null).length,
         },
-        composer: {
-            text: String(anchor.content ?? ""),
-            ...(skillId ? { skillId } : {}),
-            ...(anchor.skill_offset === null ? {} : { skillOffset: Number(anchor.skill_offset) }),
-            ...(typeof anchor.target_language === "string" ? { targetLanguage: anchor.target_language } : {}),
-            usedSelection: parseObject(anchor.scope_json).kind === "selection",
-        },
-        ...(revision ? { revision: { id: String(revision.id), number: Number(revision.number), ...(typeof revision.description === "string" && revision.description ? { description: revision.description } : {}), provenance: parseObject(revision.provenance_json), ...(typeof revision.restored_from_revision_id === "string" ? { restoredFromRevisionId: revision.restored_from_revision_id } : {}) } } : {}),
+        composer: checkpointComposer(anchor),
+        ...(revision ? { revision: checkpointRevision(revision) } : {}),
         draftDecisionRequired: Boolean(revision && draft),
     };
+}
+
+
+function checkpointComposer(anchor: Row): AssistantCheckpointPreview["composer"] {
+    const storedSkillId = String(anchor.explicit_skill_id ?? anchor.resolved_skill_id ?? "");
+    const skillId = isBuiltInSkillId(storedSkillId) ? storedSkillId : undefined;
+    return {
+        text: String(anchor.content ?? ""),
+        ...(skillId ? { skillId } : {}),
+        ...(anchor.skill_offset === null ? {} : { skillOffset: Number(anchor.skill_offset) }),
+        ...(typeof anchor.target_language === "string" ? { targetLanguage: anchor.target_language } : {}),
+        usedSelection: parseObject(anchor.scope_json).kind === "selection",
+    };
+}
+
+
+function checkpointRevision(revision: Row): NonNullable<AssistantCheckpointPreview["revision"]> {
+    return { id: String(revision.id), number: Number(revision.number), ...(typeof revision.description === "string" && revision.description ? { description: revision.description } : {}), provenance: parseObject(revision.provenance_json), ...(typeof revision.restored_from_revision_id === "string" ? { restoredFromRevisionId: revision.restored_from_revision_id } : {}) };
 }

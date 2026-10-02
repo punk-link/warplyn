@@ -87,13 +87,7 @@ async function invokeApplicationMethod(method: ElectronApplicationMethod, args: 
         case ELECTRON_APPLICATION_METHOD.applyAssistantEdit: return services.assistant.applyEdit(String(args[0]), String(args[1]));
         case ELECTRON_APPLICATION_METHOD.rejectTranslation: return services.assistant.rejectTranslation(String(args[0]), String(args[1]));
         case ELECTRON_APPLICATION_METHOD.previewAssistantCheckpoint: return services.assistant.previewCheckpoint(String(args[0]), String(args[1]));
-        case ELECTRON_APPLICATION_METHOD.restoreAssistantCheckpoint: {
-            const input = args[2] as { tailToken?: unknown; draftMode?: unknown };
-            if (!input || typeof input.tailToken !== "string" || (input.draftMode !== undefined && input.draftMode !== "preserve" && input.draftMode !== "discard"))
-                throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-            return services.assistant.restoreCheckpoint(String(args[0]), String(args[1]), input.tailToken, input.draftMode);
-        }
+        case ELECTRON_APPLICATION_METHOD.restoreAssistantCheckpoint: return restoreAssistantCheckpoint(args, services);
         case ELECTRON_APPLICATION_METHOD.listFactChecks: return services.factChecks.list(String(args[0]));
         case ELECTRON_APPLICATION_METHOD.resolveFactCheckFinding:
             if (!isFactCheckResolution(args[2]))
@@ -112,6 +106,15 @@ async function invokeApplicationMethod(method: ElectronApplicationMethod, args: 
         case ELECTRON_APPLICATION_METHOD.getPublishingSettings: return services.publishing.getSettings();
         case ELECTRON_APPLICATION_METHOD.setPublishingSettings: return services.publishing.setSettings(args[0] as import("@skladno/shared").PublishingSettings);
     }
+}
+
+
+function restoreAssistantCheckpoint(args: readonly unknown[], services: ApplicationServices) {
+    const input = args[2] as { tailToken?: unknown; draftMode?: unknown };
+    if (!input || typeof input.tailToken !== "string" || (input.draftMode !== undefined && input.draftMode !== "preserve" && input.draftMode !== "discard"))
+        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
+    return services.assistant.restoreCheckpoint(String(args[0]), String(args[1]), input.tailToken, input.draftMode);
 }
 
 

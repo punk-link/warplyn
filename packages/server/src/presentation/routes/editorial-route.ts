@@ -78,20 +78,8 @@ function createEditorialError(error: unknown): { category: Extract<EditorialEven
     if (error instanceof ApplicationServiceError && error.code === APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING)
         return { category: EDITORIAL_ERROR_CATEGORY.CONFIGURATION, errorCode: error.code };
 
-    const category = error instanceof EditorialEngineError
-        ? ({
-            [EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT]: EDITORIAL_ERROR_CATEGORY.INVALID_OUTPUT,
-            [EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM]: EDITORIAL_ERROR_CATEGORY.MALFORMED_STREAM,
-            [EDITORIAL_ENGINE_ERROR.NETWORK]: EDITORIAL_ERROR_CATEGORY.NETWORK,
-            [EDITORIAL_ENGINE_ERROR.PROVIDER]: EDITORIAL_ERROR_CATEGORY.PROVIDER,
-            [EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED]: EDITORIAL_ERROR_CATEGORY.SESSION_EXPIRED,
-        } as const)[error.code]
-        : error instanceof Error && /network|fetch|connect|timeout|ECONN|ENOTFOUND/i.test(error.message)
-            ? EDITORIAL_ERROR_CATEGORY.NETWORK
-            : EDITORIAL_ERROR_CATEGORY.PROVIDER;
-
     return {
-        category,
+        category: editorialErrorCategory(error),
         errorCode: error instanceof EditorialEngineError && error.code === EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM
             ? APPLICATION_ERROR.EDITORIAL_STREAM_INCOMPLETE
             : APPLICATION_ERROR.EDITORIAL_PROVIDER_FAILED,
@@ -99,20 +87,25 @@ function createEditorialError(error: unknown): { category: Extract<EditorialEven
 }
 
 
+function editorialErrorCategory(error: unknown): Extract<EditorialEvent, { type: "error" }>["code"] {
+    if (error instanceof EditorialEngineError)
+        return ({
+            [EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT]: EDITORIAL_ERROR_CATEGORY.INVALID_OUTPUT,
+            [EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM]: EDITORIAL_ERROR_CATEGORY.MALFORMED_STREAM,
+            [EDITORIAL_ENGINE_ERROR.NETWORK]: EDITORIAL_ERROR_CATEGORY.NETWORK,
+            [EDITORIAL_ENGINE_ERROR.PROVIDER]: EDITORIAL_ERROR_CATEGORY.PROVIDER,
+            [EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED]: EDITORIAL_ERROR_CATEGORY.SESSION_EXPIRED,
+        } as const)[error.code];
+
+    return error instanceof Error && /network|fetch|connect|timeout|ECONN|ENOTFOUND/i.test(error.message)
+        ? EDITORIAL_ERROR_CATEGORY.NETWORK
+        : EDITORIAL_ERROR_CATEGORY.PROVIDER;
+}
+
+
 async function streamEditorialEvents(response: ServerResponse, editorial: EditorialService, request: EditorialServiceRequest, controller: AbortController): Promise<void> {
-    let completed = false;
     try {
-        for await (const event of editorial.stream(request, controller.signal)) {
-            if (event.type === EDITORIAL_ENGINE_EVENT.COMPLETED) {
-                completed = true;
-                writeEditorialEvent(response, { ...event, requestId: request.requestId });
-
-                continue;
-            }
-
-            if (request.operation !== EDITORIAL_OPERATION.STYLE_REVIEW || event.type !== EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
-                writeEditorialEvent(response, { ...event, requestId: request.requestId });
-        }
+        const completed = await writeEditorialStream(response, editorial, request, controller.signal);
 
         if (!completed && !controller.signal.aborted) {
             const editorialError = createEditorialErrorEvent(request.requestId, EDITORIAL_ERROR_CATEGORY.MALFORMED_STREAM, APPLICATION_ERROR.EDITORIAL_STREAM_INCOMPLETE, true);
@@ -124,6 +117,21 @@ async function streamEditorialEvents(response: ServerResponse, editorial: Editor
             writeEditorialEvent(response, createEditorialErrorEvent(request.requestId, failure.category, failure.errorCode, true));
         }
     }
+}
+
+
+async function writeEditorialStream(response: ServerResponse, editorial: EditorialService, request: EditorialServiceRequest, signal: AbortSignal): Promise<boolean> {
+    let completed = false;
+    for await (const event of editorial.stream(request, signal)) {
+        if (event.type === EDITORIAL_ENGINE_EVENT.COMPLETED)
+            completed = true;
+        else if (request.operation === EDITORIAL_OPERATION.STYLE_REVIEW && event.type === EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
+            continue;
+
+        writeEditorialEvent(response, { ...event, requestId: request.requestId });
+    }
+
+    return completed;
 }
 
 

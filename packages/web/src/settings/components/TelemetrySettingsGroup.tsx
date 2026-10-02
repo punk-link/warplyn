@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { DesktopTelemetryClient, TelemetryConsent } from "@skladno/shared";
-import { useIntl } from "react-intl";
+import { useIntl, type IntlShape } from "react-intl";
 import { SettingRow } from "./SettingRow.js";
 
 
@@ -15,9 +15,11 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
         void client.getTelemetryConsent().then(setConsent).catch(() => setError(true));
     }, [client]);
 
+    const status = telemetryStatus(consent, error, intl);
+
     return <section className="mt-8 pt-8" aria-labelledby="settings-privacy-and-diagnostics">
         <h2 id="settings-privacy-and-diagnostics" className="text-base font-semibold">{intl.formatMessage({ id: "settings.privacyAndDiagnostics" })}</h2>
-        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.telemetry" })} hint={intl.formatMessage({ id: "settings.telemetryHint" })} status={error ? intl.formatMessage({ id: "settings.telemetrySaveFailed" }) : consent && !consent.supported ? intl.formatMessage({ id: "settings.telemetryUnavailable" }) : undefined}>
+        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.telemetry" })} hint={intl.formatMessage({ id: "settings.telemetryHint" })} status={status}>
             <button type="button" role="switch" aria-checked={consent?.enabled ?? false} aria-label={intl.formatMessage({ id: "settings.telemetry" })} disabled={!consent || saving || (!consent.supported && !consent.enabled)} className="group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55" onClick={() => {
                 const enabled = !consent?.enabled;
                 setSaving(true);
@@ -36,4 +38,15 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
         </SettingRow>}
         <p className="mt-4 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.telemetryDisclosure" })} <a className="text-brand underline" href="https://warplyn.com/docs/telemetry.html" target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.telemetryDetails" })}</a></p>
     </section>;
+}
+
+
+function telemetryStatus(consent: TelemetryConsent | undefined, error: boolean, intl: IntlShape): string | undefined {
+    if (error)
+        return intl.formatMessage({ id: "settings.telemetrySaveFailed" });
+
+    if (consent && !consent.supported)
+        return intl.formatMessage({ id: "settings.telemetryUnavailable" });
+
+    return undefined;
 }

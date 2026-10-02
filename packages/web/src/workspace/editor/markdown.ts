@@ -43,31 +43,16 @@ export function exportArticleMarkdown(): string {
 
 
 function encodeLinkDestinationParentheses(markdown: string): string {
-    let result = "";
-    let cursor = 0;
     let fenced = false;
-
-    while (cursor < markdown.length) {
-        const lineEnd = markdown.indexOf("\n", cursor);
-        const end = lineEnd < 0 ? markdown.length : lineEnd;
-        const line = markdown.slice(cursor, end);
+    return markdown.split("\n").map((line) => {
         const trimmed = line.trimStart();
         if (trimmed.startsWith("```") || trimmed.startsWith("~~~")) {
             fenced = !fenced;
-            result += line;
-        } else if (fenced) {
-            result += line;
-        } else {
-            result += encodeMarkdownLine(line);
+            return line;
         }
 
-        if (lineEnd >= 0)
-            result += "\n";
-
-        cursor = end + 1;
-    }
-
-    return result;
+        return fenced ? line : encodeMarkdownLine(line);
+    }).join("\n");
 }
 
 
@@ -102,18 +87,21 @@ function encodeDestination(line: string, start: number): { value: string; end: n
 
     for (let index = start; index < line.length; index++) {
         const character = line[index];
-        if (character === "(") {
-            depth++;
-            value += "%28";
-        } else if (character === ")" && depth > 0) {
-            depth--;
-            value += "%29";
-        } else if (character === ")" && depth === 0) {
-            return { value: `${value})`, end: index + 1 };
-        } else if (character === " " || character === "\t") {
-            return undefined;
-        } else {
-            value += character;
+        switch (character) {
+            case "(":
+                depth++;
+                value += "%28";
+                break;
+            case ")":
+                if (depth === 0)
+                    return { value: `${value})`, end: index + 1 };
+
+                depth--;
+                value += "%29";
+                break;
+            case " ":
+            case "\t": return undefined;
+            default: value += character;
         }
     }
 

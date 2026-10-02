@@ -87,14 +87,21 @@ function readAssistantMessageRowContext(row: Row) {
     if (skillValue !== undefined && !skillId)
         throw new Error("Invalid persisted assistant skill.");
 
-    const skillOffset = row.skill_offset === null || row.skill_offset === undefined ? undefined : Number(row.skill_offset);
-    if (skillOffset !== undefined && (!Number.isInteger(skillOffset) || skillOffset < 0))
-        throw new Error("Invalid persisted assistant skill offset.");
+    const skillOffset = readSkillOffset(row.skill_offset);
 
     const requestScope = row.request_scope_json === null || row.request_scope_json === undefined
         ? undefined
         : JSON.parse(String(row.request_scope_json)) as AssistantRequestScope;
     return { role, kind, status, skillId, skillOffset, requestScope };
+}
+
+
+function readSkillOffset(value: Row[string]): number | undefined {
+    const offset = value === null || value === undefined ? undefined : Number(value);
+    if (offset !== undefined && (!Number.isInteger(offset) || offset < 0))
+        throw new Error("Invalid persisted assistant skill offset.");
+
+    return offset;
 }
 
 

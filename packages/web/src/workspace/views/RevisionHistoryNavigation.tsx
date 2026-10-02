@@ -1,5 +1,5 @@
 import type { ArticleRevision, GeneralSettings } from "@skladno/shared";
-import { useIntl } from "react-intl";
+import { useIntl, type IntlShape } from "react-intl";
 import { formatDateTime } from "../../i18n/formatting.js";
 import { getCharacterCount, getProvenanceMessageId, getRestoredRevisionTarget, getRevisionTitle, getTimelineKind, timelineIcons } from "./revision-history-presentation.js";
 
@@ -28,7 +28,7 @@ export function RevisionHistoryNavigation({ revisions, bypassedRevisionIds, sele
                 const provenance = intl.formatMessage({ id: getProvenanceMessageId(revision, revisions) });
                 const target = getRestoredRevisionTarget(revisions, revision);
                 const title = getRevisionTitle(revision, provenance);
-                const displayTitle = target ? intl.formatMessage({ id: target.description ? "revisions.restoredTargetDescribed" : "revisions.restoredTarget" }, target) : title;
+                const displayTitle = restoredTitle(target, title, intl);
                 const kind = getTimelineKind(revision, revisions);
                 const TimelineIcon = timelineIcons[kind];
 
@@ -45,4 +45,12 @@ export function RevisionHistoryNavigation({ revisions, bypassedRevisionIds, sele
             })}
         </ol>
     </nav>;
+}
+
+
+function restoredTitle(target: ReturnType<typeof getRestoredRevisionTarget>, title: string, intl: IntlShape): string {
+    if (!target)
+        return title;
+
+    return intl.formatMessage({ id: target.description ? "revisions.restoredTargetDescribed" : "revisions.restoredTarget" }, target);
 }

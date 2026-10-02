@@ -36,20 +36,22 @@ function $setBlockType(type: BlockType) {
         blocks.set(block.getKey(), block);
     }
 
-    for (const block of blocks.values()) {
-        let replacement: ElementNode = $createParagraphNode();
+    for (const block of blocks.values())
+        block.replace($createBlock(type), true);
+}
 
-        if (type.startsWith("h"))
-            replacement = $createHeadingNode(type as "h1");
 
-        if (type === "quote")
-            replacement = $createQuoteNode();
+function $createBlock(type: BlockType): ElementNode {
+    if (type.startsWith("h"))
+        return $createHeadingNode(type as "h1");
 
-        if (type === "code")
-            replacement = $createCodeNode();
+    if (type === "quote")
+        return $createQuoteNode();
 
-        block.replace(replacement, true);
-    }
+    if (type === "code")
+        return $createCodeNode();
+
+    return $createParagraphNode();
 }
 
 

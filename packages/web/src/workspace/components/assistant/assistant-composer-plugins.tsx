@@ -97,22 +97,27 @@ function setComposerValue(value: AssistantComposerValue): AssistantSkillTagNode 
     for (const [index, line] of lines.entries()) {
         const paragraph = $createParagraphNode();
         const lineEnd = offset + line.length;
-        if (value.selectedSkill !== undefined && value.skillOffset >= offset && value.skillOffset <= lineEnd) {
-            const localOffset = value.skillOffset - offset;
-            if (localOffset)
-                paragraph.append($createTextNode(line.slice(0, localOffset)));
-
-            tag = $createAssistantSkillTagNode(value.selectedSkill);
-            paragraph.append(tag);
-            if (localOffset < line.length)
-                paragraph.append($createTextNode(line.slice(localOffset)));
-        } else if (line) {
+        if (value.selectedSkill !== undefined && value.skillOffset >= offset && value.skillOffset <= lineEnd)
+            tag = appendSkillTag(paragraph, line, value.skillOffset - offset, value.selectedSkill);
+        else if (line)
             paragraph.append($createTextNode(line));
-        }
 
         root.append(paragraph);
         offset = lineEnd + (index < lines.length - 1 ? 1 : 0);
     }
+
+    return tag;
+}
+
+
+function appendSkillTag(paragraph: ReturnType<typeof $createParagraphNode>, line: string, offset: number, skill: NonNullable<AssistantComposerValue["selectedSkill"]>): AssistantSkillTagNode {
+    if (offset)
+        paragraph.append($createTextNode(line.slice(0, offset)));
+
+    const tag = $createAssistantSkillTagNode(skill);
+    paragraph.append(tag);
+    if (offset < line.length)
+        paragraph.append($createTextNode(line.slice(offset)));
 
     return tag;
 }

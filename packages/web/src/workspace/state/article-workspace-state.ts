@@ -189,15 +189,20 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
             updateRevision(articleId, revision);
             return revision;
         } catch (error) {
-            if (!(error instanceof ArticleDraftConflictError) && !(error instanceof ArticleRevisionConflictError)) {
-                notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.saveFailed" }) });
-                const currentSession = draftLifecycle.sessionsRef.current[articleId];
-                if (currentSession)
-                    draftLifecycle.send({ articleId, event: { type: "failed", operation: "promotion", generation: currentSession.generation } });
-            }
-
+            reportSaveFailure(articleId, error);
             throw error;
         }
+    }
+
+
+    function reportSaveFailure(articleId: string, error: unknown): void {
+        if (error instanceof ArticleDraftConflictError || error instanceof ArticleRevisionConflictError)
+            return;
+
+        notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.saveFailed" }) });
+        const session = draftLifecycle.sessionsRef.current[articleId];
+        if (session)
+            draftLifecycle.send({ articleId, event: { type: "failed", operation: "promotion", generation: session.generation } });
     }
 
 

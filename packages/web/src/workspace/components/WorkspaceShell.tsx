@@ -99,7 +99,7 @@ interface WorkspaceShellLayout {
 }
 
 
-function calculatePanelLayout(layout: WorkspaceShellLayout, viewportWidth: number, responsiveAssistantExpanded: boolean) {
+function calculatePanelVisibility(layout: WorkspaceShellLayout, viewportWidth: number, responsiveAssistantExpanded: boolean) {
     const requestedLibraryWidth = layout.libraryCollapsed ? libraryLimits.collapsed : layout.libraryWidth;
     const requestedAssistantWidth = Math.max(layout.assistantWidth, assistantLimits.minimum);
     const requiredWidth = requestedLibraryWidth + (layout.assistantCollapsed ? assistantLimits.collapsed : requestedAssistantWidth) + articleWorkspaceMinimum;
@@ -108,6 +108,12 @@ function calculatePanelLayout(layout: WorkspaceShellLayout, viewportWidth: numbe
     const widthWithoutAssistant = requestedLibraryWidth + assistantLimits.collapsed + articleWorkspaceMinimum;
     const expandedAssistantNeedsCollapsedLibrary = responsiveAssistantExpanded && !assistantOverlay && requestedLibraryWidth + assistantLimits.minimum + articleWorkspaceMinimum > viewportWidth;
     const libraryCollapsed = !layout.focusMode && (layout.libraryCollapsed || widthWithoutAssistant > viewportWidth || expandedAssistantNeedsCollapsedLibrary);
+    return { requestedAssistantWidth, assistantCollapsed, assistantOverlay, libraryCollapsed };
+}
+
+
+function calculatePanelLayout(layout: WorkspaceShellLayout, viewportWidth: number, responsiveAssistantExpanded: boolean) {
+    const { requestedAssistantWidth, assistantCollapsed, assistantOverlay, libraryCollapsed } = calculatePanelVisibility(layout, viewportWidth, responsiveAssistantExpanded);
     const libraryWidth = libraryCollapsed ? libraryLimits.collapsed : layout.libraryWidth;
     const assistantMaximum = Math.min(Math.floor(viewportWidth / 2), viewportWidth - libraryWidth - articleWorkspaceMinimum);
     const assistantWidth = assistantCollapsed ? assistantLimits.collapsed : clamp(requestedAssistantWidth, assistantLimits.minimum, assistantMaximum);
@@ -152,9 +158,15 @@ export function WorkspaceShell({ content, layout }: { content: WorkspaceShellCon
             {isValidElement(library) ? cloneElement(library, { collapsed: panelLayout.libraryCollapsed, setCollapsed: setLibraryCollapsed }) : library}
             {!panelLayout.libraryCollapsed && <ResizeHandle label={intl.formatMessage({ id: "navigation.resizeArticleLibrary" })} value={libraryWidth} minimum={libraryLimits.minimum} maximum={libraryLimits.maximum} onChange={setLibraryWidth} />}
         </div>}
-        {!focusMode && <div data-responsive-overlay={panelLayout.assistantOverlay || undefined} className={panelLayout.assistantOverlay ? "absolute inset-y-0 right-0 z-20 min-h-0 min-w-0 border-l border-border-strong shadow-raised" : "relative min-h-0 min-w-0"} style={{ gridArea: "assistant", ...(panelLayout.assistantOverlay ? { width: panelLayout.assistantWidth } : {}) }}>
-            {isValidElement(assistant) ? cloneElement(assistant, { layout: { collapsed: panelLayout.assistantCollapsed, setCollapsed: setAssistantCollapsed } }) : assistant}
-            {!panelLayout.assistantCollapsed && !panelLayout.assistantOverlay && <ResizeHandle label={intl.formatMessage({ id: "assistant.resize" })} value={panelLayout.assistantWidth} minimum={assistantLimits.minimum} maximum={panelLayout.assistantMaximum} direction={-1} edge="start" onChange={setAssistantWidth} />}
-        </div>}
+        {!focusMode && <AssistantPanel assistant={assistant} panelLayout={panelLayout} setCollapsed={setAssistantCollapsed} setWidth={setAssistantWidth} />}
     </main>;
+}
+
+
+function AssistantPanel({ assistant, panelLayout, setCollapsed, setWidth }: { assistant: ReactNode; panelLayout: ReturnType<typeof calculatePanelLayout>; setCollapsed: WorkspaceShellLayout["setAssistantCollapsed"]; setWidth: WorkspaceShellLayout["setAssistantWidth"] }) {
+    const intl = useIntl();
+    return <div data-responsive-overlay={panelLayout.assistantOverlay || undefined} className={panelLayout.assistantOverlay ? "absolute inset-y-0 right-0 z-20 min-h-0 min-w-0 border-l border-border-strong shadow-raised" : "relative min-h-0 min-w-0"} style={{ gridArea: "assistant", ...(panelLayout.assistantOverlay ? { width: panelLayout.assistantWidth } : {}) }}>
+        {isValidElement(assistant) ? cloneElement(assistant, { layout: { collapsed: panelLayout.assistantCollapsed, setCollapsed } }) : assistant}
+        {!panelLayout.assistantCollapsed && !panelLayout.assistantOverlay && <ResizeHandle label={intl.formatMessage({ id: "assistant.resize" })} value={panelLayout.assistantWidth} minimum={assistantLimits.minimum} maximum={panelLayout.assistantMaximum} direction={-1} edge="start" onChange={setWidth} />}
+    </div>;
 }

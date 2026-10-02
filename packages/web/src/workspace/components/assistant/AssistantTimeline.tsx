@@ -62,10 +62,8 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
             return;
 
         const loadedPersistedMessages = !messagesLoaded.current && assistantMessages !== undefined;
-        if (!initialized.current || loadedPersistedMessages || (!collapsed && previousCollapsed.current))
-            element.scrollTop = element.scrollHeight;
-
-        if (state === "streaming" && followStream.current)
+        const shouldScroll = !initialized.current || loadedPersistedMessages || previousCollapsed.current || state === "streaming" && followStream.current;
+        if (shouldScroll)
             element.scrollTop = element.scrollHeight;
 
         const completionNeedsScroll = previousState.current === "streaming" && state === "idle" && !element.contains(document.activeElement);
@@ -121,7 +119,8 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
 
         event.preventDefault();
         const index = actions.indexOf(document.activeElement as HTMLButtonElement);
-        const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? actions.length - 1 : (index + (event.key === "ArrowRight" ? 1 : actions.length - 1)) % actions.length;
+        const positions: Record<string, number> = { Home: 0, End: actions.length - 1, ArrowRight: (index + 1) % actions.length, ArrowLeft: (index + actions.length - 1) % actions.length };
+        const nextIndex = positions[event.key]!;
         actions[nextIndex]?.focus();
     }
 
@@ -153,12 +152,25 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
     return <>
         {greeting && <AssistantTimelineMessage message={greeting} generalSettings={generalSettings} skillByRequest={skillByRequest} skillNames={skillNames} />}
         {assistantMessages?.filter((item) => item !== greeting).map((item) => <AssistantTimelineMessage key={item.id} message={item} factCheckClaims={item === completedFactCheck ? factCheckClaims : undefined} openView={openView} openSkillFolder={openSkillFolder} onRetry={item === lastMessage && !streamedMessage ? onRetry : undefined} onCheckpoint={state === "streaming" ? undefined : onCheckpoint} applyEdit={applyEdit} generalSettings={generalSettings} skillByRequest={skillByRequest} skillNames={skillNames} />)}
-        {streamedMessage?.responseKind
-            ? <AssistantTimelineMessage message={{ id: streamedMessage.id, articleId: streamedMessage.articleId, role: "assistant", kind: "response", status: streamedMessage.status, responseKind: streamedMessage.responseKind, createdAt: streamedMessage.createdAt, updatedAt: streamedMessage.createdAt }} openView={openView} onRetry={onRetry} generalSettings={generalSettings} skillByRequest={skillByRequest} />
-            : streamedMessage?.blocks.length ? <article className="p-0"><p className="text-xs font-semibold text-muted">{intl.formatMessage({ id: "assistant.heading" })}</p>{streamedMessage.blocks.map((block, index) => <AssistantMarkdown key={`${streamedMessage.id}-${index}`} content={block} />)}</article> : null}
+        <StreamedTimelineMessage message={streamedMessage} openView={openView} onRetry={onRetry} generalSettings={generalSettings} skillByRequest={skillByRequest} />
         {!assistantMessages?.length && <p className="text-sm leading-6 text-muted">{intl.formatMessage({ id: "assistant.intro" })}</p>}
         {factCheckClaims?.length && !completedFactCheck ? <FactCheckClaims key={activeRequestId} claims={factCheckClaims} className="mr-6" onSelectionChange={state === "streaming" && activeRequestId ? setClaimSelected : undefined} /> : null}
     </>;
+}
+
+
+function StreamedTimelineMessage({ message, openView, onRetry, generalSettings, skillByRequest }: Pick<AssistantTimelineActions, "openView" | "onRetry"> & { message: StreamedAssistantMessage | undefined; generalSettings: GeneralSettings; skillByRequest: Map<string, string> }) {
+    const intl = useIntl();
+    if (message?.responseKind)
+        return <AssistantTimelineMessage message={{ id: message.id, articleId: message.articleId, role: "assistant", kind: "response", status: message.status, responseKind: message.responseKind, createdAt: message.createdAt, updatedAt: message.createdAt }} openView={openView} onRetry={onRetry} generalSettings={generalSettings} skillByRequest={skillByRequest} />;
+
+    if (message?.blocks.length)
+        return <article className="p-0">
+            <p className="text-xs font-semibold text-muted">{intl.formatMessage({ id: "assistant.heading" })}</p>
+            {message.blocks.map((block, index) => <AssistantMarkdown key={`${message.id}-${index}`} content={block} />)}
+        </article>;
+
+    return null;
 }
 
 

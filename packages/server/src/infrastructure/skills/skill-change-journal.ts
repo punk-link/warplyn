@@ -12,11 +12,8 @@ function parsePending(value: unknown): PendingSkillChange {
     if (typeof change.requestId !== "string" || !change.requestId || typeof change.skillId !== "string" || !/^[a-z][a-z0-9_-]{2,63}$/.test(change.skillId))
         throw new Error("invalid_skill_journal");
 
-    for (const files of [change.previousFiles, change.nextFiles]) {
-        if (files !== undefined && (typeof files !== "object" || files === null || Array.isArray(files)
-            || Object.entries(files).some(([path, content]) => (path !== "SKILL.md" && !/^references\/[A-Za-z0-9_-]+\.md$/.test(path)) || typeof content !== "string")))
-            throw new Error("invalid_skill_journal");
-    }
+    validatePendingFiles(change.previousFiles);
+    validatePendingFiles(change.nextFiles);
 
     return {
         requestId: change.requestId,
@@ -24,6 +21,13 @@ function parsePending(value: unknown): PendingSkillChange {
         ...(change.previousFiles ? { previousFiles: change.previousFiles as Record<string, string> } : {}),
         ...(change.nextFiles ? { nextFiles: change.nextFiles as Record<string, string> } : {}),
     };
+}
+
+
+function validatePendingFiles(files: unknown): void {
+    if (files !== undefined && (typeof files !== "object" || files === null || Array.isArray(files)
+        || Object.entries(files).some(([path, content]) => (path !== "SKILL.md" && !/^references\/[A-Za-z0-9_-]+\.md$/.test(path)) || typeof content !== "string")))
+        throw new Error("invalid_skill_journal");
 }
 
 

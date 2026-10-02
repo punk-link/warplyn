@@ -42,15 +42,7 @@ export function persistFactCheckArtifact(input: {
         });
 
         for (const finding of factCheck.findings) {
-            for (const source of finding.sources) {
-                input.artifacts.createSourceCitation({
-                    editorialArtifactId: created.id,
-                    url: source.url,
-                    ...(source.title ? { title: source.title } : {}),
-                    ...(source.excerpt ? { excerpt: source.excerpt } : {}),
-                    uncertainty: `${source.quality}${source.publishedAt ? `; published ${source.publishedAt}` : ""}; ${finding.uncertainty}`,
-                });
-            }
+            persistFindingSources(input.artifacts, created.id, finding);
         }
 
         input.factChecks.saveFactCheckRun(created.id, input.articleId, input.revisionId, factCheck);
@@ -58,4 +50,17 @@ export function persistFactCheckArtifact(input: {
     });
 
     return { artifactId: artifact.id, factCheck };
+}
+
+
+function persistFindingSources(artifacts: FactCheckArtifactStore, artifactId: string, finding: FactCheck["findings"][number]): void {
+    for (const source of finding.sources) {
+        artifacts.createSourceCitation({
+            editorialArtifactId: artifactId,
+            url: source.url,
+            ...(source.title ? { title: source.title } : {}),
+            ...(source.excerpt ? { excerpt: source.excerpt } : {}),
+            uncertainty: `${source.quality}${source.publishedAt ? `; published ${source.publishedAt}` : ""}; ${finding.uncertainty}`,
+        });
+    }
 }

@@ -164,13 +164,7 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
     options.store.setStateByArticle((states) => ({ ...states, [article.id]: "streaming" }));
     options.store.setFactCheckClaimsByArticle((claims) => ({ ...claims, [article.id]: [] }));
     options.store.controller.current = new AbortController();
-    const selectionMatchesRevision = !creatorRequest && options.selection && options.selection.articleId === article.id
-        && options.selection.fingerprint === await fingerprintArticleContent(revision.content);
-
-    if (!creatorRequest && options.selection && !selectionMatchesRevision)
-        throw new ApplicationClientError("assistant_selection_invalid", undefined, 400);
-
-    const matchingSelection = selectionMatchesRevision ? options.selection : undefined;
+    const matchingSelection = await validateRequestSelection(creatorRequest, options.selection, article.id, revision.content);
     const requestId = crypto.randomUUID();
     const streamedId = `streaming-${crypto.randomUUID()}`;
 
@@ -186,6 +180,17 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
         ...(skillOffset === undefined ? {} : { skillOffset }),
         ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}),
     }, (event) => options.handleAssistantEvent(event, article.id, revision.id, streamedId), options.store.controller.current.signal);
+}
+
+
+async function validateRequestSelection(creatorRequest: boolean, selection: AssistantRequestActionsOptions["selection"], articleId: string, content: string) {
+    if (creatorRequest || !selection)
+        return undefined;
+
+    if (selection.articleId !== articleId || selection.fingerprint !== await fingerprintArticleContent(content))
+        throw new ApplicationClientError("assistant_selection_invalid", undefined, 400);
+
+    return selection;
 }
 
 

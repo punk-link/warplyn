@@ -225,9 +225,14 @@ export class AssistantCompletion {
         return {
             ...(metadataChanged ? { metadataChanged: true } : {}),
             ...(request.completedCapability === EDITORIAL_CAPABILITY.FACT_CHECK && factCheck ? { factCheck } : {}),
-            ...(request.completedCapability === EDITORIAL_CAPABILITY.STYLE_REVIEW ? { proposal: content, ...(event.styleReview ? { styleReview: event.styleReview } : {}) } : {}),
+            ...(request.completedCapability === EDITORIAL_CAPABILITY.STYLE_REVIEW ? this.getStyleReviewResult(event, content) : {}),
             ...(request.completedCapability === EDITORIAL_CAPABILITY.TRANSLATE && event.translation ? { translation: { metadata: event.translation, content } } : {}),
             ...(request.completedCapability === EDITORIAL_CAPABILITY.GENERATE_PROPOSAL ? { proposal: content } : {}),
         };
+    }
+
+
+    private getStyleReviewResult(event: CompletionEvent, content: string): AssistantEditorialResult {
+        return { proposal: content, ...(event.styleReview ? { styleReview: event.styleReview } : {}) };
     }
 }

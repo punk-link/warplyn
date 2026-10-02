@@ -99,22 +99,27 @@ function createEditorialFailure(error: unknown): { category: Extract<EditorialEv
     if (error instanceof ApplicationServiceError && error.code === APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING)
         return { category: EDITORIAL_ERROR_CATEGORY.CONFIGURATION, errorCode: error.code };
 
-    let category: Extract<EditorialEvent, { type: "error" }>["code"] = EDITORIAL_ERROR_CATEGORY.PROVIDER;
-    if (error instanceof EditorialEngineError) {
-        if (error.code === EDITORIAL_ENGINE_ERROR.NETWORK)
-            category = EDITORIAL_ERROR_CATEGORY.NETWORK;
-        else if (error.code === EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED)
-            category = EDITORIAL_ERROR_CATEGORY.SESSION_EXPIRED;
-    } else if (error instanceof Error && /network|fetch|connect|timeout|ECONN|ENOTFOUND/i.test(error.message)) {
-        category = EDITORIAL_ERROR_CATEGORY.NETWORK;
-    }
-
     return {
-        category,
+        category: editorialFailureCategory(error),
         errorCode: error instanceof EditorialEngineError && error.code === EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM
             ? APPLICATION_ERROR.EDITORIAL_STREAM_INCOMPLETE
             : APPLICATION_ERROR.EDITORIAL_PROVIDER_FAILED
     };
+}
+
+
+function editorialFailureCategory(error: unknown): Extract<EditorialEvent, { type: "error" }>["code"] {
+    if (error instanceof EditorialEngineError) {
+        if (error.code === EDITORIAL_ENGINE_ERROR.NETWORK)
+            return EDITORIAL_ERROR_CATEGORY.NETWORK;
+
+        if (error.code === EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED)
+            return EDITORIAL_ERROR_CATEGORY.SESSION_EXPIRED;
+    } else if (error instanceof Error && /network|fetch|connect|timeout|ECONN|ENOTFOUND/i.test(error.message)) {
+        return EDITORIAL_ERROR_CATEGORY.NETWORK;
+    }
+
+    return EDITORIAL_ERROR_CATEGORY.PROVIDER;
 }
 
 
@@ -155,16 +160,8 @@ async function streamEditorial(event: ElectronIpcMainEvent, request: Extract<Ele
     }
 
     const serviceRequest: EditorialServiceRequest = { ...input, articleId: request.articleId, operation: input.operation, authorContext: input.authorContext ?? "" };
-    let completed = false;
     try {
-        for await (const item of editorial.stream(serviceRequest, controller.signal)) {
-            if (item.type === EDITORIAL_ENGINE_EVENT.COMPLETED) {
-                completed = true;
-                send(event, { streamId: request.streamId, kind: "editorial", event: { ...item, requestId } });
-            } else if (serviceRequest.operation !== EDITORIAL_OPERATION.STYLE_REVIEW || item.type !== EDITORIAL_ENGINE_EVENT.TEXT_DELTA) {
-                send(event, { streamId: request.streamId, kind: "editorial", event: { ...item, requestId } });
-            }
-        }
+        const completed = await relayEditorialStream(event, request.streamId, serviceRequest, editorial, controller.signal);
 
         if (!completed && !controller.signal.aborted)
             send(event, {
@@ -178,6 +175,21 @@ async function streamEditorial(event: ElectronIpcMainEvent, request: Extract<Ele
             send(event, { streamId: request.streamId, kind: "editorial", event: { type: "error", requestId, code: failure.category, errorCode: failure.errorCode, retryable: true } });
         }
     }
+}
+
+
+async function relayEditorialStream(event: ElectronIpcMainEvent, streamId: string, request: EditorialServiceRequest, editorial: EditorialService, signal: AbortSignal): Promise<boolean> {
+    let completed = false;
+    for await (const item of editorial.stream(request, signal)) {
+        if (item.type === EDITORIAL_ENGINE_EVENT.COMPLETED)
+            completed = true;
+        else if (request.operation === EDITORIAL_OPERATION.STYLE_REVIEW && item.type === EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
+            continue;
+
+        send(event, { streamId, kind: "editorial", event: { ...item, requestId: request.requestId } });
+    }
+
+    return completed;
 }
 
 

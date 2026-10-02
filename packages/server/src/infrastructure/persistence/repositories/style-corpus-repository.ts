@@ -9,7 +9,7 @@ function createStyleProfile(items: { id: string; content: string }[], rules: str
     const sentences = content.split(/[.!?]+/).map((sentence) => sentence.trim()).filter(Boolean);
     const words = content.match(/[\p{L}\p{N}]+(?:['’][\p{L}]+)?/gu) ?? [];
     const paragraphs = content.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
-    const averageSentenceWords = sentences.length === 0 ? 0 : words.length / sentences.length;
+    const averageSentenceWords = averageWordsPerSentence(words.length, sentences.length);
     const firstPerson = (content.match(/\b(I|we|my|our|I’m|we’re|I’ve|we’ve)\b/giu) ?? []).length;
     const contractions = (content.match(/\b[\p{L}]+['’][\p{L}]+\b/gu) ?? []).length;
     const transitionCount = (content.match(/\b(however|therefore|for example|for instance|meanwhile|instead|because|although|finally|first|second)\b/giu) ?? []).length;
@@ -18,11 +18,6 @@ function createStyleProfile(items: { id: string; content: string }[], rules: str
         .map((match) => match[1]!)
         .filter((phrase, index, phrases) => phrases.indexOf(phrase) === index && phrases.filter((item) => item === phrase).length >= 2)
         .slice(0, 5);
-    let rhythmLabel = "moderate sentence length";
-    if (averageSentenceWords <= 14)
-        rhythmLabel = "compact sentences";
-    else if (averageSentenceWords >= 24)
-        rhythmLabel = "long, developed sentences";
 
     const traits: StyleTrait[] = [{
         id: "voice",
@@ -30,7 +25,7 @@ function createStyleProfile(items: { id: string; content: string }[], rules: str
         evidence: `${firstPerson} first-person references in the local corpus.`
     }, {
         id: "rhythm",
-        label: rhythmLabel,
+        label: getRhythmLabel(averageSentenceWords),
         evidence: `Average sentence length: ${Math.round(averageSentenceWords)} words across ${sentences.length} sentences.`
     }, {
         id: "structure",
@@ -60,6 +55,22 @@ function createStyleProfile(items: { id: string; content: string }[], rules: str
         rules,
         updatedAt: getCurrentTimestamp()
     };
+}
+
+
+function averageWordsPerSentence(words: number, sentences: number): number {
+    return sentences === 0 ? 0 : words / sentences;
+}
+
+
+function getRhythmLabel(averageSentenceWords: number): string {
+    if (averageSentenceWords <= 14)
+        return "compact sentences";
+
+    if (averageSentenceWords >= 24)
+        return "long, developed sentences";
+
+    return "moderate sentence length";
 }
 
 

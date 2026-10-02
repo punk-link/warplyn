@@ -73,23 +73,22 @@ function restoredAcceptance(article: Article, message: AssistantMessage, review:
         return Object.fromEntries(review.changes.map((change) => [change.id, acceptedChangeIds.has(change.id) ? "accepted" : "rejected"]));
     }
 
+    return restoredRevisionAcceptance(article, message, review);
+}
+
+
+function restoredRevisionAcceptance(article: Article, message: AssistantMessage, review: TextProposal): Record<string, ProposalDecision> | undefined {
     const provenance = article.currentRevision.provenance;
     if (provenance.kind !== REVISION_PROVENANCE_KIND.ACCEPTED_PROPOSAL || provenance.baseRevisionId !== message.baseRevisionId)
         return undefined;
 
     const wholeProposal = provenance.wholeProposal === true;
-    const acceptedChangeIds = Array.isArray(provenance.acceptedChangeIds) && provenance.acceptedChangeIds.every((id) => typeof id === "string")
-        ? new Set(provenance.acceptedChangeIds)
-        : undefined;
-    const artifactMatches = typeof provenance.editorialArtifactId === "string" && provenance.editorialArtifactId === message.editorialArtifactId;
-    if (wholeProposal) {
-        if (!artifactMatches && article.currentRevision.content !== review.proposedContent)
-            return undefined;
-
+    const acceptedChangeIds = restoredChangeIds(provenance.acceptedChangeIds);
+    const artifactMatches = matchingProposalArtifact(provenance.editorialArtifactId, message.editorialArtifactId);
+    if (wholeProposal && (artifactMatches || article.currentRevision.content === review.proposedContent))
         return Object.fromEntries(review.changes.map((change) => [change.id, "accepted"]));
-    }
 
-    if (!acceptedChangeIds)
+    if (wholeProposal || !acceptedChangeIds)
         return undefined;
 
     const acceptedContent = applyProposalChanges(review, acceptedChangeIds);
@@ -101,11 +100,69 @@ function restoredAcceptance(article: Article, message: AssistantMessage, review:
 }
 
 
+function matchingProposalArtifact(stored: unknown, artifactId: string | undefined): boolean {
+    return typeof stored === "string" && stored === artifactId;
+}
+
+
+function restoredChangeIds(value: unknown): Set<string> | undefined {
+    return Array.isArray(value) && value.every((id) => typeof id === "string") ? new Set(value) : undefined;
+}
+
+
+function restoredProposalBase(article: Article, message: AssistantMessage, accepted: boolean): ProposalBase {
+    return { articleId: article.id, content: message.baseRevisionContent!, revisionId: message.baseRevisionId!, ...(message.editorialArtifactId ? { editorialArtifactId: message.editorialArtifactId } : {}), ...(accepted ? { accepted: true } : {}) };
+}
+
+
+function acceptanceProvenance(base: ProposalBase, ids: ReadonlySet<string>, whole: boolean) {
+    return {
+        kind: REVISION_PROVENANCE_KIND.ACCEPTED_PROPOSAL,
+        baseRevisionId: base.revisionId,
+        ...(base.editorialArtifactId ? { editorialArtifactId: base.editorialArtifactId } : {}),
+        ...(whole ? { wholeProposal: true } : { acceptedChangeIds: [...ids] }),
+    };
+}
+
+
+function acceptedProposalContent(base: ProposalBase, review: TextProposal, ids: ReadonlySet<string>, whole: boolean, acceptWhole: boolean): string {
+    if (base.correctedFindingIds?.length) {
+        const selected = acceptWhole ? new Set(review.changes.map((change) => change.id)) : ids;
+        return applyProposalChanges(review, selected, true);
+    }
+
+    return whole ? review.proposedContent : applyProposalChanges(review, ids);
+}
+
+
 export function useProposalActions({ client, workspace, intl, proposal: { base, review, accepted, stale, decisions }, summaries: { setProposalSummaries, setProposalSummaryLocale }, results, restoredArticleIds, controller, ...setters }: ProposalActionsInput) {
     const { notifyError } = useNotifications();
     const telemetry = getDesktopTelemetryClient();
     const { setProposal, setBase, setDecisions, setState, setMessage } = setters;
     const { applyResult, loadFactChecks, resolveFactCheck, createTranslation, rejectTranslation, setFactCheck, setStyleReview, retainTranslation, replaceTranslations } = results;
+
+
+    function startProposal(operation: EditorialOperation, nextBase: ProposalBase): void {
+        if (!isProposalOperation(operation))
+            return;
+
+        setBase(nextBase);
+        setProposal("");
+        setDecisions({});
+        setProposalSummaries({});
+        setProposalSummaryLocale(undefined);
+    }
+
+
+    function reportRequestFailure(error: unknown): void {
+        if (error instanceof DOMException && error.name === "AbortError")
+            return;
+
+        setState("error");
+        setMessage(error instanceof ApplicationClientError
+            ? intl.formatMessage({ id: getErrorMessageId(error.code) }, error.parameters)
+            : intl.formatMessage({ id: "errors.editorialRequestFailed" }));
+    }
 
 
     async function request(operation: EditorialOperation, authorContext: string, targetLanguage?: string, correctedFindingIds?: string[]) {
@@ -118,13 +175,7 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
             const revisionId = saved?.id ?? article.currentRevisionId;
             const content = saved?.content ?? workspace.content;
 
-            if (isProposalOperation(operation)) {
-                setBase({ articleId: article.id, content, revisionId, ...(correctedFindingIds?.length ? { correctedFindingIds } : {}) });
-                setProposal("");
-                setDecisions({});
-                setProposalSummaries({});
-                setProposalSummaryLocale(undefined);
-            }
+            startProposal(operation, { articleId: article.id, content, revisionId, ...(correctedFindingIds?.length ? { correctedFindingIds } : {}) });
 
             setMessage("");
             setState("streaming");
@@ -133,13 +184,7 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
             controller.current = requestController;
             await client.streamEditorial(article.id, { requestId: crypto.randomUUID(), operation, authorContext, ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}), correctionSelection: correctionSelection(revisionId, correctedFindingIds) }, (event) => handleEditorialEvent({ event, articleId: article.id, content, revisionId, operation, correctedFindingIds, setProposal, setBase, setState, setMessage, setFactCheck, loadFactChecks, setStyleReview, retainTranslation, intl }), requestController.signal);
         } catch (error) {
-            if (!(error instanceof DOMException && error.name === "AbortError")) {
-                setState("error");
-                if (error instanceof ApplicationClientError)
-                    setMessage(intl.formatMessage({ id: getErrorMessageId(error.code) }, error.parameters));
-                else
-                    setMessage(intl.formatMessage({ id: "errors.editorialRequestFailed" }));
-            }
+            reportRequestFailure(error);
         }
     }
 
@@ -153,20 +198,13 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
         const acceptWhole = wholeProposal || completeCorrection;
 
         const telemetryGeneration = await beginBestEffortTelemetryCapture(telemetry);
-        const content = base.correctedFindingIds?.length
-            ? applyProposalChanges(review, acceptWhole ? new Set(review.changes.map((change) => change.id)) : acceptedChangeIds, true)
-            : wholeProposal ? review.proposedContent : applyProposalChanges(review, acceptedChangeIds);
+        const content = acceptedProposalContent(base, review, acceptedChangeIds, wholeProposal, acceptWhole);
         try {
             const revision = await client.acceptProposal(article.id, {
                 baseRevisionId: base.revisionId,
                 content,
                 interfaceLocale: intl.locale,
-                provenance: {
-                    kind: REVISION_PROVENANCE_KIND.ACCEPTED_PROPOSAL,
-                    baseRevisionId: base.revisionId,
-                    ...(base.editorialArtifactId ? { editorialArtifactId: base.editorialArtifactId } : {}),
-                    ...(acceptWhole ? { wholeProposal: true } : { acceptedChangeIds: [...acceptedChangeIds] })
-                }
+                provenance: acceptanceProvenance(base, acceptedChangeIds, acceptWhole),
             });
 
             workspace.updateRevision(article.id, revision);
@@ -219,15 +257,16 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
             return;
 
         restoredArticleIds.current.add(article.id);
-        if (message) {
-            const restoredReview = createTextProposal(message.baseRevisionContent!, message.proposalContent!);
-            const acceptance = restoredAcceptance(article, message, restoredReview);
-            setBase({ articleId: article.id, content: message.baseRevisionContent!, revisionId: message.baseRevisionId!, ...(message.editorialArtifactId ? { editorialArtifactId: message.editorialArtifactId } : {}), ...(acceptance ? { accepted: true } : {}) });
-            setProposal(message.proposalContent!);
-            setProposalSummaries(Object.fromEntries((message.proposalSummaries ?? []).map((summary) => [summary.changeId, summary.summary])));
-            setProposalSummaryLocale(message.proposalSummaryLocale);
-            setDecisions(acceptance ?? {});
-        }
+        if (!message)
+            return;
+
+        const restoredReview = createTextProposal(message.baseRevisionContent!, message.proposalContent!);
+        const acceptance = restoredAcceptance(article, message, restoredReview);
+        setBase(restoredProposalBase(article, message, Boolean(acceptance)));
+        setProposal(message.proposalContent!);
+        setProposalSummaries(Object.fromEntries((message.proposalSummaries ?? []).map((summary) => [summary.changeId, summary.summary])));
+        setProposalSummaryLocale(message.proposalSummaryLocale);
+        setDecisions(acceptance ?? {});
 
     }, [replaceTranslations, restoredArticleIds, setBase, setDecisions, setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.selectedArticle]);
 

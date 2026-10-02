@@ -300,10 +300,7 @@ export class AssistantCapabilityLoop {
             if (primary())
                 throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
-            if (definition.id === EDITORIAL_CAPABILITY.FACT_CHECK && event.factCheck)
-                request.partialFactCheck = event.factCheck;
-
-            request.completedCapability = definition.id;
+            this.recordCompletedArtifact(request, definition, event);
             setPrimary(event);
         }
 
@@ -313,6 +310,14 @@ export class AssistantCapabilityLoop {
 
         this.completeCapability(request, definition);
         return { status: "prepared" };
+    }
+
+
+    private recordCompletedArtifact(request: PreparedAssistantRequest, definition: EditorialCapabilityDefinition, event: CompletionEvent): void {
+        if (definition.id === EDITORIAL_CAPABILITY.FACT_CHECK && event.factCheck)
+            request.partialFactCheck = event.factCheck;
+
+        request.completedCapability = definition.id;
     }
 
 

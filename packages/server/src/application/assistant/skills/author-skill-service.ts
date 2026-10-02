@@ -53,6 +53,11 @@ export class AuthorSkillService {
             return;
         }
 
+        this.validateRestore(change, current);
+    }
+
+
+    private validateRestore(change: Extract<AuthorSkillChange, { kind: "restore" }>, current: ReturnType<AuthorSkillService["readCurrent"]>): void {
         const files = this.readRevision(change.skillId, change.revisionId);
         if (!files)
             throw new Error("skill_revision_not_found");
@@ -219,13 +224,17 @@ export class AuthorSkillService {
         try {
             return this.record({ skillPackage, files: replacement, requestId: input.requestId, restoredFromId: input.revisionId });
         } catch (error) {
-            if (previous)
-                this.source.replace({ directory: input.skillId, files: previous.files, expectedHash: skillPackage.contentHash ?? "" });
-            else
-                this.source.delete({ directory: input.skillId, expectedHash: skillPackage.contentHash ?? "" });
-
+            this.recoverRestore(input.skillId, skillPackage, previous);
             throw error;
         }
+    }
+
+
+    private recoverRestore(skillId: string, skillPackage: AssistantSkillPackage, previous: { files: Readonly<Record<string, string>> } | undefined): void {
+        if (previous)
+            this.source.replace({ directory: skillId, files: previous.files, expectedHash: skillPackage.contentHash ?? "" });
+        else
+            this.source.delete({ directory: skillId, expectedHash: skillPackage.contentHash ?? "" });
     }
 
 

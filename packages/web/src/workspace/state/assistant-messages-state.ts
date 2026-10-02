@@ -73,20 +73,30 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
     }, [article, checkpointPreview, clearStream, client, intl, notifyError, store, workspace]);
 
     return {
-        messages: article ? store.messagesByArticle[article.id] : undefined,
-        state: article ? store.stateByArticle[article.id] ?? "idle" : "idle",
-        message: article ? store.messageByArticle[article.id] ?? "" : "",
-        errorDetails: article ? store.errorDetailsByArticle[article.id] : undefined,
-        hasUnavailableAiConnection: article ? store.aiConnectionUnavailableByArticle[article.id] ?? false : false,
-        activity: article ? store.activityByArticle[article.id] : undefined,
-        streamedMessage: article ? store.streamedMessagesByArticle[article.id] : undefined,
-        factCheckClaims: article ? store.factCheckClaimsByArticle[article.id] : undefined,
-        activeRequestId: article ? store.activeRequestIdByArticle[article.id] : undefined,
+        ...selectedMessageState(store, article?.id),
         setClaimSelected,
         request, retry, checkpointPreview, previewCheckpoint, restoreCheckpoint, closeCheckpoint: () => setCheckpointPreview(undefined), restoredComposer,
         ...edits,
         reload,
         cancel: () => store.controller.current?.abort(),
+    };
+}
+
+
+function selectedMessageState(store: ReturnType<typeof useAssistantRequestStore>, articleId: string | undefined) {
+    if (!articleId)
+        return { messages: undefined, state: "idle" as const, message: "", errorDetails: undefined, hasUnavailableAiConnection: false, activity: undefined, streamedMessage: undefined, factCheckClaims: undefined, activeRequestId: undefined };
+
+    return {
+        messages: store.messagesByArticle[articleId],
+        state: store.stateByArticle[articleId] ?? "idle",
+        message: store.messageByArticle[articleId] ?? "",
+        errorDetails: store.errorDetailsByArticle[articleId],
+        hasUnavailableAiConnection: store.aiConnectionUnavailableByArticle[articleId] ?? false,
+        activity: store.activityByArticle[articleId],
+        streamedMessage: store.streamedMessagesByArticle[articleId],
+        factCheckClaims: store.factCheckClaimsByArticle[articleId],
+        activeRequestId: store.activeRequestIdByArticle[articleId],
     };
 }
 

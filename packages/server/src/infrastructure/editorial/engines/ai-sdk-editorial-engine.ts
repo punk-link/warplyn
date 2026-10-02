@@ -110,8 +110,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
                 content: `${request.scope === "selection" ? "Selected Article context" : "Current Article context"}:\n${getBoundedArticleContext(request.article)}`
             });
 
-        for (const turn of request.history.slice(-12))
-            messages.push({ role: turn.role === "author" ? "user" : "assistant", content: turn.content });
+        messages.push(...request.history.slice(-12).map((turn): ModelMessage => ({ role: turn.role === "author" ? "user" : "assistant", content: turn.content })));
 
         messages.push({ role: "user", content: request.message });
 
@@ -164,19 +163,19 @@ export class AiSdkEditorialEngine implements EditorialEngine {
         let finished = false;
 
         for await (const part of result.stream) {
-            if (part.type === "text-delta") {
-                text += part.text;
-                yield { type: EDITORIAL_ENGINE_EVENT.TEXT_DELTA, delta: part.text };
+            switch (part.type) {
+                case "text-delta":
+                    text += part.text;
+                    yield { type: EDITORIAL_ENGINE_EVENT.TEXT_DELTA, delta: part.text };
+                    break;
+                case "error":
+                    throw createProviderError(part.error, Boolean(previousResponseId));
+                case "finish":
+                    finished ||= isAcceptedFinish(part.finishReason);
+                    break;
+                case "abort":
+                    throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
             }
-
-            if (part.type === "error")
-                throw createProviderError(part.error, Boolean(previousResponseId));
-
-            if (part.type === "finish" && isAcceptedFinish(part.finishReason))
-                finished = true;
-
-            if (part.type === "abort")
-                throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
         }
 
         const token = getContinuationToken({ provider: this.options.provider, storeResponses: this.options.storeResponses, metadata: (await result.finalStep).providerMetadata });
