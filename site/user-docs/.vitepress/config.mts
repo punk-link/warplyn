@@ -5,7 +5,18 @@ export default defineConfig({
     description: "Installation, user guides, settings, and reference for Warplyn.",
     base: "/docs/",
     outDir: "../public/docs",
-    head: [["link", { rel: "icon", type: "image/svg+xml", href: "/docs/warplyn.svg" }]],
+    head: [
+        ["meta", { name: "robots", content: "max-image-preview:large" }],
+        ["meta", { name: "msvalidate.01", content: "E7950C41DDCE9E24A1BA991C6CF6451D" }],
+        ["link", { rel: "icon", type: "image/svg+xml", href: "/docs/warplyn.svg" }],
+        ["script", { async: "", src: "https://www.googletagmanager.com/gtag/js?id=G-QWD5DZEQZG" }],
+        ["script", {}, `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-QWD5DZEQZG');
+        `],
+    ],
     themeConfig: {
         logo: { src: "/warplyn.svg", alt: "" },
         nav: [
