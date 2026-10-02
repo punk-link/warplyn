@@ -6,6 +6,10 @@ Use ICU messages for interpolation and count-dependent wording. Parameters are n
 
 Accessible-only names have their own IDs. Do not translate Article text, proposals, findings, citations, user-entered names, model IDs, environment-variable names, paths, URLs, Markdown, or persisted enum values.
 
+## Command labels
+
+Append the single ellipsis character `…` to commands that require further Author input, such as choosing a file or entering options, before completing. Use matching wording and punctuation in menus, button labels, and tooltips. The file commands are `Save to file…` and `Load from file…` in both desktop and browser. Immediate actions and commands that only ask for confirmation, such as Archive and Delete, use plain labels without an ellipsis.
+
 ## Enforcement
 
 Production components consume the application-level `I18nProvider`; fixed-locale or component-local providers are test-only. ESLint rejects uncatalogued JSX copy and literal user-visible attributes, production `IntlProvider` instances, and selectors coupled to localized accessible labels. Intentional product identity text uses the narrow repository allowlist; other exceptions require a local suppression with a reason.

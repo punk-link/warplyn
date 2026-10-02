@@ -18,6 +18,7 @@ export default defineConfig(
             "**/coverage/**",
             "**/dist/**",
             "**/node_modules/**",
+            "site/user-docs/.vitepress/cache/**",
             "site/public/docs/**",
         ],
     },

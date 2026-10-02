@@ -9,6 +9,7 @@ import type { ArticleWorkspaceState } from "../state/article-workspace-state.js"
 import type { AssistantMessagesState, AssistantSelectionScope } from "../state/assistant-messages-state.js";
 import type { EditorialProposalState } from "../state/editorial-proposal-state.js";
 import type { PublishingState } from "../state/publishing-state.js";
+import type { ArticleFilesState } from "../state/article-files-state.js";
 import type { StyleCorpusState } from "../state/style-corpus-state.js";
 import type { WorkspaceLayoutState } from "../state/useWorkspaceLayout.js";
 import { ArticleLibraryPanel } from "./ArticleLibraryPanel.js";
@@ -28,6 +29,7 @@ interface WorkspaceScreenContent {
     revisions: ArticleRevisionsState;
     corpus: StyleCorpusState;
     publishing: PublishingState;
+    articleFiles: ArticleFilesState;
     generalSettings: GeneralSettings;
     authorSkills: readonly AssistantSkillSummary[];
 }
@@ -65,7 +67,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
     environment: WorkspaceScreenEnvironment;
     selection: WorkspaceScreenSelection;
 }) {
-    const { layout, workspace, assistant, editorial, revisions, corpus, publishing, generalSettings, authorSkills } = content;
+    const { layout, workspace, assistant, editorial, revisions, corpus, publishing, articleFiles, generalSettings, authorSkills } = content;
     const { createBlank, runFactCheck, runTranslation, rejectTranslation, openSettings, openModelSettings } = actions;
     const { dispatcher, shortcutOverrides, hasUsableAiConnection, loadAuthorSkills, overlays } = environment;
     const { assistantSelection, onSelectionChange, clearAssistantSelection } = selection;
@@ -86,6 +88,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
         }}
         content={{
             library: <ArticleLibraryPanel
+                files={articleFiles}
                 data={{ articles: workspace.articles, selectedArticleId: workspace.selectedArticleId, collapsed: layout.libraryCollapsed, language: workspace.selectedArticle?.language }}
                 navigation={{ selectArticle: workspace.selectArticle, setCollapsed: layout.setLibraryCollapsed, createBlank, openStyleProfile: () => layout.setView("style-profile"), openSettings, dispatcher, shortcutOverrides }}
                 mutations={{ remove: workspace.remove, setArchived: workspace.setArchived, setPinned: workspace.setPinned, reorderPinned: workspace.reorderPinned, notifyError }} />,
@@ -131,7 +134,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                 layout={{ collapsed: layout.assistantCollapsed, setCollapsed: layout.setAssistantCollapsed }} />,
             children: <>
                 {hasUsableAiConnection === false && <AiConnectionWarning openModelSettings={openModelSettings} />}
-                <ArticleWorkspace state={{ workspace, layout, editorial, revisions, corpus, publishing, generalSettings, checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined }} actions={{ createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection: assistantSelection?.preview }} />
+                <ArticleWorkspace state={{ workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined }} actions={{ createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection: assistantSelection?.preview }} />
                 {overlays}
             </>,
         }}

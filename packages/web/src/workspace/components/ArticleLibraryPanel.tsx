@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { KEY_BINDING_COMMAND, type Article, type KeyBindingOverrides } from "@skladno/shared";
 import { Button, Dialog, Field, IconButton } from "../../ui/primitives.js";
 import { ChevronRightIcon, SearchIcon, SettingsIcon, UserIcon } from "../../ui/icons.js";
@@ -9,6 +9,8 @@ import { UpdateController } from "./UpdateController.js";
 import type { Notifications } from "../../notifications/notifications.js";
 import { WarplynIcon } from "../../ui/WarplynIcon.js";
 import { ArticleLibraryRowLabel } from "./ArticleLibraryRowLabel.js";
+import { ArticleLibraryRowMenu } from "./ArticleLibraryRowMenu.js";
+import type { ArticleFilesState } from "../state/article-files-state.js";
 
 
 function getLanguageCode(language: string | undefined): string {
@@ -60,45 +62,6 @@ function handlePinnedArticleDrop(event: React.DragEvent<HTMLDivElement>, article
 }
 
 
-interface ArticleLibraryMenuActions {
-    handleMenuKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
-    movePinned: (article: Article, direction: -1 | 1) => void;
-    run: (action: () => Promise<void>) => void;
-    setDeleteTarget: (article: Article) => void;
-}
-
-
-function ArticleLibraryRowMenu({ article, canReorder, pinnedRoots, menuRef, handleMenuKeyDown, movePinned, run, setDeleteTarget, closeMenu, setPinned, setArchived }: {
-    article: Article;
-    canReorder: boolean;
-    pinnedRoots: Article[];
-    menuRef: Ref<HTMLDivElement>;
-    handleMenuKeyDown: ArticleLibraryMenuActions["handleMenuKeyDown"];
-    movePinned: ArticleLibraryMenuActions["movePinned"];
-    run: ArticleLibraryMenuActions["run"];
-    setDeleteTarget: ArticleLibraryMenuActions["setDeleteTarget"];
-    closeMenu: () => void;
-    setPinned: ArticleLibraryMutations["setPinned"];
-    setArchived: ArticleLibraryMutations["setArchived"];
-}) {
-    const intl = useIntl();
-    return <div ref={menuRef} className="relative z-20" role="menu" aria-label={article.title} onKeyDown={handleMenuKeyDown}>
-        <div className="absolute left-2 top-0 w-36 rounded-control border border-border bg-surface-raised p-1 shadow-raised">
-            {!article.sourceArticleId && !article.archived && <button className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs hover:bg-brand-soft focus:outline-none" type="button" role="menuitem" onClick={() => run(() => setPinned?.(article.id, article.pinOrder === undefined) ?? Promise.resolve())}>{intl.formatMessage({ id: article.pinOrder === undefined ? "navigation.pin" : "navigation.unpin" })}</button>}
-            {!article.sourceArticleId && <button className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs hover:bg-brand-soft focus:outline-none" type="button" role="menuitem" onClick={() => run(() => setArchived?.(article.id, !article.archived) ?? Promise.resolve())}>{intl.formatMessage({ id: article.archived ? "navigation.unarchive" : "navigation.archive" })}</button>}
-            {canReorder && <>
-                <button className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs hover:bg-brand-soft focus:outline-none disabled:opacity-50" type="button" role="menuitem" disabled={pinnedRoots[0]?.id === article.id} onClick={() => movePinned(article, -1)}>{intl.formatMessage({ id: "navigation.movePinnedUp" })}</button>
-                <button className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs hover:bg-brand-soft focus:outline-none disabled:opacity-50" type="button" role="menuitem" disabled={pinnedRoots.at(-1)?.id === article.id} onClick={() => movePinned(article, 1)}>{intl.formatMessage({ id: "navigation.movePinnedDown" })}</button>
-            </>}
-            <button className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-danger hover:bg-danger-soft focus:outline-none" type="button" role="menuitem" onClick={() => {
-                setDeleteTarget(article);
-                closeMenu();
-            }}>{intl.formatMessage({ id: "navigation.delete" })}</button>
-        </div>
-    </div>;
-}
-
-
 function ArticleLibraryNavigation({ pinnedRoots, recentRoots, archivedRoots, archivedOpen, setArchivedOpen, query, archivedContent, archivedContentEmpty, articles, renderRoots }: {
     pinnedRoots: Article[];
     recentRoots: Article[];
@@ -114,15 +77,30 @@ function ArticleLibraryNavigation({ pinnedRoots, recentRoots, archivedRoots, arc
     const intl = useIntl();
     const archiveExpanded = archivedOpen || Boolean(query);
     return <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong" aria-label={intl.formatMessage({ id: "navigation.articleLibraryNav" })}>
-        {pinnedRoots.length > 0 && <><p className="px-2 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "navigation.pinned" })}</p><div className="mt-2 space-y-1">{renderRoots(pinnedRoots)}</div></>}
-        {recentRoots.length > 0 && <><p className="mt-4 px-2 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "navigation.recent" })}</p><div className="mt-2 space-y-1">{renderRoots(recentRoots)}</div></>}
-        {archivedRoots.length > 0 && <section className="mt-4"><button className="flex w-full items-center gap-2 px-2 text-micro font-semibold uppercase tracking-overline text-muted focus:outline-none" type="button" aria-expanded={archiveExpanded} onClick={() => setArchivedOpen((open) => !open)}><ChevronRightIcon className={`size-3 transition-transform ${archiveExpanded ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "navigation.archived" }, { count: archivedRoots.length })}</button><div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${archiveExpanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`} aria-hidden={!archiveExpanded} {...(!archiveExpanded ? { inert: true } : {}) as Record<string, boolean>}><div className="min-h-0 overflow-hidden"><div className="mt-2 space-y-1">{archivedContent}</div></div></div></section>}
+        {pinnedRoots.length > 0 && <>
+            <p className="px-2 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "navigation.pinned" })}</p>
+            <div className="mt-2 space-y-0.5">{renderRoots(pinnedRoots)}</div>
+        </>}
+        {recentRoots.length > 0 && <>
+            <p className="mt-4 px-2 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "navigation.recent" })}</p>
+            <div className="mt-2 space-y-0.5">{renderRoots(recentRoots)}</div>
+        </>}
+        {archivedRoots.length > 0 && <section className="mt-4">
+            <button className="flex w-full items-center gap-2 px-2 text-micro font-semibold uppercase tracking-overline text-muted focus:outline-none" type="button" aria-expanded={archiveExpanded} onClick={() => setArchivedOpen((open) => !open)}>
+                <ChevronRightIcon className={`size-3 transition-transform ${archiveExpanded ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "navigation.archived" }, { count: archivedRoots.length })}
+            </button>
+            <div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${archiveExpanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`} aria-hidden={!archiveExpanded} {...(!archiveExpanded ? { inert: true } : {}) as Record<string, boolean>}>
+                <div className="min-h-0 overflow-hidden">
+                    <div className="mt-2 space-y-0.5">{archivedContent}</div>
+                </div>
+            </div>
+        </section>}
         {articles.length > 0 && pinnedRoots.length + recentRoots.length === 0 && archivedContentEmpty && <p className="px-2 py-5 text-sm text-muted">{intl.formatMessage({ id: "navigation.noArticlesMatch" })}</p>}
     </nav>;
 }
 
 
-export function ArticleLibraryPanel({ data, navigation, mutations }: { data: ArticleLibraryData; navigation: ArticleLibraryNavigation; mutations: ArticleLibraryMutations }) {
+export function ArticleLibraryPanel({ data, navigation, mutations, files }: { data: ArticleLibraryData; navigation: ArticleLibraryNavigation; mutations: ArticleLibraryMutations; files?: Pick<ArticleFilesState, "pending" | "saveArticle" | "loadArticle"> }) {
     const { articles, selectedArticleId, collapsed, language } = data;
     const { selectArticle, setCollapsed, createBlank, openStyleProfile, openSettings, dispatcher, shortcutOverrides } = navigation;
     const { remove, setArchived, setPinned, reorderPinned, notifyError } = mutations;
@@ -141,7 +119,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations }: { data: Art
         if (!menuArticleId)
             return;
 
-        menuRef.current?.querySelector<HTMLButtonElement>("[role=menuitem]")?.focus();
+        menuRef.current?.querySelector<HTMLButtonElement>("[role=menuitem]:not(:disabled)")?.focus();
         const dismiss = (event: MouseEvent) => {
             if (!menuRef.current?.contains(event.target as Node)) {
                 setMenuArticleId(undefined);
@@ -179,6 +157,16 @@ export function ArticleLibraryPanel({ data, navigation, mutations }: { data: Art
     }
 
 
+    function runFile(action: () => Promise<unknown>, importing = false) {
+        const id = menuArticleId;
+        setMenuArticleId(undefined);
+        void action().then((loaded) => {
+            if (id && (!importing || !loaded))
+                triggerRefs.current.get(id)?.focus();
+        });
+    }
+
+
     function movePinned(article: Article, direction: -1 | 1) {
         const index = pinnedRoots.findIndex((item) => item.id === article.id);
         const nextIndex = index + direction;
@@ -192,7 +180,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations }: { data: Art
 
 
     function handleMenuKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-        const items = [...(menuRef.current?.querySelectorAll<HTMLButtonElement>("[role=menuitem]") ?? [])];
+        const items = [...(menuRef.current?.querySelectorAll<HTMLButtonElement>("[role=menuitem]:not(:disabled)") ?? [])];
         const index = items.indexOf(document.activeElement as HTMLButtonElement);
         if (event.key === "Escape") {
             event.preventDefault();
@@ -225,17 +213,17 @@ export function ArticleLibraryPanel({ data, navigation, mutations }: { data: Art
                     event.preventDefault();
                     setMenuArticleId(article.id);
                 }
-            }} className={`${child ? "ml-4 w-[calc(100%-1rem)] border-l border-border py-1.5" : "w-full py-2.5"} rounded-panel px-2 text-left transition-colors ${tone}`} aria-current={selectedRow ? "page" : undefined} aria-expanded={childCount > 0 ? expanded : undefined} tabIndex={hidden ? -1 : undefined}>
+            }} className={`${child ? "ml-4 w-[calc(100%-1rem)] border-l border-border py-1" : "w-full py-1.5"} rounded-panel px-2 text-left transition-colors ${tone}`} aria-current={selectedRow ? "page" : undefined} aria-expanded={childCount > 0 ? expanded : undefined} tabIndex={hidden ? -1 : undefined}>
                 <ArticleLibraryRowLabel article={article} child={child} childCount={childCount} expanded={expanded} />
             </button>
-            {menuArticleId === article.id && <ArticleLibraryRowMenu article={article} canReorder={canReorder} pinnedRoots={pinnedRoots} menuRef={menuRef} handleMenuKeyDown={handleMenuKeyDown} movePinned={movePinned} run={run} setDeleteTarget={setDeleteTarget} closeMenu={closeMenu} setPinned={setPinned} setArchived={setArchived} />}
+            {menuArticleId === article.id && <ArticleLibraryRowMenu article={article} anchor={triggerRefs.current.get(article.id)} canReorder={canReorder} pinnedRoots={pinnedRoots} menuRef={menuRef} handleMenuKeyDown={handleMenuKeyDown} movePinned={movePinned} run={run} setDeleteTarget={setDeleteTarget} closeMenu={closeMenu} setPinned={setPinned} setArchived={setArchived} files={files} runFile={runFile} />}
         </div>;
     };
 
     const renderRoots = (items: Article[]) => items.filter((article) => !query || isArticleMatch(article) || getChildArticles(article.id).some(isArticleMatch)).map((article) => {
         const nested = getChildArticles(article.id).filter((child) => !query || isArticleMatch(article) || isArticleMatch(child));
         const expanded = Boolean(query) || article.id === expandedRootId;
-        return <div key={article.id}>{renderArticleRow({ article, childCount: nested.length, expanded })}{nested.length > 0 && <div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`} aria-hidden={!expanded}><div className="min-h-0 space-y-1 overflow-hidden">{nested.map((child) => renderArticleRow({ article: child, child: true, hidden: !expanded }))}</div></div>}</div>;
+        return <div key={article.id}>{renderArticleRow({ article, childCount: nested.length, expanded })}{nested.length > 0 && <div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`} aria-hidden={!expanded}><div className="min-h-0 space-y-0.5 overflow-hidden">{nested.map((child) => renderArticleRow({ article: child, child: true, hidden: !expanded }))}</div></div>}</div>;
     });
 
     const archivedContent = renderRoots(archivedRoots);

@@ -3,6 +3,15 @@
     "area": "history-and-publishing",
     "capabilities": [
         {
+            "id": "history-and-publishing.article-files",
+            "area": "Article files",
+            "title": "Whole-Article Markdown import and export in desktop and browser",
+            "status": "implemented",
+            "owners": ["packages/shared/src/articles/files/article-files.ts", "packages/web/src/application/article-files-client.ts", "packages/web/src/application/browser-article-files.ts", "packages/web/src/workspace/state/article-files-state.ts", "packages/web/src/workspace/components/ArticleHeader.tsx", "packages/web/src/workspace/components/ArticleLibraryPanel.tsx", "packages/web/src/workspace/components/ArticleLibraryRowMenu.tsx", "packages/web/src/workspace/views/RevisionHistoryDetails.tsx", "packages/electron/src/presentation/articles/desktop-article-files.ts", "packages/electron/src/infrastructure/articles/article-markdown-files.ts"],
+            "contract": "Authors explicitly save whole current Draft Markdown or load UTF-8 .md files into independent Articles through buttons beside Save revision in the Article header or through the Library Article context menu. Library export captures the targeted Article's working Draft without changing the open Article. Revisions exports complete saved Revision snapshots. Text highlighting never restricts export. Imported titles use a leading level-one heading or the filename. Both runtimes enforce a 10 MiB limit, safe names, strict UTF-8, silent picker cancellation, and localized actionable failures. Electron dialogs and filesystem access remain in main behind a finite validated sender-bound bridge; native saves replace destinations only after successful temporary writes. Browser import uses an author-selected file input and export initiates a browser-managed download without claiming disk-write completion. The Copy menu retains only Markdown and plain-text actions, and Revision restoration remains unchanged.",
+            "persistence": "Import checkpoints the previous Draft before creating one new independently recoverable Article and initial immutable Revision. Export creates no Revision and changes no Article or Draft. Paths are neither accepted from the renderer nor persisted."
+        },
+        {
             "id": "history-and-publishing.revision-history",
             "area": "Revision history",
             "title": "Immutable Revision timeline and read-only preview",
@@ -68,6 +77,36 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "history-and-publishing.article-files-import",
+            "title": "Markdown import creates an independent recoverable Article",
+            "capabilityIds": ["history-and-publishing.article-files"],
+            "preconditions": ["The Author has a current Article and chooses Load from file."],
+            "event": "The Author imports valid Markdown, cancels, or encounters a read/checkpoint failure.",
+            "expected": ["Valid Markdown creates a separate Article through the application client with a heading or filename title; both Articles recover after reload.", "Cancellation and failures preserve the current Article and its Draft."],
+            "forbidden": ["Implicitly overwriting an existing Article or creating a new Article after a failed Draft checkpoint."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/EditorialWorkspace.article-files.test.tsx" }
+        },
+        {
+            "id": "history-and-publishing.article-files-export",
+            "title": "Markdown save exports whole Draft content without changing history",
+            "capabilityIds": ["history-and-publishing.article-files"],
+            "preconditions": ["The Author opens a current Article with highlighted text."],
+            "event": "The Author saves Markdown, cancels, or encounters a file-write error.",
+            "expected": ["The complete current workspace Markdown is exported, and success/failure feedback is localized.", "Cancellation is silent and export creates no Revision.", "The Library context menu and header tooltips show Save to file… and Load from file…. The Library menu separates file actions from Article management actions."],
+            "forbidden": ["Exporting only the highlighted text or changing Article history."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/EditorialWorkspace.article-files.test.tsx" }
+        },
+        {
+            "id": "history-and-publishing.article-files-native",
+            "title": "Native Markdown operations remain bounded and authorized",
+            "capabilityIds": ["history-and-publishing.article-files"],
+            "preconditions": ["The Author uses the Electron file client."],
+            "event": "The client loads/saves Markdown, cancels, sends an invalid request, or encounters a replacement failure.",
+            "expected": ["The client round-trips UTF-8 Markdown through native file operations.", "Cancelled operations are no-ops, invalid senders/requests never open dialogs, failures return only safe codes, and failed replacement preserves prior data."],
+            "forbidden": ["Renderer-selected filesystem paths, private details in errors, or destination truncation before a successful write."],
+            "evidence": { "kind": "automated", "path": "packages/electron/src/presentation/articles/desktop-article-files.test.ts" }
+        },
         {
             "id": "history-and-publishing.revision-history-browsing",
             "title": "Revision history is browsable without changing Article content",

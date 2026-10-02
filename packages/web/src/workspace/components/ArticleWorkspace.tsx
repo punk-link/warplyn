@@ -18,6 +18,7 @@ import { publishingProfileMessageId } from "../../i18n/publishing.js";
 import type { WorkspaceView } from "../workspace-views.js";
 import type { AssistantSelectionSnapshot } from "../editor/ArticleEditorPlugins.js";
 import type { IntlShape } from "react-intl";
+import type { ArticleFilesState } from "../state/article-files-state.js";
 
 
 interface ArticleWorkspaceViewState {
@@ -27,6 +28,7 @@ interface ArticleWorkspaceViewState {
     revisions: ArticleRevisionsState;
     corpus: StyleCorpusState;
     publishing: PublishingState;
+    articleFiles?: ArticleFilesState;
     generalSettings: GeneralSettings;
     checkingClaimCount?: number;
 }
@@ -95,7 +97,7 @@ function addTranslationBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabB
 
 
 export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceViewState; actions: ArticleWorkspaceActions }) {
-    const { workspace, layout, editorial, revisions, corpus, publishing, generalSettings, checkingClaimCount } = state;
+    const { workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, checkingClaimCount } = state;
     const { createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection } = actions;
     const intl = useIntl();
     const { notifyError } = useNotifications();
@@ -118,6 +120,7 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
         <ArticleHeader article={article}
             updateArticle={workspace.updateArticle}
             save={workspace.save}
+            files={articleFiles}
             remove={workspace.remove}
             setArchived={workspace.setArchived}
             groupCount={article.sourceArticleId ? 1 : workspace.articles.filter((item) => item.id === article.id || item.sourceArticleId === article.id).length}
@@ -137,7 +140,7 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
         <WorkspaceTabBar view={layout.view} setView={layout.setView} badges={badges} shortcutOverrides={shortcutOverrides} />
         <WorkspaceViewRouter
             content={{ view: layout.view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, publishProfile: publishing.profile, publishProfileLabel }}
-            actions={{ runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection }}
+            actions={{ runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection, articleFiles }}
             navigation={{
                 proposalWarningsDismissed: layout.proposalWarningsDismissed, dismissProposalWarnings: () => layout.setProposalWarningsDismissed(true), openWrite: () => layout.setView("write"), openAssistant: () => {
                     layout.setAssistantCollapsed(false);

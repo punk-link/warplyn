@@ -83,6 +83,15 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await expect(page.evaluate(() => "skladno" in window)).resolves.toBe(true);
+        await expect(page.evaluate(() => {
+            const files = window.skladnoArticleFiles;
+            return files?.saveMarkdown({ fileName: "invalid.md", content: "\0" }).catch((error: unknown) => {
+                if (error instanceof Error)
+                    return error.message;
+
+                return undefined;
+            });
+        })).resolves.toBe("article_file_invalid");
         await page.setViewportSize({ width: 1024, height: 768 });
 
         const create = page.getByRole("button", { name: "Create" });

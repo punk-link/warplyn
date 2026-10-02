@@ -4,15 +4,17 @@ import { Badge, Button, Select } from "../../ui/primitives.js";
 import { formatDateTime } from "../../i18n/formatting.js";
 import { RevisionArticlePreview } from "../editor/RevisionArticlePreview.js";
 import { getCharacterCount, getProvenanceMessageId, getRestoredRevisionTarget, getRevisionTitle } from "./revision-history-presentation.js";
+import type { ArticleFilesState } from "../state/article-files-state.js";
 
 
-export function RevisionHistoryDetails({ revisions, bypassedRevisionIds, selected, currentRevisionId, select, generalSettings }: {
+export function RevisionHistoryDetails({ revisions, bypassedRevisionIds, selected, currentRevisionId, select, generalSettings, files }: {
     revisions: ArticleRevision[];
     bypassedRevisionIds: ReadonlySet<string>;
     selected: ArticleRevision;
     currentRevisionId: string;
     select: (revision: ArticleRevision) => void;
     generalSettings: GeneralSettings;
+    files?: Pick<ArticleFilesState, "pending" | "saveRevision">;
 }) {
     const intl = useIntl();
     const newestFirst = [...revisions].reverse();
@@ -43,6 +45,7 @@ export function RevisionHistoryDetails({ revisions, bypassedRevisionIds, selecte
                     {selectedIsCurrent && <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "revisions.currentExplanation" })}</p>}
                     {bypassedRevisionIds.has(selected.id) && <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "revisions.inactive" })}</p>}
                 </div>
+                {files && <Button variant="secondary" disabled={files.pending} onClick={() => void files.saveRevision(selected, revisions.indexOf(selected) + 1)}>{intl.formatMessage({ id: "articleFiles.save" })}</Button>}
                 {selectedIsCurrent
                     ? <Badge>{intl.formatMessage({ id: "revisions.currentRevision" })}</Badge>
                     : <Button variant="secondary" onClick={() => select(selected)}>{intl.formatMessage({ id: "revisions.restore" })}</Button>}

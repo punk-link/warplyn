@@ -7,6 +7,13 @@ export {
 } from "./application/health.js";
 export type { EditorialWorkspaceClient } from "./application/client.js";
 export {
+    articleFilesChannel, articleMarkdownByteLimit, decodeArticleMarkdown, encodeArticleMarkdown,
+    getArticleMarkdownFileName, getImportedArticleTitle, isArticleFilesRequest, isArticleMarkdownFile,
+    validateArticleMarkdownName, validateArticleMarkdownSize,
+    type ArticleFilesClient, type ArticleFilesRequest, type ArticleFilesResult,
+    type ArticleMarkdownFile, type ArticleMarkdownSaveResult,
+} from "./articles/files/article-files.js";
+export {
     ELECTRON_APPLICATION_METHOD,
     ELECTRON_IPC_CHANNEL,
     isElectronApplicationMethod,

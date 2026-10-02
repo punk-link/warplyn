@@ -8,7 +8,7 @@ import { createDraftCheckpointTelemetry } from "../drafts/draft-checkpoint-telem
 import { getDraftPresentationState, hasUncommittedDraftChanges, hydrateDraftLifecycle, type DraftPresentationState } from "../drafts/draft-lifecycle.js";
 import { useDraftLifecycle } from "../drafts/useDraftLifecycle.js";
 import { createArticleWorkspaceActions } from "./article-workspace-actions.js";
-import { sortArticlesByActivity, withoutDraft } from "./article-workspace-articles.js";
+import { getArticleContentForWorkspace, sortArticlesByActivity, withoutDraft } from "./article-workspace-articles.js";
 
 export { getArticleContentForWorkspace, sortArticlesByActivity } from "./article-workspace-articles.js";
 
@@ -238,6 +238,7 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
             setPersistedSelectedArticleId(articleId);
         },
         content: selectedDraft?.content ?? "",
+        getArticleContent: (article: Article) => draftLifecycle.sessionsRef.current[article.id]?.content ?? getArticleContentForWorkspace(article),
         setContent: (value: string) => {
             if (!selectedArticleId)
                 return;
