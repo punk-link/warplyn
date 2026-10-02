@@ -2,47 +2,30 @@
 
 - Status: Accepted
 - Date: 2026-08-27
+- Updated: 2026-10-02
 - Scope: Windows distribution, update discovery, apply and restart, and recovery
 - Depends on: [ADR-006](adr-006-sqlite-lifecycle-and-recovery.md), [ADR-008](adr-008-loopback-service-trust-boundary.md), [ADR-009](adr-009-native-settings-credentials-and-data-switching.md)
 
 ## Context
 
-Skladno distributes unsigned Windows 11 x64 releases through GitHub Releases and Squirrel.Windows. Users need updates before paid Windows code signing is justified. An update can replace application binaries and start forward-only SQLite migrations, so it must not bypass Draft recovery, database shutdown, or author choice.
-
-GitHub Releases can host the installer, full package, and `RELEASES` manifest required by Squirrel.Windows. Electron's public update service ignores releases marked as prereleases and would add another network recipient. Skladno already needs separate discovery and download actions, so that service adds no useful capability here.
+Updates replace application binaries and may run forward-only database migrations. Authors must retain control and a recoverable copy of their work.
 
 ## Decision
 
-Keep Windows 11 x64 as the only update target. Publish stable builds as GitHub releases and preview builds as GitHub prereleases with SemVer tags such as `v0.1.0-preview.2`. A security-related preview uses the exact optional suffix `.security`, for example `v0.1.1-preview.1.security`. The release workflow validates the tag and package versions. In-app update discovery considers both stable releases and prereleases.
+Discover releases directly through GitHub only after persisted Author permission naming the recipient and data boundary. Offer compatible releases according to the Author's channel preference. Checks remain optional; download and restart are explicit. Security classification changes the warning and never forces installation.
 
-Use GitHub directly. About Settings requires the author's persisted network permission, confirmed in an in-app dialog naming GitHub and the data boundary, before a packaged Electron main process checks public release metadata; after consent, it checks at startup and at most once every 24 hours unless the author disables automatic checks. It uses Electron's Chromium network stack so normal system networking policy applies. Settings contains the permission and automatic-check switches, current version, check status, release summary, explicit Check, Download, and Restart actions, plus privacy and recovery guidance. Discovery sends the repository identity, installed version, platform, architecture, and normal connection metadata to GitHub. It sends no device identifier, account, Article content, or analytics.
+Keep network access, release validation, updater control, snapshots, and restart authority in Electron main. Expose only finite desktop operations and validated, localized state. Browser and development builds do not imitate an updater.
 
-Only the newest compatible release allowed by the author's channel preference is offered. Stable builds default to stable-only discovery, while preview builds default to including prereleases; the author can change that preference in Settings. A stable release ranks above previews of the same version. The author may ignore it indefinitely. Skladno never forces a check, download, deadline, restart, or install because an update is security-related. The `.security` suffix changes the visible warning only.
+On Windows, use the native Squirrel updater. Restart and update first obtains the latest Draft checkpoint and creates a pre-update snapshot. Either failure cancels the update. Then close streams, services, and SQLite through the existing shutdown path before applying the update. Ordinary close or OS shutdown does not apply it.
 
-After discovery, Electron's native Squirrel updater downloads only when the author requests it. Skladno points it at the selected GitHub release assets. It validates external metadata before it becomes renderer-safe update state. Raw GitHub and Squirrel errors remain in the privileged process and are mapped to stable, localized failures.
+Mark startup successful only after the database opens, migrations complete, services start, and the renderer is ready. Retain recovery state outside SQLite and a snapshot from the previous installed version until the next update succeeds. Database rollback requires the prior binary and its matching snapshot; opening migrated data with an older binary alone is unsupported.
 
-The Article Status Bar and Article Library utility area show one update controller when an action is relevant. The controller presents available, downloading, ready, security warning, and failed states with accessible names and non-color cues. Downloading uses a quiet pulse; reduced-motion mode uses a static busy mark. Clicking it opens About Settings and focuses Updates. Detailed actions and failures remain in Settings.
-
-Restart and update is explicit. It first obtains the latest Draft checkpoint and creates a pre-update SQLite snapshot. Either failure cancels the update. It then closes streams, application services, and SQLite through the existing shutdown path before applying the staged update. Ordinary close and operating-system shutdown do not apply it.
-
-The runtime records the prior version and recovery snapshot outside SQLite. Startup marks the update successful only after SQLite opens, migrations complete, application services start, and the renderer reports ready. Retain one snapshot from the previous installed version until the next update succeeds. A failed installation may use Squirrel recovery. After a migrated startup, rollback means reinstalling the prior preview together with restoring its matching pre-update snapshot. Opening a migrated database with an older binary alone is unsupported.
-
-CI creates a public GitHub release or prerelease, uploads the installer, `RELEASES`, and full package, and validates the complete asset set. The documented disposable-profile upgrade drill runs against a prerelease. Stable and preview Windows releases remain unsigned until signing is completed in [warplyn#41](https://github.com/punk-link/warplyn/issues/41).
+Linux may discover compatible Debian releases with the same network permission, but installation remains with the system package manager or manual reinstall. Warplyn and Skladno use separate release feeds and package identities.
 
 ## Consequences
 
-Preview users receive updates without a signing certificate or a separate update server. They still see unsigned-publisher warnings, and Windows policy may block installation. HTTPS and Squirrel package integrity do not establish Authenticode publisher identity, so the preview must not be described as signed or suitable for general enterprise distribution.
+Authors can defer any update and recover their data. Unsigned Windows packages may trigger warnings or be blocked by policy; HTTPS and package integrity do not establish publisher identity. No separate update service is needed.
 
-The renderer gains only a narrow desktop update client and validated state. GitHub access, release selection, Squirrel control, snapshots, and restart authority stay in Electron main. Browser and development builds expose no updater imitation.
+## Verification and references
 
-The release process becomes deliberately manual at publication. Linux packages use the system package manager or manual `.deb` reinstalls. After the same author-approved GitHub network permission, Linux may discover the newest matching Debian release and open its release notes, but exposes no in-app download or apply action. Percentage rollout, multiple channels, downgrade migrations, mandatory security updates, update analytics, macOS, ARM64, and stable-release signing remain outside this decision.
-
-## Verification
-
-Focused tests cover tag validation, release metadata validation, update state transitions, 24-hour scheduling, security-warning presentation, reduced-motion behavior, renderer-safe failures, Draft and snapshot gates, shutdown reuse, and startup success marking.
-
-The Windows release drill installs the previous preview into a disposable data directory, creates an Article, Draft, Revision, and Settings, updates through the staged flow, and verifies that all local data reopens. It also exercises failed discovery, failed download, failed snapshot, deferred restart, and documented snapshot rollback without recording private paths or Article content.
-
-## Separate product feeds
-
-Warplyn discovers and downloads only from `punk-link/warplyn`; Skladno installers remain in `punk-link/skladno-legacy`. Warplyn requires its own `com.warplyn.desktop-…-full.nupkg` or `warplyn_…_amd64.deb` asset identity. Inherited tags identify historical source, not Warplyn downloads. Current release workflows reject checked-out legacy product metadata before packaging or publishing. Keep the existing Author-controlled network permission, channels, checkpoint, recovery snapshot, and restart gates.
+[Desktop release and update policy](../reference/desktop-release-and-update-policy.md) owns tags, channels, scheduling, assets, and status presentation. The [release guide](../guides/mvp-release-and-recovery.md) owns publication and installed upgrade/recovery drills. Test state transitions, consent, checkpoint and snapshot gates, shutdown, and startup success.

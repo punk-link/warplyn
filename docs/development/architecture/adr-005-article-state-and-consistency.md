@@ -2,33 +2,33 @@
 
 - Status: Accepted
 - Date: 2026-08-21
-- Updated: 2026-09-25
+- Updated: 2026-10-02
 - Scope: Article, Draft, Revision, Proposal, Finding, and translation state
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-002](adr-002-shared-contract-organization.md)
 
 ## Context
 
-Skladno must recover author work, prevent delayed AI output from changing newer text, and keep every accepted change attributable. Treating the editor buffer, saved history, and generated output as one mutable record would make conflicts and recovery ambiguous.
+Authors need recoverable work and attributable changes. Delayed AI output must not overwrite newer text.
 
 ## Decision
 
-An Article points to its current immutable Revision. Editing creates a mutable Draft checkpoint tied to that Revision. Explicit save promotes only the matching current checkpoint into a new Revision and clears only that checkpoint.
+An Article points to its current immutable Revision. Editing creates a mutable Draft checkpoint tied to that Revision. Explicit save promotes only the matching current checkpoint into one new Revision and clears only that checkpoint.
 
-AI-generated Proposals and advisory Findings record their base Revision. They become stale when the Article's current Revision changes. Stale output cannot change Article content. Accepting a valid Proposal creates one new Revision; rejecting or resolving advisory output creates none.
+Proposals and advisory Findings record their base Revision and become stale when the current Revision changes. Stale output cannot change content. Accepting a valid Proposal creates one Revision; rejecting or resolving advisory output creates none.
 
-Restoring an earlier Revision appends a new Revision whose provenance identifies the source. History is never rewritten. A conflicting or retained Draft remains recoverable until the author explicitly chooses which text to use.
+Restoration appends a new Revision with source provenance. It never rewrites history. Conflicting or retained Drafts remain recoverable until the Author explicitly chooses which text to use.
 
-Every persisted Author message anchors a conversation checkpoint. Restoring one rejects that message and the later active conversation and artifacts in one SQLite transaction. When the checkpoint links to a Revision, restoration appends a new restore Revision and leaves later Revisions accessible in history. A current Draft is promoted first by default or discarded only by explicit choice. A stale confirmation or failed transaction changes neither the conversation nor Article state. The renderer returns the rejected message to the Composer only after the transaction succeeds; it does not recreate an old Article selection.
+Conversation checkpoint restoration atomically rejects the selected request and later active conversation and artifacts. A linked Article restoration appends a Revision while preserving displaced history. Draft preservation is the default; discard requires explicit choice. A stale confirmation or failed transaction changes neither conversation nor Article state.
 
-A completed Assistant reply may carry one separately validated exact replacement for its captured selection or the whole Article. The Author can apply that reply once; an opt-in conversation mode can apply it at completion only after a separate check of the Author's exact edit instruction. Both paths generate a concise Revision description from the changed context before persistence, with the same local fallback used for other content Revisions. They reject a stale base Revision and any current Draft, then atomically append an Assistant-attributed Revision and record the applied reply. An ordinary Proposal still uses Proposal Review. A failed or incomplete request never changes Article content.
+A validated Assistant reply replacement may apply once through an Author action or an explicitly authorized opt-in direct-edit mode. Both paths reject stale Revisions and current Drafts, then atomically append an attributable Revision and record application. Failed or incomplete requests never change Article content.
 
-Translations are linked Articles with their own Drafts and Revisions. Their source Article and source Revision remain recorded so stale source relationships are visible.
+Translations are independently recoverable Articles with their own Drafts and Revisions and recorded source Article and Revision.
 
 ## Consequences
 
-Every durable content change is recoverable and attributable. Optimistic conflict handling is required at Draft promotion, Proposal acceptance, and Revision restoration. Generated output may need regeneration after the base Revision changes.
+Every durable content change remains recoverable and attributable. Optimistic conflicts may require an Author decision or regenerated output.
 
-## Verification
+## Verification and references
 
-Tests cover checkpoint version conflicts, exact checkpoint promotion, immutable restore, stale Proposal blocking, advisory Findings, and independently editable translations. Product scenarios remain canonical in `product-model/areas`.
+Test exact checkpoint promotion, conflict handling, immutable restoration, stale-artifact blocking, and independent translations. [Assistant execution and recovery](../reference/assistant-execution-and-recovery.md) specifies checkpoint and reply-application details. Canonical visible behavior remains in [Article Workspace](../../../product-model/areas/article-workspace.json) and [editorial workflows](../../../product-model/areas/editorial-workflows.json); use the [testing guide](../guides/testing.md).
 

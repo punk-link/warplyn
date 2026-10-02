@@ -2,60 +2,34 @@
 
 - Status: Accepted
 - Date: 2026-08-23
+- Updated: 2026-10-02
 - Scope: Electron Settings, managed credentials, native backups, restore, and data relocation
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-006](adr-006-sqlite-lifecycle-and-recovery.md), [ADR-008](adr-008-loopback-service-trust-boundary.md)
 
 ## Context
 
-Skladno now has a Windows Electron client and browser-based Application Settings. The browser owns its selected backup-directory handle, while the local application service owns SQLite snapshots and environment-variable credential resolution.
-
-Native Settings need operating-system folder selection, File Explorer integration, managed credentials, backup restore, and relocation of live SQLite data. These operations cannot grant filesystem or credential access to the renderer. Restore and relocation also cannot switch an open SQLite database safely.
-
-Windows 11 x64 and Ubuntu 22.04 x64 are desktop targets. Compatible Debian-based distributions may use the same package, but Ubuntu remains the release-validation baseline. The Settings domain must not require a later platform implementation to replace shared contracts or application use cases.
+Native credentials, backup picking, and restore need OS access without granting that authority to the renderer. Replacing an open SQLite database would risk Author data.
 
 ## Decision
 
-Represent an AI connection's credential source as either an environment-variable reference or a managed credential. Store managed API keys in the operating-system credential store through a narrow application port. Windows uses Windows Credential Manager; Linux uses Secret Service through `@napi-rs/keyring`. If Secret Service, D-Bus, or its collection is unavailable or locked, managed credentials report `managed_credentials_unavailable`; Skladno never falls back to a file or kernel keyring. Persist only sanitized connection metadata in SQLite.
+Represent credentials as environment references or OS-managed secrets through platform-neutral application ports. Persist only sanitized connection metadata. Never fall back to secret files or insecure storage if the OS credential service is unavailable. No client receives credential values.
 
-Each supported platform composition root selects its credential adapter once. Browser clients may select, test, and use managed connections, but only the Electron client may create, rename, or remove them. No client receives a credential value.
+Browser clients may select, test, and use managed connections; only Electron may create, rename, or remove them. Electron main owns native dialogs, retained picker selections, reveal actions, credential mutation, and restart coordination through a separate finite bridge. Renderers cannot submit arbitrary privileged paths.
 
-Expose native Settings through a separate, context-isolated preload client. Electron main owns native dialogs, File Explorer actions, retained picker selections, credential mutation, and restart coordination. The application client remains transport-neutral. The renderer cannot submit arbitrary paths for privileged actions.
+Keep backup destinations and runtime recovery configuration outside SQLite. Write runtime configuration atomically, without credentials or Article content.
 
-Keep browser and native backup destinations outside SQLite. The browser retains its permission handle. Windows stores its native destination in a validated runtime configuration beneath the operating-system application-data directory.
+Native restore stages a snapshot and applies it during restart. Retain a complete recovery snapshot first, clear pending state only after the database and application services open successfully, and attempt at most one automatic rollback. Never enter a relaunch loop or automatically delete old data or orphaned credentials.
 
-Runtime configuration stores the native backup folder and pending restore record, with no credentials or Article content, and is written atomically. Warplyn resolves live storage from `WARPLYN_DATA_DIR` or `~/.warplyn`; runtime-selected live-directory relocation is not implemented. The planned relocation flow must preserve the same recovery guarantees before it is exposed.
+Live data belongs on a local filesystem; backups may use network destinations. Backup and live-data directories cannot contain one another.
 
-Restore and relocation use staged SQLite snapshots and apply only during restart. Native backups include current Author Skills and Skill Revision history in a companion directory with an integrity manifest; a legacy database-only snapshot retains current Skills. Before restore, Skladno creates and retains a recovery snapshot with Skill files. Relocation retains the complete old data directory. Startup clears pending state only after the new database and application services open successfully. A failed switch attempts one automatic rollback and cannot enter a relaunch loop.
+Runtime-selected relocation is not implemented. Any future relocation must retain the old directory and meet the same restart, validation, rollback, and recovery guarantees before exposure.
 
-Live data must remain on a local filesystem. Native backup snapshots may use a network destination. Backup and data directories cannot contain one another.
-
-Define platform-neutral credential and native-settings boundaries. Windows and Linux implement only their credential adapters; Linux reuses Electron's user-data runtime configuration, dialogs, reveal action, and recovery flow. Other platforms require their own acceptance evidence.
+Warplyn is an independent installation. Legacy migration uses explicit backup replacement, preserves source backups and OS credentials, and requires fresh connection setup. [Local data compatibility and recovery](../reference/local-data-compatibility-and-recovery.md) owns installation identities and restore sanitization.
 
 ## Consequences
 
-Managed credentials remain available to supported platform runtimes when their OS credential service is available, without entering renderer responses, SQLite, backups, or runtime configuration. Native path authority stays in Electron main. Restore and relocation gain an explicit recovery state instead of mutating an open database.
+Authors gain native recovery and managed credentials without exposing secrets through backups or the renderer. OS credential availability and restart-based restore limit convenience in exchange for recoverability.
 
-Each package ships only its matching x64 credential-store binary. Runtime startup becomes responsible for resolving and completing or rolling back a pending data switch before normal composition.
+## Verification and references
 
-Other desktop platforms are not implemented by this decision. Their adapters can reuse the Settings contracts and switching state machine, but each platform needs separate credential-store, filesystem, packaging, and recovery acceptance evidence.
-
-## Rejected alternatives
-
-- Electron `safeStorage`: a separately launched loopback service cannot access it, so managed connections would not be usable from the browser runtime.
-- Credential values in SQLite or runtime JSON: snapshots and relocation would copy secrets and weaken the renderer and persistence boundary.
-- A generic filesystem IPC bridge: it would grant more authority than Settings needs.
-- In-place restore or live relocation: an open WAL-mode database cannot be replaced safely.
-- Automatic deletion of old data or orphaned credentials: it would remove rollback options without a separate author decision.
-- Platform-specific fields in shared Settings contracts: they would make future adapters change the domain model.
-
-## Verification
-
-Contract and adapter tests must cover credential-source validation, no secret serialization, allowlisted IPC, retained picker selections, path containment, snapshot compatibility, configuration precedence, staged switching, one rollback attempt, and restart-loop prevention.
-
-The packaged Windows 11 x64 and Ubuntu 22.04 x64 acceptance drills must prove their managed credential behavior, native backup retention, successful restore and relocation, failure rollback, retained old data, and continued browser behavior. A compatible distribution becomes a guaranteed target only after the same pass succeeds there.
-
-## Independent Warplyn installation
-
-Warplyn uses application and credential service ID `com.warplyn.desktop`, Electron profile `Warplyn`, and default data directory `~/.warplyn`. Its configuration uses `WARPLYN_`; `SKLADNO_DATA_DIR` is used only to reject known legacy-directory overlap, never as a live-storage fallback. Canonical paths prevent junction or symlink aliases from bypassing that guard.
-
-Migration uses the existing explicit backup/replacement/restart flow. It copies compatible database records and backed-up Skills, without merging, reading legacy secrets, or copying `.env` files. Runtime backup folders, update preferences, telemetry consent and identity, and recovery records stay outside the backup. During public beta, supported installations enable telemetry by default with a fresh installation ID; saved opt-out preferences remain respected. Both native and browser restore clear connection metadata, including environment-variable references, and connection-bound model preferences on a private restore copy. The Author adds connections and selects models again. Source backups and OS credentials remain unchanged; recovery snapshots retain previous connection settings for rollback.
+Test credential isolation, finite IPC, path authority, staged restore, retained recovery data, and bounded rollback. The [data reference](../reference/local-data-compatibility-and-recovery.md) specifies platform behavior and future relocation requirements. Run implemented desktop acceptance drills from the [release guide](../guides/mvp-release-and-recovery.md); relocation acceptance is required only before that capability ships.

@@ -9,3 +9,7 @@ Use this guide when discovery spans features or a code change has several steps.
 5. Review the production path against the request. Report checks and any manual verification still needed.
 
 Use `rg` to find current owners and tests rather than relying on a fixed file map. For renderer ownership, consult [ADR-003](../architecture/adr-003-web-feature-oriented-react-architecture.md); for UI changes, consult the [design system](../ui/design-system.md). Keep command output focused on the failing diagnostic or a short success summary.
+
+## Import-checker limitation
+
+The application-client-to-feature rule in `scripts/web-import-boundaries.mjs` still matches the former `application-client.ts` filename. Until that rule covers the current `application/` adapters, review their imports directly. Passing the checker alone does not prove this boundary. This is a maintenance limitation, not an architectural exception.

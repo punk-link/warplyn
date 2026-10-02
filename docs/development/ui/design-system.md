@@ -28,6 +28,25 @@ Keep the Article as the visual and keyboard-order center. Navigation and assista
 
 Use the established supporting surface, alignment, and quiet scrollbar treatments across workspace regions. Keep intentional empty areas quiet, use real UI icons rather than unrelated glyphs or emojis, and preserve existing controls and responsive states.
 
+## Keyboard focus areas
+
+[ADR-012](../architecture/adr-012-workspace-keyboard-focus-areas.md) owns the area-based navigation decision. Tab and Shift+Tab traverse these visible Workspace areas in order:
+
+1. Library
+2. Article header
+3. Workspace views
+4. Formatting toolbar
+5. Article editor
+6. Article status
+7. Assistant chat
+8. Assistant composer
+
+Settings uses its own sequence: Settings navigation, then Settings content. Enter the stable target or fall back to the last valid focused descendant; skip missing, disabled, collapsed, or hidden entries. Restore the editor caret or selection where Lexical supports it. Dialogs own focus while open.
+
+Library uses Up and Down outside Search. Article Header and Article Status use Left and Right. Workspace Views, menus, and the toolbar keep their roving keyboard behavior. Editor, composer, and Search keep native text-editing keys. Assistant chat uses Up and Down to scroll and Left and Right for actionable results.
+
+Shared focus traversal owns movement and restoration. Features retain their local keyboard handlers; new controls belong to an existing area or an explicit popup or dialog. Test both traversal directions, restored targets, hidden entries, local actions, and Settings separation. Complete the Electron keyboard pass before release.
+
 ## Canonical feature guidance
 
 Feature behavior belongs in the canonical records rather than this visual foundation:

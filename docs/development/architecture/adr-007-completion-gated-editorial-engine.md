@@ -2,35 +2,33 @@
 
 - Status: Accepted
 - Date: 2026-08-21
-- Updated: 2026-09-13
+- Updated: 2026-10-02
 - Scope: AI generation, streaming, provider storage, and generated artifact persistence
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-005](adr-005-article-state-and-consistency.md)
 
 ## Context
 
-Editorial operations stream partial provider output and may fail, be cancelled, return invalid structured data, or refer to an expired provider continuation. Provider SDK types, response IDs, and defaults must not become application contracts or weaken author approval and privacy rules.
+Provider streams may fail, be cancelled, or contain invalid output. Provider mechanics must not weaken Author approval, privacy, or application contracts.
 
 ## Decision
 
-Application services depend on Skladno's `EditorialEngine` contract. Provider SDK construction, options, metadata, tools, and errors remain in infrastructure adapters.
+Application services depend on a provider-neutral Editorial Engine. Infrastructure adapters own provider SDKs, options, tools, metadata, errors, context bounding, and configured model resolution.
 
-The infrastructure resolver constructs a common SDK Language Model for the active finite provider connection. The adapter consumes the complete provider stream, forwards safe domain events, propagates the request `AbortSignal`, and emits completion only after the stream succeeds and its required text, finish reason, structured output where required, and domain validation are valid. A successful completion receives a local identity; a provider response ID is not required. Failed, cancelled, empty, malformed, or incomplete operations persist no generated artifact except the completed Fact Check findings described below.
+Consume and validate the full stream before completion: required text, finish reason, structured output, and domain validation must succeed. Propagate cancellation and expose only safe domain events and errors. Completion has a local identity independent of provider response IDs.
 
-Infrastructure keeps provider mechanics, Article context bounding, and Assistant `ToolLoopAgent` execution in focused modules. The engine factory constructs capability-specific providers such as `FactCheckProvider` and injects them into the `EditorialEngine`; the engine does not construct unused provider clients for other connections. Supporting adapters for titles, Proposal summaries, and action-intent verification remain separate and share only provider configuration. Fact Check researches and evaluates at most three claims concurrently. Each fully evaluated claim may report progress inside the server; on an Assistant time limit or an individual claim failure, completed findings may be persisted as a Revision-bound Fact Check, marked incomplete if claims remain. A completed Fact Check also survives failure of the Assistant's final reply. Unfinished or failed claim output is discarded. If no findings complete, the request fails. Other operations retain the full-run completion gate.
+Generated artifacts become durable only after validated completion. Failed, cancelled, empty, malformed, or incomplete operations persist no generated artifact, with one exception: Assistant Fact Check may retain fully researched and evaluated findings after a time limit, individual claim failure, or failed final reply. Findings remain bound to the unchanged base Revision and are marked incomplete if claims remain. Discard unfinished or failed claims; fail normally if none complete.
 
-Application engine contracts live in `packages/server/src/application/editorial/engine/`. Under `packages/server/src/infrastructure/editorial/`, `engines/` owns engine construction and configured resolution, `adapters/` owns provider and SDK integration, `models/` owns infrastructure request/output types and context helpers, `services/` owns model discovery and capability checks, and `workflows/` owns the fact-check workflow. Add provider mechanics to these infrastructure owners rather than to application contracts or the composition root.
+All Assistant artifact capabilities share one execution and completion policy. Identical calls reuse one generation; conflicting calls fail before another begins. Required reads and authorized actions precede the artifact. A validated artifact ends orchestration without another model reply, but full-stream and application checks still precede persistence.
 
-Provider-side response storage is disabled by default where the provider exposes that control. `SKLADNO_AI_SESSION_CONTINUATION=true` opts into eligible same-Article continuation only when the provider adapter supports it. The stored provider token is separate from Skladno's local completion identity and is reused only when Article, connection, provider, and model all match. Fact checks, translations, cross-Article requests, legacy unscoped sessions, and adapters without continuation support start fresh. Provider-specific storage and continuation mechanisms remain inside infrastructure adapters.
+The deadline covers all completion validation and Revision descriptions. Delivery after committed completion cannot turn success into timeout or cancellation.
 
-Application errors use stable safe categories. Raw provider messages, prompts, Article bodies, credentials, and SDK types do not cross the adapter boundary or enter diagnostics.
-
-All Assistant artifact capabilities share one execution and completion policy. Identical calls within a run reuse the same in-flight or completed generation; conflicting calls fail before a second generation. After a validated artifact tool completes, the orchestration step finishes the run without an additional model reply. The adapter still consumes and validates the full orchestration stream, including errors and finish reason, before application completion checks and persistence. Required reads and authorized actions precede the artifact. The configured Assistant deadline remains active through replacement validation, edit-intent verification, and Revision description generation. Once completion is committed, delivery cannot turn the request into a timeout or cancellation.
+Provider response storage is disabled by default where supported. Continuation requires explicit opt-in and matching Article, connection, provider, and model. Local completion identity is never sent to a provider. Raw provider errors, prompts, credentials, Article bodies, and SDK types stay outside application responses and diagnostics.
 
 ## Consequences
 
-The provider or SDK can change without rewriting application behavior. The adapter carries strict completion checks, and partial streamed text is presentation state rather than durable content. Continuation cannot leak between connections or models, and local artifact identity is never sent to a provider.
+Providers can change without changing application behavior. Completion checks add adapter work, while partial streams remain temporary presentation state and scoped continuation protects private context.
 
-## Verification
+## Verification and references
 
-Deterministic adapter and integration tests cover storage defaults, scoped eligible continuation, abort propagation, stream error parts, incomplete output, structured validation, safe errors, provider-model routing, and absence of artifact persistence before valid completion.
+Test completion, cancellation, invalid streams, safe errors, scoped continuation, and the Fact Check exception. [Assistant execution and recovery](../reference/assistant-execution-and-recovery.md) owns model routing and continuation eligibility. [ADR-005](adr-005-article-state-and-consistency.md) owns Article changes; use the [testing guide](../guides/testing.md).
 
