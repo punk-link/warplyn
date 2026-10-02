@@ -1,3 +1,7 @@
+---
+description: "Connect an AI provider to Warplyn, store your API key, choose models, and understand connection checks and supported capabilities."
+---
+
 # AI providers and models
 
 Warplyn sends AI requests to the provider you configure in **Settings** → **AI assistant**. You need an account and API key from that provider. The provider may charge for API use.

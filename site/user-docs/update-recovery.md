@@ -1,3 +1,7 @@
+---
+description: "Recover from a failed Warplyn Windows preview update by reinstalling the previous preview and restoring its matching snapshot."
+---
+
 # Windows preview update recovery
 
 Preview updates are optional. If Warplyn cannot start after an update, reinstall the previous preview and restore the matching pre-update snapshot.

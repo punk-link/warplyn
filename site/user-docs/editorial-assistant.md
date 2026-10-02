@@ -1,3 +1,7 @@
+---
+description: "Use Warplyn's Editorial Assistant to draft, revise, check facts, review style, and translate. Review generated changes before accepting them."
+---
+
 # Editorial Assistant
 
 Use the Editorial Assistant when you want help composing, revising, checking facts, reviewing style, or preparing a translation. Every request is explicit. Choosing from **Quick actions** only puts a *Skill* starter in the Composer. Select **Send editorial request** to start work.

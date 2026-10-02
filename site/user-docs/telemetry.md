@@ -1,3 +1,7 @@
+---
+description: "Learn what diagnostic and usage data Warplyn shares, what stays private, and how to turn sharing off in Settings."
+---
+
 # Share diagnostic and usage data
 
 Warplyn's packaged Windows and Linux apps send pseudonymous reliability and usage events to PostHog Cloud in the United States (Virginia). Sharing is on by default during the public beta. You can turn it off in **Settings** → **General** → **Privacy & diagnostics**.

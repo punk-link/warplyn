@@ -1,3 +1,7 @@
+---
+description: "Understand what affects AI request costs in Warplyn, how API billing works, and how to review your provider's usage charges."
+---
+
 # AI provider costs
 
 AI assistance is optional. Warplyn does not bill you for requests. Your AI provider may charge your account when Warplyn sends one.

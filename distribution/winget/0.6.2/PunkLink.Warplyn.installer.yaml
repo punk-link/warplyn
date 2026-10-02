@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.12.0.schema.json
+PackageIdentifier: PunkLink.Warplyn
+PackageVersion: 0.6.2
+MinimumOSVersion: 10.0.22000.0
+InstallerType: exe
+Scope: user
+InstallModes:
+  - interactive
+  - silent
+  - silentWithProgress
+InstallerSwitches:
+  Silent: --silent
+  SilentWithProgress: --silent
+UpgradeBehavior: install
+AppsAndFeaturesEntries:
+  - DisplayName: Warplyn
+    Publisher: Kirill Taran
+    DisplayVersion: 0.6.2
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/punk-link/warplyn/releases/download/v0.6.2/Warplyn-0.6.2-win32-x64-setup.exe
+    InstallerSha256: F527A85EC7834B0707C049182B8BBDBDEB13CFCD5394E6632A2FB536DCDBA4BE
+ManifestType: installer
+ManifestVersion: 1.12.0

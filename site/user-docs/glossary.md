@@ -1,3 +1,7 @@
+---
+description: "Understand Warplyn's Articles, Drafts, Revisions, Proposals, Findings, and Skills with definitions used throughout the writing workspace."
+---
+
 # Warplyn glossary
 
 These terms describe concepts visible to authors and the domain language used throughout Warplyn.

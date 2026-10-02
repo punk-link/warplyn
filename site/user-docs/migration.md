@@ -1,3 +1,7 @@
+---
+description: "Move from Skladno to Warplyn using a backup while keeping your original installation and writing available for recovery."
+---
+
 # Moving from Skladno to Warplyn
 
 Warplyn is available as a separate application. Keep Skladno and its data until you have verified your restored work. Do not move its live data folder into Warplyn.

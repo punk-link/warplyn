@@ -1,3 +1,7 @@
+---
+description: "Create and manage reusable editorial Skills in Warplyn so the Assistant can follow your writing instructions across repeated tasks."
+---
+
 # Skills
 
 *Skills* are local Markdown instruction packages. They help the Assistant choose and sequence editorial capabilities. They do not add permissions or make changes to an *Article*.

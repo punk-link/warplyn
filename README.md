@@ -1,12 +1,12 @@
 # Warplyn
 
-This repository is maintained by [punk-link](https://github.com/punk-link) for Warplyn development. It contains Skladno's Git history and inherited tags. These tags do not identify Warplyn installers; no Warplyn release is available yet.
-
-Historical issues, pull-request reviews, and Skladno releases remain in [skladno-legacy](https://github.com/punk-link/skladno-legacy). Active issues moved to this repository through native transfer; see the [issue URL map](docs/development/guides/skladno-to-warplyn-issue-map.md).
-
 > Your ideas, in your voice.
 
 Warplyn is an open-source, local-first desktop writing workspace for Authors. Work with an AI Editorial Assistant on your writing, in your voice. You decide what to ask for and which changes to keep.
+
+[Download for Windows or Debian Linux](https://github.com/punk-link/warplyn/releases/latest) · [Installation guide](https://warplyn.com/docs/installation.html) · [Website](https://warplyn.com/)
+
+![Warplyn desktop workspace with an Article and an Editorial Assistant revision request.](site/user-docs/public/images/editorial-assistant-example.png)
 
 ## Built around the Author
 
@@ -63,11 +63,11 @@ Currently supported AI providers:
 
 Through OpenCode Zen, Authors can also use models from additional vendors available in its catalog. Supported editorial operations depend on the chosen model's capabilities.
 
-After Warplyn installers are published:
+To get started on Windows:
 
 1. Open [Warplyn releases](https://github.com/punk-link/warplyn/releases) and download the Windows setup `.exe` from **Assets**.
 2. Run the installer and open Warplyn.
-3. To use the Editorial Assistant, open **Settings > AI Assistant**, add your provider connection and API key, and verify the connection. Your provider's pricing applies.
+3. To use the Editorial Assistant, open **Settings > AI assistant**, add your provider connection and API key, and verify the connection. Your provider's pricing applies.
 4. Create an Article and start writing. Set up a backup folder in **Settings > Data & backups** to protect your work.
 
 **Releases are not digitally signed.** Windows may show a SmartScreen warning. Check that you downloaded the installer from the Warplyn repository's release page before continuing.
@@ -78,6 +78,12 @@ On Windows, you control update checks, downloads, and restarts in **Settings > A
 
 - [User documentation](https://warplyn.com/docs/)
 - [Report a problem or suggest an improvement](https://github.com/punk-link/warplyn/issues)
+
+## Project history
+
+Warplyn is maintained by [punk-link](https://github.com/punk-link) and includes Skladno's Git history and inherited tags. Download Warplyn installers from the current [Warplyn releases](https://github.com/punk-link/warplyn/releases).
+
+Historical issues, pull-request reviews, and Skladno releases remain in [skladno-legacy](https://github.com/punk-link/skladno-legacy). Active issues moved to this repository through native transfer; see the [issue URL map](docs/development/guides/skladno-to-warplyn-issue-map.md).
 
 ## License
 

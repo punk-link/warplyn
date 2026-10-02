@@ -1,3 +1,7 @@
+---
+description: "Install Warplyn on Windows 11 or Debian Linux, connect an AI provider, and start using the desktop writing workspace."
+---
+
 # Install Warplyn
 
 Warplyn is available for Windows 11 x64 and Linux. Download the current installers from [Warplyn releases](https://github.com/punk-link/warplyn/releases). If you use Skladno, follow the [migration guide](migration.md) and keep its installation and backups until you verify your restored work.

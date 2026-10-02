@@ -1,5 +1,6 @@
 ---
 prev: false
+description: "Install Warplyn, use the Editorial Assistant, configure AI providers, and protect your writing with backups and recovery guides."
 ---
 
 # Warplyn user guide

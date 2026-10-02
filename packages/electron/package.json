@@ -6,7 +6,7 @@
     "main": "dist/main.js",
     "productName": "Warplyn",
     "description": "Local-first AI editorial workspace",
-    "author": "Kirill Taran",
+    "author": "punk.link",
     "scripts": {
         "build": "tsc -b && esbuild src/presentation/main.ts --bundle --platform=node --format=esm --external:electron --external:@napi-rs/keyring --banner:js=\"import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);\" --outfile=dist/main.js && esbuild src/presentation/preload.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload.cjs",
         "start": "electron .",

@@ -67,6 +67,8 @@ Run `npm run release` to release the next stable patch or `npm run release -- 1.
 
 If a tag exists without a release, run `gh workflow run electron-windows.yml -f tag=v1.2.3` after the workflow change reaches the default branch.
 
+For each stable Windows release, CI generates and validates WinGet manifests from the built installer and saves a `winget-v<version>` workflow artifact. Complete the disposable installation, upgrade, and uninstall checks before submitting it using the [WinGet submission procedure](../../../distribution/winget/README.md). Preview releases do not generate WinGet manifests.
+
 ### Desktop acceptance scenario
 
 Run this pass with a disposable `WARPLYN_DATA_DIR` and no private content:
