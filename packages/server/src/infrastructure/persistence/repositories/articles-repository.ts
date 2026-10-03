@@ -8,6 +8,7 @@ import { deleteArticle, reorderPinnedArticles, setArticleArchived, setArticlePin
 import { throwArticleNotFound, throwInvalidArticleRequest, requireArticleTitle, throwRevisionNotFound, throwUnsupportedPublishingProfile } from "./article-repository-errors.js";
 import { mapArticleFromRow, articleSelect } from "./article-record-mappers.js";
 import { getArticleRevision, insertArticleRevision, listArticleRevisions } from "./article-revision-queries.js";
+import { acceptTranslationRefresh } from "./translation-refresh-acceptance.js";
 import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
 
 
@@ -37,6 +38,10 @@ export class ArticlesRepository {
     private validateSourceRevision(sourceRevisionId: string | undefined, sourceArticleId: string | undefined): void {
         if (sourceRevisionId && (!sourceArticleId || !this.database.prepare("SELECT 1 FROM article_revisions WHERE id = ? AND article_id = ?").get(sourceRevisionId, sourceArticleId)))
             throwInvalidArticleRequest();
+
+        const source = sourceArticleId && this.getArticle(sourceArticleId);
+        if (sourceRevisionId && source && source.currentRevisionId !== sourceRevisionId)
+            throw new ArticleRevisionConflictError(source);
     }
 
 
@@ -57,7 +62,7 @@ export class ArticlesRepository {
         this.database.prepare("INSERT INTO articles (id, title, language, audience, publishing_profile_id, source_article_id, source_revision_id, archived, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
             .run(articleId, requireArticleTitle(input.title), language ?? null, input.audience ?? null, input.publishingProfileId ?? null, sourceArticleId ?? null, input.sourceRevisionId ?? null, archived, timestamp, timestamp);
         this.database.prepare("INSERT INTO article_revisions (id, article_id, content, provenance_json, created_at) VALUES (?, ?, ?, ?, ?)")
-            .run(revisionId, articleId, input.content, JSON.stringify(input.provenance ?? { kind: REVISION_PROVENANCE_KIND.INITIAL }), timestamp);
+            .run(revisionId, articleId, input.content, JSON.stringify({ ...(input.provenance ?? { kind: REVISION_PROVENANCE_KIND.INITIAL }), ...(input.sourceRevisionId ? { sourceRevisionId: input.sourceRevisionId } : {}) }), timestamp);
         this.database.prepare("UPDATE articles SET current_revision_id = ? WHERE id = ?").run(revisionId, articleId);
     }
 
@@ -205,12 +210,13 @@ export class ArticlesRepository {
             if (current.currentRevisionId !== input.baseRevisionId)
                 throw new ArticleRevisionConflictError(current);
 
+            const provenance = acceptTranslationRefresh(this.database, current, input, (id) => this.getArticle(id));
             insertArticleRevision(this.database, {
                 revisionId,
                 articleId,
                 content: input.content,
                 description,
-                provenance: input.provenance,
+                provenance,
                 timestamp,
             });
             this.resolveAcceptedCorrections(articleId, input, current.currentRevision.content, timestamp);
@@ -272,7 +278,7 @@ export class ArticlesRepository {
             if (current.draft && current.draft.content !== input.content)
                 throw new ArticleDraftConflictError(current, current.draft);
 
-            const provenance = { kind: REVISION_PROVENANCE_KIND.AUTHOR_DRAFT, baseRevisionId: input.baseRevisionId };
+            const provenance = { kind: REVISION_PROVENANCE_KIND.AUTHOR_DRAFT, baseRevisionId: input.baseRevisionId, ...(current.sourceRevisionId ? { sourceRevisionId: current.sourceRevisionId } : {}) };
             this.database.prepare("INSERT INTO article_revisions (id, article_id, content, description, provenance_json, created_at) VALUES (?, ?, ?, ?, ?, ?)")
                 .run(revisionId, articleId, input.content, description ?? null, JSON.stringify(provenance), timestamp);
             this.database.prepare("UPDATE articles SET current_revision_id = ?, updated_at = ? WHERE id = ?")

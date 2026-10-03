@@ -221,7 +221,7 @@
                 "packages/web/src/workspace/views/TranslationsView.tsx",
                 "packages/web/src/workspace/state/article-workspace-state.ts"
             ],
-            "contract": "A stale source blocks creation, and the completed translated title and text create an independent linked Article without overwriting its source Article. The selected completed translation is restored per Article when available, otherwise the latest available translation is shown. An Author can confirm rejection of generated output, which removes it from pending approval without changing the source Article or accepted translation history.",
+            "contract": "A stale source blocks creation, and the completed translated title and text create an independent linked Article without overwriting its source Article. Freshness belongs to each selected language proposal, so a stale sibling does not block a fresh result. The selected latest completed translation per language is restored per Article when available, otherwise the latest available translation is shown. Source Articles show Current or Outdated for every linked translation. An Author may explicitly accept a reviewed proposal into a named existing translation as a new immutable Revision, preserving its title and history; source or target Revision changes, rejected or invalid output, mismatched language, and retained target Drafts block acceptance. Creating another translation remains available. An Author can confirm rejection of generated output, which removes it from pending approval without changing the source Article or accepted translation history.",
             "persistence": "Independent Article with source Article and Revision linkage; selected translation language is a local workspace preference per Article.",
             "relatedCapabilityIds": ["history-and-publishing.translations", "editorial-workflows.translation-request"]
         },
@@ -743,6 +743,16 @@
                 "kind": "automated",
                 "path": "packages/web/src/workspace/views/TranslationsView.test.tsx"
             }
+        },
+        {
+            "id": "workspace.translations.language-freshness",
+            "title": "A fresh language stays actionable when a sibling proposal is stale",
+            "capabilityIds": ["workspace.translations.linked-article"],
+            "preconditions": ["Spanish is based on the current source Revision and German on an older Revision."],
+            "event": "The Author switches between language proposals.",
+            "expected": ["Only the stale selected proposal warns and blocks acceptance."],
+            "forbidden": ["A stale sibling disabling a fresh selected proposal."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/TranslationsView.freshness.test.tsx" }
         },
         {
             "id": "workspace.translations.reject-generated",

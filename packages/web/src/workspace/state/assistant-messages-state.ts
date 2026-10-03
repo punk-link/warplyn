@@ -78,7 +78,7 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
         request, retry, checkpointPreview, previewCheckpoint, restoreCheckpoint, closeCheckpoint: () => setCheckpointPreview(undefined), restoredComposer,
         ...edits,
         reload,
-        cancel: () => store.controller.current?.abort(),
+        cancel: () => article && store.controllers.current.get(article.id)?.abort(),
     };
 }
 

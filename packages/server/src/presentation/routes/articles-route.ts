@@ -187,6 +187,9 @@ export async function acceptProposalRoute(request: IncomingMessage, response: Se
         content: parseString(body.content, "content"),
         ...(body.interfaceLocale === undefined ? {} : { interfaceLocale: parseString(body.interfaceLocale, "interfaceLocale") }),
         provenance: provenance as Record<string, unknown>,
+        ...(body.translationRefresh === undefined ? {} : { translationRefresh: {
+            editorialArtifactId: parseString(parseObject(body.translationRefresh).editorialArtifactId, "editorialArtifactId"),
+        } }),
     };
 
     writeJson(response, HTTP_STATUS.CREATED, await articles.acceptProposalWithDescription(articleId, input, new AbortController().signal));

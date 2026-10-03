@@ -35,6 +35,7 @@ export interface AcceptProposalInput {
     content: string;
     provenance: Record<string, unknown>;
     interfaceLocale?: string;
+    translationRefresh?: { editorialArtifactId: string };
 }
 
 

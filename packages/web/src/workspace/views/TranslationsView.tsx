@@ -4,6 +4,7 @@ import { TranslationsHeader } from "./TranslationsHeader.js";
 import { TranslationsNavigation } from "./TranslationsNavigation.js";
 import { TranslationBody } from "./TranslationBody.js";
 import { TranslationRejectionDialog } from "./TranslationRejectionDialog.js";
+import { TranslationRefreshControl } from "./TranslationRefreshControl.js";
 import type { TranslationsActions } from "./translations-view-actions.js";
 import type { TranslationsData } from "./translations-view-data.js";
 import { getProviderLanguageName } from "../state/editorial-language.js";
@@ -34,6 +35,7 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
     const [displayMode, setDisplayMode] = useState<"side-by-side" | "aligned">("side-by-side");
     const [visibleText, setVisibleText] = useState<"source" | "translation">("source");
     const translation = translations.find((item) => item.metadata.targetLanguage === selectedTargetLanguage) ?? translations.at(-1);
+    const selectedStale = stale || Boolean(translation && translation.baseRevisionId !== article.currentRevisionId);
     const startCreate = () => {
         if (!translation)
             return;
@@ -82,7 +84,7 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
             displayMode={displayMode}
             creating={creating}
             rejecting={rejecting}
-            stale={stale}
+            stale={selectedStale}
             edit={edit}
             reject={reject}
             translate={translate}
@@ -97,10 +99,11 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
             linkedTranslations={linkedTranslations}
             translations={translations}
             translation={translation}
-            stale={stale}
+            stale={selectedStale}
             openArticle={openArticle}
             selectTargetLanguage={selectTargetLanguage}
         />
+        {translation?.editorialArtifactId && !sourceArticle && <TranslationRefreshControl translation={translation} linkedTranslations={linkedTranslations} stale={selectedStale} create={create} />}
         <TranslationBody
             source={source}
             translatedContent={translatedContent}

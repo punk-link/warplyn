@@ -48,7 +48,7 @@ class FakeIpcMain implements ElectronIpcMain {
 }
 
 
-function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; close: () => void } {
+function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; persistence: ReturnType<typeof createTestPersistence>; close: () => void } {
     const directory = mkdtempSync(join(tmpdir(), "skladno-electron-ipc-"));
     const database = openDatabase(join(directory, "skladno.sqlite"));
     const persistence = createTestPersistence(database);
@@ -67,12 +67,32 @@ function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; close:
 
     return {
         ipcMain,
+        persistence,
         close: () => {
             database.close();
             rmSync(directory, { recursive: true, force: true });
         },
     };
 }
+
+
+test("Electron refresh acceptance uses the existing finite operation and preserves translation history", async () => {
+    const adapter = createAdapter();
+    try {
+        const { articles, editorialArtifacts } = adapter.persistence;
+        const source = articles.createArticle({ title: "Source", content: "Original", language: "en" });
+        const target = articles.createArticle({ title: "Spanish", content: "Original español", language: "es", sourceArticleId: source.id, sourceRevisionId: source.currentRevisionId });
+        const revision = articles.saveRevision(source.id, { baseRevisionId: source.currentRevisionId, content: "Updated" });
+        const artifact = editorialArtifacts.createEditorialArtifact({ articleId: source.id, revisionId: revision.id, kind: "assistant-proposal", content: JSON.stringify({ proposal: "Actualizado", translation: { targetLanguage: "Spanish", protectedSpans: [] } }) });
+        const accepted = await adapter.ipcMain.invoke({ method: "acceptProposal", args: [target.id, { baseRevisionId: target.currentRevisionId, content: "Actualizado", provenance: {}, translationRefresh: { editorialArtifactId: artifact.id } }] });
+        assert.equal(accepted.ok, true);
+        assert.equal(articles.getArticle(target.id)?.sourceRevisionId, revision.id);
+        assert.equal(articles.listRevisions(target.id).length, 2);
+        assert.equal(articles.getRevision(target.id, target.currentRevisionId)?.content, "Original español");
+    } finally {
+        adapter.close();
+    }
+});
 
 
 test("Electron IPC invokes application services and serializes conflict details", async () => {

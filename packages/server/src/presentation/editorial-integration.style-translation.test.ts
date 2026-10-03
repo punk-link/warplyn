@@ -95,3 +95,37 @@ test("translation carries its target language, preserves the source, and records
         assert.equal(repositories.articles.restoreRevision(translated.id, translated.currentRevisionId).content, translated.currentRevision.content);
     });
 });
+
+
+test("a source change during translation generation discards the output without changing accepted translations", async () => {
+    const engine = new FixtureEngine([{ type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "translation", text: "Nueva versión", translation: { targetLanguage: "Spanish", protectedSpans: [] } }]);
+    let started: () => void = () => undefined;
+    let release: () => void = () => undefined;
+    const generating = new Promise<void>((resolve) => {
+        started = resolve;
+    });
+    const blocked = new Promise<void>((resolve) => {
+        release = resolve;
+    });
+    const stream = engine.stream.bind(engine);
+    engine.stream = async function* (request) {
+        started();
+        await blocked;
+        yield* stream(request);
+    };
+    await withService(engine, async (baseUrl, repositories) => {
+        const source = repositories.articles.createArticle({ title: "Source", content: "Original", language: "en" });
+        const target = repositories.articles.createArticle({ title: "Spanish", content: "Original español", language: "es", sourceArticleId: source.id, sourceRevisionId: source.currentRevisionId });
+        const response = fetch(`${baseUrl}/api/articles/${source.id}/assistant/requests`, {
+            method: HTTP_METHOD.POST, headers: { "content-type": "application/json" },
+            body: JSON.stringify({ kind: "new", requestId: "translation-race", authorMessage: "", explicitSkillId: "translation", targetLanguage: "Spanish", scope: { kind: "article", baseRevisionId: source.currentRevisionId } }),
+        });
+        await generating;
+        repositories.articles.saveRevision(source.id, { baseRevisionId: source.currentRevisionId, content: "Changed source" });
+        release();
+        const body = await (await response).text();
+        assert.match(body, /revision_conflict/);
+        assert.equal(repositories.editorialArtifacts.listEditorialArtifacts(source.id).length, 0);
+        assert.deepEqual(repositories.articles.getArticle(target.id), target);
+    });
+});
