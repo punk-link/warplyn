@@ -173,6 +173,7 @@ export {
     type TextProposal,
     type SummarizeProposalInput,
 } from "./articles/revision/revisions.js";
+export { findSequenceMatches } from "./cross-cutting/sequence-matches.js";
 export type {
     Article,
     CreateArticleInput,

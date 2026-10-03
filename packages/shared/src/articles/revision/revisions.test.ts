@@ -4,6 +4,21 @@ import test from "node:test";
 import { applyProposalChanges, createTextProposal } from "./revisions.js";
 
 
+test("long Articles retain exact change IDs and partial acceptance", () => {
+    const lines = Array.from({ length: 4000 }, (_, index) => `Paragraph ${index}.`);
+    const changed = [...lines];
+    changed[20] = "Revised paragraph twenty.";
+    changed[2000] = "Revised paragraph two thousand.";
+    const review = createTextProposal(lines.join("\n"), changed.join("\n"));
+    assert.deepEqual(review.changes.map(({ id, baseStart, baseEnd }) => ({ id, baseStart, baseEnd })), [
+        { id: "change-1", baseStart: 20, baseEnd: 21 },
+        { id: "change-2", baseStart: 2000, baseEnd: 2001 },
+    ]);
+    lines[20] = changed[20];
+    assert.equal(applyProposalChanges(review, new Set(["change-1"])), lines.join("\n"));
+});
+
+
 test("line proposals represent additions, deletions, replacements, and no-op proposals", () => {
     const addition = createTextProposal("one\nthree", "one\ntwo\nthree");
     assert.equal(addition.changes.length, 1);

@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import type { TextProposal } from "@skladno/shared";
+import { useMemo, useRef, useState } from "react";
+import { findSequenceMatches, type TextProposal } from "@skladno/shared";
 import { Banner, Button, Diff, EmptyState, IconButton, Status } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import { presentProposalReview, type ProposalDecision } from "./proposal-review-presentation.js";
@@ -9,53 +9,34 @@ import { AssistantIcon, ChevronRightIcon, CloseIcon, HighlightChangesIcon, SideB
 interface HighlightPart { changed: boolean; text: string }
 
 
-function buildTokenMatches(originalTokens: string[], proposedTokens: string[]): number[][] {
-    // ponytail: quadratic per paragraph; replace with Myers diff if long paragraphs become slow.
-    const matches = Array.from({ length: originalTokens.length + 1 }, () => Array<number>(proposedTokens.length + 1).fill(0));
-
-    for (let originalIndex = originalTokens.length - 1; originalIndex >= 0; originalIndex -= 1) {
-        for (let proposedIndex = proposedTokens.length - 1; proposedIndex >= 0; proposedIndex -= 1) {
-            matches[originalIndex]![proposedIndex] = originalTokens[originalIndex] === proposedTokens[proposedIndex]
-                ? matches[originalIndex + 1]![proposedIndex + 1]! + 1
-                : Math.max(matches[originalIndex + 1]![proposedIndex]!, matches[originalIndex]![proposedIndex + 1]!);
-        }
-    }
-
-    return matches;
+function appendChangedTokens(parts: HighlightPart[], tokens: string[], start: number, end: number): void {
+    for (let index = start; index < end; index += 1)
+        parts.push({ changed: true, text: tokens[index] });
 }
 
 
 function renderHighlightedText(original: string, proposed: string) {
     const originalTokens = original.match(/\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu) ?? [];
     const proposedTokens = proposed.match(/\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu) ?? [];
-    const matches = buildTokenMatches(originalTokens, proposedTokens);
-
     const originalParts: HighlightPart[] = [];
     const proposedParts: HighlightPart[] = [];
     let originalIndex = 0;
     let proposedIndex = 0;
-    while (originalIndex < originalTokens.length || proposedIndex < proposedTokens.length) {
-        const unchanged = originalIndex < originalTokens.length && originalTokens[originalIndex] === proposedTokens[proposedIndex];
-        if (unchanged) {
-            originalParts.push({ changed: false, text: originalTokens[originalIndex]! });
-            proposedParts.push({ changed: false, text: proposedTokens[proposedIndex]! });
-            originalIndex += 1;
-            proposedIndex += 1;
-        } else if (shouldRemoveToken(originalIndex, proposedIndex, originalTokens.length, proposedTokens.length, matches)) {
-            originalParts.push({ changed: true, text: originalTokens[originalIndex]! });
-            originalIndex += 1;
-        } else {
-            proposedParts.push({ changed: true, text: proposedTokens[proposedIndex]! });
-            proposedIndex += 1;
-        }
+
+    // Swap inputs to retain highlighting's deletion-first tie rule.
+    for (const match of findSequenceMatches(proposedTokens, originalTokens)) {
+        appendChangedTokens(originalParts, originalTokens, originalIndex, match.proposalIndex);
+        appendChangedTokens(proposedParts, proposedTokens, proposedIndex, match.baseIndex);
+        originalParts.push({ changed: false, text: originalTokens[match.proposalIndex] });
+        proposedParts.push({ changed: false, text: proposedTokens[match.baseIndex] });
+        originalIndex = match.proposalIndex + 1;
+        proposedIndex = match.baseIndex + 1;
     }
 
+    appendChangedTokens(originalParts, originalTokens, originalIndex, originalTokens.length);
+    appendChangedTokens(proposedParts, proposedTokens, proposedIndex, proposedTokens.length);
+
     return { original: originalParts, proposed: proposedParts };
-}
-
-
-function shouldRemoveToken(originalIndex: number, proposedIndex: number, originalLength: number, proposedLength: number, matches: number[][]): boolean {
-    return originalIndex < originalLength && (proposedIndex === proposedLength || matches[originalIndex + 1]![proposedIndex]! >= matches[originalIndex]![proposedIndex + 1]!);
 }
 
 
@@ -67,7 +48,7 @@ function HighlightedText({ parts, tone }: { parts: HighlightPart[]; tone: "added
 
 
 function ProposalDiff({ original, proposed, layout, decision = "pending", highlight }: { original: string; proposed: string; layout: "columns" | "stacked"; decision?: ProposalDecision; highlight: boolean }) {
-    const highlights = highlight ? renderHighlightedText(original, proposed) : undefined;
+    const highlights = useMemo(() => highlight ? renderHighlightedText(original, proposed) : undefined, [highlight, original, proposed]);
     return <Diff layout={layout} state={decision}
         removed={highlights ? <HighlightedText parts={highlights.original} tone="removed" /> : original}
         added={highlights ? <HighlightedText parts={highlights.proposed} tone="added" /> : proposed} />;
