@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { KEY_BINDING_COMMAND, type Article, type KeyBindingOverrides } from "@skladno/shared";
 import { Button, Dialog, Field, IconButton } from "../../ui/primitives.js";
 import { ChevronRightIcon, SearchIcon, SettingsIcon, UserIcon } from "../../ui/icons.js";
@@ -16,6 +16,21 @@ import type { ArticleFilesState } from "../state/article-files-state.js";
 function getLanguageCode(language: string | undefined): string {
     const codes: Record<string, string> = { English: "EN", Spanish: "ES", Portuguese: "PT" };
     return language ? codes[language] ?? language.slice(0, 2).toUpperCase() : "EN";
+}
+
+
+function groupArticleChildren(articles: readonly Article[]): Map<string, Article[]> {
+    const children = new Map<string, Article[]>();
+    for (const article of articles) {
+        if (!article.sourceArticleId)
+            continue;
+
+        const siblings = children.get(article.sourceArticleId) ?? [];
+        siblings.push(article);
+        children.set(article.sourceArticleId, siblings);
+    }
+
+    return children;
 }
 
 
@@ -114,6 +129,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files }: { da
     const searchRef = useRef<HTMLInputElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     const triggerRefs = useRef(new Map<string, HTMLButtonElement>());
+    const childrenByArticle = useMemo(() => groupArticleChildren(articles), [articles]);
     useEffect(() => dispatcher?.register(KEY_BINDING_COMMAND.SEARCH_ARTICLES, () => searchRef.current?.focus()), [dispatcher]);
     useEffect(() => {
         if (!menuArticleId)
@@ -134,7 +150,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files }: { da
     const isArticleMatch = (article: Article) => article.title.toLowerCase().includes(normalizedQuery);
     const articleIds = new Set(articles.map((article) => article.id));
     const roots = articles.filter((article) => !article.sourceArticleId || !articleIds.has(article.sourceArticleId));
-    const getChildArticles = (id: string) => articles.filter((article) => article.sourceArticleId === id);
+    const getChildArticles = (id: string) => childrenByArticle.get(id) ?? [];
     const selected = articles.find((article) => article.id === selectedArticleId);
     const expandedRootId = selected?.sourceArticleId ?? selected?.id;
     const activeRoots = roots.filter((article) => !article.archived);
