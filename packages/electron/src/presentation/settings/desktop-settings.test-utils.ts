@@ -37,14 +37,12 @@ export function setup(response: number, backupChecked = false, backupFails = fal
         } } as never,
         userDataPath,
         dataDirectory: configuredDataDirectory ?? dataDirectory,
-        database: { exec: (sql) => {
+        createSnapshot: async (path) => {
             if (backupFails)
                 throw new Error("backup failed");
 
-            const temporary = sql.match(/VACUUM INTO '(.+)'/)?.[1];
-            if (temporary)
-                writeFileSync(temporary, "backup");
-        } },
+            writeFileSync(path, "backup");
+        },
         telemetry: { beginCapture: () => (event) => telemetry.push(event) },
         services: {} as never,
         messages: getElectronMessagesFor("en"),

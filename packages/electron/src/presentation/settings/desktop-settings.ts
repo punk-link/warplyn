@@ -20,14 +20,14 @@ interface DesktopSettingsAdapterOptions {
     dialog: Pick<Dialog, "showMessageBox">;
     userDataPath: string;
     dataDirectory: string;
-    database: { exec(sql: string): void };
+    createSnapshot(path: string): Promise<unknown>;
     telemetry?: TelemetryCaptureSource;
     services: ApplicationServices;
     messages: ElectronMessages;
     chooseDirectory(): Promise<string | undefined>;
     chooseBackupSnapshot(directory: string): Promise<string | undefined>;
     requestCheckpoint(): Promise<boolean>;
-    closeApplication(): void;
+    closeApplication(): void | Promise<void>;
     restart(): void;
 }
 
@@ -81,11 +81,11 @@ async function revealCreatedSkillDirectory({ services, shell }: Pick<DesktopSett
 }
 
 
-function createBackup({ runtime, dataDirectory, database, telemetry }: Pick<DesktopSettingsContext, "runtime" | "dataDirectory" | "database" | "telemetry">): unknown {
+async function createBackup({ runtime, dataDirectory, createSnapshot, telemetry }: Pick<DesktopSettingsContext, "runtime" | "dataDirectory" | "createSnapshot" | "telemetry">): Promise<unknown> {
     if (!runtime.backupDirectory)
         return { ok: false, error: "editorial_request_failed" };
 
-    return { ok: true, value: createNativeBackup(database, dataDirectory, runtime.backupDirectory, telemetry) };
+    return { ok: true, value: await createNativeBackup(createSnapshot, dataDirectory, runtime.backupDirectory, telemetry) };
 }
 
 
@@ -105,7 +105,7 @@ async function deleteLocalData({ dialog, messages, deletion }: Pick<DesktopSetti
     if (confirmation.response !== 0)
         return { ok: true, value: undefined };
 
-    const error = deletion.execute(confirmation.checkboxChecked);
+    const error = await deletion.execute(confirmation.checkboxChecked);
     if (error)
         return { ok: false, error };
 
@@ -165,11 +165,19 @@ function removeManagedAiConnection({ services }: Pick<DesktopSettingsContext, "s
 
 export function registerDesktopSettingsAdapter({ ipcMain, userDataPath, ...options }: DesktopSettingsAdapterOptions): void {
     const runtimePath = join(userDataPath, "runtime-settings.json");
+    let changingData = false;
     ipcMain.handle(desktopSettingsChannel, async (_event, request: unknown) => {
         const method = request && typeof request === "object" ? (request as Record<string, unknown>).method : undefined;
         const args = request && typeof request === "object" && Array.isArray((request as Record<string, unknown>).args) ? (request as { args: unknown[] }).args : [];
         const runtime = readRuntimeSettings(runtimePath);
         const context = { ...options, runtimePath, runtime };
+        if (changingData)
+            return { ok: false, error: "editorial_request_failed" };
+
+        const changesData = method === "restoreNativeBackup" || method === "deleteLocalData";
+        if (changesData)
+            changingData = true;
+
         try {
             switch (method) {
                 case "getLocations":
@@ -183,7 +191,7 @@ export function registerDesktopSettingsAdapter({ ipcMain, userDataPath, ...optio
                 case "revealCreatedSkillDirectory":
                     return await revealCreatedSkillDirectory(context, String(args[0]));
                 case "createNativeBackup":
-                    return createBackup(context);
+                    return await createBackup(context);
                 case "restoreNativeBackup":
                     return await restoreNativeBackup({
                         dialog: context.dialog,
@@ -192,7 +200,7 @@ export function registerDesktopSettingsAdapter({ ipcMain, userDataPath, ...optio
                             runtimePath: context.runtimePath,
                             dataDirectory: context.dataDirectory,
                             backupDirectory: context.runtime.backupDirectory,
-                            database: context.database,
+                            createSnapshot: context.createSnapshot,
                             chooseBackupSnapshot: context.chooseBackupSnapshot,
                             requestCheckpoint: context.requestCheckpoint,
                             closeApplication: context.closeApplication,
@@ -207,7 +215,7 @@ export function registerDesktopSettingsAdapter({ ipcMain, userDataPath, ...optio
                         deletion: createLocalDataDeletion({
                             dataDirectory: context.dataDirectory,
                             backupDirectory: context.runtime.backupDirectory,
-                            database: context.database,
+                            createSnapshot: context.createSnapshot,
                             closeApplication: context.closeApplication,
                             restart: context.restart,
                             telemetry: context.telemetry,
@@ -224,6 +232,9 @@ export function registerDesktopSettingsAdapter({ ipcMain, userDataPath, ...optio
             }
         } catch {
             return { ok: false, error: "editorial_request_failed" };
+        } finally {
+            if (changesData)
+                changingData = false;
         }
     });
 }

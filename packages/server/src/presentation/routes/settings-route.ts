@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { readFileSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { APPLICATION_ERROR, HTTP_STATUS } from "@skladno/shared";
 
 import { ApplicationSettingsService } from "../../application/settings/application-settings-service.js";
@@ -22,20 +22,20 @@ export async function handleBackupPolicyRoute(request: IncomingMessage, response
 }
 
 
-export function handleCreateBackupRoute(response: ServerResponse, settings: ApplicationSettingsService, diagnostics?: LocalDiagnostics): void {
-    let backup: ReturnType<ApplicationSettingsService["createBackup"]> | undefined;
+export async function handleCreateBackupRoute(response: ServerResponse, settings: ApplicationSettingsService, diagnostics?: LocalDiagnostics): Promise<void> {
+    let backup: Awaited<ReturnType<ApplicationSettingsService["createBackup"]>> | undefined;
     try {
-        backup = settings.createBackup();
+        backup = await settings.createBackup();
         response.writeHead(HTTP_STATUS.CREATED, {
             "content-type": "application/vnd.sqlite3",
             "content-disposition": `attachment; filename="skladno-backup-${backup.createdAt.replaceAll(/[:.]/g, "-")}.sqlite"`,
         });
-        response.end(readFileSync(backup.path));
+        response.end(await readFile(backup.path));
     } catch (error) {
         diagnostics?.write("backup.failed", { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }, error);
         writeJson(response, HTTP_STATUS.INTERNAL_SERVER_ERROR, { error: { code: APPLICATION_ERROR.EDITORIAL_REQUEST_FAILED } });
     } finally {
-        backup?.cleanup();
+        await backup?.cleanup();
     }
 }
 

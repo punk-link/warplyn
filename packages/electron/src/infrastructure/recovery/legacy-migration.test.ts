@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, 
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { backup } from "node:sqlite";
 import { createLocalApplication, loadServerConfig, openDatabase } from "@skladno/server/electron";
 import { createNativeBackupRestoration } from "../../presentation/settings/desktop-settings-recovery.js";
 import { createAuthorSkillBackup } from "./author-skill-backup.js";
@@ -59,7 +60,7 @@ test("legacy backup pairs and database-only snapshots restore without changing t
                 mkdirSync(join(source, "skill-history", "clarity"), { recursive: true });
                 writeFileSync(join(source, "skills", "clarity", "SKILL.md"), "Legacy Skill");
                 writeFileSync(join(source, "skill-history", "clarity", "revision.json"), "Immutable Skill history");
-                createAuthorSkillBackup({ dataDirectory: source, snapshotPath: snapshot });
+                await createAuthorSkillBackup({ dataDirectory: source, snapshotPath: snapshot });
             }
 
             writeFileSync(join(source, "runtime-settings.json"), JSON.stringify({ telemetry: { consent: "granted", installationId: "legacy-id" }, updateNetworkAccess: true }));
@@ -70,9 +71,9 @@ test("legacy backup pairs and database-only snapshots restore without changing t
             const database = openDatabase(databasePath);
             const diskFailure = createNativeBackupRestoration({
                 runtimePath, dataDirectory: target, backupDirectory: source,
-                database: { exec: () => {
+                createSnapshot: async () => {
                     throw new Error("ENOSPC");
-                } },
+                },
                 chooseBackupSnapshot: async () => snapshot,
                 requestCheckpoint: async () => true,
                 closeApplication: () => assert.fail("Disk failure must leave the destination open"),
@@ -82,7 +83,7 @@ test("legacy backup pairs and database-only snapshots restore without changing t
             assert.equal(readRuntimeSettings(runtimePath).pendingRestore, undefined);
             assert.deepEqual(hashes(source), before);
             const restoration = createNativeBackupRestoration({
-                runtimePath, dataDirectory: target, backupDirectory: source, database,
+                runtimePath, dataDirectory: target, backupDirectory: source, createSnapshot: (path) => backup(database, path),
                 chooseBackupSnapshot: async () => snapshot,
                 requestCheckpoint: async () => true,
                 closeApplication: () => database.close(), restart: () => undefined,

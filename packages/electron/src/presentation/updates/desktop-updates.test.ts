@@ -31,7 +31,7 @@ test("Linux release discovery offers the newest Debian package without downloadi
             },
         },
         {
-            database: { exec: () => undefined }, dataDirectory: root,
+            createSnapshot: async () => undefined, dataDirectory: root,
             updater: { setFeedURL: () => undefined, checkForUpdates: () => {
                 checked = true;
             }, quitAndInstall: () => undefined, on: () => undefined },
@@ -72,7 +72,7 @@ test("update discovery selects the newest complete Windows release without downl
             openExternal: async () => undefined,
         },
         {
-            database: { exec: () => undefined }, dataDirectory: root,
+            createSnapshot: async () => undefined, dataDirectory: root,
             updater: {
                 setFeedURL: () => undefined, checkForUpdates: () => {
                     checked = true;
@@ -105,7 +105,7 @@ test("update discovery requires persisted network access", async () => {
             openExternal: async () => undefined,
         },
         {
-            database: { exec: () => undefined }, dataDirectory: root,
+            createSnapshot: async () => undefined, dataDirectory: root,
             updater: { setFeedURL: () => undefined, checkForUpdates: () => undefined, quitAndInstall: () => undefined, on: () => undefined },
             requestCheckpoint: async () => true, closeApplication: () => undefined,
         },
@@ -141,7 +141,7 @@ test("automatic update discovery runs at startup and daily while Warplyn remains
             openExternal: async () => undefined,
         },
         {
-            database: { exec: () => undefined }, dataDirectory: root,
+            createSnapshot: async () => undefined, dataDirectory: root,
             updater: { setFeedURL: () => undefined, checkForUpdates: () => undefined, quitAndInstall: () => undefined, on: () => undefined },
             requestCheckpoint: async () => true, closeApplication: () => undefined,
         },
@@ -174,7 +174,7 @@ test("a late update response preserves a newer telemetry consent", async () => {
             openExternal: async () => undefined,
         },
         {
-            database: { exec: () => undefined }, dataDirectory: root,
+            createSnapshot: async () => undefined, dataDirectory: root,
             updater: { setFeedURL: () => undefined, checkForUpdates: () => undefined, quitAndInstall: () => undefined, on: () => undefined },
             requestCheckpoint: async () => true, closeApplication: () => undefined,
         },
@@ -210,7 +210,7 @@ test("applying a downloaded update records its recovery snapshot outcome", async
             openExternal: async () => undefined,
         },
         {
-            database: { exec: (sql) => writeFileSync(sql.match(/'(.+)'/)![1]!, "snapshot") },
+            createSnapshot: async (path) => writeFileSync(path, "snapshot"),
             dataDirectory: root,
             updater: {
                 setFeedURL: () => undefined, checkForUpdates: () => downloaded?.(), quitAndInstall: () => undefined,

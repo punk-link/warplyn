@@ -1,5 +1,6 @@
-import { mkdirSync, renameSync, statSync } from "node:fs";
+import { mkdir, rename, rm, stat } from "node:fs/promises";
 import { join } from "node:path";
+import { runBackup } from "../../infrastructure/recovery/backup-lifecycle.js";
 import { beginTimedTelemetryCapture, type DesktopUpdateState, type TelemetryCaptureSource } from "@skladno/shared";
 import { readRuntimeSettings, updateRuntimeSettings, writeRuntimeSettings, type RuntimeSettings } from "../../infrastructure/runtime/runtime-settings.js";
 import { getAvailableUpdateState, getNewestCompatibleRelease, updatePreferences, type Release } from "./desktop-update-releases.js";
@@ -34,11 +35,11 @@ interface DesktopUpdateReleaseSource {
 
 
 interface DesktopUpdateExecution {
-    database: { exec(sql: string): void };
+    createSnapshot(path: string): Promise<unknown>;
     dataDirectory: string;
     updater: NativeUpdater;
     requestCheckpoint(): Promise<boolean>;
-    closeApplication(): void;
+    closeApplication(): void | Promise<void>;
     telemetry?: TelemetryCaptureSource;
 }
 
@@ -49,21 +50,22 @@ interface DesktopUpdatePresentation {
 }
 
 
-function createUpdateSnapshot(database: { exec(sql: string): void }, directory: string, priorVersion: string, telemetry?: TelemetryCaptureSource): string {
+async function createUpdateSnapshot(createSnapshot: (path: string) => Promise<unknown>, directory: string, priorVersion: string, telemetry?: TelemetryCaptureSource): Promise<string> {
     const observed = beginTimedTelemetryCapture(telemetry);
+    const path = join(directory, `skladno-before-${priorVersion}.sqlite`);
+    const temporary = `${path}.tmp`;
     try {
-        mkdirSync(directory, { recursive: true });
-        const path = join(directory, `skladno-before-${priorVersion}.sqlite`);
-        const temporary = `${path}.tmp`;
-        database.exec(`VACUUM INTO '${temporary.replaceAll("'", "''")}'`);
-        renameSync(temporary, path);
+        await mkdir(directory, { recursive: true });
+        await createSnapshot(temporary);
+        await rename(temporary, path);
 
-        if (statSync(path).size === 0)
+        if ((await stat(path)).size === 0)
             throw new Error("Update snapshot is empty.");
 
         observed.capture({ kind: "backup_finished", outcome: "completed", elapsedMs: observed.elapsedMs() });
         return path;
     } catch (error) {
+        await rm(temporary, { force: true });
         observed.capture({ kind: "backup_finished", outcome: "failed", elapsedMs: observed.elapsedMs(), failure: "unknown" });
         throw error;
     }
@@ -73,7 +75,7 @@ function createUpdateSnapshot(database: { exec(sql: string): void }, directory: 
 export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, source: DesktopUpdateReleaseSource, execution: DesktopUpdateExecution, presentation: DesktopUpdatePresentation) {
     const { runtimePath, currentVersion, supported, platform } = runtime;
     const { fetchReleases = () => fetch(releasesUrl), openExternal } = source;
-    const { database, dataDirectory, updater, requestCheckpoint, closeApplication, telemetry } = execution;
+    const { createSnapshot, dataDirectory, updater, requestCheckpoint, closeApplication, telemetry } = execution;
     const { notify, scheduleTimeout = setTimeout } = presentation;
     let release: Release | undefined;
     let state: DesktopUpdateState = withRecoveryGuidance(getInitialUpdateState());
@@ -229,9 +231,9 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
                 return false;
 
             try {
-                const snapshot = createUpdateSnapshot(database, join(dataDirectory, "update-recovery"), currentVersion, telemetry);
+                const snapshot = await runBackup(() => createUpdateSnapshot(createSnapshot, join(dataDirectory, "update-recovery"), currentVersion, telemetry));
                 writeRuntimeSettings(runtimePath, { ...readCurrentRuntimeSettings(), priorVersion: currentVersion, recoverySnapshotPath: snapshot, startupSuccess: false });
-                closeApplication();
+                await closeApplication();
                 updater.quitAndInstall();
                 return true;
             } catch {

@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-21
-- Updated: 2026-10-02
+- Updated: 2026-10-03
 - Scope: Local persistence, schema migration, backups, and recovery
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-005](adr-005-article-state-and-consistency.md), [ADR-009](adr-009-native-settings-credentials-and-data-switching.md)
 
@@ -16,6 +16,8 @@ SQLite is the local system of record, with foreign keys and WAL enabled. Schema 
 
 Backups capture consistent database state and recoverable Author Skills and Skill history. Credentials and environment files are excluded. Automatic retention never deletes manual backups. Legacy database-only restore leaves destination Skill files unchanged.
 
+Create snapshots through SQLite's asynchronous online backup API. Copy files asynchronously and hash bounded stream chunks so backup creation yields to editing and IPC. Report completion after the complete backup is written and checked. Database replacement and shutdown wait for pending backups; a failed capture removes its partial output before teardown proceeds.
+
 Validate backup integrity before replacing active data and verify application state afterward. Retain complete prior data for recovery and recover interrupted switches. Source backups and immutable Revisions remain unchanged.
 
 Restrict data access to the current user where the platform supports it. Native restore authority and restart coordination follow [ADR-009](adr-009-native-settings-credentials-and-data-switching.md).
@@ -23,6 +25,8 @@ Restrict data access to the current user where the platform supports it. Native 
 ## Consequences
 
 Authors can recover through snapshots without a second persistence format. Downgrade migrations, replacing an open database, and upgrades from the pre-Article prototype are unsupported.
+
+Online snapshots do not compact unused database pages as `VACUUM INTO` did. Backup size and total duration can increase in exchange for a responsive application during capture.
 
 ## Verification and references
 

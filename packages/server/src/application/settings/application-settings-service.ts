@@ -10,6 +10,9 @@ import { getEnvironmentVariableName, normalizeAiConnections, normalizeAppModel, 
 
 
 export class ApplicationSettingsService {
+    private readonly pendingBackups = new Set<ReturnType<BackupSnapshotCreator["createTemporary"]>>();
+
+
     constructor(
         private readonly settings: SettingsStore,
         private readonly dateTimeFormat: SystemDateTimeFormatProvider,
@@ -91,11 +94,23 @@ export class ApplicationSettingsService {
     }
 
 
-    createBackup(): { path: string; createdAt: string; cleanup(): void } {
+    async createBackup(): ReturnType<BackupSnapshotCreator["createTemporary"]> {
         if (!this.backups)
             throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_REQUEST_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR);
 
-        return this.backups.createTemporary();
+        const pending = this.backups.createTemporary();
+        this.pendingBackups.add(pending);
+        try {
+            return await pending;
+        } finally {
+            this.pendingBackups.delete(pending);
+        }
+    }
+
+
+    async waitForBackups(): Promise<void> {
+        while (this.pendingBackups.size > 0)
+            await Promise.allSettled(this.pendingBackups);
     }
 
 

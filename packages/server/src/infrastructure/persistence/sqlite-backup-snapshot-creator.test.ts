@@ -35,13 +35,13 @@ test("an older database-only schema validates and migrates on its destination co
 });
 
 
-test("creates a restorable temporary snapshot", () => {
+test("creates a restorable temporary snapshot", async () => {
     const directory = mkdtempSync(join(tmpdir(), "skladno-backup-"));
     const database = openDatabase(join(directory, "skladno.sqlite"));
     database.prepare("INSERT INTO app_settings (key, value_json, updated_at) VALUES (?, ?, ?)").run("test", JSON.stringify({ article: "private" }), "2026-08-18T00:00:00.000Z");
 
     try {
-        const backup = new SqliteBackupSnapshotCreator(database, () => new Date("2026-08-18T00:00:00.000Z")).createTemporary();
+        const backup = await new SqliteBackupSnapshotCreator(database, () => new Date("2026-08-18T00:00:00.000Z")).createTemporary();
         if (process.platform !== "win32") {
             const databasePath = join(directory, "skladno.sqlite");
             assert.equal(statSync(databasePath).mode & 0o777, 0o600);
@@ -56,7 +56,7 @@ test("creates a restorable temporary snapshot", () => {
             assert.deepEqual(JSON.parse(String(restored.prepare("SELECT value_json FROM app_settings WHERE key = 'test'").get()?.value_json)), { article: "private" });
         } finally {
             restored.close();
-            backup.cleanup();
+            await backup.cleanup();
         }
     } finally {
         database.close();
@@ -65,14 +65,14 @@ test("creates a restorable temporary snapshot", () => {
 });
 
 
-test("a snapshot restores the active local database", () => {
+test("a snapshot restores the active local database", async () => {
     const directory = mkdtempSync(join(tmpdir(), "skladno-backup-"));
     const databasePath = join(directory, "skladno.sqlite");
     const database = openDatabase(databasePath);
 
     try {
         database.prepare("INSERT INTO app_settings (key, value_json, updated_at) VALUES (?, ?, ?)").run("release-fixture", JSON.stringify({ revision: 1 }), "2026-08-18T00:00:00.000Z");
-        const backup = new SqliteBackupSnapshotCreator(database).createTemporary();
+        const backup = await new SqliteBackupSnapshotCreator(database).createTemporary();
         database.prepare("UPDATE app_settings SET value_json = ? WHERE key = 'release-fixture'").run(JSON.stringify({ revision: 2 }));
         database.close();
         copyFileSync(backup.path, databasePath);
@@ -82,7 +82,7 @@ test("a snapshot restores the active local database", () => {
             assert.deepEqual(JSON.parse(String(restored.prepare("SELECT value_json FROM app_settings WHERE key = 'release-fixture'").get()?.value_json)), { revision: 1 });
         } finally {
             restored.close();
-            backup.cleanup();
+            await backup.cleanup();
         }
     } finally {
         rmSync(directory, { recursive: true, force: true });

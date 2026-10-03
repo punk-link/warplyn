@@ -63,6 +63,23 @@ test("cancelling backup-folder selection keeps the backup folder", async () => {
     }
 });
 
+
+test("a pending data-change confirmation blocks overlapping operations and cancellation releases them", async () => {
+    const fixture = setup(1);
+    try {
+        const deletion = fixture.invoke();
+        const backup = fixture.invokeCreateBackup();
+        const restoration = fixture.invokeRestore();
+        assert.deepEqual(await backup, { ok: false, error: "editorial_request_failed" });
+        assert.deepEqual(await restoration, { ok: false, error: "editorial_request_failed" });
+        assert.deepEqual(await deletion, { ok: true, value: undefined });
+        const result = await fixture.invokeCreateBackup();
+        assert.ok(result && typeof result === "object" && "ok" in result && result.ok === true);
+    } finally {
+        fixture.cleanup();
+    }
+});
+
 test("data-directory overlap is rejected without changing the backup folder", async () => {
     const selections = [
         ({ dataDirectory }: { dataDirectory: string }) => dataDirectory,

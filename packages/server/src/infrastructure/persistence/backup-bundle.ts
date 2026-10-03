@@ -1,13 +1,15 @@
-import { createHash, randomUUID } from "node:crypto";
-import { copyFileSync, cpSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import { existsSync } from "node:fs";
+import { copyFile, cp, lstat, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import type { BackupBundleManifest } from "@skladno/shared";
 
 import { validateDatabaseSnapshot } from "./database.js";
+import { recordBackupFile } from "./backup-file-record.js";
 
 
-interface Snapshot { path: string; cleanup(): void }
+interface Snapshot { path: string; cleanup(): Promise<void> }
 
 
 interface Session { directory: string; manifest: BackupBundleManifest; kind: "export" | "import"; expiry: ReturnType<typeof setTimeout> }
@@ -27,40 +29,46 @@ function isSafeBundlePath(path: string): boolean {
 }
 
 
-function fileRecord(root: string, path: string): BackupBundleManifest["files"][number] {
-    const bytes = readFileSync(join(root, ...path.split("/")));
-    return { path, size: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") };
+async function fileRecord(root: string, path: string): Promise<BackupBundleManifest["files"][number]> {
+    return { path, ...await recordBackupFile(join(root, ...path.split("/"))) };
 }
 
 
-function visit(directory: string, prefix: string, root: string, files: BackupBundleManifest["files"]): void {
-    for (const name of readdirSync(directory)) {
+async function visit(directory: string, prefix: string, root: string, files: BackupBundleManifest["files"]): Promise<void> {
+    for (const name of await readdir(directory)) {
         const path = `${prefix}/${name}`;
         if (!isSafeBundlePath(path))
             throw new Error("backup_bundle_unsafe_path");
 
         const absolute = join(directory, name);
-        const stat = lstatSync(absolute);
+        const stat = await lstat(absolute);
         if (stat.isDirectory())
-            visit(absolute, path, root, files);
+            await visit(absolute, path, root, files);
         else if (stat.isFile())
-            files.push(fileRecord(root, path));
+            files.push(await fileRecord(root, path));
         else
             throw new Error("backup_bundle_unsafe_file");
     }
 }
 
 
-function inventory(root: string): BackupBundleManifest["files"] {
+async function inventory(root: string): Promise<BackupBundleManifest["files"]> {
     const files: BackupBundleManifest["files"] = [];
     for (const directory of skillDirectories) {
         const absolute = join(root, directory);
-        if (existsSync(absolute)) {
-            if (!lstatSync(absolute).isDirectory())
-                throw new Error("backup_bundle_unsafe_file");
+        const stat = await lstat(absolute).catch((error: unknown) => {
+            if (error && typeof error === "object" && "code" in error && error.code === "ENOENT")
+                return undefined;
 
-            visit(absolute, directory, root, files);
-        }
+            throw error;
+        });
+        if (!stat)
+            continue;
+
+        if (!stat.isDirectory())
+            throw new Error("backup_bundle_unsafe_file");
+
+        await visit(absolute, directory, root, files);
     }
 
     return files.sort((first, second) => first.path.localeCompare(second.path));
@@ -72,7 +80,7 @@ function sameFiles(first: BackupBundleManifest["files"], second: BackupBundleMan
 }
 
 
-export function validateBackupBundle(directory: string, manifest: BackupBundleManifest): void {
+export async function validateBackupBundle(directory: string, manifest: BackupBundleManifest): Promise<void> {
     if (manifest.files.length > 10_000)
         throw new Error("backup_bundle_invalid_manifest");
 
@@ -81,7 +89,7 @@ export function validateBackupBundle(directory: string, manifest: BackupBundleMa
         || paths.some((path) => !isSafeBundlePath(path)))
         throw new Error("backup_bundle_invalid_manifest");
 
-    const actual = [fileRecord(directory, "database.sqlite"), ...inventory(directory)];
+    const actual = [await fileRecord(directory, "database.sqlite"), ...await inventory(directory)];
     if (!sameFiles(manifest.files, actual))
         throw new Error("backup_bundle_invalid_manifest");
 
@@ -95,80 +103,80 @@ export class BackupBundleTransfers {
 
     constructor(
         private readonly dataDirectory: string,
-        private readonly createSnapshot: () => Snapshot,
+        private readonly createSnapshot: () => Promise<Snapshot>,
         private readonly restore: (directory: string, manifest: BackupBundleManifest) => Promise<void>,
     ) { }
 
 
-    createExport(): { id: string; manifest: BackupBundleManifest } {
-        const directory = mkdtempSync(join(tmpdir(), "skladno-backup-export-"));
+    async createExport(): Promise<{ id: string; manifest: BackupBundleManifest }> {
+        const directory = await mkdtemp(join(tmpdir(), "skladno-backup-export-"));
         let snapshot: Snapshot | undefined;
         try {
-            const before = inventory(this.dataDirectory);
-            snapshot = this.createSnapshot();
-            copyFileSync(snapshot.path, join(directory, "database.sqlite"));
+            const before = await inventory(this.dataDirectory);
+            snapshot = await this.createSnapshot();
+            await copyFile(snapshot.path, join(directory, "database.sqlite"));
             for (const name of skillDirectories) {
                 const source = join(this.dataDirectory, name);
                 if (existsSync(source))
-                    cpSync(source, join(directory, name), { recursive: true, errorOnExist: true });
+                    await cp(source, join(directory, name), { recursive: true, errorOnExist: true });
             }
 
-            const copied = inventory(directory);
-            if (!sameFiles(before, inventory(this.dataDirectory)) || !sameFiles(before, copied))
+            const copied = await inventory(directory);
+            if (!sameFiles(before, await inventory(this.dataDirectory)) || !sameFiles(before, copied))
                 throw new Error("backup_bundle_changed");
 
-            const manifest: BackupBundleManifest = { format: 1, files: [fileRecord(directory, "database.sqlite"), ...copied] };
+            const manifest: BackupBundleManifest = { format: 1, files: [await fileRecord(directory, "database.sqlite"), ...copied] };
             if (!isBackupBundleManifest(manifest))
                 throw new Error("backup_bundle_too_large");
 
-            writeFileSync(join(directory, "manifest.json"), JSON.stringify(manifest));
+            await writeFile(join(directory, "manifest.json"), JSON.stringify(manifest));
             const id = randomUUID();
             this.addSession(id, { directory, manifest, kind: "export" });
             return { id, manifest };
         } catch (error) {
-            rmSync(directory, { recursive: true, force: true });
+            await rm(directory, { recursive: true, force: true });
             throw error;
         } finally {
-            snapshot?.cleanup();
+            await snapshot?.cleanup();
         }
     }
 
 
-    readExport(id: string, index: number): Uint8Array {
+    async readExport(id: string, index: number): Promise<Uint8Array> {
         const session = this.getSession(id, "export");
         const file = session.manifest.files[index];
         if (!file)
             throw new Error("backup_bundle_invalid_file");
 
-        const actual = fileRecord(session.directory, file.path);
+        const actual = await fileRecord(session.directory, file.path);
         if (!sameFiles([file], [actual]))
             throw new Error("backup_bundle_changed");
 
-        return readFileSync(join(session.directory, ...file.path.split("/")));
+        return readFile(join(session.directory, ...file.path.split("/")));
     }
 
 
-    beginImport(value: unknown): string {
+    async beginImport(value: unknown): Promise<string> {
         if (!isBackupBundleManifest(value))
             throw new Error("backup_bundle_invalid_manifest");
 
-        const directory = mkdtempSync(join(tmpdir(), "skladno-backup-import-"));
+        const directory = await mkdtemp(join(tmpdir(), "skladno-backup-import-"));
         const id = randomUUID();
         this.addSession(id, { directory, manifest: value, kind: "import" });
         return id;
     }
 
 
-    writeImport(id: string, index: number, bytes: Uint8Array): void {
+    async writeImport(id: string, index: number, bytes: Uint8Array): Promise<void> {
         const session = this.getSession(id, "import");
         const file = session.manifest.files[index];
         if (!file || bytes.length !== file.size || bytes.length > 100_000_000)
             throw new Error("backup_bundle_invalid_file");
 
         const target = join(session.directory, ...file.path.split("/"));
-        mkdirSync(dirname(target), { recursive: true });
-        writeFileSync(target, bytes, { flag: "wx" });
-        if (!sameFiles([file], [fileRecord(session.directory, file.path)]))
+        await mkdir(dirname(target), { recursive: true });
+        await writeFile(target, bytes, { flag: "wx" });
+        if (!sameFiles([file], [await fileRecord(session.directory, file.path)]))
             throw new Error("backup_bundle_invalid_file");
     }
 
@@ -176,27 +184,27 @@ export class BackupBundleTransfers {
     async restoreImport(id: string): Promise<void> {
         const session = this.getSession(id, "import");
         try {
-            validateBackupBundle(session.directory, session.manifest);
+            await validateBackupBundle(session.directory, session.manifest);
             await this.restore(session.directory, session.manifest);
         } finally {
-            this.remove(id);
+            await this.remove(id);
         }
     }
 
 
-    remove(id: string): void {
+    async remove(id: string): Promise<void> {
         const session = this.sessions.get(id);
         if (!session)
             return;
 
         this.sessions.delete(id);
         clearTimeout(session.expiry);
-        rmSync(session.directory, { recursive: true, force: true });
+        await rm(session.directory, { recursive: true, force: true });
     }
 
 
     private addSession(id: string, value: Omit<Session, "expiry">): void {
-        const expiry = setTimeout(() => this.remove(id), 60 * 60 * 1000);
+        const expiry = setTimeout(() => void this.remove(id), 60 * 60 * 1000);
         expiry.unref();
         this.sessions.set(id, { ...value, expiry });
     }

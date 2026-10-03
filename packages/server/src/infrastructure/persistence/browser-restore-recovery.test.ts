@@ -9,7 +9,7 @@ import { openDatabase } from "./database.js";
 import { SqliteBackupSnapshotCreator } from "./sqlite-backup-snapshot-creator.js";
 
 
-test("startup rolls back an interrupted database and Skill restore", () => {
+test("startup rolls back an interrupted database and Skill restore", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-browser-restore-recovery-"));
     const databasePath = join(root, "skladno.sqlite");
     const database = openDatabase(databasePath);
@@ -19,9 +19,9 @@ test("startup rolls back an interrupted database and Skill restore", () => {
         mkdirSync(recovery);
         mkdirSync(join(root, "skills", "clarity"), { recursive: true });
         writeFileSync(skillPath, "original skill");
-        const snapshot = new SqliteBackupSnapshotCreator(database).createTemporary();
+        const snapshot = await new SqliteBackupSnapshotCreator(database).createTemporary();
         copyFileSync(snapshot.path, join(recovery, "database.sqlite"));
-        snapshot.cleanup();
+        await snapshot.cleanup();
         mkdirSync(join(recovery, "skills", "clarity"), { recursive: true });
         writeFileSync(join(recovery, "skills", "clarity", "SKILL.md"), "original skill");
         prepareBrowserRestoreRecovery(databasePath, recovery);

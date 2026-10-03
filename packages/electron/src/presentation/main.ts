@@ -12,6 +12,8 @@ import { createTelemetryOwner } from "../infrastructure/telemetry/telemetry-owne
 import { createTelemetryDelivery, readTelemetryDelivery } from "../infrastructure/telemetry/telemetry-delivery.js";
 import { createApplicationFailureEvent } from "./telemetry/application-failure-telemetry.js";
 import { getBuiltInSkillRoot } from "./desktop-skill-path.js";
+import { backup } from "node:sqlite";
+import { waitForBackups } from "../infrastructure/recovery/backup-lifecycle.js";
 import { registerDesktopSettingsAdapter } from "./settings/desktop-settings.js";
 import { registerDesktopTelemetryAdapter } from "./telemetry/desktop-telemetry.js";
 import { registerDesktopShellAdapter } from "./shell/desktop-shell.js";
@@ -21,7 +23,7 @@ import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpd
 
 const rendererUrl = "http://localhost:5173";
 let mainWindow: BrowserWindow | undefined;
-let closeApplication: (() => void) | undefined;
+let closeApplication: (() => Promise<void>) | undefined;
 let closing = false;
 let nativeMessages = getElectronMessagesFor(defaultInterfaceLocale);
 let updates: ReturnType<typeof createDesktopUpdateCoordinator> | undefined;
@@ -88,7 +90,7 @@ async function quitFrom(window: BrowserWindow): Promise<void> {
     }
 
     try {
-        closeApplication?.();
+        await closeApplication?.();
     } catch {
         dialog.showErrorBox(nativeMessages["electron.closeFailed.title"], nativeMessages["electron.closeFailed.message"]);
     } finally {
@@ -206,7 +208,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             dialog,
             userDataPath: app.getPath("userData"),
             dataDirectory: dirname(config.databasePath),
-            database: application.database,
+            createSnapshot: (path) => backup(application.database, path),
             telemetry,
             services: application.services,
             messages: nativeMessages,
@@ -216,7 +218,8 @@ if (supportsNativeUpdates() && squirrelStartup) {
                 filters: [{ name: "Warplyn backups", extensions: ["sqlite"] }], properties: ["openFile"]
             })).filePaths[0],
             requestCheckpoint: () => mainWindow ? requestDraftCheckpoint(ipcMain, mainWindow.webContents) : Promise.resolve(false),
-            closeApplication: () => {
+            closeApplication: async () => {
+                await waitForBackups();
                 cancelStreams();
                 telemetry?.dispose();
                 application.database.close();
@@ -232,7 +235,8 @@ if (supportsNativeUpdates() && squirrelStartup) {
             isAuthorizedSender: (event) => event.sender === mainWindow?.webContents,
             telemetry,
         });
-        closeApplication = () => {
+        closeApplication = async () => {
+            await waitForBackups();
             cancelStreams();
             telemetry?.dispose();
             application.database.close();
@@ -247,11 +251,13 @@ if (supportsNativeUpdates() && squirrelStartup) {
                     openExternal: (url) => shell.openExternal(url),
                 },
                 {
-                    database: application.database,
+                    createSnapshot: (path) => backup(application.database, path),
                     dataDirectory: dirname(config.databasePath),
                     updater: autoUpdater,
                     requestCheckpoint: () => mainWindow ? requestDraftCheckpoint(ipcMain, mainWindow.webContents) : Promise.resolve(false),
-                    closeApplication: () => closeApplication?.(),
+                    closeApplication: async () => {
+                        await closeApplication?.();
+                    },
                     telemetry,
                 },
                 { notify: (state) => mainWindow?.webContents.send(desktopUpdatesEvent, state) },
@@ -269,7 +275,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
 
         await createMainWindow();
         updates?.schedule();
-    }).catch((error: unknown) => {
+    }).catch(async (error: unknown) => {
         telemetry?.capture({ kind: "app_failure", source: "startup", failure: error instanceof PendingRestoreError ? "persistence" : "unknown" });
         if (!app.isPackaged)
             console.error("Warplyn startup failed.", error);
@@ -281,7 +287,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             ? nativeMessages["electron.restoreFailed.title"]
             : nativeMessages["electron.startFailed.title"];
         dialog.showErrorBox(title, message);
-        closeApplication?.();
+        await closeApplication?.();
         app.quit();
     });
 }

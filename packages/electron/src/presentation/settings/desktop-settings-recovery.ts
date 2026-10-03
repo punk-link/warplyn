@@ -20,18 +20,18 @@ function isSafeDataDirectory(path: string): boolean {
 }
 
 
-export function createLocalDataDeletion({ dataDirectory, backupDirectory, database, closeApplication, restart, telemetry }: {
+export function createLocalDataDeletion({ dataDirectory, backupDirectory, createSnapshot, closeApplication, restart, telemetry }: {
     dataDirectory: string;
     backupDirectory?: string;
-    database: { exec(sql: string): void };
-    closeApplication(): void;
+    createSnapshot(path: string): Promise<unknown>;
+    closeApplication(): void | Promise<void>;
     restart(): void;
     telemetry?: TelemetryCaptureSource;
 }) {
     const backupAvailable = Boolean(backupDirectory && !areSettingsKeysOverlapping(backupDirectory, dataDirectory) && !areSettingsKeysOverlapping(dataDirectory, backupDirectory));
     return {
         backupAvailable,
-        execute(withBackup: boolean): "invalid_request" | "editorial_request_failed" | undefined {
+        async execute(withBackup: boolean): Promise<"invalid_request" | "editorial_request_failed" | undefined> {
             if (!isSafeDataDirectory(dataDirectory))
                 return "invalid_request";
 
@@ -39,10 +39,10 @@ export function createLocalDataDeletion({ dataDirectory, backupDirectory, databa
                 if (!backupAvailable || !backupDirectory)
                     return "editorial_request_failed";
 
-                createNativeBackup(database, dataDirectory, backupDirectory, telemetry);
+                await createNativeBackup(createSnapshot, dataDirectory, backupDirectory, telemetry);
             }
 
-            closeApplication();
+            await closeApplication();
             rmSync(resolve(dataDirectory), { recursive: true, maxRetries: 3, retryDelay: 100 });
             restart();
         },
@@ -50,14 +50,14 @@ export function createLocalDataDeletion({ dataDirectory, backupDirectory, databa
 }
 
 
-export function createNativeBackupRestoration({ runtimePath, dataDirectory, backupDirectory, database, chooseBackupSnapshot, requestCheckpoint, closeApplication, restart, telemetry }: {
+export function createNativeBackupRestoration({ runtimePath, dataDirectory, backupDirectory, createSnapshot, chooseBackupSnapshot, requestCheckpoint, closeApplication, restart, telemetry }: {
     runtimePath: string;
     dataDirectory: string;
     backupDirectory?: string;
-    database: { exec(sql: string): void };
+    createSnapshot(path: string): Promise<unknown>;
     chooseBackupSnapshot(directory: string): Promise<string | undefined>;
     requestCheckpoint(): Promise<boolean>;
-    closeApplication(): void;
+    closeApplication(): void | Promise<void>;
     restart(): void;
     telemetry?: TelemetryCaptureSource;
 }) {
@@ -93,9 +93,9 @@ export function createNativeBackupRestoration({ runtimePath, dataDirectory, back
                 cpSync(getAuthorSkillBackupPath(selected), getAuthorSkillBackupPath(stagedSnapshotPath), { recursive: true, errorOnExist: true });
 
             validateAuthorSkillBackup(stagedSnapshotPath);
-            const recoverySnapshotPath = createNativeBackup(database, dataDirectory, stagingDirectory, telemetry).path;
+            const { path: recoverySnapshotPath } = await createNativeBackup(createSnapshot, dataDirectory, stagingDirectory, telemetry);
             updateRuntimeSettings(runtimePath, (current) => ({ ...current, pendingRestore: { stagedSnapshotPath, recoverySnapshotPath, phase: "ready" } }));
-            closeApplication();
+            await closeApplication();
 
             restart();
         },
