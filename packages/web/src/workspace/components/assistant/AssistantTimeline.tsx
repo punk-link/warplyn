@@ -51,7 +51,7 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
     const lastMessage = assistantMessages?.at(-1);
     const skillByRequest = new Map(assistantMessages?.flatMap((item) => item.requestId && item.skillId ? [[item.requestId, item.skillId] as const] : []));
     const skillNames = new Map(authorSkills.map((skill) => [skill.reference.id, skill.name] as const));
-    const completedFactCheck = state === "idle" ? [...(assistantMessages ?? [])].reverse().find((item) => item.responseKind === "findings_prepared" || item.responseKind === "findings_partial") : undefined;
+    const completedFactCheck = state === "idle" ? findLatestCompletedFactCheck(assistantMessages) : undefined;
 
     useLayoutEffect(() => {
         if (collapsed)
@@ -134,6 +134,16 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
             <ChevronDownIcon className="size-4" />
         </IconButton>}
     </div>;
+}
+
+
+function findLatestCompletedFactCheck(messages: AssistantMessage[] | undefined): AssistantMessage | undefined {
+    const items = messages ?? [];
+    for (let index = items.length - 1; index >= 0; index -= 1) {
+        const message = items[index];
+        if (message.responseKind === "findings_prepared" || message.responseKind === "findings_partial")
+            return message;
+    }
 }
 
 

@@ -18,9 +18,9 @@ export function TranslationRefreshControl({ translation, linkedTranslations, sta
     const [target, setTarget] = useState<Article>();
     const [applying, setApplying] = useState(false);
     const targets = linkedTranslations.filter((article) => getProviderLanguageName(article.language ?? "") === translation.metadata.targetLanguage);
-    const selected = targets.find((article) => article.id === selectedId) ?? targets[0];
     if (!targets.length)
         return null;
+    const selected = targets.find((article) => article.id === selectedId) ?? targets[0];
 
     const accept = async () => {
         if (!target)
