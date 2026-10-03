@@ -2,6 +2,9 @@ import { defaultInterfaceLocale, INTERFACE_LOCALE, type InterfaceLocale } from "
 
 
 const englishElectronMessages = {
+    "electron.articleFiles.markdown": "Markdown files",
+    "electron.articleFiles.load": "Load Article from file",
+    "electron.articleFiles.save": "Save Article to file",
     "electron.draftCheckpointFailed.title": "Draft checkpoint failed",
     "electron.draftCheckpointFailed.message": "Warplyn could not save the latest Draft checkpoint.",
     "electron.draftCheckpointFailed.detail": "Return to the Article and try again, or quit without the latest unsaved changes.",

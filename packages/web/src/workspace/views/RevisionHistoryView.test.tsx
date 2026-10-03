@@ -33,6 +33,20 @@ function renderHistory(revisions: ArticleRevision[], currentRevisionId = revisio
 
 
 describe("RevisionHistoryView", () => {
+    it("exports the entire historical Article snapshot without restoring it", async () => {
+        const old = createArticleRevision("old", "Historical **whole** Article", "initial", "2026-01-01T10:00:00.000Z");
+        const current = createArticleRevision("current", "Current Article", "author-draft", "2026-01-02T10:00:00.000Z", undefined, "Updated the Article");
+        const saveRevision = vi.fn().mockResolvedValue(undefined);
+        const select = vi.fn();
+        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView revisions={[old, current]} currentRevisionId="current" select={select} files={{ pending: false, saveRevision }} /></IntlProvider>);
+        const user = userEvent.setup();
+        await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
+        await user.click(screen.getByRole("button", { name: "Save to file" }));
+        expect(saveRevision).toHaveBeenCalledWith(old, 1);
+        expect(select).not.toHaveBeenCalled();
+        expect(current.content).toBe("Current Article");
+    });
+
     afterEach(cleanup);
 
     it.each([

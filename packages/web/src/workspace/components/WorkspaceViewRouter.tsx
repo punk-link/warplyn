@@ -12,6 +12,7 @@ import { RevisionHistoryView } from "../views/RevisionHistoryView.js";
 import { StyleProfileView } from "../views/StyleProfileView.js";
 import { TranslationsView } from "../views/TranslationsView.js";
 import type { AssistantSelectionSnapshot } from "../editor/ArticleEditorPlugins.js";
+import type { ArticleFilesState } from "../state/article-files-state.js";
 
 
 interface WorkspaceViewContent {
@@ -29,6 +30,7 @@ interface WorkspaceViewContent {
 
 
 interface WorkspaceViewActions {
+    articleFiles?: ArticleFilesState;
     runFactCheck: () => void;
     runTranslation: () => void;
     rejectTranslation?: (targetLanguage: string) => Promise<void>;
@@ -62,7 +64,7 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
             return renderPanel(<ProposalReviewView data={{ review: editorial.review, accepted: editorial.accepted, stale: editorial.stale, decisions: editorial.decisions, summaries: editorial.proposalSummaries, summaryState: editorial.proposalSummaryState, warningsDismissed: proposalWarningsDismissed }} actions={{ setDecision: editorial.setDecision, acceptAll: editorial.acceptAll, applyAccepted: editorial.applyAccepted, rejectAll: editorial.rejectAll, dismissProposal: editorial.dismissProposal, dismissWarnings: dismissProposalWarnings, openWrite, openAssistant }} />);
 
         case "revisions":
-            return renderPanel(<RevisionHistoryView revisions={revisions.revisions} currentRevisionId={article.currentRevisionId} select={revisions.setCandidate} generalSettings={generalSettings} />);
+            return renderPanel(<RevisionHistoryView revisions={revisions.revisions} currentRevisionId={article.currentRevisionId} select={revisions.setCandidate} generalSettings={generalSettings} files={actions.articleFiles} />);
 
         case "fact-check": {
             const revisionNumber = revisions.revisions.findIndex((revision) => revision.id === editorial.factCheck?.reviewedRevisionId);

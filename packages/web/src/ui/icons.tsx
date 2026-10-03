@@ -161,6 +161,16 @@ export function SaveIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 
+export function SaveFileIcon(props: SVGProps<SVGSVGElement>) {
+    return <Icon strokeWidth="1.8" {...props}><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4" /></Icon>;
+}
+
+
+export function LoadFileIcon(props: SVGProps<SVGSVGElement>) {
+    return <Icon strokeWidth="1.8" {...props}><path d="M12 15V3m-4 4 4-4 4 4M4 16v4h16v-4" /></Icon>;
+}
+
+
 export function DeleteIcon(props: SVGProps<SVGSVGElement>) {
     return <Icon strokeWidth="1.8" {...props}><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5" /></Icon>;
 }
@@ -168,6 +178,11 @@ export function DeleteIcon(props: SVGProps<SVGSVGElement>) {
 
 export function ArchiveIcon(props: SVGProps<SVGSVGElement>) {
     return <Icon strokeWidth="1.8" {...props}><path d="M4 7h16v13H4zM3 4h18v3H3zM9 12h6" /></Icon>;
+}
+
+
+export function PinIcon(props: SVGProps<SVGSVGElement>) {
+    return <Icon strokeWidth="1.8" {...props}><path d="M9 3h6l-1 7 4 4v2H6v-2l4-4zM12 16v6" /></Icon>;
 }
 
 

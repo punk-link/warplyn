@@ -14,6 +14,12 @@ test("generates a release manifest with the matching publisher, URLs, and instal
     writeFileSync(installer, "installer fixture");
     const metadata = { version: "1.2.3", author: "punk.link" };
     const output = generateWingetManifests(installer, directory, metadata);
+    for (const [name, type] of [["PunkLink.Warplyn.yaml", "version"], ["PunkLink.Warplyn.locale.en-US.yaml", "defaultLocale"], ["PunkLink.Warplyn.installer.yaml", "installer"]]) {
+        const generated = readFileSync(join(output, name), "utf8");
+        assert.equal(generated.split(/\r?\n/, 1)[0], `# yaml-language-server: $schema=https://aka.ms/winget-manifest.${type}.1.10.0.schema.json`);
+        assert.match(generated, /^ManifestVersion: 1\.10\.0$/m);
+    }
+
     const manifest = readFileSync(join(output, "PunkLink.Warplyn.installer.yaml"), "utf8");
     const locale = readFileSync(join(output, "PunkLink.Warplyn.locale.en-US.yaml"), "utf8");
     const checksum = createHash("sha256").update("installer fixture").digest("hex").toUpperCase();

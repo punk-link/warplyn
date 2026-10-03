@@ -10,6 +10,7 @@ import { createDesktopSettingsClient } from "./settings/desktop-settings-client.
 import { createDesktopShellClient } from "./shell/desktop-shell.js";
 import { createDesktopUpdateClient, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
 import { createDesktopTelemetryClient } from "./telemetry/desktop-telemetry.js";
+import { createDesktopArticleFilesClient } from "./articles/desktop-article-files-client.js";
 
 
 function isPrepareCloseRequest(value: unknown): value is ElectronPrepareCloseRequest {
@@ -42,6 +43,7 @@ function parseCheckpointResult(value: unknown, requestId: string): ElectronCheck
 
 
 exposeElectronApplicationClient(ipcRenderer, contextBridge);
+contextBridge.exposeInMainWorld("skladnoArticleFiles", createDesktopArticleFilesClient(ipcRenderer));
 contextBridge.exposeInMainWorld("skladnoDesktop", createDesktopSettingsClient(ipcRenderer));
 contextBridge.exposeInMainWorld("skladnoShell", createDesktopShellClient(ipcRenderer));
 

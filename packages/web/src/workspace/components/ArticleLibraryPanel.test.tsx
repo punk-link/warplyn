@@ -91,9 +91,9 @@ describe("ArticleLibraryPanel", () => {
         const otherButton = screen.getByRole("button", { name: /Other Article/ });
         expect(screen.getByText("Mother Article").title).toBe("Mother Article");
         expect(screen.getByText("Mother Article").classList.contains("truncate")).toBe(true);
-        expect(sourceButton.classList.contains("py-2.5")).toBe(true);
+        expect(sourceButton.classList.contains("py-1.5")).toBe(true);
         expect(sourceButton.dataset.focusAreaEntry).toBe("true");
-        expect(translationButton.classList.contains("py-1.5")).toBe(true);
+        expect(translationButton.classList.contains("py-1")).toBe(true);
         expect(screen.getByText("Spanish edition").classList.contains("text-xs")).toBe(true);
         expect(sourceButton.getAttribute("aria-expanded")).toBe("true");
         expect(otherButton.getAttribute("aria-expanded")).toBe("false");

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useIntl } from "react-intl";
-import { BUILT_IN_SKILL, defaultPublishLimitProfileId, ELECTRON_LIFECYCLE_EVENT, isArticleLanguage, isPublishLimitProfileId, KEY_BINDING_COMMAND, type AssistantSkillSummary, type KeyBindingOverrides } from "@skladno/shared";
+import { BUILT_IN_SKILL, ELECTRON_LIFECYCLE_EVENT, KEY_BINDING_COMMAND, type AssistantSkillSummary, type KeyBindingOverrides } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../application/client.js";
 import { Banner } from "../ui/primitives.js";
 import { ApplicationSettings } from "../settings/ApplicationSettings.js";
@@ -18,6 +18,9 @@ import { useStyleCorpus, type StyleCorpusState } from "./state/style-corpus-stat
 import { getAssistantSelectionScope, useAssistantMessages, type AssistantMessagesState, type AssistantSelectionScope } from "./state/assistant-messages-state.js";
 import type { AssistantSelectionSnapshot } from "./editor/ArticleEditorPlugins.js";
 import { usePublishing, type PublishingState } from "./state/publishing-state.js";
+import { createRendererArticleFilesClient } from "../application/article-files-client.js";
+import { useArticleFiles } from "./state/article-files-state.js";
+import { createArticleWithDefaults } from "./state/article-creation.js";
 
 export type { DraftConflict, DraftPresentationState as SaveState } from "./drafts/draft-lifecycle.js";
 export type { WorkspaceView } from "./workspace-views.js";
@@ -130,14 +133,9 @@ function useWorkspaceActions({ client, intl, notifyError, workspace, generalSett
 }) {
     const createBlank = useCallback(async () => {
         try {
-            const settings = await client.getApplicationSettings();
-            const defaultLanguage = settings.general.defaultArticleLanguage;
-            const { defaultProfileId } = await client.getPublishingSettings();
-            return await workspace.create({
+            return await createArticleWithDefaults(client, workspace.create, {
                 title: intl.formatMessage({ id: "article.defaultTitle" }),
                 content: "",
-                language: isArticleLanguage(defaultLanguage) ? defaultLanguage : "en",
-                publishingProfileId: isPublishLimitProfileId(defaultProfileId) ? defaultProfileId : defaultPublishLimitProfileId,
             });
         } catch (error) {
             notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.createArticleFailed" }) });
@@ -291,6 +289,8 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
             await assistant.reload(workspace.selectedArticle.id);
     }, [assistant, editorial, workspace.selectedArticle]);
     const publishing = usePublishing(client, workspace.selectedArticle, workspace.content, workspace.updateArticle);
+    const [fileClient] = useState(createRendererArticleFilesClient);
+    const articleFiles = useArticleFiles(fileClient, client, workspace, () => layout.setView("write"));
     const actions = useWorkspaceActions({ client, intl, notifyError, workspace, generalSettings, layout, assistant, openSettings });
     useWorkspaceLifecycle(workspace, assistant, editorial.restoreAssistantProposal);
     useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save: workspace.save });
@@ -309,7 +309,7 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
         return <ApplicationSettings client={client} back={backToWorkspace} initialSection={settingsSection} onKeyBindingsUpdated={onKeyBindingsUpdated} onThemeApplied={onThemeApplied} focusUpdates={focusUpdates} onUpdatesFocused={onUpdatesFocused} openQuickStart={openQuickStart} />;
 
     return <WorkspaceScreen
-        content={{ layout, workspace, assistant, editorial, revisions, corpus, publishing, generalSettings, authorSkills: authorSkills.authorSkills }}
+        content={{ layout, workspace, assistant, editorial, revisions, corpus, publishing, articleFiles, generalSettings, authorSkills: authorSkills.authorSkills }}
         actions={{ ...actions, rejectTranslation, openSettings: actions.enterSettings, openModelSettings }}
         environment={{ dispatcher, shortcutOverrides: keyBindingOverrides, hasUsableAiConnection, loadAuthorSkills: authorSkills.loadAuthorSkills, overlays: <>
             <ExtractedRestoreRevisionDialog candidate={revisions.candidate} hasUncommittedChanges={workspace.hasUncommittedChanges} close={() => revisions.setCandidate(undefined)} restore={revisions.restore} />

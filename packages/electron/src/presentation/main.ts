@@ -15,6 +15,7 @@ import { getBuiltInSkillRoot } from "./desktop-skill-path.js";
 import { registerDesktopSettingsAdapter } from "./settings/desktop-settings.js";
 import { registerDesktopTelemetryAdapter } from "./telemetry/desktop-telemetry.js";
 import { registerDesktopShellAdapter } from "./shell/desktop-shell.js";
+import { registerDesktopArticleFilesAdapter } from "./articles/desktop-article-files.js";
 import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpdatesAdapter, supportsNativeUpdates, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
 
 
@@ -105,6 +106,7 @@ async function createMainWindow(): Promise<void> {
     const preload = join(import.meta.dirname, "preload.cjs");
     const window = new BrowserWindow(createWindowOptions(preload, readWindowBounds(statePath, displays), app.isPackaged));
     mainWindow = window;
+    registerDesktopArticleFilesAdapter({ ipcMain, window, dialog, messages: nativeMessages });
     registerDesktopShellAdapter({
         ipcMain,
         window,

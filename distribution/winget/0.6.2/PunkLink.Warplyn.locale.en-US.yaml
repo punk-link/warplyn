@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.12.0.schema.json
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.10.0.schema.json
 PackageIdentifier: PunkLink.Warplyn
 PackageVersion: 0.6.2
 PackageLocale: en-US
@@ -16,4 +16,4 @@ Tags:
   - local-first
 ReleaseNotesUrl: https://github.com/punk-link/warplyn/releases/tag/v0.6.2
 ManifestType: defaultLocale
-ManifestVersion: 1.12.0
+ManifestVersion: 1.10.0

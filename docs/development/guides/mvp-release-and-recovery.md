@@ -35,6 +35,16 @@ Set a new empty data folder for the local service, copy `.env.example` to an unt
 
 Mark a step failed if it silently changes the Article, loses Revision history, exposes a credential, or cannot be recovered. Capture a linked defect rather than substituting private content in the report.
 
+## Article file acceptance
+
+Use disposable Articles and files for these checks:
+
+- In Windows and Ubuntu packaged apps, verify real open/save/cancel dialogs, overwrite confirmation, unreadable input, unwritable destinations, Unicode filenames and content, whole historical Revision export, and restart recovery.
+- In the browser, verify picker cancellation and reselection, download preferences, later download-manager cancellation, and accurate download-started feedback.
+- In both runtimes, verify header and Library file actions, Tab/Shift+Tab focus areas, screen-reader names and notifications, and collapsed/responsive Article and Revision controls.
+
+On 2026-10-02, the maintainer reported all manual checks from the Article Markdown files plan passed. This records maintainer acceptance; repeat the checks for future releases when file operations change.
+
 ## Recovery drill
 
 This drill proves recovery from a backup snapshot; it intentionally replaces the active database. Use the clean-profile data folder, not a maintainer's working data.
