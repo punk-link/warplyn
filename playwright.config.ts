@@ -4,6 +4,8 @@ export default defineConfig({
     testDir: "./e2e",
     testIgnore: "**/electron-*.spec.ts",
     fullyParallel: false,
+    // Browser journeys share the local service's Articles and Settings.
+    workers: 1,
     preserveOutput: "never",
     reporter: "line",
     use: {
