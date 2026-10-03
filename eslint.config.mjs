@@ -35,8 +35,6 @@ export default defineConfig(
         },
         rules: {
             "project-style/conditional-braces": "error",
-            "project-style/no-nested-concise-functions": "error",
-            "max-nested-callbacks": ["error", 3],
             "project-style/two-blank-lines-between-declarations": "error",
             "@stylistic/brace-style": ["error", "1tbs"],
             "@stylistic/comma-spacing": "error",

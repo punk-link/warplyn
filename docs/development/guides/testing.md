@@ -7,7 +7,6 @@ Use the smallest check that can fail for the changed behavior, then run the appl
 - `npm run verify` runs the product check, complexity check, lint, typecheck, and full test suite.
 - `npm test --workspace <workspace>` runs the selected workspace tests.
 - `npm run lint` checks import boundaries and ESLint rules.
-- Function readability rules reject nested functions inside expression-bodied arrows and allow at most three nested callbacks. Block-bodied functions may contain callbacks and local named helpers. These rules apply to tests too.
 - `npm run complexity:check` fails at cognitive complexity 16 or higher and reports scores 10–15 for review.
 - `npm run typecheck` checks the TypeScript project references.
 - `npm run test:e2e` runs deterministic Chromium author journeys.
