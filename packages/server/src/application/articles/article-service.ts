@@ -20,6 +20,21 @@ export class ArticleService {
     }
 
 
+    listArticleSummaries() {
+        return this.store.listArticleSummaries();
+    }
+
+
+    listRevisionSummaries(articleId: string) {
+        return this.store.listRevisionSummaries(articleId);
+    }
+
+
+    getRevision(articleId: string, revisionId: string) {
+        return this.store.getRevision(articleId, revisionId);
+    }
+
+
     createArticle(input: CreateArticleInput): Article {
         const article = this.store.createArticle(input);
         this.assistant.ensureGreeting(article.id);

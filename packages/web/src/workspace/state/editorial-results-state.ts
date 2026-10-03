@@ -4,7 +4,7 @@ import {
     defaultPublishLimitProfileId,
     isPublishLimitProfileId,
     type AssistantEditorialResult,
-    type Article,
+    type ArticleSummary,
     type AssistantMessage,
     type FactCheck,
     type PublishLimitProfileId,
@@ -27,15 +27,16 @@ interface EditorialResult<T> {
 type TranslationResult = EditorialResult<{ metadata: TranslationMetadata; content: string; editorialArtifactId?: string }>;
 
 
-async function refreshLinkedTranslation(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, target: Article, result: TranslationResult, intl: IntlShape): Promise<void> {
-    if (workspace.getArticleContent(target) !== target.currentRevision.content || target.draft)
+async function refreshLinkedTranslation(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, target: ArticleSummary, result: TranslationResult, intl: IntlShape): Promise<void> {
+    const persisted = await client.getArticle(target.id);
+    if (await workspace.getArticleContent(target) !== persisted.currentRevision.content || persisted.draft)
         throw new Error(intl.formatMessage({ id: "views.translationRefreshDraft" }));
 
     if (!result.value.editorialArtifactId)
         throw new Error(intl.formatMessage({ id: "views.translationRefreshUnavailable" }));
 
     await client.acceptProposal(target.id, {
-        baseRevisionId: target.currentRevisionId,
+        baseRevisionId: persisted.currentRevisionId,
         content: result.value.content,
         provenance: { kind: "accepted-translation" },
         translationRefresh: { editorialArtifactId: result.value.editorialArtifactId },
@@ -130,7 +131,7 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
     const translations = translationResults.filter((result) => result.articleId === selectedArticleId);
     const translationStale = translations.some((result) => result.baseRevisionId !== workspace.selectedArticle?.currentRevisionId);
 
-    const createTranslation = useCallback(async (targetLanguage: string, target?: Article) => {
+    const createTranslation = useCallback(async (targetLanguage: string, target?: ArticleSummary) => {
         const article = workspace.selectedArticle;
         const translationResult = translations.find((result) => result.value.metadata.targetLanguage === targetLanguage);
         if (!article || !translationResult || translationResult.baseRevisionId !== article.currentRevisionId)

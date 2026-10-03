@@ -1,4 +1,4 @@
-import { getPublishingLength, type Article, type PublishLimitProfile } from "@skladno/shared";
+import { getPublishingLength, type ArticleSummary, type PublishLimitProfile } from "@skladno/shared";
 import { AlignedParagraphsIcon, SideBySideIcon } from "../../ui/icons.js";
 import { Button, IconButton } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
@@ -6,7 +6,7 @@ import type { Translation } from "./translations-view-types.js";
 
 
 interface TranslationsHeaderProps {
-    sourceArticle?: Article;
+    sourceArticle?: ArticleSummary;
     translation?: Translation;
     translationLanguages: readonly string[];
     translatedContent?: string;

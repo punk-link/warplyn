@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useIntl } from "react-intl";
-import type { ArticleRevision, CustomPublishLimitProfile, PublishLimitProfile, PublishLimitProfileId, PublishingLength } from "@skladno/shared";
+import type { ArticleRevision, ArticleRevisionSummary, CustomPublishLimitProfile, PublishLimitProfile, PublishLimitProfileId, PublishingLength } from "@skladno/shared";
 import type { DraftPresentationState as SaveState } from "../drafts/draft-lifecycle.js";
 import { CopyStatusControl } from "./CopyStatusControl.js";
 import { LanguageStatusControl } from "./LanguageStatusControl.js";
@@ -10,9 +10,9 @@ import { SaveStatus } from "./SaveStatus.js";
 
 
 export interface RevisionSelector {
-    revisions: readonly ArticleRevision[];
+    revisions: readonly (ArticleRevisionSummary | ArticleRevision)[];
     currentRevisionId: string;
-    selectForRestore: (revision: ArticleRevision) => void;
+    selectForRestore: (revision: ArticleRevision | ArticleRevisionSummary) => void;
 }
 
 

@@ -174,6 +174,10 @@ export {
     type SummarizeProposalInput,
 } from "./articles/revision/revisions.js";
 export { findSequenceMatches } from "./cross-cutting/sequence-matches.js";
+export { summarizeArticle, type ArticleSummary } from "./articles/article/article-summary.js";
+export type { ArticleRevisionSummary } from "./articles/revision/revision.js";
+export { articleSummariesPath, createArticlePath } from "./articles/workspace/workspace.js";
+export { createRevisionSummariesPath, createRevisionPath } from "./articles/revision/revisions.js";
 export type {
     Article,
     CreateArticleInput,
@@ -274,3 +278,6 @@ export {
     type PublishingClient,
     type PublishingSettings,
 } from "./publishing/publishing.js";
+
+export { hydrateAssistantMessageHistory, type AssistantMessageHistory } from "./assistant/assistant-message-history.js";
+export { createAssistantMessageHistoryPath } from "./assistant/assistant.js";

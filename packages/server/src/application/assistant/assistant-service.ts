@@ -74,6 +74,11 @@ export class AssistantService {
     }
 
 
+    listMessageHistory(articleId: string): import("@skladno/shared").AssistantMessageHistory {
+        return this.preparation.listMessageHistory(articleId);
+    }
+
+
     listMessages(articleId: string): AssistantMessage[] {
         return this.preparation.listMessages(articleId);
     }

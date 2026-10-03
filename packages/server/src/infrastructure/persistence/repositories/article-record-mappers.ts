@@ -1,4 +1,4 @@
-import type { Article, ArticleDraft, ArticleRevision } from "@skladno/shared";
+import type { Article, ArticleDraft, ArticleRevision, ArticleSummary } from "@skladno/shared";
 
 import { parseObject, type Row } from "./repository-utils.js";
 
@@ -33,14 +33,27 @@ function mapDraftFromRow(row: Row): ArticleDraft | undefined {
 export function mapArticleFromRow(row: Row): Article {
     const currentRevision = mapRevisionFromRow(row);
     const currentDraft = mapDraftFromRow(row);
+    return { ...mapArticleMetadataFromRow(row), currentRevision, ...(currentDraft ? { draft: currentDraft } : {}) };
+}
+
+
+export function mapArticleSummaryFromRow(row: Row): ArticleSummary {
+    const draft = row.draft_article_id ? {
+        articleId: String(row.draft_article_id), baseRevisionId: String(row.draft_base_revision_id),
+        version: Number(row.draft_version), updatedAt: String(row.draft_updated_at),
+    } : undefined;
+
+    return { ...mapArticleMetadataFromRow(row), ...(draft ? { draft } : {}) };
+}
+
+
+function mapArticleMetadataFromRow(row: Row): Omit<Article, "currentRevision" | "draft"> {
     return {
         id: String(row.article_id),
         title: String(row.title),
         createdAt: String(row.article_created_at),
         updatedAt: String(row.article_updated_at),
-        currentRevisionId: currentRevision.id,
-        currentRevision,
-        ...(currentDraft ? { draft: currentDraft } : {}),
+        currentRevisionId: String(row.id),
         ...(row.language ? { language: String(row.language) } : {}),
         ...(row.audience ? { audience: String(row.audience) } : {}),
         ...(row.publishing_profile_id ? { publishingProfileId: String(row.publishing_profile_id) } : {}),
@@ -53,4 +66,9 @@ export function mapArticleFromRow(row: Row): Article {
 }
 
 
-export const articleSelect = "SELECT a.id article_id, a.title, a.language, a.audience, a.publishing_profile_id, a.source_article_id, a.source_revision_id, a.archived, a.pin_order, (SELECT COUNT(*) FROM article_revisions numbered JOIN article_revisions linked ON linked.id = a.source_revision_id WHERE numbered.article_id = a.source_article_id AND (numbered.created_at < linked.created_at OR (numbered.created_at = linked.created_at AND numbered.id <= linked.id))) source_revision_number, a.created_at article_created_at, a.updated_at article_updated_at, r.*, d.article_id draft_article_id, d.content draft_content, d.base_revision_id draft_base_revision_id, d.version draft_version, d.updated_at draft_updated_at FROM articles a JOIN article_revisions r ON r.id = a.current_revision_id LEFT JOIN article_drafts d ON d.article_id = a.id";
+const articleMetadataColumns = "a.id article_id, a.title, a.language, a.audience, a.publishing_profile_id, a.source_article_id, a.source_revision_id, a.archived, a.pin_order, (SELECT COUNT(*) FROM article_revisions numbered JOIN article_revisions linked ON linked.id = a.source_revision_id WHERE numbered.article_id = a.source_article_id AND (numbered.created_at < linked.created_at OR (numbered.created_at = linked.created_at AND numbered.id <= linked.id))) source_revision_number, a.created_at article_created_at, a.updated_at article_updated_at";
+const draftMetadataColumns = "d.article_id draft_article_id, d.base_revision_id draft_base_revision_id, d.version draft_version, d.updated_at draft_updated_at";
+const articleJoins = "FROM articles a JOIN article_revisions r ON r.id = a.current_revision_id LEFT JOIN article_drafts d ON d.article_id = a.id";
+
+export const articleSelect = `SELECT ${articleMetadataColumns}, r.*, d.content draft_content, ${draftMetadataColumns} ${articleJoins}`;
+export const articleSummarySelect = `SELECT ${articleMetadataColumns}, r.id, ${draftMetadataColumns} ${articleJoins}`;

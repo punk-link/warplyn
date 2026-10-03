@@ -1,10 +1,13 @@
 import type { Article, CreateArticleInput, UpdateArticleInput } from "../article/article.js";
+import type { ArticleSummary } from "../article/article-summary.js";
 import type { ArticleDraft, SaveArticleDraftInput } from "../draft/draft.js";
 import type { ArticleRevision, SaveArticleRevisionInput } from "../revision/revision.js";
 import type { RevisionClient } from "../revision/revisions.js";
 import type { AssistantClient, AssistantMessage } from "../../assistant/assistant.js";
 
 export const articlesPath = "/api/articles";
+export const articleSummariesPath = `${articlesPath}/summaries`;
+export const createArticlePath = (articleId: string) => `${articlesPath}/${encodeURIComponent(articleId)}`;
 export const createArticleArchivePath = (articleId: string) => `${articlesPath}/${encodeURIComponent(articleId)}/archive`;
 export const createArticlePinPath = (articleId: string) => `${articlesPath}/${encodeURIComponent(articleId)}/pin`;
 export const pinnedArticleOrderPath = `${articlesPath}/pinned-order`;
@@ -13,6 +16,8 @@ export const pinnedArticleOrderPath = `${articlesPath}/pinned-order`;
 /** The transport-neutral operations required by the author workspace. */
 export interface ArticleLibraryClient extends RevisionClient, AssistantClient {
     listArticles(): Promise<Article[]>;
+    listArticleSummaries(): Promise<ArticleSummary[]>;
+    getArticle(articleId: string): Promise<Article>;
     createArticle(input: CreateArticleInput): Promise<Article>;
     updateArticle(articleId: string, input: UpdateArticleInput): Promise<Article>;
     deleteArticle(articleId: string): Promise<void>;
@@ -22,6 +27,7 @@ export interface ArticleLibraryClient extends RevisionClient, AssistantClient {
     saveArticleDraft(articleId: string, input: SaveArticleDraftInput): Promise<ArticleDraft>;
     discardArticleDraft(articleId: string, expectedDraftVersion: number): Promise<void>;
     saveArticleRevision(articleId: string, input: SaveArticleRevisionInput): Promise<ArticleRevision>;
+    listAssistantMessageHistory(articleId: string): Promise<import("../../assistant/assistant-message-history.js").AssistantMessageHistory>;
     listAssistantMessages(articleId: string): Promise<AssistantMessage[]>;
 }
 

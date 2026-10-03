@@ -6,7 +6,7 @@ import { useIntl } from "react-intl";
 interface StyleProfileDialogData {
     removingId: string | undefined;
     snapshotRevisionId: string | undefined;
-    revisions: readonly { revision: ArticleRevision; number: number }[];
+    revisions: readonly { revision: Omit<ArticleRevision, "content">; number: number }[];
 }
 
 

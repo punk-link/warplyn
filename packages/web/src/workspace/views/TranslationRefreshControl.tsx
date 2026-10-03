@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import type { Article } from "@skladno/shared";
+import type { ArticleSummary } from "@skladno/shared";
 import { Button, Dialog, Select } from "../../ui/primitives.js";
 import { getProviderLanguageName } from "../state/editorial-language.js";
 import type { Translation } from "./translations-view-types.js";
@@ -9,17 +9,18 @@ import type { TranslationsActions } from "./translations-view-actions.js";
 
 export function TranslationRefreshControl({ translation, linkedTranslations, stale, create }: {
     translation: Translation;
-    linkedTranslations: readonly Article[];
+    linkedTranslations: readonly ArticleSummary[];
     stale: boolean;
     create: TranslationsActions["create"];
 }) {
     const intl = useIntl();
     const [selectedId, setSelectedId] = useState("");
-    const [target, setTarget] = useState<Article>();
+    const [target, setTarget] = useState<ArticleSummary>();
     const [applying, setApplying] = useState(false);
     const targets = linkedTranslations.filter((article) => getProviderLanguageName(article.language ?? "") === translation.metadata.targetLanguage);
     if (!targets.length)
         return null;
+
     const selected = targets.find((article) => article.id === selectedId) ?? targets[0];
 
     const accept = async () => {

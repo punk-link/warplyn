@@ -1,10 +1,10 @@
-import type { Article, PublishLimitProfile, TranslationMetadata } from "@skladno/shared";
+import type { Article, ArticleSummary, PublishLimitProfile, TranslationMetadata } from "@skladno/shared";
 
 
 export interface TranslationsData {
     article: Article;
     sourceArticle?: Article;
-    linkedTranslations?: readonly Article[];
+    linkedTranslations?: readonly ArticleSummary[];
     translations?: readonly { metadata: TranslationMetadata; content: string; baseRevisionId: string; editorialArtifactId?: string }[];
     stale: boolean;
     translationLanguages?: readonly string[];

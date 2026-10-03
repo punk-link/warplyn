@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { defaultGeneralSettings, type ArticleRevision, type GeneralSettings, type StyleCorpus, type StyleReview } from "@skladno/shared";
+import { defaultGeneralSettings, type ArticleRevisionSummary, type GeneralSettings, type StyleCorpus, type StyleReview } from "@skladno/shared";
 import { Banner, Button } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import type { MessageId } from "../../i18n/messages.js";
@@ -13,7 +13,7 @@ interface StyleProfileViewData {
     findings: StyleReview | undefined;
     findingsStale: boolean;
     articleId: string;
-    revisions?: readonly ArticleRevision[];
+    revisions?: readonly (ArticleRevisionSummary | import("@skladno/shared").ArticleRevision)[];
     generalSettings?: GeneralSettings;
 }
 

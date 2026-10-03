@@ -26,19 +26,53 @@ function createArticleRevision(id: string, content: string, kind: string, create
 
 function renderHistory(revisions: ArticleRevision[], currentRevisionId = revisions.at(-1)?.id ?? "", generalSettings?: GeneralSettings) {
     const select = vi.fn();
-    const result = render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView revisions={revisions} currentRevisionId={currentRevisionId} select={select} generalSettings={generalSettings} /></IntlProvider>);
+    const result = render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView loadRevision={vi.fn()} revisions={revisions} currentRevisionId={currentRevisionId} select={select} generalSettings={generalSettings} /></IntlProvider>);
 
     return { ...result, select };
 }
 
 
 describe("RevisionHistoryView", () => {
+    it("loads only the previewed historical body and exports its original Revision number", async () => {
+        const old = createArticleRevision("old", "Historical body", "initial", "2026-01-01T10:00:00.000Z");
+        const current = createArticleRevision("current", "Current body", "author-draft", "2026-01-02T10:00:00.000Z");
+        const { content, ...metadata } = old;
+        const loadRevision = vi.fn().mockResolvedValue(old);
+        const saveRevision = vi.fn();
+        const select = vi.fn();
+        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView revisions={[{ ...metadata, characterCount: content.length }, current]} loadRevision={loadRevision} currentRevisionId={current.id} select={select} files={{ pending: false, saveRevision }} /></IntlProvider>);
+        expect(loadRevision).not.toHaveBeenCalled();
+        const user = userEvent.setup();
+        await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
+        await screen.findByText("Historical body");
+        expect(loadRevision).toHaveBeenCalledExactlyOnceWith(old.id);
+        await user.click(screen.getByRole("button", { name: "Save to file" }));
+        expect(saveRevision).toHaveBeenCalledWith(old, 1);
+        expect(select).not.toHaveBeenCalled();
+    });
+
+    it("keeps navigation available when loading fails and retries the same body", async () => {
+        const old = createArticleRevision("old", "Recovered preview", "initial", "2026-01-01T10:00:00.000Z");
+        const current = createArticleRevision("current", "Current body", "author-draft", "2026-01-02T10:00:00.000Z");
+        const { content, ...metadata } = old;
+        const loadRevision = vi.fn().mockRejectedValueOnce(new Error("Unavailable")).mockResolvedValue(old);
+        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView revisions={[{ ...metadata, characterCount: content.length }, current]} loadRevision={loadRevision} currentRevisionId={current.id} select={vi.fn()} /></IntlProvider>);
+        const user = userEvent.setup();
+        await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
+        await screen.findByText(messages["workspace.revisionHistoryFailed"]);
+        expect(screen.getByRole("combobox")).toBeTruthy();
+        await user.click(screen.getByRole("button", { name: messages["assistant.retry"] }));
+        await screen.findByText("Recovered preview");
+        expect(loadRevision).toHaveBeenCalledTimes(2);
+    });
+
+
     it("exports the entire historical Article snapshot without restoring it", async () => {
         const old = createArticleRevision("old", "Historical **whole** Article", "initial", "2026-01-01T10:00:00.000Z");
         const current = createArticleRevision("current", "Current Article", "author-draft", "2026-01-02T10:00:00.000Z", undefined, "Updated the Article");
         const saveRevision = vi.fn().mockResolvedValue(undefined);
         const select = vi.fn();
-        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView revisions={[old, current]} currentRevisionId="current" select={select} files={{ pending: false, saveRevision }} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView loadRevision={vi.fn()} revisions={[old, current]} currentRevisionId="current" select={select} files={{ pending: false, saveRevision }} /></IntlProvider>);
         const user = userEvent.setup();
         await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
         await user.click(screen.getByRole("button", { name: "Save to file" }));

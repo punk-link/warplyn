@@ -1,6 +1,14 @@
 import type { ComponentType } from "react";
-import { REVISION_PROVENANCE_KIND, type ArticleRevision } from "@skladno/shared";
+import { REVISION_PROVENANCE_KIND, type ArticleRevision, type ArticleRevisionSummary } from "@skladno/shared";
 import { ArticleIcon, RevisionAiIcon, RevisionManualIcon, RevisionRestoreIcon } from "../../ui/icons.js";
+
+
+export type RevisionHistoryEntry = ArticleRevision | ArticleRevisionSummary;
+
+
+export function getRevisionCharacterCount(revision: RevisionHistoryEntry): number {
+    return "content" in revision ? getCharacterCount(revision.content) : revision.characterCount;
+}
 
 
 export function getCharacterCount(content: string): number {
@@ -8,8 +16,8 @@ export function getCharacterCount(content: string): number {
 }
 
 
-export function getProvenanceMessageId(revision: Pick<ArticleRevision, "provenance" | "restoredFromRevisionId"> & Partial<Pick<ArticleRevision, "id">>, revisions?: readonly ArticleRevision[]): "revisions.empty" | "revisions.initial" | "revisions.author" | "revisions.acceptedProposal" | "revisions.assistantEdit" | "revisions.restored" | "revisions.saved" {
-    if (revisions?.[0]?.provenance.kind === REVISION_PROVENANCE_KIND.INITIAL && revisions[0].content.length === 0) {
+export function getProvenanceMessageId(revision: Pick<ArticleRevision, "provenance" | "restoredFromRevisionId"> & Partial<Pick<ArticleRevision, "id">>, revisions?: readonly RevisionHistoryEntry[]): "revisions.empty" | "revisions.initial" | "revisions.author" | "revisions.acceptedProposal" | "revisions.assistantEdit" | "revisions.restored" | "revisions.saved" {
+    if (revisions?.[0]?.provenance.kind === REVISION_PROVENANCE_KIND.INITIAL && getRevisionCharacterCount(revisions[0]) === 0) {
         if (revision.id === revisions[0].id)
             return "revisions.empty";
 
@@ -30,12 +38,12 @@ export function getProvenanceMessageId(revision: Pick<ArticleRevision, "provenan
 }
 
 
-export function getRevisionTitle(revision: ArticleRevision, provenance: string): string {
+export function getRevisionTitle(revision: RevisionHistoryEntry, provenance: string): string {
     return revision.description ?? provenance;
 }
 
 
-export function getBypassedRevisionIds(revisions: readonly ArticleRevision[], currentRevisionId: string): Set<string> {
+export function getBypassedRevisionIds(revisions: readonly RevisionHistoryEntry[], currentRevisionId: string): Set<string> {
     const indices = new Map(revisions.map((revision, index) => [revision.id, index]));
     let index = indices.get(currentRevisionId);
     if (index === undefined)
@@ -56,7 +64,7 @@ export function getBypassedRevisionIds(revisions: readonly ArticleRevision[], cu
 }
 
 
-export function getRestoredRevisionTarget(revisions: ArticleRevision[], revision: ArticleRevision): { number: number; description?: string } | undefined {
+export function getRestoredRevisionTarget(revisions: RevisionHistoryEntry[], revision: RevisionHistoryEntry): { number: number; description?: string } | undefined {
     if (!revision.restoredFromRevisionId)
         return undefined;
 
@@ -75,7 +83,7 @@ export function getRestoredRevisionTarget(revisions: ArticleRevision[], revision
 export type RevisionTimelineKind = "initial" | "manual" | "ai" | "restored";
 
 
-export function getTimelineKind(revision: ArticleRevision, revisions?: readonly ArticleRevision[]): RevisionTimelineKind {
+export function getTimelineKind(revision: RevisionHistoryEntry, revisions?: readonly RevisionHistoryEntry[]): RevisionTimelineKind {
     if (revision.restoredFromRevisionId || revision.provenance.kind === REVISION_PROVENANCE_KIND.RESTORE)
         return "restored";
 

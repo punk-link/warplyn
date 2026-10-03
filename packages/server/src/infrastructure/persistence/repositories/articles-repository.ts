@@ -1,15 +1,16 @@
-import { APPLICATION_ERROR, HTTP_STATUS, REVISION_PROVENANCE_KIND, applyProposalChanges, createTextProposal, isArticleLanguage, isPublishLimitProfileId, type AcceptedChange, type AcceptProposalInput, type CreateArticleInput, type UpdateArticleInput, type Article, type ArticleDraft, type ArticleRevision, type SaveArticleDraftInput, type SaveArticleRevisionInput } from "@skladno/shared";
+import { REVISION_PROVENANCE_KIND, isArticleLanguage, isPublishLimitProfileId, type AcceptedChange, type AcceptProposalInput, type CreateArticleInput, type UpdateArticleInput, type Article, type ArticleDraft, type ArticleRevision, type SaveArticleDraftInput, type SaveArticleRevisionInput } from "@skladno/shared";
 
 import type { SqliteDatabase } from "../database.js";
 import { ArticleDraftConflictError } from "../../../application/articles/article-draft-conflict-error.js";
 import { ArticleRevisionConflictError } from "../../../application/articles/article-revision-conflict-error.js";
-import { ApplicationServiceError } from "../../../application/errors/application-service-error.js";
 import { deleteArticle, reorderPinnedArticles, setArticleArchived, setArticlePinned } from "./article-library-operations.js";
 import { throwArticleNotFound, throwInvalidArticleRequest, requireArticleTitle, throwRevisionNotFound, throwUnsupportedPublishingProfile } from "./article-repository-errors.js";
 import { mapArticleFromRow, articleSelect } from "./article-record-mappers.js";
 import { getArticleRevision, insertArticleRevision, listArticleRevisions } from "./article-revision-queries.js";
 import { acceptTranslationRefresh } from "./translation-refresh-acceptance.js";
 import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
+import { resolveAcceptedCorrections } from "./accepted-corrections-resolution.js";
+import { listArticleSummaries, listRevisionSummaries } from "./article-summary-queries.js";
 
 
 export class ArticlesRepository {
@@ -69,6 +70,16 @@ export class ArticlesRepository {
 
     listArticles(): Article[] {
         return (this.database.prepare(`${articleSelect} ORDER BY CASE WHEN d.updated_at IS NOT NULL AND d.updated_at > a.updated_at THEN d.updated_at ELSE a.updated_at END DESC, a.id ASC`).all() as Row[]).map(mapArticleFromRow);
+    }
+
+
+    listArticleSummaries() {
+        return listArticleSummaries(this.database);
+    }
+
+
+    listRevisionSummaries(articleId: string) {
+        return listRevisionSummaries(this.database, articleId);
     }
 
 
@@ -219,7 +230,7 @@ export class ArticlesRepository {
                 provenance,
                 timestamp,
             });
-            this.resolveAcceptedCorrections(articleId, input, current.currentRevision.content, timestamp);
+            resolveAcceptedCorrections(this.database, articleId, input, current.currentRevision.content, timestamp);
             this.database.exec("COMMIT;");
         } catch (error) {
             this.database.exec("ROLLBACK;");
@@ -227,36 +238,6 @@ export class ArticlesRepository {
         }
 
         return this.getRevision(articleId, revisionId)!;
-    }
-
-
-    private resolveAcceptedCorrections(articleId: string, input: AcceptProposalInput, baseContent: string, timestamp: string): void {
-        const artifactId = input.provenance.editorialArtifactId;
-        if (typeof artifactId !== "string" || input.provenance.wholeProposal !== true)
-            return;
-
-        const row = this.database.prepare("SELECT content FROM editorial_artifacts WHERE id = ? AND article_id = ? AND revision_id = ? AND kind = 'editorial-proposal' AND rejected_at IS NULL")
-            .get(artifactId, articleId, input.baseRevisionId) as Row | undefined;
-        if (!row)
-            return;
-
-        const metadata = JSON.parse(String(row.content)) as { proposal?: unknown; correctionSelection?: { expectedRevisionId?: unknown; occurrenceIds?: unknown } };
-        const selection = metadata.correctionSelection;
-        if (!selection)
-            return;
-
-        const ids = selection.occurrenceIds;
-        if (selection.expectedRevisionId !== input.baseRevisionId || !Array.isArray(ids) || ids.length === 0 || ids.some((id) => typeof id !== "string") || typeof metadata.proposal !== "string")
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-        const review = createTextProposal(baseContent, metadata.proposal);
-        const expectedContent = applyProposalChanges(review, new Set(review.changes.map((change) => change.id)), true);
-        if (input.content === baseContent || input.content !== expectedContent)
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-        const resolve = this.database.prepare("INSERT INTO fact_check_resolutions (occurrence_id, resolution, updated_at) SELECT o.id, 'corrected_or_removed', ? FROM fact_occurrences o JOIN facts f ON f.id = o.fact_id WHERE o.id = ? AND o.revision_id = ? AND f.article_id = ? AND NOT EXISTS (SELECT 1 FROM fact_check_resolutions r WHERE r.occurrence_id = o.id)");
-        if (ids.some((id) => resolve.run(timestamp, id, input.baseRevisionId, articleId).changes !== 1))
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
     }
 
 
@@ -294,7 +275,7 @@ export class ArticlesRepository {
             throw error;
         }
 
-        return this.listRevisions(articleId).find((item) => item.id === revisionId)!;
+        return this.getRevision(articleId, revisionId)!;
     }
 
 
@@ -343,7 +324,7 @@ export class ArticlesRepository {
             throw error;
         }
 
-        return this.listRevisions(articleId).find((item) => item.id === revisionId)!;
+        return this.getRevision(articleId, revisionId)!;
     }
 
 }

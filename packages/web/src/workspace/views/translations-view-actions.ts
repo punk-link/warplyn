@@ -1,8 +1,8 @@
-import type { Article } from "@skladno/shared";
+import type { ArticleSummary } from "@skladno/shared";
 
 
 export interface TranslationsActions {
-    create: (targetLanguage: string, target?: Article) => Promise<void>;
+    create: (targetLanguage: string, target?: ArticleSummary) => Promise<void>;
     reject?: (targetLanguage: string) => Promise<void>;
     edit?: () => void;
     openArticle?: (articleId: string) => void;

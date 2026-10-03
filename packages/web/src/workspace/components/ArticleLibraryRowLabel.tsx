@@ -1,9 +1,9 @@
-import type { Article } from "@skladno/shared";
+import type { ArticleSummary } from "@skladno/shared";
 import { useIntl } from "react-intl";
 import { ArticleIcon, ChevronRightIcon } from "../../ui/icons.js";
 
 
-export function ArticleLibraryRowLabel({ article, child, childCount, expanded }: { article: Article; child: boolean; childCount: number; expanded: boolean }) {
+export function ArticleLibraryRowLabel({ article, child, childCount, expanded }: { article: ArticleSummary; child: boolean; childCount: number; expanded: boolean }) {
     const intl = useIntl();
     const chevronClass = expanded ? "rotate-90" : "";
     return <span className="flex gap-2">

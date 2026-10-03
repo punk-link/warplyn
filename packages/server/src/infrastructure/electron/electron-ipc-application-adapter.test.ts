@@ -203,3 +203,31 @@ test("Electron IPC rejects invalid publishing settings before persistence", asyn
         adapter.close();
     }
 });
+
+test("Electron summary reads load scoped bodies and reject malformed identifiers", async () => {
+    const adapter = createAdapter();
+    try {
+        const article = adapter.persistence.articles.createArticle({ title: "Summary", content: "Snapshot" });
+        const summaries = await adapter.ipcMain.invoke({ method: "listArticleSummaries", args: [] });
+        assert.ok(summaries.ok);
+        assert.ok(!("currentRevision" in summaries.value[0]));
+        const full = await adapter.ipcMain.invoke({ method: "getArticle", args: [article.id] });
+        assert.deepEqual(full, { ok: true, value: article });
+        const revisions = await adapter.ipcMain.invoke({ method: "listArticleRevisionSummaries", args: [article.id] });
+        assert.ok(revisions.ok);
+        assert.equal(revisions.value[0].characterCount, 8);
+        assert.ok(!("content" in revisions.value[0]));
+        const revision = await adapter.ipcMain.invoke({ method: "getArticleRevision", args: [article.id, article.currentRevisionId] });
+        assert.deepEqual(revision, { ok: true, value: article.currentRevision });
+        const wrongArticle = await adapter.ipcMain.invoke({ method: "getArticleRevision", args: ["missing", article.currentRevisionId] });
+        assert.deepEqual(wrongArticle, { ok: false, error: { code: APPLICATION_ERROR.REVISION_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND } });
+        const invalid = await adapter.ipcMain.invoke({ method: "getArticle", args: [" "] });
+        assert.deepEqual(invalid, { ok: false, error: { code: APPLICATION_ERROR.INVALID_REQUEST, status: HTTP_STATUS.BAD_REQUEST } });
+        const history = await adapter.ipcMain.invoke({ method: "listAssistantMessageHistory", args: [article.id] });
+        assert.ok(history.ok);
+        assert.equal(history.value.messages[0].kind, "greeting");
+        assert.deepEqual(history.value.revisionContents, {});
+    } finally {
+        adapter.close();
+    }
+});

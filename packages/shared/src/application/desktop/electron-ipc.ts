@@ -23,6 +23,10 @@ export const ELECTRON_IPC_CHANNEL = {
 
 
 export interface ElectronApplicationOperationMap {
+    listArticleSummaries: { args: []; result: import("../../articles/article/article-summary.js").ArticleSummary[] };
+    getArticle: { args: [string]; result: Article };
+    listArticleRevisionSummaries: { args: [string]; result: import("../../articles/revision/revision.js").ArticleRevisionSummary[] };
+    getArticleRevision: { args: [string, string]; result: ArticleRevision };
     getHealth: { args: []; result: HealthResponse };
     getApplicationSettings: { args: []; result: ApplicationSettingsSnapshot };
     updateGeneralSettings: { args: [GeneralSettings]; result: GeneralSettings };
@@ -51,6 +55,7 @@ export interface ElectronApplicationOperationMap {
     summarizeProposal: { args: [string, SummarizeProposalInput]; result: ProposalChangeSummary[] };
     restoreRevision: { args: [string, string]; result: ArticleRevision };
     listAssistantSkills: { args: []; result: AssistantSkillSummary[] };
+    listAssistantMessageHistory: { args: [string]; result: import("../../assistant/assistant-message-history.js").AssistantMessageHistory };
     listAssistantMessages: { args: [string]; result: import("../../assistant/assistant.js").AssistantMessage[] };
     setAssistantClaimSelected: { args: [string, string, string, boolean]; result: void };
     getAssistantEditMode: { args: [string]; result: import("../../assistant/assistant.js").AssistantEditMode };
@@ -78,6 +83,10 @@ export interface ElectronApplicationOperationMap {
 export type ElectronApplicationMethod = keyof ElectronApplicationOperationMap;
 
 export const ELECTRON_APPLICATION_METHOD = {
+    listArticleSummaries: "listArticleSummaries",
+    getArticle: "getArticle",
+    listArticleRevisionSummaries: "listArticleRevisionSummaries",
+    getArticleRevision: "getArticleRevision",
     getHealth: "getHealth",
     getApplicationSettings: "getApplicationSettings",
     updateGeneralSettings: "updateGeneralSettings",
@@ -106,6 +115,7 @@ export const ELECTRON_APPLICATION_METHOD = {
     summarizeProposal: "summarizeProposal",
     restoreRevision: "restoreRevision",
     listAssistantSkills: "listAssistantSkills",
+    listAssistantMessageHistory: "listAssistantMessageHistory",
     listAssistantMessages: "listAssistantMessages",
     setAssistantClaimSelected: "setAssistantClaimSelected",
     getAssistantEditMode: "getAssistantEditMode",

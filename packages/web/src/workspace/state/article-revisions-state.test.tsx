@@ -31,7 +31,7 @@ function createArticleRevision(articleId: string): ArticleRevision {
 
 function RevisionHarness({ client, selectedArticle }: { client: EditorialWorkspaceClient; selectedArticle: Article }) {
     const { revisions } = useArticleRevisions(client, selectedArticle, vi.fn(), vi.fn(), vi.fn());
-    return <output>{revisions.map((revision) => revision.content).join(", ")}</output>;
+    return <output>{revisions.map((revision) => revision.id).join(", ")}</output>;
 }
 
 
@@ -48,19 +48,19 @@ describe("useArticleRevisions", () => {
         const first = createDeferred<ArticleRevision[]>();
         const second = createDeferred<ArticleRevision[]>();
         const client = {
-            listArticleRevisions: vi.fn((articleId: string) => articleId === "article-a" ? first.promise : second.promise),
+            listArticleRevisionSummaries: vi.fn((articleId: string) => articleId === "article-a" ? first.promise : second.promise),
         } as unknown as EditorialWorkspaceClient;
         const view = renderRevisions(client, createArticle("article-a"));
 
-        await waitFor(() => expect(client.listArticleRevisions).toHaveBeenCalledWith("article-a"));
+        await waitFor(() => expect(client.listArticleRevisionSummaries).toHaveBeenCalledWith("article-a"));
         view.rerender(<IntlProvider locale="en" messages={messages}><NotificationProvider><RevisionHarness client={client} selectedArticle={createArticle("article-b")} /></NotificationProvider></IntlProvider>);
-        await waitFor(() => expect(client.listArticleRevisions).toHaveBeenCalledWith("article-b"));
+        await waitFor(() => expect(client.listArticleRevisionSummaries).toHaveBeenCalledWith("article-b"));
 
         await act(async () => second.resolve([createArticleRevision("article-b")]));
-        expect(screen.getByText("article-b history")).toBeTruthy();
+        expect(screen.getByText("article-b-revision")).toBeTruthy();
 
         await act(async () => first.resolve([createArticleRevision("article-a")]));
-        expect(screen.getByText("article-b history")).toBeTruthy();
-        expect(screen.queryByText("article-a history")).toBeNull();
+        expect(screen.getByText("article-b-revision")).toBeTruthy();
+        expect(screen.queryByText("article-a-revision")).toBeNull();
     });
 });

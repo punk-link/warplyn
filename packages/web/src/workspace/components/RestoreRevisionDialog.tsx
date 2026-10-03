@@ -5,7 +5,7 @@ import { useIntl } from "react-intl";
 
 
 export function RestoreRevisionDialog({ candidate, hasUncommittedChanges, close, restore }: {
-    candidate: ArticleRevision | undefined;
+    candidate: Omit<ArticleRevision, "content"> | undefined;
     hasUncommittedChanges: boolean;
     close: () => void;
     restore: (mode: "keep" | "save" | "discard") => Promise<void>

@@ -1,4 +1,4 @@
-import { type Article } from "@skladno/shared";
+import { type ArticleSummary } from "@skladno/shared";
 import { Banner, Button, Tab, TabList } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import { getProviderLanguageName } from "../state/editorial-language.js";
@@ -6,9 +6,9 @@ import type { Translation } from "./translations-view-types.js";
 
 
 interface TranslationsNavigationProps {
-    article: Article;
-    sourceArticle?: Article;
-    linkedTranslations: readonly Article[];
+    article: ArticleSummary;
+    sourceArticle?: ArticleSummary;
+    linkedTranslations: readonly ArticleSummary[];
     translations: readonly Translation[];
     translation?: Translation;
     stale: boolean;

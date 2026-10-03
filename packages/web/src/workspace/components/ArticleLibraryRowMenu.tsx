@@ -1,21 +1,21 @@
 import { useLayoutEffect, useState, type KeyboardEvent, type RefObject } from "react";
 import { createPortal } from "react-dom";
-import type { Article } from "@skladno/shared";
+import type { ArticleSummary } from "@skladno/shared";
 import { useIntl } from "react-intl";
 import { ArchiveIcon, ArrowLeftIcon, DeleteIcon, LoadFileIcon, PinIcon, SaveFileIcon } from "../../ui/icons.js";
 import type { ArticleFilesState } from "../state/article-files-state.js";
 
 
 export function ArticleLibraryRowMenu({ article, anchor, canReorder, pinnedRoots, menuRef, handleMenuKeyDown, movePinned, run, setDeleteTarget, closeMenu, setPinned, setArchived, files, runFile }: {
-    article: Article;
+    article: ArticleSummary;
     anchor: HTMLButtonElement | undefined;
     canReorder: boolean;
-    pinnedRoots: Article[];
+    pinnedRoots: ArticleSummary[];
     menuRef: RefObject<HTMLDivElement>;
     handleMenuKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
-    movePinned: (article: Article, direction: -1 | 1) => void;
+    movePinned: (article: ArticleSummary, direction: -1 | 1) => void;
     run: (action: () => Promise<void>) => void;
-    setDeleteTarget: (article: Article) => void;
+    setDeleteTarget: (article: ArticleSummary) => void;
     closeMenu: () => void;
     setPinned?: (articleId: string, pinned: boolean) => Promise<void>;
     setArchived?: (articleId: string, archived: boolean) => Promise<void>;

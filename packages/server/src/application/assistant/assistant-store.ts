@@ -17,6 +17,8 @@ export class AssistantEditError extends Error {
 
 export interface AssistantStore {
     ensureGreeting(articleId: string): void;
+    listMessageHistory(articleId: string): import("@skladno/shared").AssistantMessageHistory;
+    listConversationHistory(articleId: string, limit?: number): import("./requests/conversation-history.js").ConversationHistory;
     listMessages(articleId: string): AssistantMessage[];
     getEditMode(articleId: string, defaultMode: AssistantEditMode): AssistantEditMode;
     setEditMode(articleId: string, mode: AssistantEditMode): AssistantEditMode;

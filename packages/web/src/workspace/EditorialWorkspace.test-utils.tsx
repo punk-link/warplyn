@@ -1,6 +1,6 @@
 /* eslint-disable project-style/no-production-intl-provider -- This is a test-only render helper. */
 import { cleanup, render } from "@testing-library/react";
-import { defaultGeneralSettings, defaultPublishingSettings, type Article, type ArticleRevision, type AssistantCapabilityActivity, type AssistantMessage, type AssistantSkillSummary, type FactCheckClaimPreview, type GeneralSettings, type KeyBindingOverrides } from "@skladno/shared";
+import { summarizeArticle, defaultGeneralSettings, defaultPublishingSettings, type Article, type ArticleRevision, type AssistantCapabilityActivity, type AssistantMessage, type AssistantSkillSummary, type FactCheckClaimPreview, type GeneralSettings, type KeyBindingOverrides } from "@skladno/shared";
 import { IntlProvider } from "react-intl";
 import type { ReactElement } from "react";
 import { vi } from "vitest";
@@ -62,7 +62,7 @@ export function renderLocalized(element: ReactElement) {
 
 export function createFakeClient(): EditorialWorkspaceClient {
     const created = createArticleFixture("new", "New Article");
-    return {
+    const client = {
         getHealth: vi.fn(),
         listArticles: vi.fn().mockResolvedValue([createArticleFixture("one", "First Article")]),
         createArticle: vi.fn().mockResolvedValue(created),
@@ -114,6 +114,25 @@ export function createFakeClient(): EditorialWorkspaceClient {
         refreshAiModels: vi.fn(),
         updateModelPreferences: vi.fn(),
     } as unknown as EditorialWorkspaceClient;
+    client.listArticleSummaries = vi.fn(async () => (await client.listArticles()).map(summarizeArticle));
+    client.getArticle = vi.fn(async (id: string) => {
+        const article = (await client.listArticles()).find((item) => item.id === id);
+        if (!article)
+            throw new Error("Article missing in fixture");
+
+        return article;
+    });
+    client.listArticleRevisionSummaries = vi.fn(async (id: string) => (await client.listArticleRevisions(id)).map(({ content, ...revision }) => ({ ...revision, characterCount: Array.from(content).length })));
+    client.getArticleRevision = vi.fn(async (id: string, revisionId: string) => {
+        const revision = (await client.listArticleRevisions(id)).find((item) => item.id === revisionId);
+        if (!revision)
+            throw new Error("Revision missing in fixture");
+
+        return revision;
+    });
+
+    client.listAssistantMessageHistory = vi.fn(async (id: string) => ({ messages: await client.listAssistantMessages(id), revisionContents: {} }));
+    return client;
 }
 
 
@@ -123,7 +142,4 @@ export function resetWorkspaceTestEnvironment() {
     window.skladnoShell = undefined;
     window.skladnoUpdates = undefined;
 }
-
-
-
 

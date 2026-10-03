@@ -1,4 +1,4 @@
-import type { ArticleRevision } from "./revision.js";
+import type { ArticleRevision, ArticleRevisionSummary } from "./revision.js";
 import { findSequenceMatches } from "../../cross-cutting/sequence-matches.js";
 
 
@@ -41,6 +41,8 @@ export interface AcceptProposalInput {
 
 
 export const createArticleRevisionsPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/revisions`;
+export const createRevisionSummariesPath = (articleId: string) => `${createArticleRevisionsPath(articleId)}/summaries`;
+export const createRevisionPath = (articleId: string, revisionId: string) => `${createArticleRevisionsPath(articleId)}/${encodeURIComponent(revisionId)}`;
 export const createArticleDraftPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/draft`;
 export const acceptProposalPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/proposal-acceptances`;
 export const createProposalSummariesPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/proposal-summaries`;
@@ -195,6 +197,8 @@ export function applyProposalChanges(proposal: TextProposal, selectedChangeIds: 
 
 export interface RevisionClient {
     listArticleRevisions(articleId: string): Promise<ArticleRevision[]>;
+    listArticleRevisionSummaries(articleId: string): Promise<ArticleRevisionSummary[]>;
+    getArticleRevision(articleId: string, revisionId: string): Promise<ArticleRevision>;
     acceptProposal(articleId: string, input: AcceptProposalInput): Promise<ArticleRevision>;
     restoreRevision(articleId: string, revisionId: string): Promise<ArticleRevision>;
     summarizeProposal(articleId: string, input: SummarizeProposalInput): Promise<ProposalChangeSummary[]>;

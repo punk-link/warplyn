@@ -7,7 +7,7 @@ import { useAssistantMessageHistory } from "./assistant-message-history-state.js
 
 function History({ listAssistantMessages }: { listAssistantMessages: (articleId: string) => Promise<AssistantMessage[]> }) {
     const [messages, setMessages] = useState<Record<string, AssistantMessage[]>>({});
-    const client = useMemo(() => ({ listAssistantMessages }), [listAssistantMessages]);
+    const client = useMemo(() => ({ listAssistantMessageHistory: async (id: string) => ({ messages: await listAssistantMessages(id), revisionContents: {} }) }), [listAssistantMessages]);
     const { reload } = useAssistantMessageHistory({ client, articleId: "article", profileRebuilt: undefined, store: { setMessagesByArticle: setMessages } });
 
     useEffect(() => {

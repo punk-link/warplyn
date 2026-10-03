@@ -72,3 +72,29 @@ test("preload exposes only the typed application client and completes streams", 
     }, () => undefined);
     assert.equal(streamListener, undefined);
 });
+
+test("preload forwards summary and body reads through the finite invoke channel", async () => {
+    const requests: ElectronInvokeRequest[] = [];
+    const client = createElectronApplicationClient({
+        invoke: async (channel, request) => {
+            assert.equal(channel, ELECTRON_IPC_CHANNEL.invoke);
+            requests.push(request);
+            return { ok: true, value: [] };
+        },
+        send: () => undefined,
+        on: () => undefined,
+        removeListener: () => undefined,
+    });
+    await client.listArticleSummaries();
+    await client.getArticle("article");
+    await client.listArticleRevisionSummaries("article");
+    await client.getArticleRevision("article", "revision");
+    await client.listAssistantMessageHistory("article");
+    assert.deepEqual(requests, [
+        { method: "listArticleSummaries", args: [] },
+        { method: "getArticle", args: ["article"] },
+        { method: "listArticleRevisionSummaries", args: ["article"] },
+        { method: "getArticleRevision", args: ["article", "revision"] },
+        { method: "listAssistantMessageHistory", args: ["article"] },
+    ]);
+});

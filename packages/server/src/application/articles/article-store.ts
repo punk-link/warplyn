@@ -2,6 +2,8 @@ import type { AcceptProposalInput, Article, ArticleDraft, ArticleRevision, Creat
 
 
 export interface ArticleStore {
+    listArticleSummaries(): import("@skladno/shared").ArticleSummary[];
+    listRevisionSummaries(articleId: string): import("@skladno/shared").ArticleRevisionSummary[];
     listArticles(): Article[];
     createArticle(input: CreateArticleInput): Article;
     getArticle(articleId: string): Article | undefined;
