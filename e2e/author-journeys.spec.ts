@@ -189,18 +189,24 @@ test("a provider failure leaves the Article unchanged and clears after checkpoin
 });
 
 
-test("Ctrl+S saves while the Article Editor has focus", async ({ page }) => {
+test("Article undo, redo, and Ctrl+S preserve the latest text through reload", async ({ page }) => {
     await page.goto("/");
     await createArticle(page);
 
     const editor = page.getByRole("textbox", { name: "Article draft" });
     await editor.pressSequentially(" Saved with shortcut.");
+    await editor.press("Control+Z");
+    await expect(editor).not.toContainText("Saved with shortcut.");
+    await editor.press("Control+Y");
+    await expect(editor).toContainText("Saved with shortcut.");
     const saved = page.waitForResponse((response) => response.url().includes("/revisions") && response.request().method() === "POST");
     await editor.press("Control+S");
 
     await saved;
     await expect(editor).toContainText("Saved with shortcut.");
     await expect(page.getByRole("status").filter({ hasText: "Saved" })).toBeVisible();
+    await page.reload();
+    await expect(editor).toContainText("Saved with shortcut.");
 });
 
 
