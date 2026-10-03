@@ -1,3 +1,6 @@
+import noNestedConciseFunctions from "./no-nested-concise-functions.mjs";
+
+
 const conditionalBraces = {
     meta: {
         type: "layout",
@@ -375,6 +378,7 @@ export default {
     rules: {
         "conditional-braces": conditionalBraces,
         "no-accessible-label-selector": noAccessibleLabelSelector,
+        "no-nested-concise-functions": noNestedConciseFunctions,
         "no-production-intl-provider": noProductionIntlProvider,
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
         "two-blank-lines-between-declarations": twoBlankLinesBetweenDeclarations,
