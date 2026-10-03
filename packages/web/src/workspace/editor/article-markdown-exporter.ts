@@ -24,6 +24,7 @@ export function createArticleMarkdownExporter() {
 
             return result;
         };
+
         return { ...transformer, export: exportCached };
     });
 
