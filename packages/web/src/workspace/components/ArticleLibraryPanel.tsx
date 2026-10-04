@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import { KEY_BINDING_COMMAND, type Article, type KeyBindingOverrides } from "@skladno/shared";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { KEY_BINDING_COMMAND, type ArticleSummary, type KeyBindingOverrides } from "@skladno/shared";
 import { Button, Dialog, Field, IconButton } from "../../ui/primitives.js";
 import { ChevronRightIcon, SearchIcon, SettingsIcon, UserIcon } from "../../ui/icons.js";
 import { useIntl } from "react-intl";
@@ -19,8 +19,23 @@ function getLanguageCode(language: string | undefined): string {
 }
 
 
+function groupArticleChildren(articles: readonly ArticleSummary[]): Map<string, ArticleSummary[]> {
+    const children = new Map<string, ArticleSummary[]>();
+    for (const article of articles) {
+        if (!article.sourceArticleId)
+            continue;
+
+        const siblings = children.get(article.sourceArticleId) ?? [];
+        siblings.push(article);
+        children.set(article.sourceArticleId, siblings);
+    }
+
+    return children;
+}
+
+
 interface ArticleLibraryData {
-    articles: Article[];
+    articles: ArticleSummary[];
     selectedArticleId: string | undefined;
     collapsed: boolean;
     language: string | undefined;
@@ -47,7 +62,7 @@ interface ArticleLibraryMutations {
 }
 
 
-function handlePinnedArticleDrop(event: React.DragEvent<HTMLDivElement>, article: Article, draggedArticleId: string | undefined, pinnedRoots: Article[], reorderPinned: ArticleLibraryMutations["reorderPinned"], run: (action: () => Promise<void>) => void) {
+function handlePinnedArticleDrop(event: React.DragEvent<HTMLDivElement>, article: ArticleSummary, draggedArticleId: string | undefined, pinnedRoots: ArticleSummary[], reorderPinned: ArticleLibraryMutations["reorderPinned"], run: (action: () => Promise<void>) => void) {
     event.preventDefault();
     if (!draggedArticleId || draggedArticleId === article.id || !reorderPinned)
         return;
@@ -63,16 +78,16 @@ function handlePinnedArticleDrop(event: React.DragEvent<HTMLDivElement>, article
 
 
 function ArticleLibraryNavigation({ pinnedRoots, recentRoots, archivedRoots, archivedOpen, setArchivedOpen, query, archivedContent, archivedContentEmpty, articles, renderRoots }: {
-    pinnedRoots: Article[];
-    recentRoots: Article[];
-    archivedRoots: Article[];
+    pinnedRoots: ArticleSummary[];
+    recentRoots: ArticleSummary[];
+    archivedRoots: ArticleSummary[];
     archivedOpen: boolean;
     setArchivedOpen: (update: (current: boolean) => boolean) => void;
     query: string;
     archivedContent: ReactNode;
     archivedContentEmpty: boolean;
-    articles: Article[];
-    renderRoots: (items: Article[]) => ReactNode;
+    articles: ArticleSummary[];
+    renderRoots: (items: ArticleSummary[]) => ReactNode;
 }) {
     const intl = useIntl();
     const archiveExpanded = archivedOpen || Boolean(query);
@@ -109,11 +124,12 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files }: { da
     const [query, setQuery] = useState("");
     const [archivedOpen, setArchivedOpen] = useState(false);
     const [menuArticleId, setMenuArticleId] = useState<string>();
-    const [deleteTarget, setDeleteTarget] = useState<Article>();
+    const [deleteTarget, setDeleteTarget] = useState<ArticleSummary>();
     const [draggedArticleId, setDraggedArticleId] = useState<string>();
     const searchRef = useRef<HTMLInputElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     const triggerRefs = useRef(new Map<string, HTMLButtonElement>());
+    const childrenByArticle = useMemo(() => groupArticleChildren(articles), [articles]);
     useEffect(() => dispatcher?.register(KEY_BINDING_COMMAND.SEARCH_ARTICLES, () => searchRef.current?.focus()), [dispatcher]);
     useEffect(() => {
         if (!menuArticleId)
@@ -131,10 +147,10 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files }: { da
         return () => window.removeEventListener("mousedown", dismiss);
     }, [menuArticleId]);
     const normalizedQuery = query.toLowerCase();
-    const isArticleMatch = (article: Article) => article.title.toLowerCase().includes(normalizedQuery);
+    const isArticleMatch = (article: ArticleSummary) => article.title.toLowerCase().includes(normalizedQuery);
     const articleIds = new Set(articles.map((article) => article.id));
     const roots = articles.filter((article) => !article.sourceArticleId || !articleIds.has(article.sourceArticleId));
-    const getChildArticles = (id: string) => articles.filter((article) => article.sourceArticleId === id);
+    const getChildArticles = (id: string) => childrenByArticle.get(id) ?? [];
     const selected = articles.find((article) => article.id === selectedArticleId);
     const expandedRootId = selected?.sourceArticleId ?? selected?.id;
     const activeRoots = roots.filter((article) => !article.archived);
@@ -167,7 +183,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files }: { da
     }
 
 
-    function movePinned(article: Article, direction: -1 | 1) {
+    function movePinned(article: ArticleSummary, direction: -1 | 1) {
         const index = pinnedRoots.findIndex((item) => item.id === article.id);
         const nextIndex = index + direction;
         if (index < 0 || nextIndex < 0 || nextIndex >= pinnedRoots.length || !reorderPinned)
@@ -194,7 +210,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files }: { da
     }
 
 
-    const renderArticleRow = ({ article, child = false, childCount = 0, expanded = false, hidden = false }: { article: Article; child?: boolean; childCount?: number; expanded?: boolean; hidden?: boolean }) => {
+    const renderArticleRow = ({ article, child = false, childCount = 0, expanded = false, hidden = false }: { article: ArticleSummary; child?: boolean; childCount?: number; expanded?: boolean; hidden?: boolean }) => {
         const selectedRow = article.id === selectedArticleId;
         let tone = child ? "text-muted hover:bg-surface-raised" : "text-ink/85 hover:bg-surface-raised";
         if (selectedRow)
@@ -220,7 +236,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files }: { da
         </div>;
     };
 
-    const renderRoots = (items: Article[]) => items.filter((article) => !query || isArticleMatch(article) || getChildArticles(article.id).some(isArticleMatch)).map((article) => {
+    const renderRoots = (items: ArticleSummary[]) => items.filter((article) => !query || isArticleMatch(article) || getChildArticles(article.id).some(isArticleMatch)).map((article) => {
         const nested = getChildArticles(article.id).filter((child) => !query || isArticleMatch(article) || isArticleMatch(child));
         const expanded = Boolean(query) || article.id === expandedRootId;
         return <div key={article.id}>{renderArticleRow({ article, childCount: nested.length, expanded })}{nested.length > 0 && <div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`} aria-hidden={!expanded}><div className="min-h-0 space-y-0.5 overflow-hidden">{nested.map((child) => renderArticleRow({ article: child, child: true, hidden: !expanded }))}</div></div>}</div>;

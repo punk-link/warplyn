@@ -62,6 +62,22 @@ test("article API supports CRUD and revision-aware saves", async () => {
         assert.equal(createdResponse.status, HTTP_STATUS.CREATED);
         const created = await createdResponse.json() as Article;
 
+        const summaries = await fetch(`${baseUrl}/summaries`);
+        assert.equal(summaries.status, HTTP_STATUS.OK);
+        const summary = (await summaries.json())[0];
+        assert.equal(summary.id, created.id);
+        assert.ok(!("currentRevision" in summary));
+        assert.deepEqual(await (await fetch(`${baseUrl}/${created.id}`)).json(), created);
+        const revisionSummaries = await (await fetch(`${baseUrl}/${created.id}/revisions/summaries`)).json();
+        assert.equal(revisionSummaries[0].characterCount, 3);
+        assert.ok(!("content" in revisionSummaries[0]));
+        assert.deepEqual(await (await fetch(`${baseUrl}/${created.id}/revisions/${created.currentRevisionId}`)).json(), created.currentRevision);
+        assert.equal((await fetch(`${baseUrl}/missing`)).status, HTTP_STATUS.NOT_FOUND);
+        assert.equal((await fetch(`${baseUrl}/missing/revisions/${created.currentRevisionId}`)).status, HTTP_STATUS.NOT_FOUND);
+        const messageHistory = await (await fetch(`${baseUrl}/${created.id}/assistant/messages/history`)).json();
+        assert.equal(messageHistory.messages[0].kind, "greeting");
+        assert.deepEqual(messageHistory.revisionContents, {});
+
         const firstDraftResponse = await fetch(`${baseUrl}/${created.id}/draft`, {
             method: HTTP_METHOD.PUT,
             headers: { "content-type": "application/json" },

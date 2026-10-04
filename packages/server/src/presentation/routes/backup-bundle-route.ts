@@ -15,32 +15,32 @@ function requestedIndex(value: string): number {
 }
 
 
-export function createBackupExportRoute(response: ServerResponse, transfers: BackupBundleTransfers): void {
-    writeJson(response, HTTP_STATUS.CREATED, transfers.createExport());
+export async function createBackupExportRoute(response: ServerResponse, transfers: BackupBundleTransfers): Promise<void> {
+    writeJson(response, HTTP_STATUS.CREATED, await transfers.createExport());
 }
 
 
-export function readBackupExportRoute(response: ServerResponse, transfers: BackupBundleTransfers, id: string, index: string): void {
-    const bytes = transfers.readExport(id, requestedIndex(index));
+export async function readBackupExportRoute(response: ServerResponse, transfers: BackupBundleTransfers, id: string, index: string): Promise<void> {
+    const bytes = await transfers.readExport(id, requestedIndex(index));
     response.writeHead(HTTP_STATUS.OK, { "content-type": "application/octet-stream" });
     response.end(bytes);
 }
 
 
-export function removeBackupTransferRoute(response: ServerResponse, transfers: BackupBundleTransfers, id: string): void {
-    transfers.remove(id);
+export async function removeBackupTransferRoute(response: ServerResponse, transfers: BackupBundleTransfers, id: string): Promise<void> {
+    await transfers.remove(id);
     response.writeHead(HTTP_STATUS.NO_CONTENT);
     response.end();
 }
 
 
 export async function beginBackupImportRoute(request: IncomingMessage, response: ServerResponse, transfers: BackupBundleTransfers): Promise<void> {
-    writeJson(response, HTTP_STATUS.CREATED, { id: transfers.beginImport(await readJson(request, 5_000_000)) });
+    writeJson(response, HTTP_STATUS.CREATED, { id: await transfers.beginImport(await readJson(request, 5_000_000)) });
 }
 
 
 export async function writeBackupImportRoute(request: IncomingMessage, response: ServerResponse, transfers: BackupBundleTransfers, id: string, index: string): Promise<void> {
-    transfers.writeImport(id, requestedIndex(index), await readBinary(request));
+    await transfers.writeImport(id, requestedIndex(index), await readBinary(request));
     response.writeHead(HTTP_STATUS.NO_CONTENT);
     response.end();
 }

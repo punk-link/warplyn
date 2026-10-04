@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from "react";
-import { FACT_CHECK_STATUS, type ArticleRevision, type FactCheck, type FactCheckFinding, type GeneralSettings } from "@skladno/shared";
+import { FACT_CHECK_STATUS, type ArticleRevisionSummary, type FactCheck, type FactCheckFinding, type GeneralSettings } from "@skladno/shared";
 import { Badge, Banner, Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
 import { ChevronDownIcon, ChevronRightIcon, UpdateIcon } from "../../ui/icons.js";
 import { useIntl } from "react-intl";
@@ -18,7 +18,7 @@ const quietScrollbar = "[scrollbar-color:var(--color-border-strong)_transparent]
 interface FactCheckData {
     factCheck: FactCheck | undefined;
     currentRevisionId?: string;
-    revisions?: ArticleRevision[];
+    revisions?: (ArticleRevisionSummary | import("@skladno/shared").ArticleRevision)[];
     runs?: FactCheck[];
     selectedRun?: number;
     revisionNumber?: number;

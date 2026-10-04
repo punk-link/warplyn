@@ -1,5 +1,5 @@
 import type { Dispatch, MutableRefObject, SetStateAction } from "react";
-import { ArticleDraftConflictError, ArticleRevisionConflictError, type Article, type UpdateArticleInput } from "@skladno/shared";
+import { ArticleDraftConflictError, ArticleRevisionConflictError, type Article, type ArticleSummary, type UpdateArticleInput } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
 import type { Notifications } from "../../notifications/notifications.js";
 import { hydrateDraftLifecycle } from "../drafts/draft-lifecycle.js";
@@ -8,12 +8,12 @@ import { sortArticlesByActivity, withoutDraft } from "./article-workspace-articl
 
 
 type DraftLifecycle = ReturnType<typeof useDraftLifecycle>;
-type ReplaceArticles = (update: (items: Article[]) => Article[]) => void;
+type ReplaceArticles = (update: (items: (Article | ArticleSummary)[]) => (Article | ArticleSummary)[]) => void;
 
 
 interface ArticleWorkspaceActionsOptions {
     client: EditorialWorkspaceClient;
-    articlesRef: MutableRefObject<Article[]>;
+    articlesRef: MutableRefObject<(Article | ArticleSummary)[]>;
     draftLifecycle: DraftLifecycle;
     timers: MutableRefObject<Map<string, ReturnType<typeof setTimeout>>>;
     checkpoint: (articleId: string, content?: string) => Promise<void>;
@@ -102,7 +102,7 @@ export function createArticleWorkspaceActions(options: ArticleWorkspaceActionsOp
 
 
     async function refreshArticle(articleId: string, refreshDraft = false) {
-        const article = (await client.listArticles()).find((item) => item.id === articleId);
+        const article = await client.getArticle(articleId);
         if (article) {
             if (refreshDraft)
                 draftLifecycle.replace({ ...draftLifecycle.sessionsRef.current, [articleId]: hydrateDraftLifecycle(article) });

@@ -15,8 +15,7 @@ export function createRendererArticleFilesClient(host: Pick<Window, "skladnoArti
         return createBrowserArticleFilesClient();
 
 
-    // contextBridge transfers Error messages, not custom class identity or fields.
-    function restoreClientError(error: unknown): never {
+    function restoreSerializedApplicationError(error: unknown): never {
         if (error instanceof Error) {
             const code = Object.values(APPLICATION_ERROR).find((value) => value === error.message);
             if (code)
@@ -28,7 +27,7 @@ export function createRendererArticleFilesClient(host: Pick<Window, "skladnoArti
 
 
     return {
-        loadMarkdown: () => bridge.loadMarkdown().catch(restoreClientError),
-        saveMarkdown: (file) => bridge.saveMarkdown(file).catch(restoreClientError),
+        loadMarkdown: () => bridge.loadMarkdown().catch(restoreSerializedApplicationError),
+        saveMarkdown: (file) => bridge.saveMarkdown(file).catch(restoreSerializedApplicationError),
     };
 }

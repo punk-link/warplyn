@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { APPLICATION_ERROR, ApplicationClientError, defaultGeneralSettings, type ArticleRevision, type AssistantMessage } from "@skladno/shared";
 
 import { App } from "../App.js";
@@ -9,6 +9,43 @@ import { createArticleFixture, createFakeClient, resetWorkspaceTestEnvironment }
 
 describe("Editorial Workspace assistant requests", () => {
     afterEach(resetWorkspaceTestEnvironment);
+
+
+    it("keeps concurrent requests and cancellation isolated between Articles", async () => {
+        const previousViewportWidth = window.innerWidth;
+        onTestFinished(() => {
+            Object.defineProperty(window, "innerWidth", { configurable: true, value: previousViewportWidth, writable: true });
+        });
+        Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440, writable: true });
+        const client = createFakeClient();
+        client.listArticles = vi.fn().mockResolvedValue([createArticleFixture("one", "First Article"), createArticleFixture("two", "Second Article")]);
+        const signals: (AbortSignal | undefined)[] = [];
+        const releases: (() => void)[] = [];
+        client.streamAssistantRequest = vi.fn((_id, _input, _onEvent, signal) => {
+            signals.push(signal);
+            return new Promise<void>((resolve) => {
+                releases.push(resolve);
+                signal?.addEventListener("abort", () => resolve(), { once: true });
+            });
+        });
+        const user = userEvent.setup();
+        localStorage.setItem("skladno-workspace-layout", JSON.stringify({ version: 3, view: "write", libraryCollapsed: false, assistantCollapsed: false, selectedArticleId: "one" }));
+        render(<App client={client} />);
+        await screen.findByRole("heading", { name: "First Article" });
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.flowAndClarity.label") }));
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
+        await waitFor(() => expect(signals).toHaveLength(1));
+        await user.click(screen.getByRole("button", { name: /Second Article/ }));
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.flowAndClarity.label") }));
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
+        await waitFor(() => expect(signals).toHaveLength(2));
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.stop") }));
+        expect(signals[0]?.aborted).toBe(false);
+        expect(signals[1]?.aborted).toBe(true);
+        releases.forEach((release) => release());
+    });
 
 
     // Product scenarios: editorial-workflows.author-skill-creation
@@ -215,6 +252,8 @@ describe("Editorial Workspace assistant requests", () => {
         client.getApplicationSettings = vi.fn().mockResolvedValue({ general: { ...defaultGeneralSettings, defaultTranslationLanguages: ["es", "de"] }, connections: [], modelPreferences: { defaultModel: "", skillOverrides: {} }, backupPolicy: { schedule: "off", retention: { mode: "count", count: 7 } }, keyBindingOverrides: {} });
         client.saveArticleDraft = vi.fn().mockResolvedValue(source.draft);
         client.saveArticleRevision = vi.fn().mockResolvedValue(promoted);
+        const releases: (() => void)[] = [];
+        client.streamAssistantRequest = vi.fn(() => new Promise<void>((resolve) => releases.push(resolve)));
 
         render(<App client={client} />);
         await screen.findByRole("textbox", { name: "Article draft" });
@@ -224,5 +263,9 @@ describe("Editorial Workspace assistant requests", () => {
 
         await waitFor(() => expect(client.streamAssistantRequest).toHaveBeenCalledTimes(2));
         expect(vi.mocked(client.streamAssistantRequest).mock.calls.map(([, request]) => request.kind === "new" ? request.scope.baseRevisionId : undefined)).toEqual([promoted.id, promoted.id]);
+        expect(client.saveArticleRevision).toHaveBeenCalledTimes(1);
+        const signals = vi.mocked(client.streamAssistantRequest).mock.calls.map((call) => call[3]);
+        expect(signals[0]).toBe(signals[1]);
+        releases.forEach((release) => release());
     });
 });

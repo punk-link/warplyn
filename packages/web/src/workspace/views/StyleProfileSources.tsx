@@ -11,7 +11,7 @@ const quietScrollbar = "[scrollbar-color:var(--color-border-strong)_transparent]
 
 interface StyleProfileSourcesData {
     corpus: StyleCorpus | undefined;
-    revisions: readonly { revision: ArticleRevision; number: number }[];
+    revisions: readonly { revision: Omit<ArticleRevision, "content">; number: number }[];
     generalSettings: GeneralSettings;
     pendingAction: string | undefined;
     adding: boolean;

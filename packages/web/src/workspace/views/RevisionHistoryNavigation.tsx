@@ -1,14 +1,14 @@
-import type { ArticleRevision, GeneralSettings } from "@skladno/shared";
+import type { GeneralSettings } from "@skladno/shared";
 import { useIntl, type IntlShape } from "react-intl";
 import { formatDateTime } from "../../i18n/formatting.js";
-import { getCharacterCount, getProvenanceMessageId, getRestoredRevisionTarget, getRevisionTitle, getTimelineKind, timelineIcons } from "./revision-history-presentation.js";
+import { getRevisionCharacterCount, type RevisionHistoryEntry, getProvenanceMessageId, getRestoredRevisionTarget, getRevisionTitle, getTimelineKind, timelineIcons } from "./revision-history-presentation.js";
 
 
 export function RevisionHistoryNavigation({ revisions, bypassedRevisionIds, selectedRevisionId, onSelect, generalSettings }: {
-    revisions: ArticleRevision[];
+    revisions: RevisionHistoryEntry[];
     bypassedRevisionIds: ReadonlySet<string>;
     selectedRevisionId: string;
-    onSelect: (revision: ArticleRevision) => void;
+    onSelect: (revision: RevisionHistoryEntry) => void;
     generalSettings: GeneralSettings;
 }) {
     const intl = useIntl();
@@ -39,7 +39,7 @@ export function RevisionHistoryNavigation({ revisions, bypassedRevisionIds, sele
                     <button className={`w-full rounded-control border p-3 text-left focus:outline-none ${selected ? "border-brand bg-brand-soft" : "border-transparent hover:bg-surface"}`} type="button" aria-pressed={selected} onClick={() => onSelect(revision)}>
                         <span className={`line-clamp-2 text-sm ${titleStyle}`} title={displayTitle}>{displayTitle}</span>
                         {inactive && <span className="mt-1 block text-micro text-muted">{intl.formatMessage({ id: "revisions.inactive" })}</span>}
-                        <span className="mt-1 block text-xs text-muted">{formatRevisionDate(revision.createdAt)} · {intl.formatMessage({ id: "revisions.characterCount" }, { count: intl.formatNumber(getCharacterCount(revision.content)) })}</span>
+                        <span className="mt-1 block text-xs text-muted">{formatRevisionDate(revision.createdAt)} · {intl.formatMessage({ id: "revisions.characterCount" }, { count: intl.formatNumber(getRevisionCharacterCount(revision)) })}</span>
                     </button>
                 </li>;
             })}

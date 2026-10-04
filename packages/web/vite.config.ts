@@ -3,12 +3,13 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath, URL } from "node:url";
 
+const tailwindcssWithHighlightPseudoElementSupport = tailwindcss({ optimize: false });
+
 export default defineConfig({
     base: "./",
     plugins: [
         react(),
-        // Lightning CSS does not yet recognize the standard ::highlight() pseudo-element.
-        tailwindcss({ optimize: false }),
+        tailwindcssWithHighlightPseudoElementSupport,
     ],
     test: {
         environment: "jsdom",

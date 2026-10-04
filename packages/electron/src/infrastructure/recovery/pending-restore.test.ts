@@ -133,7 +133,7 @@ test("successful restoration removes only the staged backup", () => {
 });
 
 
-test("staged restoration restores Author Skills alongside the database", () => {
+test("staged restoration restores Author Skills alongside the database", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-restore-skills-"));
     const databasePath = join(root, "skladno.sqlite");
     const stagedSnapshotPath = join(root, "selected.sqlite");
@@ -144,7 +144,7 @@ test("staged restoration restores Author Skills alongside the database", () => {
     writeSetting(stagedSnapshotPath, "restored");
     mkdirSync(join(root, "skills", "clarity"), { recursive: true });
     writeFileSync(join(root, "skills", "clarity", "SKILL.md"), "restored skill");
-    createAuthorSkillBackup({ dataDirectory: root, snapshotPath: stagedSnapshotPath });
+    await createAuthorSkillBackup({ dataDirectory: root, snapshotPath: stagedSnapshotPath });
     writeFileSync(join(root, "skills", "clarity", "SKILL.md"), "active skill");
     writeRuntimeSettings(runtimePath, { pendingRestore: { stagedSnapshotPath, recoverySnapshotPath, phase: "ready" } });
 

@@ -283,4 +283,9 @@ export const migrations = [
         CREATE INDEX fact_occurrences_fact_revision ON fact_occurrences(fact_id, revision_id);
         `,
     },
+    {
+        version: 23,
+        name: "assistant_message_request_lookup",
+        sql: "CREATE INDEX assistant_messages_request_role_created ON assistant_messages(request_id, role, created_at, id);",
+    },
 ] as const;

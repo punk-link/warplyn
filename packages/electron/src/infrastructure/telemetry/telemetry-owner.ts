@@ -18,9 +18,7 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
 }) {
     let state: OwnerState = { generation: 0, sessionStartedGeneration: -1, disposed: false };
 
-    // Public-beta default applies only to a fresh, supported installation.
-    if (delivery.supported && !readRuntimeSettings(runtimePath).telemetry)
-        updateRuntimeSettings(runtimePath, (runtime) => ({ ...runtime, telemetry: { consent: "granted", installationId: randomUUID() } }));
+    initializeSupportedInstallationTelemetryDefault(runtimePath, delivery.supported);
 
 
     function getTelemetryConsent(): TelemetryConsent {
@@ -107,4 +105,12 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
             stop();
         },
     };
+}
+
+
+function initializeSupportedInstallationTelemetryDefault(runtimePath: string, telemetrySupported: boolean): void {
+    if (!telemetrySupported || readRuntimeSettings(runtimePath).telemetry)
+        return;
+
+    updateRuntimeSettings(runtimePath, (runtime) => ({ ...runtime, telemetry: { consent: "granted", installationId: randomUUID() } }));
 }

@@ -1,10 +1,11 @@
+import { hydrateAssistantMessageHistory } from "@skladno/shared";
 import { useCallback, useEffect, useRef } from "react";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
 import type { AssistantRequestStore } from "./assistant-request-state.js";
 
 
 interface AssistantMessageHistoryOptions {
-    client: Pick<EditorialWorkspaceClient, "listAssistantMessages">;
+    client: Pick<EditorialWorkspaceClient, "listAssistantMessageHistory">;
     articleId: string | undefined;
     profileRebuilt: { articleId: string; count: number; token: number } | undefined;
     store: Pick<AssistantRequestStore, "setMessagesByArticle">;
@@ -16,7 +17,7 @@ export function useAssistantMessageHistory({ client, articleId, profileRebuilt, 
     const requestVersion = useRef(0);
     const reload = useCallback(async (id: string) => {
         const version = ++requestVersion.current;
-        const messages = await client.listAssistantMessages(id);
+        const messages = hydrateAssistantMessageHistory(await client.listAssistantMessageHistory(id));
         if (version === requestVersion.current)
             setMessagesByArticle((current) => ({ ...current, [id]: messages }));
     }, [client, setMessagesByArticle]);
@@ -29,7 +30,8 @@ export function useAssistantMessageHistory({ client, articleId, profileRebuilt, 
             };
 
         const version = ++requestVersion.current;
-        void client.listAssistantMessages(articleId)
+        void client.listAssistantMessageHistory(articleId)
+            .then(hydrateAssistantMessageHistory)
             .then((messages) => {
                 if (!cancelled && version === requestVersion.current)
                     setMessagesByArticle((current) => ({

@@ -51,7 +51,6 @@ export async function* streamWithAssistantDeadline(
         clearTimeout(timer);
 
         combined.removeEventListener("abort", onAbort);
-        // Do not wait for a provider that ignores cancellation to close its iterator.
         void iterator.return?.().catch(() => undefined);
     }
 }

@@ -14,6 +14,7 @@ import { handleAiModelsRoute, handleAppModelRoute, handleBackupPolicyRoute, hand
 import { addArticleRevisionStyleCorpusItemRoute, createStyleCorpusItemRoute, deleteStyleCorpusItemRoute, getArticleStyleRulesRoute, handleStyleCorpusRoute, rebuildStyleCorpusRoute, setArticleStyleRulesRoute, updateStyleCorpusItemRoute, updateStyleCorpusRulesRoute } from "./style-corpus-route.js";
 import { beginBackupImportRoute, createBackupExportRoute, readBackupExportRoute, removeBackupTransferRoute, restoreBackupImportRoute, writeBackupImportRoute } from "./backup-bundle-route.js";
 import { summarizeProposalRoute } from "./proposal-summary-route.js";
+import { registerArticleHistoryReadRoutes } from "./article-history-read-routes.js";
 import { listFactChecksRoute, resolveFactCheckRoute } from "./fact-check-route.js";
 
 
@@ -60,6 +61,7 @@ const BACKUP_IMPORT_RESTORE_PATH = createRoutePattern(`${backupImportsPath}/${RO
 export function createPresentationRouter(editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics, restoreBackup?: (snapshot: Uint8Array) => Promise<void>, backupTransfers?: BackupBundleTransfers): Router {
     const { articles, assistant, factChecks, proposalSummaries, publishing, settings, skills, styleCorpus } = services;
     const router = new Router();
+    registerArticleHistoryReadRoutes(router, articles, assistant);
 
     router.register(HTTP_METHOD.GET, healthPath, (_request, response) => handleHealthRoute(response));
     router.register(HTTP_METHOD.GET, assistantSkillsPath, (_request, response) => listAssistantSkillsRoute(response, skills));

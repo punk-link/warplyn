@@ -59,12 +59,12 @@ const conditionalBraces = {
             const statement = branch.body[0];
             const openingBrace = sourceCode.getFirstToken(branch);
             const closingBrace = sourceCode.getLastToken(branch);
-            const indentation = " ".repeat(statement.loc.start.column - openingBrace.loc.start.column);
+            const whitespace = sourceCode.text.slice(openingBrace.range[1], statement.range[0]);
 
             return [
                 fixer.replaceTextRange(
                     [openingBrace.range[0], statement.range[0]],
-                    indentation,
+                    whitespace,
                 ),
                 fixer.removeRange([statement.range[1], closingBrace.range[1]]),
             ];

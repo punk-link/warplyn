@@ -20,6 +20,21 @@ export class ArticleService {
     }
 
 
+    listArticleSummaries() {
+        return this.store.listArticleSummaries();
+    }
+
+
+    listRevisionSummaries(articleId: string) {
+        return this.store.listRevisionSummaries(articleId);
+    }
+
+
+    getRevision(articleId: string, revisionId: string) {
+        return this.store.getRevision(articleId, revisionId);
+    }
+
+
     createArticle(input: CreateArticleInput): Article {
         const article = this.store.createArticle(input);
         this.assistant.ensureGreeting(article.id);
@@ -118,13 +133,9 @@ export class ArticleService {
 
 
     async describeContentChange(previousContent: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string> {
-        try {
-            const description = await this.revisionDescriptionGenerator?.()?.generate(previousContent, content, interfaceLocale, signal);
-            if (description?.trim())
-                return description.trim();
-        } catch {
-            // A Revision must remain recoverable when its optional description cannot be generated.
-        }
+        const generatedDescription = await this.tryGenerateRevisionDescription(previousContent, content, interfaceLocale, signal);
+        if (generatedDescription)
+            return generatedDescription;
 
         const previousLength = Array.from(previousContent).length;
         const nextLength = Array.from(content).length;
@@ -135,5 +146,14 @@ export class ArticleService {
             return `Removed ${previousLength - nextLength} characters`;
 
         return "Updated Article";
+    }
+
+
+    private async tryGenerateRevisionDescription(previousContent: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string | undefined> {
+        try {
+            return (await this.revisionDescriptionGenerator?.()?.generate(previousContent, content, interfaceLocale, signal))?.trim() || undefined;
+        } catch {
+            return undefined;
+        }
     }
 }

@@ -107,7 +107,7 @@ export class AssistantCapabilityLoop {
             interfaceLocale: request.interfaceLocale,
             article: "",
             scope: request.scope.kind,
-            instructions: selectedSkills.flatMap((skill) => [skill.instructions, ...(skill.references ?? [])]),
+            instructions: [...selectedSkills.flatMap((skill) => [skill.instructions, ...(skill.references ?? [])]), ...(request.targetLanguage ? [`Target translation language: ${request.targetLanguage}`] : [])],
             history: this.dependencies.conversationHistory(request.articleId, 12),
             skills: skills.map((skill) => ({ id: skill.reference.id, name: skill.name, description: skill.description, instructions: [skill.instructions, ...(skill.references ?? [])].join("\n\n"), capabilities: this.getInitialCapabilities(skill.reference.id, request.scope.kind) })),
             tools,
@@ -186,8 +186,11 @@ export class AssistantCapabilityLoop {
             input: definition.input,
             execution: definition.execution,
             execute: (input, signal) => {
-                const run = () => this.executeCapability(request, excerpt, authorContext, definition, input, signal, primary, setPrimary, onProgress);
-                return definition.execution === "artifact" ? artifact.execute(definition.id, input, run) : run();
+                const scopedInput = definition.id === EDITORIAL_CAPABILITY.TRANSLATE && request.targetLanguage
+                    ? { ...input, targetLanguage: request.targetLanguage }
+                    : input;
+                const run = () => this.executeCapability(request, excerpt, authorContext, definition, scopedInput, signal, primary, setPrimary, onProgress);
+                return definition.execution === "artifact" ? artifact.execute(definition.id, scopedInput, run) : run();
             },
         }));
 
@@ -215,11 +218,11 @@ export class AssistantCapabilityLoop {
     }
 
 
-    finishPendingSkill(requestId: string): void {
+    finishPendingSkillBestEffort(requestId: string): void {
         try {
             this.dependencies.authorSkills?.finishChange(requestId);
         } catch {
-            // Startup recovery reads the SQLite request status and removes the pending record.
+            // Best-effort cleanup must not replace the Assistant operation's result.
         }
     }
 

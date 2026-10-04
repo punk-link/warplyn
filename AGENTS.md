@@ -1,6 +1,8 @@
-# Skladno agent guide
+# Warplyn agent guide
 
-Skladno is a beta, local-first AI editorial workspace. The Author controls accepted changes and publication. Electron is the primary product; the web app mainly supports development.
+Warplyn is a beta, local-first AI writing workspace with an Editorial Assistant. The Author controls accepted changes and publication. Electron is the primary product; the web app mainly supports development.
+
+For product descriptions, landing copy, mottos, README introductions, or About copy, follow the [product positioning guide](docs/development/guides/product-positioning.md).
 
 ## Product decision criteria
 

@@ -1,4 +1,4 @@
-import {
+import { createAssistantMessageHistoryPath,
     acceptProposalPath,
     assistantSkillsPath,
     createArticleArchivePath,
@@ -48,9 +48,30 @@ import {
 
 import { createApplicationClientError, parseAssistantEvent, streamEvents } from "./client-transport.js";
 import { HttpSettingsClient } from "./settings-client.js";
+import { articleSummariesPath, createArticlePath, createRevisionSummariesPath, createRevisionPath, type ArticleSummary, type ArticleRevisionSummary } from "@skladno/shared";
 
 
 export abstract class HttpArticleClient extends HttpSettingsClient {
+    async listArticleSummaries(): Promise<ArticleSummary[]> {
+        return this.request<ArticleSummary[]>(articleSummariesPath);
+    }
+
+
+    async getArticle(articleId: string): Promise<Article> {
+        return this.request<Article>(createArticlePath(articleId));
+    }
+
+
+    async listArticleRevisionSummaries(articleId: string): Promise<ArticleRevisionSummary[]> {
+        return this.request<ArticleRevisionSummary[]>(createRevisionSummariesPath(articleId));
+    }
+
+
+    async getArticleRevision(articleId: string, revisionId: string): Promise<ArticleRevision> {
+        return this.request<ArticleRevision>(createRevisionPath(articleId, revisionId));
+    }
+
+
     async listAssistantSkills(): Promise<AssistantSkillSummary[]> {
         return this.request<AssistantSkillSummary[]>(assistantSkillsPath);
     }
@@ -123,6 +144,11 @@ export abstract class HttpArticleClient extends HttpSettingsClient {
 
     async restoreRevision(articleId: string, revisionId: string): Promise<ArticleRevision> {
         return this.request<ArticleRevision>(restoreRevisionPath(articleId, revisionId), { method: HTTP_METHOD.POST });
+    }
+
+
+    async listAssistantMessageHistory(articleId: string): Promise<import("@skladno/shared").AssistantMessageHistory> {
+        return this.request(createAssistantMessageHistoryPath(articleId));
     }
 
 

@@ -1,17 +1,19 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { $generateNodesFromDOM } from "@lexical/html";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $createRangeSelection, $getRoot, $getSelection, $isElementNode, $isRangeSelection, $setSelection, CLEAR_HISTORY_COMMAND, COMMAND_PRIORITY_CRITICAL, createEditor, PASTE_COMMAND, type LexicalEditor, type LexicalNode, type RangeSelection } from "lexical";
+import { $createRangeSelection, $getSelection, $isRangeSelection, $setSelection, CLEAR_HISTORY_COMMAND, COMMAND_PRIORITY_CRITICAL, createEditor, HISTORY_MERGE_TAG, PASTE_COMMAND, type LexicalEditor, type RangeSelection } from "lexical";
 import { articleEditorNodes } from "./article-editor-config.js";
 import { exportArticleMarkdown, importArticleMarkdown } from "./markdown.js";
 import { sanitizeRichPasteDocument } from "./paste.js";
+import { createArticleMarkdownExporter } from "./article-markdown-exporter.js";
 
 
 export function EditorBridge({ content, onChange, onReady }: { content: string; onChange: (value: string) => void; onReady: (editor: LexicalEditor) => void }) {
     const [editor] = useLexicalComposerContext();
     const emitted = useRef(content);
     const initialContent = useRef(content);
+    const markdownExporter = useMemo(createArticleMarkdownExporter, []);
 
     useEffect(() => {
         onReady(editor);
@@ -27,18 +29,21 @@ export function EditorBridge({ content, onChange, onReady }: { content: string; 
         editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
     }, [content, editor]);
 
-    return <OnChangePlugin ignoreSelectionChange onChange={(state, changedEditor, tags) => {
-        if (tags.has("article-initial") || tags.has("article-external") || tags.has("assistant-selection-capture") || tags.has("assistant-selection-restore"))
+    useLayoutEffect(() => editor.registerUpdateListener(({ editorState, dirtyElements, dirtyLeaves, prevEditorState, tags }) => {
+        markdownExporter.invalidate(dirtyElements);
+        if (tags.has(HISTORY_MERGE_TAG) || tags.has("article-initial") || tags.has("article-external") || tags.has("assistant-selection-capture") || tags.has("assistant-selection-restore") || prevEditorState.isEmpty() || (dirtyElements.size === 0 && dirtyLeaves.size === 0))
             return;
 
-        state.read(() => {
-            const markdown = exportArticleMarkdown();
+        editorState.read(() => {
+            const markdown = markdownExporter.export();
             if (markdown !== emitted.current) {
                 emitted.current = markdown;
                 onChange(markdown);
             }
         });
-    }} />;
+    }), [editor, markdownExporter, onChange]);
+
+    return null;
 }
 
 
@@ -52,23 +57,14 @@ export interface AssistantSelectionSnapshot {
 
 export function captureAssistantSelection(editor: LexicalEditor, selection: RangeSelection): AssistantSelectionSnapshot | undefined {
     const originalState = editor.getEditorState();
-    const boundaries = selection.getStartEndPoints();
-    if (!boundaries)
-        return undefined;
+    const boundaries = originalState.read(() => {
+        const points = selection.getStartEndPoints();
+        return selection.isBackward() ? [points[1], points[0]] : points;
+    });
 
     const nonce = crypto.randomUUID().replaceAll("-", "");
     const startMarker = `skladnoselectionstart${nonce}`;
     const endMarker = `skladnoselectionend${nonce}`;
-    const boundaryPaths = originalState.read(() => boundaries.map((point) => {
-        const path: number[] = [];
-        let node = point.getNode();
-        while (node.getParent()) {
-            path.unshift(node.getIndexWithinParent());
-            node = node.getParent()!;
-        }
-
-        return { path, offset: point.offset, type: point.type };
-    }));
     const preview = originalState.read(() => selection.getTextContent());
     const snapshotEditor = createEditor({
         namespace: `assistant-selection-${nonce}`,
@@ -77,33 +73,21 @@ export function captureAssistantSelection(editor: LexicalEditor, selection: Rang
             throw error;
         },
     });
-    snapshotEditor.setEditorState(snapshotEditor.parseEditorState(originalState.toJSON()));
+    snapshotEditor.setEditorState(originalState.clone(null));
     let snapshot: AssistantSelectionSnapshot | undefined;
 
     snapshotEditor.update(() => {
-        const insertAt = (boundary: typeof boundaryPaths[number], text: string) => {
-            let node: LexicalNode = $getRoot();
-            for (const index of boundary.path) {
-                if (!$isElementNode(node))
-                    return;
-
-                const child = node.getChildAtIndex(index);
-                if (!child)
-                    return;
-
-                node = child;
-            }
-
+        const insertAt = (boundary: typeof boundaries[number], text: string) => {
             const cursor = $createRangeSelection();
-            cursor.anchor.set(node.getKey(), boundary.offset, boundary.type);
-            cursor.focus.set(node.getKey(), boundary.offset, boundary.type);
+            cursor.anchor.set(boundary.key, boundary.offset, boundary.type);
+            cursor.focus.set(boundary.key, boundary.offset, boundary.type);
             $setSelection(cursor);
             cursor.insertText(text);
         };
 
-        // Insert from right to left so the start point remains valid in its original node.
-        insertAt(boundaryPaths[1], endMarker);
-        insertAt(boundaryPaths[0], startMarker);
+        const [startBoundary, endBoundary] = boundaries;
+        insertAt(endBoundary, endMarker);
+        insertAt(startBoundary, startMarker);
         const markdown = exportArticleMarkdown();
         const start = markdown.indexOf(startMarker);
         const end = markdown.indexOf(endMarker);

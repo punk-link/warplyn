@@ -91,8 +91,9 @@ export function useWorkspaceLayout() {
                 if (parsed)
                     return parsed;
             } catch {
-                // Replace malformed local preferences with the current version.
+                // Fall back to migrated preferences when saved preferences cannot be parsed.
             }
+
 
         const migrated = migratedPreferences();
 

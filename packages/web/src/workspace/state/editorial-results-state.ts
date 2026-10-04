@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { useIntl } from "react-intl";
+import { useIntl, type IntlShape } from "react-intl";
 import {
     defaultPublishLimitProfileId,
     isPublishLimitProfileId,
     type AssistantEditorialResult,
+    type ArticleSummary,
     type AssistantMessage,
     type FactCheck,
+    type PublishLimitProfileId,
     type StyleReview,
     type TranslationMetadata,
 } from "@skladno/shared";
@@ -23,6 +25,27 @@ interface EditorialResult<T> {
 
 
 type TranslationResult = EditorialResult<{ metadata: TranslationMetadata; content: string; editorialArtifactId?: string }>;
+
+
+async function refreshLinkedTranslation(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, target: ArticleSummary, result: TranslationResult, intl: IntlShape): Promise<void> {
+    const persisted = await client.getArticle(target.id);
+    if (await workspace.getArticleContent(target) !== persisted.currentRevision.content || persisted.draft)
+        throw new Error(intl.formatMessage({ id: "views.translationRefreshDraft" }));
+
+    if (!result.value.editorialArtifactId)
+        throw new Error(intl.formatMessage({ id: "views.translationRefreshUnavailable" }));
+
+    await client.acceptProposal(target.id, {
+        baseRevisionId: persisted.currentRevisionId,
+        content: result.value.content,
+        provenance: { kind: "accepted-translation" },
+        translationRefresh: { editorialArtifactId: result.value.editorialArtifactId },
+        interfaceLocale: intl.locale,
+    });
+
+    await workspace.refreshArticle(target.id, true);
+    workspace.selectArticle(target.id);
+}
 
 
 export function withFindingFreshness(factCheck: FactCheck, revisionId: string, content: string): FactCheck {
@@ -98,16 +121,17 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
     }, []);
 
     const replaceTranslations = useCallback((articleId: string, messages: readonly AssistantMessage[] | undefined) => {
-        const translations = (messages ?? []).flatMap((message) => message.status === "completed" && message.translation && message.baseRevisionId
+        const completed = (messages ?? []).flatMap((message) => message.status === "completed" && message.translation && message.baseRevisionId
             ? [{ articleId, baseRevisionId: message.baseRevisionId, value: { ...message.translation, editorialArtifactId: message.editorialArtifactId } }]
             : []);
+        const translations = [...new Map(completed.map((result) => [result.value.metadata.targetLanguage, result])).values()];
         setTranslationResults((current) => [...current.filter((result) => result.articleId !== articleId), ...translations]);
     }, []);
 
     const translations = translationResults.filter((result) => result.articleId === selectedArticleId);
     const translationStale = translations.some((result) => result.baseRevisionId !== workspace.selectedArticle?.currentRevisionId);
 
-    const createTranslation = useCallback(async (targetLanguage: string) => {
+    const createTranslation = useCallback(async (targetLanguage: string, target?: ArticleSummary) => {
         const article = workspace.selectedArticle;
         const translationResult = translations.find((result) => result.value.metadata.targetLanguage === targetLanguage);
         if (!article || !translationResult || translationResult.baseRevisionId !== article.currentRevisionId)
@@ -116,21 +140,30 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
         const translation = translationResult.value.metadata;
 
         try {
+            if (target) {
+                await refreshLinkedTranslation(client, workspace, target, translationResult, intl);
+                return;
+            }
+
             const { defaultProfileId: configuredDefaultProfile } = await client.getPublishingSettings();
+            let publishingProfileId: PublishLimitProfileId = defaultPublishLimitProfileId;
+            if (isPublishLimitProfileId(configuredDefaultProfile))
+                publishingProfileId = configuredDefaultProfile;
+
+            if (isPublishLimitProfileId(article.publishingProfileId))
+                publishingProfileId = article.publishingProfileId;
+
             await workspace.create({
                 title: translation.title ?? article.title,
                 content: translationResult.value.content,
                 language: getTargetLanguageId(translationResult.value.metadata.targetLanguage),
-                publishingProfileId: isPublishLimitProfileId(article.publishingProfileId)
-                    ? article.publishingProfileId
-                    : isPublishLimitProfileId(configuredDefaultProfile)
-                        ? configuredDefaultProfile
-                        : defaultPublishLimitProfileId,
+                publishingProfileId,
                 sourceArticleId: article.id,
-                sourceRevisionId: translationResult.baseRevisionId
+                sourceRevisionId: translationResult.baseRevisionId,
+                provenance: { kind: "accepted-translation", targetLanguage, ...(translationResult.value.editorialArtifactId ? { editorialArtifactId: translationResult.value.editorialArtifactId } : {}) },
             });
         } catch (error) {
-            notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.createTranslationFailed" }) });
+            notifyError(error, { fallbackMessage: intl.formatMessage({ id: target ? "views.translationRefreshFailed" : "workspace.createTranslationFailed" }) });
             throw error;
         }
     }, [client, intl, notifyError, translations, workspace]);

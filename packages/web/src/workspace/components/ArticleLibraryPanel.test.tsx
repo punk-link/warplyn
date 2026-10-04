@@ -108,6 +108,33 @@ describe("ArticleLibraryPanel", () => {
     });
 
 
+    it("updates grouped children and their order when the Article list changes", () => {
+        const other: Article = { ...source, id: "other", title: "Other Article" };
+        const translation: Article = { ...source, id: "translation", title: "Spanish edition", sourceArticleId: source.id };
+        const added: Article = { ...translation, id: "added", title: "Portuguese edition" };
+        const panel = (articles: Article[], selectedArticleId = source.id) => <IntlProvider locale="en" messages={messages}>
+            <ArticleLibraryPanel articles={articles} selectedArticleId={selectedArticleId} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+        </IntlProvider>;
+        const { rerender } = render(panel([source, translation, other]));
+        expect(screen.getByRole("button", { name: /Spanish edition/ })).toBeTruthy();
+
+        rerender(panel([source, added, translation, other]));
+        const first = screen.getByRole("button", { name: /Portuguese edition/ });
+        const second = screen.getByRole("button", { name: /Spanish edition/ });
+        expect(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+        rerender(panel([source, { ...translation, sourceArticleId: other.id }, other]));
+        expect(screen.queryByRole("button", { name: /Portuguese edition/ })).toBeNull();
+        expect(screen.queryByRole("button", { name: /Spanish edition/ })).toBeNull();
+        expect(screen.getByRole("button", { name: /Mother Article/ }).hasAttribute("aria-expanded")).toBe(false);
+
+        rerender(panel([source, { ...translation, sourceArticleId: other.id }, other], other.id));
+        const otherButton = screen.getByRole("button", { name: /Other Article/ });
+        const moved = screen.getByRole("button", { name: /Spanish edition/ });
+        expect(otherButton.compareDocumentPosition(moved) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+
     it("moves between Library controls with Up and Down without taking search editing keys", () => {
         render(<IntlProvider locale="en" messages={messages}>
             <ArticleLibraryPanel articles={[source]} selectedArticleId={source.id} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />

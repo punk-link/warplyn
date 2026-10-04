@@ -1,4 +1,5 @@
-import type { ArticleRevision } from "./revision.js";
+import type { ArticleRevision, ArticleRevisionSummary } from "./revision.js";
+import { findSequenceMatches } from "../../cross-cutting/sequence-matches.js";
 
 
 export interface ProposalChange {
@@ -35,10 +36,13 @@ export interface AcceptProposalInput {
     content: string;
     provenance: Record<string, unknown>;
     interfaceLocale?: string;
+    translationRefresh?: { editorialArtifactId: string };
 }
 
 
 export const createArticleRevisionsPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/revisions`;
+export const createRevisionSummariesPath = (articleId: string) => `${createArticleRevisionsPath(articleId)}/summaries`;
+export const createRevisionPath = (articleId: string, revisionId: string) => `${createArticleRevisionsPath(articleId)}/${encodeURIComponent(revisionId)}`;
 export const createArticleDraftPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/draft`;
 export const acceptProposalPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/proposal-acceptances`;
 export const createProposalSummariesPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/proposal-summaries`;
@@ -97,21 +101,6 @@ function replacementLines(change: ProposalChange, preserveBlankLines: boolean): 
 }
 
 
-function createProposalLcsTable(baseLines: string[], proposalLines: string[]): number[][] {
-    const table = Array.from({ length: baseLines.length + 1 }, () => Array<number>(proposalLines.length + 1).fill(0));
-    for (let baseIndex = baseLines.length - 1; baseIndex >= 0; baseIndex -= 1) {
-        for (let proposalIndex = proposalLines.length - 1; proposalIndex >= 0; proposalIndex -= 1) {
-            const linesMatch = baseLines[baseIndex].trim() !== "" && baseLines[baseIndex] === proposalLines[proposalIndex];
-            table[baseIndex][proposalIndex] = linesMatch
-                ? table[baseIndex + 1][proposalIndex + 1] + 1
-                : Math.max(table[baseIndex + 1][proposalIndex], table[baseIndex][proposalIndex + 1]);
-        }
-    }
-
-    return table;
-}
-
-
 function getCommonProposalEdges(removed: string[], added: string[]): { start: number; removedEnd: number; addedEnd: number } {
     let start = 0;
     while (start < removed.length && start < added.length && removed[start] === added[start])
@@ -165,57 +154,27 @@ function appendProposalChanges(changes: ProposalChange[], changeBaseStart: numbe
 }
 
 
-function isUnchangedLine(baseLines: string[], proposalLines: string[], baseIndex: number, proposalIndex: number): boolean {
-    return baseIndex < baseLines.length && proposalIndex < proposalLines.length
-        && baseLines[baseIndex].trim() !== "" && baseLines[baseIndex] === proposalLines[proposalIndex];
-}
-
-
-function shouldAddProposalLine(baseLines: string[], proposalLines: string[], table: number[][], baseIndex: number, proposalIndex: number): boolean {
-    return proposalIndex < proposalLines.length
-        && (baseIndex === baseLines.length || table[baseIndex][proposalIndex + 1] >= table[baseIndex + 1][proposalIndex]);
-}
-
-
-function getProposalChangeStart(current: number, baseIndex: number, removed: string[], added: string[]): number {
-    return removed.length === 0 && added.length === 0 ? baseIndex : current;
-}
-
-
 /**
  * Creates line-based hunks. They are deliberately used only while the original
  * revision remains current; callers must otherwise fall back to whole-proposal review.
  */
 export function createTextProposal(baseContent: string, proposedContent: string): TextProposal {
+    if (baseContent === proposedContent)
+        return { baseContent, proposedContent, changes: [] };
+
     const baseLines = splitLines(baseContent);
     const proposalLines = splitLines(proposedContent);
-    const table = createProposalLcsTable(baseLines, proposalLines);
     const changes: ProposalChange[] = [];
     let baseIndex = 0;
     let proposalIndex = 0;
-    let changeBaseStart = 0;
-    let removed: string[] = [];
-    let added: string[] = [];
 
-    while (baseIndex < baseLines.length || proposalIndex < proposalLines.length) {
-        if (isUnchangedLine(baseLines, proposalLines, baseIndex, proposalIndex)) {
-            changeBaseStart = appendProposalChanges(changes, changeBaseStart, removed, added);
-            removed = [];
-            added = [];
-            baseIndex += 1;
-            proposalIndex += 1;
-        } else if (shouldAddProposalLine(baseLines, proposalLines, table, baseIndex, proposalIndex)) {
-            changeBaseStart = getProposalChangeStart(changeBaseStart, baseIndex, removed, added);
-            added.push(proposalLines[proposalIndex]);
-            proposalIndex += 1;
-        } else {
-            changeBaseStart = getProposalChangeStart(changeBaseStart, baseIndex, removed, added);
-            removed.push(baseLines[baseIndex]);
-            baseIndex += 1;
-        }
+    for (const match of findSequenceMatches(baseLines, proposalLines, true)) {
+        appendProposalChanges(changes, baseIndex, baseLines.slice(baseIndex, match.baseIndex), proposalLines.slice(proposalIndex, match.proposalIndex));
+        baseIndex = match.baseIndex + 1;
+        proposalIndex = match.proposalIndex + 1;
     }
 
-    appendProposalChanges(changes, changeBaseStart, removed, added);
+    appendProposalChanges(changes, baseIndex, baseLines.slice(baseIndex), proposalLines.slice(proposalIndex));
     return { baseContent, proposedContent, changes };
 }
 
@@ -238,6 +197,8 @@ export function applyProposalChanges(proposal: TextProposal, selectedChangeIds: 
 
 export interface RevisionClient {
     listArticleRevisions(articleId: string): Promise<ArticleRevision[]>;
+    listArticleRevisionSummaries(articleId: string): Promise<ArticleRevisionSummary[]>;
+    getArticleRevision(articleId: string, revisionId: string): Promise<ArticleRevision>;
     acceptProposal(articleId: string, input: AcceptProposalInput): Promise<ArticleRevision>;
     restoreRevision(articleId: string, revisionId: string): Promise<ArticleRevision>;
     summarizeProposal(articleId: string, input: SummarizeProposalInput): Promise<ProposalChangeSummary[]>;

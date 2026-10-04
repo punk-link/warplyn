@@ -1,4 +1,5 @@
-import { chmodSync, mkdtempSync, rmSync } from "node:fs";
+import { chmod, mkdtemp, rm } from "node:fs/promises";
+import { backup } from "node:sqlite";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -12,11 +13,6 @@ function createBackupFilename(now: Date): string {
 }
 
 
-function escapeSqlPathForSqlite(path: string): string {
-    return path.replaceAll("'", "''");
-}
-
-
 export class SqliteBackupSnapshotCreator implements BackupSnapshotCreator {
     constructor(
         private readonly database: SqliteDatabase,
@@ -24,17 +20,22 @@ export class SqliteBackupSnapshotCreator implements BackupSnapshotCreator {
     ) { }
 
 
-    createTemporary(): { path: string; createdAt: string; cleanup(): void } {
-        const destination = mkdtempSync(join(tmpdir(), "skladno-backup-"));
+    async createTemporary(): Promise<{ path: string; createdAt: string; cleanup(): Promise<void> }> {
+        const destination = await mkdtemp(join(tmpdir(), "skladno-backup-"));
         if (process.platform !== "win32")
-            chmodSync(destination, 0o700);
+            await chmod(destination, 0o700);
 
         const created = this.now();
         const path = join(destination, createBackupFilename(created));
-        this.database.exec(`VACUUM INTO '${escapeSqlPathForSqlite(path)}'`);
-        if (process.platform !== "win32")
-            chmodSync(path, 0o600);
+        try {
+            await backup(this.database, path);
+            if (process.platform !== "win32")
+                await chmod(path, 0o600);
 
-        return { path, createdAt: created.toISOString(), cleanup: () => rmSync(destination, { recursive: true, force: true }) };
+            return { path, createdAt: created.toISOString(), cleanup: () => rm(destination, { recursive: true, force: true }) };
+        } catch (error) {
+            await rm(destination, { recursive: true, force: true });
+            throw error;
+        }
     }
 }

@@ -46,13 +46,8 @@ export function NotificationViewport({ notifications, label, dismissLabel, dismi
                 <p className="font-semibold">{notification.title}</p>
                 {notification.message && <p className="mt-1">{notification.message}</p>}
                 {notification.action && <button className="mt-2 min-h-9 rounded-control border border-current px-3 py-1 text-xs font-semibold leading-5 hover:bg-surface-raised/45 active:translate-y-px" type="button" onClick={() => {
-                    try {
-                        notification.action?.onAction();
-                    } catch {
-                        // Action handlers must surface their own recoverable failures through the notification API.
-                    } finally {
-                        dismiss(notification.id);
-                    }
+                    runNotificationActionIgnoringErrors(notification.action?.onAction);
+                    dismiss(notification.id);
                 }}>{notification.action.label}</button>}
             </div>
             <button className="absolute right-1 top-1 grid size-9 place-items-center rounded-control hover:bg-surface-raised/45 active:translate-y-px"
@@ -63,4 +58,13 @@ export function NotificationViewport({ notifications, label, dismissLabel, dismi
             </button>
         </article>)}
     </section>;
+}
+
+
+function runNotificationActionIgnoringErrors(action: (() => void) | undefined): void {
+    try {
+        action?.();
+    } catch {
+        // A failed action must still allow the notification to be dismissed.
+    }
 }

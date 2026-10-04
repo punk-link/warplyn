@@ -48,7 +48,7 @@ class FakeIpcMain implements ElectronIpcMain {
 }
 
 
-function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; close: () => void } {
+function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; persistence: ReturnType<typeof createTestPersistence>; close: () => void } {
     const directory = mkdtempSync(join(tmpdir(), "skladno-electron-ipc-"));
     const database = openDatabase(join(directory, "skladno.sqlite"));
     const persistence = createTestPersistence(database);
@@ -67,12 +67,32 @@ function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; close:
 
     return {
         ipcMain,
+        persistence,
         close: () => {
             database.close();
             rmSync(directory, { recursive: true, force: true });
         },
     };
 }
+
+
+test("Electron refresh acceptance uses the existing finite operation and preserves translation history", async () => {
+    const adapter = createAdapter();
+    try {
+        const { articles, editorialArtifacts } = adapter.persistence;
+        const source = articles.createArticle({ title: "Source", content: "Original", language: "en" });
+        const target = articles.createArticle({ title: "Spanish", content: "Original español", language: "es", sourceArticleId: source.id, sourceRevisionId: source.currentRevisionId });
+        const revision = articles.saveRevision(source.id, { baseRevisionId: source.currentRevisionId, content: "Updated" });
+        const artifact = editorialArtifacts.createEditorialArtifact({ articleId: source.id, revisionId: revision.id, kind: "assistant-proposal", content: JSON.stringify({ proposal: "Actualizado", translation: { targetLanguage: "Spanish", protectedSpans: [] } }) });
+        const accepted = await adapter.ipcMain.invoke({ method: "acceptProposal", args: [target.id, { baseRevisionId: target.currentRevisionId, content: "Actualizado", provenance: {}, translationRefresh: { editorialArtifactId: artifact.id } }] });
+        assert.equal(accepted.ok, true);
+        assert.equal(articles.getArticle(target.id)?.sourceRevisionId, revision.id);
+        assert.equal(articles.listRevisions(target.id).length, 2);
+        assert.equal(articles.getRevision(target.id, target.currentRevisionId)?.content, "Original español");
+    } finally {
+        adapter.close();
+    }
+});
 
 
 test("Electron IPC invokes application services and serializes conflict details", async () => {
@@ -179,6 +199,34 @@ test("Electron IPC rejects invalid publishing settings before persistence", asyn
 
         const settings = await adapter.ipcMain.invoke({ method: ELECTRON_APPLICATION_METHOD.getPublishingSettings, args: [] });
         assert.deepEqual(settings, { ok: true, value: { defaultProfileId: "default", customProfiles: [] } });
+    } finally {
+        adapter.close();
+    }
+});
+
+test("Electron summary reads load scoped bodies and reject malformed identifiers", async () => {
+    const adapter = createAdapter();
+    try {
+        const article = adapter.persistence.articles.createArticle({ title: "Summary", content: "Snapshot" });
+        const summaries = await adapter.ipcMain.invoke({ method: "listArticleSummaries", args: [] });
+        assert.ok(summaries.ok);
+        assert.ok(!("currentRevision" in summaries.value[0]));
+        const full = await adapter.ipcMain.invoke({ method: "getArticle", args: [article.id] });
+        assert.deepEqual(full, { ok: true, value: article });
+        const revisions = await adapter.ipcMain.invoke({ method: "listArticleRevisionSummaries", args: [article.id] });
+        assert.ok(revisions.ok);
+        assert.equal(revisions.value[0].characterCount, 8);
+        assert.ok(!("content" in revisions.value[0]));
+        const revision = await adapter.ipcMain.invoke({ method: "getArticleRevision", args: [article.id, article.currentRevisionId] });
+        assert.deepEqual(revision, { ok: true, value: article.currentRevision });
+        const wrongArticle = await adapter.ipcMain.invoke({ method: "getArticleRevision", args: ["missing", article.currentRevisionId] });
+        assert.deepEqual(wrongArticle, { ok: false, error: { code: APPLICATION_ERROR.REVISION_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND } });
+        const invalid = await adapter.ipcMain.invoke({ method: "getArticle", args: [" "] });
+        assert.deepEqual(invalid, { ok: false, error: { code: APPLICATION_ERROR.INVALID_REQUEST, status: HTTP_STATUS.BAD_REQUEST } });
+        const history = await adapter.ipcMain.invoke({ method: "listAssistantMessageHistory", args: [article.id] });
+        assert.ok(history.ok);
+        assert.equal(history.value.messages[0].kind, "greeting");
+        assert.deepEqual(history.value.revisionContents, {});
     } finally {
         adapter.close();
     }

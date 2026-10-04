@@ -1,4 +1,4 @@
-import { REVISION_PROVENANCE_KIND, type ArticleRevision, type AssistantCheckpointDraftMode, type AssistantCheckpointPreview, type AssistantEditCandidate, type AssistantEditMode, type AssistantMessage, type AssistantRequest, type AssistantRequestScope, type AssistantResponseKind, type AssistantSkillSource, type RestoreAssistantCheckpointResult } from "@skladno/shared";
+import { hydrateAssistantMessageHistory, REVISION_PROVENANCE_KIND, type ArticleRevision, type AssistantCheckpointDraftMode, type AssistantCheckpointPreview, type AssistantEditCandidate, type AssistantEditMode, type AssistantMessage, type AssistantRequest, type AssistantRequestScope, type AssistantResponseKind, type AssistantSkillSource, type RestoreAssistantCheckpointResult } from "@skladno/shared";
 
 import type { SqliteDatabase } from "../database.js";
 import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
@@ -7,7 +7,8 @@ import { insertArticleRevision } from "./article-revision-queries.js";
 import { applyAssistantEdit, previewAssistantEdit } from "./assistant-edit-queries.js";
 import { AssistantCheckpointError } from "../../../application/assistant/assistant-store.js";
 import { createCheckpointPreview, getCheckpointAnchor, getCheckpointTail } from "./assistant-checkpoint-queries.js";
-import { getProposalAcceptances, mapAssistantMessageFromRow } from "./assistant-record-mappers.js";
+import { mapAssistantMessageFromRow } from "./assistant-record-mappers.js";
+import { listAssistantMessageHistory, listConversationHistory } from "./assistant-history-queries.js";
 import { mapAssistantRequestFromRow } from "./assistant-request-mappers.js";
 
 
@@ -132,23 +133,18 @@ export class AssistantRepository {
 
 
     listMessages(articleId: string): AssistantMessage[] {
-        this.ensureGreeting(articleId);
-        const rows = this.database.prepare(`
-            SELECT assistant_messages.*, assistant_requests.scope_json AS request_scope_json, assistant_requests.skill_source AS request_skill_source, assistant_requests.base_revision_id AS request_base_revision_id, article_revisions.content AS request_revision_content, editorial_artifacts.content AS artifact_content
-            FROM assistant_messages
-            LEFT JOIN assistant_requests ON assistant_requests.id = assistant_messages.request_id
-            LEFT JOIN article_revisions ON article_revisions.id = assistant_requests.base_revision_id
-            LEFT JOIN editorial_artifacts ON editorial_artifacts.id = assistant_messages.editorial_artifact_id
-            WHERE assistant_messages.article_id = ?
-            ORDER BY assistant_messages.created_at, assistant_messages.id
-        `).all(articleId) as Row[];
+        return hydrateAssistantMessageHistory(this.listMessageHistory(articleId));
+    }
 
-        const acceptances = getProposalAcceptances(this.database, articleId);
-        return rows.map((row) => {
-            const message = mapAssistantMessageFromRow(row);
-            const acceptance = message.editorialArtifactId ? acceptances.get(message.editorialArtifactId) : undefined;
-            return acceptance ? { ...message, proposalAcceptance: acceptance } : message;
-        });
+
+    listMessageHistory(articleId: string) {
+        this.ensureGreeting(articleId);
+        return listAssistantMessageHistory(this.database, articleId);
+    }
+
+
+    listConversationHistory(articleId: string, limit?: number) {
+        return listConversationHistory(this.database, articleId, limit);
     }
 
 

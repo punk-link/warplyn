@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
-import { lstatSync, readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
+import { lstatSync, readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { lstat, readdir, writeFile } from "node:fs/promises";
+import { recordBackupFile } from "@skladno/server/electron";
 
 
 interface FileRecord { size: number; sha256: string }
@@ -47,19 +49,52 @@ function inventory(root: string): FileInventory {
 }
 
 
-export function captureAuthorSkillInventory(dataDirectory: string): FileInventory {
-    return inventory(dataDirectory);
+async function visitBackupFiles(directory: string, prefix: string, files: FileInventory): Promise<void> {
+    for (const name of await readdir(directory)) {
+        const path = join(directory, name);
+        const relative = `${prefix}/${name}`;
+        const stat = await lstat(path);
+        if (stat.isDirectory())
+            await visitBackupFiles(path, relative, files);
+        else if (stat.isFile())
+            files[relative] = await recordBackupFile(path);
+        else
+            throw new Error("author_skill_backup_unsafe_file");
+    }
 }
 
 
-export function writeAuthorSkillBackupManifest(snapshotPath: string, bundleDirectory: string, before: FileInventory, dataDirectory: string): void {
-    const after = inventory(dataDirectory);
-    const copied = inventory(bundleDirectory);
+export async function captureAuthorSkillInventory(dataDirectory: string): Promise<FileInventory> {
+    const files: FileInventory = {};
+    for (const name of skillDirectories) {
+        const path = join(dataDirectory, name);
+        const stat = await lstat(path).catch((error: unknown) => {
+            if (error && typeof error === "object" && "code" in error && error.code === "ENOENT")
+                return undefined;
+
+            throw error;
+        });
+        if (!stat)
+            continue;
+
+        if (!stat.isDirectory())
+            throw new Error("author_skill_backup_unsafe_file");
+
+        await visitBackupFiles(path, name, files);
+    }
+
+    return Object.fromEntries(Object.entries(files).sort(([first], [second]) => first.localeCompare(second)));
+}
+
+
+export async function writeAuthorSkillBackupManifest(snapshotPath: string, bundleDirectory: string, before: FileInventory, dataDirectory: string): Promise<void> {
+    const after = await captureAuthorSkillInventory(dataDirectory);
+    const copied = await captureAuthorSkillInventory(bundleDirectory);
     if (JSON.stringify(before) !== JSON.stringify(after) || JSON.stringify(before) !== JSON.stringify(copied))
         throw new Error("author_skill_backup_changed");
 
-    const manifest = { format: 1, files: { "database.sqlite": recordFile(snapshotPath), ...copied } };
-    writeFileSync(join(bundleDirectory, "manifest.json"), JSON.stringify(manifest), { flag: "wx" });
+    const manifest = { format: 1, files: { "database.sqlite": await recordBackupFile(snapshotPath), ...copied } };
+    await writeFile(join(bundleDirectory, "manifest.json"), JSON.stringify(manifest), { flag: "wx" });
 }
 
 

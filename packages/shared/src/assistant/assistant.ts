@@ -173,6 +173,7 @@ export interface AssistantEditorialResult {
 
 
 export const createAssistantMessagesPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/assistant/messages`;
+export const createAssistantMessageHistoryPath = (articleId: string) => `${createAssistantMessagesPath(articleId)}/history`;
 export const createAssistantRequestsPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/assistant/requests`;
 export const createAssistantClaimSelectionPath = (articleId: string, requestId: string) => `${createAssistantRequestsPath(articleId)}/${encodeURIComponent(requestId)}/claims/selection`;
 export const assistantSkillsPath = "/api/assistant/skills";

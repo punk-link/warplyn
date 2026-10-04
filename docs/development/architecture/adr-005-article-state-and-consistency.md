@@ -23,6 +23,7 @@ Conversation checkpoint restoration atomically rejects the selected request and 
 A validated Assistant reply replacement may apply once through an Author action or an explicitly authorized opt-in direct-edit mode. Both paths reject stale Revisions and current Drafts, then atomically append an attributable Revision and record application. Failed or incomplete requests never change Article content.
 
 Translations are independently recoverable Articles with their own Drafts and Revisions and recorded source Article and Revision.
+Explicit acceptance of a reviewed source translation may refresh a named existing translation. The same transaction validates source freshness, the target Revision, absence of a target Draft, and the completed artifact, then appends a Revision and updates the source link. Each translation Revision records its source snapshot; restoration recovers that snapshot without rewriting history. Refresh preserves the independently edited title. Creating another linked translation remains available.
 
 ## Consequences
 

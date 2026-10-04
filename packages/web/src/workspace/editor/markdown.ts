@@ -37,12 +37,15 @@ export function importArticleMarkdown(content: string): void {
 }
 
 
-export function exportArticleMarkdown(): string {
-    return encodeLinkDestinationParentheses($convertToMarkdownString(articleMarkdownTransformers, undefined, true));
+export function exportArticleMarkdown(transformers = articleMarkdownTransformers): string {
+    return encodeLinkDestinationParentheses($convertToMarkdownString(transformers, undefined, true));
 }
 
 
 function encodeLinkDestinationParentheses(markdown: string): string {
+    if (!markdown.includes("]("))
+        return markdown;
+
     let fenced = false;
     return markdown.split("\n").map((line) => {
         const trimmed = line.trimStart();
@@ -57,6 +60,9 @@ function encodeLinkDestinationParentheses(markdown: string): string {
 
 
 function encodeMarkdownLine(line: string): string {
+    if (!line.includes("]("))
+        return line;
+
     let result = "";
     let inlineCode = false;
     for (let index = 0; index < line.length; index++) {

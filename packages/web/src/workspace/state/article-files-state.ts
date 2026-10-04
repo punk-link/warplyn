@@ -15,14 +15,14 @@ export function useArticleFiles(files: ArticleFilesClient, client: EditorialWork
     latestWorkspace.current = workspace;
 
 
-    async function save(file: ArticleMarkdownFile) {
+    async function save(createFile: () => Promise<ArticleMarkdownFile>) {
         if (busy.current)
             return;
 
         busy.current = true;
         setPending(true);
         try {
-            const result = await files.saveMarkdown(file);
+            const result = await files.saveMarkdown(await createFile());
             if (result !== "cancelled")
                 notify({ tone: "success", title: intl.formatMessage({ id: result === "saved" ? "articleFiles.saved" : "articleFiles.downloadStarted" }) });
         } catch (error) {
@@ -69,8 +69,8 @@ export function useArticleFiles(files: ArticleFilesClient, client: EditorialWork
     return {
         pending,
         loadArticle,
-        saveArticle: (article = workspace.selectedArticle) => save({ fileName: article?.title ?? "Article", content: article ? workspace.getArticleContent(article) : workspace.content }),
-        saveRevision: (revision: ArticleRevision, number: number) => save({ fileName: `${workspace.selectedArticle?.title ?? "Article"} - Revision ${number}`, content: revision.content }),
+        saveArticle: async (article: import("@skladno/shared").ArticleSummary | undefined = workspace.selectedArticle) => save(async () => ({ fileName: article?.title ?? "Article", content: article ? await workspace.getArticleContent(article) : workspace.content })),
+        saveRevision: (revision: ArticleRevision, number: number) => save(async () => ({ fileName: `${workspace.selectedArticle?.title ?? "Article"} - Revision ${number}`, content: revision.content })),
     };
 }
 

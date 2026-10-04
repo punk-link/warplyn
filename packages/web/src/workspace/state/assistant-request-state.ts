@@ -1,12 +1,13 @@
 import { useCallback, useRef, useState, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
 import type { IntlShape } from "react-intl";
-import { APPLICATION_ERROR, ApplicationClientError, BUILT_IN_SKILL, type AssistantCapabilityActivity, type AssistantEvent, type AssistantMessage, type FactCheckClaimPreview } from "@skladno/shared";
+import { APPLICATION_ERROR, ASSISTANT_EVENT, ApplicationClientError, BUILT_IN_SKILL, type ArticleRevision, type AssistantCapabilityActivity, type AssistantEvent, type AssistantMessage, type FactCheckClaimPreview } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
 import { getErrorMessageId } from "../../i18n/errors.js";
 import type { ArticleWorkspaceState } from "./article-workspace-state.js";
 import { getProviderLanguageName } from "./editorial-language.js";
 import { fingerprintArticleContent, requestedTranslationLanguages, type AssistantSelectionScope } from "./assistant-selection.js";
 import type { StreamBuffer, StreamedAssistantMessage } from "./assistant-streaming.js";
+import { runTranslationBatch } from "./translation-request-batch.js";
 
 
 export type ProposalState = "idle" | "streaming" | "error";
@@ -34,7 +35,7 @@ export interface AssistantRequestStore {
     setActivityByArticle: Setter<Record<string, AssistantCapabilityActivity>>;
     streamedMessagesByArticle: Record<string, StreamedAssistantMessage>;
     setStreamedMessagesByArticle: Setter<Record<string, StreamedAssistantMessage>>;
-    controller: MutableRefObject<AbortController | undefined>;
+    controllers: MutableRefObject<Map<string, AbortController>>;
     streamBuffers: MutableRefObject<Record<string, StreamBuffer>>;
 }
 
@@ -49,7 +50,7 @@ export function useAssistantRequestStore(): AssistantRequestStore {
     const [activeRequestIdByArticle, setActiveRequestIdByArticle] = useState<Record<string, string>>({});
     const [activityByArticle, setActivityByArticle] = useState<Record<string, AssistantCapabilityActivity>>({});
     const [streamedMessagesByArticle, setStreamedMessagesByArticle] = useState<Record<string, StreamedAssistantMessage>>({});
-    const controller = useRef<AbortController>();
+    const controllers = useRef(new Map<string, AbortController>());
     const streamBuffers = useRef<Record<string, StreamBuffer>>({});
 
     return {
@@ -57,7 +58,7 @@ export function useAssistantRequestStore(): AssistantRequestStore {
         messageByArticle, setMessageByArticle, errorDetailsByArticle, setErrorDetailsByArticle,
         aiConnectionUnavailableByArticle, setAiConnectionUnavailableByArticle,
         factCheckClaimsByArticle, setFactCheckClaimsByArticle, activeRequestIdByArticle, setActiveRequestIdByArticle, activityByArticle, setActivityByArticle,
-        streamedMessagesByArticle, setStreamedMessagesByArticle, controller, streamBuffers,
+        streamedMessagesByArticle, setStreamedMessagesByArticle, controllers, streamBuffers,
     };
 }
 
@@ -149,21 +150,23 @@ async function runRequest({ articleId, perform, ...options }: AssistantRequestAc
 type SelectedArticle = NonNullable<ArticleWorkspaceState["selectedArticle"]>;
 
 
-async function performNewAssistantRequest({ options, article, authorMessage, explicitSkillId, targetLanguage, skillOffset }: {
+async function performNewAssistantRequest({ options, article, authorMessage, explicitSkillId, targetLanguage, skillOffset, batch }: {
     options: AssistantRequestActionsOptions;
     article: SelectedArticle;
     authorMessage: string;
     explicitSkillId: string | undefined;
     targetLanguage: string | undefined;
     skillOffset: number | undefined;
+    batch?: { revision: ArticleRevision; controller: AbortController };
 }) {
     const creatorRequest = explicitSkillId === BUILT_IN_SKILL.SKILL_CREATOR;
-    const saved = creatorRequest ? undefined : await options.workspace.save(article.id);
-    const revision = saved ?? article.currentRevision;
+    const saved = creatorRequest || batch ? undefined : await options.workspace.save(article.id);
+    const revision = batch?.revision ?? saved ?? article.currentRevision;
     clearAssistantRequestFeedback(options.store, article.id);
     options.store.setStateByArticle((states) => ({ ...states, [article.id]: "streaming" }));
     options.store.setFactCheckClaimsByArticle((claims) => ({ ...claims, [article.id]: [] }));
-    options.store.controller.current = new AbortController();
+    const controller = batch?.controller ?? options.store.controllers.current.get(article.id) ?? new AbortController();
+    options.store.controllers.current.set(article.id, controller);
     const matchingSelection = await validateRequestSelection(creatorRequest, options.selection, article.id, revision.content);
     const requestId = crypto.randomUUID();
     const streamedId = `streaming-${crypto.randomUUID()}`;
@@ -179,7 +182,11 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
         ...(explicitSkillId ? { explicitSkillId } : {}),
         ...(skillOffset === undefined ? {} : { skillOffset }),
         ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}),
-    }, (event) => options.handleAssistantEvent(event, article.id, revision.id, streamedId), options.store.controller.current.signal);
+    }, (event) => {
+        const shouldHandleEventOutsideParallelReviewStream = !batch || event.type !== ASSISTANT_EVENT.TEXT_DELTA;
+        if (shouldHandleEventOutsideParallelReviewStream)
+            options.handleAssistantEvent(event, article.id, revision.id, streamedId);
+    }, controller.signal);
 }
 
 
@@ -198,11 +205,12 @@ async function performRetryAssistantRequest(options: AssistantRequestActionsOpti
     const { article } = options;
     clearRetryFeedback(options.store, article.id);
     options.store.setStateByArticle((states) => ({ ...states, [article.id]: "streaming" }));
-    options.store.controller.current = new AbortController();
+    const controller = new AbortController();
+    options.store.controllers.current.set(article.id, controller);
     const streamedId = `streaming-${crypto.randomUUID()}`;
     await options.client.streamAssistantRequest(article.id, {
         kind: "retry", requestId: crypto.randomUUID(), retryOfRequestId: options.retryOfRequestId, interfaceLocale: options.intl.locale,
-    }, (event) => options.handleAssistantEvent(event, article.id, article.currentRevisionId, streamedId), options.store.controller.current.signal);
+    }, (event) => options.handleAssistantEvent(event, article.id, article.currentRevisionId, streamedId), controller.signal);
 }
 
 
@@ -232,36 +240,42 @@ function appendPendingMessage({ store, articleId, requestId, authorMessage, expl
 async function requestAssistant(options: AssistantRequestActionsOptions & { authorMessage: string; explicitSkillId?: string; targetLanguage?: string | readonly string[]; skillOffset?: number }): Promise<void> {
     const { workspace, targetLanguage, authorMessage, explicitSkillId, skillOffset } = options;
     const article = workspace.selectedArticle;
-    if (!article)
+    if (!article || options.store.controllers.current.has(article.id))
         return;
 
-    if (targetLanguage && typeof targetLanguage !== "string") {
-        for (const language of requestedTranslationLanguages(authorMessage, targetLanguage))
-            await requestAssistant({ ...options, targetLanguage: language });
+    const controller = new AbortController();
+    options.store.controllers.current.set(article.id, controller);
+    options.store.setStateByArticle((states) => ({ ...states, [article.id]: "streaming" }));
+    const perform = async () => {
+        if (targetLanguage && typeof targetLanguage !== "string") {
+            const revision = await workspace.save(article.id) ?? article.currentRevision;
+            await runTranslationBatch(requestedTranslationLanguages(authorMessage, targetLanguage), controller.signal, (language) =>
+                performNewAssistantRequest({ options, article, authorMessage, explicitSkillId, targetLanguage: language, skillOffset, batch: { revision, controller } }));
+            return;
+        }
 
-        return;
+        await performNewAssistantRequest({ options, article, authorMessage, explicitSkillId, targetLanguage, skillOffset });
+    };
+    try {
+        await runRequest({ ...options, articleId: article.id, perform });
+    } finally {
+        if (options.store.controllers.current.get(article.id) === controller)
+            options.store.controllers.current.delete(article.id);
     }
-
-    const perform = () => performNewAssistantRequest({ options, article, authorMessage, explicitSkillId, targetLanguage, skillOffset });
-    await runRequest({
-        ...options,
-        articleId: article.id,
-        perform,
-    });
 }
 
 
 async function retryAssistant(options: AssistantRequestActionsOptions & { retryOfRequestId: string }): Promise<void> {
     const article = options.workspace.selectedArticle;
-    if (!article)
+    if (!article || options.store.controllers.current.has(article.id))
         return;
 
     const perform = () => performRetryAssistantRequest({ ...options, article });
-    await runRequest({
-        ...options,
-        articleId: article.id,
-        perform,
-    });
+    try {
+        await runRequest({ ...options, articleId: article.id, perform });
+    } finally {
+        options.store.controllers.current.delete(article.id);
+    }
 }
 
 

@@ -6,7 +6,6 @@ import { EditorialEngineError } from "../../../application/editorial/engine/edit
 import { createAiSdkGenerationOptions, isAcceptedFinish, type SupportingTextProviderOptions } from "./ai-sdk-provider.js";
 
 
-/** Provider-neutral AI SDK implementation of the title-generator port. */
 export class AiSdkArticleTitleGeneratorAdapter implements ArticleTitleGenerator {
     constructor(private readonly model: LanguageModel, private readonly providerOptions: SupportingTextProviderOptions = undefined) { }
 

@@ -1,5 +1,6 @@
-import { cpSync, existsSync, mkdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { cp, mkdir, rename, rm } from "node:fs/promises";
 import { captureAuthorSkillInventory, validateAuthorSkillBackupManifest, writeAuthorSkillBackupManifest } from "./author-skill-backup-manifest.js";
 
 
@@ -12,25 +13,25 @@ export function getAuthorSkillBackupPath(snapshotPath: string): string {
 }
 
 
-export function createAuthorSkillBackup({ dataDirectory, snapshotPath, expectedInventory }: { dataDirectory: string; snapshotPath: string; expectedInventory?: ReturnType<typeof captureAuthorSkillInventory> }): void {
+export async function createAuthorSkillBackup({ dataDirectory, snapshotPath, expectedInventory }: { dataDirectory: string; snapshotPath: string; expectedInventory?: Awaited<ReturnType<typeof captureAuthorSkillInventory>> }): Promise<void> {
     const destination = getAuthorSkillBackupPath(snapshotPath);
     const staged = `${destination}.tmp`;
     if (existsSync(destination) || existsSync(staged))
         throw new Error("author_skill_backup_conflict");
 
-    const before = expectedInventory ?? captureAuthorSkillInventory(dataDirectory);
+    const before = expectedInventory ?? await captureAuthorSkillInventory(dataDirectory);
     try {
-        mkdirSync(staged);
+        await mkdir(staged);
         for (const directory of authorSkillDirectories) {
             const source = join(dataDirectory, directory);
             if (existsSync(source))
-                cpSync(source, join(staged, directory), { recursive: true, errorOnExist: true });
+                await cp(source, join(staged, directory), { recursive: true, errorOnExist: true });
         }
 
-        writeAuthorSkillBackupManifest(snapshotPath, staged, before, dataDirectory);
-        renameSync(staged, destination);
+        await writeAuthorSkillBackupManifest(snapshotPath, staged, before, dataDirectory);
+        await rename(staged, destination);
     } catch (error) {
-        rmSync(staged, { recursive: true, force: true });
+        await rm(staged, { recursive: true, force: true });
         throw error;
     }
 }

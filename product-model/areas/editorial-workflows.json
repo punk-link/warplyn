@@ -70,8 +70,8 @@
             "area": "Editorial operations",
             "title": "Translation request",
             "status": "implemented",
-            "owners": ["packages/server/src/application/editorial/translation/translation.ts", "packages/server/src/index.ts", "packages/server/src/presentation/routes/editorial-route.ts"],
-            "contract": "Translation requests prepare a translated Article title and body in separate structured fields, then create linked Article content; the source Article is never overwritten.",
+            "owners": ["packages/server/src/application/editorial/translation/translation.ts", "packages/server/src/index.ts", "packages/server/src/presentation/routes/editorial-route.ts", "packages/web/src/workspace/state/assistant-request-state.ts", "packages/web/src/workspace/state/translation-request-batch.ts", "packages/server/src/application/assistant/capabilities/assistant-capability-loop.ts"],
+            "contract": "Translation requests prepare a translated Article title and body in separate structured fields; the source Article is never overwritten. Configured languages share one explicitly saved source Revision and run at most three requests concurrently. Each request binds its explicit target language and retains independent completion, failure, and recovery; Cancel stops all active requests and starts no queued languages. Existing completed results remain recoverable when a fresh request fails.",
             "persistence": "Translation review metadata is local and source linkage remains recoverable."
         },
         {

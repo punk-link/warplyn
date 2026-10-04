@@ -26,17 +26,17 @@ test("exports and imports a database with current and deleted Skill history", as
             assert.equal(readFileSync(join(directory, "skill-history", "deleted", "revision-1", "SKILL.md"), "utf8"), "deleted history");
             restored = true;
         });
-        const { id, manifest } = transfers.createExport();
+        const { id, manifest } = await transfers.createExport();
         assert.deepEqual(manifest.files.map((file) => file.path), [
             "database.sqlite", "skill-history/deleted/revision-1/SKILL.md", "skills/current/SKILL.md",
         ]);
 
-        const imported = transfers.beginImport(manifest);
+        const imported = await transfers.beginImport(manifest);
         for (const [index] of manifest.files.entries())
-            transfers.writeImport(imported, index, transfers.readExport(id, index));
+            await transfers.writeImport(imported, index, await transfers.readExport(id, index));
 
         await transfers.restoreImport(imported);
-        transfers.remove(id);
+        await transfers.remove(id);
         assert.equal(restored, true);
     } finally {
         database.close();
@@ -54,14 +54,14 @@ test("rejects a modified bundle before restoring", async () => {
         const transfers = new BackupBundleTransfers(root, () => snapshotCreator.createTemporary(), async () => {
             restored = true;
         });
-        const { id, manifest } = transfers.createExport();
-        const imported = transfers.beginImport(manifest);
-        const changed = Buffer.from(transfers.readExport(id, 0));
+        const { id, manifest } = await transfers.createExport();
+        const imported = await transfers.beginImport(manifest);
+        const changed = Buffer.from(await transfers.readExport(id, 0));
         changed[0] = changed[0] === 0 ? 1 : 0;
-        assert.throws(() => transfers.writeImport(imported, 0, changed), /backup_bundle_invalid_file/);
+        await assert.rejects(() => transfers.writeImport(imported, 0, changed), /backup_bundle_invalid_file/);
         await assert.rejects(transfers.restoreImport(imported));
         assert.equal(restored, false);
-        transfers.remove(id);
+        await transfers.remove(id);
     } finally {
         database.close();
         rmSync(root, { recursive: true, force: true });
@@ -69,11 +69,11 @@ test("rejects a modified bundle before restoring", async () => {
 });
 
 
-test("rejects a browser bundle beyond the transfer limit", () => {
+test("rejects a browser bundle beyond the transfer limit", async () => {
     const transfers = new BackupBundleTransfers("unused", () => {
         throw new Error("unused");
     }, async () => undefined);
-    assert.throws(() => transfers.beginImport({
+    await assert.rejects(() => transfers.beginImport({
         format: 1,
         files: [{ path: "database.sqlite", size: 100_000_001, sha256: "0".repeat(64) }],
     }), /backup_bundle_invalid_manifest/);

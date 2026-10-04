@@ -30,6 +30,7 @@ Set a new empty data folder for the local service, copy `.env.example` to an unt
 4. In Revisions, restore the initial Revision and confirm restoration appends another Revision instead of rewriting history.
 5. Request a fact check. Confirm Findings are advisory, cite sources, and do not alter the Article.
 6. Configure a translation language, create a translation, and confirm it opens as a linked, independently editable Article.
+   For translation freshness, configure Spanish and German, request both, and accept both as linked Articles. Save a source edit and confirm both show Outdated while their text and History remain unchanged. Open each translation and check its source-change warning. Regenerate Spanish, review its output, select Update existing translation, and confirm the named target. Confirm its title remains unchanged, History contains the old and new Revisions, and only Spanish becomes Current. Restore its earlier Revision and confirm it becomes Outdated again. Repeat with a retained target Draft and with a source edit during generation; neither may overwrite accepted text. Cancel a multi-language request and confirm no queued requests start and completed results remain available. Request another translation from an unchanged source and confirm creating it preserves existing translations.
 7. Use the Status Bar Copy control for Markdown and plain text. Confirm it copies output only; it must not publish to a platform.
 8. Restart the service and confirm the Articles, Revisions, settings, and backup policy remain available.
 

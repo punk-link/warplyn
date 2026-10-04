@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useIntl } from "react-intl";
-import { ArticleDraftConflictError, ArticleRevisionConflictError, type Article, type ArticleRevision } from "@skladno/shared";
+import { ArticleDraftConflictError, ArticleRevisionConflictError, summarizeArticle, type Article, type ArticleSummary, type ArticleRevision } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
 import { getDesktopTelemetryClient } from "../../application/desktop-client.js";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { createDraftCheckpointTelemetry } from "../drafts/draft-checkpoint-telemetry.js";
 import { getDraftPresentationState, hasUncommittedDraftChanges, hydrateDraftLifecycle, type DraftPresentationState } from "../drafts/draft-lifecycle.js";
 import { useDraftLifecycle } from "../drafts/useDraftLifecycle.js";
+import { cacheArticleUpdate } from "./article-body-cache.js";
 import { createArticleWorkspaceActions } from "./article-workspace-actions.js";
 import { getArticleContentForWorkspace, sortArticlesByActivity, withoutDraft } from "./article-workspace-articles.js";
 
@@ -16,14 +17,16 @@ export { getArticleContentForWorkspace, sortArticlesByActivity } from "./article
 export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredSelectedArticleId: string | undefined, setPersistedSelectedArticleId: (articleId: string | undefined) => void, interfaceLocale: string) {
     const intl = useIntl();
     const { notifyError } = useNotifications();
-    const [articles, setArticles] = useState<Article[]>([]);
+    const [articles, setArticles] = useState<ArticleSummary[]>([]);
     const [selectedArticleId, setSelectedArticleId] = useState<string>();
     const draftLifecycle = useDraftLifecycle();
     const replaceDraftLifecycle = draftLifecycle.replace;
     const [comparisonArticleId, setComparisonArticleId] = useState<string>();
     const [state, setState] = useState<"loading" | "ready" | "error">("loading");
     const [message, setMessage] = useState(() => intl.formatMessage({ id: "workspace.loadingArticles" }));
-    const articlesRef = useRef<Article[]>([]);
+    const articlesRef = useRef<(Article | ArticleSummary)[]>([]);
+    const loadedArticles = useRef(new Map<string, Article>());
+    const loadingArticles = useRef(new Map<string, Promise<Article>>());
     const queues = useRef(new Map<string, Promise<void>>());
     const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
     const checkpointTelemetry = useRef(createDraftCheckpointTelemetry(getDesktopTelemetryClient()));
@@ -35,29 +38,110 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
     setPersistedSelectedArticleIdRef.current = setPersistedSelectedArticleId;
 
 
-    function replaceArticles(update: (items: Article[]) => Article[]) {
-        const next = sortArticlesByActivity(update(articlesRef.current));
+    function replaceArticles(update: (items: (Article | ArticleSummary)[]) => (Article | ArticleSummary)[]) {
+        const next = sortArticlesByActivity(update(articlesRef.current)).map((article) => cacheArticleUpdate(loadedArticles.current, article));
+        const ids = new Set(next.map((article) => article.id));
+        for (const id of loadedArticles.current.keys()) {
+            if (!ids.has(id))
+                loadedArticles.current.delete(id);
+        }
+
         articlesRef.current = next;
         setArticles(next);
     }
 
 
+    const loadArticle = useCallback(async (articleId: string): Promise<Article> => {
+        const cached = loadedArticles.current.get(articleId);
+        if (cached) {
+            if (!draftLifecycle.sessionsRef.current[articleId])
+                replaceDraftLifecycle({ ...draftLifecycle.sessionsRef.current, [articleId]: hydrateDraftLifecycle(cached) });
+
+            return cached;
+        }
+
+        let pending = loadingArticles.current.get(articleId);
+        if (!pending) {
+            pending = client.getArticle(articleId);
+            loadingArticles.current.set(articleId, pending);
+        }
+
+        let article: Article;
+        try {
+            article = await pending;
+        } finally {
+            loadingArticles.current.delete(articleId);
+        }
+
+        loadedArticles.current.set(articleId, article);
+        if (!draftLifecycle.sessionsRef.current[articleId])
+            replaceDraftLifecycle({ ...draftLifecycle.sessionsRef.current, [articleId]: hydrateDraftLifecycle(article) });
+
+        const next = articlesRef.current.map((item) => item.id === articleId ? summarizeArticle(article) : item);
+        articlesRef.current = next;
+        setArticles(next);
+
+        return article;
+    }, [client, replaceDraftLifecycle, draftLifecycle.sessionsRef]);
+
+
     useEffect(() => {
-        client.listArticles().then((loaded) => {
-            const sorted = sortArticlesByActivity(loaded);
+        let cancelled = false;
+        client.listArticleSummaries().then(async (loaded) => {
+            if (cancelled)
+                return;
+
+            const sorted = sortArticlesByActivity(loaded.map(summarizeArticle));
             const preferred = preferredSelectedArticleIdRef.current;
             const selected = sorted.some((article) => article.id === preferred) ? preferred : sorted[0]?.id;
             articlesRef.current = sorted;
             setArticles(sorted);
-            replaceDraftLifecycle(Object.fromEntries(sorted.map((article) => [article.id, hydrateDraftLifecycle(article)])));
+            if (selected)
+                await loadArticle(selected);
+
+            const sourceId = sorted.find((article) => article.id === selected)?.sourceArticleId;
+            if (sourceId)
+                await loadArticle(sourceId);
+
+            if (cancelled)
+                return;
+
             setSelectedArticleId(selected);
             setPersistedSelectedArticleIdRef.current(selected);
             setState("ready");
         }).catch(() => {
+            if (cancelled)
+                return;
+
             setState("error");
             setMessage(intl.formatMessage({ id: "workspace.serviceUnavailable" }));
         });
-    }, [client, intl, replaceDraftLifecycle]);
+        return () => {
+            cancelled = true;
+        };
+    }, [client, intl, loadArticle]);
+
+    useEffect(() => {
+        if (!selectedArticleId || !articlesRef.current.some((article) => article.id === selectedArticleId))
+            return;
+
+        let cancelled = false;
+        void loadArticle(selectedArticleId).then(async (article) => {
+            if (article.sourceArticleId)
+                await loadArticle(article.sourceArticleId);
+        }).catch((error) => {
+            if (cancelled)
+                return;
+
+            setState("error");
+            setMessage(intl.formatMessage({ id: "workspace.serviceUnavailable" }));
+            notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.serviceUnavailable" }) });
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [selectedArticleId, loadArticle, intl, notifyError]);
 
 
     function recordConflict(articleId: string, error: ArticleDraftConflictError | ArticleRevisionConflictError, localContent: string) {
@@ -89,7 +173,7 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
         const generation = session.generation;
         const preceding = queues.current.get(articleId) ?? Promise.resolve();
         const task = preceding.then(async () => {
-            const current = articlesRef.current.find((article) => article.id === articleId);
+            const current = loadedArticles.current.get(articleId);
             const latest = draftLifecycle.sessionsRef.current[articleId];
             if (!current || !latest)
                 return;
@@ -170,7 +254,7 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
             return undefined;
 
         const session = draftLifecycle.sessionsRef.current[articleId];
-        const current = articlesRef.current.find((article) => article.id === articleId);
+        const current = loadedArticles.current.get(articleId);
         if (!current || !session)
             return undefined;
 
@@ -214,7 +298,7 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
         if (expectedDraftVersion !== undefined)
             await client.discardArticleDraft(articleId, expectedDraftVersion);
 
-        const current = articlesRef.current.find((article) => article.id === articleId);
+        const current = loadedArticles.current.get(articleId);
         if (!current)
             return;
 
@@ -223,22 +307,24 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
     }
 
 
-    const selectedArticle = articles.find((article) => article.id === selectedArticleId);
+    const selectedArticle = selectedArticleId && articles.some((article) => article.id === selectedArticleId) ? loadedArticles.current.get(selectedArticleId) : undefined;
     const selectedDraft = selectedArticleId ? draftLifecycle.sessions[selectedArticleId] : undefined;
 
     return {
         articles,
         selectedArticle,
         selectedArticleId,
+        sourceArticle: selectedArticle?.sourceArticleId ? loadedArticles.current.get(selectedArticle.sourceArticleId) : undefined,
         selectArticle: (articleId: string) => {
             if (selectedArticleId && selectedArticleId !== articleId)
                 void checkpoint(selectedArticleId).catch(() => undefined);
 
+            setState("ready");
             setSelectedArticleId(articleId);
             setPersistedSelectedArticleId(articleId);
         },
         content: selectedDraft?.content ?? "",
-        getArticleContent: (article: Article) => draftLifecycle.sessionsRef.current[article.id]?.content ?? getArticleContentForWorkspace(article),
+        getArticleContent: async (article: ArticleSummary) => draftLifecycle.sessionsRef.current[article.id]?.content ?? getArticleContentForWorkspace(await loadArticle(article.id)),
         setContent: (value: string) => {
             if (!selectedArticleId)
                 return;
@@ -246,7 +332,7 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
             draftLifecycle.send({ articleId: selectedArticleId, event: { type: "edit", content: value } });
             scheduleCheckpoint(selectedArticleId, value);
         },
-        state,
+        state: state === "ready" && selectedArticleId && !selectedArticle ? "loading" : state,
         message,
         saveState: selectedDraft ? getDraftPresentationState(selectedDraft) : "saved" as DraftPresentationState,
         save, retry: () => selectedArticleId ? checkpoint(selectedArticleId) : Promise.resolve(), flushSelected: () => selectedArticleId ? checkpoint(selectedArticleId) : Promise.resolve(), discardDraft,

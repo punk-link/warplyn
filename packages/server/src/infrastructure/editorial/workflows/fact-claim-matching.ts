@@ -7,15 +7,18 @@ interface Claim { claim: string }
 
 
 export async function matchFactCandidates(claims: Claim[], history: FactCheckFinding[], provider: FactCheckProvider, signal: AbortSignal): Promise<Map<number, FactCheckFinding>> {
-    const byId = new Map(history.flatMap((finding) => finding.factId ? [[finding.factId, finding] as const] : []));
     const { matched, used } = matchExactClaims(claims, history);
 
     if (!provider.matchClaims)
         return matched;
 
     const unresolved = claims.flatMap(({ claim }, index) => matched.has(index) ? [] : [{ claim, index }]);
+    if (!unresolved.length)
+        return matched;
+
+    const byId = new Map(history.flatMap((finding) => finding.factId ? [[finding.factId, finding] as const] : []));
     const candidates = [...byId.values()].filter((finding) => !used.has(finding.factId!));
-    if (!unresolved.length || !candidates.length)
+    if (!candidates.length)
         return matched;
 
     const matches = await provider.matchClaims(unresolved.map(({ claim }) => claim), candidates.map(({ factId, claim }) => ({ factId: factId!, claim })), signal);

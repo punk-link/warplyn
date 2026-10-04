@@ -53,7 +53,7 @@
             "title": "Linked translation Articles with source freshness protection",
             "status": "implemented",
             "owners": ["packages/web/src/workspace/views/TranslationsView.tsx", "packages/server/src/application/editorial/translation/translation.ts", "packages/server/src/infrastructure/persistence/repositories/articles-repository.ts"],
-            "contract": "Translations are independently recoverable linked Articles. The workspace starts configured target-language requests through Assistant messages, restores the latest completed proposal per language, and supports language navigation. Each completed proposal contains the translated title and body; source and translation titles remain independent. Source Articles list linked translations; each translation links back and identifies the source Revision. Source and translation appear with full language names side by side, with paragraph and Markdown-list alignment where possible, plus visible protected-span validation and stale-source warnings. A proposal with changed or missing protected content cannot create a translation Article. The selected translation shows advisory character guidance for the Article's selected publishing profile. Created translations open in the editor for author-controlled Drafts and Revisions; stale proposals cannot create them. Authors can explicitly reject generated output after confirmation, which removes it from approval without changing the source or accepted translation history.",
+            "contract": "Translations are independently recoverable linked Articles. The workspace starts configured target-language requests through Assistant messages, restores the latest completed proposal per language, and supports language navigation. Each completed proposal contains the translated title and body; source and translation titles remain independent. Source Articles list linked translations; each translation links back and identifies the source Revision. Source and translation appear with full language names side by side, with paragraph and Markdown-list alignment where possible, plus visible protected-span validation and stale-source warnings. A proposal with changed or missing protected content cannot create a translation Article. The selected translation shows advisory character guidance for the Article's selected publishing profile. Created translations open in the editor for author-controlled Drafts and Revisions; stale proposals cannot create them. Authors can explicitly reject generated output after confirmation, which removes it from approval without changing the source or accepted translation history. Freshness is displayed independently for each accepted translation and selected language proposal. An explicitly confirmed refresh accepts a validated completed source artifact into a named existing translation, appending a Revision and updating its source link atomically while preserving its title, siblings, and prior history. Source or target conflicts, retained target Drafts, rejected artifacts, and invalid or mismatched output prevent refresh. Restoring earlier translation text also restores its source snapshot.",
             "persistence": "Completed and rejected translation proposals persist in local Assistant artifacts; Source Article and Revision linkage persist on the independently recoverable translation Article."
         },
         {
@@ -186,6 +186,26 @@
             "expected": ["The stale-source warning is shown."],
             "forbidden": ["Creating a translation Article from stale source content."],
             "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/TranslationsView.test.tsx" }
+        },
+        {
+            "id": "history-and-publishing.translation-source-change",
+            "title": "Editing the source marks linked translations stale without changing their text",
+            "capabilityIds": ["history-and-publishing.translations"],
+            "preconditions": ["The source Article has independently accepted Spanish and German translations."],
+            "event": "The Author saves a new source Revision and opens Translations.",
+            "expected": ["Linked translations retain their text and Revision IDs and show Outdated; each translation warns when opened."],
+            "forbidden": ["Automatic translation changes or false freshness."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/infrastructure/persistence/repositories.translation-refresh.test.ts" }
+        },
+        {
+            "id": "history-and-publishing.translation-refresh",
+            "title": "Explicit translation refresh preserves history and source provenance atomically",
+            "capabilityIds": ["history-and-publishing.translations"],
+            "preconditions": ["A valid current source translation proposal and an existing linked target are available."],
+            "event": "The Author confirms acceptance into the named target translation.",
+            "expected": ["Acceptance appends one Revision and updates the source link; restoring an older translation Revision restores its source freshness. Legacy history remains unchanged."],
+            "forbidden": ["Overwriting history, losing a Draft, accepting a stale source or target, or changing siblings."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/infrastructure/persistence/repositories.translation-refresh.test.ts" }
         },
         {
             "id": "history-and-publishing.publishing-guidance",

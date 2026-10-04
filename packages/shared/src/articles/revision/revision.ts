@@ -21,6 +21,9 @@ export interface ArticleRevision {
 }
 
 
+export type ArticleRevisionSummary = Omit<ArticleRevision, "content"> & { characterCount: number };
+
+
 /** A compare-and-swap revision write. A conflict means another writer saved first. */
 export interface SaveArticleRevisionInput {
     content: string;

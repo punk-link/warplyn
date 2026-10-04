@@ -14,6 +14,6 @@ export function captureBestEffortTelemetry(client: DesktopTelemetryClient | unde
     try {
         void client?.captureTelemetry(event, generation).catch(() => undefined);
     } catch {
-        // Telemetry must not affect editorial work.
+        // Optional telemetry failures must not interrupt the workspace operation.
     }
 }

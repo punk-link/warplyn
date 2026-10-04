@@ -46,6 +46,14 @@ export class AssistantRequestPreparation {
     }
 
 
+    listMessageHistory(articleId: string): import("@skladno/shared").AssistantMessageHistory {
+        if (!this.dependencies.articles.getArticle(articleId))
+            throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+
+        return this.dependencies.assistant.listMessageHistory(articleId);
+    }
+
+
     prepare(request: AssistantServiceRequest): PreparedAssistantRequest {
         const article = this.dependencies.articles.getArticle(request.articleId);
         if (!article)

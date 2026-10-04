@@ -6,6 +6,14 @@ import { ArticleRevisionConflictError } from "../../application/articles/article
 import { ApplicationServiceError } from "../../application/errors/application-service-error.js";
 
 
+function readIdentifier(value: unknown): string {
+    if (typeof value !== "string" || !value.trim())
+        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
+    return value;
+}
+
+
 function isFactCheckResolution(value: unknown): value is NonNullable<import("@skladno/shared").FactCheckFinding["resolution"]> {
     return value === "accepted_as_written" || value === "evidence_accepted";
 }
@@ -44,6 +52,22 @@ function setAssistantClaimSelected(args: readonly unknown[], services: Applicati
 
 async function invokeApplicationMethod(method: ElectronApplicationMethod, args: readonly unknown[], services: ApplicationServices, now: () => string): Promise<unknown> {
     switch (method) {
+        case ELECTRON_APPLICATION_METHOD.listArticleSummaries: return services.articles.listArticleSummaries();
+        case ELECTRON_APPLICATION_METHOD.getArticle: {
+            const article = services.articles.getArticle(readIdentifier(args[0]));
+            if (!article)
+                throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+
+            return article;
+        }
+        case ELECTRON_APPLICATION_METHOD.listArticleRevisionSummaries: return services.articles.listRevisionSummaries(readIdentifier(args[0]));
+        case ELECTRON_APPLICATION_METHOD.getArticleRevision: {
+            const revision = services.articles.getRevision(readIdentifier(args[0]), readIdentifier(args[1]));
+            if (!revision)
+                throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+
+            return revision;
+        }
         case ELECTRON_APPLICATION_METHOD.getHealth: return { status: "ok", service: "skladno-local-service", timestamp: now() };
         case ELECTRON_APPLICATION_METHOD.getApplicationSettings: return services.settings.getSnapshot();
         case ELECTRON_APPLICATION_METHOD.updateGeneralSettings: return services.settings.updateGeneral(args[0]);
@@ -76,6 +100,7 @@ async function invokeApplicationMethod(method: ElectronApplicationMethod, args: 
         case ELECTRON_APPLICATION_METHOD.summarizeProposal: return services.proposalSummaries.summarize(String(args[0]), args[1], new AbortController().signal);
         case ELECTRON_APPLICATION_METHOD.restoreRevision: return services.articles.restoreRevision(String(args[0]), String(args[1]));
         case ELECTRON_APPLICATION_METHOD.listAssistantSkills: return services.skills.discover();
+        case ELECTRON_APPLICATION_METHOD.listAssistantMessageHistory: return services.assistant.listMessageHistory(readIdentifier(args[0]));
         case ELECTRON_APPLICATION_METHOD.listAssistantMessages: return services.assistant.listMessages(String(args[0]));
         case ELECTRON_APPLICATION_METHOD.setAssistantClaimSelected: return setAssistantClaimSelected(args, services);
         case ELECTRON_APPLICATION_METHOD.getAssistantEditMode: return services.assistant.getEditMode(String(args[0]));

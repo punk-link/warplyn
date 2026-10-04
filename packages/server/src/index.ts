@@ -46,19 +46,20 @@ async function start(): Promise<void> {
                 validateDatabaseSnapshot(staged);
                 resetRestoredConnectionSettings(staged);
 
-                const recovery = application.services.settings.createBackup();
+                const recovery = await application.services.settings.createBackup();
                 const recoveryDirectory = mkdtempSync(join(dirname(config.databasePath), "recovery-"));
                 try {
                     copyFileSync(recovery.path, join(recoveryDirectory, "database.sqlite"));
                     copySkillDirectories(dirname(config.databasePath), recoveryDirectory);
                 } finally {
-                    recovery.cleanup();
+                    await recovery.cleanup();
                 }
 
                 prepareBrowserRestoreRecovery(config.databasePath, recoveryDirectory);
                 let closed = false;
                 let replacementOpened = false;
                 try {
+                    await application.services.settings.waitForBackups();
                     application.database.close();
                     closed = true;
                     removeDatabaseFiles(config.databasePath);
@@ -105,6 +106,7 @@ async function start(): Promise<void> {
                 if (!(typeof error === "object" && error !== null && "code" in error && error.code === "ERR_SERVER_NOT_RUNNING"))
                     diagnostics.write("service.shutdown_failed", {}, error);
             } finally {
+                await application.services.settings.waitForBackups();
                 application.database.close();
                 process.exit(exitCode);
             }

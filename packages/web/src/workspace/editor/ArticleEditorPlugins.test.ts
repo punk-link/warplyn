@@ -43,6 +43,8 @@ describe("captureAssistantSelection", () => {
             selected = ($getSelection() as RangeSelection).clone();
         }, { discrete: true });
 
+        const originalState = editor.getEditorState();
+        const originalJson = originalState.toJSON();
         const snapshot = captureAssistantSelection(editor, selected!);
 
         expect(snapshot).toEqual({
@@ -52,5 +54,37 @@ describe("captureAssistantSelection", () => {
             endOffset: markdown.indexOf("Second café 🙂") + "Second café 🙂".length,
         });
         editor.getEditorState().read(() => expect(exportArticleMarkdown()).toBe(markdown));
+        expect(editor.getEditorState()).toBe(originalState);
+        expect(originalState.toJSON()).toEqual(originalJson);
+    });
+
+    it.each([false, true])("preserves same-node UTF-16 offsets and selection state (backward: %s)", (backward) => {
+        const editor = createEditor({ nodes: articleEditorNodes, onError: (error) => {
+            throw error;
+        } });
+        let range: RangeSelection | undefined;
+        editor.update(() => {
+            importArticleMarkdown("Before café 🙂 after");
+            const text = $getRoot().getAllTextNodes()[0];
+            range = $createRangeSelection();
+            range.anchor.set(text.getKey(), backward ? 14 : 7, "text");
+            range.focus.set(text.getKey(), backward ? 7 : 14, "text");
+            $setSelection(range);
+            range = range.clone();
+        }, { discrete: true });
+        if (!range)
+            throw new Error("Missing selection fixture");
+
+        const selected = range;
+        const state = editor.getEditorState();
+        const json = state.toJSON();
+        expect(captureAssistantSelection(editor, selected)).toEqual({
+            markdown: "Before café 🙂 after",
+            preview: "café 🙂",
+            startOffset: 7,
+            endOffset: 14,
+        });
+        expect(state.toJSON()).toEqual(json);
+        state.read(() => expect(($getSelection() as RangeSelection).is(selected)).toBe(true));
     });
 });

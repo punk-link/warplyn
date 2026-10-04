@@ -1,3 +1,3 @@
 export interface BackupSnapshotCreator {
-    createTemporary(): { path: string; createdAt: string; cleanup(): void };
+    createTemporary(): Promise<{ path: string; createdAt: string; cleanup(): Promise<void> }>;
 }
