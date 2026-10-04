@@ -261,10 +261,10 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
     }
 
 
-    return <aside data-workspace-panel="article-library" data-focus-area="library" onKeyDown={handleLibraryKeyDown} className={collapsed ? "flex h-full w-full flex-col border-r border-border bg-surface-supporting px-0.5 py-2" : "flex h-full w-full flex-col border-r border-border bg-surface-supporting"} aria-label={intl.formatMessage({ id: "navigation.articleLibrary" })}>
+    return <aside data-workspace-panel="article-library" data-focus-area="library" onKeyDown={handleLibraryKeyDown} className={collapsed ? "flex h-full w-full flex-col border-r border-border bg-surface-supporting px-0.5 pb-2" : "flex h-full w-full flex-col border-r border-border bg-surface-supporting"} aria-label={intl.formatMessage({ id: "navigation.articleLibrary" })}>
         {collapsed
             ? <>
-                <header className="flex min-h-18 items-center justify-center">
+                <header className="flex min-h-18 items-center justify-center border-b border-transparent">
                     <IconButton className="text-base font-semibold text-brand" label={intl.formatMessage({ id: "navigation.expandArticleLibrary" })} onClick={() => setCollapsed(false)}><WarplynIcon />
                     </IconButton>
                 </header>
