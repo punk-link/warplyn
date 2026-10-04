@@ -123,11 +123,15 @@ test("same-Revision translations survive reload and exact-result rejection", asy
     expect(revisions).toHaveLength(1);
     await page.reload();
     await page.getByRole("tab", { name: /Translations/ }).click();
-    const selector = page.getByRole("combobox", { name: "Translation result", exact: true });
-    await expect(selector.locator("option")).toHaveCount(2);
+    const selector = page.getByRole("button", { name: "Translation result", exact: true });
+    await selector.click();
+    const resultMenu = page.getByRole("menu", { name: "Translation result", exact: true });
+    await expect(resultMenu.getByRole("menuitemradio")).toHaveCount(2);
+    await expect(resultMenu.getByRole("menuitemradio", { name: /^v2 ·/ })).toHaveAttribute("aria-checked", "true");
     const firstId = results[0]?.editorialArtifactId;
     expect(firstId).toBeTruthy();
-    await selector.selectOption(firstId!);
+    await resultMenu.getByRole("menuitemradio", { name: /^v1 ·/ }).click();
+    await expect(selector).toHaveText(/^v1 ·/);
     await page.getByRole("button", { name: "Reject", exact: true }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Reject", exact: true }).click();
     await expect(selector).toHaveCount(0);
