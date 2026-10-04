@@ -115,8 +115,9 @@ function ArticleLibraryNavigation({ pinnedRoots, recentRoots, archivedRoots, arc
 }
 
 
-export function ArticleLibraryPanel({ data, navigation, mutations, files }: { data: ArticleLibraryData; navigation: ArticleLibraryNavigation; mutations: ArticleLibraryMutations; files?: Pick<ArticleFilesState, "pending" | "saveArticle" | "loadArticle"> }) {
-    const { articles, selectedArticleId, collapsed, language } = data;
+export function ArticleLibraryPanel({ data, navigation, mutations, files, responsiveCollapsed }: { data: ArticleLibraryData; navigation: ArticleLibraryNavigation; mutations: ArticleLibraryMutations; files?: Pick<ArticleFilesState, "pending" | "saveArticle" | "loadArticle">; responsiveCollapsed?: boolean }) {
+    const { articles, selectedArticleId, language } = data;
+    const collapsed = responsiveCollapsed ?? data.collapsed;
     const { selectArticle, setCollapsed, createBlank, openStyleProfile, openSettings, dispatcher, shortcutOverrides } = navigation;
     const { remove, setArchived, setPinned, reorderPinned, notifyError } = mutations;
     const intl = useIntl();
