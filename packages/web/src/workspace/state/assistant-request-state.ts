@@ -171,7 +171,7 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
     const requestId = crypto.randomUUID();
     const streamedId = `streaming-${crypto.randomUUID()}`;
 
-    appendPendingMessage({ store: options.store, articleId: article.id, requestId, authorMessage, explicitSkillId, skillOffset, selection: matchingSelection });
+    appendPendingMessage({ store: options.store, articleId: article.id, requestId, authorMessage, explicitSkillId, skillOffset, targetLanguage, selection: matchingSelection });
 
     await options.client.streamAssistantRequest(article.id, {
         kind: "new", requestId, authorMessage,
@@ -214,7 +214,7 @@ async function performRetryAssistantRequest(options: AssistantRequestActionsOpti
 }
 
 
-function appendPendingMessage({ store, articleId, requestId, authorMessage, explicitSkillId, skillOffset, selection }: {
+function appendPendingMessage({ store, articleId, requestId, authorMessage, explicitSkillId, skillOffset, targetLanguage, selection }: {
     store: AssistantRequestStore;
     articleId: string;
     requestId: string;
@@ -222,6 +222,7 @@ function appendPendingMessage({ store, articleId, requestId, authorMessage, expl
     explicitSkillId: string | undefined;
     skillOffset: number | undefined;
     selection: AssistantSelectionScope | undefined;
+    targetLanguage: string | undefined;
 }) {
     const timestamp = new Date().toISOString();
     store.setMessagesByArticle((messages) => ({
@@ -231,6 +232,7 @@ function appendPendingMessage({ store, articleId, requestId, authorMessage, expl
             ...(explicitSkillId ? { skillId: explicitSkillId } : {}),
             ...(skillOffset === undefined ? {} : { skillOffset }),
             ...(selection ? { selectionText: selection.preview } : {}),
+            ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}),
             createdAt: timestamp, updatedAt: timestamp,
         }],
     }));

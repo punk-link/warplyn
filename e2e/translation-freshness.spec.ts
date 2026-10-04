@@ -19,6 +19,8 @@ test("parallel translations become stale after a source edit and refresh preserv
     await page.getByRole("dialog").getByRole("button", { name: "Generate translations", exact: true }).click();
     await expect(page.getByRole("tab", { name: "Spanish", exact: true })).toBeVisible();
     await expect(page.getByRole("tab", { name: "German", exact: true })).toBeVisible();
+    await expect(page.getByText(/Translation\s*in Spanish$/)).toBeVisible();
+    await expect(page.getByText(/Translation\s*in German$/)).toBeVisible();
     for (const language of ["Spanish", "German"]) {
         await page.getByRole("tab", { name: language, exact: true }).click();
         await page.getByRole("button", { name: "Edit", exact: true }).click();
@@ -61,6 +63,8 @@ test("parallel translations become stale after a source edit and refresh preserv
     await page.reload();
     await page.getByRole("tab", { name: /Translations/ }).click();
     await page.getByRole("tab", { name: "Spanish", exact: true }).click();
+    await expect(page.getByText(/Translation\s*in Spanish$/)).toHaveCount(2);
+    await expect(page.getByText(/Translation\s*in German$/)).toBeVisible();
     await expect(page.getByText("The source Article has changed since this translation proposal was made.", { exact: true })).toHaveCount(0);
     await page.getByRole("button", { name: "New translation…", exact: true }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Generate Spanish translation", exact: true }).click();
@@ -84,6 +88,10 @@ test("same-Revision translations survive reload and exact-result rejection", asy
         localStorage.setItem("skladno-workspace-layout", JSON.stringify({ version: 3, view: "write", selectedArticleId: id, libraryCollapsed: true, assistantCollapsed: true }));
     }, source.id);
     await page.goto("/");
+    const expandAssistant = page.getByRole("button", { name: "Expand Editorial Assistant Panel", exact: true });
+    if (await expandAssistant.count())
+        await expandAssistant.click();
+
     const editor = page.getByRole("textbox", { name: "Article draft" });
     await editor.click();
     await editor.press("Control+a");

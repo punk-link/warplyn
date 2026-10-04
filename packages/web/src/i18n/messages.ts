@@ -243,6 +243,7 @@ export const messages = {
     "assistant.response.partialFindings": "Fact Check could not check every claim. Completed findings are available; other claims remain unchecked.",
     "assistant.response.proposalAndFindings": "Proposal and findings prepared",
     "assistant.response.translation": "Translation proposal prepared",
+    "assistant.translationTarget": "in {language}",
     "assistant.reviewProposal": "Review Proposal",
     "assistant.openSkillFolder": "Open Skill folder",
     "assistant.viewFindings": "View Findings",

@@ -11,6 +11,7 @@ export function listAssistantMessageHistory(database: SqliteDatabase, articleId:
     const revisionContents = Object.fromEntries(revisions.map((row) => [String(row.id), String(row.content)]));
     const rows = database.prepare(`SELECT m.*, q.scope_json AS request_scope_json,
         q.skill_source AS request_skill_source, q.base_revision_id AS request_base_revision_id,
+        q.target_language AS request_target_language,
         a.content AS artifact_content FROM assistant_messages m
         LEFT JOIN assistant_requests q ON q.id = m.request_id
         LEFT JOIN editorial_artifacts a ON a.id = m.editorial_artifact_id

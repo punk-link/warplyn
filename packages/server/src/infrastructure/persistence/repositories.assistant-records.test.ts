@@ -101,7 +101,7 @@ test("Assistant greetings persist a localized template without server-owned copy
 }));
 
 
-test("Assistant author messages retain their resolved skill", () => withRepository((repositories) => {
+test("Assistant author messages retain their resolved skill and translation target", () => withRepository((repositories) => {
     const article = repositories.articleService.createArticle({ title: "Conversation", content: "Draft" });
     const request = repositories.assistant.createRequest({
         id: "assistant-request",
@@ -110,17 +110,19 @@ test("Assistant author messages retain their resolved skill", () => withReposito
             kind: "article",
             baseRevisionId: article.currentRevisionId,
         },
-        explicitSkillId: "talking_points",
+        explicitSkillId: "translation",
+        targetLanguage: "English",
         skillOffset: 9,
     });
 
     repositories.assistant.setAuthorMessage(request.id, "Organize these ideas.");
-    repositories.assistant.resolveRequest(request.id, "talking_points", "explicit");
+    repositories.assistant.resolveRequest(request.id, "translation", "explicit");
 
     const authorMessage = repositories.assistant.listMessages(article.id).find((message) => message.requestId === request.id && message.role === "author");
 
-    assert.equal(authorMessage?.skillId, "talking_points");
+    assert.equal(authorMessage?.skillId, "translation");
     assert.equal(authorMessage?.skillOffset, 9);
+    assert.equal(authorMessage?.targetLanguage, "English");
 }));
 
 
