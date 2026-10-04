@@ -106,8 +106,9 @@ function calculatePanelVisibility(layout: WorkspaceShellLayout, viewportWidth: n
     const assistantCollapsed = !layout.focusMode && (layout.assistantCollapsed || (requiredWidth > viewportWidth && !responsiveAssistantExpanded));
     const assistantOverlay = responsiveAssistantExpanded && viewportWidth < libraryLimits.collapsed + assistantLimits.minimum + articleWorkspaceMinimum;
     const widthWithoutAssistant = requestedLibraryWidth + assistantLimits.collapsed + articleWorkspaceMinimum;
-    const expandedAssistantNeedsCollapsedLibrary = responsiveAssistantExpanded && !assistantOverlay && requestedLibraryWidth + assistantLimits.minimum + articleWorkspaceMinimum > viewportWidth;
+    const expandedAssistantNeedsCollapsedLibrary = responsiveAssistantExpanded && requestedLibraryWidth + assistantLimits.minimum + articleWorkspaceMinimum > viewportWidth;
     const libraryCollapsed = !layout.focusMode && (layout.libraryCollapsed || widthWithoutAssistant > viewportWidth || expandedAssistantNeedsCollapsedLibrary);
+
     return { requestedAssistantWidth, assistantCollapsed, assistantOverlay, libraryCollapsed };
 }
 

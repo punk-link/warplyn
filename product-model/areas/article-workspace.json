@@ -274,6 +274,7 @@
                 "Assistant Panel collapses before the Article Library Panel",
                 "An explicit Assistant Panel expand request overrides temporary responsive collapse",
                 "The expanded Assistant Panel overlays the workspace when the minimum side-by-side layout cannot fit",
+                "With an explicitly expanded Assistant, widening restores the Library once its side-by-side minimum fits, without reopening it temporarily at the overlay boundary",
                 "Article Workspace remains first in keyboard and visual order"
             ],
             "forbidden": [
