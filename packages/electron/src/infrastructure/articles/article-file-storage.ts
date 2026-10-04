@@ -1,11 +1,11 @@
 import { open, rename, unlink } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { ApplicationClientError, articleMarkdownByteLimit, decodeArticleMarkdown, encodeArticleMarkdown, validateArticleMarkdownName, validateArticleMarkdownSize, type ArticleMarkdownFile } from "@skladno/shared";
+import { ApplicationClientError, articleMarkdownByteLimit, getArticleFileFormat, validateArticleMarkdownSize, type ArticleFileBytes } from "@skladno/shared";
 
 
-export async function readArticleMarkdown(path: string): Promise<ArticleMarkdownFile> {
-    validateArticleMarkdownName(path);
+export async function readArticleFile(path: string): Promise<ArticleFileBytes> {
+    getArticleFileFormat(path);
     const handle = await open(path, "r");
     try {
         const stats = await handle.stat();
@@ -24,16 +24,17 @@ export async function readArticleMarkdown(path: string): Promise<ArticleMarkdown
             offset += bytesRead;
         }
 
-        return { fileName: basename(path), content: decodeArticleMarkdown(bytes.subarray(0, offset)) };
+        validateArticleMarkdownSize(offset);
+        return { fileName: basename(path), bytes: new Uint8Array(bytes.subarray(0, offset)) };
     } finally {
         await handle.close();
     }
 }
 
 
-export async function writeArticleMarkdown(path: string, content: string): Promise<void> {
-    validateArticleMarkdownName(path);
-    const bytes = encodeArticleMarkdown(content);
+export async function writeArticleFile(path: string, bytes: Uint8Array): Promise<void> {
+    getArticleFileFormat(path);
+    validateArticleMarkdownSize(bytes.byteLength);
     const temporary = join(dirname(path), `.article-${randomUUID()}.tmp`);
     const handle = await open(temporary, "wx", 0o600);
 

@@ -27,7 +27,10 @@ export function createRendererArticleFilesClient(host: Pick<Window, "skladnoArti
 
 
     return {
-        loadMarkdown: () => bridge.loadMarkdown().catch(restoreSerializedApplicationError),
-        saveMarkdown: (file) => bridge.saveMarkdown(file).catch(restoreSerializedApplicationError),
+        runtime: "desktop",
+        loadFile: () => bridge.loadFile().catch(restoreSerializedApplicationError),
+        chooseSaveTarget: (fileName) => bridge.chooseSaveTarget(fileName).catch(restoreSerializedApplicationError),
+        saveFile: (target, bytes) => bridge.saveFile(target, bytes).catch(restoreSerializedApplicationError),
+        releaseSaveTarget: (ticket) => bridge.releaseSaveTarget(ticket).catch(restoreSerializedApplicationError),
     };
 }

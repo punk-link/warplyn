@@ -12,6 +12,9 @@ export {
     validateArticleMarkdownName, validateArticleMarkdownSize,
     type ArticleFilesClient, type ArticleFilesRequest, type ArticleFilesResult,
     type ArticleMarkdownFile, type ArticleMarkdownSaveResult,
+    getArticleFileFormat, getArticleFileName, articleFileExtensions, articleFileMimeTypes,
+    isArticleFileFormat, isArticleFileBytes, isArticleFileBytesArray, isArticleSaveTarget,
+    type ArticleFileFormat, type ArticleFileBytes, type ArticleSaveTarget,
 } from "./articles/files/article-files.js";
 export {
     ELECTRON_APPLICATION_METHOD,
