@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useIntl, type IntlShape } from "react-intl";
 import {
     defaultPublishLimitProfileId,
@@ -24,11 +24,14 @@ interface EditorialResult<T> {
 }
 
 
-type TranslationResult = EditorialResult<{ metadata: TranslationMetadata; content: string; editorialArtifactId?: string }>;
+type TranslationResult = EditorialResult<{ metadata: TranslationMetadata; content: string; editorialArtifactId?: string; resultId?: string; createdAt?: string }>;
 
 
 async function refreshLinkedTranslation(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, target: ArticleSummary, result: TranslationResult, intl: IntlShape): Promise<void> {
     const persisted = await client.getArticle(target.id);
+    if (persisted.currentRevisionId !== target.currentRevisionId)
+        throw new Error(intl.formatMessage({ id: "views.translationRefreshFailed" }));
+
     if (await workspace.getArticleContent(target) !== persisted.currentRevision.content || persisted.draft)
         throw new Error(intl.formatMessage({ id: "views.translationRefreshDraft" }));
 
@@ -115,26 +118,28 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
     const { notifyError } = useNotifications();
     const [translationResults, setTranslationResults] = useState<TranslationResult[]>([]);
     const selectedArticleId = workspace.selectedArticle?.id;
+    const currentContext = useRef({ workspace, translationResults });
+    currentContext.current = { workspace, translationResults };
 
     const retainTranslation = useCallback((result: TranslationResult) => {
-        setTranslationResults((current) => [...current.filter((item) => item.articleId !== result.articleId || item.value.metadata.targetLanguage !== result.value.metadata.targetLanguage), result]);
+        setTranslationResults((current) => [...current.filter((item) => !result.value.editorialArtifactId || item.value.editorialArtifactId !== result.value.editorialArtifactId), { ...result, value: { ...result.value, resultId: result.value.editorialArtifactId, createdAt: new Date().toISOString() } }]);
     }, []);
 
     const replaceTranslations = useCallback((articleId: string, messages: readonly AssistantMessage[] | undefined) => {
         const completed = (messages ?? []).flatMap((message) => message.status === "completed" && message.translation && message.baseRevisionId
-            ? [{ articleId, baseRevisionId: message.baseRevisionId, value: { ...message.translation, editorialArtifactId: message.editorialArtifactId } }]
+            ? [{ articleId, baseRevisionId: message.baseRevisionId, value: { ...message.translation, editorialArtifactId: message.editorialArtifactId, resultId: message.editorialArtifactId ?? message.id, createdAt: message.createdAt } }]
             : []);
-        const translations = [...new Map(completed.map((result) => [result.value.metadata.targetLanguage, result])).values()];
+        const translations = [...new Map(completed.map((result) => [result.value.resultId, result])).values()];
         setTranslationResults((current) => [...current.filter((result) => result.articleId !== articleId), ...translations]);
     }, []);
 
     const translations = translationResults.filter((result) => result.articleId === selectedArticleId);
     const translationStale = translations.some((result) => result.baseRevisionId !== workspace.selectedArticle?.currentRevisionId);
 
-    const createTranslation = useCallback(async (targetLanguage: string, target?: ArticleSummary) => {
+    const createTranslation = useCallback(async (resultId: string, target?: ArticleSummary) => {
         const article = workspace.selectedArticle;
-        const translationResult = translations.find((result) => result.value.metadata.targetLanguage === targetLanguage);
-        if (!article || !translationResult || translationResult.baseRevisionId !== article.currentRevisionId)
+        const translationResult = translations.find((result) => (result.value.resultId ?? result.value.editorialArtifactId) === resultId);
+        if (!article || !translationResult || translationResult.baseRevisionId !== article.currentRevisionId || workspace.content !== article.currentRevision.content)
             return;
 
         const translation = translationResult.value.metadata;
@@ -146,6 +151,9 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
             }
 
             const { defaultProfileId: configuredDefaultProfile } = await client.getPublishingSettings();
+            if (!translationStillCurrent(currentContext.current.workspace, currentContext.current.translationResults, translationResult))
+                throw new Error(intl.formatMessage({ id: "workspace.createTranslationFailed" }));
+
             let publishingProfileId: PublishLimitProfileId = defaultPublishLimitProfileId;
             if (isPublishLimitProfileId(configuredDefaultProfile))
                 publishingProfileId = configuredDefaultProfile;
@@ -160,7 +168,7 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
                 publishingProfileId,
                 sourceArticleId: article.id,
                 sourceRevisionId: translationResult.baseRevisionId,
-                provenance: { kind: "accepted-translation", targetLanguage, ...(translationResult.value.editorialArtifactId ? { editorialArtifactId: translationResult.value.editorialArtifactId } : {}) },
+                provenance: { kind: "accepted-translation", targetLanguage: translation.targetLanguage, ...(translationResult.value.editorialArtifactId ? { editorialArtifactId: translationResult.value.editorialArtifactId } : {}) },
             });
         } catch (error) {
             notifyError(error, { fallbackMessage: intl.formatMessage({ id: target ? "views.translationRefreshFailed" : "workspace.createTranslationFailed" }) });
@@ -168,9 +176,9 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
         }
     }, [client, intl, notifyError, translations, workspace]);
 
-    const rejectTranslation = useCallback(async (targetLanguage: string) => {
+    const rejectTranslation = useCallback(async (resultId: string) => {
         const article = workspace.selectedArticle;
-        const translationResult = translations.find((result) => result.value.metadata.targetLanguage === targetLanguage);
+        const translationResult = translations.find((result) => (result.value.resultId ?? result.value.editorialArtifactId) === resultId);
         if (!article || !translationResult?.value.editorialArtifactId)
             return;
 
@@ -186,6 +194,14 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
         retainTranslation,
         replaceTranslations
     };
+}
+
+
+function translationStillCurrent(workspace: ArticleWorkspaceState, results: readonly TranslationResult[], result: TranslationResult): boolean {
+    return workspace.selectedArticle?.id === result.articleId
+        && workspace.selectedArticle.currentRevisionId === result.baseRevisionId
+        && workspace.content === workspace.selectedArticle.currentRevision.content
+        && results.some((item) => item.articleId === result.articleId && item.value.resultId === result.value.resultId && item.value.editorialArtifactId === result.value.editorialArtifactId);
 }
 
 

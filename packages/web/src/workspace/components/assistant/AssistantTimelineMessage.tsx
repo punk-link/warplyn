@@ -124,7 +124,7 @@ function getViewLabel(view: AssistantView, intl: Intl): string {
 }
 
 
-function AuthorMessageContent({ visible, content, selectionText, skillOffset, skillId, skillNames, intl }: { visible: boolean; content: string; selectionText?: string; skillOffset?: number; skillId?: string; skillNames: ReadonlyMap<string, string>; intl: Intl }) {
+function AuthorMessageContent({ visible, content, selectionText, skillOffset, skillId, targetLanguage, skillNames, intl }: { visible: boolean; content: string; selectionText?: string; skillOffset?: number; skillId?: string; targetLanguage?: string; skillNames: ReadonlyMap<string, string>; intl: Intl }) {
     if (!visible || (!content && !selectionText && skillOffset === undefined))
         return null;
 
@@ -134,6 +134,7 @@ function AuthorMessageContent({ visible, content, selectionText, skillOffset, sk
         </span>}
         {skillOffset === undefined ? content : <>{content.slice(0, skillOffset)}
             <span className="mx-1 inline-flex h-5 items-center align-middle rounded-full border border-brand/45 bg-surface-raised px-1.5 text-xs font-semibold text-brand">{skillId && getSkillLabel(skillId, intl, skillNames)}</span>
+            {skillId === BUILT_IN_SKILL.TRANSLATION && targetLanguage && <>{intl.formatMessage({ id: "assistant.translationTarget" }, { language: targetLanguage })}{content.slice(skillOffset) && " "}</>}
             {content.slice(skillOffset)}
         </>}
     </p>;
@@ -240,7 +241,7 @@ export function AssistantTimelineMessage({ message, factCheckClaims, openView, o
     return <article className={authorMessage ? "group ml-6 mt-2" : "p-0"} aria-label={authorMessage ? label : undefined}>
         <div className={authorMessage ? "rounded-panel border border-brand/45 bg-brand-soft p-2" : undefined}>
             {!authorMessage && <p className="text-xs font-semibold text-muted">{label}</p>}
-            <AuthorMessageContent visible={authorMessage} content={messageContent} selectionText={selectionText} skillOffset={skillOffset} skillId={skillId} skillNames={skillNames} intl={intl} />
+            <AuthorMessageContent visible={authorMessage} content={messageContent} selectionText={selectionText} skillOffset={skillOffset} skillId={skillId} targetLanguage={message.targetLanguage} skillNames={skillNames} intl={intl} />
             <AssistantMessageContent message={message} visible={!authorMessage} content={messageContent} handoffOwnsContent={handoffOwnsContent} />
             {message.editCandidate?.target === "selection" && <div className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.editOriginal" })}<pre className="max-h-32 overflow-auto whitespace-pre-wrap text-sm text-ink">{message.editCandidate.original}</pre></div>}
             {message.editCandidate && <div className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.editReplacement" })}<pre className="max-h-52 overflow-auto whitespace-pre-wrap rounded-control border border-border bg-surface-raised p-2 text-sm text-ink">{message.editCandidate.replacement}</pre></div>}

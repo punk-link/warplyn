@@ -37,6 +37,7 @@ function getAssistantIdentityFields(row: Row, role: AssistantMessageRole, kind: 
 
 function getAssistantRequestFields(row: Row): Partial<AssistantMessage> {
     return {
+        ...(typeof row.request_target_language === "string" ? { targetLanguage: row.request_target_language } : {}),
         ...(row.request_skill_source === "explicit" || row.request_skill_source === "inferred" ? { skillSource: row.request_skill_source } : {}),
         ...(row.response_kind === null ? {} : { responseKind: String(row.response_kind) as AssistantMessage["responseKind"] }),
         ...(row.request_base_revision_id === null || row.request_base_revision_id === undefined ? {} : { baseRevisionId: String(row.request_base_revision_id) }),

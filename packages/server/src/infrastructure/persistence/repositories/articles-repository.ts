@@ -7,7 +7,7 @@ import { deleteArticle, reorderPinnedArticles, setArticleArchived, setArticlePin
 import { throwArticleNotFound, throwInvalidArticleRequest, requireArticleTitle, throwRevisionNotFound, throwUnsupportedPublishingProfile } from "./article-repository-errors.js";
 import { mapArticleFromRow, articleSelect } from "./article-record-mappers.js";
 import { getArticleRevision, insertArticleRevision, listArticleRevisions } from "./article-revision-queries.js";
-import { acceptTranslationRefresh } from "./translation-refresh-acceptance.js";
+import { acceptTranslationRefresh, validateTranslationArtifact } from "./translation-refresh-acceptance.js";
 import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
 import { resolveAcceptedCorrections } from "./accepted-corrections-resolution.js";
 import { listArticleSummaries, listRevisionSummaries } from "./article-summary-queries.js";
@@ -29,7 +29,6 @@ export class ArticlesRepository {
         const articleId = input.id ?? createId();
         const revisionId = createId();
         const sourceArticleId = input.sourceArticleId;
-        this.validateSourceRevision(input.sourceRevisionId, sourceArticleId);
         this.insertInitialArticle(input, { articleId, revisionId, sourceArticleId, language, timestamp });
 
         return this.getArticle(articleId)!;
@@ -49,12 +48,26 @@ export class ArticlesRepository {
     private insertInitialArticle(input: CreateArticleInput, values: { articleId: string; revisionId: string; sourceArticleId: string | undefined; language: CreateArticleInput["language"]; timestamp: string }): void {
         this.database.exec("BEGIN IMMEDIATE;");
         try {
+            this.validateSourceRevision(input.sourceRevisionId, values.sourceArticleId);
+            this.validateAcceptedTranslation(input);
             this.insertArticleRows(input, values);
             this.database.exec("COMMIT;");
         } catch (error) {
             this.database.exec("ROLLBACK;");
             throw error;
         }
+    }
+
+
+    private validateAcceptedTranslation(input: CreateArticleInput): void {
+        if (input.provenance?.kind !== "accepted-translation" || input.provenance.editorialArtifactId === undefined)
+            return;
+
+        const source = input.sourceArticleId && this.getArticle(input.sourceArticleId);
+        if (!source || input.sourceRevisionId !== source.currentRevisionId)
+            throwInvalidArticleRequest();
+
+        validateTranslationArtifact(this.database, source, input.provenance.editorialArtifactId, input.content, input.language);
     }
 
 

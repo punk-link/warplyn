@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Article, GeneralSettings, PublishLimitProfile } from "@skladno/shared";
+import type { Article, ArticleRevisionSummary, GeneralSettings, PublishLimitProfile } from "@skladno/shared";
 import type { ArticleRevisionsState } from "../state/article-revisions-state.js";
 import type { ArticleWorkspaceState } from "../state/article-workspace-state.js";
 import type { EditorialProposalState } from "../state/editorial-proposal-state.js";
@@ -24,6 +24,7 @@ interface WorkspaceViewContent {
     corpus: StyleCorpusState;
     generalSettings: GeneralSettings;
     checkingClaimCount?: number;
+    requestActive?: boolean;
     publishProfile: PublishLimitProfile;
     publishProfileLabel: string;
 }
@@ -32,7 +33,7 @@ interface WorkspaceViewContent {
 interface WorkspaceViewActions {
     articleFiles?: ArticleFilesState;
     runFactCheck: () => void;
-    runTranslation: () => void;
+    runTranslation: (languages: readonly string[]) => void;
     rejectTranslation?: (targetLanguage: string) => Promise<void>;
     onSelectionChange?: (value: AssistantSelectionSnapshot | undefined) => void;
     assistantSelection?: string;
@@ -55,6 +56,13 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
     const { proposalWarningsDismissed, dismissProposalWarnings, openWrite, openAssistant, selectedTranslationLanguages, setSelectedTranslationLanguage } = navigation;
     const renderPanel = (children: ReactNode) => <section data-focus-area={view === "write" ? undefined : "article-editor"} role="tabpanel" id={`workspace-panel-${view}`} aria-labelledby={`workspace-tab-${view}`} className={panelClassName(view)}>{children}</section>;
     const articleRevisions = revisions.revisions.length ? revisions.revisions : [article.currentRevision];
+    const translationRevisions: ArticleRevisionSummary[] = articleRevisions.map((revision) => {
+        if (!("content" in revision))
+            return revision;
+
+        const { content, ...summary } = revision;
+        return { ...summary, characterCount: Array.from(content).length };
+    });
 
     switch (view) {
         case "write":
@@ -76,7 +84,7 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
             return renderPanel(<StyleProfileView data={{ corpus: corpus.corpus, findings: editorial.styleReview, findingsStale: editorial.styleReviewStale, articleId: article.id, revisions: revisions.revisions, generalSettings }} actions={{ add: corpus.add, remove: corpus.remove, setIncluded: corpus.setIncluded, setRules: corpus.setRules, rebuild: corpus.rebuild, getArticleRules: corpus.getArticleRules, setArticleRules: corpus.setArticleRules, snapshotArticleRevision: corpus.snapshotArticleRevision }} />);
 
         case "translations":
-            return renderPanel(<TranslationsView data={{ article, sourceArticle: workspace.sourceArticle, linkedTranslations: workspace.articles.filter((item) => item.sourceArticleId === article.id), translations: editorial.translations, stale: Boolean(article.sourceArticleId && workspace.articles.find((item) => item.id === article.sourceArticleId)?.currentRevisionId !== article.sourceRevisionId), translationLanguages: generalSettings.defaultTranslationLanguages.filter((language) => language !== article.language), publishProfile, publishProfileLabel, selectedTargetLanguage: selectedTranslationLanguages[article.id] }} actions={{ create: editorial.createTranslation, reject: rejectTranslation ?? editorial.rejectTranslation, edit: openWrite, openArticle: workspace.selectArticle, selectTargetLanguage: (targetLanguage) => setSelectedTranslationLanguage(article.id, targetLanguage), translate: runTranslation }} />);
+            return renderPanel(<TranslationsView key={article.id} data={{ article, sourceContent: workspace.content, requestActive: content.requestActive, generalSettings, revisionNumbers: Object.fromEntries(articleRevisions.map((revision, index) => [revision.id, index + 1])), revisions: translationRevisions, sourceArticle: workspace.sourceArticle, linkedTranslations: workspace.articles.filter((item) => item.sourceArticleId === article.id), translations: editorial.translations, stale: Boolean(article.sourceArticleId && workspace.articles.find((item) => item.id === article.sourceArticleId)?.currentRevisionId !== article.sourceRevisionId), translationLanguages: generalSettings.defaultTranslationLanguages.filter((language) => language !== article.language), publishProfile, publishProfileLabel, selectedTargetLanguage: selectedTranslationLanguages[article.id] }} actions={{ create: editorial.createTranslation, reject: rejectTranslation ?? editorial.rejectTranslation, edit: openWrite, openArticle: workspace.selectArticle, selectTargetLanguage: (targetLanguage) => setSelectedTranslationLanguage(article.id, targetLanguage), translate: runTranslation }} />);
 
         default: return null;
     }

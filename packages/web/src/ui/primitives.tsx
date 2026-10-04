@@ -101,7 +101,7 @@ export function Badge({ children, className, variant = "soft", compact = false, 
         <span
             {...props}
             className={joinClassNames(
-                "inline-flex items-center rounded-full font-semibold",
+                "inline-flex select-none items-center rounded-full font-semibold",
                 variant === "solid" ? "bg-brand text-on-brand" : tone ? toneClasses[tone] : "bg-brand-soft text-brand",
                 compact ? "size-4 shrink-0 justify-center p-0 text-badge" : "gap-1 px-2 py-0.5 text-xs leading-4",
                 className,

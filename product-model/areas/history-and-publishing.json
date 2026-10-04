@@ -52,9 +52,9 @@
             "area": "Translations",
             "title": "Linked translation Articles with source freshness protection",
             "status": "implemented",
-            "owners": ["packages/web/src/workspace/views/TranslationsView.tsx", "packages/server/src/application/editorial/translation/translation.ts", "packages/server/src/infrastructure/persistence/repositories/articles-repository.ts"],
-            "contract": "Translations are independently recoverable linked Articles. The workspace starts configured target-language requests through Assistant messages, restores the latest completed proposal per language, and supports language navigation. Each completed proposal contains the translated title and body; source and translation titles remain independent. Source Articles list linked translations; each translation links back and identifies the source Revision. Source and translation appear with full language names side by side, with paragraph and Markdown-list alignment where possible, plus visible protected-span validation and stale-source warnings. A proposal with changed or missing protected content cannot create a translation Article. The selected translation shows advisory character guidance for the Article's selected publishing profile. Created translations open in the editor for author-controlled Drafts and Revisions; stale proposals cannot create them. Authors can explicitly reject generated output after confirmation, which removes it from approval without changing the source or accepted translation history. Freshness is displayed independently for each accepted translation and selected language proposal. An explicitly confirmed refresh accepts a validated completed source artifact into a named existing translation, appending a Revision and updating its source link atomically while preserving its title, siblings, and prior history. Source or target conflicts, retained target Drafts, rejected artifacts, and invalid or mismatched output prevent refresh. Restoring earlier translation text also restores its source snapshot.",
-            "persistence": "Completed and rejected translation proposals persist in local Assistant artifacts; Source Article and Revision linkage persist on the independently recoverable translation Article."
+            "owners": ["packages/web/src/workspace/views/TranslationsView.tsx", "packages/web/src/workspace/state/editorial-results-state.ts", "packages/server/src/application/editorial/translation/translation.ts", "packages/server/src/infrastructure/persistence/repositories/articles-repository.ts", "packages/server/src/infrastructure/persistence/repositories/assistant-repository.ts", "packages/server/src/infrastructure/persistence/repositories/translation-refresh-acceptance.ts"],
+            "contract": "Translations are independently recoverable linked Articles. The workspace confirms selected target-language requests through Assistant messages, restores all completed unrejected proposals by identity, and supports language and result navigation. Repeated same-language generation on an unchanged source keeps earlier results and the source Revision. Each completed proposal contains the translated title and body; source and translation titles remain independent. Source Articles navigate linked translations through language tabs and Edit; each translation links back and identifies the source Revision. Edit opens an existing Article instead of creating a same-language duplicate. Edit, Update, and Reject are grouped above the tabs; the target name appears only in Update confirmation. Source and translation appear with full language names side by side, with paragraph and Markdown-list alignment where possible, plus visible protected-span validation and stale-source warnings. A proposal with changed or missing protected content cannot create a translation Article. The selected translation shows advisory character guidance for the Article's selected publishing profile. Created translations open in the editor for author-controlled Drafts and Revisions; stale proposals cannot create them. Authors can explicitly reject an exact generated result after confirmation, which removes only that result from approval without changing the source, sibling results, or accepted translation history. Freshness is displayed for the selected proposal and when an accepted translation is opened. An explicitly confirmed refresh accepts a validated completed source artifact into a named existing translation, appending a Revision and updating its source link atomically while preserving its title, siblings, and prior history. Source or target conflicts, retained target Drafts, rejected artifacts, and invalid or mismatched output prevent refresh. Restoring earlier translation text also restores its source snapshot.",
+            "persistence": "All completed and rejected translation proposals persist in local Assistant artifacts. Repeated same-language results recover by stable artifact or message identity, with generation time and source Revision. Rejecting one result preserves siblings and accepted history; Source Article and Revision linkage persist on the independently recoverable translation Article."
         },
         {
             "id": "history-and-publishing.publishing-copy",
@@ -186,6 +186,26 @@
             "expected": ["The chosen run shows only its own findings, check dates, and source dates.", "Historical runs are read-only and rechecking is explicit."],
             "forbidden": ["Historical findings creating corrections or modifying Article text."],
             "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/FactCheckView.test.tsx" }
+        },
+        {
+            "id": "history-and-publishing.translation-result-acceptance",
+            "title": "Exact translation artifact acceptance preserves siblings and rejects removed results",
+            "capabilityIds": ["history-and-publishing.translations"],
+            "preconditions": ["Two same-Revision and same-language artifacts are completed."],
+            "event": "The Author creates an independent Article or refreshes a target using an older result, then rejects its sibling.",
+            "expected": ["Accepted content and provenance use the exact artifact. Target history and sibling proposals remain preserved. Rejected artifacts, including legacy message-only rejection, cannot create or refresh Articles."],
+            "forbidden": ["Acceptance of rejected content or rewriting accepted history."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/infrastructure/persistence/repositories.translation-results.test.ts" }
+        },
+        {
+            "id": "history-and-publishing.translation-results-recovery",
+            "title": "Repeated same-language proposals recover independently",
+            "capabilityIds": ["history-and-publishing.translations"],
+            "preconditions": ["Two completed results exist for the same source Revision and language."],
+            "event": "The Workspace reloads and the Author rejects one selected result.",
+            "expected": ["Both results are selectable after reload. Rejection removes only the named artifact and preserves its sibling."],
+            "forbidden": ["Collapsing completed proposals by language or rewriting accepted history."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/EditorialWorkspace.fresh-translation.test.tsx" }
         },
         {
             "id": "history-and-publishing.translation-stale-source",

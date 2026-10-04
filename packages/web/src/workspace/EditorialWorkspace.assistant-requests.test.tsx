@@ -126,7 +126,7 @@ describe("Editorial Workspace assistant requests", () => {
         render(<App client={client} />);
 
         expect(await screen.findByText("Borrador traducido")).toBeTruthy();
-        await user.click(screen.getByRole("button", { name: "Edit Spanish translation" }));
+        await user.click(screen.getByRole("button", { name: "Edit" }));
         expect(client.createArticle).toHaveBeenCalledWith(expect.objectContaining({
             title: "TÃ­tulo traducido",
             content: "Borrador traducido",
@@ -263,6 +263,8 @@ describe("Editorial Workspace assistant requests", () => {
 
         await waitFor(() => expect(client.streamAssistantRequest).toHaveBeenCalledTimes(2));
         expect(vi.mocked(client.streamAssistantRequest).mock.calls.map(([, request]) => request.kind === "new" ? request.scope.baseRevisionId : undefined)).toEqual([promoted.id, promoted.id]);
+        expect(screen.getByText("in Spanish")).toBeTruthy();
+        expect(screen.getByText("in German")).toBeTruthy();
         expect(client.saveArticleRevision).toHaveBeenCalledTimes(1);
         const signals = vi.mocked(client.streamAssistantRequest).mock.calls.map((call) => call[3]);
         expect(signals[0]).toBe(signals[1]);

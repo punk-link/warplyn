@@ -38,7 +38,7 @@ interface WorkspaceScreenContent {
 interface WorkspaceScreenActions {
     createBlank: () => Promise<unknown>;
     runFactCheck: () => void;
-    runTranslation: () => void;
+    runTranslation: (languages: readonly string[]) => void;
     rejectTranslation: (targetLanguage: string) => Promise<void>;
     openSettings: () => void;
     openModelSettings: () => void;
@@ -134,7 +134,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                 layout={{ collapsed: layout.assistantCollapsed, setCollapsed: layout.setAssistantCollapsed }} />,
             children: <>
                 {hasUsableAiConnection === false && <AiConnectionWarning openModelSettings={openModelSettings} />}
-                <ArticleWorkspace state={{ workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined }} actions={{ createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection: assistantSelection?.preview }} />
+                <ArticleWorkspace state={{ workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, requestActive: assistant.state === "streaming", checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined }} actions={{ createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection: assistantSelection?.preview }} />
                 {overlays}
             </>,
         }}

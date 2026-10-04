@@ -3,6 +3,7 @@ import { AlignedParagraphsIcon, SideBySideIcon } from "../../ui/icons.js";
 import { Button, IconButton } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import type { Translation } from "./translations-view-types.js";
+import type { ReactNode } from "react";
 
 
 interface TranslationsHeaderProps {
@@ -20,13 +21,15 @@ interface TranslationsHeaderProps {
     reject?: (targetLanguage: string) => Promise<void>;
     translate: () => void;
     startCreate: () => void;
+    openTranslation?: () => void;
+    update?: ReactNode;
     setDisplayMode: (mode: "side-by-side" | "aligned") => void;
     setRejectionLanguage: (language: string) => void;
     setRejectConfirmationOpen: (open: boolean) => void;
 }
 
 
-export function TranslationsHeader({ sourceArticle, translation, translationLanguages, translatedContent, publishingGuidance, protectedSpansValid, displayMode, creating, rejecting, stale, edit, reject, translate, startCreate, setDisplayMode, setRejectionLanguage, setRejectConfirmationOpen }: TranslationsHeaderProps) {
+export function TranslationsHeader({ sourceArticle, translation, translationLanguages, translatedContent, publishingGuidance, protectedSpansValid, displayMode, creating, rejecting, stale, edit, reject, translate, startCreate, openTranslation, update, setDisplayMode, setRejectionLanguage, setRejectConfirmationOpen }: TranslationsHeaderProps) {
     const intl = useIntl();
 
     return <header className="shrink-0">
@@ -48,12 +51,13 @@ export function TranslationsHeader({ sourceArticle, translation, translationLang
             </div>}
             <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
                 {sourceArticle && edit && <Button variant="secondary" onClick={edit}>{intl.formatMessage({ id: "views.editTranslation" })}</Button>}
-                {translation && <Button variant="secondary" state={creating ? "loading" : "default"} disabled={stale || creating || !protectedSpansValid} onClick={startCreate}>{intl.formatMessage({ id: "views.editTranslationLanguage" }, { language: translation.metadata.targetLanguage })}</Button>}
+                {!sourceArticle && (translation || openTranslation) && <Button variant="secondary" state={creating ? "loading" : "default"} disabled={creating || (!openTranslation && (stale || !protectedSpansValid))} onClick={openTranslation ?? startCreate}>{intl.formatMessage({ id: "views.editTranslation" })}</Button>}
+                {update}
                 {translation?.editorialArtifactId && reject && <Button variant="danger" disabled={creating || rejecting} onClick={() => {
                     setRejectionLanguage(translation.metadata.targetLanguage);
                     setRejectConfirmationOpen(true);
                 }}>{intl.formatMessage({ id: "views.rejectTranslation" })}</Button>}
-                <Button disabled={!translationLanguages.length} onClick={translate}>{intl.formatMessage({ id: "views.translate" })}</Button>
+                <Button onClick={translate}>{intl.formatMessage({ id: "views.translate" })}</Button>
             </div>
         </div>
     </header>;

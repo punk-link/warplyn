@@ -221,8 +221,8 @@
                 "packages/web/src/workspace/views/TranslationsView.tsx",
                 "packages/web/src/workspace/state/article-workspace-state.ts"
             ],
-            "contract": "A stale source blocks creation, and the completed translated title and text create an independent linked Article without overwriting its source Article. Freshness belongs to each selected language proposal, so a stale sibling does not block a fresh result. The selected latest completed translation per language is restored per Article when available, otherwise the latest available translation is shown. Source Articles show Current or Outdated for every linked translation. An Author may explicitly accept a reviewed proposal into a named existing translation as a new immutable Revision, preserving its title and history; source or target Revision changes, rejected or invalid output, mismatched language, and retained target Drafts block acceptance. Creating another translation remains available. An Author can confirm rejection of generated output, which removes it from pending approval without changing the source Article or accepted translation history.",
-            "persistence": "Independent Article with source Article and Revision linkage; selected translation language is a local workspace preference per Article.",
+            "contract": "New translation… confirms supported target languages, preselecting the viewed language or configured defaults. The dialog identifies the source Article and Revision, explains Draft promotion and preservation of earlier results, and requires renewed review if the source snapshot changes. Generation uses the whole Article. All completed unrejected proposals remain available, with one tab per language and a result selector identifying generation time and source Revision. Initial load selects the latest result for the preferred language; a new completion selects the new result, while failure or cancellation preserves selection. Freshness and protected-span validity belong to the selected result. Creation, refresh, and confirmed rejection target exact result identity. Rejection preserves sibling proposals and accepted history and falls back to another available result. A stale source blocks creation of an independent linked Article. The selected language provides context for grouped Edit, Update, and Reject actions. Edit opens its existing linked Article, including when the proposal is stale, or creates an Article only when no linked translation exists. No repeated linked-Article list or target dropdown appears in the workspace. An Author may explicitly accept a reviewed proposal into a named existing translation as a new immutable Revision, preserving its title and history; source or target Revision changes, rejected or invalid output, mismatched language, and retained target Drafts block acceptance. Update names the target in confirmation; previously created duplicates can be selected there.",
+            "persistence": "Independent Article with source Article and Revision linkage; completed results recover from Assistant messages and artifacts. Selected language is a local workspace preference per Article; older result selection is session-local.",
             "relatedCapabilityIds": ["history-and-publishing.translations", "editorial-workflows.translation-request"]
         },
         {
@@ -722,6 +722,26 @@
             "expected": ["Completed findings remain readable with an incomplete-run warning and a recheck action."],
             "forbidden": ["Unfinished claims presented as checked findings."],
             "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/FactCheckView.test.tsx" }
+        },
+        {
+            "id": "workspace.translations.confirm-generation",
+            "title": "New translation confirms supported targets and the source snapshot",
+            "capabilityIds": ["workspace.translations.linked-article"],
+            "preconditions": ["An Article is open in Translations."],
+            "event": "The Author cancels or confirms after the source changes.",
+            "expected": ["Cancellation starts no request. Changed source requires renewed review, active requests disable confirmation, and confirmation generates only selected languages."],
+            "forbidden": ["Duplicate generation or generation on opening the dialog."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/TranslationsView.results.test.tsx" }
+        },
+        {
+            "id": "workspace.translations.result-selection",
+            "title": "Several results in one language support exact-result actions",
+            "capabilityIds": ["workspace.translations.linked-article"],
+            "preconditions": ["Two completed results exist for the same language."],
+            "event": "The Author selects an older result, creates an Article, or confirms rejection after changing selection.",
+            "expected": ["Selected identity controls creation; rejection uses captured identity. Freshness is per result and removal falls back to another result."],
+            "forbidden": ["Acting on a sibling proposal or resetting selection after failed generation."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/TranslationsView.results.test.tsx" }
         },
         {
             "id": "workspace.translations.stale-source",

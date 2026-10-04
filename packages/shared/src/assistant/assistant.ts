@@ -143,6 +143,7 @@ export interface AssistantMessage {
     skillSource?: AssistantSkillSource;
     skillOffset?: number;
     selectionText?: string;
+    targetLanguage?: string;
     responseKind?: AssistantResponseKind;
     editorialArtifactId?: string;
     baseRevisionId?: string;

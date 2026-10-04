@@ -105,8 +105,9 @@ test("critical local-first author journeys use deterministic provider output", a
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toContain("Original fixture Article.");
 
     await page.getByRole("tab", { name: "Translations" }).click();
-    await page.getByRole("button", { name: "Translate" }).click();
-    await page.getByRole("button", { name: "Edit Spanish translation" }).click();
+    await page.getByRole("button", { name: "New translation…" }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "Generate Spanish translation" }).click();
+    await page.getByRole("button", { name: "Edit", exact: true }).click();
     await expect(page.getByText("Fixture Article — Spanish").first()).toBeVisible();
 
     await page.getByRole("button", { name: "Settings" }).click();
