@@ -198,6 +198,7 @@ export const messages = {
     "articleHeader.deleteConfirmationDescription": "Delete “{articleTitle}” and all of its Revisions and recoverable Drafts? This cannot be undone.",
     "articleHeader.deleteGroupConfirmationDescription": "Delete {count, plural, one {“{articleTitle}” (1 Article)} other {“{articleTitle}” and # Articles including translations}}, with all affected Drafts and Revision history? This cannot be undone.",
     "articleHeader.archiveArticle": "Archive Article",
+    "articleHeader.archived": "Archived",
     "articleHeader.unarchiveArticle": "Unarchive Article",
     "articleHeader.confirmDeleteArticle": "Delete Article",
     "articleHeader.workflow": "Suggested editorial workflow",

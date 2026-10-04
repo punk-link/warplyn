@@ -135,6 +135,27 @@ describe("ArticleLibraryPanel", () => {
     });
 
 
+    it.each(["source", "translation"])("keeps the archive expanded for selected archived Article %s", (selectedArticleId) => {
+        const archived = { ...source, archived: true };
+        const translation: Article = { ...archived, id: "translation", title: "Spanish edition", sourceArticleId: source.id };
+        const panel = (selected: string | undefined) => <IntlProvider locale="en" messages={messages}>
+            <ArticleLibraryPanel articles={[archived, translation]} selectedArticleId={selected} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+        </IntlProvider>;
+        const { rerender } = render(panel(selectedArticleId));
+        const archive = screen.getByRole("button", { name: "Archived (1)" });
+        expect(archive.getAttribute("aria-expanded")).toBe("true");
+        expect(screen.getByRole("button", { name: selectedArticleId === "source" ? /Mother Article/ : /Spanish edition/ }).getAttribute("aria-current")).toBe("page");
+        fireEvent.click(archive);
+        fireEvent.click(archive);
+        expect(archive.getAttribute("aria-expanded")).toBe("true");
+
+        rerender(panel(undefined));
+        expect(archive.getAttribute("aria-expanded")).toBe("false");
+        fireEvent.click(archive);
+        expect(archive.getAttribute("aria-expanded")).toBe("true");
+    });
+
+
     it("moves between Library controls with Up and Down without taking search editing keys", () => {
         render(<IntlProvider locale="en" messages={messages}>
             <ArticleLibraryPanel articles={[source]} selectedArticleId={source.id} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
