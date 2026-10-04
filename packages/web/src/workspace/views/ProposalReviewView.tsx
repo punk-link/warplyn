@@ -23,8 +23,8 @@ function renderHighlightedText(original: string, proposed: string) {
     let originalIndex = 0;
     let proposedIndex = 0;
 
-    // Swap inputs to retain highlighting's deletion-first tie rule.
-    for (const match of findSequenceMatches(proposedTokens, originalTokens)) {
+    const deletionFirstMatches = findSequenceMatches(proposedTokens, originalTokens);
+    for (const match of deletionFirstMatches) {
         appendChangedTokens(originalParts, originalTokens, originalIndex, match.proposalIndex);
         appendChangedTokens(proposedParts, proposedTokens, proposedIndex, match.baseIndex);
         originalParts.push({ changed: false, text: originalTokens[match.proposalIndex] });

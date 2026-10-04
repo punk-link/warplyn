@@ -128,14 +128,13 @@ for (const stage of ["replacement", "intent", "description"] as const) {
                 for await (const event of services.assistant.stream(request, new AbortController().signal))
                     assert.notEqual(event.type, "completed");
             })();
-            // Keep the broken implementation's probe bounded too.
-            const verdict = completion.then(() => "completed", (error: unknown) => error);
+            const boundedVerdict = completion.then(() => "completed", (error: unknown) => error);
             await entered;
             context.mock.timers.tick(120_000);
             await new Promise<void>((resolve) => setImmediate(resolve));
             const aborted = providerSignal?.aborted;
             release();
-            const result = await verdict;
+            const result = await boundedVerdict;
             context.mock.timers.reset();
             assert.equal(aborted, true, "The active completion check must be aborted by the deadline");
             assert.ok(result && typeof result === "object" && "code" in result);

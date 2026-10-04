@@ -13,7 +13,5 @@ export async function beginBestEffortTelemetryCapture(client: DesktopTelemetryCl
 export function captureBestEffortTelemetry(client: DesktopTelemetryClient | undefined, event: TelemetryEvent, generation: number | undefined): void {
     try {
         void client?.captureTelemetry(event, generation).catch(() => undefined);
-    } catch {
-        // Telemetry must not affect editorial work.
-    }
+    } catch { }
 }

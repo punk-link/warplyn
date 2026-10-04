@@ -218,12 +218,10 @@ export class AssistantCapabilityLoop {
     }
 
 
-    finishPendingSkill(requestId: string): void {
+    finishPendingSkillBestEffort(requestId: string): void {
         try {
             this.dependencies.authorSkills?.finishChange(requestId);
-        } catch {
-            // Startup recovery reads the SQLite request status and removes the pending record.
-        }
+        } catch { }
     }
 
 

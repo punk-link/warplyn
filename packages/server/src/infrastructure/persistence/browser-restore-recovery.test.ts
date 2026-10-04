@@ -15,6 +15,7 @@ test("startup rolls back an interrupted database and Skill restore", async () =>
     const database = openDatabase(databasePath);
     const recovery = join(root, "recovery-test");
     const skillPath = join(root, "skills", "clarity", "SKILL.md");
+    let databaseIsOpen = true;
     try {
         mkdirSync(recovery);
         mkdirSync(join(root, "skills", "clarity"), { recursive: true });
@@ -27,6 +28,7 @@ test("startup rolls back an interrupted database and Skill restore", async () =>
         prepareBrowserRestoreRecovery(databasePath, recovery);
 
         database.close();
+        databaseIsOpen = false;
         rmSync(databasePath);
         writeFileSync(databasePath, "interrupted database");
         writeFileSync(skillPath, "interrupted skill");
@@ -37,12 +39,8 @@ test("startup rolls back an interrupted database and Skill restore", async () =>
         restored.close();
         assert.equal(recoverPendingBrowserRestore(databasePath), false);
     } finally {
-        try {
+        if (databaseIsOpen)
             database.close();
-        } catch {
-            // Already closed before the simulated crash.
-        }
-
         rmSync(root, { recursive: true, force: true });
     }
 });

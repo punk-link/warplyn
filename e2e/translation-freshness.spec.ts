@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { defaultGeneralSettings } from "@skladno/shared";
 
 
-test("parallel translations become stale after a source edit and refresh preserves their history", async ({ page }) => {
+test("parallel translations become stale after a source edit and refresh preserves existing history", async ({ page }) => {
     const service = "http://127.0.0.1:8787";
     const configured = await page.request.put(`${service}/api/settings/general`, { data: { ...defaultGeneralSettings, defaultTranslationLanguages: ["es", "de"] } });
     expect(configured.ok()).toBe(true);
@@ -50,7 +50,6 @@ test("parallel translations become stale after a source edit and refresh preserv
     await page.getByRole("tab", { name: /Translations/ }).click();
     await expect(page.getByText("Current", { exact: true })).toHaveCount(1);
     await expect(page.getByText("Outdated", { exact: true })).toHaveCount(1);
-    // An unchanged source can still create another result without replacing the accepted Article.
     await page.getByRole("button", { name: "Translate", exact: true }).click();
     await page.getByRole("tab", { name: "Spanish", exact: true }).click();
     await page.getByRole("button", { name: "Edit Spanish translation", exact: true }).click();

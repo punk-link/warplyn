@@ -85,9 +85,9 @@ export function captureAssistantSelection(editor: LexicalEditor, selection: Rang
             cursor.insertText(text);
         };
 
-        // Insert from right to left so the start point remains valid in its original node.
-        insertAt(boundaries[1], endMarker);
-        insertAt(boundaries[0], startMarker);
+        const [startBoundary, endBoundary] = boundaries;
+        insertAt(endBoundary, endMarker);
+        insertAt(startBoundary, startMarker);
         const markdown = exportArticleMarkdown();
         const start = markdown.indexOf(startMarker);
         const end = markdown.indexOf(endMarker);

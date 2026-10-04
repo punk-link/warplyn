@@ -41,21 +41,25 @@ async function loadRenderer(window: BrowserWindow): Promise<void> {
 
     const maxFetchAttempts = 40;
     for (let attempt = 0; attempt < maxFetchAttempts; attempt += 1) {
-        try {
-            const response = await fetch(rendererUrl);
-            if (response.ok) {
-                await window.loadURL(rendererUrl);
+        if (await isRendererDevelopmentServerReady()) {
+            await window.loadURL(rendererUrl);
 
-                return;
-            }
-        } catch {
-            // Vite may still be starting.
+            return;
         }
 
         await new Promise((resolve) => setTimeout(resolve, 250));
     }
 
     throw new Error(`Could not load the Warplyn renderer at ${rendererUrl}.`);
+}
+
+
+async function isRendererDevelopmentServerReady(): Promise<boolean> {
+    try {
+        return (await fetch(rendererUrl)).ok;
+    } catch {
+        return false;
+    }
 }
 
 

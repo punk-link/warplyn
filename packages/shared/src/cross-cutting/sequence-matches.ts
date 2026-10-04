@@ -16,14 +16,13 @@ function matchingMasks(values: readonly string[], ignoreBlankLines: boolean): Ma
 }
 
 
-function suffixMatchRows(base: readonly string[], proposal: readonly string[], ignoreBlankLines: boolean): bigint[] {
+function suffixLcsLengthBitRows(base: readonly string[], proposal: readonly string[], ignoreBlankLines: boolean): bigint[] {
     const masks = matchingMasks(proposal, ignoreBlankLines);
     const rows = Array<bigint>(base.length + 1).fill(0n);
     for (let index = base.length - 1; index >= 0; index -= 1) {
-        const previous = rows[index + 1];
-        const matches = previous | (masks.get(base[index]) ?? 0n);
-        // Each set bit records a one-point increase in the reversed-prefix LCS.
-        rows[index] = matches & ~(matches - ((previous << 1n) | 1n));
+        const suffixLcsLengthBits = rows[index + 1];
+        const matchingProposalIndexBits = suffixLcsLengthBits | (masks.get(base[index]) ?? 0n);
+        rows[index] = matchingProposalIndexBits & ~(matchingProposalIndexBits - ((suffixLcsLengthBits << 1n) | 1n));
     }
 
     return rows;
@@ -42,7 +41,7 @@ function countMatches(row: bigint, length: number): number {
 
 
 function collectSequenceMatches(base: readonly string[], proposal: readonly string[], ignoreBlankLines: boolean): SequenceMatch[] {
-    const rows = suffixMatchRows(base, proposal, ignoreBlankLines);
+    const rows = suffixLcsLengthBitRows(base, proposal, ignoreBlankLines);
     const matches: SequenceMatch[] = [];
     let baseIndex = 0;
     let proposalIndex = 0;
@@ -60,11 +59,11 @@ function collectSequenceMatches(base: readonly string[], proposal: readonly stri
 
         const below = countMatches(rows[baseIndex + 1], proposal.length - proposalIndex);
         const bit = (rows[baseIndex] >> BigInt(proposal.length - proposalIndex - 1)) & 1n;
-        const afterAddition = remaining - Number(bit);
-        // Preserve the existing Proposal alignment: additions win equal-length ties.
-        if (afterAddition >= below) {
+        const matchesAfterProposalAddition = remaining - Number(bit);
+        const proposalAdditionKeepsLongestAlignment = matchesAfterProposalAddition >= below;
+        if (proposalAdditionKeepsLongestAlignment) {
             proposalIndex += 1;
-            remaining = afterAddition;
+            remaining = matchesAfterProposalAddition;
         } else {
             baseIndex += 1;
             remaining = below;

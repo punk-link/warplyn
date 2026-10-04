@@ -32,7 +32,6 @@ export function TranslationRefreshControl({ translation, linkedTranslations, sta
             await create(translation.metadata.targetLanguage, target);
             setTarget(undefined);
         } catch {
-            // The application action reports the error; keep the review available.
         } finally {
             setApplying(false);
         }

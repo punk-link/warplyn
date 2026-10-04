@@ -183,8 +183,8 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
         ...(skillOffset === undefined ? {} : { skillOffset }),
         ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}),
     }, (event) => {
-        // Parallel review streams stay temporary; their durable replies reload after the batch.
-        if (!batch || event.type !== ASSISTANT_EVENT.TEXT_DELTA)
+        const shouldHandleEventOutsideParallelReviewStream = !batch || event.type !== ASSISTANT_EVENT.TEXT_DELTA;
+        if (shouldHandleEventOutsideParallelReviewStream)
             options.handleAssistantEvent(event, article.id, revision.id, streamedId);
     }, controller.signal);
 }

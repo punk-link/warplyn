@@ -288,7 +288,7 @@ export class AssistantService {
         const completion = this.persistAssistantCompletion(request, selectedEvent, createdSkill);
 
         if (createdSkill)
-            this.capabilityLoop.finishPendingSkill(request.requestId);
+            this.capabilityLoop.finishPendingSkillBestEffort(request.requestId);
 
         yield { type: ASSISTANT_EVENT.COMPLETED, requestId: request.requestId, ...completion };
     }
@@ -332,7 +332,7 @@ export class AssistantService {
         if (createdSkill)
             this.capabilityLoop.rollbackCreatedSkill(createdSkill);
 
-        this.capabilityLoop.finishPendingSkill(requestId);
+        this.capabilityLoop.finishPendingSkillBestEffort(requestId);
     }
 
 

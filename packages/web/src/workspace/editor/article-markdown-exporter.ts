@@ -3,7 +3,6 @@ import type { Transformer } from "@lexical/markdown";
 import { articleMarkdownTransformers, exportArticleMarkdown } from "./markdown.js";
 
 
-/** Reuse unchanged top-level blocks while Lexical still owns Markdown formatting. */
 export function createArticleMarkdownExporter() {
     const blocks = new Map<NodeKey, string>();
     const transformers = articleMarkdownTransformers.map((transformer): Transformer => {
@@ -17,7 +16,6 @@ export function createArticleMarkdownExporter() {
             if (cached !== undefined)
                 return cached;
 
-            // Plain paragraphs use Lexical's normal child exporter.
             const result = topLevel && $isParagraphNode(node) ? traverseChildren(node) : exportNode(node, traverseChildren, selection);
             if (topLevel && result !== null)
                 blocks.set(node.getKey(), result);
@@ -30,8 +28,8 @@ export function createArticleMarkdownExporter() {
 
     return {
         invalidate: (dirtyElements: ReadonlyMap<NodeKey, boolean>) => {
-            // Restoring an EditorState (including undo) dirties only the root.
-            if (dirtyElements.size === 1 && dirtyElements.has("root")) {
+            const onlyRootWasDirtied = dirtyElements.size === 1 && dirtyElements.has("root");
+            if (onlyRootWasDirtied) {
                 blocks.clear();
                 return;
             }

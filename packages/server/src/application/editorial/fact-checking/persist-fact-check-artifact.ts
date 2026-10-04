@@ -20,8 +20,7 @@ export function persistFactCheckArtifact(input: {
         reviewedRevisionId: input.revisionId,
         createdAt: checkedAt,
         findings: input.factCheck.findings.map((finding) => {
-            // Legacy claim hashes were shared across Articles; only locally assigned UUIDs are durable identities.
-            const factId = finding.factId && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(finding.factId) ? finding.factId : randomUUID();
+            const factId = isDurableFactId(finding.factId) ? finding.factId : randomUUID();
             return {
                 ...finding,
                 factId,
@@ -50,6 +49,11 @@ export function persistFactCheckArtifact(input: {
     });
 
     return { artifactId: artifact.id, factCheck };
+}
+
+
+function isDurableFactId(factId: string | undefined): factId is string {
+    return Boolean(factId && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(factId));
 }
 
 

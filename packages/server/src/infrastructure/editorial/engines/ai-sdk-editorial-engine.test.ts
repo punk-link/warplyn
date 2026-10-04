@@ -152,7 +152,6 @@ test("fact-check workflow passes the packaged instructions to its provider", asy
 test("translation constrains the language metadata to the requested value", async () => {
     const model = new MockLanguageModelV3({
         doGenerate: async ({ responseFormat }) => {
-            // A free string lets the model return "español" instead of "Spanish".
             const schema = JSON.stringify(responseFormat);
             assert.match(schema, /"const":"Spanish"|"enum":\["Spanish"\]/);
             return {

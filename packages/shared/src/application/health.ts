@@ -13,7 +13,6 @@ export interface HealthResponse {
 }
 
 
-/** The narrow interface UI code depends on for application operations. */
 export interface ApplicationClient {
     getHealth(): Promise<HealthResponse>;
 }

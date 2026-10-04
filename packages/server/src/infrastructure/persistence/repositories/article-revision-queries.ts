@@ -43,10 +43,14 @@ export function insertArticleRevision(database: SqliteDatabase, revision: {
 
 
 export function restoreTranslationSourceRevision(database: SqliteDatabase, historical: ArticleRevision): void {
-    // Older Revisions predate source snapshots. The first later refresh retains their original source link.
-    const sourceRevisionId = historical.provenance.sourceRevisionId ?? database.prepare("SELECT json_extract(provenance_json, '$.previousSourceRevisionId') source_revision_id FROM article_revisions WHERE article_id = ? AND rowid > (SELECT rowid FROM article_revisions WHERE id = ?) AND json_extract(provenance_json, '$.previousSourceRevisionId') IS NOT NULL ORDER BY rowid LIMIT 1")
-        .get(historical.articleId, historical.id)?.source_revision_id;
+    const sourceRevisionId = historical.provenance.sourceRevisionId ?? findFirstLaterLegacySourceRevision(database, historical);
 
     if (typeof sourceRevisionId === "string")
         database.prepare("UPDATE articles SET source_revision_id = ? WHERE id = ? AND source_article_id IS NOT NULL").run(sourceRevisionId, historical.articleId);
+}
+
+
+function findFirstLaterLegacySourceRevision(database: SqliteDatabase, historical: ArticleRevision): unknown {
+    return database.prepare("SELECT json_extract(provenance_json, '$.previousSourceRevisionId') source_revision_id FROM article_revisions WHERE article_id = ? AND rowid > (SELECT rowid FROM article_revisions WHERE id = ?) AND json_extract(provenance_json, '$.previousSourceRevisionId') IS NOT NULL ORDER BY rowid LIMIT 1")
+        .get(historical.articleId, historical.id)?.source_revision_id;
 }

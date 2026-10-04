@@ -51,12 +51,10 @@ function createErrorContext(error: unknown): Record<string, string | number> {
 }
 
 
-function writeDiagnostic(writer: DiagnosticWriter, event: DiagnosticEvent, context: Record<string, unknown>, environmentValues: Set<string>): void {
+function writeDiagnosticBestEffort(writer: DiagnosticWriter, event: DiagnosticEvent, context: Record<string, unknown>, environmentValues: Set<string>): void {
     try {
         writer(`${JSON.stringify(redact({ timestamp: new Date().toISOString(), event, ...context }, environmentValues))}\n`);
-    } catch {
-        // Diagnostics are advisory and must not interrupt the local service.
-    }
+    } catch { }
 }
 
 
@@ -72,7 +70,7 @@ export function createLocalDiagnostics({
     return {
         write(event: DiagnosticEvent, context: Record<string, unknown> = {}, error?: unknown): void {
             const environmentValues = new Set(Object.values(environment).filter((value): value is string => Boolean(value)));
-            writeDiagnostic(event.endsWith("failed") ? stderr : stdout, event, { ...context, ...createErrorContext(error) }, environmentValues);
+            writeDiagnosticBestEffort(event.endsWith("failed") ? stderr : stdout, event, { ...context, ...createErrorContext(error) }, environmentValues);
         },
     };
 }
