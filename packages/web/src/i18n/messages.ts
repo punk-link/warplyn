@@ -465,7 +465,7 @@ export const messages = {
     "views.translationContextChanged": "The source changed. Review the updated source before confirming again.",
     "views.translationReviewSource": "Review updated source",
     "views.translationResultSelector": "Translation result",
-    "views.translationResultOption": "{time}, source Revision {revisionId}, result {number}",
+    "views.translationResultOption": "v{number} · {date} · {description}",
     "views.translationLinkedIdentity": "Article {articleId}, source Revision {revisionId}",
     "views.translationLinkedTarget": "{title}, Article {articleId}, source Revision {revisionId}",
     "views.sourceLinkedPrefix": "This translation is linked to",

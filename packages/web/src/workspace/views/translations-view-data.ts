@@ -1,4 +1,4 @@
-import type { Article, ArticleSummary, GeneralSettings, PublishLimitProfile, TranslationMetadata } from "@skladno/shared";
+import type { Article, ArticleRevisionSummary, ArticleSummary, GeneralSettings, PublishLimitProfile, TranslationMetadata } from "@skladno/shared";
 
 
 export interface TranslationsData {
@@ -10,6 +10,7 @@ export interface TranslationsData {
     requestActive?: boolean;
     generalSettings?: GeneralSettings;
     revisionNumbers?: Readonly<Record<string, number>>;
+    revisions?: readonly ArticleRevisionSummary[];
     stale: boolean;
     translationLanguages?: readonly string[];
     publishProfile?: PublishLimitProfile;

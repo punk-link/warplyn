@@ -119,7 +119,7 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
             results={results}
             selectResult={selectResult}
             generalSettings={data.generalSettings}
-            revisionNumbers={data.revisionNumbers}
+            revisions={data.revisions}
         />
         {generationOpen && <NewTranslationDialog article={article} content={sourceContent} defaults={translationLanguages} viewedLanguage={language} revisionNumber={data.revisionNumbers?.[article.currentRevisionId]} active={requestActive} close={() => setGenerationOpen(false)} generate={translate} />}
         <TranslationBody

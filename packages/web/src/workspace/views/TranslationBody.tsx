@@ -77,5 +77,5 @@ export function TranslationBody({ source, translatedContent, targetLanguage, sou
             <ProtectedSpanNotice translation={translation} protectedSpanWarnings={protectedSpanWarnings} protectedSpansValid={protectedSpansValid} />
         </>;
 
-    return <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">{content}</div>;
+    return <div className="mt-4 min-h-0 flex-1 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">{content}</div>;
 }
