@@ -1,8 +1,8 @@
 # Warplyn
 
-> Your ideas, in your voice.
+> Your writing. Your voice. Your agent.
 
-Warplyn is an open-source, local-first desktop writing workspace for Authors. Work with an AI Editorial Assistant on your writing, in your voice. You decide what to ask for and which changes to keep.
+Warplyn is an open-source, local-first desktop AI writing workspace where an Editorial Assistant helps you develop and revise your Articles. You decide what changes.
 
 [Download for Windows or Debian Linux](https://github.com/punk-link/warplyn/releases/latest) · [Installation guide](https://warplyn.com/docs/installation.html) · [Website](https://warplyn.com/)
 
