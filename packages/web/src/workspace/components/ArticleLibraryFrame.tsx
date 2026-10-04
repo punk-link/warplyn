@@ -238,11 +238,11 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                     close();
                     openStyleProfile();
                 }}><UserIcon className="size-4" /></IconButton>
-                    <IconButton label={intl.formatMessage({ id: "navigation.settings" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={() => {
-                        close();
-                        openSettings();
-                    }}><SettingsIcon className="size-4" /></IconButton>
-                    <UpdateController /></>
+                <IconButton label={intl.formatMessage({ id: "navigation.settings" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={() => {
+                    close();
+                    openSettings();
+                }}><SettingsIcon className="size-4" /></IconButton>
+                <UpdateController /></>
                 : <><Button compact className="flex w-full items-center justify-start !py-1.5 text-left" variant="quiet" onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span></Button>
                     <Button compact className="flex w-full items-center justify-start !py-1.5 text-left" variant="quiet" title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span></Button>
                     <div className="relative flex items-center justify-between px-2 pb-1 pt-2 pr-11 text-micro font-medium text-muted"><span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span><UpdateController className="absolute right-2 top-1/2 -translate-y-1/2" /></div></>}
