@@ -5,10 +5,10 @@
         {
             "id": "history-and-publishing.article-files",
             "area": "Article files",
-            "title": "Whole-Article Markdown import and export in desktop and browser",
+            "title": "Whole-Article Markdown, HTML, DOCX and RTF import and export",
             "status": "implemented",
-            "owners": ["packages/shared/src/articles/files/article-files.ts", "packages/web/src/application/article-files-client.ts", "packages/web/src/application/browser-article-files.ts", "packages/web/src/workspace/state/article-files-state.ts", "packages/web/src/workspace/components/ArticleHeader.tsx", "packages/web/src/workspace/components/ArticleLibraryPanel.tsx", "packages/web/src/workspace/components/ArticleLibraryRowMenu.tsx", "packages/web/src/workspace/views/RevisionHistoryDetails.tsx", "packages/electron/src/presentation/articles/desktop-article-files.ts", "packages/electron/src/infrastructure/articles/article-markdown-files.ts"],
-            "contract": "Authors explicitly save whole current Draft Markdown or load UTF-8 .md files into independent Articles through buttons beside Save revision in the Article header or through the Library Article context menu. Library export captures the targeted Article's working Draft without changing the open Article. Revisions exports complete saved Revision snapshots. Text highlighting never restricts export. Imported titles use a leading level-one heading or the filename. Both runtimes enforce a 10 MiB limit, safe names, strict UTF-8, silent picker cancellation, and localized actionable failures. Electron dialogs and filesystem access remain in main behind a finite validated sender-bound bridge; native saves replace destinations only after successful temporary writes. Browser import uses an author-selected file input and export initiates a browser-managed download without claiming disk-write completion. The Copy menu retains only Markdown and plain-text actions, and Revision restoration remains unchanged.",
+            "owners": ["packages/shared/src/articles/files/article-files.ts", "packages/web/src/application/article-files-client.ts", "packages/web/src/application/browser-article-files.ts", "packages/web/src/workspace/state/article-files-state.ts", "packages/web/src/workspace/article-files", "packages/web/src/workspace/components/ArticleHeader.tsx", "packages/web/src/workspace/components/ArticleLibraryPanel.tsx", "packages/web/src/workspace/components/ArticleLibraryRowMenu.tsx", "packages/web/src/workspace/views/RevisionHistoryDetails.tsx", "packages/electron/src/presentation/articles/desktop-article-files.ts", "packages/electron/src/infrastructure/articles/article-file-storage.ts"],
+            "contract": "Authors explicitly save whole current Draft content or load Markdown, HTML, DOCX and RTF into independent Articles through the existing Article header and Library file actions. Desktop export selects the format in the native Save As file-type dropdown; browser export uses a format dialog. Library export captures the targeted Article's working Draft without changing the open Article. Revisions exports complete saved Revision snapshots. Text highlighting never restricts export. Non-Markdown import requires a supported-content review before creation. Conversion preserves supported paragraphs, headings, nested editable lists and numbering, inline marks, safe links, quotes, code and Unicode; complex layouts simplify and embedded resources are omitted. Conversion is local with no Office requirement or remote resource loading. Imported titles use a leading level-one heading or the filename. Both runtimes enforce a 10 MiB file limit, safe names, strict UTF-8 for text formats, silent cancellation, and localized actionable failures. DOCX inflated parts and RTF nesting are bounded; worker-based imports have a deadline. Electron paths remain in main behind a finite validated sender-bound bridge and expiring single-use format tickets; saves replace destinations only after successful temporary writes. Browser export initiates a browser-managed download without claiming disk-write completion. The Copy menu and Revision restoration remain unchanged.",
             "persistence": "Import checkpoints the previous Draft before creating one new independently recoverable Article and initial immutable Revision. Export creates no Revision and changes no Article or Draft. Paths are neither accepted from the renderer nor persisted."
         },
         {
@@ -79,17 +79,17 @@
     "scenarios": [
         {
             "id": "history-and-publishing.article-files-import",
-            "title": "Markdown import creates an independent recoverable Article",
+            "title": "File import creates an independent recoverable Article after review",
             "capabilityIds": ["history-and-publishing.article-files"],
             "preconditions": ["The Author has a current Article and chooses Load from file."],
-            "event": "The Author imports valid Markdown, cancels, or encounters a read/checkpoint failure.",
+            "event": "The Author imports a supported file, cancels the picker or review, or encounters a conversion/checkpoint failure.",
             "expected": ["Valid Markdown creates a separate Article through the application client with a heading or filename title; both Articles recover after reload.", "Cancellation and failures preserve the current Article and its Draft."],
             "forbidden": ["Implicitly overwriting an existing Article or creating a new Article after a failed Draft checkpoint."],
             "evidence": { "kind": "automated", "path": "packages/web/src/workspace/EditorialWorkspace.article-files.test.tsx" }
         },
         {
             "id": "history-and-publishing.article-files-export",
-            "title": "Markdown save exports whole Draft content without changing history",
+            "title": "File save exports whole Draft content without changing history",
             "capabilityIds": ["history-and-publishing.article-files"],
             "preconditions": ["The Author opens a current Article with highlighted text."],
             "event": "The Author saves Markdown, cancels, or encounters a file-write error.",
@@ -99,13 +99,23 @@
         },
         {
             "id": "history-and-publishing.article-files-native",
-            "title": "Native Markdown operations remain bounded and authorized",
+            "title": "Native text and binary file operations remain bounded and authorized",
             "capabilityIds": ["history-and-publishing.article-files"],
             "preconditions": ["The Author uses the Electron file client."],
-            "event": "The client loads/saves Markdown, cancels, sends an invalid request, or encounters a replacement failure.",
-            "expected": ["The client round-trips UTF-8 Markdown through native file operations.", "Cancelled operations are no-ops, invalid senders/requests never open dialogs, failures return only safe codes, and failed replacement preserves prior data."],
+            "event": "The client loads/saves selected file bytes, cancels, sends an invalid request, or encounters a replacement failure.",
+            "expected": ["The client round-trips UTF-8 Markdown and binary bytes through native file operations with four file-type filters.", "Save tickets are single-use, format-bound and invalidated on navigation; destination paths never reach the renderer.", "Cancelled operations are no-ops, invalid senders/requests never open dialogs, failures return only safe codes, and failed replacement preserves prior data."],
             "forbidden": ["Renderer-selected filesystem paths, private details in errors, or destination truncation before a successful write."],
             "evidence": { "kind": "automated", "path": "packages/electron/src/presentation/articles/desktop-article-files.test.ts" }
+        },
+        {
+            "id": "history-and-publishing.article-files-format-conversion",
+            "title": "Local format conversion preserves basic editable structure",
+            "capabilityIds": ["history-and-publishing.article-files"],
+            "preconditions": ["A supported file contains paragraphs, lists, inline marks and Unicode."],
+            "event": "The local converters import or export HTML, DOCX or RTF.",
+            "expected": ["Basic content and editable nested lists retain their structure and numbering starts.", "Executable markup and embedded resources are omitted, malformed files fail safely, and actual inflated data and parser nesting are bounded."],
+            "forbidden": ["Remote resource fetching, executing imported content, or accepting unbounded parser input."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/article-files/article-file-codecs.test.ts" }
         },
         {
             "id": "history-and-publishing.revision-history-browsing",

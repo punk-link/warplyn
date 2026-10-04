@@ -20,6 +20,7 @@ import type { AssistantSelectionSnapshot } from "./editor/ArticleEditorPlugins.j
 import { usePublishing, type PublishingState } from "./state/publishing-state.js";
 import { createRendererArticleFilesClient } from "../application/article-files-client.js";
 import { useArticleFiles } from "./state/article-files-state.js";
+import { ArticleFileDialogs } from "./article-files/ArticleFileDialogs.js";
 import { createArticleWithDefaults } from "./state/article-creation.js";
 
 export type { DraftConflict, DraftPresentationState as SaveState } from "./drafts/draft-lifecycle.js";
@@ -312,6 +313,7 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
         content={{ layout, workspace, assistant, editorial, revisions, corpus, publishing, articleFiles, generalSettings, authorSkills: authorSkills.authorSkills }}
         actions={{ ...actions, rejectTranslation, openSettings: actions.enterSettings, openModelSettings }}
         environment={{ dispatcher, shortcutOverrides: keyBindingOverrides, hasUsableAiConnection, loadAuthorSkills: authorSkills.loadAuthorSkills, overlays: <>
+            <ArticleFileDialogs state={articleFiles.dialogs} />
             <ExtractedRestoreRevisionDialog candidate={revisions.candidate} hasUncommittedChanges={workspace.hasUncommittedChanges} close={() => revisions.setCandidate(undefined)} restore={revisions.restore} />
             <DraftConflictDialog conflict={workspace.conflict} open={Boolean(workspace.comparisonArticleId)} close={workspace.closeComparison} resolve={workspace.resolveConflict} />
         </> }}

@@ -293,7 +293,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files }: { da
                         <Field ref={searchRef} className="min-h-9 py-1.5 pl-8 pr-2" aria-label={intl.formatMessage({ id: "navigation.searchArticles" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.searchArticles" }), KEY_BINDING_COMMAND.SEARCH_ARTICLES, shortcutOverrides)} value={query} onChange={(event) => setQuery(event.target.value)} placeholder={intl.formatMessage({ id: "navigation.searchArticles" })} />
                     </div>
                 </div>
-                <ArticleLibraryNavigation pinnedRoots={pinnedRoots} recentRoots={recentRoots} archivedRoots={archivedRoots} archivedOpen={archivedOpen} setArchivedOpen={setArchivedOpen} query={query} archivedContent={archivedContent} archivedContentEmpty={archivedContent.length === 0} articles={articles} renderRoots={renderRoots} />
+                <ArticleLibraryNavigation pinnedRoots={pinnedRoots} recentRoots={recentRoots} archivedRoots={archivedRoots} archivedOpen={archivedOpen || archivedRoots.some((article) => article.id === expandedRootId)} setArchivedOpen={setArchivedOpen} query={query} archivedContent={archivedContent} archivedContentEmpty={archivedContent.length === 0} articles={articles} renderRoots={renderRoots} />
                 <footer className="border-t border-border px-2 py-2">
                     <Button className="flex w-full items-center justify-start text-left" variant="quiet" onClick={openStyleProfile}>
                         <UserIcon className="size-4 shrink-0" />

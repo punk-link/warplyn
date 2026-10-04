@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-21
-- Updated: 2026-10-02
+- Updated: 2026-10-03
 - Scope: Browser, HTTP, Electron IPC, credentials, and privileged local access
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-009](adr-009-native-settings-credentials-and-data-switching.md)
 
@@ -15,6 +15,8 @@ The renderer handles private content but cannot safely own credentials, database
 Keep the renderer an unprivileged client. The local service owns provider calls, research, persistence, credentials, and filesystem work. Browser HTTP listens on loopback by default and accepts only the configured origin. Electron composes the same application services without an HTTP listener and exposes finite, validated IPC through a sandboxed, context-isolated preload.
 
 Neither renderer receives credentials, privileged handles, raw server errors, or unrestricted IPC. Native Settings and telemetry use separate finite desktop clients with sender and request validation.
+
+Article export chooses its format and destination through Electron's native Save As dialog. Main returns an opaque, format-bound ticket that expires after 60 seconds and is consumed once by a bounded binary save. Main owns the destination path, clears tickets on navigation or renderer/window disposal, and writes through a temporary sibling before replacing the destination. Import returns only the selected filename and bounded bytes. Local renderer conversion uses inert HTML parsing and bounded DOCX/RTF workers with a 15-second deadline; it does not fetch linked resources or execute embedded content.
 
 Deny renderer-created windows and in-renderer navigation. Open only validated HTTP and HTTPS links in the system browser. Desktop close coordinates the active Draft checkpoint before cancelling streams and closing persistence.
 

@@ -1,12 +1,13 @@
-import { ApplicationClientError, decodeArticleMarkdown, encodeArticleMarkdown, getArticleMarkdownFileName, validateArticleMarkdownName, validateArticleMarkdownSize, type ArticleFilesClient, type ArticleMarkdownFile } from "@skladno/shared";
+import { ApplicationClientError, articleFileMimeTypes, getArticleFileFormat, getArticleFileName, validateArticleMarkdownSize, type ArticleFilesClient, type ArticleFileBytes, type ArticleSaveTarget } from "@skladno/shared";
 
 
-async function readBrowserMarkdown(file: File): Promise<ArticleMarkdownFile> {
-    validateArticleMarkdownName(file.name);
+async function readBrowserFile(file: File): Promise<ArticleFileBytes> {
+    getArticleFileFormat(file.name);
     validateArticleMarkdownSize(file.size);
     try {
         const bytes = new Uint8Array(await file.arrayBuffer());
-        return { fileName: file.name, content: decodeArticleMarkdown(bytes) };
+        validateArticleMarkdownSize(bytes.byteLength);
+        return { fileName: file.name, bytes };
     } catch (error) {
         if (error instanceof ApplicationClientError)
             throw error;
@@ -17,11 +18,13 @@ async function readBrowserMarkdown(file: File): Promise<ArticleMarkdownFile> {
 
 
 export function createBrowserArticleFilesClient(): ArticleFilesClient {
+    const targets = new Map<string, { target: ArticleSaveTarget; fileName: string }>();
     return {
-        loadMarkdown: () => new Promise((resolve, reject) => {
+        runtime: "browser",
+        loadFile: () => new Promise((resolve, reject) => {
             const input = document.createElement("input");
             input.type = "file";
-            input.accept = ".md,text/markdown";
+            input.accept = ".md,.html,.htm,.docx,.rtf";
             input.hidden = true;
             document.body.append(input);
             input.addEventListener("cancel", () => {
@@ -36,7 +39,7 @@ export function createBrowserArticleFilesClient(): ArticleFilesClient {
                     return;
                 }
 
-                void readBrowserMarkdown(file).then(resolve, reject);
+                void readBrowserFile(file).then(resolve, reject);
             }, { once: true });
             try {
                 input.click();
@@ -45,12 +48,26 @@ export function createBrowserArticleFilesClient(): ArticleFilesClient {
                 reject(new ApplicationClientError("article_file_load_failed", undefined, 500));
             }
         }),
-        async saveMarkdown(file) {
-            const bytes = encodeArticleMarkdown(file.content);
-            const url = URL.createObjectURL(new Blob([bytes], { type: "text/markdown;charset=utf-8" }));
+        async chooseSaveTarget(fileName, format = "markdown") {
+            const target = { ticket: crypto.randomUUID(), format };
+            targets.clear();
+            targets.set(target.ticket, { target, fileName: getArticleFileName(fileName, format) });
+            return target;
+        },
+        async releaseSaveTarget(ticket) {
+            targets.delete(ticket);
+        },
+        async saveFile(target, bytes) {
+            const selected = targets.get(target.ticket);
+            targets.delete(target.ticket);
+            if (!selected || selected.target.format !== target.format)
+                throw new ApplicationClientError("invalid_request", undefined, 400);
+
+            validateArticleMarkdownSize(bytes.byteLength);
+            const url = URL.createObjectURL(new Blob([bytes], { type: articleFileMimeTypes[target.format] }));
             const link = document.createElement("a");
             link.href = url;
-            link.download = getArticleMarkdownFileName(file.fileName);
+            link.download = selected.fileName;
             document.body.append(link);
             try {
                 link.click();

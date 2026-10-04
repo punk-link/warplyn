@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { type Article, type KeyBindingOverrides, type UpdateArticleInput } from "@skladno/shared";
-import { Button, Dialog, Field, IconButton } from "../../ui/primitives.js";
+import { Badge, Button, Dialog, Field, IconButton } from "../../ui/primitives.js";
 import { ArchiveIcon, DeleteIcon, FocusIcon, LeaveFocusIcon, SaveIcon, SaveFileIcon, LoadFileIcon } from "../../ui/icons.js";
 import type { ArticleFilesState } from "../state/article-files-state.js";
 import { useIntl } from "react-intl";
@@ -143,6 +143,7 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
                     }} />
                     : <button data-focus-area-entry className="w-full truncate text-left hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" aria-label={intl.formatMessage({ id: "articleHeader.rename" }, { articleTitle: article.title })} onClick={() => setEditingTitle(true)}>{article.title}</button>}
             </h1>
+            {article.archived && <Badge className="shrink-0" tone="info">{intl.formatMessage({ id: "articleHeader.archived" })}</Badge>}
             <div className="flex shrink-0 items-center gap-1 text-xs" aria-label={intl.formatMessage({ id: "articleHeader.metadata" })}>
                 <IconButton variant="quiet" label={intl.formatMessage({ id: "articleHeader.saveRevision" })} title={getShortcutHint(intl.formatMessage({ id: "articleHeader.saveRevision" }), KEY_BINDING_COMMAND.SAVE_REVISION, shortcutOverrides)} onClick={() => void save().catch(() => undefined)}>
                     <SaveIcon className="size-4" />

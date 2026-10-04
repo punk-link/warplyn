@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { articleMarkdownByteLimit, decodeArticleMarkdown, encodeArticleMarkdown, getArticleMarkdownFileName, getImportedArticleTitle, isArticleFilesRequest } from "./files/article-files.js";
+import { articleMarkdownByteLimit, decodeArticleMarkdown, encodeArticleMarkdown, getArticleMarkdownFileName, getImportedArticleTitle, isArticleFilesRequest, isArticleFileBytes } from "./files/article-files.js";
 
 
 test("Markdown file rules preserve Unicode and content while validating input", () => {
@@ -23,5 +23,12 @@ test("file names and title fallback are deterministic and safe", () => {
     assert.equal(getImportedArticleTitle({ fileName: ".md", content: "" }, "Default"), "Default");
     assert.equal(isArticleFilesRequest({ method: "loadMarkdown", path: "secret.md" }), false);
     assert.equal(isArticleFilesRequest({ method: "saveMarkdown", file: { fileName: "file.md", content: "body", path: "secret" } }), false);
-    assert.equal(isArticleFilesRequest({ method: "saveMarkdown", file: { fileName: "file.md", content: "body" } }), true);
+    assert.equal(isArticleFilesRequest({ method: "chooseSaveTarget", fileName: "file.md" }), true);
+    assert.equal(isArticleFilesRequest({ method: "saveFile", target: { ticket: "test", format: "docx" }, bytes: Uint8Array.of(0, 255) }), true);
+    assert.equal(isArticleFilesRequest({ method: "saveFile", target: { ticket: "test", format: "pdf" }, bytes: Uint8Array.of(0, 255) }), false);
+    assert.equal(isArticleFilesRequest({ method: "saveFile", target: { ticket: "test", format: "docx" }, bytes: [0, 255] }), false);
+    assert.equal(isArticleFilesRequest({ method: "saveFile", target: { ticket: "test", format: "docx", path: "private" }, bytes: Uint8Array.of(0, 255) }), false);
+    assert.equal(isArticleFilesRequest({ method: "saveFile", target: { ticket: "test", format: "docx" }, bytes: new Uint8Array(articleMarkdownByteLimit + 1) }), false);
+    assert.equal(isArticleFileBytes({ fileName: "../private.docx", bytes: Uint8Array.of(0) }), false);
+    assert.equal(isArticleFileBytes({ fileName: "article.docx", bytes: Uint8Array.of(0, 255) }), true);
 });

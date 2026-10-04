@@ -3,6 +3,9 @@ import { defaultInterfaceLocale, INTERFACE_LOCALE, type InterfaceLocale } from "
 
 const englishElectronMessages = {
     "electron.articleFiles.markdown": "Markdown files",
+    "electron.articleFiles.html": "HTML files",
+    "electron.articleFiles.docx": "Word files",
+    "electron.articleFiles.rtf": "Rich text files",
     "electron.articleFiles.load": "Load Article from file",
     "electron.articleFiles.save": "Save Article to file",
     "electron.draftCheckpointFailed.title": "Draft checkpoint failed",

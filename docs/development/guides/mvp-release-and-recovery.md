@@ -43,8 +43,11 @@ Use disposable Articles and files for these checks:
 - In Windows and Ubuntu packaged apps, verify real open/save/cancel dialogs, overwrite confirmation, unreadable input, unwritable destinations, Unicode filenames and content, whole historical Revision export, and restart recovery.
 - In the browser, verify picker cancellation and reselection, download preferences, later download-manager cancellation, and accurate download-started feedback.
 - In both runtimes, verify header and Library file actions, Tab/Shift+Tab focus areas, screen-reader names and notifications, and collapsed/responsive Article and Revision controls.
+- Repeat import/export in Markdown, HTML, DOCX and RTF with paragraphs, bold/italic, nested lists, numbering starting above one, links, quotes, code and Unicode. Check native Save As file-type selection and matching extensions. Open DOCX and RTF exports in Word or LibreOffice, then import independently created files. Confirm supported text remains editable, complex page layout can simplify, and cancelling the import review leaves the current Draft intact.
 
 On 2026-10-02, the maintainer reported all manual checks from the Article Markdown files plan passed. This records maintainer acceptance; repeat the checks for future releases when file operations change.
+
+The added HTML, DOCX and RTF formats require fresh packaged Windows/Ubuntu dialog and Word/LibreOffice acceptance. Automated converter, browser and production-bridge checks do not replace that manual pass.
 
 ## Recovery drill
 
