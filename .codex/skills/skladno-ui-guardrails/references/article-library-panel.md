@@ -6,11 +6,11 @@ Use these decisions for the desktop Article Library Panel.
 
 - Keep the panel narrow (`w-52`) and full-height.
 - Keep a 72px-equivalent header (`min-h-18`) with the Warplyn spiral and wordmark, New article, and collapse actions.
-- Keep search in its own bordered row. Use a compact control (`min-h-9`, `py-1.5`, `pl-8`, `pr-2`) with a search icon.
+- Keep search in its own row without a divider below it. Use a compact control (`min-h-9`, `py-1.5`, `pl-8`, `pr-2`) with a search icon. Keep 16px between the search control and the first Recent heading; retain section spacing when Pinned precedes Recent.
 - Show `Recent` only when Articles exist. With no Articles, leave the library area blank; the central workspace provides the create call to action.
 - Represent each Article with the document icon, title, detail line, and selected-state card.
 - Use compact two-line Article cards with `py-1.5` for originals, `py-1` for translations, and `space-y-0.5` between rows. Library context-menu rows use `min-h-7 py-1`, with `pointer-coarse:min-h-9` preserving larger touch targets.
-- Keep the bottom utility area in this order: Style Profile, Settings, then language/local and save-state indicators. Keep captions and icons left-aligned.
+- Keep the bottom utility area in this order: Style Profile, Settings, then language/local and save-state indicators. Use compact buttons with 6px vertical padding and a 36px minimum height. Keep captions and icons left-aligned.
 
 ## Collapsed Navigation Rail
 
