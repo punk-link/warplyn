@@ -279,7 +279,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                 </footer>
             </>
             : <>
-                <header className="flex min-h-18 items-center justify-between border-b border-border px-4">
+                <header className="flex min-h-18 items-center justify-between border-b border-border pl-4 pr-2">
                     <span className="flex items-center gap-2 text-base font-semibold text-brand">
                         <WarplynIcon />Warplyn
                     </span>
@@ -288,7 +288,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                         <IconButton label={intl.formatMessage({ id: "navigation.collapseArticleLibrary" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.collapseArticleLibrary" }), KEY_BINDING_COMMAND.TOGGLE_ARTICLE_LIBRARY, shortcutOverrides)} onClick={() => setCollapsed(true)}>‹</IconButton>
                     </div>
                 </header>
-                <div className="border-b border-border px-3 py-3">
+                <div className="border-b border-border pl-3 pr-2 py-3">
                     <div className="relative">
                         <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
                         <Field ref={searchRef} className="min-h-9 py-1.5 pl-8 pr-2" aria-label={intl.formatMessage({ id: "navigation.searchArticles" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.searchArticles" }), KEY_BINDING_COMMAND.SEARCH_ARTICLES, shortcutOverrides)} value={query} onChange={(event) => setQuery(event.target.value)} placeholder={intl.formatMessage({ id: "navigation.searchArticles" })} />

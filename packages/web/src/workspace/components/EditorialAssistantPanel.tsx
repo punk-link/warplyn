@@ -109,7 +109,7 @@ export function EditorialAssistantPanel({ data, actions, layout }: { data: Edito
         </aside>;
 
     return <aside data-workspace-panel="editorial-assistant" className="flex h-full min-h-0 min-w-0 w-full flex-col border-l border-border bg-surface-supporting" aria-label={intl.formatMessage({ id: "assistant.panel" })}>
-        <header className="flex min-h-18 items-center gap-3 border-b border-border px-5">
+        <header className="flex min-h-18 items-center gap-3 border-b border-border pl-2 pr-5">
             <Button className="inline-grid size-9 place-items-center p-1" variant="quiet" title={getShortcutHint(intl.formatMessage({ id: "assistant.collapse" }), KEY_BINDING_COMMAND.TOGGLE_EDITORIAL_ASSISTANT, shortcutOverrides)} aria-label={intl.formatMessage({ id: "assistant.collapse" })} onClick={() => setCollapsed(true)}>
                 <ChevronRightIcon className="size-3" />
             </Button>
