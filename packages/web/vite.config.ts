@@ -11,6 +11,10 @@ export default defineConfig({
         react(),
         tailwindcssWithHighlightPseudoElementSupport,
     ],
+    optimizeDeps: {
+        // Worker-only imports must be ready before conversion to avoid a mid-import reload.
+        include: ["fflate", "mammoth/mammoth.browser.js", "@xmldom/xmldom", "rtf-codec"],
+    },
     test: {
         environment: "jsdom",
     },

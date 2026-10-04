@@ -2,6 +2,24 @@ import { readFile } from "node:fs/promises";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 
+async function createBlankArticle(page: Page): Promise<void> {
+    const editor = page.getByRole("textbox", { name: "Article draft" });
+    const previousEditor = (await editor.elementHandles())[0];
+    const created = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");
+    const create = page.getByRole("button", { name: "Create" });
+    if (await create.isVisible())
+        await create.click();
+    else
+        await page.getByRole("button", { name: "New article" }).click();
+
+    expect((await created).ok()).toBe(true);
+    if (previousEditor)
+        await expect.poll(() => previousEditor.evaluate((element) => element.isConnected)).toBe(false);
+
+    await expect(editor).toHaveText("");
+}
+
+
 async function downloadArticle(page: Page): Promise<string> {
     const downloaded = page.waitForEvent("download");
     await page.locator("[data-focus-area=article-header]").getByRole("button", { name: "Save to file" }).click();
@@ -20,11 +38,7 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
     test.setTimeout(60000);
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");
-    const create = page.getByRole("button", { name: "Create" });
-    if (await create.isVisible())
-        await create.click();
-    else
-        await page.getByRole("button", { name: "New article" }).click();
+    await createBlankArticle(page);
 
     const editor = page.getByRole("textbox", { name: "Article draft" });
     await editor.fill("Whole Article café 🙂");
@@ -90,15 +104,7 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
 test("Library file action highlights follow pointer and keyboard focus", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");
-    const create = page.getByRole("button", { name: "Create" });
-    const created = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");
-    if (await create.isVisible())
-        await create.click();
-    else
-        await page.getByRole("button", { name: "New article" }).click();
-
-    await created;
-    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("");
+    await createBlankArticle(page);
 
     await page.locator("[data-workspace-panel=article-library] [aria-current=page]").click({ button: "right" });
     const menuSave = page.getByRole("menuitem", { name: "Save to file…" });
@@ -116,11 +122,7 @@ test("HTML, DOCX and RTF retain basic formatting through browser file import and
     test.setTimeout(120_000);
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");
-    const create = page.getByRole("button", { name: "Create" });
-    if (await create.isVisible())
-        await create.click();
-    else
-        await page.getByRole("button", { name: "New article" }).click();
+    await createBlankArticle(page);
 
     const content = "# Portable café 🙂\n\nFirst **bold** and *italic*.\n\nSecond paragraph.\n\n- One\n    - Nested\n- Two\n\n3. Three\n4. Four\n\n```\nconst value = 34;\nnext();\n```";
     const choosing = page.waitForEvent("filechooser");
