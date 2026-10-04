@@ -13,5 +13,7 @@ export async function beginBestEffortTelemetryCapture(client: DesktopTelemetryCl
 export function captureBestEffortTelemetry(client: DesktopTelemetryClient | undefined, event: TelemetryEvent, generation: number | undefined): void {
     try {
         void client?.captureTelemetry(event, generation).catch(() => undefined);
-    } catch { }
+    } catch {
+        // Optional telemetry failures must not interrupt the workspace operation.
+    }
 }

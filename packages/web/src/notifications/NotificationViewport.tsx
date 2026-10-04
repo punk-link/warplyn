@@ -64,5 +64,7 @@ export function NotificationViewport({ notifications, label, dismissLabel, dismi
 function runNotificationActionIgnoringErrors(action: (() => void) | undefined): void {
     try {
         action?.();
-    } catch { }
+    } catch {
+        // A failed action must still allow the notification to be dismissed.
+    }
 }

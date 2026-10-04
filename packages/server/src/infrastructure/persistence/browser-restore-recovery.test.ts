@@ -41,6 +41,7 @@ test("startup rolls back an interrupted database and Skill restore", async () =>
     } finally {
         if (databaseIsOpen)
             database.close();
+
         rmSync(root, { recursive: true, force: true });
     }
 });

@@ -54,7 +54,9 @@ function createErrorContext(error: unknown): Record<string, string | number> {
 function writeDiagnosticBestEffort(writer: DiagnosticWriter, event: DiagnosticEvent, context: Record<string, unknown>, environmentValues: Set<string>): void {
     try {
         writer(`${JSON.stringify(redact({ timestamp: new Date().toISOString(), event, ...context }, environmentValues))}\n`);
-    } catch { }
+    } catch {
+        // Diagnostic writer failures must not interrupt the application operation.
+    }
 }
 
 

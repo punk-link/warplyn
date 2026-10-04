@@ -221,7 +221,9 @@ export class AssistantCapabilityLoop {
     finishPendingSkillBestEffort(requestId: string): void {
         try {
             this.dependencies.authorSkills?.finishChange(requestId);
-        } catch { }
+        } catch {
+            // Best-effort cleanup must not replace the Assistant operation's result.
+        }
     }
 
 

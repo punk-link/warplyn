@@ -85,15 +85,14 @@ export function useWorkspaceLayout() {
     const [preferences, setPreferences] = useState(() => {
         const stored = localStorage.getItem("skladno-workspace-layout");
 
-        if (stored) {
+        if (stored)
             try {
                 const parsed = storedPreferences(JSON.parse(stored));
                 if (parsed)
                     return parsed;
             } catch {
-
+                // Fall back to migrated preferences when saved preferences cannot be parsed.
             }
-        }
 
 
         const migrated = migratedPreferences();
