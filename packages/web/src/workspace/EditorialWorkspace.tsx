@@ -122,12 +122,11 @@ function useAuthorSkills(client: EditorialWorkspaceClient) {
 }
 
 
-function useWorkspaceActions({ client, intl, notifyError, workspace, generalSettings, layout, assistant, openSettings }: {
+function useWorkspaceActions({ client, intl, notifyError, workspace, layout, assistant, openSettings }: {
     client: EditorialWorkspaceClient;
     intl: ReturnType<typeof useIntl>;
     notifyError: ReturnType<typeof useNotifications>["notifyError"];
     workspace: ArticleWorkspaceState;
-    generalSettings: ReturnType<typeof useWorkspaceGeneralSettings>;
     layout: WorkspaceLayoutState;
     assistant: AssistantMessagesState;
     openSettings: () => void;
@@ -153,14 +152,13 @@ function useWorkspaceActions({ client, intl, notifyError, workspace, generalSett
         void assistant.request("", BUILT_IN_SKILL.FACT_CHECKING);
     }, [assistant, layout]);
 
-    const runTranslation = useCallback(() => {
-        const languages = generalSettings.defaultTranslationLanguages.filter((language) => language !== workspace.selectedArticle?.language);
+    const runTranslation = useCallback((languages: readonly string[]) => {
         if (!languages.length)
             return;
 
         layout.setAssistantCollapsed(false);
-        void assistant.request("", BUILT_IN_SKILL.TRANSLATION, languages);
-    }, [assistant, generalSettings.defaultTranslationLanguages, layout, workspace.selectedArticle?.language]);
+        void assistant.request("", BUILT_IN_SKILL.TRANSLATION, languages, undefined, true);
+    }, [assistant, layout]);
 
     return { createBlank, enterSettings, runFactCheck, runTranslation };
 }
@@ -292,7 +290,7 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
     const publishing = usePublishing(client, workspace.selectedArticle, workspace.content, workspace.updateArticle);
     const [fileClient] = useState(createRendererArticleFilesClient);
     const articleFiles = useArticleFiles(fileClient, client, workspace, () => layout.setView("write"));
-    const actions = useWorkspaceActions({ client, intl, notifyError, workspace, generalSettings, layout, assistant, openSettings });
+    const actions = useWorkspaceActions({ client, intl, notifyError, workspace, layout, assistant, openSettings });
     useWorkspaceLifecycle(workspace, assistant, editorial.restoreAssistantProposal);
     useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save: workspace.save });
 

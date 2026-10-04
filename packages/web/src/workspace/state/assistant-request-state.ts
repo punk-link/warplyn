@@ -280,7 +280,7 @@ async function retryAssistant(options: AssistantRequestActionsOptions & { retryO
 
 
 export function useAssistantRequestActions(options: AssistantRequestActionsOptions) {
-    const request = useCallback((authorMessage: string, explicitSkillId?: string, targetLanguage?: string | readonly string[], skillOffset?: number) => requestAssistant({ ...options, authorMessage, explicitSkillId, targetLanguage, skillOffset }), [options]);
+    const request = useCallback((authorMessage: string, explicitSkillId?: string, targetLanguage?: string | readonly string[], skillOffset?: number, wholeArticle = false) => requestAssistant({ ...options, selection: wholeArticle ? undefined : options.selection, authorMessage, explicitSkillId, targetLanguage, skillOffset }), [options]);
     const retry = useCallback((retryOfRequestId: string) => retryAssistant({ ...options, retryOfRequestId }), [options]);
     return { request, retry };
 }

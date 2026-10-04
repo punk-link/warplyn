@@ -31,13 +31,14 @@ interface ArticleWorkspaceViewState {
     articleFiles?: ArticleFilesState;
     generalSettings: GeneralSettings;
     checkingClaimCount?: number;
+    requestActive?: boolean;
 }
 
 
 interface ArticleWorkspaceActions {
     createBlank: () => Promise<unknown>;
     runFactCheck: () => void;
-    runTranslation: () => void;
+    runTranslation: (languages: readonly string[]) => void;
     rejectTranslation?: (targetLanguage: string) => Promise<void>;
     shortcutOverrides?: KeyBindingOverrides;
     onSelectionChange?: (value: AssistantSelectionSnapshot | undefined) => void;
@@ -139,7 +140,7 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
         </Banner>}
         <WorkspaceTabBar view={layout.view} setView={layout.setView} badges={badges} shortcutOverrides={shortcutOverrides} />
         <WorkspaceViewRouter
-            content={{ view: layout.view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, publishProfile: publishing.profile, publishProfileLabel }}
+            content={{ view: layout.view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, requestActive: state.requestActive, publishProfile: publishing.profile, publishProfileLabel }}
             actions={{ runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection, articleFiles }}
             navigation={{
                 proposalWarningsDismissed: layout.proposalWarningsDismissed, dismissProposalWarnings: () => layout.setProposalWarningsDismissed(true), openWrite: () => layout.setView("write"), openAssistant: () => {

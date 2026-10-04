@@ -8,6 +8,8 @@ import { TranslationRefreshControl } from "./TranslationRefreshControl.js";
 import type { TranslationsActions } from "./translations-view-actions.js";
 import type { TranslationsData } from "./translations-view-data.js";
 import { getProviderLanguageName } from "../state/editorial-language.js";
+import { NewTranslationDialog } from "./NewTranslationDialog.js";
+import { translationResultId, useTranslationResultSelection } from "./translation-result-selection.js";
 
 
 function splitParagraphs(content: string): string[] {
@@ -25,33 +27,37 @@ function getChangedProtectedSpans(content: string, protectedSpans: readonly stri
 
 
 export function TranslationsView({ data, actions }: { data: TranslationsData; actions: TranslationsActions }) {
-    const { article, sourceArticle, linkedTranslations = [], translations = [], stale, translationLanguages = [], publishProfile, selectedTargetLanguage } = data;
+    const { article, sourceArticle, linkedTranslations = [], translations = [], stale, translationLanguages = [], publishProfile, selectedTargetLanguage, sourceContent = article.currentRevision.content, requestActive = false } = data;
     const { create, reject, edit, openArticle, selectTargetLanguage, translate } = actions;
     const [creating, setCreating] = useState(false);
     const [rejecting, setRejecting] = useState(false);
     const [rejectConfirmationOpen, setRejectConfirmationOpen] = useState(false);
     const [rejectionComplete, setRejectionComplete] = useState(false);
     const [rejectionLanguage, setRejectionLanguage] = useState<string>();
+    const [rejectionId, setRejectionId] = useState<string>();
+    const [generationOpen, setGenerationOpen] = useState(false);
     const [displayMode, setDisplayMode] = useState<"side-by-side" | "aligned">("side-by-side");
     const [visibleText, setVisibleText] = useState<"source" | "translation">("source");
-    const translation = translations.find((item) => item.metadata.targetLanguage === selectedTargetLanguage) ?? translations.at(-1);
-    const selectedStale = stale || Boolean(translation && translation.baseRevisionId !== article.currentRevisionId);
+    const languages = [...new Set([...translations.map((result) => result.metadata.targetLanguage), ...linkedTranslations.map((linked) => getProviderLanguageName(linked.language ?? ""))])];
+    const { translation, language, results, selectResult } = useTranslationResultSelection(translations, selectedTargetLanguage, selectTargetLanguage, languages);
+    const linkedTranslation = linkedTranslations.find((linked) => getProviderLanguageName(linked.language ?? "") === language);
+    const selectedStale = stale || sourceContent !== article.currentRevision.content || Boolean(translation && translation.baseRevisionId !== article.currentRevisionId);
     const startCreate = () => {
         if (!translation)
             return;
 
         setCreating(true);
-        void create(translation.metadata.targetLanguage).then(() => {
+        void create(translationResultId(translation)).then(() => {
             setCreating(false);
             edit?.();
         }, () => setCreating(false));
     };
     const confirmRejection = () => {
-        if (!translation || !reject)
+        if (!rejectionId || !reject || !translations.some((result) => translationResultId(result) === rejectionId))
             return;
 
         setRejecting(true);
-        void reject(translation.metadata.targetLanguage).then(() => {
+        void reject(rejectionId).then(() => {
             setRejecting(false);
             setRejectionComplete(true);
             window.setTimeout(() => {
@@ -87,23 +93,35 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
             stale={selectedStale}
             edit={edit}
             reject={reject}
-            translate={translate}
+            translate={() => setGenerationOpen(true)}
             startCreate={startCreate}
+            openTranslation={linkedTranslation && openArticle ? () => {
+                openArticle(linkedTranslation.id);
+                edit?.();
+            } : undefined}
+            update={translation?.editorialArtifactId && !sourceArticle && <TranslationRefreshControl key={translationResultId(translation)} translation={translation} linkedTranslations={linkedTranslations} stale={selectedStale || !protectedSpansValid} create={create} />}
             setDisplayMode={setDisplayMode}
             setRejectionLanguage={setRejectionLanguage}
-            setRejectConfirmationOpen={setRejectConfirmationOpen}
+            setRejectConfirmationOpen={(open) => {
+                setRejectionId(translation && translationResultId(translation));
+                setRejectConfirmationOpen(open);
+            }}
         />
         <TranslationsNavigation
             article={article}
             sourceArticle={sourceArticle}
-            linkedTranslations={linkedTranslations}
-            translations={translations}
+            languages={languages}
+            selectedLanguage={language}
             translation={translation}
             stale={selectedStale}
             openArticle={openArticle}
             selectTargetLanguage={selectTargetLanguage}
+            results={results}
+            selectResult={selectResult}
+            generalSettings={data.generalSettings}
+            revisionNumbers={data.revisionNumbers}
         />
-        {translation?.editorialArtifactId && !sourceArticle && <TranslationRefreshControl translation={translation} linkedTranslations={linkedTranslations} stale={selectedStale} create={create} />}
+        {generationOpen && <NewTranslationDialog article={article} content={sourceContent} defaults={translationLanguages} viewedLanguage={language} revisionNumber={data.revisionNumbers?.[article.currentRevisionId]} active={requestActive} close={() => setGenerationOpen(false)} generate={translate} />}
         <TranslationBody
             source={source}
             translatedContent={translatedContent}

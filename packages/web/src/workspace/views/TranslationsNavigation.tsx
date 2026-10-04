@@ -1,37 +1,43 @@
-import { type ArticleSummary } from "@skladno/shared";
-import { Banner, Button, Tab, TabList } from "../../ui/primitives.js";
+import { type ArticleSummary, type GeneralSettings } from "@skladno/shared";
+import { Banner, Select, Tab, TabList } from "../../ui/primitives.js";
+import { formatDateTime } from "../../i18n/formatting.js";
+import { translationResultId } from "./translation-result-selection.js";
 import { useIntl } from "react-intl";
-import { getProviderLanguageName } from "../state/editorial-language.js";
 import type { Translation } from "./translations-view-types.js";
 
 
 interface TranslationsNavigationProps {
     article: ArticleSummary;
     sourceArticle?: ArticleSummary;
-    linkedTranslations: readonly ArticleSummary[];
-    translations: readonly Translation[];
+    languages: readonly string[];
+    selectedLanguage?: string;
     translation?: Translation;
     stale: boolean;
     openArticle?: (articleId: string) => void;
     selectTargetLanguage?: (language: string) => void;
+    results: readonly Translation[];
+    selectResult: (id: string) => void;
+    generalSettings?: GeneralSettings;
+    revisionNumbers?: Readonly<Record<string, number>>;
 }
 
 
-export function TranslationsNavigation({ article, sourceArticle, linkedTranslations, translations, translation, stale, openArticle, selectTargetLanguage }: TranslationsNavigationProps) {
+export function TranslationsNavigation({ article, sourceArticle, languages, selectedLanguage, translation, stale, openArticle, selectTargetLanguage, results, selectResult, generalSettings, revisionNumbers }: TranslationsNavigationProps) {
     const intl = useIntl();
 
     return <>
-        {translations.length > 1 && <TabList className="mt-4">
-            {translations.map((item) => <Tab key={item.metadata.targetLanguage} selected={item.metadata.targetLanguage === translation?.metadata.targetLanguage} onClick={() => selectTargetLanguage?.(item.metadata.targetLanguage)}>{item.metadata.targetLanguage}</Tab>)}
+        {languages.length > 1 && <TabList className="mt-4">
+            {languages.map((language) => <Tab key={language} selected={language === selectedLanguage} onClick={() => selectTargetLanguage?.(language)}>{language}</Tab>)}
         </TabList>}
-        {(linkedTranslations.length > 0 && openArticle || sourceArticle && openArticle) && <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1">
-            {linkedTranslations.length > 0 && openArticle && <nav className="flex flex-wrap items-center gap-2" aria-label={intl.formatMessage({ id: "views.existingTranslations" })}>
-                <span className="text-xs font-semibold text-muted">{intl.formatMessage({ id: "views.existingTranslations" })}</span>
-                {linkedTranslations.map((linked) => <div key={linked.id} className="flex items-center gap-1"><Button variant="quiet" onClick={() => openArticle(linked.id)}>{intl.formatMessage({ id: "views.openTranslation" }, { language: getProviderLanguageName(linked.language ?? ""), title: linked.title })}</Button><span className="text-xs text-muted">{intl.formatMessage({ id: linked.sourceRevisionId === article.currentRevisionId ? "views.translationFresh" : "views.translationOutdated" })}</span></div>)}
-            </nav>}
-            {sourceArticle && openArticle && <p className="text-xs text-muted">
+        {results.length > 1 && translation && <div className="mt-3">
+            <Select aria-label={intl.formatMessage({ id: "views.translationResultSelector" })} value={translationResultId(translation)} onChange={(event) => selectResult(event.target.value)}>
+                {results.map((result, index) => <option key={translationResultId(result)} value={translationResultId(result)}>{intl.formatMessage({ id: "views.translationResultOption" }, { time: result.createdAt ? formatDateTime(result.createdAt, intl.locale, generalSettings?.dateFormat, generalSettings?.timeFormat, generalSettings?.timeZone) : "", revisionId: revisionNumbers?.[result.baseRevisionId] ?? result.baseRevisionId, number: index + 1 })}</option>)}
+            </Select>
+        </div>}
+        {sourceArticle && openArticle && <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1">
+            <p className="text-xs text-muted">
                 {intl.formatMessage({ id: "views.sourceLinkedPrefix" })} <button type="button" className="font-semibold text-brand underline underline-offset-2" onClick={() => openArticle(sourceArticle.id)}>{sourceArticle.title}</button>{article.sourceRevisionNumber ? ` ${intl.formatMessage({ id: "views.sourceLinkedRevision" }, { revisionNumber: article.sourceRevisionNumber })}` : null}
-            </p>}
+            </p>
         </div>}
         {stale && <Banner className="mt-3" tone="warning">{intl.formatMessage({ id: sourceArticle ? "views.translationArticleStale" : "views.translationStale" })}</Banner>}
     </>;

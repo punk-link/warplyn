@@ -67,10 +67,13 @@ describe("TranslationsView", () => {
             <TranslationsView article={{ ...article, language: "ru" }} stale={false} create={vi.fn()} translate={translate} translationLanguages={["es", "de"]} />
         </IntlProvider>);
 
-        expect(screen.getByText("Use Translate to request translations. Completed proposals appear here for review.")).toBeTruthy();
+        expect(screen.getByText("Generate a translation, then review it here. Previous results are kept.")).toBeTruthy();
         expect(screen.queryByText(/ru source/)).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("views.translate") }));
+        expect(translate).not.toHaveBeenCalled();
+        await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Generate translations" }));
         expect(translate).toHaveBeenCalledOnce();
+        expect(translate).toHaveBeenCalledWith(["es", "de"]);
     });
 
     it("workspace.translations.stale-source blocks creating a translation from stale source content", () => {
@@ -79,7 +82,7 @@ describe("TranslationsView", () => {
         </IntlProvider>);
 
         expect(screen.getByText("The source Article has changed since this translation proposal was made.")).toBeTruthy();
-        expect(screen.getByRole("button", { name: getMessage("views.editTranslationLanguage", { language: "Spanish" }) }).hasAttribute("disabled")).toBe(true);
+        expect(screen.getByRole("button", { name: getMessage("views.editTranslation") }).hasAttribute("disabled")).toBe(true);
     });
 
     it("warns and blocks creation when protected content changed", () => {
@@ -88,7 +91,7 @@ describe("TranslationsView", () => {
         </IntlProvider>);
 
         expect(screen.getByRole("alert").textContent).toBe("Protected content changed or missing: https://example.com, API-v2");
-        expect(screen.getByRole("button", { name: getMessage("views.editTranslationLanguage", { language: "Spanish" }) }).hasAttribute("disabled")).toBe(true);
+        expect(screen.getByRole("button", { name: getMessage("views.editTranslation") }).hasAttribute("disabled")).toBe(true);
     });
 
     it("shows loading while creating a translation", async () => {
@@ -101,7 +104,7 @@ describe("TranslationsView", () => {
             <TranslationsView article={article} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-2" }]} stale={false} create={create} translate={vi.fn()} />
         </IntlProvider>);
 
-        const button = screen.getByRole("button", { name: getMessage("views.editTranslationLanguage", { language: "Spanish" }) });
+        const button = screen.getByRole("button", { name: getMessage("views.editTranslation") });
         await user.click(button);
 
         expect(button.getAttribute("aria-busy")).toBe("true");
@@ -117,7 +120,7 @@ describe("TranslationsView", () => {
             <TranslationsView article={article} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-2" }]} stale={false} create={vi.fn().mockResolvedValue(undefined)} edit={edit} translate={vi.fn()} />
         </IntlProvider>);
 
-        await user.click(screen.getByRole("button", { name: getMessage("views.editTranslationLanguage", { language: "Spanish" }) }));
+        await user.click(screen.getByRole("button", { name: getMessage("views.editTranslation") }));
         expect(edit).toHaveBeenCalledOnce();
     });
 
@@ -131,7 +134,7 @@ describe("TranslationsView", () => {
         await user.click(screen.getByRole("button", { name: getMessage("views.rejectTranslation") }));
         expect(reject).not.toHaveBeenCalled();
         await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: getMessage("views.confirmRejectTranslation") }));
-        expect(reject).toHaveBeenCalledWith("Spanish");
+        expect(reject).toHaveBeenCalledWith("translation-artifact");
         await waitFor(() => expect(within(screen.getByRole("dialog")).getByRole("status").textContent).toBe("Rejected"));
         await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     });
@@ -159,7 +162,7 @@ describe("TranslationsView", () => {
             <TranslationsView article={article} linkedTranslations={[{ ...article, id: "spanish-article", title: "Source — Spanish", language: "es", sourceArticleId: article.id, sourceRevisionId: article.currentRevisionId, sourceRevisionNumber: 1 }]} stale={false} create={vi.fn()} openArticle={openArticle} translate={vi.fn()} />
         </IntlProvider>);
 
-        await user.click(screen.getByRole("button", { name: "Spanish: Source — Spanish" }));
+        await user.click(screen.getByRole("button", { name: "Edit" }));
         expect(openArticle).toHaveBeenCalledWith("spanish-article");
     });
 
@@ -176,7 +179,7 @@ describe("TranslationsView", () => {
         expect(screen.getByText("Deutscher Text")).toBeTruthy();
         await user.click(screen.getByRole("tab", { name: "Spanish" }));
         expect(screen.getByText("Texto en español")).toBeTruthy();
-        await user.click(screen.getByRole("button", { name: getMessage("views.editTranslationLanguage", { language: "Spanish" }) }));
+        await user.click(screen.getByRole("button", { name: getMessage("views.editTranslation") }));
         expect(create).toHaveBeenCalledWith("Spanish");
     });
 

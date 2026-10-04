@@ -231,8 +231,15 @@ export class AssistantRepository {
 
 
     rejectTranslation(articleId: string, editorialArtifactId: string): boolean {
-        return this.database.prepare("UPDATE assistant_messages SET status = 'rejected', updated_at = ? WHERE article_id = ? AND editorial_artifact_id = ? AND response_kind = 'translation_proposal_prepared' AND status = 'completed'")
-            .run(getCurrentTimestamp(), articleId, editorialArtifactId).changes > 0;
+        return this.completeRun(() => {
+            const timestamp = getCurrentTimestamp();
+            const changed = this.database.prepare("UPDATE assistant_messages SET status = 'rejected', updated_at = ? WHERE article_id = ? AND editorial_artifact_id = ? AND response_kind = 'translation_proposal_prepared' AND status = 'completed'")
+                .run(timestamp, articleId, editorialArtifactId).changes > 0;
+            if (changed)
+                this.database.prepare("UPDATE editorial_artifacts SET rejected_at = ? WHERE id = ? AND article_id = ? AND rejected_at IS NULL").run(timestamp, editorialArtifactId, articleId);
+
+            return changed;
+        });
     }
 
 

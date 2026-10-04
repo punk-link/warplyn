@@ -71,7 +71,7 @@
             "title": "Translation request",
             "status": "implemented",
             "owners": ["packages/server/src/application/editorial/translation/translation.ts", "packages/server/src/index.ts", "packages/server/src/presentation/routes/editorial-route.ts", "packages/web/src/workspace/state/assistant-request-state.ts", "packages/web/src/workspace/state/translation-request-batch.ts", "packages/server/src/application/assistant/capabilities/assistant-capability-loop.ts"],
-            "contract": "Translation requests prepare a translated Article title and body in separate structured fields; the source Article is never overwritten. Configured languages share one explicitly saved source Revision and run at most three requests concurrently. Each request binds its explicit target language and retains independent completion, failure, and recovery; Cancel stops all active requests and starts no queued languages. Existing completed results remain recoverable when a fresh request fails.",
+            "contract": "Translation requests prepare a translated Article title and body in separate structured fields; the source Article is never overwritten. Workspace generation confirms selected supported languages and whole-Article scope, then saves a changed Draft once. Unchanged content keeps its source Revision. Each confirmed attempt starts independent request identities, including the same language on an unchanged Revision; Retry retains the failed request's parameters. Batch languages share one source Revision and run at most three requests concurrently. Each request binds its explicit target language and retains independent completion, failure, and recovery; Cancel stops all active requests and starts no queued languages. Active-Article request guards prevent duplicate starts. Earlier completed results and selection survive fresh request failure or cancellation; completion freshness gates reject changed source output.",
             "persistence": "Translation review metadata is local and source linkage remains recoverable."
         },
         {
@@ -264,6 +264,16 @@
             "expected": ["The stale warning and recovery actions appear in the review header, acceptance actions are absent, and proposal dismissal remains available."],
             "forbidden": ["Creating a Revision from a stale Proposal."],
             "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/ProposalReviewView.test.tsx" }
+        },
+        {
+            "id": "editorial-workflows.fresh-translation",
+            "title": "Repeated translation retains source Revision and independent request identities",
+            "capabilityIds": ["editorial-workflows.translation-request"],
+            "preconditions": ["An unchanged Article already has a completed translation."],
+            "event": "The Author confirms another translation, then encounters failure or cancellation.",
+            "expected": ["New request identities use the same source Revision. Earlier results and selection survive failure and cancellation."],
+            "forbidden": ["Synthetic source Revisions or loss of completed results."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/EditorialWorkspace.fresh-translation.test.tsx" }
         },
         {
             "id": "editorial-workflows.ai-connection-management",

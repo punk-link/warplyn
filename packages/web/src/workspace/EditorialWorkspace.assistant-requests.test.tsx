@@ -126,7 +126,7 @@ describe("Editorial Workspace assistant requests", () => {
         render(<App client={client} />);
 
         expect(await screen.findByText("Borrador traducido")).toBeTruthy();
-        await user.click(screen.getByRole("button", { name: "Edit Spanish translation" }));
+        await user.click(screen.getByRole("button", { name: "Edit" }));
         expect(client.createArticle).toHaveBeenCalledWith(expect.objectContaining({
             title: "TÃ­tulo traducido",
             content: "Borrador traducido",

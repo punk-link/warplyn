@@ -16,16 +16,7 @@ export function acceptTranslationRefresh(database: SqliteDatabase, current: Arti
     if (!source || typeof input.translationRefresh.editorialArtifactId !== "string")
         throwInvalidRefresh();
 
-    const row = database.prepare("SELECT revision_id, content FROM editorial_artifacts WHERE id = ? AND article_id = ? AND kind IN ('assistant-proposal', 'editorial-proposal') AND rejected_at IS NULL")
-        .get(input.translationRefresh.editorialArtifactId, source.id);
-    if (!row)
-        throwInvalidRefresh();
-
-    if (row.revision_id !== source.currentRevisionId)
-        throw new ArticleRevisionConflictError(source);
-
-    const metadata: unknown = JSON.parse(String(row.content));
-    validateTranslation(metadata, input.content, current.language);
+    validateTranslationArtifact(database, source, input.translationRefresh.editorialArtifactId, input.content, current.language);
     database.prepare("UPDATE articles SET source_revision_id = ? WHERE id = ?").run(source.currentRevisionId, current.id);
 
     return {
@@ -36,6 +27,22 @@ export function acceptTranslationRefresh(database: SqliteDatabase, current: Arti
         sourceRevisionId: source.currentRevisionId,
         previousSourceRevisionId: current.sourceRevisionId
     };
+}
+
+
+export function validateTranslationArtifact(database: SqliteDatabase, source: Article, artifactId: unknown, content: string, language: string | undefined): void {
+    if (typeof artifactId !== "string")
+        throwInvalidRefresh();
+
+    const row = database.prepare("SELECT revision_id, content FROM editorial_artifacts WHERE id = ? AND article_id = ? AND kind IN ('assistant-proposal', 'editorial-proposal') AND rejected_at IS NULL AND NOT EXISTS (SELECT 1 FROM assistant_messages WHERE editorial_artifact_id = editorial_artifacts.id AND status = 'rejected')")
+        .get(artifactId, source.id);
+    if (!row)
+        throwInvalidRefresh();
+
+    if (row.revision_id !== source.currentRevisionId)
+        throw new ArticleRevisionConflictError(source);
+
+    validateTranslation(JSON.parse(String(row.content)), content, language);
 }
 
 
