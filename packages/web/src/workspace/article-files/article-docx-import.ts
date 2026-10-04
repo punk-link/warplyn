@@ -99,7 +99,7 @@ export async function importArticleDocx(bytes: Uint8Array): Promise<string> {
         transformDocument: lists.transform,
         styleMap: lists.styleMap.concat(["p[style-name='Quote'] => blockquote:fresh", "p[style-name='Code'] => pre:fresh", "r[style-name='InlineCode'] => code"]),
     });
-    
+
     if (result.value.length > articleMarkdownByteLimit)
         throw new ApplicationClientError("article_file_too_large", undefined, 413);
 

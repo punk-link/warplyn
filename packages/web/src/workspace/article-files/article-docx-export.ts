@@ -102,6 +102,6 @@ export async function exportArticleDocx(html: string, title: string): Promise<Ui
         },
         sections: [{ children: paragraphs }],
     });
-    
+
     return new Uint8Array(await Packer.toArrayBuffer(article));
 }

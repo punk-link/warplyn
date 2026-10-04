@@ -45,7 +45,7 @@ export function useArticleFileDialogs() {
             const current = active.current;
             active.current = undefined;
             setDialog(undefined);
-            
+
             if (current?.kind === "format")
                 current.resolve(format);
             else

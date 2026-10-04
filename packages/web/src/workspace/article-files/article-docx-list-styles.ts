@@ -64,7 +64,7 @@ function paragraphListPaths(parts: Record<string, Uint8Array>): (string | undefi
             paths.push(undefined);
             ancestors.length = 0;
             ancestorIds.length = 0;
-            
+
             continue;
         }
 

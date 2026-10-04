@@ -91,7 +91,7 @@ export function registerDesktopArticleFilesAdapter({ ipcMain, window, dialog, me
 
         release();
         choosing = true;
-        
+
         try {
             await writeArticleFile(destination.path, request.bytes);
             return { ok: true, value: "saved" };

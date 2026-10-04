@@ -104,7 +104,7 @@ export function articleHtmlToMarkdown(html: string): string {
     editor.update(() => {
         $getRoot().append(...$generateNodesFromDOM(editor, safe));
     }, { discrete: true });
-    
+
     const content = editor.getEditorState().read(() => exportArticleMarkdown());
     encodeArticleMarkdown(content);
 
