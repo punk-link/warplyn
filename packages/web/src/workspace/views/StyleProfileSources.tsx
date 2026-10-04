@@ -53,7 +53,7 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
         </div>
         <div id="style-profile-add-sample" aria-hidden={!adding} {...(!adding ? { inert: true } : {}) as Record<string, boolean>} className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${adding ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
             <div className="min-h-0 overflow-hidden">
-                <div className="mb-4 rounded-panel border border-border bg-surface p-4">
+                <div className="mb-3 rounded-panel border border-border bg-surface p-3">
                     <label className="block text-xs font-semibold text-ink" htmlFor="style-profile-source-name">{intl.formatMessage({ id: "styleProfile.sourceName" })}</label>
                     <Field id="style-profile-source-name" placeholder={intl.formatMessage({ id: "styleProfile.sourceName" })} value={name} onChange={(event) => setName(event.target.value)} />
                     <label className="mt-3 block text-xs font-semibold text-ink" htmlFor="style-profile-source-content">{intl.formatMessage({ id: "styleProfile.paste" })}
@@ -72,7 +72,7 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
             </div>
         </div>
         <div className="space-y-3">
-            {corpus?.items.map((item) => <article className={`rounded-panel border p-4 ${item.included ? "border-border bg-surface-raised" : "border-border bg-surface"}`} key={item.id}>
+            {corpus?.items.map((item) => <article className={`rounded-panel border p-3 ${item.included ? "border-border bg-surface-raised" : "border-border bg-surface"}`} key={item.id}>
                 <div className="grid grid-cols-[1rem_minmax(0,1fr)_2.25rem] items-center gap-2">
                     <input className="size-4 accent-brand" type="checkbox" checked={item.included} disabled={Boolean(pendingAction)} aria-label={intl.formatMessage({ id: "styleProfile.include" })} onChange={(event) => onSetIncluded(item.id, event.target.checked)} />
                     <p className="min-w-0 text-sm font-semibold">{item.name}</p>

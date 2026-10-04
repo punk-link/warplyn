@@ -17,7 +17,7 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
 
     const status = telemetryStatus(consent, error, intl);
 
-    return <section className="mt-8 pt-8" aria-labelledby="settings-privacy-and-diagnostics">
+    return <section className="mt-6 pt-6" aria-labelledby="settings-privacy-and-diagnostics">
         <h2 id="settings-privacy-and-diagnostics" className="text-base font-semibold">{intl.formatMessage({ id: "settings.privacyAndDiagnostics" })}</h2>
         <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.telemetry" })} hint={intl.formatMessage({ id: "settings.telemetryHint" })} status={status}>
             <button type="button" role="switch" aria-checked={consent?.enabled ?? false} aria-label={intl.formatMessage({ id: "settings.telemetry" })} disabled={!consent || saving || (!consent.supported && !consent.enabled)} className="group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55" onClick={() => {

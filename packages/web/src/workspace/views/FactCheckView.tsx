@@ -100,7 +100,7 @@ export function FactCheckView({ data, actions }: { data: FactCheckData; actions:
     const getResolutionMessage = (resolution: NonNullable<FactCheckFinding["resolution"]>) => intl.formatMessage({ id: `views.factResolution.${resolution}` as never });
     return <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-col">
         <header className="shrink-0 border-b border-border bg-canvas">
-            <div className="mx-auto flex w-full max-w-6xl flex-wrap items-start justify-between gap-x-6 gap-y-3 px-5 py-4">
+            <div className="mx-auto flex w-full max-w-6xl flex-wrap items-start justify-between gap-x-4 gap-y-3 px-4 py-3">
                 <div>
                     <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.factCheck" })}</h2>
                     <p className="text-xs text-muted">{intl.formatMessage({ id: "views.factCheckRevision" }, { revision: revisionNumber === undefined ? "—" : revisionLabel(factCheck.reviewedRevisionId ?? "") })}</p>
@@ -134,7 +134,7 @@ export function FactCheckView({ data, actions }: { data: FactCheckData; actions:
             })}</aside>
             <div ref={findingDetails} className={`space-y-3 overflow-y-auto pr-1 ${quietScrollbar}`}>{factCheck.findings.map((finding, index) => {
                 const id = finding.occurrenceId ?? finding.claim;
-                return <article className="scroll-mt-4 rounded-panel border border-border bg-surface-raised p-4" key={id} tabIndex={-1} ref={(element) => {
+                return <article className="scroll-mt-4 rounded-panel border border-border bg-surface-raised p-3" key={id} tabIndex={-1} ref={(element) => {
                     findingElements.current[id] = element;
                     findingNavigation.current[index] = element;
                 }}>

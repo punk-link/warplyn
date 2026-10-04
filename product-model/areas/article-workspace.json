@@ -31,10 +31,12 @@
             "status": "implemented",
             "owners": [
                 "packages/web/src/workspace/components/ArticleLibraryPanel.tsx",
+                "packages/web/src/workspace/components/ArticleLibraryFrame.tsx",
+                "packages/web/src/workspace/components/ArticleLibraryNavigation.tsx",
                 "packages/web/src/workspace/EditorialWorkspace.tsx",
                 "packages/web/src/workspace/state/article-workspace-state.ts"
             ],
-            "contract": "The Library uses compact two-line Article rows with 2px gaps and 28px context-menu rows for fine pointers, retaining 36px menu rows for coarse pointers. Search has no divider below it and a compact gap before the first Recent heading; Style Profile and Settings use reduced padding with a 36px minimum height. The Archive section stays expanded while its source group contains the selected Article, including restored selections and translations. Selected Article is restored locally, Article activity includes retained Draft checkpoints, and independently selectable translation Articles appear under the selected source group or during search while other source groups show a collapsed-child indicator. The expanded library header and collapsed expand button share the Warplyn spiral icon, using a deeper teal gradient in light appearance and the original mint-to-teal gradient in dark appearance. Context-menu actions pair labels with decorative icons, reusing the header icons for shared actions. Context menus support archive and deletion for a complete source group, while only originals can be pinned and reordered.",
+            "contract": "The Library uses compact two-line Article rows with 2px gaps and 28px context-menu rows for fine pointers, retaining 36px menu rows for coarse pointers. Search has no divider below it and a compact gap before the first Recent heading; Style Profile and Settings use reduced padding with a 36px minimum height. The 40px collapsed Rail offers New article, Search, Articles, and Archive below the expand control. Active pinned originals appear below those actions in saved pin order as 36px title-initial shortcuts with full-title tooltips, accessible names, and a current-Article indicator. They select directly and close any temporary drawer; archived groups and translations have no separate shortcuts. The shortcut group scrolls independently so the Rail header, actions, and utility footer remain visible. Search, Articles, and Archive open one temporary adjacent Library drawer over the editor without changing the persisted panel width or collapse preference. Articles shows Pinned and Recent; Archive shows archived groups; Search includes archived Articles and translations. Search shortcuts open and focus the drawer even when the Library is responsively collapsed. Selecting an Article, Escape, repeated Rail activation, outside click, or leaving the Library focus area closes the drawer; explicit dismissal restores the trigger while focus-area traversal retains its destination. Enter in drawer Search enters results, Up and Down navigate visible drawer controls, and context-menu actions remain available. The Archive section stays expanded while its source group contains the selected Article, including restored selections and translations. Selected Article is restored locally, Article activity includes retained Draft checkpoints, and independently selectable translation Articles appear under the selected source group or during search while other source groups show a collapsed-child indicator. The expanded library header and collapsed expand button share the Warplyn spiral icon, using a deeper teal gradient in light appearance and the original mint-to-teal gradient in dark appearance. Context-menu actions pair labels with decorative icons, reusing the header icons for shared actions. Context menus support archive and deletion for a complete source group, while only originals can be pinned and reordered.",
             "persistence": "Article service persists group archive state and original pin order plus local workspace preferences."
         },
         {
@@ -326,6 +328,31 @@
             "evidence": {
                 "kind": "automated",
                 "path": "packages/web/src/workspace/EditorialWorkspace.creation.test.tsx"
+            }
+        },
+        {
+            "id": "workspace.library.rail-navigation",
+            "title": "Collapsed Library Rail retains creation, search, and Article navigation",
+            "capabilityIds": [
+                "workspace.library.article-navigation"
+            ],
+            "preconditions": [
+                "The Library is explicitly or responsively collapsed"
+            ],
+            "event": "Author uses a pinned Article shortcut, New article, Search, Articles, Archive, or the search shortcut from the Rail.",
+            "expected": [
+                "New article uses the existing creation path; Articles shows Pinned and Recent; Archive shows archived groups; Search includes archived translations.",
+                "Active pinned originals appear in saved order and select directly without opening a drawer; their scrolling group preserves access to Rail actions and Settings.",
+                "The temporary drawer closes after selection, Escape, repeated activation, outside click, or leaving the focus area, with keyboard focus preserved.",
+                "Context menus retain group actions and Search retains native editing keys, with Enter entering results."
+            ],
+            "forbidden": [
+                "Persisting the temporary drawer or expanding the Library merely to search or select an Article",
+                "Changing Article content or Revision history by opening navigation"
+            ],
+            "evidence": {
+                "kind": "automated",
+                "path": "packages/web/src/workspace/components/ArticleLibraryRail.test.tsx"
             }
         },
         {

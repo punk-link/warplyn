@@ -124,7 +124,7 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
 
 
     return <header data-focus-area="article-header" onKeyDown={handleHeaderKeyDown} className="border-b border-border bg-surface" aria-label={intl.formatMessage({ id: "articleHeader.metadata" })}>
-        <div className="flex min-h-12 items-center gap-2 overflow-x-auto px-5 py-1.5">
+        <div className="flex min-h-12 items-center gap-2 overflow-x-auto px-4 py-1.5">
             <h1 className="min-w-0 flex-1 text-xl font-semibold tracking-tight">
                 {editingTitle
                     ? <Field autoFocus aria-label={intl.formatMessage({ id: "articleHeader.title" })} className="h-10 min-h-10 w-full px-2 text-xl font-semibold tracking-tight" value={title} onBlur={finishTitleEditing} onChange={(event) => {

@@ -77,7 +77,7 @@ function ProposalReviewHeader({ presentation, counts, stale, accepted, displayMo
     const intl = useIntl();
     const disabled = accepted || stale || presentation.changes.length === 0;
     return <header className="shrink-0 border-b border-border bg-canvas">
-        <div className="mx-auto w-full max-w-6xl px-5 py-4">
+        <div className="mx-auto w-full max-w-6xl px-4 py-3">
             <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                     <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.proposalReview" })}</h2>
@@ -166,7 +166,7 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
     return <div className="flex min-h-0 flex-1 flex-col">
         <ProposalReviewHeader presentation={presentation} counts={counts} stale={stale} accepted={accepted} displayMode={displayMode} setDisplayMode={setDisplayMode} highlightChanges={highlightChanges} setHighlightChanges={setHighlightChanges} rejectAll={rejectAll} acceptAll={acceptAll} applyAccepted={applyAccepted} acceptanceBlocked={acceptanceBlocked} allResolved={allResolved} moveChange={moveChange} openWrite={openWrite} openAssistant={openAssistant} dismissProposal={dismissProposal} />
         <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
-            <div className="mx-auto w-full max-w-6xl p-5 pb-6">
+            <div className="mx-auto w-full max-w-6xl p-4 pb-5">
                 {accepted && <Status className="mb-4" label={intl.formatMessage({ id: "views.proposalAccepted" })} tone="success" />}
                 <ProposalWarnings warnings={presentation.warnings} dismissed={warningsDismissed} dismiss={dismissWarnings} />
                 <ProposalFallbackDiff review={review} reliable={presentation.reliable} stale={stale} displayMode={displayMode} highlight={highlightChanges} />
@@ -174,13 +174,13 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                     ? <EmptyState title={intl.formatMessage({ id: "views.proposalNoChanges" })}>
                         <Button variant="secondary" onClick={dismissProposal}>{intl.formatMessage({ id: "views.dismissProposal" })}</Button>
                     </EmptyState>
-                    : presentation.reliable && !stale && <div className="mt-4 space-y-4">{presentation.changes.map((change, index) => {
+                    : presentation.reliable && !stale && <div className="mt-3 space-y-3">{presentation.changes.map((change, index) => {
                         const decision = decisions[change.id] ?? "pending";
                         const decisionStyles = { accepted: "border-success bg-success-soft", rejected: "border-danger bg-danger-soft", pending: "border-border bg-surface-raised" };
                         const decisionClasses = decisionStyles[decision];
                         return <article key={change.id} ref={(element) => {
                             cards.current[index] = element;
-                        }} tabIndex={-1} className={`rounded-panel border p-4 ${decisionClasses}`}>
+                        }} tabIndex={-1} className={`rounded-panel border p-3 ${decisionClasses}`}>
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div>
                                     <h3 className="text-sm font-semibold">{intl.formatMessage({ id: `views.changeType.${change.kind}` as never }, { index: index + 1, total: presentation.changes.length })}</h3>

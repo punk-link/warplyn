@@ -29,7 +29,7 @@ export function RevisionHistoryDetails({ revisions, bypassedRevisionIds, selecte
     const formatRevisionDate = (createdAt: string) => formatDateTime(createdAt, generalSettings.interfaceLocale, generalSettings.dateFormat, generalSettings.timeFormat, generalSettings.timeZone);
 
     return <section className="flex min-w-0 flex-1 flex-col" aria-label={intl.formatMessage({ id: "revisions.articleContent" })}>
-        <div className="border-b border-border px-5 py-4">
+        <div className="border-b border-border px-4 py-3">
             <label className="block md:hidden">
                 <span className="text-xs font-semibold text-ink">{intl.formatMessage({ id: "revisions.select" })}</span>
                 <Select className="mt-1" value={selected.id} onChange={(event) => onSelect(event.target.value)}>
@@ -49,13 +49,15 @@ export function RevisionHistoryDetails({ revisions, bypassedRevisionIds, selecte
                     {selectedIsCurrent && <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "revisions.currentExplanation" })}</p>}
                     {bypassedRevisionIds.has(selected.id) && <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "revisions.inactive" })}</p>}
                 </div>
-                {files && <Button variant="secondary" disabled={files.pending || !preview} onClick={() => preview && void files.saveRevision(preview, revisions.findIndex((revision) => revision.id === selected.id) + 1)}>{intl.formatMessage({ id: "articleFiles.save" })}</Button>}
-                {selectedIsCurrent
-                    ? <Badge>{intl.formatMessage({ id: "revisions.currentRevision" })}</Badge>
-                    : <Button variant="secondary" disabled={!preview} onClick={() => select(selected)}>{intl.formatMessage({ id: "revisions.restore" })}</Button>}
+                <div className="flex flex-wrap items-center gap-2">
+                    {files && <Button variant="secondary" disabled={files.pending || !preview} onClick={() => preview && void files.saveRevision(preview, revisions.findIndex((revision) => revision.id === selected.id) + 1)}>{intl.formatMessage({ id: "articleFiles.save" })}</Button>}
+                    {selectedIsCurrent
+                        ? <Badge>{intl.formatMessage({ id: "revisions.currentRevision" })}</Badge>
+                        : <Button variant="secondary" disabled={!preview} onClick={() => select(selected)}>{intl.formatMessage({ id: "revisions.restore" })}</Button>}
+                </div>
             </div>
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto bg-editor-surface px-8 py-7 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-editor-surface px-6 py-5 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
             {preview
                 ? <article className="mx-auto w-full max-w-3xl">
                     <RevisionArticlePreview revisionId={preview.id} content={preview.content} />

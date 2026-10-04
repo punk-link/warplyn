@@ -27,7 +27,7 @@ export function SettingsNavigation({ section, setSection, back, status }: { sect
             <nav className="p-2">
                 {settingsSections.map((item) => <button key={item.id} className={`min-h-10 w-full rounded-control px-3 text-left text-sm ${section === item.id ? "bg-brand-soft font-semibold text-brand" : "text-muted hover:bg-surface"}`} onClick={() => setSection(item.id)}>{intl.formatMessage({ id: item.label })}</button>)}
             </nav>
-            <footer className="mt-auto border-t border-border px-4 py-3 text-micro text-muted" role="status">
+            <footer className="mt-auto border-t border-border px-3 py-2 text-micro text-muted" role="status">
                 <span aria-hidden="true">&#9679;</span> {status}
             </footer>
         </aside>

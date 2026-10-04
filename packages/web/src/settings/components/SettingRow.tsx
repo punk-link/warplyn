@@ -6,7 +6,7 @@ export function SettingRow(props: { label: string; hint: string; children: React
     const hintId = useId();
     const Heading = headingLevel === 3 ? "h3" : "h2";
 
-    return <section className={`border-b border-border py-6 last:border-b-0 md:grid md:grid-cols-[minmax(0,1fr)_minmax(14rem,18rem)] md:gap-x-12 ${className ?? ""}`}>
+    return <section className={`border-b border-border py-4 last:border-b-0 md:grid md:grid-cols-[minmax(0,1fr)_minmax(14rem,18rem)] md:gap-x-8 ${className ?? ""}`}>
         <div>
             <Heading className="text-sm font-semibold">{label}</Heading>
             <p id={hintId} className="mt-1 text-sm leading-5 text-muted">{hint}</p>
@@ -24,7 +24,7 @@ export function SettingRow(props: { label: string; hint: string; children: React
 export function SettingsGroup({ label, children }: { label: string; children: ReactNode }) {
     const headingId = useId();
 
-    return <section className="mt-8" aria-labelledby={headingId}>
+    return <section className="mt-6" aria-labelledby={headingId}>
         <h2 id={headingId} className="text-base font-semibold">{label}</h2>
         {children}
     </section>;

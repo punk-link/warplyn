@@ -48,7 +48,7 @@ export function ArticleFileDialogs({ state }: { state: ReturnType<typeof useArti
         </label>}
         {dialog.kind === "review" && <>
             <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "articleFiles.layoutWarning" })}</p>
-            <div className="mt-4 max-h-96 overflow-auto rounded-control border border-border p-4">
+            <div className="mt-3 max-h-96 overflow-auto rounded-control border border-border p-3">
                 <RevisionArticlePreview revisionId="file-import" content={dialog.file.content} />
             </div>
         </>}

@@ -1,7 +1,7 @@
 import { AI_PROVIDER, isAiProvider, type AiConnection, type AiProvider } from "@skladno/shared";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { Banner, Button, Field, Select } from "../../ui/primitives.js";
+import { Badge, Banner, Button, Field, Select } from "../../ui/primitives.js";
 import { Control, SettingsGroup } from "./SettingRow.js";
 import type { AiSettingsSectionProps } from "./AiSettingsTypes.js";
 
@@ -64,18 +64,20 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
     };
 
     return <SettingsGroup label={intl.formatMessage({ id: "settings.connections" })}>
-        {props.settings.connections.length > 0 && <div className="mt-6 mb-8">
+        {props.settings.connections.length > 0 && <div className="mt-5 mb-6">
             <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.configuredConnections" })}</h3>
             <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.configuredConnectionsHint" })}</p>
             <div className="mt-4 grid gap-2">
                 {props.settings.connections.filter((connection): connection is AiConnection => Boolean(connection)).map((connection) => <div key={connection.id} className="flex flex-col gap-3 rounded-control border border-border bg-surface-raised px-3 py-2 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                             <p className="text-sm font-medium">{connection.label}</p>
-                            {connection.active !== false && <p className="inline-flex min-h-8 items-center rounded-control border border-brand bg-brand-soft px-2 py-1 text-xs font-semibold text-brand" role="status">{intl.formatMessage({ id: "settings.activeConnectionShort" })}</p>}
+                            {connection.active !== false && <Badge className="shrink-0" role="status">{intl.formatMessage({ id: "settings.activeConnectionShort" })}</Badge>}
                         </div>
-                        <p className="mt-1 truncate text-xs text-muted">{getProviderLabel(connection.provider)}</p>
-                        <p className="truncate text-xs text-muted">{getCredentialSourceLabel(connection, intl.formatMessage({ id: "settings.managedCredential" }))}</p>
+                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
+                            <span className="truncate">{getCredentialSourceLabel(connection, intl.formatMessage({ id: "settings.managedCredential" }))}</span>
+                            <span className="shrink-0">{getProviderLabel(connection.provider)}</span>
+                        </div>
                     </div>
                     <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
                         {props.onRequestConnectionRename && (getCredentialSource(connection).kind !== "managed" || props.canRenameManagedConnection) && <Button compact variant="quiet" onClick={() => props.onRequestConnectionRename?.(connection)}>{intl.formatMessage({ id: "settings.renameConnectionShort" })}</Button>}
@@ -85,7 +87,7 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                 </div>)}
             </div>
         </div>}
-        {props.onAddManagedConnection && <div className="mt-6">
+        {props.onAddManagedConnection && <div className="mt-5">
             <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.chooseConnectionMethod" })}</h3>
             <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.chooseConnectionMethodHint" })}</p>
             <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={intl.formatMessage({ id: "settings.chooseConnectionMethod" })}>
@@ -93,12 +95,12 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                 <Button variant={connectionMethod === "environment-variable" ? "secondary" : "quiet"} aria-pressed={connectionMethod === "environment-variable"} onClick={() => setConnectionMethod("environment-variable")}>{intl.formatMessage({ id: "settings.environmentVariable" })}</Button>
             </div>
         </div>}
-        {connectionMethod === "managed" && <div className="mt-6 mb-8">
+        {connectionMethod === "managed" && <div className="mt-5 mb-6">
             <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.addApiKey" })}</h3>
             <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.addApiKeyHint" })}</p>
             <div className="mt-4 border-l border-border-strong pl-4">
                 <div className="mb-4">{providerControl}</div>
-                <div className="grid gap-4">
+                <div className="grid gap-3">
                     <Control label={intl.formatMessage({ id: "settings.connectionName" })} hint={intl.formatMessage({ id: "settings.connectionNameHint" })}>
                         <Field type="text" value={props.managedConnectionName} placeholder={intl.formatMessage({ id: "settings.connectionNamePlaceholder" })} onChange={(event) => props.setManagedConnectionName(event.target.value)} /></Control>
                     <Control label={intl.formatMessage({ id: "settings.apiKey" })} hint={intl.formatMessage({ id: "settings.apiKeyHint" })}>
@@ -110,12 +112,12 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                 </div>
             </div>
         </div>}
-        {connectionMethod === "environment-variable" && <div className="mt-6 mb-8">
+        {connectionMethod === "environment-variable" && <div className="mt-5 mb-6">
             <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.addConnection" })}</h3>
             <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.connectionHint" })}</p>
             <div className="mt-4 border-l border-border-strong pl-4">
                 <div className="mb-4">{providerControl}</div>
-                <div className="grid gap-4">
+                <div className="grid gap-3">
                     <Control label={intl.formatMessage({ id: "settings.connectionName" })} hint={intl.formatMessage({ id: "settings.connectionNameHint" })}>
                         <Field type="text" value={props.connectionName} placeholder={intl.formatMessage({ id: "settings.connectionNamePlaceholder" })} onChange={(event) => props.setConnectionName(event.target.value)} onPaste={handleTextFieldPaste(props.connectionName, props.setConnectionName)} />
                     </Control>

@@ -54,7 +54,7 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
                     {profiles.map((profile) => <option key={profile.id} value={profile.id}>{getProfileLabel(profile.id)}{profile.characterLimit === undefined ? "" : ` (${intl.formatNumber(profile.characterLimit)})`}</option>)}
                 </Select>
             </SettingRow>
-            <div className="mt-6 mb-8">
+            <div className="mt-5 mb-6">
                 <div>
                     <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.customProfiles" })}</h3>
                     <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.customProfilesHint" })}</p>
@@ -69,7 +69,7 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
             </div>
             <div className="pb-8">
                 <div className="border-l border-border-strong pl-4">
-                    <div className="grid gap-4">
+                    <div className="grid gap-3">
                         <Control label={intl.formatMessage({ id: "settings.customProfileName" })} hint={intl.formatMessage({ id: "settings.customProfileNameHint" })}>
                             <Field aria-label={intl.formatMessage({ id: "settings.customProfileName" })} value={name} onChange={(event) => setName(event.target.value)} />
                         </Control>
