@@ -21,11 +21,13 @@ describe("fresh translation review", () => {
         render(<IntlProvider locale="en" messages={messages}><TranslationsView data={{ article, translations: [first, second], stale: false }} actions={{ create, reject, translate: vi.fn() }} /></IntlProvider>);
         expect(screen.getByText("Second Spanish")).toBeTruthy();
         expect(screen.queryByRole("tab", { name: "Spanish" })).toBeNull();
-        await user.selectOptions(screen.getByRole("combobox", { name: "Translation result" }), "first");
+        await user.click(screen.getByRole("button", { name: "Translation result" }));
+        await user.click(screen.getAllByRole("menuitemradio")[1]!);
         await user.click(screen.getByRole("button", { name: "Edit" }));
         expect(create).toHaveBeenCalledWith("first");
         await user.click(screen.getByRole("button", { name: "Reject" }));
-        await user.selectOptions(screen.getByRole("combobox", { name: "Translation result" }), "second");
+        await user.click(screen.getByRole("button", { name: "Translation result" }));
+        await user.click(screen.getAllByRole("menuitemradio")[0]!);
         await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Reject" }));
         expect(reject).toHaveBeenCalledWith("first");
     });
@@ -37,7 +39,8 @@ describe("fresh translation review", () => {
         const { rerender } = render(view([first]));
         rerender(view([first, second]));
         expect(screen.getByText("Second Spanish")).toBeTruthy();
-        await user.selectOptions(screen.getByRole("combobox", { name: "Translation result" }), "first");
+        await user.click(screen.getByRole("button", { name: "Translation result" }));
+        await user.click(screen.getAllByRole("menuitemradio")[1]!);
         rerender(view([{ ...first }, { ...second }]));
         expect(screen.getByText("First Spanish")).toBeTruthy();
         rerender(view([second]));
@@ -48,7 +51,8 @@ describe("fresh translation review", () => {
         const user = userEvent.setup();
         render(<IntlProvider locale="en" messages={messages}><TranslationsView data={{ article, translations: [{ ...first, baseRevisionId: "old" }, second], stale: false }} actions={{ create: vi.fn(), translate: vi.fn() }} /></IntlProvider>);
         expect(screen.getByRole("button", { name: "Edit" }).hasAttribute("disabled")).toBe(false);
-        await user.selectOptions(screen.getByRole("combobox", { name: "Translation result" }), "first");
+        await user.click(screen.getByRole("button", { name: "Translation result" }));
+        await user.click(screen.getAllByRole("menuitemradio")[1]!);
         expect(screen.getByRole("button", { name: "Edit" }).hasAttribute("disabled")).toBe(true);
     });
 

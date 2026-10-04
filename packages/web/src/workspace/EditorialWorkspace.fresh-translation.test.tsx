@@ -53,7 +53,8 @@ describe("fresh translations through Assistant", () => {
         await screen.findByText("Spanish result 1");
         await generate();
         await screen.findByText("Spanish result 2");
-        await user.selectOptions(screen.getByRole("combobox", { name: "Translation result" }), "artifact-1");
+        await user.click(screen.getByRole("button", { name: "Translation result" }));
+        await user.click(screen.getAllByRole("menuitemradio")[1]!);
         outcome = "fail";
         await generate();
         await screen.findByRole("alert");
@@ -71,7 +72,8 @@ describe("fresh translations through Assistant", () => {
         workspace.unmount();
         render(<App client={client} />);
         await screen.findByText("Spanish result 2");
-        await user.selectOptions(screen.getByRole("combobox", { name: "Translation result" }), "artifact-1");
+        await user.click(screen.getByRole("button", { name: "Translation result" }));
+        await user.click(screen.getAllByRole("menuitemradio")[1]!);
         client.rejectTranslation = vi.fn(async (_id, artifactId) => {
             const rejected = history.find((message) => message.editorialArtifactId === artifactId);
             if (rejected)
