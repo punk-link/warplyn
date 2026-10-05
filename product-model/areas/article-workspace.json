@@ -752,6 +752,36 @@
             "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/FactCheckView.test.tsx" }
         },
         {
+            "id": "workspace.translations.generation-progress",
+            "title": "Translation generation shades review while request controls remain in the composer",
+            "capabilityIds": ["workspace.translations.linked-article"],
+            "preconditions": ["The Author starts translation generation for the selected Article."],
+            "event": "Generation is pending, completes, fails, or is cancelled.",
+            "expected": [
+                "The previous result remains visible under a shade with a reduced-motion-aware spinner and a screen-reader status naming the requested languages.",
+                "Review controls are inert during generation. The progress overlay has no actions; cancellation remains in the Assistant composer and accessible through its existing panel and keyboard controls.",
+                "The shade follows the Article's whole translation batch and clears on completion, failure, or cancellation; earlier results remain recoverable. New translation preserves the current Assistant panel layout rather than expanding it over the workspace.",
+                "Unrelated Assistant requests do not shade the Translations view."
+            ],
+            "forbidden": ["Modifying Article text or accepted history merely to display or dismiss progress."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/EditorialWorkspace.fresh-translation.test.tsx" }
+        },
+        {
+            "id": "workspace.translations.protected-content",
+            "title": "Validated protected content has contextual, accessible explanations",
+            "capabilityIds": ["workspace.translations.linked-article"],
+            "preconditions": ["A completed translation has protected values and exact occurrence counts."],
+            "event": "The Author reviews protected values in either comparison mode.",
+            "expected": [
+                "Validated values in source and translated text have inline controls with advisory exact-preservation explanations and expected occurrence counts.",
+                "Mouse, keyboard, and screen-reader users can reach the explanation; Left and Right navigate visible values, Enter or Space toggle details, and Escape closes them.",
+                "Long values wrap in narrow layouts; repeated values retain individual controls and multiline protected values stay together in aligned comparison.",
+                "Changed or missing values retain their warning, while validated values and the no-protected-content state have no bottom success banner."
+            ],
+            "forbidden": ["Changing source or translated text by inspecting validation."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/views/TranslationBody.test.tsx" }
+        },
+        {
             "id": "workspace.translations.confirm-generation",
             "title": "New translation confirms supported targets and the source snapshot",
             "capabilityIds": ["workspace.translations.linked-article"],

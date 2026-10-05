@@ -18,7 +18,10 @@ test("native backup finishes through the production bridge before desktop shutdo
     try {
         app = await _electron.launch({ args: [resolve("packages/electron"), `--user-data-dir=${join(root, "profile")}`], env });
         const page = await app.firstWindow();
-        await page.waitForURL("http://localhost:5173/");
+        await page.waitForURL("http://127.0.0.1:5173/");
+        if (process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true")
+            expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isVisible())).toBe(false);
+
         await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await page.getByRole("button", { name: "Create" }).click();
@@ -31,6 +34,9 @@ test("native backup finishes through the production bridge before desktop shutdo
         await page.getByRole("button", { name: "Choose backup folder" }).click();
         await expect(page.getByText(/Using .*backups/)).toBeVisible();
         await page.getByRole("button", { name: "Create backup", exact: true }).click();
+        if (process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true")
+            expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isVisible())).toBe(false);
+
         await app.close();
         app = undefined;
 

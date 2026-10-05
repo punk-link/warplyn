@@ -45,3 +45,27 @@ it("enters a content-editable Writing Surface", () => {
     fireEvent.keyDown(toolbar, { key: "Tab" });
     expect(document.activeElement).toBe(screen.getByLabelText("Writing Surface"));
 });
+
+
+it("skips inert results and reaches composer controls in both directions", () => {
+    function BusyWorkspace() {
+        const focusAreas = useFocusAreaNavigation(["workspace-views", "article-editor", "assistant-composer"]);
+        return <main ref={focusAreas.ref} onFocusCapture={focusAreas.onFocusCapture} onKeyDownCapture={focusAreas.onKeyDownCapture}>
+            <button data-focus-area="workspace-views">Views</button>
+            <div {...{ inert: "" }}><button data-focus-area="article-editor" data-focus-area-entry>Previous result</button></div>
+            <button data-focus-area="assistant-composer" data-focus-area-entry>Stop request</button>
+        </main>;
+    }
+
+
+    render(<BusyWorkspace />);
+    const views = screen.getByRole("button", { name: "Views" });
+    const stop = screen.getByRole("button", { name: "Stop request" });
+    views.focus();
+    fireEvent.keyDown(views, { key: "Tab" });
+    expect(document.activeElement).toBe(stop);
+    fireEvent.keyDown(stop, { key: "Tab" });
+    expect(document.activeElement).toBe(views);
+    fireEvent.keyDown(document.activeElement!, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(stop);
+});

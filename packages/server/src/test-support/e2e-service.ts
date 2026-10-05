@@ -88,13 +88,14 @@ class E2eFixtureEngine implements EditorialEngine {
         }
 
         if (request.operation === EDITORIAL_OPERATION.TRANSLATION) {
+            const protectedFixture = request.article.startsWith("Protected translation fixture.");
             yield {
                 type: EDITORIAL_ENGINE_EVENT.COMPLETED,
                 responseId: "e2e-translation",
-                text: "Texto de traducción de prueba.",
+                text: protectedFixture ? request.article.replace("Protected translation fixture.", "Traducción protegida.") : "Texto de traducción de prueba.",
                 translation: {
                     targetLanguage: request.targetLanguage ?? "Spanish",
-                    protectedSpans: [],
+                    protectedSpans: protectedFixture ? ["API-v2", "42", "42", "https://example.com/" + "long-path/".repeat(30), '"Quoted value"', "const result = call();\n\nreturn result;"] : [],
                     title: "Fixture Article — Spanish"
                 }
             };

@@ -12,7 +12,7 @@ async function launchArticleFiles(root: string): Promise<ElectronApplication> {
         env,
     });
     const page = await app.firstWindow();
-    await page.waitForURL("http://localhost:5173/");
+    await page.waitForURL("http://127.0.0.1:5173/");
     await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.reload();
     return app;
@@ -52,10 +52,14 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
         await editor.fill("New Draft");
         await page.locator("[data-workspace-panel=article-library] [aria-current=page]").click({ button: "right" });
         await page.getByRole("menuitem", { name: "Save to file…" }).click();
-        await expect.poll(() => readFile(target, "utf8")).toBe("# New Draft");
+        // Wait for native save completion before opening the destination on Windows.
+        await expect(page.getByRole("button", { name: "Load from file", exact: true })).toBeEnabled();
+        expect(await readFile(target, "utf8")).toBe("# New Draft");
         await page.getByRole("tab", { name: "Revisions" }).click();
-        await page.getByRole("region", { name: "Saved Article content" }).getByRole("button", { name: "Save to file", exact: true }).click();
-        await expect.poll(() => readFile(target, "utf8")).toBe(content);
+        const saveRevision = page.getByRole("region", { name: "Saved Article content" }).getByRole("button", { name: "Save to file", exact: true });
+        await saveRevision.click();
+        await expect(saveRevision).toBeEnabled();
+        expect(await readFile(target, "utf8")).toBe(content);
         await page.getByRole("tab", { name: "Write", exact: true }).click();
         await expect(editor).toContainText("New Draft");
         for (const format of ["html", "docx", "rtf"]) {

@@ -7,7 +7,7 @@ export const settingsFocusAreas = ["settings-navigation", "settings-content"] as
 
 function isAvailable(element: HTMLElement): boolean {
     const style = getComputedStyle(element);
-    return !element.closest("[hidden], [aria-hidden=true]") && !element.matches(":disabled") && style.display !== "none" && style.visibility !== "hidden";
+    return !element.closest("[hidden], [inert], [aria-hidden=true]") && !element.matches(":disabled") && style.display !== "none" && style.visibility !== "hidden";
 }
 
 

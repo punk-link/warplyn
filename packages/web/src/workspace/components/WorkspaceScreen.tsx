@@ -134,7 +134,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                 layout={{ collapsed: layout.assistantCollapsed, setCollapsed: layout.setAssistantCollapsed }} />,
             children: <>
                 {hasUsableAiConnection === false && <AiConnectionWarning openModelSettings={openModelSettings} />}
-                <ArticleWorkspace state={{ workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, requestActive: assistant.state === "streaming", checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined }} actions={{ createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection: assistantSelection?.preview }} />
+                <ArticleWorkspace state={{ workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, requestActive: assistant.state === "streaming", translationGeneration: assistant.translatingLanguages && { languages: assistant.translatingLanguages }, checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined }} actions={{ createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection: assistantSelection?.preview }} />
                 {overlays}
             </>,
         }}
@@ -145,10 +145,10 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
 function AiConnectionWarning({ openModelSettings }: { openModelSettings: () => void }) {
     const intl = useIntl();
 
-    return <Banner data-focus-area="workspace-views" className="m-3 shrink-0" tone="warning" role="status">
+    return <Banner data-focus-area="workspace-views" className="m-3 shrink-0 flex-col lg:flex-row" tone="warning" role="status">
         <span className="min-w-0">
             <strong className="block">{intl.formatMessage({ id: "workspace.aiConnectionRequired" })}</strong>
             {intl.formatMessage({ id: "workspace.aiConnectionCapabilities" })}</span>
-        <Button className="ml-auto shrink-0" variant="secondary" onClick={openModelSettings}>{intl.formatMessage({ id: "workspace.addModelKey" })}</Button>
+        <Button className="shrink-0 self-end lg:ml-auto lg:self-center" variant="secondary" onClick={openModelSettings}>{intl.formatMessage({ id: "workspace.addModelKey" })}</Button>
     </Banner>;
 }
