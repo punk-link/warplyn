@@ -203,6 +203,25 @@ describe("WorkspaceShell", () => {
     });
 
 
+    it("keeps Library restoration stable while widening a workspace with an explicitly opened Assistant", () => {
+        setViewportWidth(900);
+        const setLibraryCollapsed = vi.fn();
+        renderShell({ libraryWidth: 280, assistantOpenRequest: 1, setLibraryCollapsed });
+
+        for (const width of [900, 980, 1008, 1100, 1239]) {
+            setViewportWidth(width);
+            expect(screen.queryByRole("separator", { name: getMessage("navigation.resizeArticleLibrary") })).toBeNull();
+        }
+
+        for (const width of [1240, 1280, 1440]) {
+            setViewportWidth(width);
+            expect(screen.getByRole("separator", { name: getMessage("navigation.resizeArticleLibrary") })).toBeTruthy();
+        }
+
+        expect(setLibraryCollapsed).not.toHaveBeenCalled();
+    });
+
+
     it("collapses the Article Library only once the Assistant is already collapsed", () => {
         setViewportWidth(900);
         renderShell({

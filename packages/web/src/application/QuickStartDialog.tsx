@@ -50,7 +50,7 @@ export function QuickStartDialog({ hasUsableAiConnection, close, openModelSettin
             <h1 id="quick-start-title" className="text-lg font-semibold">{intl.formatMessage({ id: "quickStart.title" })}</h1>
             <IconButton label={intl.formatMessage({ id: "quickStart.close" })} variant="quiet" onClick={close}><CloseIcon className="size-4" /></IconButton>
         </div>
-        <ol className="mt-5 list-decimal space-y-4 pl-5 text-sm leading-5">
+        <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-5">
             <li>
                 <strong>{intl.formatMessage({ id: "quickStart.write.title" })}</strong>
                 <p className="mt-1 text-muted">{intl.formatMessage({ id: "quickStart.write.description" })}</p>
@@ -64,7 +64,7 @@ export function QuickStartDialog({ hasUsableAiConnection, close, openModelSettin
                 <p className="mt-1 text-muted">{intl.formatMessage({ id: "quickStart.modelKey.description" })}</p>
             </li>
         </ol>
-        <div className="mt-6 flex flex-wrap justify-end gap-2">
+        <div className="mt-5 flex flex-wrap justify-end gap-2">
             <Button variant="secondary" onClick={close}>{intl.formatMessage({ id: "quickStart.skip" })}</Button>
             {hasUsableAiConnection
                 ? <Button ref={primaryAction} onClick={startWriting}>{intl.formatMessage({ id: "quickStart.startWriting" })}</Button>

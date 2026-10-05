@@ -46,7 +46,7 @@ export function AiModelsSection({ data, actions }: { data: AiModelsData; actions
         <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.appModel" })} hint={intl.formatMessage({ id: "settings.appModelHint" })}>
             <ModelAndReasoning model={modelProps(appModel?.model ?? "", intl.formatMessage({ id: "settings.appModel" }), (model) => void saveAppModel(model ? { model, ...(appModel?.reasoningEffort ? { reasoningEffort: appModel.reasoningEffort } : {}) } : null), true)} effort={appModel?.reasoningEffort} onEffortChange={selectedProvider(appModel?.model ?? "") === AI_PROVIDER.OPENAI ? (reasoningEffort) => void saveAppModel({ model: appModel?.model ?? "", reasoningEffort }) : undefined} />
         </SettingRow>
-        <div className="mt-8">
+        <div className="mt-6">
             <button type="button" aria-expanded={specificModelsOpen} aria-controls="specific-model-overrides" className="group flex min-h-9 w-full items-center gap-2 text-left text-sm font-semibold hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" onClick={toggleSpecificModels}>
                 <span>{intl.formatMessage({ id: "settings.specificModels" })}</span>
                 <ChevronDownIcon className={`ml-auto size-4 shrink-0 text-brand transition-transform duration-200 motion-reduce:transition-none ${specificModelsOpen ? "rotate-180" : ""}`} />

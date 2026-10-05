@@ -106,8 +106,9 @@ function calculatePanelVisibility(layout: WorkspaceShellLayout, viewportWidth: n
     const assistantCollapsed = !layout.focusMode && (layout.assistantCollapsed || (requiredWidth > viewportWidth && !responsiveAssistantExpanded));
     const assistantOverlay = responsiveAssistantExpanded && viewportWidth < libraryLimits.collapsed + assistantLimits.minimum + articleWorkspaceMinimum;
     const widthWithoutAssistant = requestedLibraryWidth + assistantLimits.collapsed + articleWorkspaceMinimum;
-    const expandedAssistantNeedsCollapsedLibrary = responsiveAssistantExpanded && !assistantOverlay && requestedLibraryWidth + assistantLimits.minimum + articleWorkspaceMinimum > viewportWidth;
+    const expandedAssistantNeedsCollapsedLibrary = responsiveAssistantExpanded && requestedLibraryWidth + assistantLimits.minimum + articleWorkspaceMinimum > viewportWidth;
     const libraryCollapsed = !layout.focusMode && (layout.libraryCollapsed || widthWithoutAssistant > viewportWidth || expandedAssistantNeedsCollapsedLibrary);
+
     return { requestedAssistantWidth, assistantCollapsed, assistantOverlay, libraryCollapsed };
 }
 
@@ -155,7 +156,7 @@ export function WorkspaceShell({ content, layout }: { content: WorkspaceShellCon
     }}>
         <section className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden" style={{ gridArea: "workspace" }}>{children}</section>
         {!focusMode && <div className="relative min-h-0" style={{ gridArea: "library" }}>
-            {isValidElement(library) ? cloneElement(library, { collapsed: panelLayout.libraryCollapsed, setCollapsed: setLibraryCollapsed }) : library}
+            {isValidElement(library) ? cloneElement(library, { responsiveCollapsed: panelLayout.libraryCollapsed, setCollapsed: setLibraryCollapsed }) : library}
             {!panelLayout.libraryCollapsed && <ResizeHandle label={intl.formatMessage({ id: "navigation.resizeArticleLibrary" })} value={libraryWidth} minimum={libraryLimits.minimum} maximum={libraryLimits.maximum} onChange={setLibraryWidth} />}
         </div>}
         {!focusMode && <AssistantPanel assistant={assistant} panelLayout={panelLayout} setCollapsed={setAssistantCollapsed} setWidth={setAssistantWidth} />}

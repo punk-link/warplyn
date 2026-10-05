@@ -16,7 +16,7 @@ export function RevisionHistoryNavigation({ revisions, bypassedRevisionIds, sele
     const formatRevisionDate = (createdAt: string) => formatDateTime(createdAt, generalSettings.interfaceLocale, generalSettings.dateFormat, generalSettings.timeFormat, generalSettings.timeZone);
 
     return <nav className="hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex" aria-label={intl.formatMessage({ id: "revisions.historyNavigation" })}>
-        <div className="border-b border-border px-4 py-4">
+        <div className="border-b border-border px-3 py-3">
             <h2 className="text-base font-semibold">{intl.formatMessage({ id: "revisions.heading" })}</h2>
             <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "views.restoreDescription" })}</p>
         </div>

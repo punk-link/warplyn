@@ -32,7 +32,7 @@ export function GeneralSettingsSection({ general, save, applyTheme, telemetry }:
 
     return <>
         <section aria-labelledby="settings-appearance-and-language">
-            <h2 id="settings-appearance-and-language" className="mt-8 text-base font-semibold">{intl.formatMessage({ id: "settings.appearanceAndLanguage" })}</h2>
+            <h2 id="settings-appearance-and-language" className="mt-6 text-base font-semibold">{intl.formatMessage({ id: "settings.appearanceAndLanguage" })}</h2>
             <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.preferredAppearance" })} hint={intl.formatMessage({ id: "settings.appearanceHint" })} action={<Button variant="quiet" onClick={() => applyTheme?.(general.theme)}>{intl.formatMessage({ id: "settings.applyAppearance" })}</Button>}>
                 <Select value={general.theme} onChange={(event) => {
                     const value = event.target.value;
@@ -53,7 +53,7 @@ export function GeneralSettingsSection({ general, save, applyTheme, telemetry }:
                 </Select>
             </SettingRow>
         </section>
-        <section className="mt-8 pt-8" aria-labelledby="settings-date-and-time">
+        <section className="mt-6 pt-6" aria-labelledby="settings-date-and-time">
             <h2 id="settings-date-and-time" className="text-base font-semibold">{intl.formatMessage({ id: "settings.dateAndTime" })}</h2>
             <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.example" }, { value: formatExample(general) })}</p>
             <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.dateFormat" })} hint={intl.formatMessage({ id: "settings.dateFormatHint" })} action={<Button variant="quiet" disabled={general.dateFormat === "system"} onClick={() => void save({ ...general, dateFormat: "system" })}>{intl.formatMessage({ id: "settings.resetDateFormat" })}</Button>}>

@@ -6,17 +6,22 @@ Use these decisions for the desktop Article Library Panel.
 
 - Keep the panel narrow (`w-52`) and full-height.
 - Keep a 72px-equivalent header (`min-h-18`) with the Warplyn spiral and wordmark, New article, and collapse actions.
-- Keep search in its own bordered row. Use a compact control (`min-h-9`, `py-1.5`, `pl-8`, `pr-2`) with a search icon.
+- Keep search in its own row without a divider below it. Use a compact control (`min-h-9`, `py-1.5`, `pl-8`, `pr-2`) with a search icon. Keep 16px between the search control and the first Recent heading; retain section spacing when Pinned precedes Recent.
 - Show `Recent` only when Articles exist. With no Articles, leave the library area blank; the central workspace provides the create call to action.
 - Represent each Article with the document icon, title, detail line, and selected-state card.
 - Use compact two-line Article cards with `py-1.5` for originals, `py-1` for translations, and `space-y-0.5` between rows. Library context-menu rows use `min-h-7 py-1`, with `pointer-coarse:min-h-9` preserving larger touch targets.
-- Keep the bottom utility area in this order: Style Profile, Settings, then language/local and save-state indicators. Keep captions and icons left-aligned.
+- Keep the bottom utility area in this order: Style Profile, Settings, then language/local and save-state indicators. Use compact buttons with 6px vertical padding and a 36px minimum height. Keep captions and icons left-aligned.
 
 ## Collapsed Navigation Rail
 
 - Keep the rail at `w-10` with compact horizontal padding.
 - Reserve the same `min-h-18` header height as the expanded panel.
 - Use the same Warplyn spiral as the expanded header in an accessible icon button to expand the panel.
+- Below the header, place New article, Search, Articles, and Archive in that order. Search, Articles, and Archive open one temporary `w-52` drawer adjacent to the Rail, overlaying the editor without changing the saved layout. Keep its header aligned with the 72px Library header and reuse the Library search and Article rows.
+- Below those actions, show active pinned originals in their saved pin order, separated by a divider. Use 36px title-initial shortcuts with full-title tooltips, accessible names, and a current-Article indicator. Select directly without opening the drawer; scroll the shortcut group when needed so the header, actions, and utility footer remain visible. Archived groups and translations have no separate Rail shortcuts.
+- Articles shows Pinned and Recent; Archive shows archived groups; Search includes archived Articles and translations. Preserve context menus, group actions, and independent translation selection.
+- Focus Search when its Rail action or shortcut opens the drawer. Enter enters results; Up and Down navigate visible drawer controls while Search retains native editing keys. Selection, Escape, repeated activation, outside click, or leaving the Library focus area dismisses the drawer. Explicit dismissal restores the trigger; focus-area traversal keeps its intended destination.
+- Use labeled tooltips and a pressed-state cue on the active Rail action. Keep the drawer within the Library focus area and constrain its width to the available viewport.
 - Keep Style Profile and Settings as icon-only controls at the bottom, aligned with the expanded utility rows.
 - Keep the save state as an accessible semantic-colored dot at the bottom. Include an accessible name and tooltip/title with the visible save state.
 - Keep icon-only controls at least 36px and give every one an accessible label.

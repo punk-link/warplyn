@@ -98,10 +98,10 @@ function panelClassName(view: WorkspaceView): string {
         case "proposal":
             return "flex min-h-0 flex-1 flex-col overflow-hidden";
         case "translations":
-            return "flex min-h-0 flex-1 flex-col overflow-hidden p-5";
+            return "flex min-h-0 flex-1 flex-col overflow-hidden p-4";
         case "style-profile":
-            return "min-h-0 flex-1 overflow-hidden p-5";
+            return "min-h-0 flex-1 overflow-hidden p-4";
         default:
-            return "min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong";
+            return "min-h-0 flex-1 overflow-y-auto p-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong";
     }
 }

@@ -120,7 +120,7 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
     };
 
     return <div className="flex h-full min-h-0 max-w-[120rem] flex-col">
-        <header className="mb-8 shrink-0 flex flex-wrap items-start justify-between gap-4">
+        <header className="mb-6 shrink-0 flex flex-wrap items-start justify-between gap-3">
             <div>
                 <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.styleProfile" })}</h2>
                 <p className="mt-1 text-xs text-muted">{summary} · {intl.formatMessage({ id: "styleProfile.activeSources" }, { count: activeCount })}{corpus?.status === "outdated" ? ` · ${intl.formatMessage({ id: "styleProfile.outdated" })}` : ""}</p>
@@ -130,8 +130,8 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
                 <Button variant="secondary" state={pendingAction === "rebuild" ? "loading" : "default"} disabled={corpus?.status === "empty" || Boolean(pendingAction)} onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}>{intl.formatMessage({ id: "styleProfile.rebuild" })}</Button>
             </div>
         </header>
-        {corpus?.profile?.confidence === "low" && <Banner className="mb-6" tone="warning">{intl.formatMessage({ id: "styleProfile.lowConfidence" })}</Banner>}
-        <div className="grid min-h-0 min-w-0 flex-1 gap-8 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] xl:grid-rows-[minmax(0,1fr)]">
+        {corpus?.profile?.confidence === "low" && <Banner className="mb-4" tone="warning">{intl.formatMessage({ id: "styleProfile.lowConfidence" })}</Banner>}
+        <div className="grid min-h-0 min-w-0 flex-1 gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] xl:grid-rows-[minmax(0,1fr)]">
             <StyleProfileSources data={{ corpus, revisions: selectableRevisions, generalSettings, pendingAction, adding, name, content, validationFailed, uploadFailed }} actions={{ setAdding, setName, setContent, onImport: importFile, onSubmit: submit, onRemove: setRemovingId, onSetIncluded: (id, included) => run(`include:${id}`, () => setIncluded(id, included)), onSnapshot: setSnapshotRevisionId }} />
             <StyleProfileInsights data={{ corpus, findings, findingsStale, generalSettings, pendingAction, rules, savedRules, articleRules, savedArticleRules }} actions={{ setRules: setRulesDraft, setArticleRules: setArticleRulesDraft, onSaveRules: () => run("rules", () => setRules(rules), () => setSavedRules(rules)), onSaveArticleRules: () => run("article-rules", () => setArticleRules(articleId, articleRules), () => setSavedArticleRules(articleRules)), getRuleStatus }} />
         </div>
