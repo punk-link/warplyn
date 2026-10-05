@@ -183,8 +183,10 @@ test("a provider failure leaves the Article unchanged and clears after checkpoin
     await expect(page.getByRole("alert")).toHaveCount(0);
     await expect(page.getByText("Error details")).toHaveCount(0);
     await expect(page.getByRole("combobox", { name: "Editorial guidance" })).toContainText("provider error");
+    await expect(page.getByRole("combobox", { name: "Editorial guidance" })).toBeFocused();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Original fixture Article.");
     await page.reload();
+    await expect(page.getByRole("combobox", { name: "Editorial guidance" })).toContainText("provider error");
     await expect(page.getByRole("alert")).toHaveCount(0);
     await expect(page.getByText("Request failed", { exact: true })).toHaveCount(0);
 });

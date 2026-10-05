@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $createTextNode, $getRoot, $getSelection, $isElementNode, $isRangeSelection, COMMAND_PRIORITY_HIGH, KEY_ARROW_DOWN_COMMAND, KEY_ARROW_UP_COMMAND, KEY_ENTER_COMMAND, KEY_ESCAPE_COMMAND, KEY_TAB_COMMAND, PASTE_COMMAND, SKIP_DOM_SELECTION_TAG, type LexicalNode } from "lexical";
 import { $createAssistantSkillTagNode, $isAssistantSkillTagNode, type AssistantComposerSkill, type AssistantSkillTagNode } from "./AssistantSkillTagNode.js";
@@ -129,7 +129,8 @@ export function ComposerBridge({ value, onChange }: { value: AssistantComposerVa
     const latestValue = useRef(value);
     latestValue.current = value;
 
-    useEffect(() => {
+    // Synchronize restored text before focus can report the editor's previous value.
+    useLayoutEffect(() => {
         let insertedTag = false;
         editor.update(() => {
             const current = composerValue();
