@@ -21,7 +21,7 @@ import { registerDesktopArticleFilesAdapter } from "./articles/desktop-article-f
 import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpdatesAdapter, supportsNativeUpdates, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
 
 
-const rendererUrl = "http://localhost:5173";
+const rendererUrl = "http://127.0.0.1:5173";
 let mainWindow: BrowserWindow | undefined;
 let closeApplication: (() => Promise<void>) | undefined;
 let closing = false;

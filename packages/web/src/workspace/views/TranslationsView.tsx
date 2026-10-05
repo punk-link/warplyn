@@ -10,11 +10,7 @@ import type { TranslationsData } from "./translations-view-data.js";
 import { getProviderLanguageName } from "../state/editorial-language.js";
 import { NewTranslationDialog } from "./NewTranslationDialog.js";
 import { translationResultId, useTranslationResultSelection } from "./translation-result-selection.js";
-
-
-function splitParagraphs(content: string): string[] {
-    return content.split(/\n\s*\n|(?=^\s*(?:#{1,6}\s|[-*+]\s+|\d+\.\s))/m).map((paragraph) => paragraph.trim()).filter(Boolean);
-}
+import { splitTranslationParagraphs } from "./translation-paragraphs.js";
 
 
 function getChangedProtectedSpans(content: string, protectedSpans: readonly string[]): string[] {
@@ -70,8 +66,9 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
     const source = sourceArticle ?? article;
     const translatedContent = translation?.content ?? (sourceArticle ? article.currentRevision.content : undefined);
     const targetLanguage = getProviderLanguageName(translation?.metadata.targetLanguage ?? article.language ?? "");
-    const sourceParagraphs = splitParagraphs(source.currentRevision.content);
-    const translatedParagraphs = translatedContent ? splitParagraphs(translatedContent) : [];
+    const protectedSpans = translation?.metadata.protectedSpans;
+    const sourceParagraphs = splitTranslationParagraphs(source.currentRevision.content, protectedSpans);
+    const translatedParagraphs = translatedContent ? splitTranslationParagraphs(translatedContent, protectedSpans) : [];
     const paragraphCount = Math.max(sourceParagraphs.length, translatedParagraphs.length);
     const publishingGuidance = translatedContent && publishProfile
         ? { length: getPublishingLength(translatedContent, publishProfile), profile: publishProfile }
@@ -131,7 +128,6 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
             paragraphCount={paragraphCount}
             translation={translation}
             protectedSpanWarnings={protectedSpanWarnings}
-            protectedSpansValid={protectedSpansValid}
             displayMode={displayMode}
             visibleText={visibleText}
             setVisibleText={setVisibleText}

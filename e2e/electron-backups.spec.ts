@@ -18,7 +18,7 @@ test("native backup finishes through the production bridge before desktop shutdo
     try {
         app = await _electron.launch({ args: [resolve("packages/electron"), `--user-data-dir=${join(root, "profile")}`], env });
         const page = await app.firstWindow();
-        await page.waitForURL("http://localhost:5173/");
+        await page.waitForURL("http://127.0.0.1:5173/");
         await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await page.getByRole("button", { name: "Create" }).click();
