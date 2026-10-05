@@ -85,9 +85,10 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
 
 function selectedMessageState(store: ReturnType<typeof useAssistantRequestStore>, articleId: string | undefined) {
     if (!articleId)
-        return { messages: undefined, state: "idle" as const, message: "", errorDetails: undefined, hasUnavailableAiConnection: false, activity: undefined, streamedMessage: undefined, factCheckClaims: undefined, activeRequestId: undefined };
+        return { messages: undefined, state: "idle" as const, message: "", errorDetails: undefined, hasUnavailableAiConnection: false, activity: undefined, streamedMessage: undefined, factCheckClaims: undefined, activeRequestId: undefined, translatingLanguages: undefined };
 
     return {
+        translatingLanguages: store.translationLanguagesByArticle[articleId],
         messages: store.messagesByArticle[articleId],
         state: store.stateByArticle[articleId] ?? "idle",
         message: store.messageByArticle[articleId] ?? "",

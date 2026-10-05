@@ -156,9 +156,8 @@ function useWorkspaceActions({ client, intl, notifyError, workspace, layout, ass
         if (!languages.length)
             return;
 
-        layout.setAssistantCollapsed(false);
         void assistant.request("", BUILT_IN_SKILL.TRANSLATION, languages, undefined, true);
-    }, [assistant, layout]);
+    }, [assistant]);
 
     return { createBlank, enterSettings, runFactCheck, runTranslation };
 }

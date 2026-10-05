@@ -8,6 +8,7 @@ export interface TranslationsData {
     translations?: readonly { metadata: TranslationMetadata; content: string; baseRevisionId: string; editorialArtifactId?: string; resultId?: string; createdAt?: string }[];
     sourceContent?: string;
     requestActive?: boolean;
+    generation?: { languages: readonly string[] };
     generalSettings?: GeneralSettings;
     revisionNumbers?: Readonly<Record<string, number>>;
     revisions?: readonly ArticleRevisionSummary[];

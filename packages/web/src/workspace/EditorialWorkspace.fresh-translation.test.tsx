@@ -6,7 +6,7 @@ import { App } from "../App.js";
 import { createArticleFixture, createFakeClient, resetWorkspaceTestEnvironment } from "./EditorialWorkspace.test-utils.js";
 
 
-// Product scenarios: editorial-workflows.fresh-translation, history-and-publishing.translation-results-recovery
+// Product scenarios: editorial-workflows.fresh-translation, history-and-publishing.translation-results-recovery, workspace.translations.generation-progress
 describe("fresh translations through Assistant", () => {
     afterEach(resetWorkspaceTestEnvironment);
 
@@ -57,13 +57,23 @@ describe("fresh translations through Assistant", () => {
         await user.click(screen.getAllByRole("menuitemradio")[1]!);
         outcome = "fail";
         await generate();
+        await waitFor(() => expect(client.streamAssistantRequest).toHaveBeenCalledTimes(3));
+        await user.click(screen.getByRole("button", { name: "Expand Editorial Assistant Panel" }));
         await screen.findByRole("alert");
+        await user.click(screen.getByRole("button", { name: "Collapse Editorial Assistant Panel" }));
+        expect(screen.queryByText("Translating into Spanish…")).toBeNull();
         expect(screen.getByText("Spanish result 1")).toBeTruthy();
         outcome = "wait";
         await generate();
         await waitFor(() => expect(client.streamAssistantRequest).toHaveBeenCalledTimes(4));
+        expect(screen.getByText("Translating into Spanish…").closest("[role=status]")).toBeTruthy();
+        expect(screen.getByText("Spanish result 1").closest("[inert]")?.getAttribute("aria-busy")).toBe("true");
+        expect(screen.queryByRole("button", { name: /^Cancel$/ })).toBeNull();
+        await user.click(screen.getByRole("button", { name: "Expand Editorial Assistant Panel" }));
         await user.click(screen.getByRole("button", { name: "Stop request" }));
         await waitFor(() => expect(screen.queryByRole("button", { name: "Stop request" })).toBeNull());
+        expect(screen.queryByText("Translating into Spanish…")).toBeNull();
+        expect(screen.getByText("Spanish result 1").closest("[inert]")).toBeNull();
         expect(screen.getByText("Spanish result 1")).toBeTruthy();
         const requests = vi.mocked(client.streamAssistantRequest).mock.calls.map(([, request]) => request);
         expect(new Set(requests.map((request) => request.requestId)).size).toBe(4);

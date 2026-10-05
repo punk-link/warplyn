@@ -268,6 +268,12 @@ describe("Editorial Workspace assistant requests", () => {
         expect(client.saveArticleRevision).toHaveBeenCalledTimes(1);
         const signals = vi.mocked(client.streamAssistantRequest).mock.calls.map((call) => call[3]);
         expect(signals[0]).toBe(signals[1]);
-        releases.forEach((release) => release());
+        await user.click(screen.getByRole("tab", { name: /Translations/ }));
+        expect(screen.getByText("Translating into Spanish, German…")).toBeTruthy();
+        releases[0]?.();
+        await waitFor(() => expect(client.listAssistantMessages).toHaveBeenCalled());
+        expect(screen.getByText("Translating into Spanish, German…")).toBeTruthy();
+        releases[1]?.();
+        await waitFor(() => expect(screen.queryByText("Translating into Spanish, German…")).toBeNull());
     });
 });

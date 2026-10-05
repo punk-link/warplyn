@@ -17,6 +17,8 @@ type Setter<T> = Dispatch<SetStateAction<T>>;
 
 
 export interface AssistantRequestStore {
+    translationLanguagesByArticle: Record<string, readonly string[]>;
+    setTranslationLanguagesByArticle: Setter<Record<string, readonly string[]>>;
     messagesByArticle: Record<string, AssistantMessage[]>;
     setMessagesByArticle: Setter<Record<string, AssistantMessage[]>>;
     stateByArticle: Record<string, ProposalState>;
@@ -41,6 +43,7 @@ export interface AssistantRequestStore {
 
 
 export function useAssistantRequestStore(): AssistantRequestStore {
+    const [translationLanguagesByArticle, setTranslationLanguagesByArticle] = useState<Record<string, readonly string[]>>({});
     const [messagesByArticle, setMessagesByArticle] = useState<Record<string, AssistantMessage[]>>({});
     const [stateByArticle, setStateByArticle] = useState<Record<string, ProposalState>>({});
     const [messageByArticle, setMessageByArticle] = useState<Record<string, string>>({});
@@ -54,6 +57,7 @@ export function useAssistantRequestStore(): AssistantRequestStore {
     const streamBuffers = useRef<Record<string, StreamBuffer>>({});
 
     return {
+        translationLanguagesByArticle, setTranslationLanguagesByArticle,
         messagesByArticle, setMessagesByArticle, stateByArticle, setStateByArticle,
         messageByArticle, setMessageByArticle, errorDetailsByArticle, setErrorDetailsByArticle,
         aiConnectionUnavailableByArticle, setAiConnectionUnavailableByArticle,
@@ -239,6 +243,15 @@ function appendPendingMessage({ store, articleId, requestId, authorMessage, expl
 }
 
 
+function trackTranslationRequest({ store, articleId, explicitSkillId, targetLanguage, authorMessage }: { store: AssistantRequestStore; articleId: string; explicitSkillId?: string; targetLanguage?: string | readonly string[]; authorMessage: string }) {
+    if (explicitSkillId !== BUILT_IN_SKILL.TRANSLATION)
+        return;
+
+    const languages = typeof targetLanguage === "string" ? [targetLanguage] : requestedTranslationLanguages(authorMessage, targetLanguage ?? []);
+    store.setTranslationLanguagesByArticle((current) => ({ ...current, [articleId]: languages }));
+}
+
+
 async function requestAssistant(options: AssistantRequestActionsOptions & { authorMessage: string; explicitSkillId?: string; targetLanguage?: string | readonly string[]; skillOffset?: number }): Promise<void> {
     const { workspace, targetLanguage, authorMessage, explicitSkillId, skillOffset } = options;
     const article = workspace.selectedArticle;
@@ -248,6 +261,7 @@ async function requestAssistant(options: AssistantRequestActionsOptions & { auth
     const controller = new AbortController();
     options.store.controllers.current.set(article.id, controller);
     options.store.setStateByArticle((states) => ({ ...states, [article.id]: "streaming" }));
+    trackTranslationRequest({ ...options, articleId: article.id });
     const perform = async () => {
         if (targetLanguage && typeof targetLanguage !== "string") {
             const revision = await workspace.save(article.id) ?? article.currentRevision;
@@ -261,6 +275,7 @@ async function requestAssistant(options: AssistantRequestActionsOptions & { auth
     try {
         await runRequest({ ...options, articleId: article.id, perform });
     } finally {
+        removeArticleValue(options.store.setTranslationLanguagesByArticle, article.id);
         if (options.store.controllers.current.get(article.id) === controller)
             options.store.controllers.current.delete(article.id);
     }
@@ -272,10 +287,14 @@ async function retryAssistant(options: AssistantRequestActionsOptions & { retryO
     if (!article || options.store.controllers.current.has(article.id))
         return;
 
+    const original = options.store.messagesByArticle[article.id]?.find((message) => message.role === "author" && message.requestId === options.retryOfRequestId);
+    trackTranslationRequest({ store: options.store, articleId: article.id, explicitSkillId: original?.skillId, targetLanguage: original?.targetLanguage, authorMessage: original?.content ?? "" });
     const perform = () => performRetryAssistantRequest({ ...options, article });
+
     try {
         await runRequest({ ...options, articleId: article.id, perform });
     } finally {
+        removeArticleValue(options.store.setTranslationLanguagesByArticle, article.id);
         options.store.controllers.current.delete(article.id);
     }
 }

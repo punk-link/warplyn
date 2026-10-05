@@ -71,6 +71,7 @@ describe("fresh translation review", () => {
         expect(screen.getByRole("button", { name: "Generate Spanish translation" }).hasAttribute("disabled")).toBe(true);
         await user.click(screen.getByRole("button", { name: "Review updated source" }));
         rerender(view("Changed Draft", true));
+        expect(screen.queryByText(/Translating into/)).toBeNull();
         expect(screen.getByRole("button", { name: "Generate Spanish translation" }).hasAttribute("disabled")).toBe(true);
         rerender(view("Changed Draft"));
         await user.dblClick(screen.getByRole("button", { name: "Generate Spanish translation" }));

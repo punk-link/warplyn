@@ -11,6 +11,7 @@ import { getProviderLanguageName } from "../state/editorial-language.js";
 import { NewTranslationDialog } from "./NewTranslationDialog.js";
 import { translationResultId, useTranslationResultSelection } from "./translation-result-selection.js";
 import { splitTranslationParagraphs } from "./translation-paragraphs.js";
+import { TranslationReviewSurface } from "./TranslationReviewSurface.js";
 
 
 function getChangedProtectedSpans(content: string, protectedSpans: readonly string[]): string[] {
@@ -76,7 +77,7 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
     const protectedSpanWarnings = translation ? getChangedProtectedSpans(translation.content, translation.metadata.protectedSpans) : [];
     const protectedSpansValid = protectedSpanWarnings.length === 0;
 
-    return <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-col">
+    return <TranslationReviewSurface generation={data.generation}>
         <TranslationsHeader
             sourceArticle={sourceArticle}
             translation={translation}
@@ -140,5 +141,5 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
             setRejectConfirmationOpen={setRejectConfirmationOpen}
             confirmRejection={confirmRejection}
         />
-    </div>;
+    </TranslationReviewSurface>;
 }

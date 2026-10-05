@@ -134,7 +134,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                 layout={{ collapsed: layout.assistantCollapsed, setCollapsed: layout.setAssistantCollapsed }} />,
             children: <>
                 {hasUsableAiConnection === false && <AiConnectionWarning openModelSettings={openModelSettings} />}
-                <ArticleWorkspace state={{ workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, requestActive: assistant.state === "streaming", checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined }} actions={{ createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection: assistantSelection?.preview }} />
+                <ArticleWorkspace state={{ workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, requestActive: assistant.state === "streaming", translationGeneration: assistant.translatingLanguages && { languages: assistant.translatingLanguages }, checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined }} actions={{ createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection: assistantSelection?.preview }} />
                 {overlays}
             </>,
         }}
