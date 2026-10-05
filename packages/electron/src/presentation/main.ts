@@ -22,6 +22,7 @@ import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpd
 
 
 const rendererUrl = "http://127.0.0.1:5173";
+const hiddenTestWindow = process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true";
 let mainWindow: BrowserWindow | undefined;
 let closeApplication: (() => Promise<void>) | undefined;
 let closing = false;
@@ -64,7 +65,7 @@ async function isRendererDevelopmentServerReady(): Promise<boolean> {
 
 
 function focusMainWindow(): void {
-    focusWindow(mainWindow);
+    focusWindow(mainWindow, hiddenTestWindow);
 }
 
 
@@ -110,7 +111,7 @@ async function createMainWindow(): Promise<void> {
     const statePath = join(app.getPath("userData"), "window-state.json");
     const displays = screen.getAllDisplays().map(({ workArea }) => workArea);
     const preload = join(import.meta.dirname, "preload.cjs");
-    const window = new BrowserWindow(createWindowOptions(preload, readWindowBounds(statePath, displays), app.isPackaged));
+    const window = new BrowserWindow(createWindowOptions(preload, readWindowBounds(statePath, displays), app.isPackaged, hiddenTestWindow));
     mainWindow = window;
     registerDesktopArticleFilesAdapter({ ipcMain, window, dialog, messages: nativeMessages });
     registerDesktopShellAdapter({
@@ -160,7 +161,9 @@ async function createMainWindow(): Promise<void> {
     });
 
     window.once("ready-to-show", () => {
-        window.show();
+        if (!hiddenTestWindow)
+            window.show();
+
         telemetry?.capture({ kind: "app_session_started" });
     });
     await loadRenderer(window);

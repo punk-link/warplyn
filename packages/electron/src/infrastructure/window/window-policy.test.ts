@@ -40,6 +40,19 @@ test("a second desktop launch restores and focuses the existing window", () => {
 });
 
 
+test("hidden Electron tests keep rendering without revealing or focusing the window", () => {
+    const options = createWindowOptions("C:\\preload.cjs", { x: 0, y: 0, width: 1200, height: 800 }, false, true);
+    assert.equal(options.show, false);
+    assert.equal(options.webPreferences?.backgroundThrottling, false);
+    focusWindow({
+        isMinimized: () => assert.fail("Hidden tests must not restore the window"),
+        restore: () => assert.fail("Hidden tests must not restore the window"),
+        show: () => assert.fail("Hidden tests must not show the window"),
+        focus: () => assert.fail("Hidden tests must not take desktop focus"),
+    }, true);
+});
+
+
 test("desktop window resolves the bundled platform icon beside the application build", () => {
     const appRoot = fileURLToPath(new URL("../../../", import.meta.url));
     const options = createWindowOptions(join(appRoot, "dist", "preload.cjs"), { x: 0, y: 0, width: 1200, height: 800 });

@@ -32,6 +32,8 @@ Before shared tests, run `npm run typecheck` from the root to refresh `dist`; th
 
 ### Electron verification
 
+Electron E2E keeps the desktop window hidden by default, with renderer background throttling disabled so automation can run without taking desktop focus. Run `npx playwright test --config playwright.electron.config.ts` after building the Electron app and packaging it for the packaged Assistant scenario. For visible debugging in PowerShell, set `$env:WARPLYN_ELECTRON_TEST_HIDDEN = "false"` before running the tests, then run `Remove-Item Env:WARPLYN_ELECTRON_TEST_HIDDEN` to restore the default.
+
 Browser E2E does not exercise Electron IPC, preload isolation, native dialogs, credentials, packaging, or shutdown. For changes to these paths, run the relevant Electron and server tests and the affected desktop scenario in the [release guide](mvp-release-and-recovery.md). Report any desktop checks that could not be run separately from browser results.
 
 ## Deterministic AI tests
