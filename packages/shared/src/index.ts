@@ -262,6 +262,7 @@ export {
     type StartAssistantRequest
 } from "./assistant/assistant.js";
 export { ARTICLE_LANGUAGE, articleLanguages, isArticleLanguage, type ArticleLanguage } from "./cross-cutting/languages.js";
+export { desktopSpellingChannel, desktopSpellingLanguageChannel, isSpellingLanguage, isPersonalSpellingWord, isDesktopSpellingRequest, isDesktopSpellingResult, type DesktopSpellingClient, type DesktopSpellingRequest, type DesktopSpellingResult, type DesktopSpellingSnapshot, type DictionaryState } from "./application/desktop/desktop-spelling.js";
 export {
     countPublishingCharacters,
     defaultPublishLimitProfileId,

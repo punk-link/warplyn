@@ -12,6 +12,8 @@ Reuse the shared primitives for controls, status, loading, empty states, tabs, t
 
 Use application popup notifications for cross-screen outcomes and background actions. Keep validation and workflow feedback beside the operation that produced it. Notifications do not move focus; use `status` for informational or successful outcomes and `alert` for warnings or errors.
 
+Settings lists use horizontal dividers between rows and consistent vertical padding. Omit top borders directly below search fields and dividers between an action and its supporting hint. Avoid enclosing boxes and separate raised cards for configured items. Inset left borders group related forms and controls.
+
 ## Accessibility
 
 For copy and locale formatting changes, follow the [internationalization guide](../guides/internationalization.md). For a release accessibility review, use the [walkthrough](../guides/accessibility-release-walkthrough.md) and its [finding routing rules](../guides/accessibility-review-routing.md).

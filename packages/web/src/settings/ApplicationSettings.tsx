@@ -14,6 +14,7 @@ import { DataBackupsSettingsSection } from "./components/DataBackupsSettingsSect
 import { GeneralSettingsSection } from "./components/GeneralSettingsSection.js";
 import { KeyBindingSettings } from "./components/KeyBindingSettings.js";
 import { PublishingSettingsSection } from "./components/PublishingSettingsSection.js";
+import { SpellingSettingsSection } from "./components/SpellingSettingsSection.js";
 import type { SettingsSection } from "./settings-sections.js";
 import { useAiSettingsController } from "./use-ai-settings-controller.js";
 import { settingsFocusAreas, useFocusAreaNavigation } from "../ui/focus-area-navigation.js";
@@ -191,6 +192,9 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
             break;
         case "publishing":
             sectionContent = <PublishingSettingsSection publishing={publishingSettings} save={savePublishingSettings} general={general} saveGeneral={saveGeneral} />;
+            break;
+        case "spelling":
+            sectionContent = <SpellingSettingsSection />;
             break;
         case "about":
             sectionContent = <AboutSettingsSection openQuickStart={openQuickStart} />;

@@ -19,6 +19,14 @@ Only the explicitly selected connection receives its credential and minimum requ
 
 Update discovery uses GitHub under the separate Author permission in [ADR-010](../architecture/adr-010-author-controlled-preview-updates.md) and the [desktop update policy](desktop-release-and-update-policy.md). The browser service remains loopback-only by default with its configured origin; broader exposure requires a separate authentication decision.
 
+## Native spelling dictionaries
+
+Desktop spelling checks Article text locally through Electron/Chromium. No spelling text, personal words, suggestions, or Article identifiers are passed to a remote checker, provider, diagnostics, or telemetry. Main accepts only bounded language IDs and explicit bounded personal-word mutations from the trusted main frame. The renderer cannot choose a dictionary URL or filesystem path.
+
+Language dictionaries use Electron's standard Chromium CDN acquisition. Chromium's documented dictionary base is `https://redirector.gvt1.com/edgedl/chrome/dict/`, with Google CDN delivery redirects. This authorization is limited to native dictionary acquisition for system/Article languages and Author-selected preload languages, not arbitrary browsing or model-directed requests. Requests expose the requested dictionary filename/language, ordinary network metadata, and the device's IP address; they contain no Article text or personal vocabulary. See the [Chromium dictionary implementation](https://chromium.googlesource.com/chromium/src/+/master/chrome/browser/spellchecker/spellcheck_hunspell_dictionary.cc) and [Electron spelling documentation](https://www.electronjs.org/docs/latest/tutorial/spellchecker).
+
+Settings explains internet access before preloading. Native initialization confirms readiness; cached dictionaries can be reused offline. Changes to the CDN override, redirects, or a custom dictionary service need a new review. Release acceptance inspects synthetic dictionary traffic for the shipped Electron version without committing raw logs. The native personal dictionary remains local, but Windows and macOS also modify the OS custom dictionary, as explained before mutations in Settings.
+
 ## Local diagnostics
 
 Write JSON Lines for startup to stdout and failures to stderr. Allow only stable event context and safe error metadata. Exclude raw messages and stacks, request URLs and identifiers, request bodies, Article and model bodies, secrets, and environment values. Catch writer failures and create no application-owned log file or retention store.

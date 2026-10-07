@@ -3,6 +3,25 @@
     "area": "settings",
     "capabilities": [
         {
+            "id": "settings.spelling-dictionaries",
+            "area": "Spelling",
+            "title": "Prepare native language dictionaries for offline writing",
+            "status": "implemented",
+            "owners": ["packages/web/src/settings/components/SpellingSettingsSection.tsx", "packages/web/src/settings/use-spelling-settings.ts", "packages/shared/src/application/desktop/desktop-spelling.ts", "packages/electron/src/presentation/settings/desktop-spelling-settings.ts", "packages/electron/src/infrastructure/window/spelling-session.ts"],
+            "contract": "Language dictionaries use horizontal row dividers. Desktop Spelling Settings uses a single column with inset left borders grouping language and personal dictionary controls. It lists Electron-supported regional language dictionaries, sorted with confirmed downloaded dictionaries first and alphabetically within each group. Authors filter by localized language name or code without losing pending selections. Checkboxes select pending downloads only and clear on completion; downloaded rows show a quiet Unload action. Download and personal-word buttons also use the quiet Settings style. Native initialization confirms the Downloaded status; Available means supported, without claiming cached files are absent. Unload deactivates a language for the current session, removes its saved preload choice, and retains cached files. Writing or preparing a dictionary enables native spelling again. An explicit download request adds languages to existing preload choices while the Article editor is absent. Download success alone does not confirm readiness. Failed or timed-out preparation offers retry and never blocks writing. Resuming writing restores only the Article language or system fallback. Preloading does not expand Article language choices. Browser Settings explains desktop-only dictionary management.",
+            "persistence": "Requested language identifiers in installation-local runtime-settings.json; dictionaries in the native Electron profile cache. Readiness is observed in memory and reverified after restart.",
+            "limitations": ["Dictionary acquisition needs internet access to the Chromium dictionary CDN before offline reuse.", "Packaged Windows visual and screen-reader acceptance and Linux packaged acceptance require platform-specific manual verification."]
+        },
+        {
+            "id": "settings.spelling-personal-words",
+            "area": "Spelling",
+            "title": "Manage personal technical vocabulary",
+            "status": "implemented",
+            "owners": ["packages/web/src/settings/components/SpellingSettingsSection.tsx", "packages/web/src/settings/use-spelling-settings.ts", "packages/shared/src/application/desktop/desktop-spelling.ts", "packages/electron/src/infrastructure/window/spelling-session.ts", "packages/electron/src/presentation/articles/desktop-article-spelling.ts"],
+            "contract": "Personal words use horizontal row dividers. Authors search, add, and remove native personal words, individually or by bounded multiline paste. Exact duplicates are ignored, case and technical punctuation are preserved, and partial native failures retain failed entries for retry. A native spelling menu can add its misspelled word explicitly. One word list applies across Articles and languages. Settings explains native OS dictionary side effects on Windows. Vocabulary changes never change Article content, Drafts, Revisions, or Proposals and never send words to providers or telemetry. Word-entry guidance appears beside the Add words button, stacking below it on narrow screens, and remains associated with the text field for assistive technology.",
+            "persistence": "Electron's persistent custom dictionary and native OS custom dictionary where supported. Installation-local spelling data is outside Article SQLite backup/restore and Article-data deletion. Explicit word removal is available in Settings."
+        },
+        {
             "id": "settings.general-preferences",
             "area": "General",
             "title": "Appearance, locale, and date/time/time-zone",
@@ -46,7 +65,7 @@
             "title": "AI connections and activation",
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/AiSettingsSection.tsx", "packages/server/src/application/settings/application-settings-service.ts", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"],
-            "contract": "Authors choose OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek before adding an environment-variable connection. In Electron, they first choose an environment variable or managed API key, which Warplyn verifies then stores in Windows Credential Manager or Linux Secret Service. If Secret Service is unavailable or locked, managed credentials report unavailable without a plaintext fallback; environment-variable connections remain usable. Connections are active by default; authors can activate or deactivate each one independently, rename them, test them, or confirm deletion without exposing secret values.",
+            "contract": "Configured connections use horizontal row dividers. Authors choose OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek before adding an environment-variable connection. In Electron, they first choose an environment variable or managed API key, which Warplyn verifies then stores in Windows Credential Manager or Linux Secret Service. If Secret Service is unavailable or locked, managed credentials report unavailable without a plaintext fallback; environment-variable connections remain usable. Connections are active by default; authors can activate or deactivate each one independently, rename them, test them, or confirm deletion without exposing secret values.",
             "persistence": "app_settings.application-ai-connections"
         },
         {
@@ -73,7 +92,7 @@
             "title": "Publishing profiles and language defaults",
             "status": "partial",
             "owners": ["packages/web/src/settings/components/PublishingSettingsSection.tsx", "packages/server/src/presentation/routes/publish-settings-route.ts", "packages/server/src/application/publishing", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"],
-            "contract": "Default, No restrictions, LinkedIn Post, LinkedIn Article, and named custom non-negative limits provide guidance; the selected default applies to new Articles while Articles retain independent selection. Custom profiles have stable IDs, appear before add controls, and require confirmed removal; removing the selected default resets to Default. Settings persists one default Article language and deduplicated translation languages excluding it. New translation… offers configured defaults when no viewed language is available; Authors confirm selected supported targets before generation.",
+            "contract": "Custom profiles use horizontal row dividers. Default, No restrictions, LinkedIn Post, LinkedIn Article, and named custom non-negative limits provide guidance; the selected default applies to new Articles while Articles retain independent selection. Custom profiles have stable IDs, appear before add controls, and require confirmed removal; removing the selected default resets to Default. Settings persists one default Article language and deduplicated translation languages excluding it. New translation… offers configured defaults when no viewed language is available; Authors confirm selected supported targets before generation.",
             "persistence": "app_settings.publish-limit-profile"
         },
         {
@@ -124,6 +143,26 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "settings.spelling-dictionaries",
+            "title": "Preloading keeps readiness truthful and Article checking independent",
+            "capabilityIds": ["settings.spelling-dictionaries"],
+            "preconditions": ["Desktop Spelling Settings has supported language dictionaries."],
+            "event": "The Author prepares multiple regional languages and resumes an Article.",
+            "expected": ["Readiness follows native initialization, not saved requests or download success.", "Failed preparation remains recoverable and returning to writing restores the latest Article language.", "Requested language IDs preserve unrelated installation-local runtime settings."],
+            "forbidden": ["Preloaded languages stay active alongside the Article language.", "A renderer request supplies a path, URL, or unsupported native dictionary code."],
+            "evidence": { "kind": "automated", "path": "packages/electron/src/infrastructure/window/spelling-session.test.ts" }
+        },
+        {
+            "id": "settings.spelling-personal-words",
+            "title": "Personal vocabulary preserves engineering terms and reports partial failure",
+            "capabilityIds": ["settings.spelling-personal-words"],
+            "preconditions": ["The native persistent personal dictionary is available."],
+            "event": "The Author adds technical terms and removes a saved word.",
+            "expected": ["Exact duplicates do not fail; case, Unicode, and punctuation remain intact.", "Invalid or failed words are returned for retry while successful words remain saved.", "Native removal is confirmed and operating-system side effects are described."],
+            "forbidden": ["Vocabulary changes create an Article Revision.", "Personal words enter network requests or diagnostics."],
+            "evidence": { "kind": "automated", "path": "packages/electron/src/infrastructure/window/spelling-session.test.ts" }
+        },
         {
             "id": "settings.default-assistant-edit-mode",
             "title": "A saved Assistant edit default applies to new conversations",

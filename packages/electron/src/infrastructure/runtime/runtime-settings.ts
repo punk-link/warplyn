@@ -3,6 +3,7 @@ import { dirname } from "node:path";
 
 
 export interface RuntimeSettings {
+    spelling?: { preloadLanguages: string[] };
     backupDirectory?: string;
     updateNetworkAccess?: boolean;
     automaticUpdateChecks?: boolean;
@@ -18,8 +19,8 @@ export interface RuntimeSettings {
         phase: "ready" | "applied";
     };
     telemetry?:
-        | { consent: "denied" }
-        | { consent: "granted"; installationId: string };
+    | { consent: "denied" }
+    | { consent: "granted"; installationId: string };
 }
 
 
@@ -33,12 +34,25 @@ export function readRuntimeSettings(path: string): RuntimeSettings {
         return {
             ...(typeof record.backupDirectory === "string" && record.backupDirectory ? { backupDirectory: record.backupDirectory } : {}),
             ...parseUpdateSettings(record),
+            ...(parseSpellingSettings(record.spelling) ? { spelling: parseSpellingSettings(record.spelling) } : {}),
             ...(parsePendingRestore(record.pendingRestore) ? { pendingRestore: parsePendingRestore(record.pendingRestore) } : {}),
             ...(parseTelemetrySettings(record.telemetry) ? { telemetry: parseTelemetrySettings(record.telemetry) } : {}),
         };
     } catch {
         return {};
     }
+}
+
+
+function parseSpellingSettings(value: unknown): RuntimeSettings["spelling"] {
+    if (!value || typeof value !== "object" || !("preloadLanguages" in value) || !Array.isArray(value.preloadLanguages))
+        return undefined;
+
+    const preloadLanguages = value.preloadLanguages
+        .filter((language: unknown): language is string => typeof language === "string" && /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,2}$/.test(language))
+        .slice(0, 100);
+
+    return { preloadLanguages: [...new Set(preloadLanguages)] };
 }
 
 

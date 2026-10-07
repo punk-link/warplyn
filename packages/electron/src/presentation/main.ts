@@ -18,6 +18,7 @@ import { registerDesktopSettingsAdapter } from "./settings/desktop-settings.js";
 import { registerDesktopTelemetryAdapter } from "./telemetry/desktop-telemetry.js";
 import { registerDesktopShellAdapter } from "./shell/desktop-shell.js";
 import { registerDesktopArticleFilesAdapter } from "./articles/desktop-article-files.js";
+import { registerDesktopSpelling } from "./settings/desktop-spelling-settings.js";
 import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpdatesAdapter, supportsNativeUpdates, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
 
 
@@ -113,6 +114,14 @@ async function createMainWindow(): Promise<void> {
     const preload = join(import.meta.dirname, "preload.cjs");
     const window = new BrowserWindow(createWindowOptions(preload, readWindowBounds(statePath, displays), app.isPackaged, hiddenTestWindow));
     mainWindow = window;
+    registerDesktopSpelling({
+        ipcMain,
+        window,
+        runtimePath: join(app.getPath("userData"), "runtime-settings.json"),
+        preferredLanguages: app.getPreferredSystemLanguages(),
+        messages: nativeMessages
+    });
+
     registerDesktopArticleFilesAdapter({ ipcMain, window, dialog, messages: nativeMessages });
     registerDesktopShellAdapter({
         ipcMain,
@@ -127,6 +136,7 @@ async function createMainWindow(): Promise<void> {
 
         return { action: "deny" };
     });
+
     window.webContents.on("will-navigate", (event, url) => {
         if (!app.isPackaged && isRendererNavigation(url, rendererUrl))
             return;
@@ -135,11 +145,13 @@ async function createMainWindow(): Promise<void> {
         if (isExternalWebUrl(url))
             void shell.openExternal(url);
     });
+
     window.webContents.on("render-process-gone", (_event, details) => {
         const failure = createApplicationFailureEvent("renderer", details.reason);
         if (failure)
             telemetry?.capture(failure);
     });
+
     window.on("close", (event) => {
         if (closing)
             return;
@@ -147,14 +159,17 @@ async function createMainWindow(): Promise<void> {
         event.preventDefault();
         void quitFrom(window);
     });
+
     window.on("closed", () => {
         if (mainWindow === window)
             mainWindow = undefined;
     });
+
     window.on("resized", () => {
         if (!window.isMaximized() && !window.isMinimized())
             writeWindowBounds(statePath, window.getBounds());
     });
+
     window.on("moved", () => {
         if (!window.isMaximized() && !window.isMinimized())
             writeWindowBounds(statePath, window.getBounds());

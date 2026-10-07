@@ -2,6 +2,7 @@ import { defaultInterfaceLocale, INTERFACE_LOCALE, type InterfaceLocale } from "
 
 
 const englishElectronMessages = {
+    "electron.spelling.addWord": "Add to dictionary",
     "electron.articleFiles.markdown": "Markdown files",
     "electron.articleFiles.html": "HTML files",
     "electron.articleFiles.docx": "Word files",

@@ -32,6 +32,12 @@ Native and browser restore clear connection metadata, including environment refe
 
 During public beta, supported installations receive a fresh installation identity and default-enabled telemetry; saved opt-out choices remain respected. The [runtime privacy policy](runtime-privacy-and-network-policy.md) owns that separate consent contract.
 
+## Installation-local spelling data
+
+Spelling preload preferences live in Electron's `runtime-settings.json`. Native language dictionary caches and the personal word list belong to the Electron profile, with OS custom-word changes on Windows and macOS. These are outside Article SQLite backup and restore. Restoring Articles preserves the installation's spelling configuration and native vocabulary. Deleting Article data does not claim to erase profile dictionary caches or OS words. Authors can remove personal terms explicitly in Spelling Settings. Warplyn stores no duplicate vocabulary in SQLite and never deletes OS words during Article-data deletion or restore.
+
+Spelling Settings can unload a language from the current native spelling session and remove its saved preload choice. Unload retains Chromium's cached dictionary files; Electron exposes no public per-language cache deletion API. Opening an Article or preparing dictionaries enables native spelling again. Pending-download checkboxes are transient UI selections, not saved enable/disable preferences.
+
 ## Platform acceptance and deferred relocation
 
 Windows 11 x64 and Ubuntu 22.04 x64 are release-validation targets. Compatible Debian-based distributions become guaranteed targets only after the same acceptance pass. Each package ships its matching x64 credential-store binary. Linux reuses Electron dialogs, reveal behavior, user-data configuration, and recovery. Other platforms need their own credential, filesystem, packaging, and recovery evidence.

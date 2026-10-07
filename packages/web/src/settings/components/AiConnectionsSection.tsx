@@ -67,8 +67,8 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
         {props.settings.connections.length > 0 && <div className="mt-5 mb-6">
             <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.configuredConnections" })}</h3>
             <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.configuredConnectionsHint" })}</p>
-            <div className="mt-4 grid gap-2">
-                {props.settings.connections.filter((connection): connection is AiConnection => Boolean(connection)).map((connection) => <div key={connection.id} className="flex flex-col gap-3 rounded-control border border-border bg-surface-raised px-3 py-2 sm:flex-row sm:items-center">
+            <div className="mt-4 divide-y divide-border border-y border-border">
+                {props.settings.connections.filter((connection): connection is AiConnection => Boolean(connection)).map((connection) => <div key={connection.id} className="flex flex-col gap-3 py-2.5 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                             <p className="text-sm font-medium">{connection.label}</p>

@@ -1,15 +1,22 @@
 import { ApplicationClientError, type ApplicationErrorCode, type DesktopSettingsClient, type DesktopShellClient, type DesktopTelemetryClient, type DesktopUpdateClient, type ElectronApplicationBridge, type EditorialWorkspaceClient } from "@skladno/shared";
 import { HttpApplicationClient } from "./client.js";
+import type { DesktopSpellingClient } from "@skladno/shared";
 
 
 declare global {
     interface Window {
+        warplynSpelling?: DesktopSpellingClient;
         skladno?: ElectronApplicationBridge;
         skladnoDesktop?: DesktopSettingsClient;
         skladnoShell?: DesktopShellClient;
         skladnoUpdates?: DesktopUpdateClient;
         skladnoTelemetry?: DesktopTelemetryClient;
     }
+}
+
+
+export function getDesktopSpellingClient(host: Pick<Window, "warplynSpelling"> = window): DesktopSpellingClient | undefined {
+    return host.warplynSpelling;
 }
 
 

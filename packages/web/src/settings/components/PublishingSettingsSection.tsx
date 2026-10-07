@@ -59,8 +59,8 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
                     <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.customProfiles" })}</h3>
                     <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.customProfilesHint" })}</p>
                 </div>
-                {publishing.customProfiles.length > 0 && <ul className="mt-4 divide-y divide-border rounded-control border border-border">
-                    {publishing.customProfiles.map((profile) => <li key={profile.id} className="flex items-center gap-3 px-3 py-2.5 text-sm">
+                {publishing.customProfiles.length > 0 && <ul className="mt-4 divide-y divide-border border-y border-border">
+                    {publishing.customProfiles.map((profile) => <li key={profile.id} className="flex items-center gap-3 py-2.5 text-sm">
                         <span className="min-w-0 flex-1 truncate text-ink">{profile.name}</span>
                         <span className="shrink-0 rounded-control bg-surface-raised px-2 py-1 text-xs text-muted">{intl.formatNumber(profile.characterLimit)}</span>
                         <Button variant="quiet" onClick={() => setPendingRemoval(profile)} aria-label={intl.formatMessage({ id: "settings.removeCustomProfile" }, { name: profile.name })}>{intl.formatMessage({ id: "settings.remove" })}</Button>
