@@ -1,4 +1,4 @@
 export interface PendingRestore {
-    complete(): void;
-    rollback(): void;
+    complete(): Promise<void>;
+    rollback(): Promise<void>;
 }

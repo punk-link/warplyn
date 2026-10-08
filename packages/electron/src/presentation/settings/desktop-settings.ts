@@ -21,6 +21,7 @@ interface DesktopSettingsAdapterOptions {
     userDataPath: string;
     dataDirectory: string;
     createSnapshot(path: string): Promise<unknown>;
+    readPersonalWords?(): Promise<string[]>;
     telemetry?: TelemetryCaptureSource;
     services: ApplicationServices;
     messages: ElectronMessages;
@@ -81,11 +82,11 @@ async function revealCreatedSkillDirectory({ services, shell }: Pick<DesktopSett
 }
 
 
-async function createBackup({ runtime, dataDirectory, createSnapshot, telemetry }: Pick<DesktopSettingsContext, "runtime" | "dataDirectory" | "createSnapshot" | "telemetry">): Promise<unknown> {
+async function createBackup({ runtime, dataDirectory, createSnapshot, telemetry, readPersonalWords }: Pick<DesktopSettingsContext, "runtime" | "dataDirectory" | "createSnapshot" | "telemetry" | "readPersonalWords">): Promise<unknown> {
     if (!runtime.backupDirectory)
         return { ok: false, error: "editorial_request_failed" };
 
-    return { ok: true, value: await createNativeBackup(createSnapshot, dataDirectory, runtime.backupDirectory, telemetry) };
+    return { ok: true, value: await createNativeBackup(createSnapshot, dataDirectory, runtime.backupDirectory, telemetry, "manual", readPersonalWords) };
 }
 
 
@@ -201,6 +202,7 @@ export function registerDesktopSettingsAdapter({ ipcMain, userDataPath, ...optio
                             dataDirectory: context.dataDirectory,
                             backupDirectory: context.runtime.backupDirectory,
                             createSnapshot: context.createSnapshot,
+                            readPersonalWords: context.readPersonalWords,
                             chooseBackupSnapshot: context.chooseBackupSnapshot,
                             requestCheckpoint: context.requestCheckpoint,
                             closeApplication: context.closeApplication,
@@ -216,6 +218,7 @@ export function registerDesktopSettingsAdapter({ ipcMain, userDataPath, ...optio
                             dataDirectory: context.dataDirectory,
                             backupDirectory: context.runtime.backupDirectory,
                             createSnapshot: context.createSnapshot,
+                            readPersonalWords: context.readPersonalWords,
                             closeApplication: context.closeApplication,
                             restart: context.restart,
                             telemetry: context.telemetry,

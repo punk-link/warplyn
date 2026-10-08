@@ -20,7 +20,7 @@ A new `.skladno` backup includes the database, current Author *Skills*, their *S
 Browser backup transfers support files up to 100 MB each and 500 MB total. Use the desktop app for larger local data.
 :::
 
-In the desktop app, each database snapshot has a neighboring `.sqlite.skills` folder with current Author *Skills*, their *Skill Revision* history, and a manifest. Keep the `.sqlite` file and `.sqlite.skills` folder together when copying or restoring a snapshot.
+In the desktop app, each database snapshot has a neighboring `.sqlite.skills` folder with current Author *Skills*, their *Skill Revision* history, your personal spelling words, and a manifest. Keep the `.sqlite` file and `.sqlite.skills` folder together when copying or restoring a snapshot. Browser backups do not include personal spelling words.
 
 Older `.sqlite` backups contain only the database. Restoring one keeps your current *Skill* files and history.
 
@@ -36,7 +36,9 @@ Set **Automatic backups** to **Daily** to create one snapshot the first time War
 2. Choose the backup you want to restore. Warplyn checks its files and keeps a local recovery copy of your current database and *Skill* files.
 3. When the restore finishes, check your *Articles* and *Revisions*.
 
-Restoring a `.skladno` backup replaces the database and saved *Skills*. Restoring an older `.sqlite` backup replaces only the database.
+Restoring a `.skladno` backup or a desktop snapshot with its companion folder replaces the database and saved *Skills*. Restoring an older database-only `.sqlite` backup replaces only the database.
+
+Restoring a desktop backup also adds its saved personal spelling words to your dictionary. Existing words stay in place. Older backups without personal words leave your dictionary unchanged. Downloaded language dictionaries and spelling preload choices are not included.
 
 ::: warning AI settings after restore
 Restoring clears saved AI connections and model selections, including environment-variable references. Add connections and choose models again in **Settings** → **AI assistant**. Other settings are restored. If a restore fails and Warplyn rolls back, your previous connections and model selections return.

@@ -10,6 +10,7 @@ import { writeRuntimeSettings } from "../../infrastructure/runtime/runtime-setti
 import { validateAuthorSkillBackup } from "../../infrastructure/recovery/author-skill-backup.js";
 import { waitForBackups } from "../../infrastructure/recovery/backup-lifecycle.js";
 import { createDesktopBackupScheduler } from "./desktop-backup-scheduler.js";
+import { readPersonalDictionaryFile } from "../../infrastructure/recovery/personal-dictionary-backup.js";
 
 
 // Product scenario: settings.backup-policy-human-reviewed
@@ -33,6 +34,7 @@ test("native automatic backups run at startup and every 24 hours, retain only au
     const scheduler = createDesktopBackupScheduler({
         runtimePath, dataDirectory,
         readPolicy: async () => policy,
+        readPersonalWords: async () => ["Node.js"],
         createSnapshot: async (path) => {
             captures++;
             if (fail)
@@ -68,6 +70,7 @@ test("native automatic backups run at startup and every 24 hours, retain only au
         assert.equal(snapshots.length, 1);
         validateDatabaseSnapshot(join(backupDirectory, snapshots[0]!));
         validateAuthorSkillBackup(join(backupDirectory, snapshots[0]!));
+        assert.deepEqual(readPersonalDictionaryFile(join(backupDirectory, `${snapshots[0]!}.skills`, "personal-dictionary.json")), ["Node.js"]);
         assert.equal(readdirSync(backupDirectory).filter((name) => name.endsWith(".skills")).length, 1);
         assert.ok(readdirSync(backupDirectory).includes("warplyn-backup-manual.sqlite"));
         assert.ok(readdirSync(backupDirectory).includes("skladno-backup-legacy.sqlite"));

@@ -1,5 +1,5 @@
 import { dirname, join } from "node:path";
-import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, net, screen, shell } from "electron";
+import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, net, screen, session, shell } from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 import { createLocalApplication, loadServerConfig, loadServerEnvironment, registerElectronIpcApplicationAdapter, validateDatabaseSnapshot } from "@skladno/server/electron";
 import { defaultInterfaceLocale, getElectronMessagesFor } from "@skladno/shared";
@@ -211,17 +211,18 @@ if (supportsNativeUpdates() && squirrelStartup) {
             delivery: app.isPackaged ? readTelemetryDelivery(join(process.resourcesPath, "telemetry.json")) : undefined,
         });
         telemetry = createTelemetryOwner({ runtimePath, delivery: telemetryDelivery });
-        const pendingRestore = applyPendingRestore({ runtimePath, databasePath: config.databasePath, telemetry });
+        const pendingRestore = applyPendingRestore({ runtimePath, databasePath: config.databasePath, telemetry, personalDictionary: session.defaultSession });
         let application;
         try {
             application = createLocalApplication(config, telemetry);
             if (pendingRestore) {
                 validateDatabaseSnapshot(config.databasePath);
-                pendingRestore.complete();
+                await pendingRestore.complete();
             }
         } catch (error) {
-            pendingRestore?.rollback();
-            throw error;
+            application?.database.close();
+            await pendingRestore?.rollback();
+            throw pendingRestore ? new PendingRestoreError(error) : error;
         }
 
         nativeMessages = getElectronMessagesFor((await application.services.settings.getSnapshot()).general.interfaceLocale);
@@ -233,6 +234,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             userDataPath: app.getPath("userData"),
             dataDirectory: dirname(config.databasePath),
             createSnapshot: (path) => backup(application.database, path),
+            readPersonalWords: () => session.defaultSession.listWordsInSpellCheckerDictionary(),
             telemetry,
             services: application.services,
             messages: nativeMessages,
@@ -305,6 +307,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             dataDirectory: dirname(config.databasePath),
             readPolicy: async () => (await application.services.settings.getSnapshot()).backupPolicy,
             createSnapshot: (path) => backup(application.database, path),
+            readPersonalWords: () => session.defaultSession.listWordsInSpellCheckerDictionary(),
             telemetry,
             notifyFailure: () => mainWindow?.webContents.send("warplyn:automatic-backup-failed"),
         });

@@ -28,6 +28,7 @@ export function createDesktopBackupScheduler(options: {
     dataDirectory: string;
     readPolicy(): Promise<BackupPolicy>;
     createSnapshot(path: string): Promise<unknown>;
+    readPersonalWords?(): Promise<string[]>;
     notifyFailure(): void;
     telemetry?: TelemetryCaptureSource;
 }) {
@@ -44,7 +45,7 @@ export function createDesktopBackupScheduler(options: {
         if (!backupDirectory)
             throw new Error("Backup folder is not configured.");
 
-        await createNativeBackup(options.createSnapshot, options.dataDirectory, backupDirectory, options.telemetry, "automatic");
+        await createNativeBackup(options.createSnapshot, options.dataDirectory, backupDirectory, options.telemetry, "automatic", options.readPersonalWords);
         await retainAutomaticBackups(backupDirectory, policy);
     }
 

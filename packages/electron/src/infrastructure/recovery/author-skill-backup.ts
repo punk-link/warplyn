@@ -1,6 +1,6 @@
 import { cpSync, existsSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { cp, mkdir, rename, rm } from "node:fs/promises";
+import { cp, mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { captureAuthorSkillInventory, validateAuthorSkillBackupManifest, writeAuthorSkillBackupManifest } from "./author-skill-backup-manifest.js";
 
 
@@ -13,7 +13,7 @@ export function getAuthorSkillBackupPath(snapshotPath: string): string {
 }
 
 
-export async function createAuthorSkillBackup({ dataDirectory, snapshotPath, expectedInventory }: { dataDirectory: string; snapshotPath: string; expectedInventory?: Awaited<ReturnType<typeof captureAuthorSkillInventory>> }): Promise<void> {
+export async function createAuthorSkillBackup({ dataDirectory, snapshotPath, expectedInventory, personalWords }: { dataDirectory: string; snapshotPath: string; expectedInventory?: Awaited<ReturnType<typeof captureAuthorSkillInventory>>; personalWords?: string[] }): Promise<void> {
     const destination = getAuthorSkillBackupPath(snapshotPath);
     const staged = `${destination}.tmp`;
     if (existsSync(destination) || existsSync(staged))
@@ -27,6 +27,9 @@ export async function createAuthorSkillBackup({ dataDirectory, snapshotPath, exp
             if (existsSync(source))
                 await cp(source, join(staged, directory), { recursive: true, errorOnExist: true });
         }
+
+        if (personalWords)
+            await writeFile(join(staged, "personal-dictionary.json"), JSON.stringify([...new Set(personalWords)].sort()), { flag: "wx", mode: 0o600 });
 
         await writeAuthorSkillBackupManifest(snapshotPath, staged, before, dataDirectory);
         await rename(staged, destination);

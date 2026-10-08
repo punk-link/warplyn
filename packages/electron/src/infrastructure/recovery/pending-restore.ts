@@ -1,5 +1,6 @@
 import { copyFileSync, existsSync, renameSync, rmSync } from "node:fs";
 import { dirname } from "node:path";
+import type { Session } from "electron";
 
 import { resetRestoredConnectionSettings, validateDatabaseSnapshot } from "@skladno/server/electron";
 import { beginTelemetryCapture, type TelemetryCaptureSource } from "@skladno/shared";
@@ -7,6 +8,7 @@ import { beginTelemetryCapture, type TelemetryCaptureSource } from "@skladno/sha
 import { readRuntimeSettings, updateRuntimeSettings, writeRuntimeSettings } from "../runtime/runtime-settings.js";
 import type { PendingRestore } from "./pending-restore-contract.js";
 import { PendingRestoreError } from "./pending-restore-error.js";
+import { restorePersonalDictionary, rollbackPersonalDictionary } from "./personal-dictionary-backup.js";
 import { applyAuthorSkillRestore, completeAuthorSkillRestore, getAuthorSkillBackupPath, hasAuthorSkillBackup, rollbackAuthorSkillRestore, validateAuthorSkillBackup } from "./author-skill-backup.js";
 
 
@@ -78,7 +80,7 @@ function applyReadyRestore({ runtimePath, databasePath, pending }: { runtimePath
 
 
 /** Applies a validated, private staged snapshot before SQLite opens. */
-export function applyPendingRestore({ runtimePath, databasePath, telemetry }: { runtimePath: string; databasePath: string; telemetry?: TelemetryCaptureSource }): PendingRestore | undefined {
+export function applyPendingRestore({ runtimePath, databasePath, telemetry, personalDictionary }: { runtimePath: string; databasePath: string; telemetry?: TelemetryCaptureSource; personalDictionary?: Pick<Session, "listWordsInSpellCheckerDictionary" | "addWordToSpellCheckerDictionary" | "removeWordFromSpellCheckerDictionary"> }): PendingRestore | undefined {
     const runtime = readRuntimeSettings(runtimePath);
     const pending = runtime.pendingRestore;
     if (!pending)
@@ -88,6 +90,7 @@ export function applyPendingRestore({ runtimePath, databasePath, telemetry }: { 
     const originalPath = `${databasePath}.before-restore`;
     const dataDirectory = dirname(databasePath);
     const restoresAuthorSkills = hasAuthorSkillBackup(pending.stagedSnapshotPath);
+    const dictionaryJournalPath = `${pending.stagedSnapshotPath}.personal-restore.json`;
     try {
         if (pending.phase === "ready")
             applyReadyRestore({ runtimePath, databasePath, pending });
@@ -97,7 +100,11 @@ export function applyPendingRestore({ runtimePath, databasePath, telemetry }: { 
     }
 
     return {
-        complete: () => {
+        complete: async () => {
+            validateAuthorSkillBackup(pending.stagedSnapshotPath);
+            if (personalDictionary)
+                await restorePersonalDictionary(getAuthorSkillBackupPath(pending.stagedSnapshotPath), dictionaryJournalPath, personalDictionary);
+
             removeDatabase(originalPath);
             rmSync(pending.stagedSnapshotPath, { force: true });
             rmSync(getAuthorSkillBackupPath(pending.stagedSnapshotPath), { recursive: true, force: true });
@@ -105,19 +112,25 @@ export function applyPendingRestore({ runtimePath, databasePath, telemetry }: { 
                 completeAuthorSkillRestore(dataDirectory);
 
             writeRuntimeSettings(runtimePath, { ...readRuntimeSettings(runtimePath), pendingRestore: undefined });
+            rmSync(dictionaryJournalPath, { force: true });
             capture({ kind: "recovery_finished", recovery: "restore", outcome: "completed" });
         },
-        rollback: () => {
-            capture({ kind: "recovery_finished", recovery: "restore", outcome: "failed", failure: "persistence" });
-            validateDatabaseSnapshot(pending.recoverySnapshotPath);
-            removeDatabase(databasePath);
-            copyFileSync(pending.recoverySnapshotPath, databasePath);
-            rmSync(pending.stagedSnapshotPath, { force: true });
-            rmSync(getAuthorSkillBackupPath(pending.stagedSnapshotPath), { recursive: true, force: true });
-            if (restoresAuthorSkills)
-                rollbackAuthorSkillRestore(dataDirectory);
+        rollback: async () => {
+            try {
+                if (personalDictionary)
+                    await rollbackPersonalDictionary(dictionaryJournalPath, personalDictionary);
+            } finally {
+                capture({ kind: "recovery_finished", recovery: "restore", outcome: "failed", failure: "persistence" });
+                validateDatabaseSnapshot(pending.recoverySnapshotPath);
+                removeDatabase(databasePath);
+                copyFileSync(pending.recoverySnapshotPath, databasePath);
+                rmSync(pending.stagedSnapshotPath, { force: true });
+                rmSync(getAuthorSkillBackupPath(pending.stagedSnapshotPath), { recursive: true, force: true });
+                if (restoresAuthorSkills)
+                    rollbackAuthorSkillRestore(dataDirectory);
 
-            writeRuntimeSettings(runtimePath, { ...readRuntimeSettings(runtimePath), pendingRestore: undefined });
+                writeRuntimeSettings(runtimePath, { ...readRuntimeSettings(runtimePath), pendingRestore: undefined });
+            }
         },
     };
 }

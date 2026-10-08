@@ -7,12 +7,12 @@ import { captureAuthorSkillInventory } from "../../infrastructure/recovery/autho
 import { runBackup } from "../../infrastructure/recovery/backup-lifecycle.js";
 
 
-export function createNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry?: TelemetryCaptureSource, kind: "manual" | "automatic" = "manual"): Promise<{ path: string; createdAt: string }> {
-    return runBackup(() => writeNativeBackup(createSnapshot, dataDirectory, backupDirectory, telemetry, kind));
+export function createNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry?: TelemetryCaptureSource, kind: "manual" | "automatic" = "manual", readPersonalWords?: () => Promise<string[]>): Promise<{ path: string; createdAt: string }> {
+    return runBackup(() => writeNativeBackup(createSnapshot, dataDirectory, backupDirectory, telemetry, kind, readPersonalWords));
 }
 
 
-async function writeNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry: TelemetryCaptureSource | undefined, kind: "manual" | "automatic"): Promise<{ path: string; createdAt: string }> {
+async function writeNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry: TelemetryCaptureSource | undefined, kind: "manual" | "automatic", readPersonalWords: (() => Promise<string[]>) | undefined): Promise<{ path: string; createdAt: string }> {
     const observed = beginTimedTelemetryCapture(telemetry);
     let path: string | undefined;
     let temporary: string | undefined;
@@ -25,6 +25,7 @@ async function writeNativeBackup(createSnapshot: (path: string) => Promise<unkno
         temporary = join(backupDirectory, `.${filename}.${randomUUID()}.tmp`);
         path = join(backupDirectory, filename);
         const expectedInventory = await captureAuthorSkillInventory(dataDirectory);
+        const personalWords = await readPersonalWords?.();
 
         await createSnapshot(temporary);
         await rename(temporary, path);
@@ -33,7 +34,7 @@ async function writeNativeBackup(createSnapshot: (path: string) => Promise<unkno
         if ((await stat(path)).size === 0)
             throw new Error("Backup is empty.");
 
-        await createAuthorSkillBackup({ dataDirectory, snapshotPath: path, expectedInventory });
+        await createAuthorSkillBackup({ dataDirectory, snapshotPath: path, expectedInventory, personalWords });
         observed.capture({ kind: "backup_finished", outcome: "completed", elapsedMs: observed.elapsedMs() });
 
         return { path, createdAt: created.toISOString() };

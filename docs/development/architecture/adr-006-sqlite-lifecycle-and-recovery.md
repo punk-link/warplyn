@@ -14,7 +14,7 @@ Local private data must survive schema upgrades and interrupted recovery without
 
 SQLite is the local system of record, with foreign keys and WAL enabled. Schema migrations are ordered and forward-only, recorded durably, and each unapplied migration runs in one immediate transaction. Supported schemas migrate without deleting the database; unsupported prototype databases are not detected or deleted automatically.
 
-Backups capture consistent database state and recoverable Author Skills and Skill history. Credentials and environment files are excluded. Automatic retention never deletes manual backups. Legacy database-only restore leaves destination Skill files unchanged.
+Backups capture consistent database state and recoverable Author Skills and Skill history. Desktop backups also capture personal spelling words in the validated native companion folder. Restore merges those words with existing vocabulary and rolls back only new additions on failure. Credentials and environment files are excluded. Automatic retention never deletes manual backups. Legacy database-only restore leaves destination Skill files and personal vocabulary unchanged.
 
 Create snapshots through SQLite's asynchronous online backup API. Copy files asynchronously and hash bounded stream chunks so backup creation yields to editing and IPC. Report completion after the complete backup is written and checked. Database replacement and shutdown wait for pending backups; a failed capture removes its partial output before teardown proceeds.
 

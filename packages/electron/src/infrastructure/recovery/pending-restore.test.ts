@@ -32,7 +32,7 @@ function readSetting(path: string): string {
 }
 
 
-test("restore discards connection metadata and model selections while rollback preserves them", () => {
+test("restore discards connection metadata and model selections while rollback preserves them", async () => {
     const root = mkdtempSync(join(tmpdir(), "warplyn-restore-connections-"));
     const databasePath = join(root, "warplyn.sqlite");
     const stagedSnapshotPath = join(root, "selected.sqlite");
@@ -69,7 +69,7 @@ test("restore discards connection metadata and model selections while rollback p
 
         assert.equal(readSetting(databasePath), "active");
         assert.deepEqual(readFileSync(stagedSnapshotPath), sourceSnapshot);
-        restore.rollback();
+        await restore.rollback();
         const recovered = openDatabase(databasePath);
         try {
             for (const [index, key] of keys.entries())
@@ -84,7 +84,7 @@ test("restore discards connection metadata and model selections while rollback p
 
 
 // product: settings.restore-local-backup
-test("staged restoration replaces active data only until a rollback is needed", () => {
+test("staged restoration replaces active data only until a rollback is needed", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-restore-"));
     const databasePath = join(root, "skladno.sqlite");
     const stagedSnapshotPath = join(root, "selected.sqlite");
@@ -100,7 +100,7 @@ test("staged restoration replaces active data only until a rollback is needed", 
         const restore = applyPendingRestore({ runtimePath, databasePath, telemetry: { beginCapture: () => (event) => telemetry.push(event) } });
         assert.ok(restore);
         assert.equal(readSetting(databasePath), "restored");
-        restore.rollback();
+        await restore.rollback();
         assert.equal(readSetting(databasePath), "active");
         assert.deepEqual(telemetry, [{ kind: "recovery_finished", recovery: "restore", outcome: "failed", failure: "persistence" }]);
     } finally {
@@ -109,7 +109,7 @@ test("staged restoration replaces active data only until a rollback is needed", 
 });
 
 
-test("successful restoration removes only the staged backup", () => {
+test("successful restoration removes only the staged backup", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-restore-"));
     const databasePath = join(root, "skladno.sqlite");
     const stagedSnapshotPath = join(root, "selected.sqlite");
@@ -124,7 +124,7 @@ test("successful restoration removes only the staged backup", () => {
     try {
         const restore = applyPendingRestore({ runtimePath, databasePath, telemetry: { beginCapture: () => (event) => telemetry.push(event) } });
         assert.ok(restore);
-        restore.complete();
+        await restore.complete();
         assert.equal(readSetting(databasePath), "restored");
         assert.deepEqual(telemetry, [{ kind: "recovery_finished", recovery: "restore", outcome: "completed" }]);
     } finally {
@@ -153,7 +153,7 @@ test("staged restoration restores Author Skills alongside the database", async (
         assert.ok(restore);
         assert.equal(readSetting(databasePath), "restored");
         assert.equal(readFileSync(join(root, "skills", "clarity", "SKILL.md"), "utf8"), "restored skill");
-        restore.complete();
+        await restore.complete();
     } finally {
         rmSync(root, { recursive: true, force: true });
     }

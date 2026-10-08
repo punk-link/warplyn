@@ -3,6 +3,7 @@ import { lstatSync, readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { lstat, readdir, writeFile } from "node:fs/promises";
 import { recordBackupFile } from "@skladno/server/electron";
+import { readPersonalDictionaryFile } from "./personal-dictionary-backup.js";
 
 
 interface FileRecord { size: number; sha256: string }
@@ -15,6 +16,14 @@ const skillDirectories = ["skills", "skill-history"] as const;
 function recordFile(path: string): FileRecord {
     const bytes = readFileSync(path);
     return { size: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") };
+}
+
+
+function recordPersonalDictionaryFiles<T extends FileInventory | Promise<FileInventory>>(bundleDirectory: string, record: (path: string, name: string) => T): T | FileInventory {
+    const name = "personal-dictionary.json";
+    const path = join(bundleDirectory, name);
+
+    return readPersonalDictionaryFile(path) ? record(path, name) : {};
 }
 
 
@@ -93,7 +102,8 @@ export async function writeAuthorSkillBackupManifest(snapshotPath: string, bundl
     if (JSON.stringify(before) !== JSON.stringify(after) || JSON.stringify(before) !== JSON.stringify(copied))
         throw new Error("author_skill_backup_changed");
 
-    const manifest = { format: 1, files: { "database.sqlite": await recordBackupFile(snapshotPath), ...copied } };
+    const personalFiles = await recordPersonalDictionaryFiles(bundleDirectory, async (path, name) => ({ [name]: await recordBackupFile(path) }));
+    const manifest = { format: 1, files: { "database.sqlite": await recordBackupFile(snapshotPath), ...copied, ...personalFiles } };
     await writeFile(join(bundleDirectory, "manifest.json"), JSON.stringify(manifest), { flag: "wx" });
 }
 
@@ -110,7 +120,8 @@ export function validateAuthorSkillBackupManifest(snapshotPath: string, bundleDi
     if (!manifest || typeof manifest !== "object" || !("format" in manifest) || manifest.format !== 1 || !("files" in manifest))
         throw new Error("author_skill_backup_invalid_manifest");
 
-    const actual = { "database.sqlite": recordFile(snapshotPath), ...inventory(bundleDirectory) };
+    const personalFiles = recordPersonalDictionaryFiles(bundleDirectory, (path, name) => ({ [name]: recordFile(path) }));
+    const actual = { "database.sqlite": recordFile(snapshotPath), ...inventory(bundleDirectory), ...personalFiles };
     if (JSON.stringify(manifest.files) !== JSON.stringify(actual))
         throw new Error("author_skill_backup_invalid_manifest");
 }

@@ -20,10 +20,11 @@ function isSafeDataDirectory(path: string): boolean {
 }
 
 
-export function createLocalDataDeletion({ dataDirectory, backupDirectory, createSnapshot, closeApplication, restart, telemetry }: {
+export function createLocalDataDeletion({ dataDirectory, backupDirectory, createSnapshot, readPersonalWords, closeApplication, restart, telemetry }: {
     dataDirectory: string;
     backupDirectory?: string;
     createSnapshot(path: string): Promise<unknown>;
+    readPersonalWords?(): Promise<string[]>;
     closeApplication(): void | Promise<void>;
     restart(): void;
     telemetry?: TelemetryCaptureSource;
@@ -39,7 +40,7 @@ export function createLocalDataDeletion({ dataDirectory, backupDirectory, create
                 if (!backupAvailable || !backupDirectory)
                     return "editorial_request_failed";
 
-                await createNativeBackup(createSnapshot, dataDirectory, backupDirectory, telemetry);
+                await createNativeBackup(createSnapshot, dataDirectory, backupDirectory, telemetry, "manual", readPersonalWords);
             }
 
             await closeApplication();
@@ -50,11 +51,12 @@ export function createLocalDataDeletion({ dataDirectory, backupDirectory, create
 }
 
 
-export function createNativeBackupRestoration({ runtimePath, dataDirectory, backupDirectory, createSnapshot, chooseBackupSnapshot, requestCheckpoint, closeApplication, restart, telemetry }: {
+export function createNativeBackupRestoration({ runtimePath, dataDirectory, backupDirectory, createSnapshot, readPersonalWords, chooseBackupSnapshot, requestCheckpoint, closeApplication, restart, telemetry }: {
     runtimePath: string;
     dataDirectory: string;
     backupDirectory?: string;
     createSnapshot(path: string): Promise<unknown>;
+    readPersonalWords?(): Promise<string[]>;
     chooseBackupSnapshot(directory: string): Promise<string | undefined>;
     requestCheckpoint(): Promise<boolean>;
     closeApplication(): void | Promise<void>;
@@ -93,7 +95,7 @@ export function createNativeBackupRestoration({ runtimePath, dataDirectory, back
                 cpSync(getAuthorSkillBackupPath(selected), getAuthorSkillBackupPath(stagedSnapshotPath), { recursive: true, errorOnExist: true });
 
             validateAuthorSkillBackup(stagedSnapshotPath);
-            const { path: recoverySnapshotPath } = await createNativeBackup(createSnapshot, dataDirectory, stagingDirectory, telemetry);
+            const { path: recoverySnapshotPath } = await createNativeBackup(createSnapshot, dataDirectory, stagingDirectory, telemetry, "manual", readPersonalWords);
             updateRuntimeSettings(runtimePath, (current) => ({ ...current, pendingRestore: { stagedSnapshotPath, recoverySnapshotPath, phase: "ready" } }));
             await closeApplication();
 

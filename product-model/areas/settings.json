@@ -17,9 +17,9 @@
             "area": "Spelling",
             "title": "Manage personal technical vocabulary",
             "status": "implemented",
-            "owners": ["packages/web/src/settings/components/SpellingSettingsSection.tsx", "packages/web/src/settings/use-spelling-settings.ts", "packages/shared/src/application/desktop/desktop-spelling.ts", "packages/electron/src/infrastructure/window/spelling-session.ts", "packages/electron/src/presentation/articles/desktop-article-spelling.ts"],
+            "owners": ["packages/web/src/settings/components/SpellingSettingsSection.tsx", "packages/web/src/settings/use-spelling-settings.ts", "packages/shared/src/application/desktop/desktop-spelling.ts", "packages/electron/src/infrastructure/window/spelling-session.ts", "packages/electron/src/presentation/articles/desktop-article-spelling.ts", "packages/electron/src/infrastructure/recovery/personal-dictionary-backup.ts", "packages/electron/src/presentation/settings/desktop-native-backup.ts"],
             "contract": "Personal words use horizontal row dividers. Authors search, add, and remove native personal words, individually or by bounded multiline paste. Exact duplicates are ignored, case and technical punctuation are preserved, and partial native failures retain failed entries for retry. A native spelling menu can add its misspelled word explicitly. One word list applies across Articles and languages. Settings explains native OS dictionary side effects on Windows. Vocabulary changes never change Article content, Drafts, Revisions, or Proposals and never send words to providers or telemetry. Word-entry guidance appears beside the Add words button, stacking below it on narrow screens, and remains associated with the text field for assistive technology.",
-            "persistence": "Electron's persistent custom dictionary and native OS custom dictionary where supported. Installation-local spelling data is outside Article SQLite backup/restore and Article-data deletion. Explicit word removal is available in Settings."
+            "persistence": "Electron's persistent custom dictionary and native OS custom dictionary where supported. Desktop manual, automatic, deletion-protective, and restore-recovery backups include a manifest-validated personal word list in the SQLite snapshot's companion folder. Restore merges saved words without removing existing vocabulary; failed or interrupted restoration journals and rolls back only its new additions. Older backups without words leave vocabulary unchanged. Browser backups do not include personal words; native language caches and preload preferences stay outside backups. Article-data deletion leaves native personal words unchanged. Explicit word removal is available in Settings."
         },
         {
             "id": "settings.general-preferences",
@@ -143,6 +143,16 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "settings.personal-dictionary-backup",
+            "title": "Desktop backups recover personal vocabulary without deleting existing words",
+            "capabilityIds": ["settings.spelling-personal-words", "settings.backup-policy", "settings.restore-local-backup"],
+            "preconditions": ["The desktop personal dictionary contains saved words."],
+            "event": "The Author creates and restores a desktop backup.",
+            "expected": ["The manifest protects the personal word list alongside the database and Skills.", "Restoration preserves exact case, Unicode, punctuation, and existing destination words.", "Empty and older backups leave destination vocabulary unchanged.", "Native failures and interrupted restoration roll back only the new words added by the restore."],
+            "forbidden": ["Tampered or malformed vocabulary is restored.", "Existing personal or OS words are deleted during restoration.", "Personal words enter diagnostics or network requests."],
+            "evidence": { "kind": "automated", "path": "packages/electron/src/infrastructure/recovery/personal-dictionary-backup.test.ts" }
+        },
         {
             "id": "settings.spelling-dictionaries",
             "title": "Preloading keeps readiness truthful and Article checking independent",

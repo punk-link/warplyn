@@ -102,7 +102,7 @@ test("legacy backup pairs and database-only snapshots restore without changing t
                 restored.close();
             }
 
-            restore.complete();
+            await restore.complete();
             const application = createLocalApplication(loadServerConfig({ WARPLYN_DATA_DIR: target }));
             try {
                 assert.equal(application.services.publishing.getSettings().customProfiles[0]?.name, "Legacy publication");
