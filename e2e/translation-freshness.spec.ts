@@ -24,6 +24,7 @@ test("parallel translations become stale after a source edit and refresh preserv
     for (const language of ["Spanish", "German"]) {
         await page.getByRole("tab", { name: language, exact: true }).click();
         await page.getByRole("button", { name: "Edit", exact: true }).click();
+        await expect(page.getByRole("textbox", { name: "Article draft", exact: true })).toBeVisible();
         await page.getByRole("tab", { name: /Translations/ }).click();
         await page.getByRole("button", { name: "Parallel source", exact: true }).click();
     }
