@@ -5,7 +5,7 @@ import { EditorialWorkspaceProvider } from "./workspace/EditorialWorkspace.js";
 import { I18nProvider } from "./i18n/I18nProvider.js";
 import { NotificationProvider } from "./notifications/NotificationProvider.js";
 import { useKeyBindingDispatcher } from "./key-bindings/KeyBindingProvider.js";
-import { saveScheduledWebBackup } from "./settings/web-backups.js";
+import { AutomaticBackups } from "./settings/AutomaticBackups.js";
 import type { SettingsSection } from "./settings/settings-sections.js";
 import { QuickStartDialog } from "./application/QuickStartDialog.js";
 import { desktopShellCommands, resolveTheme, type KeyBindingOverrides, type ResolvedTheme, type ThemePreference } from "@skladno/shared";
@@ -64,7 +64,6 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
             setKeyBindingOverrides(settings.keyBindingOverrides);
             setTheme(settings.general.theme);
             setQuickStartConnectionReady(hasUsableAiConnection(settings));
-            void saveScheduledWebBackup(client, settings.backupPolicy).catch(() => undefined);
         }).catch(() => setQuickStartConnectionReady(false));
     }, [client]);
 
@@ -117,6 +116,7 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
 
     return <I18nProvider client={client}>
         <NotificationProvider>
+            <AutomaticBackups client={client} />
             <EditorialWorkspaceProvider
                 context={{ client, screen, settingsSection }}
                 navigation={{ openSettings: () => {

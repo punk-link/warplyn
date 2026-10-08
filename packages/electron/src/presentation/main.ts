@@ -15,6 +15,7 @@ import { getBuiltInSkillRoot } from "./desktop-skill-path.js";
 import { backup } from "node:sqlite";
 import { waitForBackups } from "../infrastructure/recovery/backup-lifecycle.js";
 import { registerDesktopSettingsAdapter } from "./settings/desktop-settings.js";
+import { createDesktopBackupScheduler } from "./settings/desktop-backup-scheduler.js";
 import { registerDesktopTelemetryAdapter } from "./telemetry/desktop-telemetry.js";
 import { registerDesktopShellAdapter } from "./shell/desktop-shell.js";
 import { registerDesktopArticleFilesAdapter } from "./articles/desktop-article-files.js";
@@ -25,6 +26,7 @@ import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpd
 const rendererUrl = "http://127.0.0.1:5173";
 const hiddenTestWindow = process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true";
 let mainWindow: BrowserWindow | undefined;
+let backups: ReturnType<typeof createDesktopBackupScheduler> | undefined;
 let closeApplication: (() => Promise<void>) | undefined;
 let closing = false;
 let nativeMessages = getElectronMessagesFor(defaultInterfaceLocale);
@@ -241,6 +243,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             })).filePaths[0],
             requestCheckpoint: () => mainWindow ? requestDraftCheckpoint(ipcMain, mainWindow.webContents) : Promise.resolve(false),
             closeApplication: async () => {
+                backups?.dispose();
                 await waitForBackups();
                 cancelStreams();
                 telemetry?.dispose();
@@ -258,6 +261,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             telemetry,
         });
         closeApplication = async () => {
+            backups?.dispose();
             await waitForBackups();
             cancelStreams();
             telemetry?.dispose();
@@ -296,6 +300,15 @@ if (supportsNativeUpdates() && squirrelStartup) {
         Menu.setApplicationMenu(null);
 
         await createMainWindow();
+        backups = createDesktopBackupScheduler({
+            runtimePath,
+            dataDirectory: dirname(config.databasePath),
+            readPolicy: async () => (await application.services.settings.getSnapshot()).backupPolicy,
+            createSnapshot: (path) => backup(application.database, path),
+            telemetry,
+            notifyFailure: () => mainWindow?.webContents.send("warplyn:automatic-backup-failed"),
+        });
+        backups.start();
         updates?.schedule();
     }).catch(async (error: unknown) => {
         telemetry?.capture({ kind: "app_failure", source: "startup", failure: error instanceof PendingRestoreError ? "persistence" : "unknown" });

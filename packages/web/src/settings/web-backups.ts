@@ -30,8 +30,7 @@ const webBackupMessages: Record<WebBackupFailure, WebBackupMessageId> = {
 const databaseName = "skladno-web-backups";
 const storeName = "settings";
 const folderKey = "folder";
-const automaticBackupKey = "last-automatic-backup";
-let automaticBackupInProgressFor: string | undefined;
+let automaticBackupInProgress = false;
 let selectedFolder: BackupDirectoryHandle | undefined;
 
 
@@ -208,17 +207,13 @@ export async function saveWebBackup(client: BackupClient, kind: BackupKind, poli
 
 
 export async function saveScheduledWebBackup(client: BackupClient, policy: BackupPolicy): Promise<void> {
-    const today = new Date().toISOString().slice(0, 10);
-    if (policy.schedule !== "daily" || automaticBackupInProgressFor === today || localStorage.getItem(automaticBackupKey) === today)
+    if (policy.schedule !== "daily" || automaticBackupInProgress)
         return;
 
-    automaticBackupInProgressFor = today;
+    automaticBackupInProgress = true;
     try {
         await saveWebBackup(client, "automatic", policy, false);
-    } catch (error) {
-        automaticBackupInProgressFor = undefined;
-        throw error;
+    } finally {
+        automaticBackupInProgress = false;
     }
-
-    localStorage.setItem(automaticBackupKey, today);
 }

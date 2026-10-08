@@ -52,6 +52,7 @@ ipcRenderer.on("warplyn:spelling-failed", (_event, kind: unknown) => {
 
 contextBridge.exposeInMainWorld("skladnoArticleFiles", createDesktopArticleFilesClient(ipcRenderer));
 contextBridge.exposeInMainWorld("skladnoDesktop", createDesktopSettingsClient(ipcRenderer));
+ipcRenderer.on("warplyn:automatic-backup-failed", () => window.dispatchEvent(new Event("warplyn:automatic-backup-failed")));
 contextBridge.exposeInMainWorld("skladnoShell", createDesktopShellClient(ipcRenderer));
 
 if (supportsReleaseDiscovery())

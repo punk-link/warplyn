@@ -18,6 +18,8 @@ Browser clients may select, test, and use managed connections; only Electron may
 
 Keep backup destinations and runtime recovery configuration outside SQLite. Write runtime configuration atomically, without credentials or Article content.
 
+Electron main owns automatic backups. With the daily policy enabled, attempt a complete native backup five seconds after startup and every 24 hours from the previous attempt's start. Read the current policy and destination for each attempt; report failures without moving focus and continue the schedule. Retention removes only automatic snapshots and their Skill companions. Stop scheduling before shutdown or data replacement and wait for in-progress backup and retention work before closing SQLite. Browser builds follow the same cadence through their retained folder permission handle.
+
 Native restore stages a snapshot and applies it during restart. Retain a complete recovery snapshot first, clear pending state only after the database and application services open successfully, and attempt at most one automatic rollback. Never enter a relaunch loop or automatically delete old data or orphaned credentials.
 
 Live data belongs on a local filesystem; backups may use network destinations. Backup and live-data directories cannot contain one another.

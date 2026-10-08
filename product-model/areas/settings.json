@@ -98,11 +98,11 @@
         {
             "id": "settings.backup-policy",
             "area": "Backups",
-            "title": "Browser-selected backup folder, schedule, and retention",
+            "title": "Local backup folder, startup and daily schedule, and retention",
             "status": "implemented",
-            "owners": ["packages/web/src/App.tsx", "packages/web/src/settings/ApplicationSettings.tsx", "packages/web/src/settings/components/DataBackupsSettingsSection.tsx", "packages/web/src/settings/web-backups.ts", "packages/server/src/application/settings/application-settings-service.ts", "packages/server/src/application/settings/backup-snapshot-creator.ts", "packages/server/src/presentation/routes/settings-route.ts", "packages/server/src/presentation/routes/backup-bundle-route.ts", "packages/server/src/infrastructure/persistence/sqlite-backup-snapshot-creator.ts", "packages/server/src/infrastructure/persistence/backup-bundle.ts", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"],
-            "contract": "In supported web browsers, authors explicitly choose a local backup folder. The browser writes complete manifest-bearing backup directories containing a consistent SQLite snapshot, current Author Skills, and immutable Skill Revision history, lists compatible bundles and legacy SQLite snapshots for explicit restore, and reloads after the loopback service safely replaces active data. Daily startup writes at most one automatic backup when the previously selected folder remains permitted, and retention removes only older automatic backups.",
-            "persistence": "app_settings.application-backup-policy plus the browser's local folder permission handle; backup bundles exclude environment variables and API keys.",
+            "owners": ["packages/web/src/App.tsx", "packages/web/src/settings/AutomaticBackups.tsx", "packages/web/src/settings/ApplicationSettings.tsx", "packages/web/src/settings/components/DataBackupsSettingsSection.tsx", "packages/web/src/settings/web-backups.ts", "packages/server/src/application/settings/application-settings-service.ts", "packages/server/src/application/settings/backup-snapshot-creator.ts", "packages/server/src/presentation/routes/settings-route.ts", "packages/server/src/presentation/routes/backup-bundle-route.ts", "packages/server/src/infrastructure/persistence/sqlite-backup-snapshot-creator.ts", "packages/server/src/infrastructure/persistence/backup-bundle.ts", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts", "packages/electron/src/presentation/main.ts", "packages/electron/src/presentation/settings/desktop-backup-scheduler.ts", "packages/electron/src/presentation/settings/desktop-native-backup.ts"],
+            "contract": "Authors explicitly choose a local backup folder through Electron or a supported browser. Both write consistent SQLite snapshots with current Author Skills and immutable Skill Revision history. When daily backups are enabled, each startup attempts a backup after five seconds, then schedules attempts every 24 hours from the previous attempt's start while the application stays open. Each attempt reads the current policy and destination. Electron main owns native scheduling; browser scheduling uses its retained permission handle and never requests permission in the background. Failures produce a recoverable notification and the next scheduled attempt remains active. Shutdown stops native scheduling and waits for in-progress backup and retention work. Retention removes only older automatic backups and their Skill companions, leaving manual and legacy native snapshots untouched.",
+            "persistence": "app_settings.application-backup-policy plus the browser's local folder permission handle or Electron's runtime backup directory; backup bundles exclude environment variables and API keys. Schedule intervals are session-local and restart from startup.",
             "limitations": ["Browser bundle transfer supports files up to 100 MB and 500 MB total; larger backups require Electron."]
         },
         {
@@ -268,10 +268,10 @@
             "title": "Backups are recoverable without interrupting editing",
             "capabilityIds": ["settings.backup-policy"],
             "preconditions": ["The author opens Data & backups Settings."],
-            "event": "The author chooses a backup folder, creates a manual backup, or the daily schedule runs at application startup.",
-            "expected": ["A complete database and Author Skill bundle is written through the browser permission handle and automatic retention leaves manual backups untouched."],
+            "event": "The author chooses a backup folder, creates a manual backup, or the startup and 24-hour schedule runs.",
+            "expected": ["A complete database and Author Skill bundle is written to the configured folder and automatic retention leaves manual backups untouched.", "Native scheduled backups run after each startup and every 24 hours from the preceding attempt, re-read policy and destination, survive failures, and stop before database shutdown."],
             "forbidden": ["A backup failure interrupts Article editing or exposes environment-variable secrets."],
-            "evidence": { "kind": "automated", "path": "packages/web/src/settings/web-backups.bundle.test.ts" }
+            "evidence": { "kind": "automated", "path": "packages/electron/src/presentation/settings/desktop-backup-scheduler.test.ts" }
         },
         {
             "id": "settings.preview-update-controls",
