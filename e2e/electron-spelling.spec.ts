@@ -42,8 +42,6 @@ test("native spelling correction follows Lexical Draft recovery and immutable sa
         // Supply menu data only; replacement, Lexical input, and persistence remain native.
         await app.evaluate(({ Menu, BrowserWindow }) => {
             BrowserWindow.getAllWindows()[0]?.webContents.prependListener("context-menu", (_event, params) => {
-                // Wait for this context's menu, rather than a previous menu with the same labels.
-                Menu.setApplicationMenu(null);
                 params.misspelledWord = "helllo";
                 params.dictionarySuggestions = ["hello"];
                 // Matches Electron 43's native result: suggestions exist despite this flag.
@@ -85,6 +83,8 @@ test("native spelling correction follows Lexical Draft recovery and immutable sa
         await expect(editor).toContainText("helllo");
         await page.evaluate(() => window.warplynSpelling?.setArticleLanguage("en"));
         await expect.poll(() => app?.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.webContents.session.getSpellCheckerLanguages())).toEqual(["en"]);
+        // Clear before requesting the menu: the context-menu event itself can arrive later.
+        await app.evaluate(({ Menu }) => Menu.setApplicationMenu(null));
         await page.mouse.click(point.x, point.y, { button: "right" });
         await expect.poll(() => app?.evaluate(({ Menu }) => Menu.getApplicationMenu()?.items.map((item) => item.label) ?? [])).toContain("hello");
         await app.evaluate(({ Menu }) => {
