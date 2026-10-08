@@ -1,16 +1,24 @@
-import type { AssistantCheckpointDraftMode, AssistantCheckpointPreview, AssistantEditCandidate, AssistantEditMode, AssistantMessage, AssistantRequest, AssistantRequestScope, AssistantResponseKind, AssistantSkillSource, ArticleRevision, RestoreAssistantCheckpointResult } from "@skladno/shared";
+import { APPLICATION_ERROR, type AssistantCheckpointDraftMode, type AssistantCheckpointPreview, type AssistantEditCandidate, type AssistantEditMode, type AssistantMessage, type AssistantRequest, type AssistantRequestScope, type AssistantResponseKind, type AssistantSkillSource, type ArticleRevision, type RestoreAssistantCheckpointResult } from "@skladno/shared";
 
 
 export class AssistantCheckpointError extends Error {
+    readonly code: typeof APPLICATION_ERROR.ASSISTANT_CHECKPOINT_INVALID | typeof APPLICATION_ERROR.ASSISTANT_CHECKPOINT_CONFLICT;
+
+
     constructor(readonly kind: "invalid" | "conflict") {
         super(kind);
+        this.code = kind === "invalid" ? APPLICATION_ERROR.ASSISTANT_CHECKPOINT_INVALID : APPLICATION_ERROR.ASSISTANT_CHECKPOINT_CONFLICT;
     }
 }
 
 
 export class AssistantEditError extends Error {
+    readonly code: typeof APPLICATION_ERROR.ASSISTANT_EDIT_INVALID | typeof APPLICATION_ERROR.ASSISTANT_EDIT_CONFLICT;
+
+
     constructor(readonly kind: "invalid" | "conflict") {
         super(kind);
+        this.code = kind === "invalid" ? APPLICATION_ERROR.ASSISTANT_EDIT_INVALID : APPLICATION_ERROR.ASSISTANT_EDIT_CONFLICT;
     }
 }
 

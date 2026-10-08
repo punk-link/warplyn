@@ -121,7 +121,7 @@ export {
     type KeyBindingOverrides,
     type KeyBindingScope,
 } from "./cross-cutting/key-bindings.js";
-export { APPLICATION_ERROR, ApplicationClientError, type ApplicationErrorCode, type ApplicationErrorPayload } from "./cross-cutting/errors.js";
+export { APPLICATION_ERROR, APPLICATION_ERROR_BY_AREA, ApplicationClientError, type ApplicationErrorCode, type ApplicationErrorPayload } from "./cross-cutting/errors.js";
 export {
     EDITORIAL_OPERATION,
     EDITORIAL_ERROR_CATEGORY,
