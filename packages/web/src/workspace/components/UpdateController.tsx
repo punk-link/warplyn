@@ -4,6 +4,7 @@ import type { IntlShape } from "react-intl";
 import type { DesktopUpdateState } from "@skladno/shared";
 import { getDesktopUpdateClient } from "../../application/desktop-client.js";
 import { UpdateIcon } from "../../ui/icons.js";
+import { ActivityIndicator } from "../../ui/primitives.js";
 
 
 export function UpdateController({ className = "" }: { className?: string }) {
@@ -24,8 +25,9 @@ export function UpdateController({ className = "" }: { className?: string }) {
 
     const label = updateLabel(state, intl);
     const warning = state.kind !== "failed" && state.security;
-    return <button className={`${className} grid size-9 place-items-center rounded-control border border-transparent transition-colors hover:bg-brand-soft hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${warning || state.kind === "failed" ? "text-warning" : "text-brand"}`} type="button" aria-label={label} title={label} aria-busy={state.kind === "downloading" || undefined} onClick={() => window.dispatchEvent(new Event("skladno:open-updates"))}>
-        <UpdateIcon className={`size-3 ${state.kind === "downloading" ? "motion-safe:animate-pulse" : ""}`} />
+    return <button className={`${className} relative grid size-9 place-items-center rounded-control border border-transparent transition-colors hover:bg-brand-soft hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${warning || state.kind === "failed" ? "text-warning" : "text-brand"}`} type="button" aria-label={label} title={label} aria-busy={state.kind === "downloading" || undefined} onClick={() => window.dispatchEvent(new Event("skladno:open-updates"))}>
+        <UpdateIcon className="size-3" />
+        {state.kind === "downloading" && <ActivityIndicator className="absolute right-1 top-1" size="small" />}
     </button>;
 }
 

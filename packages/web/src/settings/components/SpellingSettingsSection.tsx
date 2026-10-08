@@ -1,6 +1,6 @@
 import { useIntl } from "react-intl";
 import { useId, useState } from "react";
-import { Button, Field, TextareaField } from "../../ui/primitives.js";
+import { ActivityIndicator, Button, Field, TextareaField } from "../../ui/primitives.js";
 import { SettingsGroup, SettingRow } from "./SettingRow.js";
 import { useSpellingSettings } from "../use-spelling-settings.js";
 import type { DictionaryState } from "@skladno/shared";
@@ -29,7 +29,7 @@ export function SpellingSettingsSection() {
     const words = snapshot?.personal.words.filter((word) => word.toLocaleLowerCase(intl.locale).includes(spelling.search.toLocaleLowerCase(intl.locale))) ?? [];
     return <>
         <p className="mt-4 text-sm text-muted">{intl.formatMessage({ id: "spelling.localHint" })}</p>
-        <p className="mt-3 text-sm" role="status">{intl.formatMessage({ id: spelling.status })}</p>
+        <p className="mt-3 text-sm" role="status">{(spelling.busy || spelling.status === "spelling.loading") && <ActivityIndicator className="mr-2 inline-block align-middle" />}{intl.formatMessage({ id: spelling.status })}</p>
         {!snapshot && <Button variant="quiet" disabled={busy} onClick={() => void spelling.retryLoad()}>{intl.formatMessage({ id: "spelling.retry" })}</Button>}
         <SettingsGroup className="mt-6 pt-6" label={intl.formatMessage({ id: "spelling.dictionaries" })}>
             <div className="mt-4 border-l border-border-strong pl-4">
@@ -45,7 +45,7 @@ export function SpellingSettingsSection() {
                                     <input type="checkbox" className="size-4 accent-brand" disabled={snapshot?.dictionaries.states[language] === "preparing"} checked={spelling.selected.includes(language)} onChange={(event) => spelling.setSelected((current) => event.target.checked ? [...current, language] : current.filter((item) => item !== language))} />
                                     <span>{label}</span>
                                 </label>}
-                                <span className="shrink-0 text-xs text-muted" role={spelling.selected.includes(language) ? "status" : undefined}>{intl.formatMessage({ id: stateMessages[snapshot?.dictionaries.states[language] ?? "unverified"] })}</span>
+                                <span className="shrink-0 text-xs text-muted" role={spelling.selected.includes(language) ? "status" : undefined}>{snapshot?.dictionaries.states[language] === "preparing" && <ActivityIndicator className="mr-2 inline-block align-middle" />}{intl.formatMessage({ id: stateMessages[snapshot?.dictionaries.states[language] ?? "unverified"] })}</span>
                                 {downloaded && <Button variant="quiet" disabled={busy} aria-label={intl.formatMessage({ id: "spelling.unloadLanguage" }, { language: label })} onClick={() => void spelling.unload(language)}>{intl.formatMessage({ id: "spelling.unload" })}</Button>}
                             </div>)}
                         </fieldset>

@@ -48,6 +48,7 @@
     --radius-control: var(--radius-control);
     --radius-panel: var(--radius-panel);
     --shadow-raised: var(--shadow-raised);
+    --shadow-status-glow: var(--shadow-status-glow);
     --shadow-dialog: var(--shadow-dialog);
 }
 

@@ -149,7 +149,7 @@
             "capabilityIds": ["settings.spelling-dictionaries"],
             "preconditions": ["Desktop Spelling Settings has supported language dictionaries."],
             "event": "The Author prepares multiple regional languages and resumes an Article.",
-            "expected": ["Readiness follows native initialization, not saved requests or download success.", "Failed preparation remains recoverable and returning to writing restores the latest Article language.", "Requested language IDs preserve unrelated installation-local runtime settings."],
+            "expected": ["Readiness follows native initialization, not saved requests or download success.", "Loading and preparing statuses use the shared glowing activity indicator.", "Failed preparation remains recoverable and returning to writing restores the latest Article language.", "Requested language IDs preserve unrelated installation-local runtime settings."],
             "forbidden": ["Preloaded languages stay active alongside the Article language.", "A renderer request supplies a path, URL, or unsupported native dictionary code."],
             "evidence": { "kind": "automated", "path": "packages/electron/src/infrastructure/window/spelling-session.test.ts" }
         },
@@ -279,7 +279,7 @@
             "capabilityIds": ["settings.preview-updates"],
             "preconditions": ["A packaged desktop release exposes an available release."],
             "event": "The author opens About Settings, allows update network access, and checks for updates.",
-            "expected": ["The network-permission, automatic-check, and prerelease-channel switches are accessible, a confirmation dialog precedes the persisted network permission, no discovery request occurs before consent, Windows Download appears only after explicit discovery, Linux offers release notes without Download, and the status shows while a Windows update downloads."],
+            "expected": ["The network-permission, automatic-check, and prerelease-channel switches are accessible, a confirmation dialog precedes the persisted network permission, no discovery request occurs before consent, Windows Download appears only after explicit discovery, Linux offers release notes without Download, and checking or downloading uses the shared glowing activity indicator beside its status."],
             "forbidden": ["A browser or development build exposes update controls, an update-discovery request occurs without consent, or a download starts automatically."],
             "evidence": { "kind": "automated", "path": "packages/web/src/settings/ApplicationSettings.updates.test.tsx" }
         },

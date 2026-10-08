@@ -778,7 +778,7 @@
             "preconditions": ["The Author starts translation generation for the selected Article."],
             "event": "Generation is pending, completes, fails, or is cancelled.",
             "expected": [
-                "The previous result remains visible under a shade with a reduced-motion-aware spinner and a screen-reader status naming the requested languages.",
+                    "The previous result remains visible under a shade with a reduced-motion-aware glowing activity indicator and a screen-reader status naming the requested languages.",
                 "Review controls are inert during generation. The progress overlay has no actions; cancellation remains in the Assistant composer and accessible through its existing panel and keyboard controls.",
                 "The shade follows the Article's whole translation batch and clears on completion, failure, or cancellation; earlier results remain recoverable. New translation preserves the current Assistant panel layout rather than expanding it over the workspace.",
                 "Unrelated Assistant requests do not shade the Translations view."

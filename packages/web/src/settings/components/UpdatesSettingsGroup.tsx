@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useIntl, type IntlShape } from "react-intl";
 import type { DesktopUpdateClient, DesktopUpdateState } from "@skladno/shared";
-import { Button, Dialog } from "../../ui/primitives.js";
+import { ActivityIndicator, Button, Dialog } from "../../ui/primitives.js";
 import { SettingRow, SettingsGroup } from "./SettingRow.js";
 
 
@@ -129,7 +129,7 @@ export function UpdatesSettingsGroup({ client, desktop }: { client: DesktopUpdat
 
     return <SettingsGroup label={intl.formatMessage({ id: "settings.updates" })}>
         <NetworkSettings client={client} state={state} intl={intl} onRequestPermission={() => setNetworkPermissionOpen(true)} onState={setState} />
-        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.updateStatus" })} hint={intl.formatMessage({ id: "settings.updateStatusHint" }, { version: state.currentVersion })} status={status} fullWidthAction action={<UpdateActions client={client} state={state} status={status} details={isUpdateDetails(state)} onState={setState} intl={intl} />}>
+        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.updateStatus" })} hint={intl.formatMessage({ id: "settings.updateStatusHint" }, { version: state.currentVersion })} status={<>{(state.kind === "checking" || state.kind === "downloading") && <ActivityIndicator className="mr-2 inline-block align-middle" />}{status}</>} fullWidthAction action={<UpdateActions client={client} state={state} status={status} details={isUpdateDetails(state)} onState={setState} intl={intl} />}>
             <span />
         </SettingRow>
         <NetworkPermissionDialog client={client} open={networkPermissionOpen} onClose={() => setNetworkPermissionOpen(false)} onState={setState} intl={intl} />
