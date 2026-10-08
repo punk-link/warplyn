@@ -1,11 +1,17 @@
 import { expect, test, type Page } from "@playwright/test";
 
 
-async function nameArticle(page: Page, title: string) {
-    await page.getByRole("button", { name: /^Rename article:/ }).click();
+async function createAndNameArticle(page: Page, title: string) {
+    const created = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");
+    await page.getByRole("button", { name: "New article", exact: true }).click();
+    const response = await created;
+    expect(response.ok()).toBe(true);
+    const article: { title: string } = await response.json();
+    await page.getByRole("button", { name: `Rename article: ${article.title}`, exact: true }).click();
     const field = page.getByRole("textbox", { name: "Article title", exact: true });
     await field.fill(title);
     await field.press("Enter");
+    await expect(page.getByRole("button", { name: `Rename article: ${title}`, exact: true })).toBeVisible();
 }
 
 
@@ -55,11 +61,9 @@ for (const width of [1280, 760]) {
         const library = page.locator('[data-workspace-panel="article-library"]');
         const archivedTitle = `Rail archive fixture ${width}`;
         const activeTitle = `Rail active fixture ${width}`;
-        await library.getByRole("button", { name: "New article", exact: true }).click();
-        await nameArticle(page, archivedTitle);
+        await createAndNameArticle(page, archivedTitle);
         await page.getByRole("button", { name: "Archive Article", exact: true }).click();
-        await library.getByRole("button", { name: "New article", exact: true }).click();
-        await nameArticle(page, activeTitle);
+        await createAndNameArticle(page, activeTitle);
         const draft = page.getByRole("textbox", { name: "Article draft" });
         const checkpoint = page.waitForResponse((response) => response.url().includes("/draft") && response.request().method() === "PUT");
         await draft.fill("Rail draft recovery text.");

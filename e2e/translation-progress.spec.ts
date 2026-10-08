@@ -48,10 +48,10 @@ test("translation progress blocks review, preserves results, and stays accessibl
         await stop.focus();
         await expect(stop).toBeFocused();
         await page.getByRole("button", { name: "Collapse Editorial Assistant Panel", exact: true }).click();
-        const spinner = status.locator("[aria-hidden=true]");
-        expect(await spinner.evaluate((element) => getComputedStyle(element).animationName)).toBe("spin");
+        const indicator = status.locator("[aria-hidden=true]");
+        expect(await indicator.evaluate((element) => getComputedStyle(element).animationName)).toBe("pulse");
         await page.emulateMedia({ reducedMotion: "reduce" });
-        expect(await spinner.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
+        expect(await indicator.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
         await page.emulateMedia({ reducedMotion: "no-preference" });
         releaseRequest?.();
         await expect(status).toHaveCount(0);
