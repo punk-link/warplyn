@@ -6,12 +6,20 @@ export const settingsFocusAreas = ["settings-navigation", "settings-content"] as
 
 
 function isAvailable(element: HTMLElement): boolean {
-    const style = getComputedStyle(element);
-    return !element.closest("[hidden], [inert], [aria-hidden=true]") && !element.matches(":disabled") && style.display !== "none" && style.visibility !== "hidden";
+    if (element.closest("[hidden], [inert], [aria-hidden=true]") || element.matches(":disabled"))
+        return false;
+
+    for (let ancestor: HTMLElement | null = element; ancestor; ancestor = ancestor.parentElement) {
+        const style = getComputedStyle(ancestor);
+        if (style.display === "none" || style.visibility === "hidden")
+            return false;
+    }
+
+    return true;
 }
 
 
-const focusableSelector = "a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [contenteditable=true], [tabindex]";
+const focusableSelector = "a[href], button, input, select, textarea, [contenteditable=true], [tabindex]";
 
 
 export function useFocusAreaNavigation(order: readonly string[]): { ref: RefObject<HTMLElement>; onFocusCapture: (event: FocusEvent<HTMLElement>) => void; onKeyDownCapture: (event: KeyboardEvent<HTMLElement>) => void } {
@@ -62,6 +70,14 @@ export function useFocusAreaNavigation(order: readonly string[]): { ref: RefObje
         const name = target.closest<HTMLElement>("[data-focus-area]")?.dataset.focusArea;
         if (!name)
             return;
+
+        if (target.closest("[data-focus-area-native-tab]")) {
+            const controls = controlsFor(name);
+            const index = controls.indexOf(target);
+            const next = controls[index + (event.shiftKey ? -1 : 1)];
+            if (index >= 0 && next)
+                return;
+        }
 
         const entry = nextAreaEntry(name, event.shiftKey);
         if (!entry)

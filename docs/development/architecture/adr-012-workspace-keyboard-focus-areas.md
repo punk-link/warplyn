@@ -12,9 +12,11 @@ Authors need quick keyboard access to major work areas without losing convention
 
 ## Decision
 
-Tab and Shift+Tab traverse visible focus areas. Each area has a stable entry target, with its last valid focused descendant as fallback. Missing, disabled, collapsed, or hidden entries leave the sequence. Preserve editor caret or selection where supported.
+Tab and Shift+Tab traverse visible Workspace focus areas. Each area has a stable entry target, with its last valid focused descendant as fallback. Missing, disabled, collapsed, or hidden entries leave the sequence. Preserve editor caret or selection where supported.
 
 Workspace and Settings have separate area sequences. Areas retain their own keyboard rules and native text-editing behavior; dialogs own focus while open. New controls belong to an existing area or an explicit popup or dialog.
+
+Settings content and its compact navigation retain native Tab traversal between controls, switching areas at their boundaries. The desktop sidebar uses Up, Down, Home, and End to reach its back action and sections, with Enter or Space to activate. This makes every setting reachable while preserving native select and text-editing keys.
 
 Use shared traversal and restoration while keeping local keyboard handlers feature-owned. No global focus store is required.
 

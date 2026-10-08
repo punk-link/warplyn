@@ -46,6 +46,8 @@ Use the established supporting surface, alignment, and quiet scrollbar treatment
 
 Settings uses its own sequence: Settings navigation, then Settings content. Enter the stable target or fall back to the last valid focused descendant; skip missing, disabled, collapsed, or hidden entries. Restore the editor caret or selection where Lexical supports it. Dialogs own focus while open.
 
+Inside Settings content and compact navigation, Tab and Shift+Tab traverse native controls before switching areas at the boundaries. Desktop Settings navigation uses Up, Down, Home, and End between its back action and section buttons; Enter or Space activates the focused button. Native selects and text fields retain their editing keys.
+
 Library uses Up and Down outside Search. Article Header and Article Status use Left and Right. Workspace Views, menus, and the toolbar keep their roving keyboard behavior. Editor, composer, and Search keep native text-editing keys. Assistant chat uses Up and Down to scroll and Left and Right for actionable results.
 
 Shared focus traversal owns movement and restoration. Features retain their local keyboard handlers; new controls belong to an existing area or an explicit popup or dialog. Test both traversal directions, restored targets, hidden entries, local actions, and Settings separation. Complete the Electron keyboard pass before release.
