@@ -17,7 +17,7 @@ async function launchSpelling(root: string): Promise<ElectronApplication> {
 }
 
 
-test("native spelling correction follows Lexical Draft recovery and immutable save", async () => {
+test("spelling menu correction follows Lexical Draft recovery and immutable save", async () => {
     test.setTimeout(120_000);
     const root = await mkdtemp(join(tmpdir(), "warplyn-spelling-e2e-"));
     let app: ElectronApplication | undefined;
@@ -34,14 +34,21 @@ test("native spelling correction follows Lexical Draft recovery and immutable sa
         await page.getByRole("button", { name: /^Spelling test/ }).click();
         const editor = page.getByRole("textbox", { name: "Article draft" });
         await expect(editor).toHaveAttribute("spellcheck", "true");
+        // Reproduce hidden Chromium's missing markers deterministically.
+        await editor.evaluate((root) => root.setAttribute("spellcheck", "false"));
         await expect.poll(() => page.evaluate(async () => {
             const result = await window.warplynSpelling?.request({ method: "snapshot" });
             return result?.ok && result.value.dictionaries.states["en-US"] === "ready";
         }), { timeout: 60_000 }).toBe(true);
-        // Hidden Chromium can suppress spelling markers even on a plain textarea.
-        // Supply menu data only; replacement, Lexical input, and persistence remain native.
+        // replaceMisspelling requires a native marker, which synthetic menu data cannot create.
+        // Substitute native text insertion here; the visible test below covers real markers.
         await app.evaluate(({ Menu, BrowserWindow }) => {
-            BrowserWindow.getAllWindows()[0]?.webContents.prependListener("context-menu", (_event, params) => {
+            const contents = BrowserWindow.getAllWindows()[0]?.webContents;
+            if (!contents)
+                throw new Error("Missing spelling window");
+
+            contents.replaceMisspelling = (text) => void contents.insertText(text);
+            contents.prependListener("context-menu", (_event, params) => {
                 params.misspelledWord = "helllo";
                 params.dictionarySuggestions = ["hello"];
                 // Matches Electron 43's native result: suggestions exist despite this flag.
@@ -87,6 +94,7 @@ test("native spelling correction follows Lexical Draft recovery and immutable sa
         await app.evaluate(({ Menu }) => Menu.setApplicationMenu(null));
         await page.mouse.click(point.x, point.y, { button: "right" });
         await expect.poll(() => app?.evaluate(({ Menu }) => Menu.getApplicationMenu()?.items.map((item) => item.label) ?? [])).toContain("hello");
+        expect(await editor.evaluate(() => window.getSelection()?.toString())).toBe("helllo");
         await app.evaluate(({ Menu }) => {
             const suggestion = Menu.getApplicationMenu()?.items.find((item) => item.label === "hello");
             if (!suggestion)
