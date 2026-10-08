@@ -42,6 +42,8 @@ test("native spelling correction follows Lexical Draft recovery and immutable sa
         // Supply menu data only; replacement, Lexical input, and persistence remain native.
         await app.evaluate(({ Menu, BrowserWindow }) => {
             BrowserWindow.getAllWindows()[0]?.webContents.prependListener("context-menu", (_event, params) => {
+                // Wait for this context's menu, rather than a previous menu with the same labels.
+                Menu.setApplicationMenu(null);
                 params.misspelledWord = "helllo";
                 params.dictionarySuggestions = ["hello"];
                 // Matches Electron 43's native result: suggestions exist despite this flag.
