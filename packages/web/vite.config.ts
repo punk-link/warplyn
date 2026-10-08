@@ -17,6 +17,7 @@ export default defineConfig({
     },
     test: {
         environment: "jsdom",
+        maxWorkers: 4,
     },
     resolve: {
         alias: {
