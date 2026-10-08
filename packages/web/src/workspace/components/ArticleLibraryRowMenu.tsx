@@ -35,7 +35,7 @@ export function ArticleLibraryRowMenu({ article, anchor, canReorder, pinnedRoots
         });
     }, [anchor, menuRef]);
 
-    return createPortal(<div ref={menuRef} style={position} className="fixed z-20 max-h-screen w-44 overflow-y-auto rounded-control border border-border bg-surface-raised p-1 shadow-raised" role="menu" aria-label={article.title} onKeyDown={handleMenuKeyDown}>
+    return createPortal(<div ref={menuRef} style={position} className="fixed z-20 max-h-screen w-44 overflow-y-auto rounded-control border border-border bg-surface-raised p-1 shadow-raised" role="menu" aria-label={article.title.trim() || intl.formatMessage({ id: "article.defaultTitle" })} onKeyDown={handleMenuKeyDown}>
         {files && <>
             <button className="flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs hover:bg-brand-soft focus-visible:bg-brand-soft focus-visible:outline focus-visible:outline-brand disabled:opacity-50" type="button" role="menuitem" disabled={files.pending} onClick={() => runFile(() => files.saveArticle(article))}><SaveFileIcon className="size-3 shrink-0" />{intl.formatMessage({ id: "articleFiles.menuSave" })}</button>
             <button className="flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs hover:bg-brand-soft focus-visible:bg-brand-soft focus-visible:outline focus-visible:outline-brand disabled:opacity-50" type="button" role="menuitem" disabled={files.pending} onClick={() => runFile(files.loadArticle, true)}><LoadFileIcon className="size-3 shrink-0" />{intl.formatMessage({ id: "articleFiles.menuLoad" })}</button>

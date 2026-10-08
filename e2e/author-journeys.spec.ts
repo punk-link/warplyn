@@ -49,7 +49,10 @@ async function createArticle(page: import("@playwright/test").Page, content = "O
     const saved = page.waitForResponse((response) => response.url().includes("/revisions") && response.request().method() === "POST");
     await page.getByRole("button", { name: "Save revision" }).click();
     await saved;
-    await expect(page.getByRole("status").filter({ hasText: "Saved" })).toBeVisible();
+    await expect(page.getByRole("status", { name: "Saved", exact: true })).toBeVisible();
+    const titleNotice = page.getByRole("button", { name: "Dismiss notification: Revision saved without an Article title" });
+    if (await titleNotice.isVisible())
+        await titleNotice.click();
 }
 
 
@@ -207,7 +210,7 @@ test("Article undo, redo, and Ctrl+S preserve the latest text through reload", a
 
     await saved;
     await expect(editor).toContainText("Saved with shortcut.");
-    await expect(page.getByRole("status").filter({ hasText: "Saved" })).toBeVisible();
+    await expect(page.getByRole("status", { name: "Saved", exact: true })).toBeVisible();
     await page.reload();
     await expect(editor).toContainText("Saved with shortcut.");
 });

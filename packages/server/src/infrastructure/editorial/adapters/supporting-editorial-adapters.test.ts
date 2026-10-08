@@ -30,6 +30,25 @@ test("title generation rejects output stopped by the token limit", async () => {
 });
 
 
+test("title generation validates confidence, structured output, language and cancellation", async () => {
+    for (const output of ['{"title":"Community gardens","confident":true}', '{"title":"Guess","confident":false}', '{"title":"","confident":true}', "malformed"]) {
+        const model = new MockLanguageModelV3({ doGenerate: generated(output, { unified: "stop", raw: undefined }) });
+        const adapter = new AiSdkArticleTitleGeneratorAdapter(model);
+        if (output.includes("Community")) {
+            assert.equal(await adapter.generate("Community gardens", new AbortController().signal, "es"), "Community gardens");
+            assert.ok(JSON.stringify(model.doGenerateCalls[0]?.prompt).includes('\\"language\\":\\"es\\"'));
+        } else {
+            await assert.rejects(adapter.generate("Community gardens", new AbortController().signal));
+        }
+    }
+
+    const controller = new AbortController();
+    controller.abort();
+    const model = new MockLanguageModelV3({ doGenerate: generated('{"title":"Community gardens","confident":true}', { unified: "stop", raw: undefined }) });
+    await assert.rejects(new AiSdkArticleTitleGeneratorAdapter(model).generate("Community gardens", controller.signal));
+});
+
+
 test("Proposal summaries reject structured output stopped by the token limit", async () => {
     const model = new MockLanguageModelV3({ doGenerate: generated('{"summaries":[{"changeId":"change-1","summary":"A summary"}]}', { unified: "length", raw: undefined }) });
     const adapter = new AiSdkProposalSummaryGeneratorAdapter(model);

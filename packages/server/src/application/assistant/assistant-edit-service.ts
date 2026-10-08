@@ -8,7 +8,7 @@ import { AssistantCheckpointError, AssistantEditError, type AssistantStore } fro
 
 
 export class AssistantEditService {
-    constructor(private readonly assistant: AssistantStore, private readonly settings: SettingsStore, private readonly articles: Pick<ArticleService, "describeContentChange">) { }
+    constructor(private readonly assistant: AssistantStore, private readonly settings: SettingsStore, private readonly articles: Pick<ArticleService, "describeContentChange" | "completeRevisionPromotion" | "getArticle">) { }
 
 
     getEditMode(articleId: string): AssistantEditMode {
@@ -30,7 +30,8 @@ export class AssistantEditService {
                 ? await this.articles.describeContentChange(preview.previousContent, preview.content, locale, new AbortController().signal)
                 : undefined;
 
-            return this.assistant.applyEdit(articleId, messageId, description);
+            const revision = this.assistant.applyEdit(articleId, messageId, description);
+            return this.articles.completeRevisionPromotion(revision, new AbortController().signal);
         } catch (error) {
             throw this.toApplicationEditError(error);
         }
@@ -47,8 +48,16 @@ export class AssistantEditService {
     }
 
 
-    restoreCheckpoint(articleId: string, messageId: string, tailToken: string, draftMode?: AssistantCheckpointDraftMode): RestoreAssistantCheckpointResult {
-        return this.runCheckpoint(() => this.assistant.restoreCheckpoint(articleId, messageId, tailToken, draftMode));
+    async restoreCheckpoint(articleId: string, messageId: string, tailToken: string, draftMode?: AssistantCheckpointDraftMode): Promise<RestoreAssistantCheckpointResult> {
+        const previousRevisionId = this.articles.getArticle(articleId)?.currentRevisionId;
+        const result = this.runCheckpoint(() => this.assistant.restoreCheckpoint(articleId, messageId, tailToken, draftMode));
+        if (result.article.currentRevisionId !== previousRevisionId) {
+            const revision = await this.articles.completeRevisionPromotion(result.article.currentRevision, new AbortController().signal);
+            const article = this.articles.getArticle(articleId) ?? result.article;
+            result.article = article.currentRevisionId === revision.id ? { ...article, currentRevision: revision } : article;
+        }
+
+        return result;
     }
 
 

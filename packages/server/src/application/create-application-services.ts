@@ -62,7 +62,7 @@ export interface ApplicationServiceIntegration {
 
 export function createApplicationServices({ stores, settings, integration = {}, skillPackages = {} }: CreateApplicationServicesOptions): ApplicationServices {
     const factChecks = stores.factChecks ?? { listFactChecks: () => [], resolveFactCheckFinding: () => undefined, saveFactCheckRun: () => undefined };
-    const articleService = new ArticleService(stores.articles, stores.assistant, integration.telemetry, () => stores.engines.resolveRevisionDescriptionGenerator?.());
+    const articleService = new ArticleService(stores.articles, stores.assistant, integration.telemetry, () => stores.engines.resolveRevisionDescriptionGenerator?.(), () => stores.engines.resolveArticleTitleGenerator?.());
     const publishing = new PublishingService(settings.settings);
     const factCheckService = new FactCheckService(factChecks);
     const styleCorpusService = new StyleCorpusService(stores.styleCorpus, stores.engines, stores.articles);

@@ -226,7 +226,15 @@ const editVerifier: AssistantActionIntentVerifier = {
     verifyReplacement: async (message) => message.startsWith("E2E edit"),
 };
 const fixtureEngine = new E2eFixtureEngine();
-const engines: EditorialEngineResolver = { resolve: () => fixtureEngine, resolveAssistant: () => fixtureEngine, resolveAssistantActionIntentVerifier: () => editVerifier };
+const engines: EditorialEngineResolver = {
+    resolve: () => fixtureEngine, resolveAssistant: () => fixtureEngine, resolveAssistantActionIntentVerifier: () => editVerifier,
+    resolveArticleTitleGenerator: () => ({ generate: async (content) => {
+        if (content.includes("Title generation unavailable"))
+            throw new Error("Fixture title generation failed");
+
+        return "Community gardens";
+    } }),
+};
 
 assistant.seedGreetings();
 const editorial = new EditorialService(

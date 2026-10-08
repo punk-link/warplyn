@@ -161,6 +161,7 @@ export interface AssistantMessage {
 
 
 export interface AssistantEditorialResult {
+    titleGeneration?: import("../articles/revision/revision.js").ArticleRevision["titleGeneration"];
     metadataChanged?: boolean;
     articleChanged?: boolean;
     proposal?: string;

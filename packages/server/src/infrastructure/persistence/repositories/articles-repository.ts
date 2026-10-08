@@ -11,6 +11,7 @@ import { acceptTranslationRefresh, validateTranslationArtifact } from "./transla
 import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
 import { resolveAcceptedCorrections } from "./accepted-corrections-resolution.js";
 import { listArticleSummaries, listRevisionSummaries } from "./article-summary-queries.js";
+import { setGeneratedArticleTitle } from "./article-title-query.js";
 
 
 export class ArticlesRepository {
@@ -74,7 +75,7 @@ export class ArticlesRepository {
     private insertArticleRows(input: CreateArticleInput, { articleId, revisionId, sourceArticleId, language, timestamp }: { articleId: string; revisionId: string; sourceArticleId: string | undefined; language: CreateArticleInput["language"]; timestamp: string }): void {
         const archived = sourceArticleId ? Number(this.database.prepare("SELECT archived FROM articles WHERE id = ?").get(sourceArticleId)?.archived ?? 0) : 0;
         this.database.prepare("INSERT INTO articles (id, title, language, audience, publishing_profile_id, source_article_id, source_revision_id, archived, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-            .run(articleId, requireArticleTitle(input.title), language ?? null, input.audience ?? null, input.publishingProfileId ?? null, sourceArticleId ?? null, input.sourceRevisionId ?? null, archived, timestamp, timestamp);
+            .run(articleId, input.title.trim(), language ?? null, input.audience ?? null, input.publishingProfileId ?? null, sourceArticleId ?? null, input.sourceRevisionId ?? null, archived, timestamp, timestamp);
         this.database.prepare("INSERT INTO article_revisions (id, article_id, content, provenance_json, created_at) VALUES (?, ?, ?, ?, ?)")
             .run(revisionId, articleId, input.content, JSON.stringify({ ...(input.provenance ?? { kind: REVISION_PROVENANCE_KIND.INITIAL }), ...(input.sourceRevisionId ? { sourceRevisionId: input.sourceRevisionId } : {}) }), timestamp);
         this.database.prepare("UPDATE articles SET current_revision_id = ? WHERE id = ?").run(revisionId, articleId);
@@ -136,6 +137,11 @@ export class ArticlesRepository {
         this.database.prepare(`UPDATE articles SET ${assignments.join(", ")} WHERE id = ?`).run(...values);
 
         return this.getArticle(articleId)!;
+    }
+
+
+    setGeneratedTitle(articleId: string, revisionId: string, title: string): boolean {
+        return setGeneratedArticleTitle(this.database, articleId, revisionId, title);
     }
 
 

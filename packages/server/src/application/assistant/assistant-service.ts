@@ -26,6 +26,7 @@ import { AssistantClaimSelection } from "./requests/assistant-claim-selection.js
 import { getAssistantInitialEvents } from "./requests/assistant-initial-events.js";
 import { getActivityForEditorialOperation } from "./capabilities/editorial-capability-catalog.js";
 import { AssistantEditService } from "./assistant-edit-service.js";
+import { completePromotedEditTitle } from "./completion/complete-promoted-edit-title.js";
 
 
 export type { AssistantServiceRequest } from "./requests/assistant-service-request.js";
@@ -147,7 +148,9 @@ export class AssistantService {
             initialized = true;
             yield* getAssistantInitialEvents(request);
 
-            yield* streamWithAssistantDeadline((requestSignal) => this.streamRequestCompletion(request, requestSignal), signal, getAssistantRequestTimeoutMs(this.stores.settings));
+            for await (const event of streamWithAssistantDeadline((requestSignal) => this.streamRequestCompletion(request, requestSignal), signal, getAssistantRequestTimeoutMs(this.stores.settings))) {
+                yield await completePromotedEditTitle(event, request.articleId, signal, this.articles);
+            }
 
             this.captureStreamOutcome(observed, "completed");
         } catch (error) {

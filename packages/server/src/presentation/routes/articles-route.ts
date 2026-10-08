@@ -196,8 +196,8 @@ export async function acceptProposalRoute(request: IncomingMessage, response: Se
 }
 
 
-export function restoreRevisionRoute(response: ServerResponse, articleId: string, revisionId: string, articles: ArticleService): void {
+export async function restoreRevisionRoute(response: ServerResponse, articleId: string, revisionId: string, articles: ArticleService): Promise<void> {
     requireArticle(articleId, articles);
 
-    writeJson(response, HTTP_STATUS.CREATED, articles.restoreRevision(articleId, revisionId));
+    writeJson(response, HTTP_STATUS.CREATED, await articles.restoreRevisionWithTitle(articleId, revisionId));
 }

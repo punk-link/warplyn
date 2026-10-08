@@ -1,4 +1,4 @@
-import type { Article, ArticleSummary } from "@skladno/shared";
+import type { Article, ArticleSummary, ArticleRevision } from "@skladno/shared";
 
 
 function getArticleActivityTimestamp(article: ArticleSummary): string {
@@ -20,4 +20,10 @@ export function withoutDraft<T extends ArticleSummary>(article: T): Omit<T, "dra
 
 export function getArticleContentForWorkspace(article: Article): string {
     return article.draft?.baseRevisionId === article.currentRevisionId ? article.draft.content : article.currentRevision.content;
+}
+
+
+export function withPromotedRevision(article: ArticleSummary, revision: ArticleRevision): Article {
+    const title = revision.titleGeneration?.status === "generated" ? revision.titleGeneration.title : article.title;
+    return { ...withoutDraft(article), title, updatedAt: revision.createdAt, currentRevisionId: revision.id, currentRevision: revision };
 }

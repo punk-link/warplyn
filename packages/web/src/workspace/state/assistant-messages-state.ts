@@ -9,6 +9,7 @@ import { clearAssistantRequestFeedback, useAssistantRequestActions, useAssistant
 import { useAssistantStreamEvents } from "./assistant-stream-events-state.js";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { useAssistantEdits } from "./assistant-edit-state.js";
+import { notifyTitleGeneration } from "./article-title-notification.js";
 
 export { getAssistantSelectionScope, requestedTranslationLanguages, type AssistantSelectionScope } from "./assistant-selection.js";
 export type { StreamedAssistantMessage } from "./assistant-streaming.js";
@@ -16,7 +17,7 @@ export type { StreamedAssistantMessage } from "./assistant-streaming.js";
 
 export function useAssistantMessages(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, selection: AssistantSelectionScope | undefined, onResult: (articleId: string, baseRevisionId: string, result: AssistantEditorialResult, editorialArtifactId?: string) => void, profileRebuilt?: { articleId: string; count: number; token: number }) {
     const intl = useIntl();
-    const { notifyError } = useNotifications();
+    const { notify, notifyError } = useNotifications();
     const store = useAssistantRequestStore();
     const article = workspace.selectedArticle;
     const { reload } = useAssistantMessageHistory({ client, articleId: article?.id, profileRebuilt, store });
@@ -62,6 +63,7 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
             store.setStateByArticle((current) => ({ ...current, [article.id]: "idle" }));
 
             workspace.applyPersistedArticle(result.article);
+            notifyTitleGeneration(result.article.currentRevision.titleGeneration, intl, notify);
             setRestoredComposer(result.composer);
             setCheckpointPreview(undefined);
 
@@ -70,7 +72,7 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
             notifyError(error, { fallbackMessage: intl.formatMessage({ id: "errors.assistantCheckpointInvalid" }) });
             throw error;
         }
-    }, [article, checkpointPreview, clearStream, client, intl, notifyError, store, workspace]);
+    }, [article, checkpointPreview, clearStream, client, intl, notify, notifyError, store, workspace]);
 
     return {
         ...selectedMessageState(store, article?.id),

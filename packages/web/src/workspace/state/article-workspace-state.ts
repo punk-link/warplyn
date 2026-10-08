@@ -9,14 +9,15 @@ import { getDraftPresentationState, hasUncommittedDraftChanges, hydrateDraftLife
 import { useDraftLifecycle } from "../drafts/useDraftLifecycle.js";
 import { cacheArticleUpdate } from "./article-body-cache.js";
 import { createArticleWorkspaceActions } from "./article-workspace-actions.js";
-import { getArticleContentForWorkspace, sortArticlesByActivity, withoutDraft } from "./article-workspace-articles.js";
+import { getArticleContentForWorkspace, sortArticlesByActivity, withoutDraft, withPromotedRevision } from "./article-workspace-articles.js";
+import { notifyTitleGeneration } from "./article-title-notification.js";
 
 export { getArticleContentForWorkspace, sortArticlesByActivity } from "./article-workspace-articles.js";
 
 
 export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredSelectedArticleId: string | undefined, setPersistedSelectedArticleId: (articleId: string | undefined) => void, interfaceLocale: string) {
     const intl = useIntl();
-    const { notifyError } = useNotifications();
+    const { notify, notifyError } = useNotifications();
     const [articles, setArticles] = useState<ArticleSummary[]>([]);
     const [selectedArticleId, setSelectedArticleId] = useState<string>();
     const draftLifecycle = useDraftLifecycle();
@@ -232,7 +233,8 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
 
     function updateRevision(articleId: string, revision: ArticleRevision) {
         draftLifecycle.send({ articleId, event: { type: "promoted", revisionId: revision.id, content: revision.content } });
-        replaceArticles((items) => items.map((article) => article.id === articleId ? { ...withoutDraft(article), updatedAt: revision.createdAt, currentRevisionId: revision.id, currentRevision: revision } : article));
+        replaceArticles((items) => items.map((article) => article.id === articleId ? withPromotedRevision(article, revision) : article));
+        notifyTitleGeneration(revision.titleGeneration, intl, notify);
     }
 
 

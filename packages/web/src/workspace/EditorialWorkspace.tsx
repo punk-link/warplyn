@@ -134,7 +134,7 @@ function useWorkspaceActions({ client, intl, notifyError, workspace, layout, ass
     const createBlank = useCallback(async () => {
         try {
             return await createArticleWithDefaults(client, workspace.create, {
-                title: intl.formatMessage({ id: "article.defaultTitle" }),
+                title: "",
                 content: "",
             });
         } catch (error) {
