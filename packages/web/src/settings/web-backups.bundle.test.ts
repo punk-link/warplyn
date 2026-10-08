@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 
-import { chooseBackupFolder, listWebBackups, restoreWebBackup, saveWebBackup } from "./web-backups.js";
+import { chooseBackupFolder, listWebBackups, restoreWebBackup, saveScheduledWebBackup, saveWebBackup } from "./web-backups.js";
 
 
 // Product scenarios: settings.backup-policy-human-reviewed, settings.browser-skill-backup-restore
@@ -74,6 +74,26 @@ class MemoryFolder {
 
 
 describe("browser Skill backup bundle", () => {
+    it("allows a fresh automatic backup on each startup even on the same day", async () => {
+        const folder = new MemoryFolder();
+        vi.stubGlobal("showDirectoryPicker", async () => folder);
+        try {
+            await chooseBackupFolder();
+            localStorage.setItem("last-automatic-backup", new Date().toISOString().slice(0, 10));
+            const createBackup = vi.fn().mockResolvedValue(new Blob(["Synthetic SQLite snapshot"]));
+            const policy = { schedule: "daily" as const, retention: { mode: "unlimited" as const } };
+            await saveScheduledWebBackup({ createBackup }, policy);
+            await saveScheduledWebBackup({ createBackup }, policy);
+            expect(createBackup).toHaveBeenCalledTimes(2);
+            expect(folder.files.size).toBe(2);
+            await saveScheduledWebBackup({ createBackup }, { ...policy, schedule: "off" });
+            expect(createBackup).toHaveBeenCalledTimes(2);
+        } finally {
+            localStorage.removeItem("last-automatic-backup");
+            vi.unstubAllGlobals();
+        }
+    });
+
     it("saves and restores the database with Skill files through a folder handle", async () => {
         const folder = new MemoryFolder();
         vi.stubGlobal("showDirectoryPicker", async () => folder);

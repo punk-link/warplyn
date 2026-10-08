@@ -16,6 +16,7 @@ test("desktop window keeps the renderer isolated and only accepts web links", ()
         sandbox: true,
         nodeIntegration: false,
         webSecurity: true,
+        spellcheck: true,
         allowRunningInsecureContent: false,
     });
     assert.equal(isExternalWebUrl("https://example.com/article"), true);

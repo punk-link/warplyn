@@ -1,6 +1,6 @@
 import { useId, useRef, useState } from "react";
 import { FACT_CHECK_STATUS, type ArticleRevisionSummary, type FactCheck, type FactCheckFinding, type GeneralSettings } from "@skladno/shared";
-import { Badge, Banner, Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
+import { ActivityIndicator, Badge, Banner, Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
 import { ChevronDownIcon, ChevronRightIcon, UpdateIcon } from "../../ui/icons.js";
 import { useIntl } from "react-intl";
 import { formatDateTime } from "../../i18n/formatting.js";
@@ -257,6 +257,6 @@ function RunningFactCheckNotice({ count, previous }: { count: number | undefined
 
     const id = previous ? "views.factCheckRunningPrevious" : "views.factCheckRunningEmpty";
     return <Banner className={previous ? "mt-4" : undefined} tone="info">
-        <span>{intl.formatMessage({ id }, { count })}</span>
+        <span className="inline-flex items-center gap-2"><ActivityIndicator />{intl.formatMessage({ id }, { count })}</span>
     </Banner>;
 }

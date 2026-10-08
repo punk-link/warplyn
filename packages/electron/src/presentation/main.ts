@@ -15,15 +15,18 @@ import { getBuiltInSkillRoot } from "./desktop-skill-path.js";
 import { backup } from "node:sqlite";
 import { waitForBackups } from "../infrastructure/recovery/backup-lifecycle.js";
 import { registerDesktopSettingsAdapter } from "./settings/desktop-settings.js";
+import { createDesktopBackupScheduler } from "./settings/desktop-backup-scheduler.js";
 import { registerDesktopTelemetryAdapter } from "./telemetry/desktop-telemetry.js";
 import { registerDesktopShellAdapter } from "./shell/desktop-shell.js";
 import { registerDesktopArticleFilesAdapter } from "./articles/desktop-article-files.js";
+import { registerDesktopSpelling } from "./settings/desktop-spelling-settings.js";
 import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpdatesAdapter, supportsNativeUpdates, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
 
 
 const rendererUrl = "http://127.0.0.1:5173";
 const hiddenTestWindow = process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true";
 let mainWindow: BrowserWindow | undefined;
+let backups: ReturnType<typeof createDesktopBackupScheduler> | undefined;
 let closeApplication: (() => Promise<void>) | undefined;
 let closing = false;
 let nativeMessages = getElectronMessagesFor(defaultInterfaceLocale);
@@ -113,6 +116,14 @@ async function createMainWindow(): Promise<void> {
     const preload = join(import.meta.dirname, "preload.cjs");
     const window = new BrowserWindow(createWindowOptions(preload, readWindowBounds(statePath, displays), app.isPackaged, hiddenTestWindow));
     mainWindow = window;
+    registerDesktopSpelling({
+        ipcMain,
+        window,
+        runtimePath: join(app.getPath("userData"), "runtime-settings.json"),
+        preferredLanguages: app.getPreferredSystemLanguages(),
+        messages: nativeMessages
+    });
+
     registerDesktopArticleFilesAdapter({ ipcMain, window, dialog, messages: nativeMessages });
     registerDesktopShellAdapter({
         ipcMain,
@@ -127,6 +138,7 @@ async function createMainWindow(): Promise<void> {
 
         return { action: "deny" };
     });
+
     window.webContents.on("will-navigate", (event, url) => {
         if (!app.isPackaged && isRendererNavigation(url, rendererUrl))
             return;
@@ -135,11 +147,13 @@ async function createMainWindow(): Promise<void> {
         if (isExternalWebUrl(url))
             void shell.openExternal(url);
     });
+
     window.webContents.on("render-process-gone", (_event, details) => {
         const failure = createApplicationFailureEvent("renderer", details.reason);
         if (failure)
             telemetry?.capture(failure);
     });
+
     window.on("close", (event) => {
         if (closing)
             return;
@@ -147,14 +161,17 @@ async function createMainWindow(): Promise<void> {
         event.preventDefault();
         void quitFrom(window);
     });
+
     window.on("closed", () => {
         if (mainWindow === window)
             mainWindow = undefined;
     });
+
     window.on("resized", () => {
         if (!window.isMaximized() && !window.isMinimized())
             writeWindowBounds(statePath, window.getBounds());
     });
+
     window.on("moved", () => {
         if (!window.isMaximized() && !window.isMinimized())
             writeWindowBounds(statePath, window.getBounds());
@@ -226,6 +243,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             })).filePaths[0],
             requestCheckpoint: () => mainWindow ? requestDraftCheckpoint(ipcMain, mainWindow.webContents) : Promise.resolve(false),
             closeApplication: async () => {
+                backups?.dispose();
                 await waitForBackups();
                 cancelStreams();
                 telemetry?.dispose();
@@ -243,6 +261,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             telemetry,
         });
         closeApplication = async () => {
+            backups?.dispose();
             await waitForBackups();
             cancelStreams();
             telemetry?.dispose();
@@ -281,6 +300,15 @@ if (supportsNativeUpdates() && squirrelStartup) {
         Menu.setApplicationMenu(null);
 
         await createMainWindow();
+        backups = createDesktopBackupScheduler({
+            runtimePath,
+            dataDirectory: dirname(config.databasePath),
+            readPolicy: async () => (await application.services.settings.getSnapshot()).backupPolicy,
+            createSnapshot: (path) => backup(application.database, path),
+            telemetry,
+            notifyFailure: () => mainWindow?.webContents.send("warplyn:automatic-backup-failed"),
+        });
+        backups.start();
         updates?.schedule();
     }).catch(async (error: unknown) => {
         telemetry?.capture({ kind: "app_failure", source: "startup", failure: error instanceof PendingRestoreError ? "persistence" : "unknown" });

@@ -3,6 +3,16 @@
     "area": "article-workspace",
     "capabilities": [
         {
+            "id": "workspace.editor.spelling",
+            "area": "Article Screen",
+            "title": "Local native spelling indicators and explicit suggestions",
+            "status": "implemented",
+            "owners": ["packages/web/src/workspace/editor/ArticleRichEditor.tsx", "packages/web/src/workspace/editor/ArticleEditorContents.tsx", "packages/web/src/workspace/editor/ArticleSpellingPlugin.tsx", "packages/electron/src/presentation/articles/desktop-article-spelling.ts", "packages/electron/src/infrastructure/window/spelling-session.ts"],
+            "contract": "The editable Article enables native spelling with Article language metadata and supported dictionary or system fallback. Electron offers native replacement suggestions only for the focused Article editor. The context menu shows standard editing commands first, then Add to dictionary, then spelling suggestions. A clicked suggestion follows Lexical's ordinary input and Draft checkpoint path, with existing undo, save, immutable history, and Proposal freshness rules. Inline and block code use Lexical exclusions; raw URL link labels disable spelling while readable link labels retain it. Native spelling does not transmit Article text. Read-only Revision previews disable spelling.",
+            "persistence": "Spelling indicators are native transient UI. Corrections use existing Article Draft and explicit Revision save persistence.",
+            "limitations": ["Plain-text URLs and language coverage follow platform spelling behavior.", "Visual indicators, keyboard context-menu behavior, screen readers, and Linux packaging require manual acceptance."]
+        },
+        {
             "id": "workspace.shell.three-column-layout",
             "area": "Workspace Shell",
             "title": "Three-column desktop shell with independently collapsible and resizable supporting panels",
@@ -242,6 +252,16 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "workspace.editor.spelling",
+            "title": "Spelling language changes preserve editor content and protected regions",
+            "capabilityIds": ["workspace.editor.spelling"],
+            "preconditions": ["An Article editor contains prose, code, and URL links."],
+            "event": "The Author changes the Article language or opens the editor without a desktop bridge.",
+            "expected": ["Spelling is enabled, language updates preserve the existing editor and Markdown, and code and raw URL link labels exclude checking.", "The browser editor remains usable without native dictionary operations.", "Unmounting the editor resets native language ownership."],
+            "forbidden": ["Changing spelling language rewrites content or creates a Revision."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/editor/ArticleEditorSpelling.test.tsx" }
+        },
         {
             "id": "workspace.assistant.conversational-selection-edit",
             "title": "One completed selection reply applies exact text once",
@@ -758,7 +778,7 @@
             "preconditions": ["The Author starts translation generation for the selected Article."],
             "event": "Generation is pending, completes, fails, or is cancelled.",
             "expected": [
-                "The previous result remains visible under a shade with a reduced-motion-aware spinner and a screen-reader status naming the requested languages.",
+                    "The previous result remains visible under a shade with a reduced-motion-aware glowing activity indicator and a screen-reader status naming the requested languages.",
                 "Review controls are inert during generation. The progress overlay has no actions; cancellation remains in the Assistant composer and accessible through its existing panel and keyboard controls.",
                 "The shade follows the Article's whole translation batch and clears on completion, failure, or cancellation; earlier results remain recoverable. New translation preserves the current Assistant panel layout rather than expanding it over the workspace.",
                 "Unrelated Assistant requests do not shade the Translations view."

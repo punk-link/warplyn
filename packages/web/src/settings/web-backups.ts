@@ -1,5 +1,5 @@
 import type { BackupPolicy } from "@skladno/shared";
-import { restoreBackupBundle, saveBackupBundle, WebBackupError } from "./web-backup-bundles.js";
+import { restoreBackupBundle, saveBackupBundle, WEB_BACKUP_ERROR, WebBackupError } from "./web-backup-bundles.js";
 import { type BackupDirectoryHandle as BackupBundleDirectoryHandle } from "./backup-directory-handle.js";
 import { type BackupBundleClient } from "./backup-bundle-client.js";
 
@@ -18,20 +18,19 @@ interface BackupClient extends BackupBundleClient {
 
 
 type BackupKind = "manual" | "automatic";
-type WebBackupFailure = "folder-required" | "folder-permission" | "folder-picker-unsupported" | "backup-unavailable" | "restore-unavailable";
+type WebBackupFailure = typeof WEB_BACKUP_ERROR[keyof typeof WEB_BACKUP_ERROR];
 type WebBackupMessageId = "settings.backupFolderFailed" | "settings.backupFolderRequired" | "settings.backupFolderPermissionDenied" | "settings.backupFolderUnsupported" | "settings.backupCreateFailed" | "settings.backupCreateUnavailable" | "settings.restoreBackupFailed" | "settings.restoreBackupUnavailable";
 const webBackupMessages: Record<WebBackupFailure, WebBackupMessageId> = {
-    "folder-required": "settings.backupFolderRequired",
-    "folder-permission": "settings.backupFolderPermissionDenied",
-    "folder-picker-unsupported": "settings.backupFolderUnsupported",
-    "backup-unavailable": "settings.backupCreateUnavailable",
-    "restore-unavailable": "settings.restoreBackupUnavailable",
+    [WEB_BACKUP_ERROR.FOLDER_REQUIRED]: "settings.backupFolderRequired",
+    [WEB_BACKUP_ERROR.FOLDER_PERMISSION]: "settings.backupFolderPermissionDenied",
+    [WEB_BACKUP_ERROR.FOLDER_PICKER_UNSUPPORTED]: "settings.backupFolderUnsupported",
+    [WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE]: "settings.backupCreateUnavailable",
+    [WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE]: "settings.restoreBackupUnavailable",
 };
 const databaseName = "skladno-web-backups";
 const storeName = "settings";
 const folderKey = "folder";
-const automaticBackupKey = "last-automatic-backup";
-let automaticBackupInProgressFor: string | undefined;
+let automaticBackupInProgress = false;
 let selectedFolder: BackupDirectoryHandle | undefined;
 
 
@@ -90,11 +89,11 @@ async function saveFolder(folder: BackupDirectoryHandle): Promise<void> {
 async function getWritableFolder(requestPermission: boolean): Promise<BackupDirectoryHandle> {
     const folder = await readFolder();
     if (!folder)
-        throw new WebBackupError("folder-required");
+        throw new WebBackupError(WEB_BACKUP_ERROR.FOLDER_REQUIRED);
 
     const permission = requestPermission ? await folder.requestPermission({ mode: "readwrite" }) : await folder.queryPermission({ mode: "readwrite" });
     if (permission !== "granted")
-        throw new WebBackupError("folder-permission");
+        throw new WebBackupError(WEB_BACKUP_ERROR.FOLDER_PERMISSION);
 
     return folder;
 }
@@ -118,7 +117,7 @@ async function retainAutomaticBackups(folder: BackupDirectoryHandle, policy: Bac
 export async function chooseBackupFolder(): Promise<string> {
     const choose = getBackupFolderPicker();
     if (!choose)
-        throw new WebBackupError("folder-picker-unsupported");
+        throw new WebBackupError(WEB_BACKUP_ERROR.FOLDER_PICKER_UNSUPPORTED);
 
     const folder = await choose();
     selectedFolder = folder;
@@ -162,7 +161,7 @@ async function isCompleteBackupBundle(folder: BackupDirectoryHandle, entry: { ki
 
 export async function restoreWebBackup(client: BackupClient, name: string): Promise<void> {
     if (name.includes("/") || name.includes("\\") || (!name.endsWith(".sqlite") && !name.endsWith(".skladno")))
-        throw new WebBackupError("restore-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
 
     const folder = await getWritableFolder(false);
     if (name.endsWith(".skladno")) {
@@ -171,7 +170,7 @@ export async function restoreWebBackup(client: BackupClient, name: string): Prom
     }
 
     if (!client.restoreBackup)
-        throw new WebBackupError("restore-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
 
     const backup = await (await folder.getFileHandle(name)).getFile();
     await client.restoreBackup(backup);
@@ -180,7 +179,7 @@ export async function restoreWebBackup(client: BackupClient, name: string): Prom
 
 export async function saveWebBackup(client: BackupClient, kind: BackupKind, policy: BackupPolicy, requestPermission = true): Promise<string> {
     if (!client.createBackupExport && !client.createBackup)
-        throw new WebBackupError("backup-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
 
     const folder = await getWritableFolder(requestPermission);
     const name = createBackupFilename(kind);
@@ -191,7 +190,7 @@ export async function saveWebBackup(client: BackupClient, kind: BackupKind, poli
     }
 
     if (!client.createBackup)
-        throw new WebBackupError("backup-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
 
     const legacyName = name.replace(/\.skladno$/, ".sqlite");
     const file = await folder.getFileHandle(legacyName, { create: true });
@@ -208,17 +207,13 @@ export async function saveWebBackup(client: BackupClient, kind: BackupKind, poli
 
 
 export async function saveScheduledWebBackup(client: BackupClient, policy: BackupPolicy): Promise<void> {
-    const today = new Date().toISOString().slice(0, 10);
-    if (policy.schedule !== "daily" || automaticBackupInProgressFor === today || localStorage.getItem(automaticBackupKey) === today)
+    if (policy.schedule !== "daily" || automaticBackupInProgress)
         return;
 
-    automaticBackupInProgressFor = today;
+    automaticBackupInProgress = true;
     try {
         await saveWebBackup(client, "automatic", policy, false);
-    } catch (error) {
-        automaticBackupInProgressFor = undefined;
-        throw error;
+    } finally {
+        automaticBackupInProgress = false;
     }
-
-    localStorage.setItem(automaticBackupKey, today);
 }

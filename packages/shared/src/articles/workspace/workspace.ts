@@ -4,6 +4,7 @@ import type { ArticleDraft, SaveArticleDraftInput } from "../draft/draft.js";
 import type { ArticleRevision, SaveArticleRevisionInput } from "../revision/revision.js";
 import type { RevisionClient } from "../revision/revisions.js";
 import type { AssistantClient, AssistantMessage } from "../../assistant/assistant.js";
+import { APPLICATION_ERROR } from "../../cross-cutting/errors.js";
 
 export const articlesPath = "/api/articles";
 export const articleSummariesPath = `${articlesPath}/summaries`;
@@ -33,6 +34,9 @@ export interface ArticleLibraryClient extends RevisionClient, AssistantClient {
 
 
 export class ArticleDraftConflictError extends Error {
+    readonly code = APPLICATION_ERROR.DRAFT_CONFLICT;
+
+
     constructor(
         public readonly article: Article,
         public readonly draft?: ArticleDraft,
@@ -44,6 +48,9 @@ export class ArticleDraftConflictError extends Error {
 
 
 export class ArticleRevisionConflictError extends Error {
+    readonly code = APPLICATION_ERROR.REVISION_CONFLICT;
+
+
     constructor(public readonly article: Article) {
         super("This article was changed by another save. Reload it and try again.");
         this.name = "ArticleRevisionConflictError";

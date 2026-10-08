@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { mkdirSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import { EDITORIAL_OPERATION, FACT_CHECK_STATUS } from "@skladno/shared";
 
@@ -208,10 +210,9 @@ function waitForFixtureSelection(request: EditorialEngineRequest, signal: AbortS
 }
 
 
-const config = loadServerConfig();
-const dataDirectory = config.databasePath.slice(0, Math.max(config.databasePath.lastIndexOf("/"), config.databasePath.lastIndexOf("\\")));
-rmSync(dataDirectory, { recursive: true, force: true });
-mkdirSync(dataDirectory, { recursive: true });
+// The fixture owns a fresh temporary directory, never an Author's configured data.
+const dataDirectory = mkdtempSync(join(tmpdir(), "warplyn-e2e-service-"));
+const config = loadServerConfig({ ...process.env, WARPLYN_DATA_DIR: dataDirectory });
 const database = openDatabase(config.databasePath);
 const articles = new ArticlesRepository(database);
 const artifacts = new EditorialArtifactsRepository(database);

@@ -3,8 +3,18 @@ import { BackupBundleClient } from "./backup-bundle-client";
 import { BackupDirectoryHandle } from "./backup-directory-handle";
 
 
+export const WEB_BACKUP_ERROR = {
+    FOLDER_REQUIRED: "web_backup_folder_required",
+    FOLDER_PERMISSION: "web_backup_folder_permission",
+    FOLDER_PICKER_UNSUPPORTED: "web_backup_folder_picker_unsupported",
+    BACKUP_UNAVAILABLE: "web_backup_unavailable",
+    RESTORE_UNAVAILABLE: "web_backup_restore_unavailable",
+} as const;
+type WebBackupErrorCode = typeof WEB_BACKUP_ERROR[keyof typeof WEB_BACKUP_ERROR];
+
+
 export class WebBackupError extends Error {
-    constructor(readonly code: "folder-required" | "folder-permission" | "folder-picker-unsupported" | "backup-unavailable" | "restore-unavailable") {
+    constructor(readonly code: WebBackupErrorCode) {
         super(code);
     }
 }
@@ -33,7 +43,7 @@ async function writeBundleFile(directory: BackupDirectoryHandle, path: string, f
     const parts = path.split("/");
     const name = parts.pop();
     if (!name || !isSafeBundlePath(path))
-        throw new WebBackupError("backup-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
 
     let target = directory;
     for (const part of parts)
@@ -51,13 +61,13 @@ async function writeBundleFile(directory: BackupDirectoryHandle, path: string, f
 
 async function readBundleFile(directory: BackupDirectoryHandle, path: string): Promise<Blob> {
     if (!isSafeBundlePath(path))
-        throw new WebBackupError("restore-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
 
     const parts = path.split("/");
     const name = parts.pop();
 
     if (!name)
-        throw new WebBackupError("restore-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
 
     let target = directory;
 
@@ -70,7 +80,7 @@ async function readBundleFile(directory: BackupDirectoryHandle, path: string): P
 
 export async function saveBackupBundle(client: BackupBundleClient, folder: BackupDirectoryHandle, name: string): Promise<void> {
     if (!client.createBackupExport || !client.readBackupExport || !client.removeBackupExport)
-        throw new WebBackupError("backup-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
 
     const { id, manifest } = await client.createBackupExport();
 
@@ -91,14 +101,14 @@ export async function saveBackupBundle(client: BackupBundleClient, folder: Backu
 
 export async function restoreBackupBundle(client: BackupBundleClient, folder: BackupDirectoryHandle, name: string): Promise<void> {
     if (!client.beginBackupImport || !client.writeBackupImport || !client.restoreBackupImport || !client.removeBackupImport)
-        throw new WebBackupError("restore-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
 
     const directory = await folder.getDirectoryHandle(name);
     const raw = await (await directory.getFileHandle("manifest.json")).getFile();
     const manifest: unknown = JSON.parse(await raw.text());
 
     if (!isBackupBundleManifest(manifest))
-        throw new WebBackupError("restore-unavailable");
+        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
 
     const { id } = await client.beginBackupImport(manifest);
 

@@ -12,6 +12,8 @@ Reuse the shared primitives for controls, status, loading, empty states, tabs, t
 
 Use application popup notifications for cross-screen outcomes and background actions. Keep validation and workflow feedback beside the operation that produced it. Notifications do not move focus; use `status` for informational or successful outcomes and `alert` for warnings or errors.
 
+Settings lists use horizontal dividers between rows and consistent vertical padding. Omit top borders directly below search fields and dividers between an action and its supporting hint. Avoid enclosing boxes and separate raised cards for configured items. Inset left borders group related forms and controls.
+
 ## Accessibility
 
 For copy and locale formatting changes, follow the [internationalization guide](../guides/internationalization.md). For a release accessibility review, use the [walkthrough](../guides/accessibility-release-walkthrough.md) and its [finding routing rules](../guides/accessibility-review-routing.md).
@@ -43,6 +45,8 @@ Use the established supporting surface, alignment, and quiet scrollbar treatment
 8. Assistant composer
 
 Settings uses its own sequence: Settings navigation, then Settings content. Enter the stable target or fall back to the last valid focused descendant; skip missing, disabled, collapsed, or hidden entries. Restore the editor caret or selection where Lexical supports it. Dialogs own focus while open.
+
+Inside Settings content and compact navigation, Tab and Shift+Tab traverse native controls before switching areas at the boundaries. Desktop Settings navigation uses Up, Down, Home, and End between its back action and section buttons; Enter or Space activates the focused button. Native selects and text fields retain their editing keys.
 
 Library uses Up and Down outside Search. Article Header and Article Status use Left and Right. Workspace Views, menus, and the toolbar keep their roving keyboard behavior. Editor, composer, and Search keep native text-editing keys. Assistant chat uses Up and Down to scroll and Left and Right for actionable results.
 

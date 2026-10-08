@@ -7,12 +7,12 @@ import { captureAuthorSkillInventory } from "../../infrastructure/recovery/autho
 import { runBackup } from "../../infrastructure/recovery/backup-lifecycle.js";
 
 
-export function createNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry?: TelemetryCaptureSource): Promise<{ path: string; createdAt: string }> {
-    return runBackup(() => writeNativeBackup(createSnapshot, dataDirectory, backupDirectory, telemetry));
+export function createNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry?: TelemetryCaptureSource, kind: "manual" | "automatic" = "manual"): Promise<{ path: string; createdAt: string }> {
+    return runBackup(() => writeNativeBackup(createSnapshot, dataDirectory, backupDirectory, telemetry, kind));
 }
 
 
-async function writeNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry?: TelemetryCaptureSource): Promise<{ path: string; createdAt: string }> {
+async function writeNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry: TelemetryCaptureSource | undefined, kind: "manual" | "automatic"): Promise<{ path: string; createdAt: string }> {
     const observed = beginTimedTelemetryCapture(telemetry);
     let path: string | undefined;
     let temporary: string | undefined;
@@ -20,7 +20,8 @@ async function writeNativeBackup(createSnapshot: (path: string) => Promise<unkno
     try {
         await mkdir(backupDirectory, { recursive: true });
         const created = new Date();
-        const filename = `warplyn-backup-${created.toISOString().replaceAll(/[:.]/g, "-")}-${randomUUID()}.sqlite`;
+        const prefix = kind === "automatic" ? "warplyn-automatic" : "warplyn-backup";
+        const filename = `${prefix}-${created.toISOString().replaceAll(/[:.]/g, "-")}-${randomUUID()}.sqlite`;
         temporary = join(backupDirectory, `.${filename}.${randomUUID()}.tmp`);
         path = join(backupDirectory, filename);
         const expectedInventory = await captureAuthorSkillInventory(dataDirectory);

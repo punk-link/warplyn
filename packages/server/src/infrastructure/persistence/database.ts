@@ -6,7 +6,12 @@ import { join } from "node:path";
 
 
 export type SqliteDatabase = DatabaseSync;
-export type DatabaseSnapshotErrorCode = "integrity" | "foreign-keys" | "schema";
+export const DATABASE_ERROR = {
+    SNAPSHOT_INTEGRITY: "integrity",
+    SNAPSHOT_FOREIGN_KEYS: "foreign-keys",
+    SNAPSHOT_SCHEMA: "schema",
+} as const;
+export type DatabaseSnapshotErrorCode = typeof DATABASE_ERROR[keyof typeof DATABASE_ERROR];
 
 
 export class DatabaseSnapshotError extends Error {
@@ -35,20 +40,20 @@ export function validateDatabaseSnapshot(filename: string): void {
         database = new DatabaseSync(validationCopy, { readOnly: true });
         const integrity = readSnapshotRows(database, "PRAGMA integrity_check");
         if (integrity.length !== 1 || integrity[0]?.integrity_check !== "ok")
-            throw new DatabaseSnapshotError("integrity");
+            throw new DatabaseSnapshotError(DATABASE_ERROR.SNAPSHOT_INTEGRITY);
 
         if (readSnapshotRows(database, "PRAGMA foreign_key_check").length > 0)
-            throw new DatabaseSnapshotError("foreign-keys");
+            throw new DatabaseSnapshotError(DATABASE_ERROR.SNAPSHOT_FOREIGN_KEYS);
 
         const known = new Map<number, string>(migrations.map((migration) => [migration.version, migration.name]));
         const applied = readSnapshotRows(database, "SELECT version, name FROM schema_migrations ORDER BY version");
         if (applied.length === 0 || applied.some((migration) => typeof migration.version !== "number" || known.get(migration.version) !== migration.name))
-            throw new DatabaseSnapshotError("schema");
+            throw new DatabaseSnapshotError(DATABASE_ERROR.SNAPSHOT_SCHEMA);
     } catch (error) {
         if (error instanceof DatabaseSnapshotError)
             throw error;
 
-        throw new DatabaseSnapshotError("integrity");
+        throw new DatabaseSnapshotError(DATABASE_ERROR.SNAPSHOT_INTEGRITY);
     } finally {
         database?.close();
         if (writableSnapshotDirectory)

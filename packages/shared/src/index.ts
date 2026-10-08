@@ -121,7 +121,7 @@ export {
     type KeyBindingOverrides,
     type KeyBindingScope,
 } from "./cross-cutting/key-bindings.js";
-export { APPLICATION_ERROR, ApplicationClientError, type ApplicationErrorCode, type ApplicationErrorPayload } from "./cross-cutting/errors.js";
+export { APPLICATION_ERROR, APPLICATION_ERROR_BY_AREA, ApplicationClientError, type ApplicationErrorCode, type ApplicationErrorPayload } from "./cross-cutting/errors.js";
 export {
     EDITORIAL_OPERATION,
     EDITORIAL_ERROR_CATEGORY,
@@ -262,6 +262,7 @@ export {
     type StartAssistantRequest
 } from "./assistant/assistant.js";
 export { ARTICLE_LANGUAGE, articleLanguages, isArticleLanguage, type ArticleLanguage } from "./cross-cutting/languages.js";
+export { desktopSpellingChannel, desktopSpellingLanguageChannel, isSpellingLanguage, isPersonalSpellingWord, isDesktopSpellingRequest, isDesktopSpellingResult, type DesktopSpellingClient, type DesktopSpellingRequest, type DesktopSpellingResult, type DesktopSpellingSnapshot, type DictionaryState } from "./application/desktop/desktop-spelling.js";
 export {
     countPublishingCharacters,
     defaultPublishLimitProfileId,

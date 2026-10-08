@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useIntl } from "react-intl";
 import type { AssistantCapabilityActivity, AssistantMessage, AssistantSkillSummary, FactCheckClaimPreview, GeneralSettings } from "@skladno/shared";
-import { Banner, Button, IconButton } from "../../../ui/primitives.js";
+import { ActivityIndicator, Banner, Button, IconButton } from "../../../ui/primitives.js";
 import { ChevronDownIcon } from "../../../ui/icons.js";
 import { FactCheckClaims } from "./FactCheckClaims.js";
 import { AssistantTimelineMessage } from "./AssistantTimelineMessage.js";
@@ -190,10 +190,7 @@ function AssistantTimelineStatus({ data, actions }: { data: AssistantTimelineDat
     const intl = useIntl();
     return <>
         {state === "streaming" && <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted" role="status">
-            <span className="flex gap-1" aria-hidden="true">
-                <span className="size-1 rounded-full bg-muted animate-pulse motion-reduce:animate-none" />
-                <span className="size-1 rounded-full bg-muted animate-pulse motion-reduce:animate-none [animation-delay:150ms]" />
-                <span className="size-1 rounded-full bg-muted animate-pulse motion-reduce:animate-none [animation-delay:300ms]" /></span>
+            <ActivityIndicator />
             <span>{activity?.summary ?? intl.formatMessage({ id: "assistant.workingFor" }, { duration: elapsedDuration })}</span>
         </div>}
         {message && <Banner tone="error" className="border-danger/35 bg-surface-raised text-ink" role="alert">

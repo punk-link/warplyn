@@ -54,6 +54,7 @@ Opacity-derived text color is reserved for established placeholder treatment. St
 | `brand-hover` | `bg-brand-hover` | Solid-action hover |
 | `brand-soft` | `bg-brand-soft` | Selected navigation and quiet hover |
 | `focus` | `outline-focus` | Keyboard focus |
+| `status-glow` | `shadow-status-glow` | Active work indicators |
 
 Article body text uses `text-editor-ink`. In the dark theme it is softer and more neutral than the general UI ink so long-form reading stays legible without making every interface label brighter.
 

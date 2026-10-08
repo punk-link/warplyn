@@ -11,6 +11,7 @@ import { createDesktopShellClient } from "./shell/desktop-shell.js";
 import { createDesktopUpdateClient, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
 import { createDesktopTelemetryClient } from "./telemetry/desktop-telemetry.js";
 import { createDesktopArticleFilesClient } from "./articles/desktop-article-files-client.js";
+import { createDesktopSpellingClient } from "./settings/desktop-spelling-client.js";
 
 
 function isPrepareCloseRequest(value: unknown): value is ElectronPrepareCloseRequest {
@@ -43,8 +44,15 @@ function parseCheckpointResult(value: unknown, requestId: string): ElectronCheck
 
 
 exposeElectronApplicationClient(ipcRenderer, contextBridge);
+contextBridge.exposeInMainWorld("warplynSpelling", createDesktopSpellingClient(ipcRenderer));
+ipcRenderer.on("warplyn:spelling-failed", (_event, kind: unknown) => {
+    if (kind === "word" || kind === "correction" || kind === "language")
+        window.dispatchEvent(new CustomEvent("warplyn:spelling-failed", { detail: kind }));
+});
+
 contextBridge.exposeInMainWorld("skladnoArticleFiles", createDesktopArticleFilesClient(ipcRenderer));
 contextBridge.exposeInMainWorld("skladnoDesktop", createDesktopSettingsClient(ipcRenderer));
+ipcRenderer.on("warplyn:automatic-backup-failed", () => window.dispatchEvent(new Event("warplyn:automatic-backup-failed")));
 contextBridge.exposeInMainWorld("skladnoShell", createDesktopShellClient(ipcRenderer));
 
 if (supportsReleaseDiscovery())

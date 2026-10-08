@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { useIntl } from "react-intl";
 import { BUILT_IN_SKILL, ELECTRON_LIFECYCLE_EVENT, KEY_BINDING_COMMAND, type AssistantSkillSummary, type KeyBindingOverrides } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../application/client.js";
-import { Banner } from "../ui/primitives.js";
+import { ActivityIndicator, Banner } from "../ui/primitives.js";
 import { ApplicationSettings } from "../settings/ApplicationSettings.js";
 import { useNotifications } from "../notifications/NotificationProvider.js";
 import type { KeyBindingDispatcher } from "../key-bindings/dispatcher.js";
@@ -294,8 +294,8 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
     useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save: workspace.save });
 
     if (workspace.state === "loading")
-        return <main className="grid min-h-screen place-items-center text-muted">
-            {intl.formatMessage({ id: "workspace.loadingArticles" })}
+        return <main className="grid min-h-screen place-items-center text-muted" role="status">
+            <span className="inline-flex items-center gap-2"><ActivityIndicator />{intl.formatMessage({ id: "workspace.loadingArticles" })}</span>
         </main>;
 
     if (workspace.state === "error")

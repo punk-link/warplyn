@@ -3,6 +3,25 @@
     "area": "settings",
     "capabilities": [
         {
+            "id": "settings.spelling-dictionaries",
+            "area": "Spelling",
+            "title": "Prepare native language dictionaries for offline writing",
+            "status": "implemented",
+            "owners": ["packages/web/src/settings/components/SpellingSettingsSection.tsx", "packages/web/src/settings/use-spelling-settings.ts", "packages/shared/src/application/desktop/desktop-spelling.ts", "packages/electron/src/presentation/settings/desktop-spelling-settings.ts", "packages/electron/src/infrastructure/window/spelling-session.ts"],
+            "contract": "Language dictionaries use horizontal row dividers. Desktop Spelling Settings uses a single column with inset left borders grouping language and personal dictionary controls. It lists Electron-supported regional language dictionaries, sorted with confirmed downloaded dictionaries first and alphabetically within each group. Authors filter by localized language name or code without losing pending selections. Checkboxes select pending downloads only and clear on completion; downloaded rows show a quiet Unload action. Download and personal-word buttons also use the quiet Settings style. Native initialization confirms the Downloaded status; Available means supported, without claiming cached files are absent. Unload deactivates a language for the current session, removes its saved preload choice, and retains cached files. Writing or preparing a dictionary enables native spelling again. An explicit download request adds languages to existing preload choices while the Article editor is absent. Download success alone does not confirm readiness. Failed or timed-out preparation offers retry and never blocks writing. Resuming writing restores only the Article language or system fallback. Preloading does not expand Article language choices. Browser Settings explains desktop-only dictionary management.",
+            "persistence": "Requested language identifiers in installation-local runtime-settings.json; dictionaries in the native Electron profile cache. Readiness is observed in memory and reverified after restart.",
+            "limitations": ["Dictionary acquisition needs internet access to the Chromium dictionary CDN before offline reuse.", "Packaged Windows visual and screen-reader acceptance and Linux packaged acceptance require platform-specific manual verification."]
+        },
+        {
+            "id": "settings.spelling-personal-words",
+            "area": "Spelling",
+            "title": "Manage personal technical vocabulary",
+            "status": "implemented",
+            "owners": ["packages/web/src/settings/components/SpellingSettingsSection.tsx", "packages/web/src/settings/use-spelling-settings.ts", "packages/shared/src/application/desktop/desktop-spelling.ts", "packages/electron/src/infrastructure/window/spelling-session.ts", "packages/electron/src/presentation/articles/desktop-article-spelling.ts"],
+            "contract": "Personal words use horizontal row dividers. Authors search, add, and remove native personal words, individually or by bounded multiline paste. Exact duplicates are ignored, case and technical punctuation are preserved, and partial native failures retain failed entries for retry. A native spelling menu can add its misspelled word explicitly. One word list applies across Articles and languages. Settings explains native OS dictionary side effects on Windows. Vocabulary changes never change Article content, Drafts, Revisions, or Proposals and never send words to providers or telemetry. Word-entry guidance appears beside the Add words button, stacking below it on narrow screens, and remains associated with the text field for assistive technology.",
+            "persistence": "Electron's persistent custom dictionary and native OS custom dictionary where supported. Installation-local spelling data is outside Article SQLite backup/restore and Article-data deletion. Explicit word removal is available in Settings."
+        },
+        {
             "id": "settings.general-preferences",
             "area": "General",
             "title": "Appearance, locale, and date/time/time-zone",
@@ -46,7 +65,7 @@
             "title": "AI connections and activation",
             "status": "implemented",
             "owners": ["packages/web/src/settings/components/AiSettingsSection.tsx", "packages/server/src/application/settings/application-settings-service.ts", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"],
-            "contract": "Authors choose OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek before adding an environment-variable connection. In Electron, they first choose an environment variable or managed API key, which Warplyn verifies then stores in Windows Credential Manager or Linux Secret Service. If Secret Service is unavailable or locked, managed credentials report unavailable without a plaintext fallback; environment-variable connections remain usable. Connections are active by default; authors can activate or deactivate each one independently, rename them, test them, or confirm deletion without exposing secret values.",
+            "contract": "Configured connections use horizontal row dividers. Authors choose OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek before adding an environment-variable connection. In Electron, they first choose an environment variable or managed API key, which Warplyn verifies then stores in Windows Credential Manager or Linux Secret Service. If Secret Service is unavailable or locked, managed credentials report unavailable without a plaintext fallback; environment-variable connections remain usable. Connections are active by default; authors can activate or deactivate each one independently, rename them, test them, or confirm deletion without exposing secret values.",
             "persistence": "app_settings.application-ai-connections"
         },
         {
@@ -73,17 +92,17 @@
             "title": "Publishing profiles and language defaults",
             "status": "partial",
             "owners": ["packages/web/src/settings/components/PublishingSettingsSection.tsx", "packages/server/src/presentation/routes/publish-settings-route.ts", "packages/server/src/application/publishing", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"],
-            "contract": "Default, No restrictions, LinkedIn Post, LinkedIn Article, and named custom non-negative limits provide guidance; the selected default applies to new Articles while Articles retain independent selection. Custom profiles have stable IDs, appear before add controls, and require confirmed removal; removing the selected default resets to Default. Settings persists one default Article language and deduplicated translation languages excluding it. New translation… offers configured defaults when no viewed language is available; Authors confirm selected supported targets before generation.",
+            "contract": "Custom profiles use horizontal row dividers. Default, No restrictions, LinkedIn Post, LinkedIn Article, and named custom non-negative limits provide guidance; the selected default applies to new Articles while Articles retain independent selection. Custom profiles have stable IDs, appear before add controls, and require confirmed removal; removing the selected default resets to Default. Settings persists one default Article language and deduplicated translation languages excluding it. New translation… offers configured defaults when no viewed language is available; Authors confirm selected supported targets before generation.",
             "persistence": "app_settings.publish-limit-profile"
         },
         {
             "id": "settings.backup-policy",
             "area": "Backups",
-            "title": "Browser-selected backup folder, schedule, and retention",
+            "title": "Local backup folder, startup and daily schedule, and retention",
             "status": "implemented",
-            "owners": ["packages/web/src/App.tsx", "packages/web/src/settings/ApplicationSettings.tsx", "packages/web/src/settings/components/DataBackupsSettingsSection.tsx", "packages/web/src/settings/web-backups.ts", "packages/server/src/application/settings/application-settings-service.ts", "packages/server/src/application/settings/backup-snapshot-creator.ts", "packages/server/src/presentation/routes/settings-route.ts", "packages/server/src/presentation/routes/backup-bundle-route.ts", "packages/server/src/infrastructure/persistence/sqlite-backup-snapshot-creator.ts", "packages/server/src/infrastructure/persistence/backup-bundle.ts", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"],
-            "contract": "In supported web browsers, authors explicitly choose a local backup folder. The browser writes complete manifest-bearing backup directories containing a consistent SQLite snapshot, current Author Skills, and immutable Skill Revision history, lists compatible bundles and legacy SQLite snapshots for explicit restore, and reloads after the loopback service safely replaces active data. Daily startup writes at most one automatic backup when the previously selected folder remains permitted, and retention removes only older automatic backups.",
-            "persistence": "app_settings.application-backup-policy plus the browser's local folder permission handle; backup bundles exclude environment variables and API keys.",
+            "owners": ["packages/web/src/App.tsx", "packages/web/src/settings/AutomaticBackups.tsx", "packages/web/src/settings/ApplicationSettings.tsx", "packages/web/src/settings/components/DataBackupsSettingsSection.tsx", "packages/web/src/settings/web-backups.ts", "packages/server/src/application/settings/application-settings-service.ts", "packages/server/src/application/settings/backup-snapshot-creator.ts", "packages/server/src/presentation/routes/settings-route.ts", "packages/server/src/presentation/routes/backup-bundle-route.ts", "packages/server/src/infrastructure/persistence/sqlite-backup-snapshot-creator.ts", "packages/server/src/infrastructure/persistence/backup-bundle.ts", "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts", "packages/electron/src/presentation/main.ts", "packages/electron/src/presentation/settings/desktop-backup-scheduler.ts", "packages/electron/src/presentation/settings/desktop-native-backup.ts"],
+            "contract": "Authors explicitly choose a local backup folder through Electron or a supported browser. Both write consistent SQLite snapshots with current Author Skills and immutable Skill Revision history. When daily backups are enabled, each startup attempts a backup after five seconds, then schedules attempts every 24 hours from the previous attempt's start while the application stays open. Each attempt reads the current policy and destination. Electron main owns native scheduling; browser scheduling uses its retained permission handle and never requests permission in the background. Failures produce a recoverable notification and the next scheduled attempt remains active. Shutdown stops native scheduling and waits for in-progress backup and retention work. Retention removes only older automatic backups and their Skill companions, leaving manual and legacy native snapshots untouched.",
+            "persistence": "app_settings.application-backup-policy plus the browser's local folder permission handle or Electron's runtime backup directory; backup bundles exclude environment variables and API keys. Schedule intervals are session-local and restart from startup.",
             "limitations": ["Browser bundle transfer supports files up to 100 MB and 500 MB total; larger backups require Electron."]
         },
         {
@@ -124,6 +143,26 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "settings.spelling-dictionaries",
+            "title": "Preloading keeps readiness truthful and Article checking independent",
+            "capabilityIds": ["settings.spelling-dictionaries"],
+            "preconditions": ["Desktop Spelling Settings has supported language dictionaries."],
+            "event": "The Author prepares multiple regional languages and resumes an Article.",
+            "expected": ["Readiness follows native initialization, not saved requests or download success.", "Loading and preparing statuses use the shared glowing activity indicator.", "Failed preparation remains recoverable and returning to writing restores the latest Article language.", "Requested language IDs preserve unrelated installation-local runtime settings."],
+            "forbidden": ["Preloaded languages stay active alongside the Article language.", "A renderer request supplies a path, URL, or unsupported native dictionary code."],
+            "evidence": { "kind": "automated", "path": "packages/electron/src/infrastructure/window/spelling-session.test.ts" }
+        },
+        {
+            "id": "settings.spelling-personal-words",
+            "title": "Personal vocabulary preserves engineering terms and reports partial failure",
+            "capabilityIds": ["settings.spelling-personal-words"],
+            "preconditions": ["The native persistent personal dictionary is available."],
+            "event": "The Author adds technical terms and removes a saved word.",
+            "expected": ["Exact duplicates do not fail; case, Unicode, and punctuation remain intact.", "Invalid or failed words are returned for retry while successful words remain saved.", "Native removal is confirmed and operating-system side effects are described."],
+            "forbidden": ["Vocabulary changes create an Article Revision.", "Personal words enter network requests or diagnostics."],
+            "evidence": { "kind": "automated", "path": "packages/electron/src/infrastructure/window/spelling-session.test.ts" }
+        },
         {
             "id": "settings.default-assistant-edit-mode",
             "title": "A saved Assistant edit default applies to new conversations",
@@ -229,10 +268,10 @@
             "title": "Backups are recoverable without interrupting editing",
             "capabilityIds": ["settings.backup-policy"],
             "preconditions": ["The author opens Data & backups Settings."],
-            "event": "The author chooses a backup folder, creates a manual backup, or the daily schedule runs at application startup.",
-            "expected": ["A complete database and Author Skill bundle is written through the browser permission handle and automatic retention leaves manual backups untouched."],
+            "event": "The author chooses a backup folder, creates a manual backup, or the startup and 24-hour schedule runs.",
+            "expected": ["A complete database and Author Skill bundle is written to the configured folder and automatic retention leaves manual backups untouched.", "Native scheduled backups run after each startup and every 24 hours from the preceding attempt, re-read policy and destination, survive failures, and stop before database shutdown."],
             "forbidden": ["A backup failure interrupts Article editing or exposes environment-variable secrets."],
-            "evidence": { "kind": "automated", "path": "packages/web/src/settings/web-backups.bundle.test.ts" }
+            "evidence": { "kind": "automated", "path": "packages/electron/src/presentation/settings/desktop-backup-scheduler.test.ts" }
         },
         {
             "id": "settings.preview-update-controls",
@@ -240,7 +279,7 @@
             "capabilityIds": ["settings.preview-updates"],
             "preconditions": ["A packaged desktop release exposes an available release."],
             "event": "The author opens About Settings, allows update network access, and checks for updates.",
-            "expected": ["The network-permission, automatic-check, and prerelease-channel switches are accessible, a confirmation dialog precedes the persisted network permission, no discovery request occurs before consent, Windows Download appears only after explicit discovery, Linux offers release notes without Download, and the status shows while a Windows update downloads."],
+            "expected": ["The network-permission, automatic-check, and prerelease-channel switches are accessible, a confirmation dialog precedes the persisted network permission, no discovery request occurs before consent, Windows Download appears only after explicit discovery, Linux offers release notes without Download, and checking or downloading uses the shared glowing activity indicator beside its status."],
             "forbidden": ["A browser or development build exposes update controls, an update-discovery request occurs without consent, or a download starts automatically."],
             "evidence": { "kind": "automated", "path": "packages/web/src/settings/ApplicationSettings.updates.test.tsx" }
         },

@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, it } from "vitest";
 import { settingsFocusAreas, useFocusAreaNavigation } from "./focus-area-navigation.js";
 
@@ -25,6 +26,41 @@ it("traverses Settings navigation and content as separate areas", () => {
     expect(document.activeElement).toBe(navigation);
     fireEvent.keyDown(document.activeElement!, { key: "Tab", shiftKey: true });
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "Content" }));
+});
+
+
+it("allows native Tab navigation inside Settings content and switches areas at its boundaries", async () => {
+    function SettingsControls() {
+        const focusAreas = useFocusAreaNavigation(settingsFocusAreas);
+        return <main ref={focusAreas.ref} onFocusCapture={focusAreas.onFocusCapture} onKeyDownCapture={focusAreas.onKeyDownCapture}>
+            <aside style={{ display: "none" }} data-focus-area="settings-navigation"><button data-focus-area-entry>Hidden navigation</button></aside>
+            <aside data-focus-area="settings-navigation"><button data-focus-area-entry>Back</button></aside>
+            <section data-focus-area="settings-content" data-focus-area-native-tab>
+                <input aria-label="First setting" />
+                <button disabled>Unavailable</button>
+                <div hidden><button>Hidden setting</button></div>
+                <button>Last setting</button>
+            </section>
+        </main>;
+    }
+
+
+    const user = userEvent.setup();
+    render(<SettingsControls />);
+    const first = screen.getByRole("textbox", { name: "First setting" });
+    const last = screen.getByRole("button", { name: "Last setting" });
+    first.focus();
+    await user.tab();
+    expect(document.activeElement).toBe(last);
+    await user.tab({ shift: true });
+    expect(document.activeElement).toBe(first);
+    await user.tab({ shift: true });
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Back" }));
+    await user.tab();
+    expect(document.activeElement).toBe(first);
+    last.focus();
+    await user.tab();
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Back" }));
 });
 
 
