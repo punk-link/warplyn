@@ -96,6 +96,7 @@ test("daily native backups create a complete bundle at every application startup
             await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
             await page.reload();
             await expect.poll(async () => (await readdir(destination)).filter((name) => name.endsWith(".sqlite")).length, { timeout: 20_000 }).toBe(initialCount + expectedCount);
+            await page.evaluate(() => localStorage.removeItem("skladno.quick-start.v1"));
             await app.close();
             app = undefined;
         }
@@ -118,6 +119,13 @@ test("daily native backups create a complete bundle at every application startup
         await writeFile(join(profile, "runtime-settings.json"), JSON.stringify({ backupDirectory: unavailableDirectory }));
         app = await _electron.launch({ args: [resolve("packages/electron"), `--user-data-dir=${profile}`], env });
         const failedPage = await app.firstWindow();
+        await failedPage.getByRole("button", { name: "Skip quick start" }).waitFor();
+        // Exercise a failure before the reloaded renderer installs its notification listener.
+        await failedPage.route("**/src/settings/AutomaticBackups.tsx*", async (route) => {
+            await new Promise((resolveDelay) => setTimeout(resolveDelay, 8_000));
+            await route.continue();
+        });
+        await failedPage.reload();
         await expect(failedPage.getByRole("alert").filter({ hasText: "Automatic backup failed." })).toBeVisible({ timeout: 20_000 });
         await expect(failedPage.getByRole("alert").filter({ hasText: "Automatic backup failed." })).toContainText("create a manual backup");
     } finally {

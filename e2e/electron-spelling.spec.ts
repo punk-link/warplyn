@@ -228,12 +228,17 @@ test("native preload and personal words persist while language activation stays 
     try {
         app = await launchSpelling(root);
         let page = await app.firstWindow();
+        // Keep the initial UI snapshot deterministic when the fallback dictionary loads early.
+        await page.evaluate(() => window.warplynSpelling?.request({ method: "unload", language: "en-US" }));
         await page.getByRole("button", { name: "Settings", exact: true }).click();
         await page.getByRole("button", { name: "Spelling", exact: true }).click();
         await expect(page.getByRole("textbox", { name: "Words to add" })).toBeVisible();
+        await expect(page.getByRole("status").filter({ hasText: "Spelling settings loaded." })).toBeVisible();
         await page.evaluate(() => window.warplynSpelling?.setArticleLanguage(null));
-        const prepared = await page.evaluate(() => window.warplynSpelling?.request({ method: "prepare", languages: ["en-US", "es"] }));
-        expect(prepared?.ok).toBe(true);
+        const languageList = page.getByRole("group", { name: "Language dictionaries", exact: true });
+        await languageList.getByRole("checkbox", { name: /en-US/ }).check();
+        await languageList.getByRole("checkbox", { name: /\(es\)/ }).check();
+        await page.getByRole("button", { name: "Download dictionaries" }).click();
         await expect.poll(() => page.evaluate(async () => {
             const result = await window.warplynSpelling?.request({ method: "snapshot" });
             return result?.ok ? result.value.dictionaries.states : result;
@@ -242,7 +247,6 @@ test("native preload and personal words persist while language activation stays 
         expect(added?.ok && added.value.personal.words.includes("Warplynsyntheticterm")).toBe(true);
         const filter = page.getByRole("searchbox", { name: "Filter languages" });
         await expect(filter).toBeVisible();
-        const languageList = page.getByRole("group", { name: "Language dictionaries", exact: true });
         expect((await languageList.boundingBox())!.y).toBeGreaterThan((await filter.boundingBox())!.y);
         await expect(languageList.getByRole("button", { name: /Unload.*en-US/ })).toBeVisible();
         await expect(languageList.getByRole("checkbox", { name: /en-US/ })).toHaveCount(0);
