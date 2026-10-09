@@ -9,6 +9,10 @@ on:
 permissions:
     contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
     verify:
         runs-on: ubuntu-latest
@@ -32,23 +36,20 @@ jobs:
             - name: Audit production dependencies
               run: npm audit --omit=dev --audit-level=high
 
-            - name: Check product model
-              run: npm run product:check
-
-            - name: Check cognitive complexity
-              run: npm run complexity:check
-
-            - name: Lint
-              run: npm run lint
-
-            - name: Typecheck
-              run: npm run typecheck
-
-            - name: Test
-              run: npm test
+            - name: Verify core
+              run: npm run verify:core
 
             - name: Install Chromium
               run: npx playwright install --with-deps chromium
 
-            - name: End-to-end test
-              run: npm run test:e2e
+            - name: Verify browser journeys
+              run: npm run verify:browser
+
+            - name: Save browser test failure evidence
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: browser-test-results
+                  path: test-results/browser
+                  if-no-files-found: ignore
+                  retention-days: 7

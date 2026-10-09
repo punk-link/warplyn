@@ -10,6 +10,8 @@
 /playwright-report
 /test-results
 /.e2e-data
+/.tmp-pr*-*.log
+/.tmp-pr*-evidence/
 
 # next.js
 /.next/

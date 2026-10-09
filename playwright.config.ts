@@ -6,12 +6,13 @@ export default defineConfig({
     fullyParallel: false,
     // Browser journeys share the local service's Articles and Settings.
     workers: 1,
-    preserveOutput: "never",
+    outputDir: "test-results/browser",
+    preserveOutput: "failures-only",
     reporter: "line",
     use: {
         baseURL: "http://127.0.0.1:5173",
-        screenshot: "off",
-        trace: "off",
+        screenshot: "only-on-failure",
+        trace: "retain-on-failure",
         video: "off",
     },
     webServer: [

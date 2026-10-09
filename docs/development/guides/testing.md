@@ -4,16 +4,25 @@ Use the smallest check that can fail for the changed behavior, then run the appl
 
 ## Commands
 
-- `npm run verify` runs the product check, complexity check, lint, typecheck, and full test suite.
+- `npm run verify:core` runs the product check, complexity check, lint, typecheck, and workspace and script tests. `npm run verify` remains an alias for this core gate; neither command runs E2E.
+- `npm run verify:browser` runs Chromium author journeys, also available as `npm run test:e2e`.
+- `npm run verify:desktop` runs Electron journeys against development and packaged builds. Build prerequisites are below.
 - `npm test --workspace <workspace>` runs the selected workspace tests.
 - `npm run lint` checks import boundaries and ESLint rules.
 - `npm run complexity:check` fails at cognitive complexity 16 or higher and reports scores 10–15 for review.
 - `npm run typecheck` checks the TypeScript project references.
-- `npm run test:e2e` runs deterministic Chromium author journeys.
 - `npm run product:impact -- <affected paths>` returns capabilities and scenarios that the change must preserve.
 - `npm run product:check` validates canonical records, generated inventories, and product-scenario markers in workspace tests.
 
-Source changes require lint and typecheck. Run focused tests for changed behavior. Run E2E when a renderer-to-service journey, browser interaction, responsive release state, or transport integration changes.
+Use focused tests while editing. Before pushing or handing off source changes, run `verify:core` and the applicable journey gates against the final changes:
+
+| Changed behavior | Additional gate |
+| --- | --- |
+| UI, accessible names, navigation, or renderer-to-service journeys | `npm run verify:browser` |
+| Electron IPC, preload, native integration, packaging, or desktop lifecycle | Package the app, then `npm run verify:desktop` |
+| Shared renderer behavior used by desktop journeys | Both browser and desktop gates |
+
+CI uses these same commands. Quality also audits production dependencies; desktop jobs also run Electron unit tests and build platform packages. Linux additionally installs and validates the Debian package. A core pass alone does not establish merge readiness. Report core, browser, and desktop results separately, including platform and any required checks not run. Run browser and desktop journeys sequentially because they use the same web port.
 
 For documentation-only changes, inspect the diff, check local links and referenced paths, verify command examples against package scripts, and run `git diff --check`. Lint, typecheck, and application tests are unnecessary unless executable code or configuration also changes. Product-model edits require `npm run product:docs` followed by `npm run product:check`.
 
@@ -32,9 +41,17 @@ Before shared tests, run `npm run typecheck` from the root to refresh `dist`; th
 
 ### Electron verification
 
-Electron E2E keeps the desktop window hidden by default, with renderer background throttling disabled so automation can run without taking desktop focus. Run `npx playwright test --config playwright.electron.config.ts` after building the Electron app and packaging it for the packaged Assistant scenario. For visible debugging in PowerShell, set `$env:WARPLYN_ELECTRON_TEST_HIDDEN = "false"` before running the tests, then run `Remove-Item Env:WARPLYN_ELECTRON_TEST_HIDDEN` to restore the default.
+Electron E2E keeps the desktop window hidden by default, with renderer background throttling disabled so automation can run without taking desktop focus. On Windows, run `npm run package:electron` before `npm run verify:desktop`; packaging builds both the web renderer and Electron. On Linux, run `npm run make:electron:linux`, install the resulting Debian package, then run `WARPLYN_ELECTRON_EXECUTABLE=/usr/lib/warplyn/Warplyn xvfb-run --auto-servernum npm run verify:desktop`, as CI does. Run the desktop gate again after rebuilding any changed production code.
+
+For visible debugging in PowerShell, set `$env:WARPLYN_ELECTRON_TEST_HIDDEN = "false"` before running the tests, then run `Remove-Item Env:WARPLYN_ELECTRON_TEST_HIDDEN` to restore the default. The real native spelling-marker test requires this visible mode and remains separate from the deterministic synthetic correction test.
 
 Browser E2E does not exercise Electron IPC, preload isolation, native dialogs, credentials, packaging, or shutdown. For changes to these paths, run the relevant Electron and server tests and the affected desktop scenario in the [release guide](mvp-release-and-recovery.md). Report any desktop checks that could not be run separately from browser results.
+
+### E2E failures
+
+Browser and desktop failures retain screenshots, traces, and error context under `test-results/browser` and `test-results/desktop`. CI uploads these directories on failure for seven days. Open a trace with `npx playwright show-trace <path-to-trace.zip>`. Use isolated test fixtures without provider credentials or private Author content.
+
+Reproduce a failure with `npm run verify:browser -- <spec-file>` or `npm run verify:desktop -- <spec-file> --grep <test-name>`. Fix and rerun the focused scenario, then its full gate. Keep locators scoped to the intended control and its displayed accessible name; stored values can differ from display fallbacks. Synthetic spelling suggestions should not depend on dictionary downloads; dedicated dictionary journeys retain real initialization coverage. Increase timeouts only when evidence shows the operation is valid but slow.
 
 ## Deterministic AI tests
 

@@ -20,7 +20,7 @@ For product decisions, identify the Author benefit and any tradeoff against thes
 1. Use the user request as the scope. Check the implementation and read the references for the affected area below.
 2. When changing existing product behavior or its owner paths, run `npm run product:impact -- <affected paths>`. Preserve matched implemented capabilities unless the request changes them. Update `product-model/areas` only when capability, status, contract, persistence, or visible behavior changes.
 3. For broad discovery or multi-step coding, use the [agent-work guide](docs/development/guides/context-efficient-agent-work.md). For code structure, use the [refactoring skill](.codex/skills/refactoring/SKILL.md).
-4. Complete the requested change and its applicable checks. The [testing guide](docs/development/guides/testing.md) gives the checks for source, docs, product records, and Electron.
+4. Before pushing or handing off a change, follow the [testing guide](docs/development/guides/testing.md) to select and run core, browser, and desktop gates. UI changes require browser journeys; Electron integration changes require desktop journeys after packaging. Report each applicable gate separately, including failures and checks not run.
 
 ## Plans and delegation
 

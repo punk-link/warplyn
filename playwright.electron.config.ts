@@ -5,6 +5,8 @@ process.env.WARPLYN_ELECTRON_TEST_HIDDEN ??= "true";
 export default defineConfig({
     testDir: "./e2e",
     testMatch: "electron-*.spec.ts",
+    outputDir: "test-results/desktop",
+    preserveOutput: "failures-only",
     reporter: "line",
     workers: 1,
     use: {
