@@ -3,6 +3,16 @@
     "area": "history-and-publishing",
     "capabilities": [
         {
+            "id": "history-and-publishing.missing-article-title",
+            "area": "Article metadata",
+            "title": "Generate a missing title after Revision promotion",
+            "status": "implemented",
+            "owners": ["packages/server/src/application/articles/article-title-service.ts", "packages/server/src/application/articles/article-service.ts", "packages/server/src/application/assistant/assistant-edit-service.ts", "packages/server/src/application/assistant/completion/complete-promoted-edit-title.ts", "packages/server/src/infrastructure/editorial/adapters/ai-sdk-article-title-generator-adapter.ts", "packages/server/src/infrastructure/persistence/repositories/article-title-query.ts", "packages/web/src/workspace/state/article-title-notification.ts"],
+            "contract": "New blank Articles store an empty title and display the localized Untitled article placeholder. After a committed save, Proposal acceptance, Assistant edit, or content-restoring Revision or conversation checkpoint, blank titles use the configured Text Generation Model. Before sending up to 12,000 Unicode characters, local validation excludes protected spans and requires at least 80 letters with 12 distinct words or 40 East Asian ideographs. Generation follows Article language or source language, preserves included protected values, and requires a completed structured confident result. A 15-second title deadline and cancellation leave committed text recoverable. Missing configuration, failure, invalid output, or insufficient context leaves the Article untitled with an actionable localized warning. Existing titles are never replaced, including the historical persisted Untitled article title.",
+            "persistence": "An atomic conditional metadata update requires the promoted Revision still to be current and the title still blank. Title generation creates no Revision. Promotion outcomes are transient transport data, never immutable history. Failed attempts may retry on a later promotion.",
+            "limitations": ["Title quality and confidence depend on the configured provider. Local context thresholds deliberately skip short or repetitive text."]
+        },
+        {
             "id": "history-and-publishing.article-files",
             "area": "Article files",
             "title": "Whole-Article Markdown, HTML, DOCX and RTF import and export",
@@ -77,6 +87,16 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "history-and-publishing.missing-article-title",
+            "title": "Only sufficiently detailed untitled promotions generate metadata",
+            "capabilityIds": ["history-and-publishing.missing-article-title"],
+            "preconditions": ["An Article Revision is promoted successfully."],
+            "event": "Title generation succeeds, lacks context, fails, is cancelled, or races a newer Revision or Author title.",
+            "expected": ["Only an untitled Article with enough local context sends bounded title context through the Text Generation Model.", "Save, acceptance, restoration and repeated promotions preserve committed history; valid titles persist as metadata only.", "Cancellation, malformed or low-confidence output and provider failure leave the Article untitled with a next step.", "Delayed output cannot overwrite an Author title or name a newer Revision."],
+            "forbidden": ["Replacing an Author title, adding a title-only Revision, or blocking a committed Revision on title failure."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/infrastructure/persistence/repositories.article-titles.test.ts" }
+        },
         {
             "id": "history-and-publishing.article-files-import",
             "title": "File import creates an independent recoverable Article after review",

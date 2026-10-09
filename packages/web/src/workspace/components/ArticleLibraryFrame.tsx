@@ -54,9 +54,11 @@ function PinnedArticleShortcuts({ articles, selectedArticleId, drawerOpen, onSel
 
     return <div role="group" aria-label={intl.formatMessage({ id: "navigation.pinned" })} className="mt-2 flex min-h-0 flex-1 flex-col items-center gap-1 overflow-y-auto border-t border-border pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {articles.map((article) => {
+            const title = article.title.trim() || intl.formatMessage({ id: "article.defaultTitle" });
             const initials = Array.from(article.title.trim().toLocaleUpperCase(intl.locale)).slice(0, 2).join("");
             const selected = article.id === selectedArticleId;
-            return <IconButton key={article.id} variant="quiet" className="shrink-0 text-xs font-medium aria-current:border-brand" label={intl.formatMessage({ id: "navigation.openPinnedArticle" }, { articleTitle: article.title })} title={article.title} data-focus-area-entry={selected && !drawerOpen || undefined} aria-current={selected ? "page" : undefined} aria-pressed={selected} onClick={(event) => onSelect(article.id, event.currentTarget)}>{initials || <ArticleIcon className="size-4" />}</IconButton>;
+
+            return <IconButton key={article.id} variant="quiet" className="shrink-0 text-xs font-medium aria-current:border-brand" label={intl.formatMessage({ id: "navigation.openPinnedArticle" }, { articleTitle: title })} title={title} data-focus-area-entry={selected && !drawerOpen || undefined} aria-current={selected ? "page" : undefined} aria-pressed={selected} onClick={(event) => onSelect(article.id, event.currentTarget)}>{initials || <ArticleIcon className="size-4" />}</IconButton>;
         })}
     </div>;
 }

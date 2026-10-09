@@ -4,6 +4,9 @@ import type { ArticleWorkspaceState } from "./article-workspace-state.js";
 import type { AssistantRequestStore } from "./assistant-request-state.js";
 import { updateStreamedMessage } from "./assistant-streaming.js";
 import { messages } from "../../i18n/messages.js";
+import { useIntl } from "react-intl";
+import { useNotifications } from "../../notifications/NotificationProvider.js";
+import { notifyTitleGeneration } from "./article-title-notification.js";
 
 
 interface AssistantStreamEventsOptions {
@@ -15,6 +18,8 @@ interface AssistantStreamEventsOptions {
 
 
 export function useAssistantStreamEvents({ articleId, workspace, store, onResult }: AssistantStreamEventsOptions) {
+    const intl = useIntl();
+    const { notify } = useNotifications();
     const { streamBuffers, setActivityByArticle, setFactCheckClaimsByArticle, setActiveRequestIdByArticle, setStreamedMessagesByArticle } = store;
     const clearStream = useCallback((id: string) => {
         delete streamBuffers.current[id];
@@ -54,6 +59,7 @@ export function useAssistantStreamEvents({ articleId, workspace, store, onResult
 
                 const result = event.result;
                 applyCompletedResult({ workspace, onResult }, id, revisionId, result, event.editorialArtifactId);
+                notifyTitleGeneration(result.titleGeneration, intl, notify);
 
                 if (result.factCheck) {
                     const { factCheck } = result;
@@ -68,7 +74,7 @@ export function useAssistantStreamEvents({ articleId, workspace, store, onResult
             event, articleId: id, streamedId, buffers: streamBuffers.current,
             update: (next) => setStreamedMessagesByArticle((current) => ({ ...current, [id]: { ...next, createdAt: current[id]?.createdAt ?? next.createdAt } })),
         });
-    }, [onResult, setActivityByArticle, setFactCheckClaimsByArticle, setActiveRequestIdByArticle, setStreamedMessagesByArticle, streamBuffers, workspace]);
+    }, [intl, notify, onResult, setActivityByArticle, setFactCheckClaimsByArticle, setActiveRequestIdByArticle, setStreamedMessagesByArticle, streamBuffers, workspace]);
 
 
     return { clearStream, handleAssistantEvent };

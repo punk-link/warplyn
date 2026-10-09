@@ -178,7 +178,7 @@ export async function restoreAssistantCheckpointRoute(request: IncomingMessage, 
     if (draftMode !== undefined && draftMode !== "preserve" && draftMode !== "discard")
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
-    writeJson(response, HTTP_STATUS.OK, assistant.restoreCheckpoint(articleId, messageId, parseString(body.tailToken, "tailToken"), draftMode as AssistantCheckpointDraftMode | undefined));
+    writeJson(response, HTTP_STATUS.OK, await assistant.restoreCheckpoint(articleId, messageId, parseString(body.tailToken, "tailToken"), draftMode as AssistantCheckpointDraftMode | undefined));
 }
 
 

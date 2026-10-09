@@ -14,6 +14,10 @@ on:
 permissions:
     contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
     verify-linux:
         if: github.event_name == 'pull_request'
@@ -32,10 +36,18 @@ jobs:
             - run: npm run make:electron:linux
             - name: Install Debian package
               run: sudo apt-get install -y ./packages/electron/out/make/deb/x64/*.deb
-            - name: Smoke test packaged Assistant
+            - name: Verify desktop journeys
               env:
                   WARPLYN_ELECTRON_EXECUTABLE: /usr/lib/warplyn/Warplyn
-              run: xvfb-run --auto-servernum npx playwright test --config playwright.electron.config.ts
+              run: xvfb-run --auto-servernum npm run verify:desktop
+            - name: Save desktop test failure evidence
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: linux-desktop-test-results
+                  path: test-results/desktop
+                  if-no-files-found: ignore
+                  retention-days: 7
             - name: Validate Debian package
               run: |
                   shopt -s nullglob

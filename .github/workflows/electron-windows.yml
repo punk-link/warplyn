@@ -14,6 +14,10 @@ on:
 permissions:
     contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
     verify-windows:
         if: github.event_name == 'pull_request'
@@ -39,16 +43,17 @@ jobs:
             - name: Build packaged application
               run: npm run package:electron
 
-            - name: Smoke test packaged Assistant
-              run: npx playwright test --config playwright.electron.config.ts
+            - name: Verify desktop journeys
+              run: npm run verify:desktop
 
             - name: Save desktop test failure evidence
               if: failure()
               uses: actions/upload-artifact@v4
               with:
                   name: windows-desktop-test-results
-                  path: test-results
+                  path: test-results/desktop
                   if-no-files-found: ignore
+                  retention-days: 7
 
     release-windows:
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'

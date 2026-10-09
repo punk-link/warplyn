@@ -100,7 +100,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
         return () => window.removeEventListener("mousedown", dismiss);
     }, [menuArticleId]);
     const normalizedQuery = query.toLowerCase();
-    const isArticleMatch = (article: ArticleSummary) => article.title.toLowerCase().includes(normalizedQuery);
+    const isArticleMatch = (article: ArticleSummary) => (article.title.trim() || intl.formatMessage({ id: "article.defaultTitle" })).toLowerCase().includes(normalizedQuery);
     const articleIds = new Set(articles.map((article) => article.id));
     const roots = articles.filter((article) => !article.sourceArticleId || !articleIds.has(article.sourceArticleId));
     const getChildArticles = (id: string) => childrenByArticle.get(id) ?? [];
@@ -218,7 +218,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
             setDeleteTarget(undefined);
         }}>
             <h2 id="delete-library-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
-            <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: deleteTarget.title, count: groupCount })}</p>
+            <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: deleteTarget.title.trim() || intl.formatMessage({ id: "article.defaultTitle" }), count: groupCount })}</p>
             <div className="mt-5 flex justify-end gap-2">
                 <Button variant="secondary" autoFocus onClick={() => setDeleteTarget(undefined)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
                 <Button variant="danger"

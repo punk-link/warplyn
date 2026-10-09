@@ -14,6 +14,7 @@ export function AutomaticBackups({ client }: { client: EditorialWorkspaceClient 
         const reportFailure = () => notify({ tone: "error", title: intl.formatMessage({ id: "settings.automaticBackupFailed" }) });
         if (getDesktopSettingsClient()) {
             window.addEventListener("warplyn:automatic-backup-failed", reportFailure);
+            window.dispatchEvent(new Event("warplyn:automatic-backup-listener-ready"));
             return () => window.removeEventListener("warplyn:automatic-backup-failed", reportFailure);
         }
 

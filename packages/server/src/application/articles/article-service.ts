@@ -4,15 +4,23 @@ import type { ArticleStore } from "./article-store.js";
 import type { AssistantGreetingStore } from "./assistant-greeting-store.js";
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import type { RevisionDescriptionGenerator } from "../editorial/revision-description-generator.js";
+import type { ArticleTitleGenerator } from "../editorial/article-title-generator.js";
+import { ArticleTitleService } from "./article-title-service.js";
 
 
 export class ArticleService {
+    private readonly titles: ArticleTitleService;
+
+
     constructor(
         private readonly store: ArticleStore,
         private readonly assistant: AssistantGreetingStore,
         private readonly telemetry?: TelemetryObserver,
         private readonly revisionDescriptionGenerator?: () => RevisionDescriptionGenerator | undefined,
-    ) { }
+        articleTitleGenerator: () => ArticleTitleGenerator | undefined = () => undefined,
+    ) {
+        this.titles = new ArticleTitleService(store, articleTitleGenerator);
+    }
 
 
     listArticles(): Article[] {
@@ -89,7 +97,8 @@ export class ArticleService {
 
 
     async saveRevisionWithDescription(articleId: string, input: SaveArticleRevisionInput, signal: AbortSignal): Promise<ArticleRevision> {
-        return this.store.saveRevision(articleId, input, await this.describeChange(articleId, input.content, input.interfaceLocale ?? defaultInterfaceLocale, signal));
+        const revision = this.store.saveRevision(articleId, input, await this.describeChange(articleId, input.content, input.interfaceLocale ?? defaultInterfaceLocale, signal));
+        return this.completeRevisionPromotion(revision, signal);
     }
 
 
@@ -109,7 +118,18 @@ export class ArticleService {
 
 
     async acceptProposalWithDescription(articleId: string, input: AcceptProposalInput, signal: AbortSignal): Promise<ArticleRevision> {
-        return this.store.acceptProposal(articleId, input, await this.describeChange(articleId, input.content, input.interfaceLocale ?? defaultInterfaceLocale, signal));
+        const revision = this.store.acceptProposal(articleId, input, await this.describeChange(articleId, input.content, input.interfaceLocale ?? defaultInterfaceLocale, signal));
+        return this.completeRevisionPromotion(revision, signal);
+    }
+
+
+    restoreRevisionWithTitle(articleId: string, revisionId: string): Promise<ArticleRevision> {
+        return this.completeRevisionPromotion(this.restoreRevision(articleId, revisionId), new AbortController().signal);
+    }
+
+
+    completeRevisionPromotion(revision: ArticleRevision, signal: AbortSignal): Promise<ArticleRevision> {
+        return this.titles.completePromotion(revision, signal);
     }
 
 

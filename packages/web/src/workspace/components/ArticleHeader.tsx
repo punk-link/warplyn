@@ -30,6 +30,7 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
     const intl = useIntl();
     const reportError = notifyError ?? (() => undefined);
     const [title, setTitle] = useState(article.title);
+    const displayTitle = article.title.trim() || intl.formatMessage({ id: "article.defaultTitle" });
     const [editingTitle, setEditingTitle] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const [fileFocusTarget, setFileFocusTarget] = useState<HTMLButtonElement>();
@@ -141,7 +142,7 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
                             setEditingTitle(false);
                         }
                     }} />
-                    : <button data-focus-area-entry className="w-full truncate text-left hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" aria-label={intl.formatMessage({ id: "articleHeader.rename" }, { articleTitle: article.title })} onClick={() => setEditingTitle(true)}>{article.title}</button>}
+                    : <button data-focus-area-entry className="w-full truncate text-left hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" aria-label={intl.formatMessage({ id: "articleHeader.rename" }, { articleTitle: displayTitle })} onClick={() => setEditingTitle(true)}>{displayTitle}</button>}
             </h1>
             {article.archived && <Badge className="shrink-0" tone="info">{intl.formatMessage({ id: "articleHeader.archived" })}</Badge>}
             <div className="flex shrink-0 items-center gap-1 text-xs" aria-label={intl.formatMessage({ id: "articleHeader.metadata" })}>
@@ -184,7 +185,7 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
             setDeleteConfirmationOpen(false);
         }}>
             <h2 id="delete-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
-            <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: article.title, count: groupCount })}</p>
+            <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: displayTitle, count: groupCount })}</p>
             <div className="mt-5 flex justify-end gap-2">
                 <Button variant="secondary" autoFocus onClick={() => setDeleteConfirmationOpen(false)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
                 <Button variant="danger" onClick={() => void confirmDelete()}>{intl.formatMessage({ id: "articleHeader.confirmDeleteArticle" })}</Button>

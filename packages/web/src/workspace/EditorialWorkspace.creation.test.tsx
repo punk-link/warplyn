@@ -26,6 +26,6 @@ describe("Editorial Workspace Article creation", () => {
         const user = userEvent.setup();
         render(<App client={client} />);
         await user.click(await screen.findByRole("button", { name: "Create" }));
-        expect(client.createArticle).toHaveBeenCalledWith({ title: "Untitled article", content: "", language: "en", publishingProfileId: "default" });
+        expect(client.createArticle).toHaveBeenCalledWith({ title: "", content: "", language: "en", publishingProfileId: "default" });
     });
 });

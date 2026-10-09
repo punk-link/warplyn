@@ -41,7 +41,8 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         const editor = page.getByRole("textbox", { name: "Article draft" });
         await editor.pressSequentially("Electron fixture Article.");
         await page.getByRole("button", { name: "Save revision" }).click();
-        await expect(page.getByRole("status").filter({ hasText: "Saved" })).toBeVisible();
+        await expect(page.getByRole("status", { name: "Saved", exact: true })).toBeVisible();
+        await page.getByRole("button", { name: "Dismiss notification: Revision saved without an Article title" }).click();
 
         await page.getByRole("button", { name: "Expand Editorial Assistant Panel" }).click();
         await page.getByRole("combobox", { name: "Editorial guidance" }).fill("Improve flow");

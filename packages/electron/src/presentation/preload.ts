@@ -12,6 +12,7 @@ import { createDesktopUpdateClient, supportsReleaseDiscovery } from "./updates/d
 import { createDesktopTelemetryClient } from "./telemetry/desktop-telemetry.js";
 import { createDesktopArticleFilesClient } from "./articles/desktop-article-files-client.js";
 import { createDesktopSpellingClient } from "./settings/desktop-spelling-client.js";
+import { registerAutomaticBackupEvents } from "./settings/automatic-backup-events.js";
 
 
 function isPrepareCloseRequest(value: unknown): value is ElectronPrepareCloseRequest {
@@ -52,7 +53,7 @@ ipcRenderer.on("warplyn:spelling-failed", (_event, kind: unknown) => {
 
 contextBridge.exposeInMainWorld("skladnoArticleFiles", createDesktopArticleFilesClient(ipcRenderer));
 contextBridge.exposeInMainWorld("skladnoDesktop", createDesktopSettingsClient(ipcRenderer));
-ipcRenderer.on("warplyn:automatic-backup-failed", () => window.dispatchEvent(new Event("warplyn:automatic-backup-failed")));
+registerAutomaticBackupEvents(ipcRenderer, window);
 contextBridge.exposeInMainWorld("skladnoShell", createDesktopShellClient(ipcRenderer));
 
 if (supportsReleaseDiscovery())

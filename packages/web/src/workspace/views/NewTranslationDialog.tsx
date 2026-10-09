@@ -64,7 +64,7 @@ export function NewTranslationDialog({ article, content, defaults, viewedLanguag
         close();
     }}>
         <h2 id="new-translation-title" className="text-lg font-semibold">{intl.formatMessage({ id: "views.translate" })}</h2>
-        <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "views.translationGenerateDescription" }, { title: article.title, revisionId: revisionNumber ?? article.currentRevisionId })}</p>
+        <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "views.translationGenerateDescription" }, { title: article.title.trim() || intl.formatMessage({ id: "article.defaultTitle" }), revisionId: revisionNumber ?? article.currentRevisionId })}</p>
         {content !== article.currentRevision.content && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "views.translationGenerateDraft" })}</p>}
         {changed && <Banner tone="warning" className="mt-3">{intl.formatMessage({ id: "views.translationContextChanged" })}</Banner>}
         <fieldset className="mt-4">
