@@ -37,6 +37,7 @@ test("spelling menu correction follows Lexical Draft recovery and immutable save
         // Reproduce hidden Chromium's missing markers deterministically.
         await editor.evaluate((root) => root.setAttribute("spellcheck", "false"));
         // Synthetic suggestions do not require a downloaded dictionary.
+        await expect.poll(() => app?.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.webContents.session.getSpellCheckerLanguages())).toEqual(["en"]);
         // replaceMisspelling requires a native marker, which synthetic menu data cannot create.
         // Substitute native text insertion here; the visible test below covers real markers.
         await app.evaluate(({ Menu, BrowserWindow }) => {
@@ -182,18 +183,19 @@ test("packaged Spelling Settings prepares dictionaries and recovers personal voc
         let page = app.page;
         await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
+        await page.getByRole("button", { name: "Settings", exact: true }).click();
+        await page.getByRole("button", { name: "Spelling", exact: true }).click();
+        await expect(page.getByRole("textbox", { name: "Words to add" })).toBeVisible();
         const result = await page.evaluate(() => window.warplynSpelling?.request({ method: "prepare", languages: ["en-US", "es"] }));
         expect(result?.ok).toBe(true);
         await expect.poll(() => page.evaluate(async () => {
             const snapshot = await window.warplynSpelling?.request({ method: "snapshot" });
-            return snapshot?.ok && ["en-US", "es"].every((language) => snapshot.value.dictionaries.states[language] === "ready");
-        }), { timeout: 60_000 }).toBe(true);
-        await page.getByRole("button", { name: "Settings", exact: true }).click();
-        await page.getByRole("button", { name: "Spelling", exact: true }).click();
+            return snapshot?.ok ? snapshot.value.dictionaries.states : snapshot;
+        }), { timeout: 60_000 }).toMatchObject({ "en-US": "ready", es: "ready" });
         await page.getByRole("textbox", { name: "Words to add" }).fill("Warplynpackagedterm");
         await page.getByRole("button", { name: "Add words" }).click();
         await expect(page.getByRole("button", { name: "Remove Warplynpackagedterm from personal dictionary" })).toBeVisible();
-        await page.screenshot({ path: "test-results/spelling-settings-desktop.png" });
+        await page.screenshot({ path: test.info().outputPath("spelling-settings-desktop.png") });
         const viewport = await page.context().newCDPSession(page);
         await viewport.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });
         await expect(page.getByRole("combobox", { name: "Settings Navigation" })).toBeVisible();
@@ -226,17 +228,18 @@ test("native preload and personal words persist while language activation stays 
     try {
         app = await launchSpelling(root);
         let page = await app.firstWindow();
+        await page.getByRole("button", { name: "Settings", exact: true }).click();
+        await page.getByRole("button", { name: "Spelling", exact: true }).click();
+        await expect(page.getByRole("textbox", { name: "Words to add" })).toBeVisible();
         await page.evaluate(() => window.warplynSpelling?.setArticleLanguage(null));
         const prepared = await page.evaluate(() => window.warplynSpelling?.request({ method: "prepare", languages: ["en-US", "es"] }));
         expect(prepared?.ok).toBe(true);
         await expect.poll(() => page.evaluate(async () => {
             const result = await window.warplynSpelling?.request({ method: "snapshot" });
-            return result?.ok && ["en-US", "es"].every((language) => result.value.dictionaries.states[language] === "ready");
-        }), { timeout: 60_000 }).toBe(true);
+            return result?.ok ? result.value.dictionaries.states : result;
+        }), { timeout: 60_000 }).toMatchObject({ "en-US": "ready", es: "ready" });
         const added = await page.evaluate(() => window.warplynSpelling?.request({ method: "addWords", words: ["Warplynsyntheticterm"] }));
         expect(added?.ok && added.value.personal.words.includes("Warplynsyntheticterm")).toBe(true);
-        await page.getByRole("button", { name: "Settings", exact: true }).click();
-        await page.getByRole("button", { name: "Spelling", exact: true }).click();
         const filter = page.getByRole("searchbox", { name: "Filter languages" });
         await expect(filter).toBeVisible();
         const languageList = page.getByRole("group", { name: "Language dictionaries", exact: true });
@@ -254,7 +257,7 @@ test("native preload and personal words persist while language activation stays 
         await expect(languageList.getByRole("button", { name: /Unload.*en-US/ })).toBeVisible();
         await expect(page.getByRole("button", { name: "Download dictionaries" })).toBeDisabled();
         await filter.clear();
-        await page.screenshot({ path: "test-results/spelling-settings-stacked.png" });
+        await page.screenshot({ path: test.info().outputPath("spelling-settings-stacked.png") });
         await app.evaluate(({ BrowserWindow }) => {
             const window = BrowserWindow.getAllWindows()[0];
             window?.setMinimumSize(390, 600);
@@ -262,7 +265,7 @@ test("native preload and personal words persist while language activation stays 
         });
         await expect(page.getByRole("combobox", { name: "Settings Navigation" })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
-        await page.screenshot({ path: "test-results/spelling-settings-stacked-narrow.png" });
+        await page.screenshot({ path: test.info().outputPath("spelling-settings-stacked-narrow.png") });
         await page.evaluate(() => window.warplynSpelling?.setArticleLanguage("es"));
         expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.webContents.session.getSpellCheckerLanguages())).toEqual(["es"]);
         await app.evaluate(({ BrowserWindow, ipcMain }) => {

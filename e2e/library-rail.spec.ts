@@ -6,8 +6,7 @@ async function createAndNameArticle(page: Page, title: string) {
     await page.getByRole("button", { name: "New article", exact: true }).click();
     const response = await created;
     expect(response.ok()).toBe(true);
-    const article: { title: string } = await response.json();
-    await page.getByRole("button", { name: `Rename article: ${article.title}`, exact: true }).click();
+    await page.getByRole("button", { name: "Rename article: Untitled article", exact: true }).click();
     const field = page.getByRole("textbox", { name: "Article title", exact: true });
     await field.fill(title);
     await field.press("Enter");
