@@ -36,10 +36,7 @@ test("spelling menu correction follows Lexical Draft recovery and immutable save
         await expect(editor).toHaveAttribute("spellcheck", "true");
         // Reproduce hidden Chromium's missing markers deterministically.
         await editor.evaluate((root) => root.setAttribute("spellcheck", "false"));
-        await expect.poll(() => page.evaluate(async () => {
-            const result = await window.warplynSpelling?.request({ method: "snapshot" });
-            return result?.ok && result.value.dictionaries.states["en-US"] === "ready";
-        }), { timeout: 60_000 }).toBe(true);
+        // Synthetic suggestions do not require a downloaded dictionary.
         // replaceMisspelling requires a native marker, which synthetic menu data cannot create.
         // Substitute native text insertion here; the visible test below covers real markers.
         await app.evaluate(({ Menu, BrowserWindow }) => {
