@@ -18,6 +18,8 @@ function getSkillAliasKey(skill: BuiltInSkillId) {
             return "narrativeDraft";
         case BUILT_IN_SKILL.FLOW_AND_CLARITY:
             return "flowAndClarity";
+        case BUILT_IN_SKILL.CONCISE_REWRITE:
+            return "conciseRewrite";
         case BUILT_IN_SKILL.FACT_CHECKING:
             return "factChecking";
         case BUILT_IN_SKILL.STYLE_REVIEW:

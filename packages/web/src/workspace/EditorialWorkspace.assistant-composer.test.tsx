@@ -64,6 +64,7 @@ describe("Editorial Assistant composer", () => {
         expect(panelScope.getByRole("option", { name: "Talking points" })).toBeTruthy();
         expect(panelScope.getByRole("option", { name: "Narrative draft" })).toBeTruthy();
         expect(panelScope.getByRole("option", { name: "Flow and clarity" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Concise rewrite" })).toBeTruthy();
         expect(panelScope.getByRole("option", { name: "Fact checking" })).toBeTruthy();
         expect(panelScope.getByRole("option", { name: "Style review" })).toBeTruthy();
         expect(panelScope.getByRole("option", { name: "Translation" })).toBeTruthy();

@@ -38,7 +38,7 @@ export function streamAssistantEngineEvents(request: PreparedAssistantRequest, s
 }
 
 
-function getAssistantArticleExcerpt(request: PreparedAssistantRequest): string {
+export function getAssistantArticleExcerpt(request: PreparedAssistantRequest): string {
     return request.scope.kind === "selection"
         ? request.articleContent.slice(request.scope.startOffset, request.scope.endOffset)
         : request.articleContent;

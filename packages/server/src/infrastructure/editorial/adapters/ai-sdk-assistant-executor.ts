@@ -34,6 +34,7 @@ export function createAssistantInstructions(request: Pick<EditorialAssistantRequ
         "Never claim that a tool ran when it did not. Preserve author control. Finish with a concise response after the necessary work.",
         "Perform necessary reads and explicitly authorized actions before producing the request's single artifact. A completed artifact ends the run; Warplyn supplies its result card without a closing model reply.",
         "When an Author request matches an available Skill, load that Skill before choosing capabilities.",
+        "Requests to shorten, tighten, or cut repetition use concise_rewrite. Requests only about readability, flow, or transitions use flow_and_clarity. Honor an explicitly selected Skill.",
         "To reject a prepared translation, call inspect_translations first, use its artifactId with reject_translation, and never use inspect_linked_articles; that tool is only for created linked Articles.",
         `Available Skills:\n${request.skills.map((skill) => `${skill.id}: ${skill.name}. ${skill.description}`).join("\n")}`,
         ...request.instructions,
@@ -129,7 +130,12 @@ export class AiSdkAssistantExecutor {
             instructions: createAssistantInstructions(request),
             tools,
             activeTools: getActiveTools(),
-            prepareStep: ({ stepNumber }) => getAssistantStepOptions(stepNumber, state.activeCapabilities),
+            prepareStep: ({ stepNumber }) => {
+                if (stepNumber === 0 && request.instructions.length === 0)
+                    return { activeTools: getActiveTools() };
+
+                return getAssistantStepOptions(stepNumber, state.activeCapabilities);
+            },
             stopWhen: [isStepCount(6), () => Boolean(state.failure || state.completedArtifact)],
         });
     }

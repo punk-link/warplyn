@@ -56,6 +56,23 @@ async function createArticle(page: import("@playwright/test").Page, content = "O
 }
 
 
+test("Concise rewrite stays a Proposal until acceptance and survives reload", async ({ page }) => {
+    await page.goto("/");
+    await createArticle(page, "It is important to note that retries need limits.");
+    await page.getByRole("button", { name: "Quick actions" }).click();
+    await page.getByRole("option", { name: "Concise rewrite" }).click();
+    await page.getByRole("button", { name: "Send editorial request" }).click();
+    await expect(page.getByRole("tab", { name: "Proposals: Review" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
+    await page.getByRole("tab", { name: /Proposal/ }).click();
+    await page.getByRole("button", { name: "Accept all" }).click();
+    await page.getByRole("tab", { name: "Write" }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need limits.");
+    await page.reload();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need limits.");
+});
+
+
 test("critical local-first author journeys use deterministic provider output", async ({ page }) => {
     await page.goto("/");
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: "http://127.0.0.1:5173" });

@@ -1,10 +1,11 @@
 import type { AssistantResponseKind, BuiltInSkillId } from "@skladno/shared";
 
 
-export const skillMessages: Record<BuiltInSkillId, "assistant.skill.talkingPoints.label" | "assistant.skill.narrativeDraft.label" | "assistant.skill.flowAndClarity.label" | "assistant.skill.factChecking.label" | "assistant.skill.styleReview.label" | "assistant.skill.translation.label" | "assistant.skill.skillCreator.label"> = {
+export const skillMessages: Record<BuiltInSkillId, "assistant.skill.talkingPoints.label" | "assistant.skill.narrativeDraft.label" | "assistant.skill.flowAndClarity.label" | "assistant.skill.conciseRewrite.label" | "assistant.skill.factChecking.label" | "assistant.skill.styleReview.label" | "assistant.skill.translation.label" | "assistant.skill.skillCreator.label"> = {
     talking_points: "assistant.skill.talkingPoints.label",
     narrative_draft: "assistant.skill.narrativeDraft.label",
     flow_and_clarity: "assistant.skill.flowAndClarity.label",
+    concise_rewrite: "assistant.skill.conciseRewrite.label",
     fact_checking: "assistant.skill.factChecking.label",
     style_review: "assistant.skill.styleReview.label",
     translation: "assistant.skill.translation.label",

@@ -45,6 +45,9 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         await page.getByRole("button", { name: "Dismiss notification: Revision saved without an Article title" }).click();
 
         await page.getByRole("button", { name: "Expand Editorial Assistant Panel" }).click();
+        await page.getByRole("button", { name: "Quick actions" }).click();
+        await expect(page.getByRole("option", { name: "Concise rewrite" })).toBeVisible();
+        await page.getByRole("option", { name: "Concise rewrite" }).click();
         await page.getByRole("combobox", { name: "Editorial guidance" }).fill("Improve flow");
         await page.getByRole("button", { name: "Send editorial request" }).click();
         await expect(page.getByRole("alert")).toBeVisible();

@@ -48,6 +48,15 @@
             "persistence": "Completed proposal artifacts are local and revision-bound."
         },
         {
+            "id": "editorial-workflows.concise-rewrite",
+            "area": "Editorial operations",
+            "title": "Concise rewrite",
+            "status": "implemented",
+            "owners": ["packages/shared/src/assistant/assistant-skills.ts", "packages/server/src/application/assistant", "packages/server/src/application/editorial/workflow-prompt.ts", "packages/server/src/infrastructure/editorial/adapters/ai-sdk-assistant-executor.ts", "packages/web/src/workspace/components/assistant", "packages/web/src/settings/components/AiModelSelect.tsx"],
+            "contract": "An explicitly selected or automatically loaded Concise rewrite Skill shortens an Article or selection through the existing flow-revision Proposal path. Requests to shorten, tighten, or cut repetition select Concise rewrite; readability and transitions alone retain Flow and Clarity. The prompt preserves meaning, evidence, claims, numbers, URLs, quotations, citations, code, technical terms, Markdown, author voice, and certainty without adding facts, examples, or conclusions. Output retains prose form, follows explicit retention and cutting guidance, and is shorter or exactly unchanged when safe shortening is impossible. Completion rejects longer or same-length changed output and changed protected spans. Selection generation receives only the excerpt and explicit Author guidance, and splices the replacement without changing surrounding Markdown. Concise rewrite always requires explicit Proposal acceptance, including in direct-edit mode. Semantic preservation remains subject to model quality and Author review.",
+            "persistence": "Uses existing revision-bound Assistant requests and Proposal artifacts, model overrides, cancellation, retry, stale guards, and immutable acceptance Revisions without new storage."
+        },
+        {
             "id": "editorial-workflows.fact-check-request",
             "area": "Editorial operations",
             "title": "Fact-check request",
@@ -115,6 +124,26 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "editorial-workflows.concise-rewrite-contract",
+            "title": "Concise rewrite has a distinct safe-shortening prompt contract",
+            "capabilityIds": ["editorial-workflows.concise-rewrite"],
+            "preconditions": ["The Author selects Concise rewrite for an Article or selection."],
+            "event": "The engine constructs the prompt with optional Author guidance.",
+            "expected": ["The prompt specifies safe deletion, protected content, prose output, complete body or selection replacement, and an exact no-op when shortening is unsafe."],
+            "forbidden": ["Applying Flow's specific-change-only instruction, requesting surrounding selection context, or adding facts and certainty."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/application/editorial/workflow-prompt.test.ts" }
+        },
+        {
+            "id": "editorial-workflows.concise-rewrite-proposal",
+            "title": "Concise rewrite keeps shortened text under Author approval",
+            "capabilityIds": ["editorial-workflows.concise-rewrite", "editorial-workflows.ai-safety"],
+            "preconditions": ["The Author requests concise rewriting of an Article or selection, including in direct-edit mode."],
+            "event": "Generation completes, returns unchanged text, fails validation, or is cancelled and retried.",
+            "expected": ["A valid shorter or exact unchanged Proposal remains bound to its source Revision. Selection replacement preserves surrounding Markdown. Acceptance appends one immutable Revision, and stale acceptance fails. Cancellation and invalid output retain no generated artifact."],
+            "forbidden": ["Silent Article edits, persistence of unsafe output, or lost Skill identity during inferred concise routing."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/presentation/editorial-integration.concise-rewrite.test.ts" }
+        },
         {
             "id": "editorial-workflows.assistant-request-timeout",
             "title": "Assistant requests stop at their configured deadline",

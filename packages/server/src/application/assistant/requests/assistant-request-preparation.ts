@@ -18,6 +18,7 @@ function getEditorialOperationFor(skill: string): EditorialOperation | undefined
         talking_points: "thesis_to_narrative",
         narrative_draft: "thesis_to_narrative",
         flow_and_clarity: "flow_revision",
+        concise_rewrite: "flow_revision",
         fact_checking: "fact_check",
         style_review: "style_review",
         translation: "translation",

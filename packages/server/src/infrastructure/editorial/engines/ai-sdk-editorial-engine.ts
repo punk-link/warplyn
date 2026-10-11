@@ -79,7 +79,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
 
             const modelMessage = createEditorialMessages({
                 operation: request.operation,
-                article: getBoundedArticleContext(request.article),
+                article: request.skillId === BUILT_IN_SKILL.CONCISE_REWRITE ? request.article : getBoundedArticleContext(request.article),
                 articleTitle: request.articleTitle,
                 articleSelection: request.articleSelection,
                 authorContext: request.authorContext,

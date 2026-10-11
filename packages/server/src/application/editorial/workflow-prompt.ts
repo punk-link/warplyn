@@ -158,7 +158,20 @@ function createFlowRevisionPrompt(input: EditorialPromptInput): ModelMessage[] {
 }
 
 
+function createConciseRewritePrompt(input: EditorialPromptInput): ModelMessage[] {
+    const sourceLabel = input.articleSelection ? "Article selection" : "Current article";
+    const outputFormat = input.articleSelection ? "Selected-passage Markdown replacement." : "Full Article body Markdown proposal.";
+    return [
+        { role: "system", content: getSkillInstructions(input) },
+        { role: "user", content: `Output format:\n${outputFormat}\n\n${createArticleTitleContext(input)}${sourceLabel}:\n${input.article}\n\nAuthor guidance:\n${createAuthorGuidance(input.authorContext)}` },
+    ];
+}
+
+
 export function createEditorialMessages(input: EditorialPromptInput): ModelMessage[] {
+    if (input.skillId === BUILT_IN_SKILL.CONCISE_REWRITE)
+        return createConciseRewritePrompt(input);
+
     if (input.skillId === BUILT_IN_SKILL.TALKING_POINTS)
         return createTalkingPointsPrompt(input);
 

@@ -46,7 +46,7 @@ test("Assistant execution loads Skills from its catalog", async () => {
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [], discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* () {
@@ -90,7 +90,7 @@ test("streams extracted Fact Check claims while the capability is still running"
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => editorialCapabilityDefinitions.filter((definition) => definition.id === "fact_check"),
             discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
@@ -148,7 +148,7 @@ test("an Author Skill inspects the current Article before following its instruct
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [
                 { id: "inspect_article", execution: "read", allowedContext: "article", input: "none", result: "article", retry: "transient-read", activity: "Reviewing the current Article." },
@@ -202,7 +202,7 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [{ id: "generate_proposal", execution: "artifact", allowedContext: "article", selectionCompatible: true, input: "proposal-operation", result: "proposal", retry: "never", activity: "Preparing a Proposal." }],
             discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
@@ -242,7 +242,7 @@ test("an Author Skill cannot complete as chat instead of a Proposal", async () =
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [], discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* () {
@@ -295,7 +295,7 @@ test("the Assistant model can create an explicitly requested Author Skill withou
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined },
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined },
         engines: { resolveAssistantActionIntentVerifier: () => ({ verify: async (_message, action) => action === "create_author_skill" }) },
         authorSkills,
         capabilities: {

@@ -13,6 +13,19 @@ test("app work prefers its dedicated model and otherwise falls back to the defau
 });
 
 
+test("Concise rewrite uses its own model override without changing Flow", () => {
+    const resolver = new ConfiguredEditorialEngineResolver(
+        { host: "127.0.0.1", port: 8787, webOrigin: "http://localhost:5173", databasePath: "unused", aiApiKey: "test-key", aiModel: "gpt-5.6", aiSessionContinuationEnabled: false },
+        {
+            getSetting: (key) => key === "application-model-preferences" ? { key, updatedAt: "now", value: { defaultModel: "gpt-5.6", skillOverrides: { concise_rewrite: "gpt-5.6-mini" } } } : undefined,
+            saveSetting: () => ({ key: "", value: undefined, updatedAt: "now" }),
+        },
+    );
+    assert.equal(resolver.resolve("flow_revision", "concise_rewrite")?.continuationScope?.model, "gpt-5.6-mini");
+    assert.equal(resolver.resolve("flow_revision")?.continuationScope?.model, "gpt-5.6");
+});
+
+
 test("resolves the active connection's provider and isolated model preference", () => {
     const resolver = new ConfiguredEditorialEngineResolver(
         { host: "127.0.0.1", port: 8787, webOrigin: "http://localhost:5173", databasePath: "unused", aiApiKey: undefined, aiModel: "gpt-5.6", aiSessionContinuationEnabled: true } satisfies ServerConfig,

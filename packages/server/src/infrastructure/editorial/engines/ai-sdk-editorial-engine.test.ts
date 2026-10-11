@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { LanguageModelV3StreamPart } from "@ai-sdk/provider";
-import { AI_PROVIDER, EDITORIAL_OPERATION } from "@skladno/shared";
+import { AI_PROVIDER, BUILT_IN_SKILL, EDITORIAL_OPERATION } from "@skladno/shared";
 import { MockLanguageModelV3 } from "ai/test";
 
 import { EDITORIAL_ENGINE_EVENT } from "../../../application/editorial/engine/editorial-engine-events.js";
@@ -93,6 +93,31 @@ test("editorial prompts route system messages through AI SDK 7 instructions", as
         events.push(event.type);
 
     assert.deepEqual(events, [EDITORIAL_ENGINE_EVENT.TEXT_DELTA, EDITORIAL_ENGINE_EVENT.COMPLETED]);
+});
+
+
+test("Concise rewrite sends the complete requested source even beyond the conversational context bound", async () => {
+    const article = "Opening.\n" + "Evidence must survive.\n".repeat(1_200) + "Ending.\n";
+    const model = new MockLanguageModelV3({ doStream: async () => ({ stream: new ReadableStream<LanguageModelV3StreamPart>({ start(controller) {
+        controller.enqueue({ type: "text-start", id: "text" });
+        controller.enqueue({ type: "text-delta", id: "text", delta: article });
+        controller.enqueue({ type: "text-end", id: "text" });
+        controller.enqueue({ type: "finish", finishReason: { unified: "stop", raw: undefined }, usage: {
+            inputTokens: { total: 1, noCache: 1, cacheRead: 0, cacheWrite: 0 }, outputTokens: { total: 1, text: 1, reasoning: 0 },
+        } });
+        controller.close();
+    } }) }) });
+    const engine = new AiSdkEditorialEngine({ provider: AI_PROVIDER.OPENAI, languageModel: model, storeResponses: false });
+    for (const selection of [false, true]) {
+        for await (const event of engine.stream({ operation: EDITORIAL_OPERATION.FLOW_REVISION, skillId: BUILT_IN_SKILL.CONCISE_REWRITE, article, articleSelection: selection, articleTitle: "Private title", authorContext: "" }, new AbortController().signal))
+            assert.notEqual(event.type, "error");
+
+        const prompt = JSON.stringify(model.doStreamCalls.at(-1)?.prompt);
+        assert.ok(prompt.includes(JSON.stringify(article).slice(1, -1)));
+        assert.doesNotMatch(prompt, /Middle of article omitted/);
+        if (selection)
+            assert.doesNotMatch(prompt, /Private title/);
+    }
 });
 
 

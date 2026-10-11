@@ -9,7 +9,7 @@ const providerMessages: Record<AiProvider, "settings.provider.openai" | "setting
     [AI_PROVIDER.OPENAI]: "settings.provider.openai", [AI_PROVIDER.OPENCODE]: "settings.provider.opencode", [AI_PROVIDER.ANTHROPIC]: "settings.provider.anthropic", [AI_PROVIDER.GOOGLE]: "settings.provider.google", [AI_PROVIDER.XAI]: "settings.provider.xai", [AI_PROVIDER.DEEPSEEK]: "settings.provider.deepseek",
 };
 
-const skillMessages: Record<"talking_points" | "narrative_draft" | "flow_and_clarity" | "fact_checking" | "style_review" | "translation", { label: "assistant.skill.talkingPoints.label" | "assistant.skill.narrativeDraft.label" | "assistant.skill.flowAndClarity.label" | "assistant.skill.factChecking.label" | "assistant.skill.styleReview.label" | "assistant.skill.translation.label"; hint: "assistant.skill.talkingPoints.hint" | "assistant.skill.narrativeDraft.hint" | "assistant.skill.flowAndClarity.hint" | "assistant.skill.factChecking.hint" | "assistant.skill.styleReview.hint" | "assistant.skill.translation.hint" }> = {
+const skillMessages: Record<"talking_points" | "narrative_draft" | "flow_and_clarity" | "concise_rewrite" | "fact_checking" | "style_review" | "translation", { label: "assistant.skill.talkingPoints.label" | "assistant.skill.narrativeDraft.label" | "assistant.skill.flowAndClarity.label" | "assistant.skill.conciseRewrite.label" | "assistant.skill.factChecking.label" | "assistant.skill.styleReview.label" | "assistant.skill.translation.label"; hint: "assistant.skill.talkingPoints.hint" | "assistant.skill.narrativeDraft.hint" | "assistant.skill.flowAndClarity.hint" | "assistant.skill.conciseRewrite.hint" | "assistant.skill.factChecking.hint" | "assistant.skill.styleReview.hint" | "assistant.skill.translation.hint" }> = {
     talking_points: {
         label: "assistant.skill.talkingPoints.label",
         hint: "assistant.skill.talkingPoints.hint"
@@ -21,6 +21,10 @@ const skillMessages: Record<"talking_points" | "narrative_draft" | "flow_and_cla
     flow_and_clarity: {
         label: "assistant.skill.flowAndClarity.label",
         hint: "assistant.skill.flowAndClarity.hint"
+    },
+    concise_rewrite: {
+        label: "assistant.skill.conciseRewrite.label",
+        hint: "assistant.skill.conciseRewrite.hint"
     },
     fact_checking: {
         label: "assistant.skill.factChecking.label",

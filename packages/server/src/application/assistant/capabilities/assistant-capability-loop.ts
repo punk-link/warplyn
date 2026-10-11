@@ -23,6 +23,8 @@ import { AuthorSkillChatActions } from "../skills/author-skill-chat-actions.js";
 import type { CommittedAuthorSkillChange } from "../skills/committed-author-skill-change.js";
 import { AssistantArtifactExecution } from "./assistant-artifact-execution.js";
 import { getExactCharacterReplacement } from "./assistant-character-replacement.js";
+import { resolveConciseRewriteSkill } from "./resolve-concise-rewrite-skill.js";
+import { getAssistantArticleExcerpt } from "../assistant-engine-request.js";
 
 
 function isTransientReadFailure(error: unknown): boolean {
@@ -35,7 +37,7 @@ export class AssistantCapabilityLoop {
 
 
     constructor(private readonly dependencies: {
-        assistant: Pick<AssistantStore, "setExecution">;
+        assistant: Pick<AssistantStore, "setExecution" | "resolveRequest">;
         engines: Pick<EditorialEngineResolver, "resolveAssistantActionIntentVerifier">;
         capabilities?: Pick<EditorialCapabilityCatalog, "getDefinitions" | "discover" | "read" | "executeAction" | "stream">;
         authorSkills?: AuthorSkillService;
@@ -85,7 +87,7 @@ export class AssistantCapabilityLoop {
         if (!request.engine.streamAssistant || !this.dependencies.capabilities)
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
-        const excerpt = this.getArticleExcerpt(request);
+        const excerpt = getAssistantArticleExcerpt(request);
         const summaries = this.dependencies.skills.discover();
         const skills = this.dependencies.skills.load(summaries.map((skill) => skill.reference));
         const selectedSkills = request.resolvedSkillId
@@ -110,6 +112,7 @@ export class AssistantCapabilityLoop {
             instructions: [...selectedSkills.flatMap((skill) => [skill.instructions, ...(skill.references ?? [])]), ...(request.targetLanguage ? [`Target translation language: ${request.targetLanguage}`] : [])],
             history: this.dependencies.conversationHistory(request.articleId, 12),
             skills: skills.map((skill) => ({ id: skill.reference.id, name: skill.name, description: skill.description, instructions: [skill.instructions, ...(skill.references ?? [])].join("\n\n"), capabilities: this.getInitialCapabilities(skill.reference.id, request.scope.kind) })),
+            onSkillLoaded: (id: string) => resolveConciseRewriteSkill(request, id, this.dependencies.assistant),
             tools,
             ...(initialActiveCapabilities ? { initialActiveCapabilities } : {}),
         };
@@ -141,13 +144,6 @@ export class AssistantCapabilityLoop {
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
         return event;
-    }
-
-
-    private getArticleExcerpt(request: PreparedAssistantRequest): string {
-        return request.scope.kind === "selection"
-            ? request.articleContent.slice(request.scope.startOffset, request.scope.endOffset)
-            : request.articleContent;
     }
 
 

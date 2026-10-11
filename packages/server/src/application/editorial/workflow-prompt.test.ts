@@ -174,6 +174,39 @@ test("selected editorial text does not send the surrounding Article title", () =
 });
 
 
+// Product scenario: editorial-workflows.concise-rewrite-contract
+test("Concise rewrite specifies safe deletion, preservation, prose output, and exact no-op behavior", () => {
+    const fixtures = [
+        { article: "It is important to note that retries can cause repeated requests, again and again.", authorContext: "Cut the introduction first." },
+        { article: "Retries need limits.", authorContext: "" },
+        { article: 'At 42 ms, API-v2 may fail. "Keep this quote." [Evidence](https://example.test) [^1]\n\n```js\nretry(42);\n```', authorContext: "Keep the example." },
+    ];
+    for (const fixture of fixtures) {
+        const prompt = getPromptText({ ...fixture, operation: EDITORIAL_OPERATION.FLOW_REVISION, skillId: BUILT_IN_SKILL.CONCISE_REWRITE, articleTitle: "Saved title" });
+        assert.ok(prompt.includes(fixture.article));
+        assert.ok(prompt.includes(fixture.authorContext));
+        assert.match(prompt, /Remove repetition, throat-clearing, filler/);
+        assert.match(prompt, /claims, numbers, URLs, quotations, citations, code, technical terms, supported Markdown formatting, author voice, and degree of certainty/);
+        assert.match(prompt, /Do not add facts, examples, conclusions, sources, or stronger certainty/);
+        assert.match(prompt, /fewer characters than the source/);
+        assert.match(prompt, /return the source byte-for-byte unchanged/);
+        assert.match(prompt, /Return an Article, not a summary, outline, list, or feedback/);
+        assert.match(prompt, /Current Article title:\nSaved title/);
+        assert.ok(prompt.includes(authorControlInstruction));
+        assert.doesNotMatch(prompt, /make only that change/);
+    }
+});
+
+
+test("Concise rewrite selection requests only an excerpt replacement without the Article title", () => {
+    const prompt = getPromptText({ operation: EDITORIAL_OPERATION.FLOW_REVISION, skillId: BUILT_IN_SKILL.CONCISE_REWRITE, article: "Selected excerpt.", articleTitle: "Private title", articleSelection: true, authorContext: "Keep the example." });
+    assert.match(prompt, /Selected-passage Markdown replacement/);
+    assert.match(prompt, /Article selection:\nSelected excerpt/);
+    assert.match(prompt, /do not request surrounding Article context/);
+    assert.doesNotMatch(prompt, /Private title/);
+});
+
+
 test("translation prompt names the target language and preserves protected tokens", async () => {
     const prompt = getPromptText({
         operation: EDITORIAL_OPERATION.TRANSLATION,
