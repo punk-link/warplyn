@@ -1,3 +1,4 @@
+import { skillCatalogFixture } from "../workspace/skill-catalog.test-fixture.js";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
@@ -20,6 +21,7 @@ describe("ApplicationSettings AI", () => {
         const connection = { id: "connection-1", provider: "openai" as const, label: "Personal OpenAI", environmentVariableName: "OPENAI_API_KEY", status: "connected" as const };
         const refreshAiModels = vi.fn().mockResolvedValue(["gpt-5"]);
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [connection], activeConnectionId: connection.id }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             refreshAiModels,
@@ -39,6 +41,7 @@ describe("ApplicationSettings AI", () => {
         const connection = { id: "connection-1", provider: "openai" as const, label: "Personal OpenAI", environmentVariableName: "OPENAI_API_KEY", status: "connected" as const };
         const updateModelPreferences = vi.fn().mockResolvedValue(undefined);
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [connection], activeConnectionId: connection.id, modelPreferences: { defaultModel: "gpt-4.1", skillOverrides: {} } }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             refreshAiModels: vi.fn().mockResolvedValue(["gpt-5.5"]),
@@ -61,6 +64,7 @@ describe("ApplicationSettings AI", () => {
         const updateModelPreferences = vi.fn().mockResolvedValue(undefined);
         const updateAppModel = vi.fn().mockResolvedValue(undefined);
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [connection], activeConnectionId: connection.id, appModel: { model: "gpt-5.5-mini" }, modelPreferences: { defaultModel: "gpt-5.5", skillOverrides: { talking_points: "gpt-5.5-mini" } } }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             refreshAiModels: vi.fn().mockResolvedValue(["gpt-5.5", "gpt-5.5-mini"]),
@@ -88,6 +92,7 @@ describe("ApplicationSettings AI", () => {
         const openCodeConnection = { id: "connection-3", provider: "opencode" as const, label: "OpenCode Zen", environmentVariableName: "OPENCODE_API_KEY", status: "connected" as const };
         const updateModelPreferences = vi.fn().mockResolvedValue(undefined);
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [connection, anthropicConnection, openCodeConnection], activeConnectionId: connection.id }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             refreshAiModels: vi.fn().mockResolvedValue([
@@ -140,6 +145,7 @@ describe("ApplicationSettings AI", () => {
         const user = userEvent.setup();
         const connection = { id: "connection-1", provider: "opencode" as const, label: "OpenCode Zen", credentialSource: { kind: "environment-variable" as const, environmentVariableName: "OPENCODE_API_KEY" }, status: "connected" as const };
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [connection], activeConnectionId: connection.id }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             refreshAiModels: vi.fn().mockResolvedValue(["gpt-5", "claude-fable-5", "gemini-3-flash", "grok-4", "deepseek-v4", "big-pickle"]),

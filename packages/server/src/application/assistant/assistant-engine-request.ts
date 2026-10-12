@@ -1,4 +1,5 @@
-import { BUILT_IN_SKILL, EDITORIAL_OPERATION, isBuiltInSkillId } from "@skladno/shared";
+import { EDITORIAL_OPERATION } from "@skladno/shared";
+import { createSkillGuidance } from "./skills/create-skill-guidance.js";
 
 import { getReusableFactFindings } from "../editorial/fact-checking/reusable-fact-findings.js";
 import type { StyleCorpusStore } from "../editorial/style/style-corpus-store.js";
@@ -25,11 +26,12 @@ export function streamAssistantEngineEvents(request: PreparedAssistantRequest, s
         articleTitle: request.articleTitle,
         ...(request.scope.kind === "selection" ? { articleSelection: true } : {}),
         authorContext: request.authorMessage,
-        skillId: isBuiltInSkillId(request.resolvedSkillId) ? request.resolvedSkillId : undefined,
+        skillId: request.resolvedSkillId,
+        skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
         ...(request.scope.kind === "selection" ? { surroundingArticleCharacterCount: request.articleContent.length - excerpt.length } : {}),
         ...(request.publishingCharacterLimit ? { targetArticleCharacterLimit: request.publishingCharacterLimit } : {}),
         ...(request.targetLanguage ? { targetLanguage: request.targetLanguage } : {}),
-        ...(request.resolvedSkillId === BUILT_IN_SKILL.STYLE_REVIEW
+        ...(request.operation === EDITORIAL_OPERATION.STYLE_REVIEW
             ? { styleProfile: stores.styleCorpus.getStyleCorpus().profile, articleStyleRules: stores.styleCorpus.getArticleStyleRules(request.articleId) }
             : {}
         ),

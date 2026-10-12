@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import { getSkillPresentation } from "../../../i18n/skill-presentation.js";
 import { useIntl } from "react-intl";
 import type { AssistantCapabilityActivity, AssistantMessage, AssistantSkillSummary, FactCheckClaimPreview, GeneralSettings } from "@skladno/shared";
 import { ActivityIndicator, Banner, Button, IconButton } from "../../../ui/primitives.js";
@@ -50,7 +51,7 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
     const greeting = assistantMessages?.find((item) => item.template === "greeting" || item.kind === "greeting");
     const lastMessage = assistantMessages?.at(-1);
     const skillByRequest = new Map(assistantMessages?.flatMap((item) => item.requestId && item.skillId ? [[item.requestId, item.skillId] as const] : []));
-    const skillNames = new Map(authorSkills.map((skill) => [skill.reference.id, skill.name] as const));
+    const skillNames = new Map(authorSkills.map((skill) => [skill.reference.id, getSkillPresentation(skill, intl).name] as const));
     const completedFactCheck = state === "idle" ? findLatestCompletedFactCheck(assistantMessages) : undefined;
 
     useLayoutEffect(() => {

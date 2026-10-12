@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
 import type { IntlShape } from "react-intl";
-import { APPLICATION_ERROR, ASSISTANT_EVENT, ApplicationClientError, BUILT_IN_SKILL, type ArticleRevision, type AssistantCapabilityActivity, type AssistantEvent, type AssistantMessage, type FactCheckClaimPreview } from "@skladno/shared";
+import { APPLICATION_ERROR, ASSISTANT_EVENT, ApplicationClientError, type ArticleRevision, type AssistantCapabilityActivity, type AssistantEvent, type AssistantMessage, type FactCheckClaimPreview } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
 import { getErrorMessageId } from "../../i18n/errors.js";
 import type { ArticleWorkspaceState } from "./article-workspace-state.js";
@@ -163,7 +163,8 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
     skillOffset: number | undefined;
     batch?: { revision: ArticleRevision; controller: AbortController };
 }) {
-    const creatorRequest = explicitSkillId === BUILT_IN_SKILL.SKILL_CREATOR;
+    const selectedSkill = explicitSkillId ? (await options.client.listAssistantSkills()).find((skill) => skill.reference.id === explicitSkillId) : undefined;
+    const creatorRequest = selectedSkill?.execution?.capability === "manage_skills";
     const saved = creatorRequest || batch ? undefined : await options.workspace.save(article.id);
     const revision = batch?.revision ?? saved ?? article.currentRevision;
     clearAssistantRequestFeedback(options.store, article.id);
@@ -243,8 +244,8 @@ function appendPendingMessage({ store, articleId, requestId, authorMessage, expl
 }
 
 
-function trackTranslationRequest({ store, articleId, explicitSkillId, targetLanguage, authorMessage }: { store: AssistantRequestStore; articleId: string; explicitSkillId?: string; targetLanguage?: string | readonly string[]; authorMessage: string }) {
-    if (explicitSkillId !== BUILT_IN_SKILL.TRANSLATION)
+function trackTranslationRequest({ store, articleId, targetLanguage, authorMessage }: { store: AssistantRequestStore; articleId: string; targetLanguage?: string | readonly string[]; authorMessage: string }) {
+    if (!targetLanguage)
         return;
 
     const languages = typeof targetLanguage === "string" ? [targetLanguage] : requestedTranslationLanguages(authorMessage, targetLanguage ?? []);
@@ -288,7 +289,7 @@ async function retryAssistant(options: AssistantRequestActionsOptions & { retryO
         return;
 
     const original = options.store.messagesByArticle[article.id]?.find((message) => message.role === "author" && message.requestId === options.retryOfRequestId);
-    trackTranslationRequest({ store: options.store, articleId: article.id, explicitSkillId: original?.skillId, targetLanguage: original?.targetLanguage, authorMessage: original?.content ?? "" });
+    trackTranslationRequest({ store: options.store, articleId: article.id, targetLanguage: original?.targetLanguage, authorMessage: original?.content ?? "" });
     const perform = () => performRetryAssistantRequest({ ...options, article });
 
     try {

@@ -10,6 +10,7 @@ import {
     type FactCheck,
     type StyleProfile
 } from "@skladno/shared";
+import { validateProposalResult } from "./proposals/proposal-result-policy.js";
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 import type { EditorialEngine } from "./engine/editorial-engine.js";
 import type { EditorialEngineEvent } from "./engine/editorial-engine-event.js";
@@ -166,6 +167,7 @@ function createEngineRequest(request: EditorialServiceRequest, context: Editoria
         ...selectionContext(request),
         authorContext: context.correctionContext ?? request.authorContext,
         ...(request.skillId ? { skillId: request.skillId } : {}),
+        ...(request.skill ? { skill: request.skill } : {}),
         ...(request.targetArticleCharacterLimit ? { targetArticleCharacterLimit: request.targetArticleCharacterLimit } : {}),
         ...(context.styleProfile ? { styleProfile: context.styleProfile, articleStyleRules: context.articleStyleRules } : {}),
         ...(request.targetLanguage ? { targetLanguage: request.targetLanguage } : {}),
@@ -246,6 +248,7 @@ async function* streamEditorialOperation(request: EditorialServiceRequest, conte
     let completed = false;
     for await (const event of context.engine.stream(createEngineRequest(request, context, factChecks), signal)) {
         if (event.type === EDITORIAL_ENGINE_EVENT.COMPLETED) {
+            validateProposalResult(request.articleContent ?? context.article.currentRevision.content, event.text, request.skill?.execution);
             completed = true;
             const editorialArtifactId = onCompleted(event);
             yield { ...event, ...(editorialArtifactId ? { editorialArtifactId } : {}) };

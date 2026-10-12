@@ -56,7 +56,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
                 yield* streamFactCheck({
                     request: {
                         article: getBoundedArticleContext(request.article),
-                        instructions: getBuiltInSkillInstructions(BUILT_IN_SKILL.FACT_CHECKING),
+                        instructions: request.skill?.instructions ?? getBuiltInSkillInstructions(BUILT_IN_SKILL.FACT_CHECKING),
                         reusableFactFindings: request.reusableFactFindings,
                         skipFactCheckClaim: request.skipFactCheckClaim,
                     },
@@ -79,11 +79,12 @@ export class AiSdkEditorialEngine implements EditorialEngine {
 
             const modelMessage = createEditorialMessages({
                 operation: request.operation,
-                article: request.skillId === BUILT_IN_SKILL.CONCISE_REWRITE ? request.article : getBoundedArticleContext(request.article),
+                article: request.article,
                 articleTitle: request.articleTitle,
                 articleSelection: request.articleSelection,
                 authorContext: request.authorContext,
                 skillId: request.skillId,
+                skill: request.skill,
                 surroundingArticleCharacterCount: request.surroundingArticleCharacterCount,
                 targetArticleCharacterLimit: request.targetArticleCharacterLimit,
             });
@@ -198,6 +199,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
                     articleTitle: request.articleTitle,
                     articleSelection: request.articleSelection,
                     authorContext: request.authorContext,
+                    skill: request.skill,
                     styleProfile: request.styleProfile,
                     articleStyleRules: request.articleStyleRules,
                 }),
@@ -233,6 +235,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
             article: protectedArticle.protectedText,
             articleTitle: protectedTitle.protectedText,
             authorContext: request.authorContext,
+            skill: request.skill,
             targetLanguage
         });
         const result = await generateText({

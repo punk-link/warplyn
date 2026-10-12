@@ -1,4 +1,5 @@
-import type { BuiltInSkillId, EditorialOperation } from "@skladno/shared";
+import type { EditorialOperation } from "@skladno/shared";
+import type { SkillGuidance } from "../assistant/skills/skill-guidance.js";
 
 
 export interface EditorialServiceRequest {
@@ -7,7 +8,8 @@ export interface EditorialServiceRequest {
     skipFactCheckClaim?: (claim: string) => boolean;
     operation: EditorialOperation;
     authorContext: string;
-    skillId?: BuiltInSkillId;
+    skillId?: string;
+    skill?: SkillGuidance;
     targetArticleCharacterLimit?: number;
     targetLanguage?: string;
     articleContent?: string;

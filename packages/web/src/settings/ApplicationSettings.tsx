@@ -169,6 +169,7 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
                 preferences={preferences}
                 appModel={appModel}
                 models={ai.models}
+                skills={ai.skills}
                 connectionProvider={ai.connectionProvider}
                 connectionName={ai.connectionName}
                 environmentName={ai.environmentName}

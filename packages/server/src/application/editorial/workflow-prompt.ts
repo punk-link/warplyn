@@ -1,8 +1,10 @@
 import type { ModelMessage } from "ai";
-import { APPLICATION_ERROR, BUILT_IN_SKILL, EDITORIAL_OPERATION, editorialOperationSkillMap, HTTP_STATUS, type BuiltInSkillId, type EditorialOperation, type StyleProfile } from "@skladno/shared";
+import { APPLICATION_ERROR, EDITORIAL_OPERATION, editorialOperationSkillMap, HTTP_STATUS, type EditorialOperation, type StyleProfile } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../errors/application-service-error.js";
-import { getBuiltInSkillInstructions } from "../assistant/skills/get-built-in-skill-instructions.js";
+import { loadBuiltInSkillPackages } from "../assistant/skills/built-in-skill-packages.js";
+import { createSkillGuidance } from "../assistant/skills/create-skill-guidance.js";
+import type { SkillGuidance } from "../assistant/skills/skill-guidance.js";
 
 
 interface EditorialPromptInput {
@@ -11,7 +13,8 @@ interface EditorialPromptInput {
     articleTitle?: string;
     articleSelection?: boolean;
     authorContext: string;
-    skillId?: BuiltInSkillId;
+    skillId?: string;
+    skill?: SkillGuidance;
     surroundingArticleCharacterCount?: number;
     styleProfile?: StyleProfile;
     articleStyleRules?: string;
@@ -24,7 +27,12 @@ export const authorControlInstruction = "Do not claim that you saved or changed 
 
 
 function getSkillInstructions(input: EditorialPromptInput): string {
-    return getBuiltInSkillInstructions(input.skillId ?? editorialOperationSkillMap[input.operation]);
+    return resolvePromptSkill(input)?.instructions ?? "";
+}
+
+
+function resolvePromptSkill(input: EditorialPromptInput): SkillGuidance | undefined {
+    return input.skill ?? createSkillGuidance(loadBuiltInSkillPackages().find((skill) => skill.reference.id === (input.skillId ?? editorialOperationSkillMap[input.operation])));
 }
 
 
@@ -158,7 +166,7 @@ function createFlowRevisionPrompt(input: EditorialPromptInput): ModelMessage[] {
 }
 
 
-function createConciseRewritePrompt(input: EditorialPromptInput): ModelMessage[] {
+function createReplacementPrompt(input: EditorialPromptInput): ModelMessage[] {
     const sourceLabel = input.articleSelection ? "Article selection" : "Current article";
     const outputFormat = input.articleSelection ? "Selected-passage Markdown replacement." : "Full Article body Markdown proposal.";
     return [
@@ -169,14 +177,17 @@ function createConciseRewritePrompt(input: EditorialPromptInput): ModelMessage[]
 
 
 export function createEditorialMessages(input: EditorialPromptInput): ModelMessage[] {
-    if (input.skillId === BUILT_IN_SKILL.CONCISE_REWRITE)
-        return createConciseRewritePrompt(input);
+    const skill = resolvePromptSkill(input);
+    input = { ...input, skill };
+    if (skill?.execution.capability === "generate_proposal") {
+        if (skill.execution.source === "author_or_article")
+            return createTalkingPointsPrompt(input);
 
-    if (input.skillId === BUILT_IN_SKILL.TALKING_POINTS)
-        return createTalkingPointsPrompt(input);
+        if (skill.execution.operation === "thesis_to_narrative")
+            return createNarrativeDraftPrompt(input);
 
-    if (input.skillId === BUILT_IN_SKILL.NARRATIVE_DRAFT)
-        return createNarrativeDraftPrompt(input);
+        return skill.execution.resultPolicy === "verified_edit" ? createFlowRevisionPrompt(input) : createReplacementPrompt(input);
+    }
 
     if (input.operation === EDITORIAL_OPERATION.THESIS_TO_NARRATIVE)
         return createNarrativeDraftPrompt(input);

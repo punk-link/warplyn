@@ -1,6 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { IntlProvider } from "react-intl";
+import { createIntl, IntlProvider } from "react-intl";
+import { skillCatalogFixture } from "../../skill-catalog.test-fixture.js";
+import { getSkillPresentation } from "../../../i18n/skill-presentation.js";
 import type { ComponentProps } from "react";
 import { defaultGeneralSettings, type AssistantMessage } from "@skladno/shared";
 import { describe, expect, it, vi } from "vitest";
@@ -10,7 +12,9 @@ import { AssistantMarkdown } from "./AssistantMarkdown.js";
 
 
 function renderMessage(message: AssistantMessage, props: Partial<ComponentProps<typeof AssistantTimelineMessage>> = {}) {
-    return render(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage message={message} generalSettings={{ ...defaultGeneralSettings, dateFormat: "iso", timeFormat: "24-hour", timeZone: "UTC" }} skillByRequest={new Map()} {...props} /></IntlProvider>);
+    const intl = createIntl({ locale: "en", messages });
+    const skillNames = new Map(skillCatalogFixture.map((skill) => [skill.reference.id, getSkillPresentation(skill, intl).name]));
+    return render(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage message={message} generalSettings={{ ...defaultGeneralSettings, dateFormat: "iso", timeFormat: "24-hour", timeZone: "UTC" }} skillByRequest={new Map()} skillNames={skillNames} {...props} /></IntlProvider>);
 }
 
 

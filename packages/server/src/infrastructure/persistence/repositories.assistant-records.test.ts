@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { APPLICATION_ERROR, builtInSkills } from "@skladno/shared";
+import { APPLICATION_ERROR, BUILT_IN_SKILL } from "@skladno/shared";
 import { withRepository } from "./repositories.test-utils.js";
 
 test("Assistant edit modes use the default only for new conversations", () => withRepository((repositories) => {
@@ -69,7 +69,7 @@ test("a conflicting direct edit rolls back its reply and Revision", () => withRe
 // Product scenarios: cross-cutting.assistant-records-local
 test("Assistant records retain current Skill IDs", () => withRepository((repositories) => {
     const article = repositories.articleService.createArticle({ title: "Skills", content: "Draft" });
-    for (const skillId of builtInSkills) {
+    for (const skillId of Object.values(BUILT_IN_SKILL)) {
         repositories.assistant.createRequest({ id: `current-${skillId}`, articleId: article.id, scope: { kind: "article", baseRevisionId: article.currentRevisionId }, explicitSkillId: skillId });
         assert.equal(repositories.assistant.getRequest(`current-${skillId}`)?.explicitSkillId, skillId);
     }
@@ -254,6 +254,17 @@ test("Translation proposals remain recoverable with their Assistant message", ()
     const rejected = repositories.assistant.listMessages(article.id).find((item) => item.editorialArtifactId === artifact.id);
     assert.equal(rejected?.status, "rejected");
     assert.deepEqual(rejected?.translation, { content: "Hola Node.js", metadata: { targetLanguage: "Spanish", protectedSpans: ["Node.js"], title: "Hola Node.js" } });
+}));
+
+
+test("checkpoint restoration retains an Author-created Skill tag", () => withRepository((repositories) => {
+    const article = repositories.articleService.createArticle({ title: "Checkpoint", content: "before" });
+    repositories.assistant.createRequest({ id: "custom-request", articleId: article.id, authorMessage: "Shorten this", scope: { kind: "article", baseRevisionId: article.currentRevisionId }, explicitSkillId: "custom-tighten", skillOffset: 0 });
+    const anchor = repositories.assistant.listMessages(article.id).find((message) => message.requestId === "custom-request" && message.role === "author")!;
+    const preview = repositories.assistant.previewCheckpoint(article.id, anchor.id);
+    const restored = repositories.assistant.restoreCheckpoint(article.id, anchor.id, preview.tailToken, "preserve");
+    assert.equal(restored.composer.skillId, "custom-tighten");
+    assert.equal(restored.composer.skillOffset, 0);
 }));
 
 

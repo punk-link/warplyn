@@ -105,7 +105,7 @@ describe("Editorial Assistant composer", () => {
     it("distinguishes built-in and Author Skills in the picker", () => {
         const picker = renderLocalized(<AssistantQuickActions context={{ state: "idle", composer: createRef<HTMLDivElement>() }} picker={{
             quickActionsOpen: true,
-            availableSkills: [{ id: "skill_creator", name: "Skill Creator" }, { id: "house-style", name: "House style" }],
+            availableSkills: [{ id: "skill_creator", name: "Skill Creator", source: "built-in" }, { id: "house-style", name: "House style", source: "author" }],
             activeSkillIndex: 0,
             setQuickActionsOpen: vi.fn(),
             setActiveSkillIndex: vi.fn(),

@@ -1,5 +1,6 @@
-export { BUILT_IN_SKILL, builtInSkillScopeCompatibility, builtInSkills, editorialOperationSkillMap, isBuiltInSkillId } from "./assistant-skills.js";
+export { BUILT_IN_SKILL, editorialOperationSkillMap } from "./assistant-skills.js";
 export type { BuiltInSkillId } from "./assistant-skills.js";
+export { defaultSkillExecution, isSkillExecution, type SkillExecution } from "./skill-execution.js";
 import type { AssistantEvent } from "./assistant-events.js";
 import type { Article } from "../articles/article/article.js";
 
@@ -41,6 +42,9 @@ export interface AssistantSkillSummary {
     reference: AssistantSkillReference;
     name: string;
     description: string;
+    execution?: import("./skill-execution.js").SkillExecution;
+    scopes?: readonly ("article" | "selection")[];
+    presentation?: { order: number; label?: string; hint?: string };
 }
 
 

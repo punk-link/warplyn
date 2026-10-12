@@ -28,6 +28,8 @@ test("Skill Creator supplies a package example that the real store accepts", () 
         service.create({ skillId: "concise-review", files: { "SKILL.md": markdown } });
         assert.equal(service.listRevisions("concise-review").length, 1);
         assert.ok(source.get("concise-review"));
+        assert.deepEqual(source.summaries()[0]?.execution, { capability: "generate_proposal", operation: "flow_revision", source: "article", resultPolicy: "shorter_preserving_content" });
+        assert.deepEqual(source.summaries()[0]?.scopes, ["article", "selection"]);
     } finally {
         rmSync(root, { recursive: true, force: true });
     }

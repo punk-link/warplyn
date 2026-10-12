@@ -1,8 +1,8 @@
-import { APPLICATION_ERROR, ASSISTANT_EVENT, BUILT_IN_SKILL, HTTP_STATUS, type AssistantEditCandidate, type AssistantEditorialResult, type AssistantEvent, type AssistantResponseKind, type FactCheck } from "@skladno/shared";
+import { APPLICATION_ERROR, ASSISTANT_EVENT, HTTP_STATUS, type AssistantEditCandidate, type AssistantEditorialResult, type AssistantEvent, type AssistantResponseKind, type FactCheck } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import { persistFactCheckArtifact } from "../../editorial/fact-checking/persist-fact-check-artifact.js";
-import { protectArticleSpans } from "../../editorial/translation/translation.js";
+import { preservesProtectedContent } from "../../editorial/proposals/proposal-result-policy.js";
 import { EDITORIAL_CAPABILITY } from "../capabilities/editorial-capability-catalog.js";
 import type { CompletionEvent } from "./completion-event.js";
 import type { PreparedAssistantRequest } from "../requests/prepared-assistant-request.js";
@@ -12,8 +12,6 @@ import type { StyleCorpusStore } from "../../editorial/style/style-corpus-store.
 import type { AssistantArtifactStore } from "../assistant-artifact-store.js";
 import type { AssistantStore } from "../assistant-store.js";
 import type { EditorialCapabilityCatalog } from "../capabilities/editorial-capability-catalog.js";
-import { EditorialEngineError } from "../../editorial/engine/editorial-engine-error.js";
-import { EDITORIAL_ENGINE_ERROR } from "../../editorial/engine/editorial-engine-errors.js";
 
 
 export function getCompletedContent(request: PreparedAssistantRequest, text: string): string {
@@ -21,17 +19,6 @@ export function getCompletedContent(request: PreparedAssistantRequest, text: str
         return text;
 
     return `${request.articleContent.slice(0, request.scope.startOffset)}${text}${request.articleContent.slice(request.scope.endOffset)}`;
-}
-
-
-function preservesProtectedContent(source: string, replacement: string): boolean {
-    const protectedSpans = protectArticleSpans(source).protectedSpans;
-    const sourceNumbers = source.match(/\b\d+(?:[.,]\d+)*\b/g) ?? [];
-    const replacementNumbers = replacement.match(/\b\d+(?:[.,]\d+)*\b/g) ?? [];
-    if (sourceNumbers.sort().join("\u0000") !== replacementNumbers.sort().join("\u0000"))
-        return false;
-
-    return ![...new Set(protectedSpans)].some((span) => source.split(span).length !== replacement.split(span).length);
 }
 
 
@@ -49,23 +36,6 @@ export function getEditCandidate(request: PreparedAssistantRequest, event: Compl
     return request.scope.kind === "selection"
         ? { target: "selection", original: source, replacement }
         : { target: "article", replacement };
-}
-
-
-export function validateConciseRewrite(request: PreparedAssistantRequest, replacement: string): void {
-    if (request.resolvedSkillId !== BUILT_IN_SKILL.CONCISE_REWRITE)
-        return;
-
-    const source = request.scope.kind === "selection"
-        ? request.articleContent.slice(request.scope.startOffset, request.scope.endOffset)
-        : request.articleContent;
-    if (replacement === source)
-        return;
-
-    const quotationsAndCitations = source.match(/"[^"\n]+"|“[^”\n]+”|\[\^[^\]]+\]/g) ?? [];
-    const preservesReferences = quotationsAndCitations.every((span) => source.split(span).length === replacement.split(span).length);
-    if (!replacement.trim() || replacement.length >= source.length || !preservesProtectedContent(source, replacement) || !preservesReferences)
-        throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 }
 
 

@@ -106,6 +106,7 @@ function createEditorialRequest(input: StreamContext, operation: EditorialOperat
             : {}
         ),
         ...(input.skillId ? { skillId: input.skillId } : {}),
+        ...(input.skill ? { skill: input.skill } : {}),
         ...(input.targetArticleCharacterLimit ? { targetArticleCharacterLimit: input.targetArticleCharacterLimit } : {}),
         ...(input.targetLanguage?.trim() ? { targetLanguage: input.targetLanguage.trim() } : {}),
         ...(input.articleContent !== undefined ? { articleContent: input.articleContent } : {}),

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { BUILT_IN_SKILL, builtInSkills } from "@skladno/shared";
+import { BUILT_IN_SKILL } from "@skladno/shared";
 
 import { AssistantSkillCatalog } from "./assistant-skill-catalog.js";
 import { builtInSkillSource } from "./built-in-skill-source.js";
@@ -10,7 +10,7 @@ test("built-in Skills publish compact discovery data and load versioned instruct
     const catalog = new AssistantSkillCatalog([builtInSkillSource]);
     const summaries = catalog.discover();
 
-    assert.deepEqual(summaries.map((summary) => summary.reference.id), builtInSkills);
+    assert.ok(Object.values(BUILT_IN_SKILL).every((id) => summaries.some((summary) => summary.reference.id === id)));
     assert.ok(summaries.every((summary) => summary.reference.source === "built-in" && summary.name && summary.description));
     assert.deepEqual(summaries.filter((summary) => summary.reference.version === "2").map((summary) => summary.reference.id), [BUILT_IN_SKILL.NARRATIVE_DRAFT, BUILT_IN_SKILL.FLOW_AND_CLARITY, BUILT_IN_SKILL.STYLE_REVIEW, BUILT_IN_SKILL.TRANSLATION]);
     assert.equal("instructions" in summaries[0]!, false);

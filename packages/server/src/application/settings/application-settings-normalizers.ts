@@ -1,4 +1,4 @@
-import { APPLICATION_ERROR, getAiModelPreferenceId, defaultGeneralSettings, defaultInterfaceLocale, findKeyBindingConflict, HTTP_STATUS, INTERFACE_LOCALE, isAiProvider, isAssistantSendMode, isBuiltInSkillId, isDateFormatPreference, isKeyBindingCommandId, isThemePreference, isTimeFormatPreference, isTimeZonePreference, KEY_BINDING_COMMAND, normalizeKeyBinding, parseAiModelPreferenceId, resolveKeyBindings, type AiConnection, type AppModelPreference, type BackupPolicy, type GeneralSettings, type KeyBindingOverrides, type ModelPreferences } from "@skladno/shared";
+import { APPLICATION_ERROR, getAiModelPreferenceId, defaultGeneralSettings, defaultInterfaceLocale, findKeyBindingConflict, HTTP_STATUS, INTERFACE_LOCALE, isAiProvider, isAssistantSendMode, isDateFormatPreference, isKeyBindingCommandId, isThemePreference, isTimeFormatPreference, isTimeZonePreference, KEY_BINDING_COMMAND, normalizeKeyBinding, parseAiModelPreferenceId, resolveKeyBindings, type AiConnection, type AppModelPreference, type BackupPolicy, type GeneralSettings, type KeyBindingOverrides, type ModelPreferences } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 
@@ -163,14 +163,14 @@ export function normalizeAppModel(value: unknown, legacyConnectionId?: string): 
 function normalizeSkillOverrides(values: unknown, legacyConnectionId?: string): ModelPreferences["skillOverrides"] {
     return Object.fromEntries(Object.entries(values ?? {}).flatMap(([skill, model]) => {
         const preference = normalizeModelPreference(model, legacyConnectionId);
-        return isBuiltInSkillId(skill) && preference ? [[skill, preference]] : [];
+        return /^[a-z][a-z0-9_-]{2,63}$/.test(skill) && preference ? [[skill, preference]] : [];
     })) as ModelPreferences["skillOverrides"];
 }
 
 
 function normalizeSkillReasoningEfforts(values: ModelPreferences["skillReasoningEfforts"]): NonNullable<ModelPreferences["skillReasoningEfforts"]> {
     return Object.fromEntries(Object.entries(values ?? {}).flatMap(([skill, effort]) => {
-        return isBuiltInSkillId(skill) && (effort === "low" || effort === "medium" || effort === "high") ? [[skill, effort]] : [];
+        return /^[a-z][a-z0-9_-]{2,63}$/.test(skill) && (effort === "low" || effort === "medium" || effort === "high") ? [[skill, effort]] : [];
     })) as NonNullable<ModelPreferences["skillReasoningEfforts"]>;
 }
 

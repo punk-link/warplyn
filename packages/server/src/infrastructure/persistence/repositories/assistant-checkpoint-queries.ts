@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { isBuiltInSkillId, type AssistantCheckpointPreview } from "@skladno/shared";
+import type { AssistantCheckpointPreview } from "@skladno/shared";
 
 import type { SqliteDatabase } from "../database.js";
 import { parseObject, type Row } from "./repository-utils.js";
@@ -54,7 +54,7 @@ export function createCheckpointPreview(database: SqliteDatabase, messageId: str
 
 function checkpointComposer(anchor: Row): AssistantCheckpointPreview["composer"] {
     const storedSkillId = String(anchor.explicit_skill_id ?? anchor.resolved_skill_id ?? "");
-    const skillId = isBuiltInSkillId(storedSkillId) ? storedSkillId : undefined;
+    const skillId = storedSkillId || undefined;
     return {
         text: String(anchor.content ?? ""),
         ...(skillId ? { skillId } : {}),

@@ -9,37 +9,6 @@ const providerMessages: Record<AiProvider, "settings.provider.openai" | "setting
     [AI_PROVIDER.OPENAI]: "settings.provider.openai", [AI_PROVIDER.OPENCODE]: "settings.provider.opencode", [AI_PROVIDER.ANTHROPIC]: "settings.provider.anthropic", [AI_PROVIDER.GOOGLE]: "settings.provider.google", [AI_PROVIDER.XAI]: "settings.provider.xai", [AI_PROVIDER.DEEPSEEK]: "settings.provider.deepseek",
 };
 
-const skillMessages: Record<"talking_points" | "narrative_draft" | "flow_and_clarity" | "concise_rewrite" | "fact_checking" | "style_review" | "translation", { label: "assistant.skill.talkingPoints.label" | "assistant.skill.narrativeDraft.label" | "assistant.skill.flowAndClarity.label" | "assistant.skill.conciseRewrite.label" | "assistant.skill.factChecking.label" | "assistant.skill.styleReview.label" | "assistant.skill.translation.label"; hint: "assistant.skill.talkingPoints.hint" | "assistant.skill.narrativeDraft.hint" | "assistant.skill.flowAndClarity.hint" | "assistant.skill.conciseRewrite.hint" | "assistant.skill.factChecking.hint" | "assistant.skill.styleReview.hint" | "assistant.skill.translation.hint" }> = {
-    talking_points: {
-        label: "assistant.skill.talkingPoints.label",
-        hint: "assistant.skill.talkingPoints.hint"
-    },
-    narrative_draft: {
-        label: "assistant.skill.narrativeDraft.label",
-        hint: "assistant.skill.narrativeDraft.hint"
-    },
-    flow_and_clarity: {
-        label: "assistant.skill.flowAndClarity.label",
-        hint: "assistant.skill.flowAndClarity.hint"
-    },
-    concise_rewrite: {
-        label: "assistant.skill.conciseRewrite.label",
-        hint: "assistant.skill.conciseRewrite.hint"
-    },
-    fact_checking: {
-        label: "assistant.skill.factChecking.label",
-        hint: "assistant.skill.factChecking.hint"
-    },
-    style_review: {
-        label: "assistant.skill.styleReview.label",
-        hint: "assistant.skill.styleReview.hint"
-    },
-    translation: {
-        label: "assistant.skill.translation.label",
-        hint: "assistant.skill.translation.hint"
-    },
-};
-
 type ModelVendor = Exclude<AiProvider, "opencode"> | "other";
 
 
@@ -80,13 +49,20 @@ function getModelVendor(provider: AiProvider): ModelVendor {
 function ProviderMark({ provider, className, viaProvider }: { provider: AiProvider; className: string; viaProvider?: AiProvider }) {
     const props = { "data-provider": provider, ...(viaProvider ? { "data-via-provider": viaProvider } : {}), className };
     switch (provider) {
-        case AI_PROVIDER.OPENAI: return <OpenAiIcon {...props} />;
-        case AI_PROVIDER.OPENCODE: return <OpenCodeIcon {...props} />;
-        case AI_PROVIDER.ANTHROPIC: return <AnthropicIcon {...props} />;
-        case AI_PROVIDER.GOOGLE: return <GoogleIcon {...props} />;
-        case AI_PROVIDER.XAI: return <XaiIcon {...props} />;
-        case AI_PROVIDER.DEEPSEEK: return <DeepSeekIcon {...props} />;
-        default: { const _exhaustive: never = provider; return _exhaustive; }
+        case AI_PROVIDER.OPENAI:
+            return <OpenAiIcon {...props} />;
+        case AI_PROVIDER.OPENCODE:
+            return <OpenCodeIcon {...props} />;
+        case AI_PROVIDER.ANTHROPIC:
+            return <AnthropicIcon {...props} />;
+        case AI_PROVIDER.GOOGLE:
+            return <GoogleIcon {...props} />;
+        case AI_PROVIDER.XAI:
+            return <XaiIcon {...props} />;
+        case AI_PROVIDER.DEEPSEEK:
+            return <DeepSeekIcon {...props} />;
+        default:
+            { const _exhaustive: never = provider; return _exhaustive; }
     }
 }
 
@@ -215,4 +191,4 @@ export function ModelAndReasoning({ model, effort, onEffortChange, "aria-describ
 }
 
 
-export { getModelProvider, providerMessages, skillMessages };
+export { getModelProvider, providerMessages };

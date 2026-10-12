@@ -4,6 +4,7 @@ import { parseDocument } from "yaml";
 
 import { createSkillPackage } from "./create-skill-package.js";
 import { normalizeSkillName } from "./normalize-skill-name.js";
+import { parseSkillBehavior } from "./skill-package-metadata.js";
 import type { SkillPackageIssue } from "./skill-package-issue.js";
 import type { SkillPackageParseResult } from "./skill-package-parse-result.js";
 
@@ -13,7 +14,7 @@ const maximumInstructionsBytes = 64 * 1024;
 const maximumReferenceCount = 8;
 const maximumReferenceBytes = 16 * 1024;
 const skillId = /^[a-z][a-z0-9_-]{2,63}$/;
-const supportedMetadata = new Set(["id", "name", "description", "version", "references"]);
+const supportedMetadata = new Set(["id", "name", "description", "version", "references", "execution", "scopes", "presentation"]);
 const messageIds: Record<SkillPackageIssue["code"], SkillPackageIssue["messageId"]> = {
     invalid_frontmatter: "skills.validation.invalid_frontmatter",
     invalid_metadata: "skills.validation.invalid_metadata",
@@ -25,6 +26,7 @@ const messageIds: Record<SkillPackageIssue["code"], SkillPackageIssue["messageId
 
 
 interface ParsedSkillMetadata {
+    behavior: NonNullable<ReturnType<typeof parseSkillBehavior>>;
     id: string;
     name: string;
     description: string;
@@ -175,7 +177,8 @@ function readSkillMetadata(frontmatter: string, instructions: string, input: { r
     if (!validateSkillReferences(references))
         return issue("invalid_reference");
 
-    return { ...identity, instructions, references };
+    const behavior = parseSkillBehavior(metadata);
+    return behavior ? { ...identity, instructions, references, behavior } : issue("invalid_metadata");
 }
 
 
@@ -251,6 +254,7 @@ export function parseSkillPackage(input: { root: string; source: string; reserve
             reference: { source: input.source, id: metadata.id, version: metadata.version },
             name: metadata.name,
             description: metadata.description,
+            ...metadata.behavior,
             instructions: metadata.instructions,
             references: loadedReferences
         })

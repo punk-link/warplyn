@@ -53,14 +53,14 @@ test("migrates legacy model preferences to a connection-bound selection", async 
     assert.deepEqual(records.get("application-app-model"), { model: getAiModelPreferenceId("openai", "gpt-5.6-mini"), reasoningEffort: "low" });
 });
 
-test("model preferences ignore old Editorial operation overrides", () => {
+test("model preferences retain custom Skill IDs and ignore old operation overrides", () => {
     const currentModel = getAiModelPreferenceId("openai", "current-model");
     const preferences = normalizeModelPreferences({
-        skillOverrides: { flow_revision: "old-model", narrative_draft: currentModel },
+        skillOverrides: { "custom-review": currentModel, narrative_draft: currentModel, "../invalid": "old-model" },
         operationOverrides: { translation: "old-translation-model" },
     });
 
-    assert.deepEqual(preferences.skillOverrides, { narrative_draft: currentModel });
+    assert.deepEqual(preferences.skillOverrides, { "custom-review": currentModel, narrative_draft: currentModel });
 });
 
 

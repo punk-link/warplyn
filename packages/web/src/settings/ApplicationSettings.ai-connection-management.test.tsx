@@ -1,3 +1,4 @@
+import { skillCatalogFixture } from "../workspace/skill-catalog.test-fixture.js";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
@@ -21,6 +22,7 @@ describe("ApplicationSettings AI connection management", () => {
         const setAiConnectionActive = vi.fn().mockResolvedValue({ ...secondConnection, active: false });
         const removeAiConnection = vi.fn().mockResolvedValue(undefined);
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [firstConnection, secondConnection], activeConnectionId: firstConnection.id }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             addAiConnection: vi.fn().mockResolvedValue(thirdConnection),

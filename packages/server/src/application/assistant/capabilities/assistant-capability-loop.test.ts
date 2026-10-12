@@ -59,7 +59,8 @@ test("Assistant execution loads Skills from its catalog", async () => {
     for await (const event of loop.stream(request, new AbortController().signal))
         assert.equal(event.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
 
-    assert.deepEqual(received?.instructions, ["Catalog instructions."]);
+    assert.match(received?.instructions[0] ?? "", /Catalog instructions/);
+    assert.match(received?.instructions[0] ?? "", /"operation":"flow_revision"/);
     assert.deepEqual(received?.skills.map((skill) => skill.name), ["Catalog Skill"]);
 });
 
@@ -156,7 +157,7 @@ test("an Author Skill inspects the current Article before following its instruct
             ],
             discover: () => [], read: () => ({ content: "Article" }), executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* (input) {
-                proposalAuthorContext = input.authorContext;
+                proposalAuthorContext = input.skill?.instructions ?? "";
                 yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "proposal", text: "Rephrased without em dashes." } as const;
             },
         },
@@ -179,7 +180,7 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         summaries: () => [summary],
         load: (candidate) => candidate === reference ? { ...summary, instructions: "Rephrase without em dashes." } : undefined,
     };
-    let streamInput: { articleContent?: string; articleSelection?: boolean; authorContext: string } | undefined;
+    let streamInput: { articleContent?: string; articleSelection?: boolean; authorContext: string; skill?: { instructions: string } } | undefined;
     const engine = {
         async *stream() {
             return;
@@ -219,7 +220,8 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
 
     assert.equal(streamInput?.articleContent, "selected");
     assert.equal(streamInput?.articleSelection, true);
-    assert.equal(streamInput?.authorContext, "Rephrase without em dashes.");
+    assert.equal(streamInput?.authorContext, "");
+    assert.equal(streamInput?.skill?.instructions, "Rephrase without em dashes.");
 });
 
 

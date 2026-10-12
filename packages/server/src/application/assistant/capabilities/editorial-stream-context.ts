@@ -1,4 +1,5 @@
-import type { BuiltInSkillId, EditorialOperation } from "@skladno/shared";
+import type { EditorialOperation } from "@skladno/shared";
+import type { SkillGuidance } from "../skills/skill-guidance.js";
 
 import type { EditorialCapabilityContext } from "./editorial-capability-context.js";
 import type { EditorialCapabilityId } from "./editorial-capability-id.js";
@@ -10,7 +11,8 @@ export interface StreamContext {
     requestId: string;
     skipFactCheckClaim?: (claim: string) => boolean;
     authorContext: string;
-    skillId?: BuiltInSkillId;
+    skillId?: string;
+    skill?: SkillGuidance;
     targetArticleCharacterLimit?: number;
     operation?: Extract<EditorialOperation, "thesis_to_narrative" | "flow_revision">;
     targetLanguage?: string;

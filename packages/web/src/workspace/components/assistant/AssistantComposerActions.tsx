@@ -1,6 +1,6 @@
 import { useEffect, useRef, type RefObject } from "react";
 import { useIntl } from "react-intl";
-import { isBuiltInSkillId } from "@skladno/shared";
+
 import { Button } from "../../../ui/primitives.js";
 import { AssistantIcon, ChevronDownIcon, CloseIcon, UserIcon } from "../../../ui/icons.js";
 import type { AssistantSelectionScope } from "../../state/assistant-messages-state.js";
@@ -76,7 +76,7 @@ function SkillOption({ skill, index, state, activeSkillIndex, selectSkill, focus
             composer.current?.focus();
         }
     }}>
-        {isBuiltInSkillId(skill.id) ? <AssistantIcon className="mr-2 size-4 shrink-0 text-muted" /> : <UserIcon className="mr-2 size-4 shrink-0 text-muted" />}
+        {skill.source === "built-in" ? <AssistantIcon className="mr-2 size-4 shrink-0 text-muted" /> : <UserIcon className="mr-2 size-4 shrink-0 text-muted" />}
         {skill.name}
     </Button>;
 }

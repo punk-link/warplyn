@@ -1,4 +1,4 @@
-import { APPLICATION_ERROR, BUILT_IN_SKILL, HTTP_STATUS, isBuiltInSkillId } from "@skladno/shared";
+import { APPLICATION_ERROR, defaultSkillExecution, HTTP_STATUS } from "@skladno/shared";
 import { randomUUID } from "node:crypto";
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
@@ -23,7 +23,9 @@ import { AuthorSkillChatActions } from "../skills/author-skill-chat-actions.js";
 import type { CommittedAuthorSkillChange } from "../skills/committed-author-skill-change.js";
 import { AssistantArtifactExecution } from "./assistant-artifact-execution.js";
 import { getExactCharacterReplacement } from "./assistant-character-replacement.js";
-import { resolveConciseRewriteSkill } from "./resolve-concise-rewrite-skill.js";
+import { resolveRequestSkill } from "../skills/resolve-request-skill.js";
+import { getSkillCapabilities, getSkillOrchestrationInstructions } from "../skills/skill-execution.js";
+import { createSkillGuidance } from "../skills/create-skill-guidance.js";
 import { getAssistantArticleExcerpt } from "../assistant-engine-request.js";
 
 
@@ -89,15 +91,16 @@ export class AssistantCapabilityLoop {
 
         const excerpt = getAssistantArticleExcerpt(request);
         const summaries = this.dependencies.skills.discover();
-        const skills = this.dependencies.skills.load(summaries.map((skill) => skill.reference));
-        const selectedSkills = request.resolvedSkillId
-            ? skills.filter((skill) => skill.reference.id === request.resolvedSkillId)
-            : [];
+        const skills = this.dependencies.skills.load(summaries.map((skill) => skill.reference)).map((skill) => request.resolvedSkill?.reference.id === skill.reference.id ? request.resolvedSkill : skill);
+        request.resolvedSkill ??= skills.find((skill) => skill.reference.id === request.resolvedSkillId);
+        if (request.resolvedSkillId && !request.resolvedSkill)
+            throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
+
+        const selectedSkills = request.resolvedSkill ? [request.resolvedSkill] : [];
+        request.loadedSkills ??= [...selectedSkills];
         const initialActiveCapabilities = await this.getRequestCapabilities(request, signal);
 
-        const authorContext = !isBuiltInSkillId(request.resolvedSkillId ?? "")
-            ? [request.authorMessage, ...selectedSkills.flatMap((skill) => [skill.instructions, ...(skill.references ?? [])])].filter(Boolean).join("\n\n")
-            : request.authorMessage;
+        const authorContext = request.authorMessage;
         let primary: CompletionEvent | undefined;
         const progress = new AssistantToolProgress();
         const tools = this.createCapabilityTools(request, excerpt, authorContext, () => primary, (event) => {
@@ -109,10 +112,14 @@ export class AssistantCapabilityLoop {
             interfaceLocale: request.interfaceLocale,
             article: "",
             scope: request.scope.kind,
-            instructions: [...selectedSkills.flatMap((skill) => [skill.instructions, ...(skill.references ?? [])]), ...(request.targetLanguage ? [`Target translation language: ${request.targetLanguage}`] : [])],
+            instructions: [...selectedSkills.map(getSkillOrchestrationInstructions), ...(request.targetLanguage ? [`Target translation language: ${request.targetLanguage}`] : [])],
             history: this.dependencies.conversationHistory(request.articleId, 12),
-            skills: skills.map((skill) => ({ id: skill.reference.id, name: skill.name, description: skill.description, instructions: [skill.instructions, ...(skill.references ?? [])].join("\n\n"), capabilities: this.getInitialCapabilities(skill.reference.id, request.scope.kind) })),
-            onSkillLoaded: (id: string) => resolveConciseRewriteSkill(request, id, this.dependencies.assistant),
+            skills: skills.filter((skill) => (skill.scopes ?? ["article", "selection"]).includes(request.scope.kind)).map((skill) => ({ id: skill.reference.id, name: skill.name, description: skill.description, instructions: getSkillOrchestrationInstructions(skill), capabilities: getSkillCapabilities(skill, request.scope.kind) })),
+            onSkillLoaded: (id: string) => {
+                const skill = skills.find((candidate) => candidate.reference.id === id);
+                if (skill)
+                    resolveRequestSkill(request, skill, this.dependencies.assistant);
+            },
             tools,
             ...(initialActiveCapabilities ? { initialActiveCapabilities } : {}),
         };
@@ -122,8 +129,8 @@ export class AssistantCapabilityLoop {
 
 
     private async getRequestCapabilities(request: PreparedAssistantRequest, signal: AbortSignal): Promise<readonly string[] | undefined> {
-        if (request.resolvedSkillId)
-            return this.getInitialCapabilities(request.resolvedSkillId, request.scope.kind);
+        if (request.resolvedSkill)
+            return getSkillCapabilities(request.resolvedSkill, request.scope.kind);
 
         request.editIntentAuthorized = await this.authorizesArticleEditIntent(request, signal);
         return request.editIntentAuthorized ? [EDITORIAL_CAPABILITY.GENERATE_PROPOSAL] : undefined;
@@ -140,31 +147,10 @@ export class AssistantCapabilityLoop {
         if (primary)
             return primary;
 
-        if (request.operation || (request.resolvedSkillId && !isBuiltInSkillId(request.resolvedSkillId)))
+        if (request.operation || (request.resolvedSkill && (request.resolvedSkill.execution ?? defaultSkillExecution).capability !== "manage_skills"))
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
         return event;
-    }
-
-
-    private getInitialCapabilities(skill: string, scope: "article" | "selection"): readonly string[] {
-        if (!isBuiltInSkillId(skill))
-            return scope === "article"
-                ? [EDITORIAL_CAPABILITY.INSPECT_ARTICLE, EDITORIAL_CAPABILITY.GENERATE_PROPOSAL]
-                : [EDITORIAL_CAPABILITY.GENERATE_PROPOSAL];
-
-        switch (skill) {
-            case BUILT_IN_SKILL.FACT_CHECKING:
-                return [EDITORIAL_CAPABILITY.FACT_CHECK, EDITORIAL_CAPABILITY.INSPECT_FACT_CHECKS];
-            case BUILT_IN_SKILL.STYLE_REVIEW:
-                return [EDITORIAL_CAPABILITY.STYLE_REVIEW, EDITORIAL_CAPABILITY.INSPECT_STYLE_CORPUS, EDITORIAL_CAPABILITY.INSPECT_ARTICLE_STYLE_RULES];
-            case BUILT_IN_SKILL.TRANSLATION:
-                return [EDITORIAL_CAPABILITY.TRANSLATE, EDITORIAL_CAPABILITY.INSPECT_TRANSLATIONS];
-            case BUILT_IN_SKILL.SKILL_CREATOR:
-                return ["create_author_skill", "get_author_skill", "list_author_skill_revisions", "read_author_skill_revision", "update_author_skill", "restore_author_skill", "delete_author_skill"];
-            default:
-                return [EDITORIAL_CAPABILITY.GENERATE_PROPOSAL];
-        }
     }
 
 
@@ -279,6 +265,10 @@ export class AssistantCapabilityLoop {
 
 
     private async streamArtifactCapability(request: PreparedAssistantRequest, excerpt: string, authorContext: string, definition: EditorialCapabilityDefinition, input: Readonly<Record<string, string>>, signal: AbortSignal, primary: () => CompletionEvent | undefined, setPrimary: (event: CompletionEvent) => void, onProgress: (event: EditorialEngineEvent) => void): Promise<{ status: "prepared" }> {
+        const execution = request.resolvedSkill?.execution ?? defaultSkillExecution;
+        if (request.resolvedSkill && (execution.capability !== definition.id || (execution.capability === "generate_proposal" && execution.operation !== input.operation)))
+            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
         const exactReplacement = definition.id === EDITORIAL_CAPABILITY.GENERATE_PROPOSAL ? getExactCharacterReplacement(request, excerpt) : undefined;
         if (exactReplacement) {
             request.completedCapability = definition.id;
@@ -327,7 +317,8 @@ export class AssistantCapabilityLoop {
             requestId: request.requestId,
             skipFactCheckClaim: request.skipFactCheckClaim,
             authorContext,
-            ...(request.resolvedSkillId && isBuiltInSkillId(request.resolvedSkillId) ? { skillId: request.resolvedSkillId } : {}),
+            ...(request.resolvedSkillId ? { skillId: request.resolvedSkillId } : {}),
+            skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
             ...(request.publishingCharacterLimit ? { targetArticleCharacterLimit: request.publishingCharacterLimit } : {}),
             ...(input.operation ? { operation: input.operation as StreamContext["operation"] } : {}),
             ...(input.targetLanguage ? { targetLanguage: input.targetLanguage } : {}),

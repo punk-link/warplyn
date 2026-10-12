@@ -3,6 +3,13 @@ id: translation
 name: Translation
 description: Prepare a complete translation Proposal in a selected language.
 version: 2
+execution:
+  capability: translate
+scopes: [article]
+presentation:
+  order: 70
+  label: assistant.skill.translation.label
+  hint: assistant.skill.translation.hint
 references:
   - references/language.md
 ---

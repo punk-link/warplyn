@@ -1,4 +1,5 @@
-import type { BuiltInSkillId, EditorialOperation, FactCheckFinding, StyleProfile } from "@skladno/shared";
+import type { EditorialOperation, FactCheckFinding, StyleProfile } from "@skladno/shared";
+import type { SkillGuidance } from "../../assistant/skills/skill-guidance.js";
 
 
 export interface EditorialEngineRequest {
@@ -7,7 +8,8 @@ export interface EditorialEngineRequest {
     articleTitle?: string;
     authorContext: string;
     articleSelection?: boolean;
-    skillId?: BuiltInSkillId;
+    skillId?: string;
+    skill?: SkillGuidance;
     surroundingArticleCharacterCount?: number;
     styleProfile?: StyleProfile;
     articleStyleRules?: string;

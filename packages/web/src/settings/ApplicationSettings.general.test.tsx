@@ -1,3 +1,4 @@
+import { skillCatalogFixture } from "../workspace/skill-catalog.test-fixture.js";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
@@ -21,7 +22,8 @@ describe("ApplicationSettings general", () => {
     it("saves the default Assistant edit mode", async () => {
         const user = userEvent.setup();
         const updateGeneralSettings = vi.fn().mockResolvedValue({ ...defaultGeneralSettings, defaultAssistantEditMode: "direct" });
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         await screen.findByRole("button", { name: getMessage("settings.ai") });
         expect(screen.queryByRole("combobox", { name: getMessage("settings.defaultAssistantEditMode") })).toBeNull();
@@ -37,7 +39,8 @@ describe("ApplicationSettings general", () => {
     it("defaults to two minutes and saves an accessible Assistant request time limit", async () => {
         const user = userEvent.setup();
         const updateGeneralSettings = vi.fn().mockResolvedValue({ ...defaultGeneralSettings, assistantRequestTimeoutMinutes: 5 });
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         await screen.findByRole("button", { name: getMessage("settings.ai") });
         expect(screen.queryByRole("combobox", { name: getMessage("settings.assistantRequestTimeout") })).toBeNull();
@@ -54,7 +57,8 @@ describe("ApplicationSettings general", () => {
 
     it("provides a compact section selector and resets content scrolling", async () => {
         const user = userEvent.setup();
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         const navigation = await screen.findByRole("combobox", { name: getMessage("settings.navigation") });
         const content = screen.getByRole("heading", { name: getMessage("settings.general") }).closest("section");
@@ -75,7 +79,8 @@ describe("ApplicationSettings general", () => {
     it("persists the Editorial Assistant send-key preference", async () => {
         const user = userEvent.setup();
         const updateGeneralSettings = vi.fn().mockResolvedValue(defaultGeneralSettings);
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         await user.click(await screen.findByRole("button", { name: getMessage("settings.keyBindings") }));
         await user.selectOptions(screen.getByRole("combobox", { name: getMessage("settings.assistantSendMode") }), "ctrl-enter");
@@ -85,7 +90,8 @@ describe("ApplicationSettings general", () => {
     it("persists an accessible explicit time-zone selection and previews it", async () => {
         const user = userEvent.setup();
         const updateGeneralSettings = vi.fn().mockResolvedValue(defaultGeneralSettings);
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         const heading = await screen.findByText("Time zone");
         const select = heading.closest("section")?.querySelector("select") as HTMLSelectElement;
@@ -104,7 +110,8 @@ describe("ApplicationSettings general", () => {
     it("offers system and explicit date formats and resets only the date preference", async () => {
         const user = userEvent.setup();
         const updateGeneralSettings = vi.fn().mockResolvedValue(defaultGeneralSettings);
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         const heading = await screen.findByText("Date format");
         const select = heading.closest("section")?.querySelector("select") as HTMLSelectElement;
@@ -124,7 +131,8 @@ describe("ApplicationSettings general", () => {
         const user = userEvent.setup();
         const general = { ...defaultGeneralSettings, theme: "dark" as const };
         const onThemeApplied = vi.fn();
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), general }), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), general }), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} onThemeApplied={onThemeApplied} /></NotificationProvider></IntlProvider>);
         await screen.findByText("Preferred appearance");
         await user.click(screen.getByRole("button", { name: getMessage("settings.applyAppearance") }));
@@ -132,7 +140,8 @@ describe("ApplicationSettings general", () => {
     });
 
     it("marks the single supported interface language as unavailable", async () => {
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         const heading = await screen.findByText("Interface language");
         const select = heading.closest("section")?.querySelector("select") as HTMLSelectElement;
@@ -144,7 +153,8 @@ describe("ApplicationSettings general", () => {
         const user = userEvent.setup();
         const general = { ...defaultGeneralSettings, dateFormat: "day-first-dots" as const, timeFormat: "24-hour" as const, timeZone: "America/Buenos_Aires" };
         const updateGeneralSettings = vi.fn().mockResolvedValue(general);
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), general }), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), general }), updateGeneralSettings, getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         await screen.findByText("Time format");
         await user.click(screen.getByRole("button", { name: getMessage("settings.resetTimeFormat") }));
@@ -155,7 +165,8 @@ describe("ApplicationSettings general", () => {
         const user = userEvent.setup();
         const setTelemetryConsent = vi.fn().mockResolvedValue({ enabled: false, supported: true });
         window.skladnoTelemetry = { getTelemetryConsent: vi.fn().mockResolvedValue({ enabled: true, supported: true, installationId: "123e4567-e89b-42d3-a456-426614174000" }), setTelemetryConsent, beginTelemetryCapture: vi.fn(), captureTelemetry: vi.fn() };
-        const client = { getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         const toggle = await screen.findByRole("switch", { name: getMessage("settings.telemetry") });
         expect(toggle.getAttribute("aria-checked")).toBe("true");

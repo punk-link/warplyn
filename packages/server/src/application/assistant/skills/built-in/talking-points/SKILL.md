@@ -3,6 +3,16 @@ id: talking_points
 name: Talking Points
 description: Develop 3–5 grounded theses from author-provided material.
 version: 1
+execution:
+  capability: generate_proposal
+  operation: thesis_to_narrative
+  source: author_or_article
+  resultPolicy: verified_edit
+scopes: [article, selection]
+presentation:
+  order: 10
+  label: assistant.skill.talkingPoints.label
+  hint: assistant.skill.talkingPoints.hint
 ---
 # Talking Points
 

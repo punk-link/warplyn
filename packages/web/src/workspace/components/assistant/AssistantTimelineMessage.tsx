@@ -1,10 +1,10 @@
-import { BUILT_IN_SKILL, isBuiltInSkillId, type AssistantMessage, type FactCheckClaimPreview, type GeneralSettings } from "@skladno/shared";
+import { BUILT_IN_SKILL, type AssistantMessage, type FactCheckClaimPreview, type GeneralSettings } from "@skladno/shared";
 import { Button, IconButton } from "../../../ui/primitives.js";
 import { ArticleIcon, FolderIcon, StatusIcon, UndoIcon, UpdateIcon } from "../../../ui/icons.js";
 import { formatDateTime } from "../../../i18n/formatting.js";
 import { useIntl } from "react-intl";
 import { useState, type ReactNode } from "react";
-import { getSelectionPreview, responseMessages, skillMessages } from "./assistant-messages.js";
+import { getSelectionPreview, responseMessages } from "./assistant-messages.js";
 import { FactCheckClaims } from "./FactCheckClaims.js";
 import { AssistantMarkdown } from "./AssistantMarkdown.js";
 
@@ -27,8 +27,8 @@ interface MessagePresentation {
 }
 
 
-function getSkillLabel(skillId: string, intl: Intl, skillNames: ReadonlyMap<string, string>): string {
-    return isBuiltInSkillId(skillId) ? intl.formatMessage({ id: skillMessages[skillId] }) : skillNames.get(skillId) ?? skillId;
+function getSkillLabel(skillId: string, skillNames: ReadonlyMap<string, string>): string {
+    return skillNames.get(skillId) ?? skillId;
 }
 
 
@@ -40,10 +40,10 @@ function getMessageLabel(message: AssistantMessage, skillId: string | undefined,
         return intl.formatMessage({ id: "assistant.response.narrativeDraftProposal" });
 
     if (message.responseKind)
-        return intl.formatMessage({ id: responseMessages[message.responseKind] }, skillId ? { skill: getSkillLabel(skillId, intl, skillNames) } : {});
+        return intl.formatMessage({ id: responseMessages[message.responseKind] }, skillId ? { skill: getSkillLabel(skillId, skillNames) } : {});
 
     if (skillId)
-        return getSkillLabel(skillId, intl, skillNames);
+        return getSkillLabel(skillId, skillNames);
 
     return message.role === "author"
         ? intl.formatMessage({ id: "assistant.authorMessage" })
@@ -133,7 +133,7 @@ function AuthorMessageContent({ visible, content, selectionText, skillOffset, sk
             <span className="relative -top-px max-w-48 truncate">{getSelectionPreview(selectionText)}</span>
         </span>}
         {skillOffset === undefined ? content : <>{content.slice(0, skillOffset)}
-            <span className="mx-1 inline-flex h-5 items-center align-middle rounded-full border border-brand/45 bg-surface-raised px-1.5 text-xs font-semibold text-brand">{skillId && getSkillLabel(skillId, intl, skillNames)}</span>
+            <span className="mx-1 inline-flex h-5 items-center align-middle rounded-full border border-brand/45 bg-surface-raised px-1.5 text-xs font-semibold text-brand">{skillId && getSkillLabel(skillId, skillNames)}</span>
             {skillId === BUILT_IN_SKILL.TRANSLATION && targetLanguage && <>{intl.formatMessage({ id: "assistant.translationTarget" }, { language: targetLanguage })}{content.slice(skillOffset) && " "}</>}
             {content.slice(skillOffset)}
         </>}
@@ -199,7 +199,7 @@ function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl
 
     const statusLabel = getStatusLabel(message.status, intl);
     const skillUsedLabel = skillId ? intl.formatMessage({ id: "assistant.skillUsed" }) : undefined;
-    const skillTitle = skillId ? getSkillLabel(skillId, intl, skillNames) : undefined;
+    const skillTitle = skillId ? getSkillLabel(skillId, skillNames) : undefined;
 
     return <div className="mt-2 flex items-center gap-2">
         <p className="flex min-w-0 flex-wrap items-center gap-1 text-xs text-muted">

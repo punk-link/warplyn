@@ -33,8 +33,8 @@ class RoutedFixtureEngine extends FixtureEngine {
 
     async *streamAssistant(request: EditorialAssistantRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
         const instructions = createAssistantInstructions(request);
-        assert.match(instructions, /shorten, tighten, or cut repetition use concise_rewrite/);
-        assert.match(instructions, /only about readability, flow, or transitions use flow_and_clarity/);
+        assert.match(instructions, /concise_rewrite: Concise rewrite. Shorten or tighten/);
+        assert.match(instructions, /flow_and_clarity: Flow and Clarity. Prepare a full-text Proposal that improves coherence and readability/);
         const model = new MockLanguageModelV3({ doStream: [
             { stream: toolCall("load_skill", { id: this.skillId }) },
             { stream: toolCall("generate_proposal", { operation: "flow_revision" }) },
@@ -101,9 +101,8 @@ test("inferred concise requests retain the Skill identity through the real tool 
             for await (const event of services.assistant.stream(request, new AbortController().signal))
                 assert.notEqual(event.type, "failed");
 
-            const concise = fixture.skillId === BUILT_IN_SKILL.CONCISE_REWRITE;
-            assert.equal(engine.requests[0]?.skillId, concise ? BUILT_IN_SKILL.CONCISE_REWRITE : undefined);
-            assert.equal(persistence.assistant.getRequest("inferred")?.resolvedSkillId, concise ? BUILT_IN_SKILL.CONCISE_REWRITE : undefined);
+            assert.equal(engine.requests[0]?.skillId, fixture.skillId);
+            assert.equal(persistence.assistant.getRequest("inferred")?.resolvedSkillId, fixture.skillId);
             assert.equal(persistence.editorialArtifacts.listEditorialArtifacts(article.id).length, 1);
             assert.equal(services.articles.getArticle(article.id)?.currentRevision.content, source);
         }, false, { verify: async () => true, verifyReplacement: async () => true });

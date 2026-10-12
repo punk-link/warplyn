@@ -109,11 +109,16 @@ function useAssistantSelection(workspace: ArticleWorkspaceState) {
 
 
 function useAuthorSkills(client: EditorialWorkspaceClient) {
+    const intl = useIntl();
+    const { notifyError } = useNotifications();
     const [authorSkills, setAuthorSkills] = useState<readonly AssistantSkillSummary[]>([]);
-    const loadAuthorSkills = useCallback(async () => {
-        const skills = await client.listAssistantSkills();
-        setAuthorSkills(skills.filter((skill) => skill.reference.source === "author"));
-    }, [client]);
+    const loadAuthorSkills = useCallback(async function loadCatalog() {
+        try {
+            setAuthorSkills(await client.listAssistantSkills());
+        } catch (error) {
+            notifyError(error, { fallbackMessage: intl.formatMessage({ id: "skills.loadFailed" }), action: { label: intl.formatMessage({ id: "assistant.retry" }), onAction: () => void loadCatalog() } });
+        }
+    }, [client, intl, notifyError]);
     useEffect(() => {
         void loadAuthorSkills();
     }, [loadAuthorSkills]);

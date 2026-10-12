@@ -8,6 +8,7 @@ import { CloseIcon } from "../../../ui/icons.js";
 export interface AssistantComposerSkill {
     id: string;
     name: string;
+    source?: string;
 }
 
 
