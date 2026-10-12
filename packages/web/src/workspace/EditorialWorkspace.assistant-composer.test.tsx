@@ -79,7 +79,8 @@ describe("Editorial Assistant composer", () => {
             updateArticle={updateArticle} />);
         const panelScope = within(panel.container);
 
-        expect(panelScope.getByText(/here to help shape this Article/)).toBeTruthy();
+        const hereHelpShapePattern = /here to help shape this Article/;
+        expect(panelScope.getByText(hereHelpShapePattern)).toBeTruthy();
         expect(panelScope.queryByRole("button", { name: "Talking points" })).toBeNull();
 
         const quickActions = panelScope.getByRole("button", { name: getMessage("assistant.quickActions") });

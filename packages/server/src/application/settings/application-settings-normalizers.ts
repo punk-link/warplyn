@@ -118,7 +118,8 @@ export function normalizeAiConnections(value: unknown): { connections: AiConnect
 
 
 export function getEnvironmentVariableName(value: unknown): string {
-    if (typeof value !== "string" || !/^[A-Z_][A-Z0-9_]*$/.test(value))
+    const punctuationPattern = /^[A-Z_][A-Z0-9_]*$/;
+    if (typeof value !== "string" || !punctuationPattern.test(value))
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_ENVIRONMENT_VARIABLE_NAME, HTTP_STATUS.BAD_REQUEST);
 
     return value;
@@ -163,14 +164,16 @@ export function normalizeAppModel(value: unknown, legacyConnectionId?: string): 
 function normalizeSkillOverrides(values: unknown, legacyConnectionId?: string): ModelPreferences["skillOverrides"] {
     return Object.fromEntries(Object.entries(values ?? {}).flatMap(([skill, model]) => {
         const preference = normalizeModelPreference(model, legacyConnectionId);
-        return /^[a-z][a-z0-9_-]{2,63}$/.test(skill) && preference ? [[skill, preference]] : [];
+        const lowercaseIdentifierPattern = /^[a-z][a-z0-9_-]{2,63}$/;
+        return lowercaseIdentifierPattern.test(skill) && preference ? [[skill, preference]] : [];
     })) as ModelPreferences["skillOverrides"];
 }
 
 
 function normalizeSkillReasoningEfforts(values: ModelPreferences["skillReasoningEfforts"]): NonNullable<ModelPreferences["skillReasoningEfforts"]> {
     return Object.fromEntries(Object.entries(values ?? {}).flatMap(([skill, effort]) => {
-        return /^[a-z][a-z0-9_-]{2,63}$/.test(skill) && (effort === "low" || effort === "medium" || effort === "high") ? [[skill, effort]] : [];
+        const lowercaseIdentifierPattern = /^[a-z][a-z0-9_-]{2,63}$/;
+        return lowercaseIdentifierPattern.test(skill) && (effort === "low" || effort === "medium" || effort === "high") ? [[skill, effort]] : [];
     })) as NonNullable<ModelPreferences["skillReasoningEfforts"]>;
 }
 

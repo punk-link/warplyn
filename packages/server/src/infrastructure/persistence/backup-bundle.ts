@@ -228,9 +228,10 @@ function isBackupBundleManifest(value: unknown): value is BackupBundleManifest {
     const files = value.files;
     let total = 0;
     for (const file of files) {
+        const punctuationPattern = /^[a-f0-9]{64}$/;
         if (!file || typeof file !== "object" || typeof file.path !== "string" || !isSafeBundlePath(file.path)
             || !Number.isInteger(file.size) || file.size < 0 || file.size > 100_000_000
-            || typeof file.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(file.sha256))
+            || typeof file.sha256 !== "string" || !punctuationPattern.test(file.sha256))
             return false;
 
         total += file.size;

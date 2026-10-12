@@ -3,6 +3,17 @@ import multilineLongStrings from "./multiline-long-strings.mjs";
 import sqlQueryLayout from "./sql-query-layout.mjs";
 
 
+const unicodeLetterPattern = /\p{L}/u;
+const indentationPattern = /^[ \t]*/u;
+const whitespaceOnlyPattern = /^[ \t]*$/u;
+const globalOrStickyRegexFlagsPattern = /[gy]/u;
+const regexWordPattern = /[\p{L}]{3,}/giu;
+const combiningMarkPattern = /\p{M}/gu;
+const patternSuffixPattern = /Pattern$/u;
+const statelessRegexMethods = new Set(["match", "matchAll", "replace", "search", "split"]);
+const regexNameStopWords = new Set(["http", "https", "and", "with", "from", "that", "this", "the", "for", "not", "only", "match", "test", "replace", "true", "false"]);
+
+
 const conditionalBraces = {
     meta: {
         type: "layout",
@@ -105,6 +116,225 @@ const conditionalBraces = {
 };
 
 
+const namedRegex = {
+    meta: {
+        type: "suggestion",
+        fixable: "code",
+        docs: {
+            description: "Require regular expressions to be assigned to purpose-named variables.",
+        },
+        messages: {
+            unnamedRegex: "Assign this regular expression to a purpose-named variable before using it.",
+        },
+        schema: [],
+    },
+
+    create(context) {
+        const sourceCode = context.sourceCode;
+
+
+        function extractionStatement(node) {
+            const ancestors = sourceCode.getAncestors(node);
+
+            for (let index = ancestors.length - 1; index >= 0; index--) {
+                const ancestor = ancestors[index];
+                if (ancestor.type !== "Program" && ancestor.type !== "BlockStatement")
+                    continue;
+
+                const statement = ancestors[index + 1];
+
+                if (statement?.parent !== ancestor || statement.type === "Program")
+                    continue;
+
+                if (["ForStatement", "ForInStatement", "ForOfStatement", "WhileStatement", "DoWhileStatement"].includes(statement.type))
+                    return null;
+
+                const lineStart = sourceCode.text.lastIndexOf("\n", statement.range[0] - 1) + 1;
+                const indentation = sourceCode.text.slice(lineStart, statement.range[0]);
+                if (!whitespaceOnlyPattern.test(indentation))
+                    return null;
+
+                return { indentation, lineStart, statement };
+            }
+
+            return null;
+        }
+
+
+        function suggestedName(node) {
+            const pattern = node.regex.pattern;
+            const context = sourceCode.getAncestors(node).reverse().find((ancestor) => ancestor.type === "CallExpression");
+            const callee = context?.callee;
+            const methodName = callee?.type === "MemberExpression" && !callee.computed && callee.property.type === "Identifier"
+                ? callee.property.name
+                : undefined;
+
+            return purposeName(pattern, methodName);
+        }
+
+
+        function uniqueName(name, node) {
+            const scope = sourceCode.getScope(node);
+            let uniqueNameCandidate = name;
+            let suffix = 2;
+
+            while (scope.set.has(uniqueNameCandidate)) {
+                uniqueNameCandidate = `${name}${suffix}`;
+                suffix++;
+            }
+
+            return uniqueNameCandidate;
+        }
+
+
+        function canSafelyExtract(node) {
+            if (!node.regex || !globalOrStickyRegexFlagsPattern.test(node.regex.flags))
+                return !!node.regex;
+
+            const ancestors = sourceCode.getAncestors(node).reverse();
+            const call = ancestors.find((ancestor) => ancestor.type === "CallExpression");
+            const callee = call?.callee;
+            const methodName = callee?.type === "MemberExpression" && !callee.computed && callee.property.type === "Identifier"
+                ? callee.property.name
+                : undefined;
+
+            return methodName !== undefined && statelessRegexMethods.has(methodName);
+        }
+
+
+        function reportUnlessNamed(node) {
+            const parent = node.parent;
+
+            if (parent.type === "VariableDeclarator" && parent.init === node && parent.id.type === "Identifier")
+                return;
+
+            context.report({
+                node,
+                messageId: "unnamedRegex",
+                fix(fixer) {
+                    if (!canSafelyExtract(node))
+                        return null;
+
+                    const extraction = extractionStatement(node);
+                    if (!extraction)
+                        return null;
+
+                    const name = uniqueName(suggestedName(node), node);
+                    const declaration = `${extraction.indentation}const ${name} = ${sourceCode.getText(node)};\n`;
+
+                    return [
+                        fixer.insertTextBeforeRange([extraction.lineStart, extraction.lineStart], declaration),
+                        fixer.replaceText(node, name),
+                    ];
+                },
+            });
+        }
+
+
+        function isRegExpConstructor(node) {
+            return node.callee.type === "Identifier" && node.callee.name === "RegExp";
+        }
+
+
+        return {
+            Literal(node) {
+                if (node.regex)
+                    reportUnlessNamed(node);
+            },
+
+            CallExpression(node) {
+                if (isRegExpConstructor(node))
+                    reportUnlessNamed(node);
+            },
+
+            NewExpression(node) {
+                if (isRegExpConstructor(node))
+                    reportUnlessNamed(node);
+            },
+        };
+    },
+};
+
+
+function purposeName(pattern, methodName) {
+    const source = pattern.toLowerCase();
+    const purpose = patternPurpose(source);
+    if (purpose)
+        return purpose;
+
+    const words = [...pattern.matchAll(regexWordPattern)]
+        .map((match) => match[0].normalize("NFD").replace(combiningMarkPattern, "").toLowerCase())
+        .filter((word) => !regexNameStopWords.has(word));
+    const semanticWords = [...new Set(words)].slice(0, 3);
+
+    if (semanticWords.length > 0) {
+        const patternName = `${semanticWords[0]}${semanticWords.slice(1).map((word) => word[0].toUpperCase() + word.slice(1)).join("")}Pattern`;
+        return methodName === "getByRole" || methodName === "getByText"
+            ? patternName.replace(patternSuffixPattern, "NamePattern")
+            : patternName;
+    }
+
+    if (source.includes("\\s"))
+        return methodName === "split" ? "whitespaceSeparatorPattern" : "whitespacePattern";
+
+    if (source.includes("\\d") || source.includes("[0-9]"))
+        return "numberPattern";
+
+    if (source.includes("\\p{l}"))
+        return "letterPattern";
+
+    return "punctuationPattern";
+}
+
+
+function patternPurpose(source) {
+    if (source.includes("\\b(i|we|my|our"))
+        return "firstPersonPronounPattern";
+
+    if (source.includes("button|div"))
+        return "clickableElementPattern";
+
+    if (source.includes("\\r") || source.includes("\\n")) {
+        if (source.includes("\\s*\\n") || source.includes("\\n\\s*\\n"))
+            return "paragraphBoundaryPattern";
+
+        if (source.includes("\\r?\\n") || source.includes("\\r\\n?"))
+            return "lineBreakPattern";
+
+        return "lineEndingPattern";
+    }
+
+    if (source.includes("https?:\\/\\/"))
+        return "urlPattern";
+
+    if (source.includes("\\p{script=han}") || source.includes("\\p{script=hiragana}") || source.includes("\\p{script=katakana}"))
+        return "ideographPattern";
+
+    if (source.includes("\\p{l}"))
+        return "letterPattern";
+
+    if (source.includes("\\s") && source.startsWith("^"))
+        return "whitespacePrefixPattern";
+
+    if (source.includes("\\.test\\."))
+        return "testFilenamePattern";
+
+    if (source.includes("\\.md"))
+        return "markdownExtensionPattern";
+
+    if (source.includes("[\\d") || source.includes("\\d+"))
+        return "numberPattern";
+
+    if (source.includes("[a-z]") && source.includes("[a-z0-9"))
+        return "lowercaseIdentifierPattern";
+
+    if (source.includes("\\s*delete"))
+        return "deleteStatementPattern";
+
+    return undefined;
+}
+
+
 function literalString(node) {
     if (node?.type === "Literal" && typeof node.value === "string")
         return node.value;
@@ -157,7 +387,7 @@ const noUntranslatedUiCopy = {
         function isApplicationCopy(value) {
             const copy = value.trim();
 
-            return /\p{L}/u.test(copy) && !allowedLiterals.has(copy);
+            return unicodeLetterPattern.test(copy) && !allowedLiterals.has(copy);
         }
 
 
@@ -310,7 +540,7 @@ const switchCaseBodyNewline = {
                     fix(fixer) {
                         const lastComment = comments.at(-1);
                         const bodyStart = lastComment?.range[1] ?? colon.range[1];
-                        const caseIndent = /^[ \t]*/u.exec(sourceCode.lines[colon.loc.start.line - 1])?.[0] ?? "";
+                        const caseIndent = indentationPattern.exec(sourceCode.lines[colon.loc.start.line - 1])?.[0] ?? "";
                         const newline = sourceCode.text.includes("\r\n") ? "\r\n" : "\n";
 
                         return fixer.replaceTextRange(
@@ -397,7 +627,7 @@ const twoBlankLinesBetweenDeclarations = {
                             return null;
 
                         const lineStart = sourceCode.text.lastIndexOf("\n", boundaryToken.range[0] - 1) + 1;
-                        const indentation = /^[ \t]*/u.exec(sourceCode.text.slice(lineStart, boundaryToken.range[0]))?.[0] ?? "";
+                        const indentation = indentationPattern.exec(sourceCode.text.slice(lineStart, boundaryToken.range[0]))?.[0] ?? "";
                         const newline = sourceCode.text.includes("\r\n") ? "\r\n" : "\n";
                         return fixer.replaceTextRange(
                             [previousToken.range[1], boundaryToken.range[0]],
@@ -431,6 +661,7 @@ export default {
         "conditional-braces": conditionalBraces,
         "no-accessible-label-selector": noAccessibleLabelSelector,
         "no-production-intl-provider": noProductionIntlProvider,
+        "named-regex": namedRegex,
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
         "multiline-long-strings": multilineLongStrings,
         "multiline-many-jsx-attributes": multilineManyJsxAttributes,

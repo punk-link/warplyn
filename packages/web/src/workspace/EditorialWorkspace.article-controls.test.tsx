@@ -116,9 +116,12 @@ describe("Editorial Workspace article controls", () => {
             copyMarkdown={vi.fn()}
             copyPlainText={vi.fn()} />);
 
-        await user.click(within(statusBar.container).getByRole("button", { name: /Character count:/ }));
-        expect(within(statusBar.container).getByRole("menuitemradio", { name: /Newsletter/ })).toBeTruthy();
-        await user.click(within(statusBar.container).getByRole("menuitemradio", { name: /LinkedIn article/ }));
+        const characterCountPattern = /Character count:/;
+        await user.click(within(statusBar.container).getByRole("button", { name: characterCountPattern }));
+        const newsletterPattern = /Newsletter/;
+        expect(within(statusBar.container).getByRole("menuitemradio", { name: newsletterPattern })).toBeTruthy();
+        const linkedinArticlePattern = /LinkedIn article/;
+        await user.click(within(statusBar.container).getByRole("menuitemradio", { name: linkedinArticlePattern }));
 
         expect(setProfile).toHaveBeenCalledWith("linkedin-article");
     });
@@ -189,7 +192,8 @@ describe("Editorial Workspace article controls", () => {
 
         expect(remove).not.toHaveBeenCalled();
         expect(headerScope.getByRole("heading", { name: "Delete Article?" })).toBeTruthy();
-        expect(headerScope.getByText(/^Delete “First Article”/)).toBeTruthy();
+        const deleteFirstArticlePattern = /^Delete “First Article”/;
+        expect(headerScope.getByText(deleteFirstArticlePattern)).toBeTruthy();
 
         await user.click(headerScope.getByRole("button", { name: "Delete Article" }));
 
@@ -212,8 +216,10 @@ describe("Editorial Workspace article controls", () => {
         const statusBarScope = within(statusBar.container);
 
         expect(statusBarScope.getByText("v2")).toBeTruthy();
-        expect(statusBarScope.getByText(/1,234 \/ 3,000 characters/)).toBeTruthy();
-        expect(statusBarScope.queryByText(/1,766 characters remaining/)).toBeNull();
+        const charactersPattern = /1,234 \/ 3,000 characters/;
+        expect(statusBarScope.getByText(charactersPattern)).toBeTruthy();
+        const charactersRemainingPattern = /1,766 characters remaining/;
+        expect(statusBarScope.queryByText(charactersRemainingPattern)).toBeNull();
     });
 
 
@@ -231,7 +237,8 @@ describe("Editorial Workspace article controls", () => {
             copyPlainText={vi.fn()} />);
 
         expect(within(statusBar.container).getByRole("status", { name: "Saved" })).toBeTruthy();
-        expect(within(statusBar.container).queryByRole("button", { name: /Update/ })).toBeNull();
+        const updatePattern = /Update/;
+        expect(within(statusBar.container).queryByRole("button", { name: updatePattern })).toBeNull();
     });
 
 
@@ -249,6 +256,7 @@ describe("Editorial Workspace article controls", () => {
             copyPlainText={vi.fn()} />);
         const statusBarScope = within(statusBar.container);
 
-        expect(statusBarScope.getByRole("button", { name: /Character count: 3,001 of 3,000 characters/ })).toBeTruthy();
+        const characterCountCharactersPattern = /Character count: 3,001 of 3,000 characters/;
+        expect(statusBarScope.getByRole("button", { name: characterCountCharactersPattern })).toBeTruthy();
     });
 });

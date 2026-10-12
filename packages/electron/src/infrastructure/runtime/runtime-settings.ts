@@ -48,8 +48,9 @@ function parseSpellingSettings(value: unknown): RuntimeSettings["spelling"] {
     if (!value || typeof value !== "object" || !("preloadLanguages" in value) || !Array.isArray(value.preloadLanguages))
         return undefined;
 
+    const punctuationPattern = /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,2}$/;
     const preloadLanguages = value.preloadLanguages
-        .filter((language: unknown): language is string => typeof language === "string" && /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,2}$/.test(language))
+        .filter((language: unknown): language is string => typeof language === "string" && punctuationPattern.test(language))
         .slice(0, 100);
 
     return { preloadLanguages: [...new Set(preloadLanguages)] };
@@ -78,7 +79,8 @@ function parseTelemetrySettings(value: unknown): RuntimeSettings["telemetry"] | 
     if (record.consent === "denied" && Object.keys(record).length === 1)
         return { consent: "denied" };
 
-    if (record.consent !== "granted" || typeof record.installationId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(record.installationId))
+    const punctuationPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (record.consent !== "granted" || typeof record.installationId !== "string" || !punctuationPattern.test(record.installationId))
         return undefined;
 
     return { consent: "granted", installationId: record.installationId };

@@ -91,7 +91,8 @@ describe("Article file actions", () => {
         window.skladnoArticleFiles = files;
         render(<App client={client} />);
         await screen.findByRole("textbox", { name: "Article draft" });
-        const row = screen.getByRole("button", { name: /^Second Article/ });
+        const secondArticlePattern = /^Second Article/;
+        const row = screen.getByRole("button", { name: secondArticlePattern });
         fireEvent.contextMenu(row);
         const menu = screen.getByRole("menu", { name: "Second Article" });
         expect(within(menu).getAllByRole("menuitem").map((item) => item.textContent)).toEqual(["Save to file…", "Load from file…", "Pin", "Archive", "Delete"]);
@@ -123,7 +124,8 @@ describe("Article file actions", () => {
         await runFileAction("Save to file");
         expect(screen.getByRole("button", { name: "Save to file" }).hasAttribute("disabled")).toBe(true);
         expect(screen.getByRole("button", { name: "Load from file" }).hasAttribute("disabled")).toBe(true);
-        fireEvent.contextMenu(screen.getByRole("button", { name: /^First Article/ }));
+        const firstArticlePattern = /^First Article/;
+        fireEvent.contextMenu(screen.getByRole("button", { name: firstArticlePattern }));
         expect(screen.getByRole("menuitem", { name: "Save to file…" }).hasAttribute("disabled")).toBe(true);
         expect(screen.getByRole("menuitem", { name: "Load from file…" }).hasAttribute("disabled")).toBe(true);
         expect(files.saveFile).toHaveBeenCalledExactlyOnceWith({ ticket: "test-save", format: "markdown" }, new TextEncoder().encode("Draft"));
@@ -203,9 +205,11 @@ describe("Article file actions", () => {
         expect(screen.queryByText("Article loaded from file")).toBeNull();
         expect(screen.queryByText("Article saved to file")).toBeNull();
         await runFileAction("Load from file");
-        expect(await screen.findByText(/Choose a readable Markdown, HTML/)).toBeTruthy();
+        const chooseReadableMarkdownPattern = /Choose a readable Markdown, HTML/;
+        expect(await screen.findByText(chooseReadableMarkdownPattern)).toBeTruthy();
         await runFileAction("Save to file");
-        expect(await screen.findByText(/Choose a writable location/)).toBeTruthy();
+        const chooseWritableLocationPattern = /Choose a writable location/;
+        expect(await screen.findByText(chooseWritableLocationPattern)).toBeTruthy();
         expect(client.createArticle).not.toHaveBeenCalled();
         expect(client.saveArticleRevision).not.toHaveBeenCalled();
     });

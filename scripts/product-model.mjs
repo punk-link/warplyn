@@ -54,13 +54,16 @@ async function testFiles() {
         return filesUnder(sourcePath);
     }));
 
-    return files.flat().filter((path) => /\.test\.[cm]?[jt]sx?$/.test(path));
+    const testFilenamePattern = /\.test\.[cm]?[jt]sx?$/;
+    return files.flat().filter((path) => testFilenamePattern.test(path));
 }
 
 
 function productScenarioIds(source) {
-    return [...source.matchAll(/\bproduct(?: scenarios?)?:\s*([^\r\n]*)/gi)]
-        .flatMap((match) => match[1].match(/[a-z][a-z0-9-]*(?:\.[a-z0-9-]+)+/g) ?? []);
+    const lineEndingPattern = /\bproduct(?: scenarios?)?:\s*([^\r\n]*)/gi;
+    const lowercaseIdentifierPattern = /[a-z][a-z0-9-]*(?:\.[a-z0-9-]+)+/g;
+    return [...source.matchAll(lineEndingPattern)]
+        .flatMap((match) => match[1].match(lowercaseIdentifierPattern) ?? []);
 }
 
 

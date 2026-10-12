@@ -33,8 +33,10 @@ class RoutedFixtureEngine extends FixtureEngine {
 
     async *streamAssistant(request: EditorialAssistantRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
         const instructions = createAssistantInstructions(request);
-        assert.match(instructions, /concise_rewrite: Concise rewrite. Shorten or tighten/);
-        assert.match(instructions, /flow_and_clarity: Flow and Clarity. Prepare a full-text Proposal that improves coherence and readability/);
+        const conciseRewriteShortenPattern = /concise_rewrite: Concise rewrite. Shorten or tighten/;
+        assert.match(instructions, conciseRewriteShortenPattern);
+        const flowClarityPreparePattern = /flow_and_clarity: Flow and Clarity. Prepare a full-text Proposal that improves coherence and readability/;
+        assert.match(instructions, flowClarityPreparePattern);
         const model = new MockLanguageModelV3({ doStream: [
             { stream: toolCall("load_skill", { id: this.skillId }) },
             { stream: toolCall("generate_proposal", { operation: "flow_revision" }) },

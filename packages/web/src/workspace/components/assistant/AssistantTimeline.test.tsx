@@ -46,7 +46,8 @@ describe("AssistantTimeline", () => {
             generalSettings={defaultGeneralSettings}
             elapsedDuration="1 second" /></IntlProvider>);
 
-        expect(screen.getByText(/Used skill/).getAttribute("title")).toBe("Em dash-free rephrase");
+        const usedSkillPattern = /Used skill/;
+        expect(screen.getByText(usedSkillPattern).getAttribute("title")).toBe("Em dash-free rephrase");
     });
 
     it("keeps conversation text selectable with the default cursor", () => {
@@ -98,7 +99,8 @@ describe("AssistantTimeline", () => {
             generalSettings={defaultGeneralSettings}
             elapsedDuration="1 second" /></IntlProvider>);
         const timeline = view.container.querySelector<HTMLElement>("[aria-live='polite']")!;
-        const actions = screen.getAllByRole("button", { name: /later conversation and work will be rejected/ });
+        const laterConversationWorkPattern = /later conversation and work will be rejected/;
+        const actions = screen.getAllByRole("button", { name: laterConversationWorkPattern });
 
         fireEvent.keyDown(timeline, { key: "End" });
         expect(document.activeElement).toBe(actions[1]);

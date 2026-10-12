@@ -21,7 +21,8 @@ export function removeDatabaseFiles(databasePath: string): void {
 
 export function prepareBrowserRestoreRecovery(databasePath: string, recoveryDirectory: string): void {
     const name = basename(recoveryDirectory);
-    if (!/^recovery-[a-zA-Z0-9_-]+$/.test(name) || dirname(recoveryDirectory) !== dirname(databasePath))
+    const recoveryPattern = /^recovery-[a-zA-Z0-9_-]+$/;
+    if (!recoveryPattern.test(name) || dirname(recoveryDirectory) !== dirname(databasePath))
         throw new Error("invalid_restore_recovery_directory");
 
     validateDatabaseSnapshot(join(recoveryDirectory, "database.sqlite"));
@@ -35,8 +36,9 @@ export function recoverPendingBrowserRestore(databasePath: string): boolean {
         return false;
 
     const value: unknown = JSON.parse(readFileSync(marker, "utf8"));
+    const recoveryPattern = /^recovery-[a-zA-Z0-9_-]+$/;
     if (!value || typeof value !== "object" || !("recoveryDirectory" in value)
-        || typeof value.recoveryDirectory !== "string" || !/^recovery-[a-zA-Z0-9_-]+$/.test(value.recoveryDirectory))
+        || typeof value.recoveryDirectory !== "string" || !recoveryPattern.test(value.recoveryDirectory))
         throw new Error("invalid_restore_recovery_marker");
 
     const recoveryDirectory = join(dirname(databasePath), value.recoveryDirectory);

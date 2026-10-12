@@ -83,7 +83,8 @@ test("legacy backup pairs and database-only snapshots restore without changing t
                 closeApplication: () => assert.fail("Disk failure must leave the destination open"),
                 restart: () => assert.fail("Disk failure must not restart"),
             });
-            await assert.rejects(diskFailure.execute(snapshot), /ENOSPC/);
+            const enospcPattern = /ENOSPC/;
+            await assert.rejects(diskFailure.execute(snapshot), enospcPattern);
             assert.equal(readRuntimeSettings(runtimePath).pendingRestore, undefined);
             assert.deepEqual(hashes(source), before);
             const restoration = createNativeBackupRestoration({

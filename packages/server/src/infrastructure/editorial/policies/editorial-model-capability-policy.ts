@@ -34,11 +34,14 @@ export class EditorialModelCapabilityPolicy {
 
 
     private isKnownStructuredModel(provider: AiProvider, model: string): boolean {
-        const id = model.replace(/^opencode\//, "");
+        const opencodePattern = /^opencode\//;
+        const id = model.replace(opencodePattern, "");
 
+        const gptPattern = /^(gpt|o\d)/;
+        const gptGrokClaudePattern = /^(gpt-|grok-|claude-|gemini-|deepseek-)/;
         switch (provider) {
             case AI_PROVIDER.OPENAI:
-                return /^(gpt|o\d)/.test(id);
+                return gptPattern.test(id);
             case AI_PROVIDER.ANTHROPIC:
                 return id.startsWith("claude-");
             case AI_PROVIDER.GOOGLE:
@@ -48,7 +51,7 @@ export class EditorialModelCapabilityPolicy {
             case AI_PROVIDER.DEEPSEEK:
                 return id.startsWith("deepseek-");
             default:
-                return /^(gpt-|grok-|claude-|gemini-|deepseek-)/.test(id);
+                return gptGrokClaudePattern.test(id);
         }
     }
 }

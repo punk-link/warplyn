@@ -33,11 +33,12 @@ describe("Editorial Workspace persistence", () => {
 
         await user.click(screen.getByRole("button", { name: "Save revision" }));
         await waitFor(() => expect(client.listArticleRevisions).toHaveBeenCalledTimes(2));
-        expect(within(timeline).getByRole("button", { name: /Updated the Article/ }).getAttribute("aria-pressed")).toBe("true");
+        const updatedArticlePattern = /Updated the Article/;
+        expect(within(timeline).getByRole("button", { name: updatedArticlePattern }).getAttribute("aria-pressed")).toBe("true");
         expect(screen.getByText("Updated Article")).toBeTruthy();
 
         await act(async () => resolveHistory([article.currentRevision, saved]));
-        expect(within(timeline).getAllByRole("button", { name: /Updated the Article/ })).toHaveLength(1);
+        expect(within(timeline).getAllByRole("button", { name: updatedArticlePattern })).toHaveLength(1);
         expect(within(timeline).getAllByRole("button")).toHaveLength(2);
     });
 

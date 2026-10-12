@@ -118,7 +118,8 @@ test("update discovery requires persisted network access", async () => {
         assert.equal((await coordinator.checkNow()).kind, "available");
         assert.equal(requests, 1);
         assert.equal(coordinator.setIncludePrereleases(false).kind, "current");
-        assert.match(readFileSync(join(root, "runtime-settings.json"), "utf8"), /"includePrereleaseUpdates":false/);
+        const includeprereleaseupdatesPattern = /"includePrereleaseUpdates":false/;
+        assert.match(readFileSync(join(root, "runtime-settings.json"), "utf8"), includeprereleaseupdatesPattern);
     } finally {
         rmSync(root, { recursive: true, force: true });
     }

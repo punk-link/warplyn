@@ -12,11 +12,13 @@ type AssistantState = "idle" | "streaming" | "error";
 
 function getSlashQueryAt(guidance: string, caretOffset: number): { start: number; query: string } | undefined {
     const start = guidance.lastIndexOf("/", caretOffset - 1);
-    if (start < 0 || (start > 0 && !/\s/.test(guidance[start - 1] ?? "")))
+    const characterWhitespacePattern = /\s/;
+    if (start < 0 || (start > 0 && !characterWhitespacePattern.test(guidance[start - 1] ?? "")))
         return undefined;
 
     const query = guidance.slice(start + 1, caretOffset);
-    return /\s/.test(query) ? undefined : { start, query };
+    const queryWhitespacePattern = /\s/;
+    return queryWhitespacePattern.test(query) ? undefined : { start, query };
 }
 
 
@@ -204,7 +206,8 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         const guidanceWithoutSlash = slashRange
             ? `${guidance.slice(0, slashRange.start)}${guidance.slice(slashRange.end)}`
             : guidance;
-        const needsTrailingSpace = insertionOffset === guidanceWithoutSlash.length || !/\s/.test(guidanceWithoutSlash[insertionOffset] ?? "");
+        const whitespacePattern = /\s/;
+        const needsTrailingSpace = insertionOffset === guidanceWithoutSlash.length || !whitespacePattern.test(guidanceWithoutSlash[insertionOffset] ?? "");
         const nextGuidance = needsTrailingSpace
             ? `${guidanceWithoutSlash.slice(0, insertionOffset)} ${guidanceWithoutSlash.slice(insertionOffset)}`
             : guidanceWithoutSlash;

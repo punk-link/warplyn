@@ -82,7 +82,8 @@ describe("TranslationsView", () => {
         </IntlProvider>);
 
         expect(screen.getByText("Generate a translation, then review it here. Previous results are kept.")).toBeTruthy();
-        expect(screen.queryByText(/ru source/)).toBeNull();
+        const sourcePattern = /ru source/;
+        expect(screen.queryByText(sourcePattern)).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("views.translate") }));
         expect(translate).not.toHaveBeenCalled();
         await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Generate translations" }));

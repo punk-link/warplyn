@@ -58,7 +58,8 @@ test("rejects a modified bundle before restoring", async () => {
         const imported = await transfers.beginImport(manifest);
         const changed = Buffer.from(await transfers.readExport(id, 0));
         changed[0] = changed[0] === 0 ? 1 : 0;
-        await assert.rejects(() => transfers.writeImport(imported, 0, changed), /backup_bundle_invalid_file/);
+        const backupBundleInvalidPattern = /backup_bundle_invalid_file/;
+        await assert.rejects(() => transfers.writeImport(imported, 0, changed), backupBundleInvalidPattern);
         await assert.rejects(transfers.restoreImport(imported));
         assert.equal(restored, false);
         await transfers.remove(id);
@@ -73,8 +74,9 @@ test("rejects a browser bundle beyond the transfer limit", async () => {
     const transfers = new BackupBundleTransfers("unused", () => {
         throw new Error("unused");
     }, async () => undefined);
+    const backupBundleInvalidPattern = /backup_bundle_invalid_manifest/;
     await assert.rejects(() => transfers.beginImport({
         format: 1,
         files: [{ path: "database.sqlite", size: 100_000_001, sha256: "0".repeat(64) }],
-    }), /backup_bundle_invalid_manifest/);
+    }), backupBundleInvalidPattern);
 });

@@ -34,7 +34,8 @@ function flushMarkdownBlock(state: MarkdownBlockState): void {
 
 
 function appendFenceLine(state: MarkdownBlockState, line: string): boolean {
-    if (!/^```/.test(line.trim()))
+    const punctuationPattern = /^```/;
+    if (!punctuationPattern.test(line.trim()))
         return false;
 
     state.current += line;
@@ -52,7 +53,8 @@ function appendOrdinaryLine(state: MarkdownBlockState, line: string, trimmed: st
         return;
     }
 
-    if (/^(#{1,6}\s|[-*+]\s|\d+[.)]\s|>\s?)/.test(trimmed)) {
+    const whitespacePrefixPattern = /^(#{1,6}\s|[-*+]\s|\d+[.)]\s|>\s?)/;
+    if (whitespacePrefixPattern.test(trimmed)) {
         flushMarkdownBlock(state);
         state.blocks.push(line);
         return;

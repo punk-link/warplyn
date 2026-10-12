@@ -114,9 +114,11 @@ test("Concise rewrite sends the complete requested source even beyond the conver
 
         const prompt = JSON.stringify(model.doStreamCalls.at(-1)?.prompt);
         assert.ok(prompt.includes(JSON.stringify(article).slice(1, -1)));
-        assert.doesNotMatch(prompt, /Middle of article omitted/);
+        const middleArticleOmittedPattern = /Middle of article omitted/;
+        assert.doesNotMatch(prompt, middleArticleOmittedPattern);
+        const privateTitlePattern = /Private title/;
         if (selection)
-            assert.doesNotMatch(prompt, /Private title/);
+            assert.doesNotMatch(prompt, privateTitlePattern);
     }
 });
 
@@ -167,10 +169,14 @@ test("fact-check workflow passes the packaged instructions to its provider", asy
         completed ||= event.type === EDITORIAL_ENGINE_EVENT.COMPLETED;
 
     assert.ok(completed);
-    assert.match(instructions, /For claim extraction, include every previously checked claim/);
-    assert.match(instructions, /Extract up to 12 additional externally verifiable factual claims/);
-    assert.match(instructions, /For web research, research the factual claim using web search/);
-    assert.match(instructions, /For evidence evaluation, evaluate each Article claim/);
+    const claimExtractionIncludePattern = /For claim extraction, include every previously checked claim/;
+    assert.match(instructions, claimExtractionIncludePattern);
+    const extractAdditionalExternallyPattern = /Extract up to 12 additional externally verifiable factual claims/;
+    assert.match(instructions, extractAdditionalExternallyPattern);
+    const webResearchFactualPattern = /For web research, research the factual claim using web search/;
+    assert.match(instructions, webResearchFactualPattern);
+    const evidenceEvaluationEvaluatePattern = /For evidence evaluation, evaluate each Article claim/;
+    assert.match(instructions, evidenceEvaluationEvaluatePattern);
 });
 
 
@@ -178,7 +184,8 @@ test("translation constrains the language metadata to the requested value", asyn
     const model = new MockLanguageModelV3({
         doGenerate: async ({ responseFormat }) => {
             const schema = JSON.stringify(responseFormat);
-            assert.match(schema, /"const":"Spanish"|"enum":\["Spanish"\]/);
+            const constSpanishEnumPattern = /"const":"Spanish"|"enum":\["Spanish"\]/;
+            assert.match(schema, constSpanishEnumPattern);
             return {
                 content: [{ type: "text", text: JSON.stringify({ translation: "Hola mundo.", title: "Prueba", targetLanguage: "Spanish" }) }],
                 finishReason: { unified: "stop", raw: undefined },

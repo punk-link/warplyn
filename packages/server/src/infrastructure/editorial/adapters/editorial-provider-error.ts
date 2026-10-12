@@ -4,10 +4,12 @@ import { EditorialEngineError } from "../../../application/editorial/engine/edit
 
 export function createProviderError(error: unknown, hadPreviousResponseId: boolean): EditorialEngineError {
     const message = error instanceof Error ? error.message : EDITORIAL_ENGINE_ERROR.PROVIDER;
-    if (hadPreviousResponseId && /previous[_ ]response|response.*not found|not found/i.test(message))
+    const previousResponseFoundPattern = /previous[_ ]response|response.*not found|not found/i;
+    if (hadPreviousResponseId && previousResponseFoundPattern.test(message))
         return new EditorialEngineError(EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED, EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED);
 
-    if (/network|fetch|connect|timeout|ECONN|ENOTFOUND/i.test(message))
+    const networkFetchConnectPattern = /network|fetch|connect|timeout|ECONN|ENOTFOUND/i;
+    if (networkFetchConnectPattern.test(message))
         return new EditorialEngineError(EDITORIAL_ENGINE_ERROR.NETWORK, EDITORIAL_ENGINE_ERROR.NETWORK);
 
     return new EditorialEngineError(EDITORIAL_ENGINE_ERROR.PROVIDER, EDITORIAL_ENGINE_ERROR.PROVIDER);

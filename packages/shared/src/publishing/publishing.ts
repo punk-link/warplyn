@@ -62,7 +62,8 @@ export const defaultPublishingSettings: PublishingSettings = {
 
 
 export function isPublishLimitProfileId(value: unknown): value is PublishLimitProfileId {
-    return publishLimitProfiles.some((profile) => profile.id === value) || (typeof value === "string" && /^custom-[0-9a-f-]{36}$/i.test(value));
+    const customPattern = /^custom-[0-9a-f-]{36}$/i;
+    return publishLimitProfiles.some((profile) => profile.id === value) || (typeof value === "string" && customPattern.test(value));
 }
 
 
@@ -75,24 +76,41 @@ export function getPublishLimitProfile(id: PublishLimitProfileId, settings = def
 
 
 export function preparePlainTextForPublishing(content: string): string {
+    const codeFenceMarkerPattern = /```/g;
+    const escapedNewlinePattern = /\\\n/g;
+    const boldMarkdownPattern = /(\*\*|__)(.+?)\1/g;
+    const asteriskEmphasisPattern = /(?<!\*)\*([^*\n]+)\*(?!\*)/g;
+    const underscoreEmphasisPattern = /(?<!_)_([^_\n]+)_(?!_)/g;
+    const strikethroughPattern = /~~(.+?)~~/g;
+    const excessBlankLinesPattern = /\n{3,}/g;
+    const lineBreakPattern = /\r\n?/g;
+    const markdownImagePattern = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+[^)]*)?\)/g;
+    const markdownLinkPattern = /\[([^\]]+)\]\(([^)\s]+)(?:\s+[^)]*)?\)/g;
+    const urlPattern = /<((?:https?:\/\/|mailto:)[^>]+)>/g;
+    const markdownHeadingMarkerPattern = /^[ \t]{0,3}#{1,6}[ \t]+/gm;
+    const markdownBlockquoteMarkerPattern = /^[ \t]{0,3}>[ \t]?/gm;
+    const markdownListMarkerPattern = /^[ \t]*(?:[-+*]|\d+[.)])[ \t]+/gm;
+    const markdownHorizontalRulePattern = /^[ \t]{0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/gm;
+    const codeFenceOpeningPattern = /^[ \t]*```[^\n]*\n?/gm;
+    const inlineCodePattern = /`([^`]+)`/g;
     return content
-        .replace(/\r\n?/g, "\n")
-        .replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+[^)]*)?\)/g, "$1 ($2)")
-        .replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+[^)]*)?\)/g, "$1 ($2)")
-        .replace(/<((?:https?:\/\/|mailto:)[^>]+)>/g, "$1")
-        .replace(/^[ \t]{0,3}#{1,6}[ \t]+/gm, "")
-        .replace(/^[ \t]{0,3}>[ \t]?/gm, "")
-        .replace(/^[ \t]*(?:[-+*]|\d+[.)])[ \t]+/gm, "")
-        .replace(/^[ \t]{0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/gm, "")
-        .replace(/^[ \t]*```[^\n]*\n?/gm, "")
-        .replace(/`([^`]+)`/g, "$1")
-        .replace(/```/g, "")
-        .replace(/\\\n/g, "\n")
-        .replace(/(\*\*|__)(.+?)\1/g, "$2")
-        .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, "$1")
-        .replace(/(?<!_)_([^_\n]+)_(?!_)/g, "$1")
-        .replace(/~~(.+?)~~/g, "$1")
-        .replace(/\n{3,}/g, "\n\n")
+        .replace(lineBreakPattern, "\n")
+        .replace(markdownImagePattern, "$1 ($2)")
+        .replace(markdownLinkPattern, "$1 ($2)")
+        .replace(urlPattern, "$1")
+        .replace(markdownHeadingMarkerPattern, "")
+        .replace(markdownBlockquoteMarkerPattern, "")
+        .replace(markdownListMarkerPattern, "")
+        .replace(markdownHorizontalRulePattern, "")
+        .replace(codeFenceOpeningPattern, "")
+        .replace(inlineCodePattern, "$1")
+        .replace(codeFenceMarkerPattern, "")
+        .replace(escapedNewlinePattern, "\n")
+        .replace(boldMarkdownPattern, "$2")
+        .replace(asteriskEmphasisPattern, "$1")
+        .replace(underscoreEmphasisPattern, "$1")
+        .replace(strikethroughPattern, "$1")
+        .replace(excessBlankLinesPattern, "\n\n")
         .trim();
 }
 

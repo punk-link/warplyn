@@ -31,7 +31,8 @@ describe("FactCheckView", () => {
             resolve={vi.fn()}
             proposeCorrections={vi.fn()} /></IntlProvider>);
 
-        expect(screen.getByText(/checking 7 claims/).textContent).toContain("previous completed check");
+        const checkingClaimsPattern = /checking 7 claims/;
+        expect(screen.getByText(checkingClaimsPattern).textContent).toContain("previous completed check");
     });
 
     // Product scenario: workspace.findings.incomplete-timeout
@@ -59,8 +60,10 @@ describe("FactCheckView", () => {
             proposeCorrections={vi.fn()} /></IntlProvider>);
 
         expect(screen.getByText("Evidence reused from Revision v1.")).toBeTruthy();
-        expect(screen.getByText(/^Checked /)).toBeTruthy();
-        expect(screen.getByRole("link", { name: /Primary source/ }).textContent).toContain("2026-01-01");
+        const checkedPattern = /^Checked /;
+        expect(screen.getByText(checkedPattern)).toBeTruthy();
+        const primarySourcePattern = /Primary source/;
+        expect(screen.getByRole("link", { name: primarySourcePattern }).textContent).toContain("2026-01-01");
     });
 
     it("keeps stale findings readable but blocks correction selection", async () => {
@@ -73,9 +76,11 @@ describe("FactCheckView", () => {
             proposeCorrections={vi.fn()} /></IntlProvider>);
 
         expect(screen.getAllByText("A claim that needs evidence.")).toHaveLength(2);
-        expect(screen.getByRole("link", { name: /Primary source/ }).getAttribute("title")).toBe("https://example.com/source");
-        expect(screen.getByRole("link", { name: /Primary source/ }).getAttribute("target")).toBe("_blank");
-        expect(screen.queryByRole("button", { name: /Propose corrections/ })).toBeNull();
+        const primarySourcePattern = /Primary source/;
+        expect(screen.getByRole("link", { name: primarySourcePattern }).getAttribute("title")).toBe("https://example.com/source");
+        expect(screen.getByRole("link", { name: primarySourcePattern }).getAttribute("target")).toBe("_blank");
+        const proposeCorrectionsPattern = /Propose corrections/;
+        expect(screen.queryByRole("button", { name: proposeCorrectionsPattern })).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("views.runFactCheckAgain") }));
     });
 
@@ -131,11 +136,12 @@ describe("FactCheckView", () => {
             resolve={vi.fn()}
             proposeCorrections={vi.fn()} /></IntlProvider>);
 
-        screen.getAllByRole("button", { name: /A claim that needs evidence/ })[0]!.focus();
+        const claimNeedsEvidencePattern = /A claim that needs evidence/;
+        screen.getAllByRole("button", { name: claimNeedsEvidencePattern })[0]!.focus();
         await user.keyboard("{Enter}");
         expect(scrollTo).toHaveBeenCalledOnce();
         expect(scrollTo.mock.contexts[0]).toBe(screen.getByLabelText(getMessage("views.factCheckFindings")).nextElementSibling);
-        expect(screen.getAllByRole("button", { name: /A claim that needs evidence/ })[0]!.getAttribute("aria-current")).toBe("true");
+        expect(screen.getAllByRole("button", { name: claimNeedsEvidencePattern })[0]!.getAttribute("aria-current")).toBe("true");
         expect(screen.getByText("Accepted as written")).toBeTruthy();
     });
 
@@ -172,7 +178,8 @@ describe("FactCheckView", () => {
 
         await user.click(screen.getByRole("button", { name: "Fact Check history" }));
         expect(screen.getAllByText("v2 · Updated opening")).toHaveLength(2);
-        await user.click(screen.getByRole("menuitemradio", { name: /v1/ }));
+        const punctuationPattern = /v1/;
+        await user.click(screen.getByRole("menuitemradio", { name: punctuationPattern }));
         expect(selectRun).toHaveBeenCalledWith(0);
     });
 
@@ -188,7 +195,8 @@ describe("FactCheckView", () => {
             resolve={vi.fn()}
             proposeCorrections={vi.fn()} /></IntlProvider>);
 
-        expect(screen.getByText(/earlier Fact Check run is read-only/)).toBeTruthy();
+        const earlierFactCheckPattern = /earlier Fact Check run is read-only/;
+        expect(screen.getByText(earlierFactCheckPattern)).toBeTruthy();
         expect(screen.queryByRole("button", { name: getMessage("views.proposeFactCorrection") })).toBeNull();
         expect(screen.queryByRole("button", { name: getMessage("views.acceptFactAsWritten") })).toBeNull();
     });
@@ -201,7 +209,9 @@ describe("FactCheckView", () => {
             resolve={vi.fn()}
             proposeCorrections={vi.fn()} /></IntlProvider>);
 
-        expect(screen.getByText(/Time-sensitive claims may have changed/)).toBeTruthy();
-        expect(screen.queryByText(/earlier Revision/)).toBeNull();
+        const timeSensitiveClaimsPattern = /Time-sensitive claims may have changed/;
+        expect(screen.getByText(timeSensitiveClaimsPattern)).toBeTruthy();
+        const earlierRevisionPattern = /earlier Revision/;
+        expect(screen.queryByText(earlierRevisionPattern)).toBeNull();
     });
 });

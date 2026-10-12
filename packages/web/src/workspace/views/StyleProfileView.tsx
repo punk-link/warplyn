@@ -74,7 +74,8 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         if (!file)
             return;
 
-        if (!/\.(txt|md)$/i.test(file.name)) {
+        const txtPattern = /\.(txt|md)$/i;
+        if (!txtPattern.test(file.name)) {
             setUploadFailed(true);
             event.target.value = "";
             return;
@@ -82,7 +83,8 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
 
         void file.text().then((text) => {
             setUploadFailed(false);
-            setName(file.name.replace(/\.(txt|md)$/i, ""));
+            const txtPattern = /\.(txt|md)$/i;
+            setName(file.name.replace(txtPattern, ""));
             setContent(text);
         }, () => setUploadFailed(true));
         event.target.value = "";

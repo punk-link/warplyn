@@ -30,7 +30,8 @@ export function getEditCandidate(request: PreparedAssistantRequest, event: Compl
         ? request.articleContent.slice(request.scope.startOffset, request.scope.endOffset)
         : request.articleContent;
     const replacement = event.text;
-    if (replacement === source || /(?:^|\n)\s*(?:option|version|alternative)\s*[12]\s*[:.)]/i.test(replacement) || !preservesProtectedContent(source, replacement))
+    const lineEndingPattern = /(?:^|\n)\s*(?:option|version|alternative)\s*[12]\s*[:.)]/i;
+    if (replacement === source || lineEndingPattern.test(replacement) || !preservesProtectedContent(source, replacement))
         return undefined;
 
     return request.scope.kind === "selection"

@@ -50,7 +50,8 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                 status={backupStatus ?? (creating ? intl.formatMessage({ id: "settings.backupCreating" }) : undefined)}>
                 <Button disabled={!folderName} state={creating ? "loading" : "default"} onClick={() => {
                     setCreating(true);
-                    void (desktop ? desktop.createNativeBackup().then((backup) => backup.path.split(/[\\/]/).at(-1) ?? backup.path) : saveWebBackup(client, "manual", backupPolicy)).then((name) => setBackupStatus(intl.formatMessage({ id: "settings.backupCreated" }, { name })), (error) => setBackupStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupCreateFailed") }))).finally(() => setCreating(false));
+                    const punctuationPattern = /[\\/]/;
+                    void (desktop ? desktop.createNativeBackup().then((backup) => backup.path.split(punctuationPattern).at(-1) ?? backup.path) : saveWebBackup(client, "manual", backupPolicy)).then((name) => setBackupStatus(intl.formatMessage({ id: "settings.backupCreated" }, { name })), (error) => setBackupStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupCreateFailed") }))).finally(() => setCreating(false));
                 }}>{intl.formatMessage({ id: "settings.createBackup" })}</Button>
             </SettingRow>
             <SettingRow

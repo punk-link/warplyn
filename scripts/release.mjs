@@ -54,13 +54,15 @@ function release() {
     runNpm(["run", "verify"]);
 
     const { version: currentVersion } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+    const lineBreakPattern = /\r?\n/;
     const tags = run("git", ["tag", "--list", "v*"], { stdio: "pipe" })
         .trim()
-        .split(/\r?\n/)
+        .split(lineBreakPattern)
         .filter(Boolean)
         .map((tag) => tag.slice(1));
     const mode = process.argv[2];
-    assert.match(mode, /^(stable|preview)$/, "Release mode must be stable or preview.");
+    const stablePreviewPattern = /^(stable|preview)$/;
+    assert.match(mode, stablePreviewPattern, "Release mode must be stable or preview.");
     const version = nextReleaseVersion(currentVersion, mode === "preview", process.argv[3], tags);
     const tag = `v${version}`;
 

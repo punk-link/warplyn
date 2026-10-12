@@ -34,8 +34,10 @@ test("style review uses a compact local profile and saves cited findings as a pr
         const body = await response.text();
         const artifact = repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!;
 
-        assert.match(body, /"text":"A concise proposal."/);
-        assert.match(body, /"traitIds":\["structure"\]/);
+        const textConciseProposalPattern = /"text":"A concise proposal."/;
+        assert.match(body, textConciseProposalPattern);
+        const traitidsStructurePattern = /"traitIds":\["structure"\]/;
+        assert.match(body, traitidsStructurePattern);
         assert.equal(engine.requests[0]!.styleProfile?.traits.some((trait) => trait.id === "structure"), true);
         assert.equal(engine.requests[0]?.articleTitle, "Draft");
         assert.deepEqual(JSON.parse(artifact.content).findings, [{
@@ -80,7 +82,8 @@ test("translation carries its target language, preserves the source, and records
             provenance: { kind: "accepted-translation", targetLanguage: "Spanish" },
         });
 
-        assert.match(body, /"targetLanguage":"Spanish"/);
+        const targetlanguageSpanishPattern = /"targetLanguage":"Spanish"/;
+        assert.match(body, targetlanguageSpanishPattern);
         assert.equal(engine.requests[0]?.targetLanguage, "Spanish");
         assert.equal(engine.requests[0]?.articleTitle, "Source");
         assert.equal(repositories.articles.getArticle(source.id)?.currentRevision.content, "Run `npm test` at https://example.com.");
@@ -124,7 +127,8 @@ test("a source change during translation generation discards the output without 
         repositories.articles.saveRevision(source.id, { baseRevisionId: source.currentRevisionId, content: "Changed source" });
         release();
         const body = await (await response).text();
-        assert.match(body, /revision_conflict/);
+        const revisionConflictPattern = /revision_conflict/;
+        assert.match(body, revisionConflictPattern);
         assert.equal(repositories.editorialArtifacts.listEditorialArtifacts(source.id).length, 0);
         assert.deepEqual(repositories.articles.getArticle(target.id), target);
     });

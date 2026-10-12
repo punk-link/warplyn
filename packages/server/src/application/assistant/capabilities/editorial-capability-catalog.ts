@@ -70,7 +70,8 @@ function getEditorialOperationFor(input: StreamContext): EditorialOperation {
 
 
 function splitIntoWords(value: string): readonly string[] {
-    return value.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((word) => word.length > 1);
+    const letterPattern = /[^\p{L}\p{N}]+/u;
+    return value.toLowerCase().split(letterPattern).filter((word) => word.length > 1);
 }
 
 

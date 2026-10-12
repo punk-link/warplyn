@@ -34,5 +34,6 @@ function parsePresentation(presentation: unknown, behavior: PackageBehavior): Pa
 
 
 function isMessageId(value: unknown): value is string {
-    return typeof value === "string" && /^assistant\.skill\.[a-zA-Z]+\.(label|hint)$/.test(value);
+    const assistantSkillLabelPattern = /^assistant\.skill\.[a-zA-Z]+\.(label|hint)$/;
+    return typeof value === "string" && assistantSkillLabelPattern.test(value);
 }

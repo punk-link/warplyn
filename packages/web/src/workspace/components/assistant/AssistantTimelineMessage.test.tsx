@@ -87,7 +87,8 @@ describe("AssistantTimelineMessage", () => {
 
         expect(scope.getByText("Talking points prepared")).toBeTruthy();
         expect(scope.getByText("Completed")).toBeTruthy();
-        expect(scope.getByText(/Used skill/).getAttribute("title")).toBe("Talking points");
+        const usedSkillPattern = /Used skill/;
+        expect(scope.getByText(usedSkillPattern).getAttribute("title")).toBe("Talking points");
         expect(scope.queryByText("A long proposal owned by the Proposal View.")).toBeNull();
         const review = scope.getByRole("button", { name: "Review Proposal" });
         expect(review.classList.contains("!size-6")).toBe(true);
@@ -111,7 +112,8 @@ describe("AssistantTimelineMessage", () => {
     it("identifies a persisted Skill Creator response without its request source", () => {
         const view = renderMessage({ id: "skill", articleId: "article", requestId: "request", role: "assistant", kind: "response", status: "completed", skillId: "skill_creator", content: "Created a Skill.", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" });
 
-        expect(within(view.container).getByText(/Used skill/).getAttribute("title")).toBe("Skill Creator");
+        const usedSkillPattern = /Used skill/;
+        expect(within(view.container).getByText(usedSkillPattern).getAttribute("title")).toBe("Skill Creator");
     });
 
 
@@ -128,7 +130,8 @@ describe("AssistantTimelineMessage", () => {
         const onCheckpoint = vi.fn();
         const view = renderMessage({ id: "author-message", articleId: "article", requestId: "request", role: "author", kind: "message", status: "completed", content: "Author message", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }, { onCheckpoint });
 
-        const action = within(view.container).getByRole("button", { name: /Edit from Author message at/ });
+        const editAuthorMessagePattern = /Edit from Author message at/;
+        const action = within(view.container).getByRole("button", { name: editAuthorMessagePattern });
         expect(action.previousElementSibling?.textContent).toBe("2026-01-01, 00:00");
         const bubble = screen.getByText("Author message").closest("div.rounded-panel");
         expect(bubble?.classList.contains("p-2")).toBe(true);

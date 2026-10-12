@@ -7,6 +7,9 @@ import type { LocalDiagnostics } from "../../infrastructure/diagnostics/local-di
 import { parseObject, readBinary, readJson, writeJson } from "../transport/json.js";
 
 
+const backupTimestampPattern = /[:.]/g;
+
+
 export async function handleSettingsSnapshotRoute(response: ServerResponse, settings: ApplicationSettingsService): Promise<void> {
     writeJson(response, HTTP_STATUS.OK, await settings.getSnapshot());
 }
@@ -28,7 +31,7 @@ export async function handleCreateBackupRoute(response: ServerResponse, settings
         backup = await settings.createBackup();
         response.writeHead(HTTP_STATUS.CREATED, {
             "content-type": "application/vnd.sqlite3",
-            "content-disposition": `attachment; filename="skladno-backup-${backup.createdAt.replaceAll(/[:.]/g, "-")}.sqlite"`,
+            "content-disposition": `attachment; filename="skladno-backup-${backup.createdAt.replaceAll(backupTimestampPattern, "-")}.sqlite"`,
         });
         response.end(await readFile(backup.path));
     } catch (error) {

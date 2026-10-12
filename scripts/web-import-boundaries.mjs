@@ -51,7 +51,9 @@ async function collectSourceFiles(directory) {
             continue;
         }
 
-        if (/\.(ts|tsx)$/.test(entry.name) && !/\.test\.(ts|tsx)$/.test(entry.name))
+        const tsxPattern = /\.(ts|tsx)$/;
+        const testFilenamePattern = /\.test\.(ts|tsx)$/;
+        if (tsxPattern.test(entry.name) && !testFilenamePattern.test(entry.name))
             files.push(entryPath);
     }
 
@@ -71,7 +73,8 @@ function resolveRelativeImport(sourceFile, importPath) {
     const sourceDirectory = path.posix.dirname(sourceFile);
     const resolved = path.posix.normalize(path.posix.join(sourceDirectory, importPath));
 
-    return resolved.replace(/\.(?:js|jsx|ts|tsx)$/, "");
+    const jsxTsxPattern = /\.(?:js|jsx|ts|tsx)$/;
+    return resolved.replace(jsxTsxPattern, "");
 }
 
 

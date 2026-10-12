@@ -11,9 +11,12 @@ import { AiSdkAssistantExecutor, createAssistantInstructions } from "./ai-sdk-as
 
 test("Assistant distinguishes prepared translations from linked translation Articles before rejection", () => {
     const instructions = createAssistantInstructions({ instructions: [], skills: [], interfaceLocale: "en" });
-    assert.match(instructions, /service messages.*Interface locale en.*ordinary conversational answers.*language of the Author's question/s);
-    assert.match(instructions, /matches an available Skill, load that Skill before choosing capabilities/);
-    assert.match(instructions, /inspect_translations first.*artifactId.*reject_translation.*never use inspect_linked_articles/s);
+    const serviceMessagesInterfacePattern = /service messages.*Interface locale en.*ordinary conversational answers.*language of the Author's question/s;
+    assert.match(instructions, serviceMessagesInterfacePattern);
+    const matchesAvailableSkillPattern = /matches an available Skill, load that Skill before choosing capabilities/;
+    assert.match(instructions, matchesAvailableSkillPattern);
+    const inspectTranslationsFirstPattern = /inspect_translations first.*artifactId.*reject_translation.*never use inspect_linked_articles/s;
+    assert.match(instructions, inspectTranslationsFirstPattern);
 });
 
 
@@ -103,7 +106,8 @@ test("Assistant fails when an artifact tool fails instead of completing with the
             events.push(event.type);
     };
 
-    await assert.rejects(consume(), /translation failed/);
+    const translationFailedPattern = /translation failed/;
+    await assert.rejects(consume(), translationFailedPattern);
     assert.deepEqual(events, []);
     assert.equal(model.doStreamCalls.length, 1, "A terminal tool failure must stop the model loop");
 });

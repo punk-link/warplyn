@@ -41,7 +41,8 @@ export function ProtectedTranslationText({ content, protectedSpans }: { content:
         return <>{content}</>;
 
     const values = [...counts.keys()].sort((a, b) => b.length - a.length);
-    const pattern = new RegExp(values.map((value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
+    const punctuationPattern = /[.*+?^${}()|[\]\\]/g;
+    const pattern = new RegExp(values.map((value) => value.replace(punctuationPattern, "\\$&")).join("|"), "g");
     const pieces = [];
     let end = 0;
 

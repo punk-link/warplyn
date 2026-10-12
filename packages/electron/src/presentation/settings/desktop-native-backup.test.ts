@@ -59,7 +59,8 @@ test("teardown waits for a failed backup to clean up its partial snapshot", asyn
             rejectSnapshot = reject;
         });
     }, root, destination);
-    const rejected = assert.rejects(pending, /fixture failure/);
+    const fixtureFailurePattern = /fixture failure/;
+    const rejected = assert.rejects(pending, fixtureFailurePattern);
     try {
         await started;
         let drained = false;

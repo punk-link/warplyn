@@ -54,7 +54,8 @@ function boundedDocx(bytes: Uint8Array): Record<string, Uint8Array> {
             if (size > articleMarkdownByteLimit || total > 4 * articleMarkdownByteLimit)
                 throw new ApplicationClientError("article_file_too_large", undefined, 413);
 
-            if (/\.(xml|rels)$/i.test(file.name))
+            const xmlRelsPattern = /\.(xml|rels)$/i;
+            if (xmlRelsPattern.test(file.name))
                 chunks.push(chunk);
 
             if (final) {
@@ -67,7 +68,8 @@ function boundedDocx(bytes: Uint8Array): Record<string, Uint8Array> {
                         offset += chunk.length;
                     }
 
-                    if (/<!DOCTYPE|<!ENTITY/i.test(new TextDecoder().decode(part)))
+                    const doctypeEntityPattern = /<!DOCTYPE|<!ENTITY/i;
+                    if (doctypeEntityPattern.test(new TextDecoder().decode(part)))
                         throw new Error("Unsupported XML");
 
                     parts[file.name] = part;

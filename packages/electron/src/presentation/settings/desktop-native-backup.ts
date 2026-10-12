@@ -7,6 +7,9 @@ import { captureAuthorSkillInventory } from "../../infrastructure/recovery/autho
 import { runBackup } from "../../infrastructure/recovery/backup-lifecycle.js";
 
 
+const backupTimestampPattern = /[:.]/g;
+
+
 export function createNativeBackup(createSnapshot: (path: string) => Promise<unknown>, dataDirectory: string, backupDirectory: string, telemetry?: TelemetryCaptureSource, kind: "manual" | "automatic" = "manual", readPersonalWords?: () => Promise<string[]>): Promise<{ path: string; createdAt: string }> {
     return runBackup(() => writeNativeBackup(createSnapshot, dataDirectory, backupDirectory, telemetry, kind, readPersonalWords));
 }
@@ -21,7 +24,7 @@ async function writeNativeBackup(createSnapshot: (path: string) => Promise<unkno
         await mkdir(backupDirectory, { recursive: true });
         const created = new Date();
         const prefix = kind === "automatic" ? "warplyn-automatic" : "warplyn-backup";
-        const filename = `${prefix}-${created.toISOString().replaceAll(/[:.]/g, "-")}-${randomUUID()}.sqlite`;
+        const filename = `${prefix}-${created.toISOString().replaceAll(backupTimestampPattern, "-")}-${randomUUID()}.sqlite`;
         temporary = join(backupDirectory, `.${filename}.${randomUUID()}.tmp`);
         path = join(backupDirectory, filename);
         const expectedInventory = await captureAuthorSkillInventory(dataDirectory);

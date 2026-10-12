@@ -31,7 +31,8 @@ test("server records one private-content-free terminal event for each explicit A
         { kind: "ai_operation_finished", operation: "flow_revision", outcome: "completed" },
         { kind: "ai_operation_finished", operation: "assistant", outcome: "completed" },
     ]);
-    assert.doesNotMatch(JSON.stringify(events), /Private (title|Article content|prompt|generated output)/);
+    const privateTitleArticlePattern = /Private (title|Article content|prompt|generated output)/;
+    assert.doesNotMatch(JSON.stringify(events), privateTitleArticlePattern);
 });
 
 
@@ -113,5 +114,6 @@ test("Article revision recovery records only its terminal outcome", async () => 
         { kind: "recovery_finished", recovery: "revision", outcome: "completed" },
         { kind: "recovery_finished", recovery: "revision", outcome: "failed", failure: "unknown" },
     ]);
-    assert.doesNotMatch(JSON.stringify(events), /Private (title|first Revision|second Revision|other Revision)/);
+    const privateTitleFirstPattern = /Private (title|first Revision|second Revision|other Revision)/;
+    assert.doesNotMatch(JSON.stringify(events), privateTitleFirstPattern);
 });

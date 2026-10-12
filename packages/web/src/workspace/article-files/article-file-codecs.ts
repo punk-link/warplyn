@@ -35,7 +35,8 @@ export async function importArticleFile(file: ArticleFileBytes): Promise<string>
     try {
         const html = format === "html" ? decodeArticleMarkdown(file.bytes) : await runArticleFileWorker(format, file.bytes);
         const content = articleHtmlToMarkdown(html);
-        if (!content.trim() && !createSafeArticleHtml(html).body.innerHTML.trim() && /<(script|iframe|object|embed|img|svg|canvas)\b/i.test(html))
+        const scriptIframeObjectPattern = /<(script|iframe|object|embed|img|svg|canvas)\b/i;
+        if (!content.trim() && !createSafeArticleHtml(html).body.innerHTML.trim() && scriptIframeObjectPattern.test(html))
             throw new ApplicationClientError("article_file_invalid", undefined, 400);
 
         return content;

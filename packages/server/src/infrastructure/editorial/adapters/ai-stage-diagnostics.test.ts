@@ -35,7 +35,8 @@ test("provider stream errors use safe diagnostics instead of SDK raw-error loggi
     assert.equal(diagnostic.stage, "assistant_step");
     assert.equal(diagnostic.status, 503);
     assert.equal(typeof diagnostic.elapsedMs, "number");
-    assert.doesNotMatch(lines.join(""), /private Article|secret credential|Private prompt|stack|statusCode/);
+    const privateArticleSecretPattern = /private Article|secret credential|Private prompt|stack|statusCode/;
+    assert.doesNotMatch(lines.join(""), privateArticleSecretPattern);
 });
 
 
@@ -52,7 +53,8 @@ test("verification failures identify the failed stage without leaking provider d
     await assert.rejects(verifier.verifyReplacement("Private prompt", "Private source", "Private replacement", "article", new AbortController().signal), { code: EDITORIAL_ENGINE_ERROR.PROVIDER });
     assert.equal(lines.length, 1);
     assert.equal(JSON.parse(lines[0]!).stage, "replacement_verification");
-    assert.doesNotMatch(lines.join(""), /private verifier payload|Private prompt|Private source|Private replacement/);
+    const privateVerifierPayloadPattern = /private verifier payload|Private prompt|Private source|Private replacement/;
+    assert.doesNotMatch(lines.join(""), privateVerifierPayloadPattern);
 });
 
 
@@ -72,5 +74,6 @@ test("diagnostics allowlist finish reasons and HTTP failure status", (context) =
     callbacks.onError({ error: { statusCode: "private status", message: "private payload" } });
     assert.equal(JSON.parse(lines[0]!).finishReason, "unknown");
     assert.equal(JSON.parse(lines[1]!).status, undefined);
-    assert.doesNotMatch(lines.join(""), /private finish metadata|private status|private payload/);
+    const privateFinishMetadataPattern = /private finish metadata|private status|private payload/;
+    assert.doesNotMatch(lines.join(""), privateFinishMetadataPattern);
 });

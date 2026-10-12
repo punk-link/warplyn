@@ -99,8 +99,10 @@ describe("ApplicationSettings general", () => {
         expect(select).toBeTruthy();
         expect(select.getAttribute("aria-describedby")).toBeTruthy();
         expect([...select.options].map((option) => option.value)).toContain("UTC");
-        expect([...select.options].find((option) => option.value === "America/Buenos_Aires")?.textContent).toMatch(/^\(UTC[+-]\d{2}:\d{2}\) Buenos Aires$/);
-        expect(screen.getByText(/Example:/)).toBeTruthy();
+        const utcBuenosAiresPattern = /^\(UTC[+-]\d{2}:\d{2}\) Buenos Aires$/;
+        expect([...select.options].find((option) => option.value === "America/Buenos_Aires")?.textContent).toMatch(utcBuenosAiresPattern);
+        const examplePattern = /Example:/;
+        expect(screen.getByText(examplePattern)).toBeTruthy();
         await user.selectOptions(select, "America/Buenos_Aires");
         await waitFor(() => expect(updateGeneralSettings).toHaveBeenCalledWith({ ...defaultGeneralSettings, timeZone: "America/Buenos_Aires" }));
         await user.click(screen.getByRole("button", { name: getMessage("settings.resetTimeZone") }));
@@ -117,7 +119,8 @@ describe("ApplicationSettings general", () => {
         const select = heading.closest("section")?.querySelector("select") as HTMLSelectElement;
         expect(select.getAttribute("aria-describedby")).toBeTruthy();
         expect([...select.options].map((option) => option.value)).toEqual(["system", "day-first", "day-first-dots", "month-first", "iso"]);
-        expect(select.options[0]?.textContent).toMatch(/^System date format \(.+\)$/);
+        const systemDateFormatPattern = /^System date format \(.+\)$/;
+        expect(select.options[0]?.textContent).toMatch(systemDateFormatPattern);
         await user.selectOptions(select, "day-first-dots");
         await waitFor(() => expect(updateGeneralSettings).toHaveBeenCalledWith({ ...defaultGeneralSettings, dateFormat: "day-first-dots" }));
         const reset = screen.getByRole("button", { name: getMessage("settings.resetDateFormat") });

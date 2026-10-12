@@ -45,7 +45,8 @@ export async function launchPackaged(root: string): Promise<{ process: ChildProc
         if (!page)
             throw new Error("Packaged Warplyn opened no renderer page.");
 
-        await page.waitForURL(/index\.html$/, { timeout: 30_000 });
+        const indexHtmlPattern = /index\.html$/;
+        await page.waitForURL(indexHtmlPattern, { timeout: 30_000 });
         return { process: child, browser, page };
     } catch (error) {
         child.kill();

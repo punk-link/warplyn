@@ -16,8 +16,10 @@ function appendChangedTokens(parts: HighlightPart[], tokens: string[], start: nu
 
 
 function renderHighlightedText(original: string, proposed: string) {
-    const originalTokens = original.match(/\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu) ?? [];
-    const proposedTokens = proposed.match(/\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu) ?? [];
+    const originalTokenPattern = /\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu;
+    const originalTokens = original.match(originalTokenPattern) ?? [];
+    const proposedTokenPattern = /\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu;
+    const proposedTokens = proposed.match(proposedTokenPattern) ?? [];
     const originalParts: HighlightPart[] = [];
     const proposedParts: HighlightPart[] = [];
     let originalIndex = 0;

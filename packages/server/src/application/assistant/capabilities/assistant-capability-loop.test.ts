@@ -59,8 +59,10 @@ test("Assistant execution loads Skills from its catalog", async () => {
     for await (const event of loop.stream(request, new AbortController().signal))
         assert.equal(event.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
 
-    assert.match(received?.instructions[0] ?? "", /Catalog instructions/);
-    assert.match(received?.instructions[0] ?? "", /"operation":"flow_revision"/);
+    const catalogInstructionsPattern = /Catalog instructions/;
+    assert.match(received?.instructions[0] ?? "", catalogInstructionsPattern);
+    const operationFlowRevisionPattern = /"operation":"flow_revision"/;
+    assert.match(received?.instructions[0] ?? "", operationFlowRevisionPattern);
     assert.deepEqual(received?.skills.map((skill) => skill.name), ["Catalog Skill"]);
 });
 
@@ -282,7 +284,8 @@ test("the Assistant model can create an explicitly requested Author Skill withou
             assert.equal(creator.description, "Save a validated local Author Skill Markdown package.");
             assert.ok(request.initialActiveCapabilities?.includes("create_author_skill"));
             assert.ok(request.initialActiveCapabilities?.includes("update_author_skill"));
-            assert.match(request.skills.find((skill) => skill.id === "skill_creator")?.instructions ?? "", /Ask a concise clarifying question/);
+            const askConciseClarifyingPattern = /Ask a concise clarifying question/;
+            assert.match(request.skills.find((skill) => skill.id === "skill_creator")?.instructions ?? "", askConciseClarifyingPattern);
             await creator.execute({
                 skillId: "no-em-dashes",
                 skillMarkdown: "---\nid: no-em-dashes\nname: No em dashes\ndescription: Rephrase writing without em dashes.\nversion: 1\n---\n# Rewrite\n\nRewrite without em dashes.\n",
@@ -316,7 +319,8 @@ test("the Assistant model can create an explicitly requested Author Skill withou
         assert.equal(source.get("no-em-dashes"), undefined);
         assert.equal(authorSkills.listRevisions("no-em-dashes").length, 0);
         loop.commitPendingSkill(request);
-        assert.match(source.get("no-em-dashes")?.instructions ?? "", /Rewrite without em dashes/);
+        const rewriteWithoutDashesPattern = /Rewrite without em dashes/;
+        assert.match(source.get("no-em-dashes")?.instructions ?? "", rewriteWithoutDashesPattern);
         assert.equal(authorSkills.listRevisions("no-em-dashes").length, 1);
     } finally {
         rmSync(root, { recursive: true, force: true });

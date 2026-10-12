@@ -36,7 +36,8 @@ describe("Editorial Workspace assistant requests", () => {
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.flowAndClarity.label") }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
         await waitFor(() => expect(signals).toHaveLength(1));
-        await user.click(screen.getByRole("button", { name: /Second Article/ }));
+        const secondArticlePattern = /Second Article/;
+        await user.click(screen.getByRole("button", { name: secondArticlePattern }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.flowAndClarity.label") }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
@@ -119,7 +120,8 @@ describe("Editorial Workspace assistant requests", () => {
         await user.click(screen.getByRole("tab", { name: "Spanish" }));
         expect(screen.getByText("Borrador traducido")).toBeTruthy();
         await user.click(screen.getByRole("tab", { name: "Write" }));
-        await user.click(screen.getByRole("tab", { name: /Translations/ }));
+        const translationsPattern = /Translations/;
+        await user.click(screen.getByRole("tab", { name: translationsPattern }));
         expect(screen.getByText("Borrador traducido")).toBeTruthy();
         firstWorkspace.unmount();
 
@@ -165,7 +167,8 @@ describe("Editorial Workspace assistant requests", () => {
 
         await screen.findByRole("heading", { name: "First Article" });
         expect(await screen.findByText("First Article conversation")).toBeTruthy();
-        await user.click(screen.getByRole("button", { name: /Second Article/ }));
+        const secondArticlePattern = /Second Article/;
+        await user.click(screen.getByRole("button", { name: secondArticlePattern }));
 
         expect(await screen.findByText("Second Article conversation")).toBeTruthy();
         expect(screen.queryByText("First Article conversation")).toBeNull();
@@ -200,7 +203,8 @@ describe("Editorial Workspace assistant requests", () => {
         await user.click(screen.getByText("Error details"));
         expect(errorDetails?.open).toBe(true);
         expect(screen.getByText("Couldn't complete that AI-assisted action. Your Article was not changed. Try again, or check your AI connection in Settings.")).toBeTruthy();
-        await user.click(screen.getByRole("button", { name: /Second Article/ }));
+        const secondArticlePattern = /Second Article/;
+        await user.click(screen.getByRole("button", { name: secondArticlePattern }));
 
         await screen.findByRole("heading", { name: "Second Article" });
         expect(screen.queryByRole("alert")).toBeNull();
@@ -216,7 +220,8 @@ describe("Editorial Workspace assistant requests", () => {
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
         await screen.findByRole("alert");
-        expect(screen.queryByText(/Working for/)).toBeNull();
+        const workingPattern = /Working for/;
+        expect(screen.queryByText(workingPattern)).toBeNull();
         await user.click(screen.getByText("Error details"));
         expect(screen.getByText(getMessage("errors.assistantRequestTimedOut"))).toBeTruthy();
     });
@@ -268,7 +273,8 @@ describe("Editorial Workspace assistant requests", () => {
         expect(client.saveArticleRevision).toHaveBeenCalledTimes(1);
         const signals = vi.mocked(client.streamAssistantRequest).mock.calls.map((call) => call[3]);
         expect(signals[0]).toBe(signals[1]);
-        await user.click(screen.getByRole("tab", { name: /Translations/ }));
+        const translationsPattern = /Translations/;
+        await user.click(screen.getByRole("tab", { name: translationsPattern }));
         expect(screen.getByText("Translating into Spanish, German…")).toBeTruthy();
         releases[0]?.();
         await waitFor(() => expect(client.listAssistantMessages).toHaveBeenCalled());

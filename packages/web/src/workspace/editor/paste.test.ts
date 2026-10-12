@@ -110,7 +110,8 @@ describe("Word and rich-text paste", () => {
 
         expect(document.body.querySelector("img, script, iframe")).toBeNull();
         expect(document.body.querySelector("a")).toBeNull();
-        expect(paragraph?.textContent?.replace(/\s+/g, " ").trim()).toBe("Safe label");
+        const whitespacePattern = /\s+/g;
+        expect(paragraph?.textContent?.replace(whitespacePattern, " ").trim()).toBe("Safe label");
         expect(paragraph?.attributes).toHaveLength(0);
         expect(importHtmlAsMarkdown(html).trim()).toBe("Safe label");
     });

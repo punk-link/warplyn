@@ -20,7 +20,8 @@ export default {
 
         function getIndentation(node) {
             const lineStart = sourceCode.text.lastIndexOf("\n", node.range[0] - 1) + 1;
-            const currentIndentation = /^[ \t]*/u.exec(sourceCode.text.slice(lineStart, node.range[0]))?.[0] ?? "";
+            const punctuationPattern = /^[ \t]*/u;
+            const currentIndentation = punctuationPattern.exec(sourceCode.text.slice(lineStart, node.range[0]))?.[0] ?? "";
             return `${currentIndentation}    `;
         }
 

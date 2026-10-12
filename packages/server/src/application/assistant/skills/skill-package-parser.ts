@@ -52,7 +52,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 
 function splitFrontmatter(text: string): { frontmatter: string; instructions: string } | undefined {
-    const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]+)$/.exec(text);
+    const lineBreakPattern = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]+)$/;
+    const match = lineBreakPattern.exec(text);
     return match ? { frontmatter: match[1]!, instructions: match[2]!.trim() } : undefined;
 }
 
@@ -141,8 +142,9 @@ function readInstructions(text: string): { frontmatter: string; instructions: st
 function validateSkillIdentity(input: { reservedIds?: readonly string[]; reservedNames?: readonly string[] }, metadata: Record<string, unknown>): { id: string; name: string; description: string; version: string } | SkillPackageParseResult {
     const { id, name, description, version } = metadata;
     const versionText = typeof version === "string" || typeof version === "number" ? String(version) : undefined;
+    const numberPattern = /^\d+(?:\.\d+){0,2}$/;
     if (typeof id !== "string" || !skillId.test(id) || typeof name !== "string" || !name.trim() || name.length > 80
-        || typeof description !== "string" || !description.trim() || description.length > 280 || !versionText || !/^\d+(?:\.\d+){0,2}$/.test(versionText))
+        || typeof description !== "string" || !description.trim() || description.length > 280 || !versionText || !numberPattern.test(versionText))
         return issue("invalid_metadata");
 
     if ((input.reservedIds ?? []).includes(id) || (input.reservedNames ?? []).some((candidate) => normalizeSkillName(candidate) === normalizeSkillName(name)))

@@ -16,7 +16,8 @@ test("built-in Skills publish compact discovery data and load versioned instruct
     assert.equal("instructions" in summaries[0]!, false);
 
     const [factChecking] = catalog.load([summaries.find((summary) => summary.reference.id === BUILT_IN_SKILL.FACT_CHECKING)!.reference]);
-    assert.match(factChecking?.references?.[0] ?? "", /advisory/);
+    const advisoryPattern = /advisory/;
+    assert.match(factChecking?.references?.[0] ?? "", advisoryPattern);
     assert.deepEqual(catalog.load([]), []);
 });
 
@@ -26,8 +27,10 @@ test("Skill Creator keeps its model instructions in the built-in package", () =>
     const creator = catalog.discover().find((summary) => summary.reference.id === BUILT_IN_SKILL.SKILL_CREATOR);
 
     assert.equal(creator?.name, "Skill Creator");
-    assert.match(catalog.load([creator!.reference])[0]?.instructions ?? "", /Ask a concise clarifying question/);
-    assert.match(catalog.load([creator!.reference])[0]?.instructions ?? "", /Use the Warplyn Glossary as the authority for domain terms/);
+    const askConciseClarifyingPattern = /Ask a concise clarifying question/;
+    assert.match(catalog.load([creator!.reference])[0]?.instructions ?? "", askConciseClarifyingPattern);
+    const useWarplynGlossaryPattern = /Use the Warplyn Glossary as the authority for domain terms/;
+    assert.match(catalog.load([creator!.reference])[0]?.instructions ?? "", useWarplynGlossaryPattern);
 });
 
 

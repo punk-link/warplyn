@@ -6,15 +6,22 @@ import { createId, getCurrentTimestamp, requireNonEmpty, type Row } from "./repo
 
 function createStyleProfile(items: { id: string; content: string }[], rules: string, version: number): StyleProfile {
     const content = items.map((item) => item.content).join("\n");
-    const sentences = content.split(/[.!?]+/).map((sentence) => sentence.trim()).filter(Boolean);
-    const words = content.match(/[\p{L}\p{N}]+(?:['’][\p{L}]+)?/gu) ?? [];
-    const paragraphs = content.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
+    const punctuationPattern = /[.!?]+/;
+    const sentences = content.split(punctuationPattern).map((sentence) => sentence.trim()).filter(Boolean);
+    const corpusWordPattern = /[\p{L}\p{N}]+(?:['’][\p{L}]+)?/gu;
+    const words = content.match(corpusWordPattern) ?? [];
+    const paragraphBoundaryPattern = /\n\s*\n/;
+    const paragraphs = content.split(paragraphBoundaryPattern).map((paragraph) => paragraph.trim()).filter(Boolean);
     const averageSentenceWords = averageWordsPerSentence(words.length, sentences.length);
-    const firstPerson = (content.match(/\b(I|we|my|our|I’m|we’re|I’ve|we’ve)\b/giu) ?? []).length;
-    const contractions = (content.match(/\b[\p{L}]+['’][\p{L}]+\b/gu) ?? []).length;
-    const transitionCount = (content.match(/\b(however|therefore|for example|for instance|meanwhile|instead|because|although|finally|first|second)\b/giu) ?? []).length;
+    const firstPersonPronounPattern = /\b(I|we|my|our|I’m|we’re|I’ve|we’ve)\b/giu;
+    const firstPerson = (content.match(firstPersonPronounPattern) ?? []).length;
+    const contractionPattern = /\b[\p{L}]+['’][\p{L}]+\b/gu;
+    const contractions = (content.match(contractionPattern) ?? []).length;
+    const howeverThereforeExamplePattern = /\b(however|therefore|for example|for instance|meanwhile|instead|because|although|finally|first|second)\b/giu;
+    const transitionCount = (content.match(howeverThereforeExamplePattern) ?? []).length;
     // ponytail: O(n²) phrase counting is bounded by the local corpus; add a frequency map if profiles grow materially.
-    const phrasesToAvoid = [...content.toLowerCase().matchAll(/\b([\p{L}]+\s+[\p{L}]+\s+[\p{L}]+)\b/gu)]
+    const repeatedThreeWordPhrasePattern = /\b([\p{L}]+\s+[\p{L}]+\s+[\p{L}]+)\b/gu;
+    const phrasesToAvoid = [...content.toLowerCase().matchAll(repeatedThreeWordPhrasePattern)]
         .map((match) => match[1]!)
         .filter((phrase, index, phrases) => phrases.indexOf(phrase) === index && phrases.filter((item) => item === phrase).length >= 2)
         .slice(0, 5);
@@ -86,7 +93,8 @@ function getProfileConfidence(itemCount: number, characterCount: number): StyleP
 
 
 function createExcerpt(content: string): string {
-    const compact = content.trim().replace(/\s+/g, " ");
+    const whitespacePattern = /\s+/g;
+    const compact = content.trim().replace(whitespacePattern, " ");
     return compact.length <= 180 ? compact : `${compact.slice(0, 177)}…`;
 }
 
@@ -110,12 +118,13 @@ export class StyleCorpusRepository {
         else if (profile && profile.rules === rules && profile.contributorIds.length === includedIds.length && profile.contributorIds.every((id) => includedIds.includes(id)))
             status = "ready";
 
+        const corpusTokenPattern = /[\p{L}\p{N}]+/gu;
         return {
             items: rows.map((row): StyleCorpusItem => ({
                 id: String(row.id),
                 name: String(row.name),
                 characterCount: String(row.content).length,
-                wordCount: String(row.content).match(/[\p{L}\p{N}]+/gu)?.length ?? 0,
+                wordCount: String(row.content).match(corpusTokenPattern)?.length ?? 0,
                 excerpt: createExcerpt(String(row.content)),
                 createdAt: String(row.created_at),
                 updatedAt: String(row.updated_at),

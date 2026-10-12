@@ -82,7 +82,8 @@ function maskSqlLiterals(sql) {
 
 
 function hasStructuredClauses(sql) {
-    if (/[ \t]+(?:\r?\n|$)/u.test(sql))
+    const lineBreakPattern = /[ \t]+(?:\r?\n|$)/u;
+    if (lineBreakPattern.test(sql))
         return false;
 
     const maskedSql = maskSqlLiterals(sql);
@@ -92,7 +93,8 @@ function hasStructuredClauses(sql) {
         const index = clause.index ?? 0;
         const lineStart = maskedSql.lastIndexOf("\n", index - 1) + 1;
         const prefix = maskedSql.slice(lineStart, index);
-        if (clause[0].toUpperCase() === "FROM" && /^\s*DELETE\s*$/iu.test(prefix))
+        const whitespacePrefixPattern = /^\s*DELETE\s*$/iu;
+        if (clause[0].toUpperCase() === "FROM" && whitespacePrefixPattern.test(prefix))
             continue;
 
         if (prefix.trim())
@@ -112,7 +114,8 @@ function formatSql(sql, indentation) {
         const index = clause.index ?? 0;
         const lineStart = maskedSql.lastIndexOf("\n", index - 1) + 1;
         const prefix = maskedSql.slice(lineStart, index);
-        if (clause[0].toUpperCase() === "FROM" && /^\s*DELETE\s*$/iu.test(prefix))
+        const whitespacePrefixPattern = /^\s*DELETE\s*$/iu;
+        if (clause[0].toUpperCase() === "FROM" && whitespacePrefixPattern.test(prefix))
             continue;
 
         if (prefix.trim())
@@ -122,18 +125,21 @@ function formatSql(sql, indentation) {
     let formatted = "";
     let previous = 0;
     for (const index of breaks) {
-        formatted += `${sql.slice(previous, index).replace(/[ \t]+$/u, "")}\n${indentation}`;
+        const punctuationPattern = /[ \t]+$/u;
+        formatted += `${sql.slice(previous, index).replace(punctuationPattern, "")}\n${indentation}`;
         previous = index;
     }
 
     formatted += sql.slice(previous);
 
-    return wrapLongLines(formatted, indentation).replace(/[ \t]+(?=\r?$)/gmu, "");
+    const lineEndingPattern = /[ \t]+(?=\r?$)/gmu;
+    return wrapLongLines(formatted, indentation).replace(lineEndingPattern, "");
 }
 
 
 function wrapLongLines(sql, indentation) {
-    return sql.split(/\r?\n/u).flatMap((sourceLine) => {
+    const lineBreakPattern = /\r?\n/u;
+    return sql.split(lineBreakPattern).flatMap((sourceLine) => {
         const lines = [];
         let line = sourceLine;
 
@@ -170,7 +176,8 @@ function isDatabaseQuery(node) {
 
 
 function isMigrationSql(node, filename) {
-    return /[\\/]infrastructure[\\/]persistence[\\/]migrations\.ts$/u.test(filename)
+    const infrastructurePersistenceMigrationsPattern = /[\\/]infrastructure[\\/]persistence[\\/]migrations\.ts$/u;
+    return infrastructurePersistenceMigrationsPattern.test(filename)
         && node.type === "Property"
         && !node.computed
         && node.key.type === "Identifier"
@@ -202,7 +209,8 @@ export default {
                 messageId: "structuredSql",
                 fix(fixer) {
                     const sourceLine = context.sourceCode.text.lastIndexOf("\n", expression.range[0] - 1) + 1;
-                    const baseIndentation = /^[ \t]*/u.exec(context.sourceCode.text.slice(sourceLine, expression.range[0]))?.[0] ?? "";
+                    const punctuationPattern = /^[ \t]*/u;
+                    const baseIndentation = punctuationPattern.exec(context.sourceCode.text.slice(sourceLine, expression.range[0]))?.[0] ?? "";
                     const indentation = `${baseIndentation}    `;
                     return fixer.replaceText(expression, toTemplateLiteral(sql, indentation));
                 },

@@ -6,6 +6,9 @@ import test from "node:test";
 import { resolveDataDirectory } from "./data-directory.js";
 
 
+const separateDataDirectoryMessagePattern = /Choose a separate WARPLYN_DATA_DIR/;
+
+
 test("Warplyn ignores legacy overrides and refuses overlapping legacy directories, including junctions", () => {
     const root = mkdtempSync(join(tmpdir(), "warplyn-isolation-"));
     const legacy = join(root, "legacy");
@@ -15,7 +18,7 @@ test("Warplyn ignores legacy overrides and refuses overlapping legacy directorie
     try {
         assert.equal(resolveDataDirectory({ SKLADNO_DATA_DIR: legacy }, root), join(root, ".warplyn"));
         for (const target of [legacy, alias, join(alias, "new"), root, join(root, ".skladno")])
-            assert.throws(() => resolveDataDirectory({ WARPLYN_DATA_DIR: target, SKLADNO_DATA_DIR: legacy }, root), /Choose a separate WARPLYN_DATA_DIR/);
+            assert.throws(() => resolveDataDirectory({ WARPLYN_DATA_DIR: target, SKLADNO_DATA_DIR: legacy }, root), separateDataDirectoryMessagePattern);
 
         assert.equal(resolveDataDirectory({ WARPLYN_DATA_DIR: join(root, "legacy-other"), SKLADNO_DATA_DIR: legacy }, root), join(root, "legacy-other"));
     } finally {

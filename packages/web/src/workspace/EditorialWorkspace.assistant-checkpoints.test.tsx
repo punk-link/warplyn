@@ -41,7 +41,8 @@ it.each([true, false])("clears request feedback only after a successful checkpoi
     await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));
     await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
     await screen.findByRole("button", { name: "Open Application Settings" });
-    await user.click(await screen.findByRole("button", { name: /Edit from Author message at/ }));
+    const editAuthorMessagePattern = /Edit from Author message at/;
+    await user.click(await screen.findByRole("button", { name: editAuthorMessagePattern }));
     const dialog = await screen.findByRole("dialog", { name: getMessage("assistant.checkpoint.heading") });
     await user.click(within(dialog).getByRole("button", { name: getMessage("assistant.checkpoint.restore") }));
     await waitFor(() => expect(client.restoreAssistantCheckpoint).toHaveBeenCalledWith("one", "author-message", { tailToken: "tail" }));

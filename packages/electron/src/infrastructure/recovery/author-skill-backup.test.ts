@@ -109,12 +109,13 @@ test("rejects a backup with changed Skill content before restore", async () => {
         await createAuthorSkillBackup({ dataDirectory: root, snapshotPath });
         writeFileSync(join(getAuthorSkillBackupPath(snapshotPath), "skills", "clarity", "SKILL.md"), "tampered");
 
-        assert.throws(() => validateAuthorSkillBackup(snapshotPath), /author_skill_backup_invalid_manifest/);
-        assert.throws(() => applyAuthorSkillRestore({ dataDirectory: root, snapshotPath }), /author_skill_backup_invalid_manifest/);
+        const invalidAuthorSkillBackupManifestPattern = /author_skill_backup_invalid_manifest/;
+        assert.throws(() => validateAuthorSkillBackup(snapshotPath), invalidAuthorSkillBackupManifestPattern);
+        assert.throws(() => applyAuthorSkillRestore({ dataDirectory: root, snapshotPath }), invalidAuthorSkillBackupManifestPattern);
         assert.equal(readFileSync(join(root, "skills", "clarity", "SKILL.md"), "utf8"), "original");
 
         rmSync(join(getAuthorSkillBackupPath(snapshotPath), "manifest.json"));
-        assert.throws(() => validateAuthorSkillBackup(snapshotPath), /author_skill_backup_invalid_manifest/);
+        assert.throws(() => validateAuthorSkillBackup(snapshotPath), invalidAuthorSkillBackupManifestPattern);
     } finally {
         rmSync(root, { recursive: true, force: true });
     }
@@ -132,7 +133,8 @@ test("fails backup creation when Skill files change during capture", async () =>
         const expectedInventory = await captureAuthorSkillInventory(root);
         writeFileSync(skillPath, "after");
 
-        await assert.rejects(() => createAuthorSkillBackup({ dataDirectory: root, snapshotPath, expectedInventory }), /author_skill_backup_changed/);
+        const authorSkillBackupPattern = /author_skill_backup_changed/;
+        await assert.rejects(() => createAuthorSkillBackup({ dataDirectory: root, snapshotPath, expectedInventory }), authorSkillBackupPattern);
         assert.equal(existsSync(getAuthorSkillBackupPath(snapshotPath)), false);
     } finally {
         rmSync(root, { recursive: true, force: true });

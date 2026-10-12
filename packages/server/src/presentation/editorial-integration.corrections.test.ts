@@ -27,18 +27,21 @@ test("verified correction selection creates one reviewable Proposal and resolves
             body: JSON.stringify({ requestId: crypto.randomUUID(), operation: EDITORIAL_OPERATION.FLOW_REVISION, correctionSelection: { expectedRevisionId: revisionId, occurrenceIds: ids } }),
         });
 
+        const invalidFactCorrectionSelectionPattern = /"errorCode":"fact_correction_selection_invalid"/;
         for (const ids of [["missing"], [selectedId, "missing"], [selectedId, selectedId], [otherId, selectedId, "missing"]]) {
-            assert.match(await (await correction(ids)).text(), /"errorCode":"fact_correction_selection_invalid"/);
+            assert.match(await (await correction(ids)).text(), invalidFactCorrectionSelectionPattern);
             assert.equal(engine.requests.length, 0);
         }
 
-        assert.match(await (await correction([selectedId], "other-revision")).text(), /"errorCode":"fact_correction_selection_invalid"/);
+        assert.match(await (await correction([selectedId], "other-revision")).text(), invalidFactCorrectionSelectionPattern);
         assert.equal(engine.requests.length, 0);
 
         const response = await correction([selectedId]);
-        assert.match(await response.text(), /"type":"completed"/);
+        const typeCompletedPattern = /"type":"completed"/;
+        assert.match(await response.text(), typeCompletedPattern);
         assert.equal(engine.requests.length, 1);
-        assert.match(engine.requests[0]!.authorContext, /Wrong claim\./);
+        const wrongClaimPattern = /Wrong claim\./;
+        assert.match(engine.requests[0]!.authorContext, wrongClaimPattern);
         const proposal = repositories.editorialArtifacts.listEditorialArtifacts(article.id).find((artifact) => artifact.kind === "editorial-proposal")!;
         assert.deepEqual(JSON.parse(proposal.content).correctionSelection.occurrenceIds, [selectedId]);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "Wrong claim.");
@@ -54,8 +57,8 @@ test("verified correction selection creates one reviewable Proposal and resolves
         const findings = repositories.factChecks.listFactChecks(article.id)[0]!.findings;
         assert.equal(findings[0]!.resolution, "corrected_or_removed");
         assert.equal(findings[1]!.resolution, undefined);
-        assert.match(await (await correction([otherId], repositories.articles.getArticle(article.id)!.currentRevisionId)).text(), /"errorCode":"fact_correction_selection_invalid"/);
-        assert.match(await (await correction([selectedId])).text(), /"errorCode":"fact_correction_selection_invalid"/);
+        assert.match(await (await correction([otherId], repositories.articles.getArticle(article.id)!.currentRevisionId)).text(), invalidFactCorrectionSelectionPattern);
+        assert.match(await (await correction([selectedId])).text(), invalidFactCorrectionSelectionPattern);
         const conflicted = await fetch(`${baseUrl}/api/articles/${article.id}/proposal-acceptances`, { method: HTTP_METHOD.POST, headers: { "content-type": "application/json" }, body: JSON.stringify(acceptance) });
         assert.equal(conflicted.status, 409);
         assert.equal(repositories.factChecks.listFactChecks(article.id)[0]!.findings[1]!.resolution, undefined);
@@ -73,7 +76,8 @@ test("resolved selections and direct correction resolution are rejected", async 
         repositories.factChecks.resolveFactCheckFinding(id, "accepted_as_written");
         const response = await fetch(`${baseUrl}/api/articles/${article.id}/editorial`, { method: HTTP_METHOD.POST, headers: { "content-type": "application/json" },
             body: JSON.stringify({ requestId: "resolved", operation: EDITORIAL_OPERATION.FLOW_REVISION, correctionSelection: { expectedRevisionId: article.currentRevisionId, occurrenceIds: [id] } }) });
-        assert.match(await response.text(), /"errorCode":"fact_correction_selection_invalid"/);
+        const errorcodeFactCorrectionPattern = /"errorCode":"fact_correction_selection_invalid"/;
+        assert.match(await response.text(), errorcodeFactCorrectionPattern);
         assert.equal(engine.requests.length, 0);
         const direct = await fetch(`${baseUrl}/api/articles/${article.id}/fact-checks/${id}/resolution`, { method: HTTP_METHOD.PUT, headers: { "content-type": "application/json" }, body: JSON.stringify({ resolution: "corrected_or_removed" }) });
         assert.equal(direct.status, 400);

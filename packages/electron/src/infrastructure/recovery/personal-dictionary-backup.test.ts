@@ -93,7 +93,8 @@ test("native word failures and interrupted dictionary restore roll back only new
         };
         const restore = applyPendingRestore({ runtimePath, databasePath, personalDictionary: native });
         assert.ok(restore);
-        await assert.rejects(restore.complete(), /personal_dictionary_restore_failed/);
+        const personalDictionaryRestorePattern = /personal_dictionary_restore_failed/;
+        await assert.rejects(restore.complete(), personalDictionaryRestorePattern);
         assert.ok(native.words.has("added"));
         assert.ok(readRuntimeSettings(runtimePath).pendingRestore);
         // Simulate another startup after the native mutation was interrupted.
@@ -120,16 +121,19 @@ test("dictionary integrity and shape are validated before native mutation", asyn
         const bundle = getAuthorSkillBackupPath(selected.path);
         const personalPath = join(bundle, "personal-dictionary.json");
         writeFileSync(personalPath, JSON.stringify(["tampered"]));
-        assert.throws(() => validateAuthorSkillBackup(selected.path), /invalid_manifest/);
+        const invalidBackupManifestPattern = /invalid_manifest/;
+        assert.throws(() => validateAuthorSkillBackup(selected.path), invalidBackupManifestPattern);
         rmSync(personalPath);
-        assert.throws(() => validateAuthorSkillBackup(selected.path), /invalid_manifest/);
+        assert.throws(() => validateAuthorSkillBackup(selected.path), invalidBackupManifestPattern);
         writeFileSync(personalPath, JSON.stringify(["invalid\nword"]));
         const native = dictionary(["existing"]);
-        await assert.rejects(restorePersonalDictionary(bundle, join(root, "journal.json"), native), /backup_invalid/);
+        const backupInvalidPattern = /backup_invalid/;
+        await assert.rejects(restorePersonalDictionary(bundle, join(root, "journal.json"), native), backupInvalidPattern);
         assert.deepEqual([...native.words], ["existing"]);
+        const nativeReadFailedPattern = /native read failed/;
         await assert.rejects(createNativeBackup((path) => backup(database, path), root, join(root, "failed"), undefined, "manual", async () => {
             throw new Error("native read failed");
-        }), /native read failed/);
+        }), nativeReadFailedPattern);
     } finally {
         database.close();
         rmSync(root, { recursive: true, force: true });

@@ -86,13 +86,15 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
         await page.getByRole("button", { name: "Load from file" }).click();
         await expect(editor).toContainText("New Draft");
         await expect(page.getByRole("button", { name: "Load from file" })).toBeFocused();
-        const notifications = page.getByRole("button", { name: /^Dismiss notification:/ });
+        const dismissNotificationPattern = /^Dismiss notification:/;
+        const notifications = page.getByRole("button", { name: dismissNotificationPattern });
         while (await notifications.count())
             await notifications.first().click();
 
         await chooseNativePaths(app, join(root, "missing.md"), target);
         await page.getByRole("button", { name: "Load from file" }).click();
-        await expect(page.getByText(/Choose a readable Markdown, HTML, DOCX, or RTF file/)).toBeVisible();
+        const chooseReadableMarkdownPattern = /Choose a readable Markdown, HTML, DOCX, or RTF file/;
+        await expect(page.getByText(chooseReadableMarkdownPattern)).toBeVisible();
         await expect(editor).toContainText("New Draft");
         await app.close();
         app = await launchArticleFiles(root);
@@ -118,7 +120,8 @@ test("built file renderer imports DOCX and RTF in isolated workers", async () =>
         app = await launchArticleFiles(root);
         const page = await app.firstWindow();
         await app.evaluate(async ({ BrowserWindow }, path) => BrowserWindow.getAllWindows()[0].loadFile(path), resolve("packages/web/dist/index.html"));
-        await page.waitForURL(/^file:/);
+        const filePattern = /^file:/;
+        await page.waitForURL(filePattern);
         await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await page.getByRole("button", { name: "Create" }).click();

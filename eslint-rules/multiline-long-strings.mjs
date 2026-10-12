@@ -26,7 +26,8 @@ function splitString(value) {
 function createStringFix(fixer, node, value, sourceCode) {
     const chunks = splitString(value);
     const lineStart = sourceCode.text.lastIndexOf("\n", node.range[0] - 1) + 1;
-    const indentation = /^[ \t]*/u.exec(sourceCode.text.slice(lineStart, node.range[0]))?.[0] ?? "";
+    const punctuationPattern = /^[ \t]*/u;
+    const indentation = punctuationPattern.exec(sourceCode.text.slice(lineStart, node.range[0]))?.[0] ?? "";
     const newline = sourceCode.text.includes("\r\n") ? "\r\n" : "\n";
     const expression = chunks.length === 1
         ? JSON.stringify(chunks[0])
@@ -57,7 +58,8 @@ export default {
 
     create(context) {
         function hasLongLine(value) {
-            return value.split(/\r?\n/u).some((line) => Array.from(line).length >= 160);
+            const lineBreakPattern = /\r?\n/u;
+            return value.split(lineBreakPattern).some((line) => Array.from(line).length >= 160);
         }
 
 

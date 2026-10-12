@@ -9,13 +9,16 @@ test("selected archived Article stays visible after selection and reload", async
     else
         await page.getByRole("button", { name: "New article", exact: true }).click();
 
-    await page.getByRole("button", { name: /^Rename article:/ }).click();
+    const renameArticlePattern = /^Rename article:/;
+    await page.getByRole("button", { name: renameArticlePattern }).click();
     await page.getByRole("textbox", { name: "Article title", exact: true }).fill("Archived fixture Article");
     await page.getByRole("textbox", { name: "Article title", exact: true }).press("Enter");
     await page.getByRole("button", { name: "Archive Article", exact: true }).click();
-    const archive = page.getByRole("button", { name: /^Archived \(/ });
+    const archivedPattern = /^Archived \(/;
+    const archive = page.getByRole("button", { name: archivedPattern });
     await archive.click();
-    const row = page.getByRole("navigation").getByRole("button", { name: /Archived fixture Article/ });
+    const archivedFixtureArticlePattern = /Archived fixture Article/;
+    const row = page.getByRole("navigation").getByRole("button", { name: archivedFixtureArticlePattern });
     await row.click();
     await expect(row).toHaveAttribute("aria-current", "page");
     await expect(page.locator('[data-focus-area="article-header"]').getByText("Archived", { exact: true })).toBeVisible();

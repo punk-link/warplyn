@@ -104,9 +104,12 @@ describe("ArticleLibraryPanel", () => {
                 language="en" />
         </IntlProvider>);
 
-        const sourceButton = screen.getByRole("button", { name: /Mother Article/ });
-        const translationButton = screen.getByRole("button", { name: /Spanish edition/ });
-        const otherButton = screen.getByRole("button", { name: /Other Article/ });
+        const motherArticlePattern = /Mother Article/;
+        const sourceButton = screen.getByRole("button", { name: motherArticlePattern });
+        const spanishEditionPattern = /Spanish edition/;
+        const translationButton = screen.getByRole("button", { name: spanishEditionPattern });
+        const otherArticlePattern = /Other Article/;
+        const otherButton = screen.getByRole("button", { name: otherArticlePattern });
         expect(screen.getByText("Mother Article").title).toBe("Mother Article");
         expect(screen.getByText("Mother Article").classList.contains("truncate")).toBe(true);
         expect(sourceButton.classList.contains("py-1.5")).toBe(true);
@@ -115,13 +118,15 @@ describe("ArticleLibraryPanel", () => {
         expect(screen.getByText("Spanish edition").classList.contains("text-xs")).toBe(true);
         expect(sourceButton.getAttribute("aria-expanded")).toBe("true");
         expect(otherButton.getAttribute("aria-expanded")).toBe("false");
-        expect(screen.queryByRole("button", { name: /Other Spanish edition/ })).toBeNull();
+        const collapsedSpanishEditionPattern = /Other Spanish edition/;
+        expect(screen.queryByRole("button", { name: collapsedSpanishEditionPattern })).toBeNull();
         expect(otherButton.querySelector("svg")?.classList.contains("transition-transform")).toBe(true);
         expect(screen.getByText("Other Spanish edition").closest("[aria-hidden]")?.classList.contains("grid-rows-[0fr]")).toBe(true);
         expect(sourceButton.compareDocumentPosition(translationButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
         await user.type(screen.getByRole("textbox", { name: getMessage("navigation.searchArticles") }), "Other Spanish");
-        await user.click(screen.getByRole("button", { name: /Other Spanish edition/ }));
-        expect(screen.getByRole("button", { name: /Other Article/ })).toBeTruthy();
+        const expandedSpanishEditionPattern = /Other Spanish edition/;
+        await user.click(screen.getByRole("button", { name: expandedSpanishEditionPattern }));
+        expect(screen.getByRole("button", { name: otherArticlePattern })).toBeTruthy();
         expect(selectArticle).toHaveBeenCalledWith("other-translation");
     });
 
@@ -143,21 +148,27 @@ describe("ArticleLibraryPanel", () => {
                 language="en" />
         </IntlProvider>;
         const { rerender } = render(panel([source, translation, other]));
-        expect(screen.getByRole("button", { name: /Spanish edition/ })).toBeTruthy();
+        const spanishEditionPattern = /Spanish edition/;
+        expect(screen.getByRole("button", { name: spanishEditionPattern })).toBeTruthy();
 
         rerender(panel([source, added, translation, other]));
-        const first = screen.getByRole("button", { name: /Portuguese edition/ });
-        const second = screen.getByRole("button", { name: /Spanish edition/ });
+        const portugueseEditionPattern = /Portuguese edition/;
+        const first = screen.getByRole("button", { name: portugueseEditionPattern });
+        const secondSpanishEditionPattern = /Spanish edition/;
+        const second = screen.getByRole("button", { name: secondSpanishEditionPattern });
         expect(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
         rerender(panel([source, { ...translation, sourceArticleId: other.id }, other]));
-        expect(screen.queryByRole("button", { name: /Portuguese edition/ })).toBeNull();
-        expect(screen.queryByRole("button", { name: /Spanish edition/ })).toBeNull();
-        expect(screen.getByRole("button", { name: /Mother Article/ }).hasAttribute("aria-expanded")).toBe(false);
+        expect(screen.queryByRole("button", { name: portugueseEditionPattern })).toBeNull();
+        expect(screen.queryByRole("button", { name: secondSpanishEditionPattern })).toBeNull();
+        const motherArticlePattern = /Mother Article/;
+        expect(screen.getByRole("button", { name: motherArticlePattern }).hasAttribute("aria-expanded")).toBe(false);
 
         rerender(panel([source, { ...translation, sourceArticleId: other.id }, other], other.id));
-        const otherButton = screen.getByRole("button", { name: /Other Article/ });
-        const moved = screen.getByRole("button", { name: /Spanish edition/ });
+        const otherArticlePattern = /Other Article/;
+        const otherButton = screen.getByRole("button", { name: otherArticlePattern });
+        const movedSpanishEditionPattern = /Spanish edition/;
+        const moved = screen.getByRole("button", { name: movedSpanishEditionPattern });
         expect(otherButton.compareDocumentPosition(moved) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
 
@@ -180,7 +191,9 @@ describe("ArticleLibraryPanel", () => {
         const { rerender } = render(panel(selectedArticleId));
         const archive = screen.getByRole("button", { name: "Archived (1)" });
         expect(archive.getAttribute("aria-expanded")).toBe("true");
-        expect(screen.getByRole("button", { name: selectedArticleId === "source" ? /Mother Article/ : /Spanish edition/ }).getAttribute("aria-current")).toBe("page");
+        const motherArticlePattern = /Mother Article/;
+        const spanishEditionPattern = /Spanish edition/;
+        expect(screen.getByRole("button", { name: selectedArticleId === "source" ? motherArticlePattern : spanishEditionPattern }).getAttribute("aria-current")).toBe("page");
         fireEvent.click(archive);
         fireEvent.click(archive);
         expect(archive.getAttribute("aria-expanded")).toBe("true");
@@ -206,7 +219,8 @@ describe("ArticleLibraryPanel", () => {
                 language="en" />
         </IntlProvider>);
 
-        const article = screen.getByRole("button", { name: /Mother Article/ });
+        const motherArticlePattern = /Mother Article/;
+        const article = screen.getByRole("button", { name: motherArticlePattern });
         article.focus();
         fireEvent.keyDown(article, { key: "ArrowDown" });
         expect(document.activeElement).toBe(screen.getByRole("button", { name: "Style Profile" }));
@@ -263,7 +277,8 @@ describe("ArticleLibraryPanel", () => {
                 setArchived={setArchived} />
         </IntlProvider>);
 
-        fireEvent.contextMenu(screen.getByRole("button", { name: /Mother Article/ }));
+        const motherArticlePattern = /Mother Article/;
+        fireEvent.contextMenu(screen.getByRole("button", { name: motherArticlePattern }));
         expect(selectArticle).not.toHaveBeenCalled();
         expect(screen.getByRole("menuitem", { name: "Pin" })).toBeTruthy();
         fireEvent.click(screen.getByRole("menuitem", { name: "Archive" }));
@@ -286,7 +301,8 @@ describe("ArticleLibraryPanel", () => {
                 language="en" />
         </IntlProvider>);
 
-        fireEvent.contextMenu(screen.getByRole("button", { name: /Spanish edition/ }));
+        const spanishEditionPattern = /Spanish edition/;
+        fireEvent.contextMenu(screen.getByRole("button", { name: spanishEditionPattern }));
         expect(screen.getAllByRole("menuitem").map((item) => item.textContent)).toEqual(["Delete"]);
     });
 });

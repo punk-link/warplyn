@@ -49,7 +49,8 @@ test("foreign keys and Article ownership reject invalid writes", () => withRepos
     const two = repositories.articleService.createArticle({ title: "Two", content: "two" });
 
     assert.throws(() => repositories.articles.restoreRevision(one.id, two.currentRevisionId), { code: APPLICATION_ERROR.REVISION_NOT_FOUND });
-    assert.throws(() => repositories.materials.createMaterial({ name: " ", content: "x" }), /must not be empty/);
+    const mustEmptyPattern = /must not be empty/;
+    assert.throws(() => repositories.materials.createMaterial({ name: " ", content: "x" }), mustEmptyPattern);
 }));
 
 
@@ -105,7 +106,8 @@ test("Article Revision snapshots remain local immutable style samples", () => wi
     assert.equal(snapshot.origin, "article-revision");
     assert.equal(snapshot.articleId, article.id);
     assert.equal(snapshot.revisionId, revision.id);
-    assert.match(snapshot.name, /Snapshot — Revision 2/);
+    const snapshotRevisionPattern = /Snapshot — Revision 2/;
+    assert.match(snapshot.name, snapshotRevisionPattern);
     assert.equal(snapshot.excerpt, "Second version.");
     assert.throws(() => service.addArticleRevision(article.id, revision.id), { code: "duplicate_style_corpus_item" });
 }));

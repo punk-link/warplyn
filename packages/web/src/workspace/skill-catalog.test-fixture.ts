@@ -8,7 +8,8 @@ const root = resolve(process.cwd(), "../server/src/application/assistant/skills/
 
 export const skillCatalogFixture: AssistantSkillSummary[] = readdirSync(root).map((directory) => {
     const markdown = readFileSync(resolve(root, directory, "SKILL.md"), "utf8");
-    const metadata = parse(markdown.split(/^---\s*$/m)[1]!) as AssistantSkillSummary & { id: string; version: number };
+    const whitespacePrefixPattern = /^---\s*$/m;
+    const metadata = parse(markdown.split(whitespacePrefixPattern)[1]!) as AssistantSkillSummary & { id: string; version: number };
 
     return {
         reference: { source: "built-in", id: metadata.id, version: String(metadata.version) },

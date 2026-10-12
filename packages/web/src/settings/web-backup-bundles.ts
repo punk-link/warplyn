@@ -22,8 +22,9 @@ export class WebBackupError extends Error {
 
 function isSafeBundlePath(path: string): boolean {
     const parts = path.split("/");
+    const punctuationPattern = /^[a-zA-Z0-9_-][a-zA-Z0-9._-]*$/;
     return path === "database.sqlite" || path === "manifest.json" || (parts.length >= 2 && (parts[0] === "skills" || parts[0] === "skill-history")
-        && parts.every((part) => part !== "." && part !== ".." && /^[a-zA-Z0-9_-][a-zA-Z0-9._-]*$/.test(part)));
+        && parts.every((part) => part !== "." && part !== ".." && punctuationPattern.test(part)));
 }
 
 
@@ -32,10 +33,11 @@ function isBackupBundleManifest(value: unknown): value is BackupBundleManifest {
         || !("files" in value) || !Array.isArray(value.files) || value.files.length === 0)
         return false;
 
+    const punctuationPattern = /^[a-f0-9]{64}$/;
     return value.files.every((entry: unknown) => entry && typeof entry === "object" && "path" in entry
         && typeof entry.path === "string" && entry.path !== "manifest.json" && isSafeBundlePath(entry.path)
         && "size" in entry && typeof entry.size === "number" && Number.isSafeInteger(entry.size)
-        && "sha256" in entry && typeof entry.sha256 === "string" && /^[a-f0-9]{64}$/.test(entry.sha256));
+        && "sha256" in entry && typeof entry.sha256 === "string" && punctuationPattern.test(entry.sha256));
 }
 
 

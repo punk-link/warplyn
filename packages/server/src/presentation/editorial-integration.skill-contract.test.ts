@@ -57,7 +57,8 @@ for (const scope of ["article", "selection"] as const) {
 
                 assert.equal(engine.requests[0]?.article, source);
                 assert.equal(engine.requests[0]?.skill?.contentHash, captured.contentHash);
-                assert.match(engine.requests[0]?.skill?.instructions ?? "", /Shorten the source/);
+                const shortenSourcePattern = /Shorten the source/;
+                assert.match(engine.requests[0]?.skill?.instructions ?? "", shortenSourcePattern);
                 assert.equal(services.articles.listRevisions(article.id).length, 1);
             }, false, { verify: async () => true, verifyReplacement: async () => true });
         });
@@ -85,8 +86,10 @@ test("inferred Author Skill keeps its primary contract when a complementary buil
 
         assert.equal(persistence.assistant.getRequest(request.requestId)?.resolvedSkillId, "custom-tighten");
         assert.equal(engine.requests[0]?.skill?.execution.capability, "generate_proposal");
-        assert.match(engine.requests[0]?.skill?.instructions ?? "", /Shorten the source/);
-        assert.match(engine.requests[0]?.skill?.instructions ?? "", /Flow and Clarity/);
+        const shortenSourcePattern = /Shorten the source/;
+        assert.match(engine.requests[0]?.skill?.instructions ?? "", shortenSourcePattern);
+        const flowClarityPattern = /Flow and Clarity/;
+        assert.match(engine.requests[0]?.skill?.instructions ?? "", flowClarityPattern);
         assert.equal(persistence.assistant.listMessages(article.id).at(-1)?.editCandidate, undefined);
         assert.equal(persistence.editorialArtifacts.listEditorialArtifacts(article.id).length, 1);
     }, false, { verify: async () => true, verifyReplacement: async () => true });

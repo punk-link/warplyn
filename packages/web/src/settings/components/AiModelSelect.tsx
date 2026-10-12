@@ -13,7 +13,8 @@ type ModelVendor = Exclude<AiProvider, "opencode"> | "other";
 
 
 function getModelLabel(model: string): string {
-    return model.replace(/^(gpt|o)-?([\d.]+)(?:-(mini|nano))?$/i, (_match, family: string, version: string, size?: string) => `${family.toUpperCase() === "GPT" ? "GPT" : family.toLowerCase()}-${version}${size ? ` ${size}` : ""}`);
+    const numberPattern = /^(gpt|o)-?([\d.]+)(?:-(mini|nano))?$/i;
+    return model.replace(numberPattern, (_match, family: string, version: string, size?: string) => `${family.toUpperCase() === "GPT" ? "GPT" : family.toLowerCase()}-${version}${size ? ` ${size}` : ""}`);
 }
 
 
@@ -21,7 +22,8 @@ function getModelProvider(model: string, connectionProvider: AiProvider): AiProv
     if (connectionProvider !== AI_PROVIDER.OPENCODE)
         return connectionProvider;
 
-    const id = model.replace(/^opencode\//, "");
+    const opencodePattern = /^opencode\//;
+    const id = model.replace(opencodePattern, "");
     if (id.startsWith("gpt-"))
         return AI_PROVIDER.OPENAI;
 

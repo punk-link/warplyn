@@ -39,7 +39,8 @@ describe("Article format conversion", () => {
         const html = articleMarkdownToHtml(fixture);
         expect(html).toContain("<pre");
         const markdown = articleHtmlToMarkdown(html);
-        expect(markdown).toMatch(/# (?:\*\*)?Title café 🙂/);
+        const titleCafePattern = /# (?:\*\*)?Title café 🙂/;
+        expect(markdown).toMatch(titleCafePattern);
         expect(markdown).toContain("**bold**");
         expect(markdown).toContain("*italic*");
         expect(markdown).toContain("~~strike~~");

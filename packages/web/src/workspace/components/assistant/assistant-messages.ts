@@ -16,7 +16,8 @@ export const responseMessages: Record<AssistantResponseKind, "assistant.response
 
 
 export function getSelectionPreview(selection: string): string {
-    const normalized = selection.replace(/\s+/g, " ").trim();
+    const whitespacePattern = /\s+/g;
+    const normalized = selection.replace(whitespacePattern, " ").trim();
 
     return normalized.length > 20 ? `${normalized.slice(0, 20)}…` : normalized;
 }

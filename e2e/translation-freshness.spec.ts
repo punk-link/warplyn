@@ -14,18 +14,22 @@ test("parallel translations become stale after a source edit and refresh preserv
         localStorage.setItem("skladno-workspace-layout", JSON.stringify({ version: 3, view: "translations", selectedArticleId: id }));
     }, source.id);
     await page.goto("/");
-    await page.getByRole("tab", { name: /Translations/ }).click();
+    const translationsPattern = /Translations/;
+    await page.getByRole("tab", { name: translationsPattern }).click();
     await page.getByRole("button", { name: "New translation…", exact: true }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Generate translations", exact: true }).click();
     await expect(page.getByRole("tab", { name: "Spanish", exact: true })).toBeVisible();
     await expect(page.getByRole("tab", { name: "German", exact: true })).toBeVisible();
-    await expect(page.getByText(/Translation\s*in Spanish$/)).toBeVisible();
-    await expect(page.getByText(/Translation\s*in German$/)).toBeVisible();
+    const translationSpanishPattern = /Translation\s*in Spanish$/;
+    await expect(page.getByText(translationSpanishPattern)).toBeVisible();
+    const translationGermanPattern = /Translation\s*in German$/;
+    await expect(page.getByText(translationGermanPattern)).toBeVisible();
     for (const language of ["Spanish", "German"]) {
         await page.getByRole("tab", { name: language, exact: true }).click();
         await page.getByRole("button", { name: "Edit", exact: true }).click();
         await expect(page.getByRole("textbox", { name: "Article draft", exact: true })).toBeVisible();
-        await page.getByRole("tab", { name: /Translations/ }).click();
+        const translationsPattern = /Translations/;
+        await page.getByRole("tab", { name: translationsPattern }).click();
         await page.getByRole("button", { name: "Parallel source", exact: true }).click();
     }
 
@@ -34,7 +38,8 @@ test("parallel translations become stale after a source edit and refresh preserv
     await page.getByRole("tab", { name: "Write", exact: true }).click();
     await page.getByRole("textbox", { name: "Article draft" }).fill("Changed translation source.");
     await page.getByRole("button", { name: "Save revision", exact: true }).click();
-    await page.getByRole("tab", { name: /Translations/ }).click();
+    const translationsPattern = /Translations/;
+    await page.getByRole("tab", { name: translationsPattern }).click();
     await expect(page.getByText("The source Article has changed since this translation proposal was made.", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Edit", exact: true })).toBeEnabled();
     await expect(page.getByRole("button", { name: "Update", exact: true })).toBeDisabled();
@@ -56,16 +61,20 @@ test("parallel translations become stale after a source edit and refresh preserv
     const accepted = page.waitForResponse((response) => response.url().endsWith("/proposal-acceptances") && response.request().method() === "POST");
     await page.getByRole("dialog").getByRole("button", { name: "Update", exact: true }).click();
     expect((await accepted).status()).toBe(201);
-    await expect(page.getByText(/Its text has been preserved/)).toHaveCount(0);
+    const itsTextHasPattern = /Its text has been preserved/;
+    await expect(page.getByText(itsTextHasPattern)).toHaveCount(0);
     const spanish = before.find((article: { language: string }) => article.language === "es");
     const revisions = await (await page.request.get(`${service}/api/articles/${spanish.id}/revisions`)).json();
     expect(revisions).toHaveLength(2);
     expect(revisions.some((revision: { id: string }) => revision.id === spanish.currentRevisionId)).toBe(true);
     await page.reload();
-    await page.getByRole("tab", { name: /Translations/ }).click();
+    const translationsPattern = /Translations/;
+    await page.getByRole("tab", { name: translationsPattern }).click();
     await page.getByRole("tab", { name: "Spanish", exact: true }).click();
-    await expect(page.getByText(/Translation\s*in Spanish$/)).toHaveCount(2);
-    await expect(page.getByText(/Translation\s*in German$/)).toBeVisible();
+    const translationSpanishPattern = /Translation\s*in Spanish$/;
+    await expect(page.getByText(translationSpanishPattern)).toHaveCount(2);
+    const translationGermanPattern = /Translation\s*in German$/;
+    await expect(page.getByText(translationGermanPattern)).toBeVisible();
     await expect(page.getByText("The source Article has changed since this translation proposal was made.", { exact: true })).toHaveCount(0);
     await page.getByRole("button", { name: "New translation…", exact: true }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Generate Spanish translation", exact: true }).click();
@@ -96,7 +105,8 @@ test("same-Revision translations survive reload and exact-result rejection", asy
     const editor = page.getByRole("textbox", { name: "Article draft" });
     await editor.click();
     await editor.press("Control+a");
-    await page.getByRole("tab", { name: /Translations/ }).click();
+    const translationsPattern = /Translations/;
+    await page.getByRole("tab", { name: translationsPattern }).click();
     const requests: AssistantRequestInput[] = [];
     page.on("request", (request) => {
         if (request.url().endsWith(`/articles/${source.id}/assistant/requests`) && request.method() === "POST")
@@ -123,16 +133,20 @@ test("same-Revision translations survive reload and exact-result rejection", asy
     const revisions = await (await page.request.get(`${service}/api/articles/${source.id}/revisions`)).json();
     expect(revisions).toHaveLength(1);
     await page.reload();
-    await page.getByRole("tab", { name: /Translations/ }).click();
+    const translationsPattern = /Translations/;
+    await page.getByRole("tab", { name: translationsPattern }).click();
     const selector = page.getByRole("button", { name: "Translation result", exact: true });
     await selector.click();
     const resultMenu = page.getByRole("menu", { name: "Translation result", exact: true });
     await expect(resultMenu.getByRole("menuitemradio")).toHaveCount(2);
-    await expect(resultMenu.getByRole("menuitemradio", { name: /^v2 ·/ })).toHaveAttribute("aria-checked", "true");
+    const punctuationPattern = /^v2 ·/;
+    await expect(resultMenu.getByRole("menuitemradio", { name: punctuationPattern })).toHaveAttribute("aria-checked", "true");
     const firstId = results[0]?.editorialArtifactId;
     expect(firstId).toBeTruthy();
-    await resultMenu.getByRole("menuitemradio", { name: /^v1 ·/ }).click();
-    await expect(selector).toHaveText(/^v1 ·/);
+    const punctuationPattern = /^v1 ·/;
+    await resultMenu.getByRole("menuitemradio", { name: punctuationPattern }).click();
+    const punctuationPattern = /^v1 ·/;
+    await expect(selector).toHaveText(punctuationPattern);
     await page.getByRole("button", { name: "Reject", exact: true }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Reject", exact: true }).click();
     await expect(selector).toHaveCount(0);

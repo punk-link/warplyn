@@ -109,13 +109,14 @@ function createEditorialFailure(error: unknown): { category: Extract<EditorialEv
 
 
 function editorialFailureCategory(error: unknown): Extract<EditorialEvent, { type: "error" }>["code"] {
+    const networkFetchConnectPattern = /network|fetch|connect|timeout|ECONN|ENOTFOUND/i;
     if (error instanceof EditorialEngineError) {
         if (error.code === EDITORIAL_ENGINE_ERROR.NETWORK)
             return EDITORIAL_ERROR_CATEGORY.NETWORK;
 
         if (error.code === EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED)
             return EDITORIAL_ERROR_CATEGORY.SESSION_EXPIRED;
-    } else if (error instanceof Error && /network|fetch|connect|timeout|ECONN|ENOTFOUND/i.test(error.message)) {
+    } else if (error instanceof Error && networkFetchConnectPattern.test(error.message)) {
         return EDITORIAL_ERROR_CATEGORY.NETWORK;
     }
 

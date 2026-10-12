@@ -177,10 +177,11 @@ test("Assistant capability history is minimal and completion transactions roll b
     assert.deepEqual(Object.keys(execution?.[0] ?? {}).sort(), ["baseRevisionId", "capability", "completedAt", "requestId", "startedAt", "status"]);
     assert.equal(execution?.[0]?.status, "completed");
 
+    const forcedCompletionFailurePattern = /forced completion failure/;
     assert.throws(() => repositories.assistant.completeRun(() => {
         repositories.editorialArtifacts.createEditorialArtifact({ articleId: article.id, revisionId: article.currentRevisionId, kind: "assistant-proposal", content: "staged" });
         throw new Error("forced completion failure");
-    }), /forced completion failure/);
+    }), forcedCompletionFailurePattern);
     assert.deepEqual(repositories.editorialArtifacts.listEditorialArtifacts(article.id), []);
 }));
 

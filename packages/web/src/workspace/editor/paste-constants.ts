@@ -17,14 +17,18 @@ export function isSupportedArticleLink(value: string): boolean {
 }
 
 
+const msoListPattern = /mso-list/i;
+const msoListIgnorePattern = /mso-list\s*:\s*ignore/i;
+const bulletMarkerPrefixPattern = /^[\s\u00a0]*(?:[\u00b7\u2022\u2023\u25aa\u25e6])[\s\u00a0]*/;
+const numberedMarkerPrefixPattern = /^[\s\u00a0]*\d+[.)][\s\u00a0]*/;
 export const WORD_PASTE = {
     blockElementNames: new Set(["p", "div", "li", "blockquote", "h1", "h2", "h3", "h4", "h5", "h6"]),
     listCandidateElementNames: new Set(["p", "div"]),
     listCandidateSelector: "p, div",
-    listMetadataPattern: /mso-list/i,
-    listMarkerIgnorePattern: /mso-list\s*:\s*ignore/i,
-    bulletMarkerPattern: /^[\s\u00a0]*(?:[\u00b7\u2022\u2023\u25aa\u25e6])[\s\u00a0]*/,
-    numberMarkerPattern: /^[\s\u00a0]*\d+[.)][\s\u00a0]*/,
+    listMetadataPattern: msoListPattern,
+    listMarkerIgnorePattern: msoListIgnorePattern,
+    bulletMarkerPattern: bulletMarkerPrefixPattern,
+    numberMarkerPattern: numberedMarkerPrefixPattern,
 } as const;
 
 

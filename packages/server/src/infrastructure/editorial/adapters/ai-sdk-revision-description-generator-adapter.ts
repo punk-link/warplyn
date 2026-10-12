@@ -16,7 +16,9 @@ export class AiSdkRevisionDescriptionGeneratorAdapter implements RevisionDescrip
             ...createAiSdkGenerationOptions({ model: this.model, signal, providerOptions: this.providerOptions }),
             prompt: `Summarize this editorial change in 2 to 8 neutral words in the interface locale ${interfaceLocale}, regardless of the Article language. Return only the summary, without quotation marks or ending punctuation. Do not invent facts.\n\nRemoved text:\n${changedContext.removed}\n\nAdded text:\n${changedContext.added}`,
         });
-        const description = result.text.trim().replace(/^['"“”]+|['"“”]+$/g, "").replace(/\s+/g, " ").slice(0, 120);
+        const punctuationPattern = /^['"“”]+|['"“”]+$/g;
+        const whitespacePattern = /\s+/g;
+        const description = result.text.trim().replace(punctuationPattern, "").replace(whitespacePattern, " ").slice(0, 120);
         if (!isAcceptedFinish(result.finishReason) || !description)
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 

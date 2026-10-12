@@ -22,13 +22,19 @@ test("direct thesis composition uses the Narrative Draft prompt", async () => {
     const prompt = getPromptText(input);
 
     assert.deepEqual(createEditorialMessages(input), createEditorialMessages({ ...input, skillId: BUILT_IN_SKILL.NARRATIVE_DRAFT }));
-    assert.match(prompt, /Explain Kubernetes retries/);
-    assert.match(prompt, /Current draft/);
-    assert.match(prompt, /Preserve the author's claims, numbers, URLs, code, technical terms/);
-    assert.match(prompt, /Do not invent facts, examples, or sources/);
+    const explainKubernetesRetriesPattern = /Explain Kubernetes retries/;
+    assert.match(prompt, explainKubernetesRetriesPattern);
+    const currentDraftPattern = /Current draft/;
+    assert.match(prompt, currentDraftPattern);
+    const preserveAuthorClaimsPattern = /Preserve the author's claims, numbers, URLs, code, technical terms/;
+    assert.match(prompt, preserveAuthorClaimsPattern);
+    const inventFactsExamplesPattern = /Do not invent facts, examples, or sources/;
+    assert.match(prompt, inventFactsExamplesPattern);
     assert.ok(prompt.includes(authorControlInstruction));
-    assert.match(prompt, /Current Article title:\nSaved title/);
-    assert.match(prompt, /title is managed separately/i);
+    const lineEndingPattern = /Current Article title:\nSaved title/;
+    assert.match(prompt, lineEndingPattern);
+    const titleManagedSeparatelyPattern = /title is managed separately/i;
+    assert.match(prompt, titleManagedSeparatelyPattern);
 });
 
 
@@ -41,10 +47,14 @@ test("talking-points prompt prioritizes the Author's message and defaults to 3â€
         skillId: BUILT_IN_SKILL.TALKING_POINTS,
     });
 
-    assert.match(prompt, /Author's message:\nWhy retries need an upper bound/);
-    assert.doesNotMatch(prompt, /Existing Article content/);
-    assert.match(prompt, /between 3 and 5 theses/);
-    assert.match(prompt, /ask the Author only the focused questions needed/);
+    const lineEndingPattern = /Author's message:\nWhy retries need an upper bound/;
+    assert.match(prompt, lineEndingPattern);
+    const existingArticleContentPattern = /Existing Article content/;
+    assert.doesNotMatch(prompt, existingArticleContentPattern);
+    const betweenThesesPattern = /between 3 and 5 theses/;
+    assert.match(prompt, betweenThesesPattern);
+    const askAuthorFocusedPattern = /ask the Author only the focused questions needed/;
+    assert.match(prompt, askAuthorFocusedPattern);
 });
 
 
@@ -56,7 +66,8 @@ test("talking-points prompt falls back to Article content when the composer is e
         skillId: BUILT_IN_SKILL.TALKING_POINTS,
     });
 
-    assert.match(prompt, /Article content:\nRetries can amplify an outage/);
+    const lineEndingPattern = /Article content:\nRetries can amplify an outage/;
+    assert.match(prompt, lineEndingPattern);
 });
 
 
@@ -69,10 +80,14 @@ test("talking-points prompt uses an Article selection as primary and allows the 
         skillId: BUILT_IN_SKILL.TALKING_POINTS,
     });
 
-    assert.match(prompt, /Article selection:\nSelected evidence with two concrete claims/);
-    assert.match(prompt, /Author message \(supplementary direction or material that may extend the selection\)/);
-    assert.match(prompt, /treat only the selection and any material explicitly supplied in the Author's message as source material/);
-    assert.match(prompt, /selection plus any supplementary material the Author explicitly provides/);
+    const lineEndingPattern = /Article selection:\nSelected evidence with two concrete claims/;
+    assert.match(prompt, lineEndingPattern);
+    const authorMessageSupplementaryPattern = /Author message \(supplementary direction or material that may extend the selection\)/;
+    assert.match(prompt, authorMessageSupplementaryPattern);
+    const treatSelectionAnyPattern = /treat only the selection and any material explicitly supplied in the Author's message as source material/;
+    assert.match(prompt, treatSelectionAnyPattern);
+    const selectionPlusAnyPattern = /selection plus any supplementary material the Author explicitly provides/;
+    assert.match(prompt, selectionPlusAnyPattern);
 });
 
 
@@ -89,17 +104,28 @@ test("narrative-draft prompt follows Author direction, selection priority, and t
         targetArticleCharacterLimit: 1_300,
     });
 
-    assert.match(prompt, /Author message \(highest-priority direction and supplementary material\):\nAdd one simple example/);
-    assert.match(prompt, /Article selection:\nSelected theses/);
-    assert.match(prompt, /treat only the selection and any material explicitly supplied in the Author's message as source material/);
-    assert.match(prompt, /resulting complete Article: about 1300 characters/);
-    assert.match(prompt, /not a hard limit on your response/);
-    assert.match(prompt, /unchanged surrounding Article currently contains 800 characters/);
-    assert.match(prompt, /Output format:\nSelected-passage Markdown replacement/);
-    assert.match(prompt, /title is managed separately/i);
-    assert.doesNotMatch(prompt, /Current Article title:\nExisting Article title/);
-    assert.match(prompt, /not the Article's author/);
-    assert.match(prompt, /Prefer straightforward structure and ideas/);
+    const authorDirectionSectionPattern = /Author message \(highest-priority direction and supplementary material\):\nAdd one simple example/;
+    assert.match(prompt, authorDirectionSectionPattern);
+    const selectedThesesSectionPattern = /Article selection:\nSelected theses/;
+    assert.match(prompt, selectedThesesSectionPattern);
+    const treatSelectionAnyPattern = /treat only the selection and any material explicitly supplied in the Author's message as source material/;
+    assert.match(prompt, treatSelectionAnyPattern);
+    const resultingCompleteArticlePattern = /resulting complete Article: about 1300 characters/;
+    assert.match(prompt, resultingCompleteArticlePattern);
+    const hardLimitYourPattern = /not a hard limit on your response/;
+    assert.match(prompt, hardLimitYourPattern);
+    const unchangedSurroundingArticlePattern = /unchanged surrounding Article currently contains 800 characters/;
+    assert.match(prompt, unchangedSurroundingArticlePattern);
+    const outputFormatSectionPattern = /Output format:\nSelected-passage Markdown replacement/;
+    assert.match(prompt, outputFormatSectionPattern);
+    const titleManagedSeparatelyPattern = /title is managed separately/i;
+    assert.match(prompt, titleManagedSeparatelyPattern);
+    const existingArticleTitleSectionPattern = /Current Article title:\nExisting Article title/;
+    assert.doesNotMatch(prompt, existingArticleTitleSectionPattern);
+    const articleAuthorPattern = /not the Article's author/;
+    assert.match(prompt, articleAuthorPattern);
+    const preferStraightforwardStructurePattern = /Prefer straightforward structure and ideas/;
+    assert.match(prompt, preferStraightforwardStructurePattern);
 });
 
 test("full Narrative Draft uses the existing Article title without adding it to the body", async () => {
@@ -111,9 +137,12 @@ test("full Narrative Draft uses the existing Article title without adding it to 
         skillId: BUILT_IN_SKILL.NARRATIVE_DRAFT,
     });
 
-    assert.match(prompt, /Current Article title:\nExisting Article title/);
-    assert.match(prompt, /title is managed separately/i);
-    assert.match(prompt, /do not include a title or title label in the proposed body/i);
+    const lineEndingPattern = /Current Article title:\nExisting Article title/;
+    assert.match(prompt, lineEndingPattern);
+    const titleManagedSeparatelyPattern = /title is managed separately/i;
+    assert.match(prompt, titleManagedSeparatelyPattern);
+    const includeTitleLabelPattern = /do not include a title or title label in the proposed body/i;
+    assert.match(prompt, includeTitleLabelPattern);
 });
 
 
@@ -125,13 +154,20 @@ test("flow-revision prompt asks for a full-text proposal rather than feedback", 
         authorContext: "Keep the opening sentence.",
     });
 
-    assert.match(prompt, /Revise the current Article as a complete Article/);
-    assert.match(prompt, /complete Article/);
-    assert.match(prompt, /do not summarize it or turn it into feedback/);
-    assert.match(prompt, /make only that change\. Preserve all other wording, punctuation, and formatting exactly/);
-    assert.match(prompt, /Keep the opening sentence/);
-    assert.match(prompt, /Current Article title:\nSaved title/);
-    assert.match(prompt, /do not include a title or title label in the proposed body/i);
+    const reviseCurrentArticlePattern = /Revise the current Article as a complete Article/;
+    assert.match(prompt, reviseCurrentArticlePattern);
+    const completeArticlePattern = /complete Article/;
+    assert.match(prompt, completeArticlePattern);
+    const summarizeTurnIntoPattern = /do not summarize it or turn it into feedback/;
+    assert.match(prompt, summarizeTurnIntoPattern);
+    const makeChangePreservePattern = /make only that change\. Preserve all other wording, punctuation, and formatting exactly/;
+    assert.match(prompt, makeChangePreservePattern);
+    const keepOpeningSentencePattern = /Keep the opening sentence/;
+    assert.match(prompt, keepOpeningSentencePattern);
+    const lineEndingPattern = /Current Article title:\nSaved title/;
+    assert.match(prompt, lineEndingPattern);
+    const includeTitleLabelPattern = /do not include a title or title label in the proposed body/i;
+    assert.match(prompt, includeTitleLabelPattern);
 });
 
 
@@ -154,11 +190,16 @@ test("style review sends a compact profile rather than raw corpus text", async (
         },
     });
 
-    assert.match(prompt, /Supplied corpus traits/);
-    assert.match(prompt, /paragraphing: Compact paragraphs/);
-    assert.match(prompt, /No additional author guidance was provided/);
-    assert.match(prompt, /Current Article title:\nSaved title/);
-    assert.match(prompt, /do not include a title or title label in the proposed body/i);
+    const suppliedCorpusTraitsPattern = /Supplied corpus traits/;
+    assert.match(prompt, suppliedCorpusTraitsPattern);
+    const paragraphingCompactParagraphsPattern = /paragraphing: Compact paragraphs/;
+    assert.match(prompt, paragraphingCompactParagraphsPattern);
+    const additionalAuthorGuidancePattern = /No additional author guidance was provided/;
+    assert.match(prompt, additionalAuthorGuidancePattern);
+    const lineEndingPattern = /Current Article title:\nSaved title/;
+    assert.match(prompt, lineEndingPattern);
+    const includeTitleLabelPattern = /do not include a title or title label in the proposed body/i;
+    assert.match(prompt, includeTitleLabelPattern);
 });
 
 test("selected editorial text does not send the surrounding Article title", () => {
@@ -170,7 +211,8 @@ test("selected editorial text does not send the surrounding Article title", () =
         authorContext: "",
     });
 
-    assert.doesNotMatch(prompt, /Private surrounding title/);
+    const privateSurroundingTitlePattern = /Private surrounding title/;
+    assert.doesNotMatch(prompt, privateSurroundingTitlePattern);
 });
 
 
@@ -185,25 +227,37 @@ test("Concise rewrite specifies safe deletion, preservation, prose output, and e
         const prompt = getPromptText({ ...fixture, operation: EDITORIAL_OPERATION.FLOW_REVISION, skillId: BUILT_IN_SKILL.CONCISE_REWRITE, articleTitle: "Saved title" });
         assert.ok(prompt.includes(fixture.article));
         assert.ok(prompt.includes(fixture.authorContext));
-        assert.match(prompt, /Remove repetition, throat-clearing, filler/);
-        assert.match(prompt, /claims, numbers, URLs, quotations, citations, code, technical terms, supported Markdown formatting, author voice, and degree of certainty/);
-        assert.match(prompt, /Do not add facts, examples, conclusions, sources, or stronger certainty/);
-        assert.match(prompt, /fewer characters than the source/);
-        assert.match(prompt, /return the source byte-for-byte unchanged/);
-        assert.match(prompt, /Return an Article, not a summary, outline, list, or feedback/);
-        assert.match(prompt, /Current Article title:\nSaved title/);
+        const removeRepetitionThroatPattern = /Remove repetition, throat-clearing, filler/;
+        assert.match(prompt, removeRepetitionThroatPattern);
+        const claimsNumbersUrlsPattern = /claims, numbers, URLs, quotations, citations, code, technical terms, supported Markdown formatting, author voice, and degree of certainty/;
+        assert.match(prompt, claimsNumbersUrlsPattern);
+        const addFactsExamplesPattern = /Do not add facts, examples, conclusions, sources, or stronger certainty/;
+        assert.match(prompt, addFactsExamplesPattern);
+        const fewerCharactersThanPattern = /fewer characters than the source/;
+        assert.match(prompt, fewerCharactersThanPattern);
+        const returnSourceBytePattern = /return the source byte-for-byte unchanged/;
+        assert.match(prompt, returnSourceBytePattern);
+        const returnArticleSummaryPattern = /Return an Article, not a summary, outline, list, or feedback/;
+        assert.match(prompt, returnArticleSummaryPattern);
+        const lineEndingPattern = /Current Article title:\nSaved title/;
+        assert.match(prompt, lineEndingPattern);
         assert.ok(prompt.includes(authorControlInstruction));
-        assert.doesNotMatch(prompt, /make only that change/);
+        const makeChangePattern = /make only that change/;
+        assert.doesNotMatch(prompt, makeChangePattern);
     }
 });
 
 
 test("Concise rewrite selection requests only an excerpt replacement without the Article title", () => {
     const prompt = getPromptText({ operation: EDITORIAL_OPERATION.FLOW_REVISION, skillId: BUILT_IN_SKILL.CONCISE_REWRITE, article: "Selected excerpt.", articleTitle: "Private title", articleSelection: true, authorContext: "Keep the example." });
-    assert.match(prompt, /Selected-passage Markdown replacement/);
-    assert.match(prompt, /Article selection:\nSelected excerpt/);
-    assert.match(prompt, /do not request surrounding Article context/);
-    assert.doesNotMatch(prompt, /Private title/);
+    const selectedPassageMarkdownPattern = /Selected-passage Markdown replacement/;
+    assert.match(prompt, selectedPassageMarkdownPattern);
+    const lineEndingPattern = /Article selection:\nSelected excerpt/;
+    assert.match(prompt, lineEndingPattern);
+    const requestSurroundingArticlePattern = /do not request surrounding Article context/;
+    assert.match(prompt, requestSurroundingArticlePattern);
+    const privateTitlePattern = /Private title/;
+    assert.doesNotMatch(prompt, privateTitlePattern);
 });
 
 
@@ -216,10 +270,16 @@ test("translation prompt names the target language and preserves protected token
         targetLanguage: "Spanish",
     });
 
-    assert.match(prompt, /Target language:\nSpanish/);
-    assert.match(prompt, /Translate its title and body in the same response/);
-    assert.match(prompt, /title field.*translation field.*body only/i);
-    assert.match(prompt, /Deploy Node\.js safely/);
-    assert.match(prompt, /copy every token exactly once/);
-    assert.match(prompt, /\[\[SKLADNO_PROTECTED_0\]\]/);
+    const lineEndingPattern = /Target language:\nSpanish/;
+    assert.match(prompt, lineEndingPattern);
+    const translateItsTitlePattern = /Translate its title and body in the same response/;
+    assert.match(prompt, translateItsTitlePattern);
+    const titleFieldTranslationPattern = /title field.*translation field.*body only/i;
+    assert.match(prompt, titleFieldTranslationPattern);
+    const deployNodeSafelyPattern = /Deploy Node\.js safely/;
+    assert.match(prompt, deployNodeSafelyPattern);
+    const copyEveryTokenPattern = /copy every token exactly once/;
+    assert.match(prompt, copyEveryTokenPattern);
+    const skladnoProtectedPattern = /\[\[SKLADNO_PROTECTED_0\]\]/;
+    assert.match(prompt, skladnoProtectedPattern);
 });

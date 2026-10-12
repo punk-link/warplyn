@@ -6,9 +6,16 @@ const execFileAsync = promisify(execFile);
 const windowsInternationalKey = "HKCU\\Control Panel\\International";
 
 
+function createRegistryStringPattern(name: string): RegExp {
+    const registryStringPattern = new RegExp(`\\s${name}\\s+REG_SZ\\s+(.+)$`, "m");
+    return registryStringPattern;
+}
+
+
 async function getWindowsInternationalValue(name: "LocaleName" | "sShortDate" | "sTimeFormat"): Promise<string | undefined> {
     const result = await execFileAsync("reg.exe", ["query", windowsInternationalKey, "/v", name], { windowsHide: true });
-    const value = new RegExp(`\\s${name}\\s+REG_SZ\\s+(.+)$`, "m").exec(result.stdout)?.[1]?.trim();
+    const pattern = createRegistryStringPattern(name);
+    const value = pattern.exec(result.stdout)?.[1]?.trim();
 
     return value || undefined;
 }

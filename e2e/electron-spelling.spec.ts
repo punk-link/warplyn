@@ -31,7 +31,8 @@ test("spelling menu correction follows Lexical Draft recovery and immutable save
             return window.skladno.createArticle({ title: "Spelling test", content: "A helllo world.", language: "en", publishingProfileId: "default" });
         });
         await page.reload();
-        await page.getByRole("button", { name: /^Spelling test/ }).click();
+        const spellingPattern = /^Spelling test/;
+        await page.getByRole("button", { name: spellingPattern }).click();
         const editor = page.getByRole("textbox", { name: "Article draft" });
         await expect(editor).toHaveAttribute("spellcheck", "true");
         // Reproduce hidden Chromium's missing markers deterministically.
@@ -129,7 +130,8 @@ test("native spelling context supplies Russian suggestions for an underlined wor
         const page = await app.firstWindow();
         await page.evaluate(async () => window.skladno?.createArticle({ title: "Native suggestions", content: "Это крайна важно.", language: "ru", publishingProfileId: "default" }));
         await page.reload();
-        await page.getByRole("button", { name: /^Native suggestions/ }).click();
+        const nativeSuggestionsPattern = /^Native suggestions/;
+        await page.getByRole("button", { name: nativeSuggestionsPattern }).click();
         await expect.poll(() => page.evaluate(async () => {
             const result = await window.warplynSpelling?.request({ method: "snapshot" });
             return result?.ok && result.value.dictionaries.states.ru === "ready";
@@ -236,8 +238,10 @@ test("native preload and personal words persist while language activation stays 
         await expect(page.getByRole("status").filter({ hasText: "Spelling settings loaded." })).toBeVisible();
         await page.evaluate(() => window.warplynSpelling?.setArticleLanguage(null));
         const languageList = page.getByRole("group", { name: "Language dictionaries", exact: true });
-        await languageList.getByRole("checkbox", { name: /en-US/ }).check();
-        await languageList.getByRole("checkbox", { name: /\(es\)/ }).check();
+        const punctuationPattern = /en-US/;
+        await languageList.getByRole("checkbox", { name: punctuationPattern }).check();
+        const punctuationPattern = /\(es\)/;
+        await languageList.getByRole("checkbox", { name: punctuationPattern }).check();
         await page.getByRole("button", { name: "Download dictionaries" }).click();
         await expect.poll(() => page.evaluate(async () => {
             const result = await window.warplynSpelling?.request({ method: "snapshot" });
@@ -248,17 +252,23 @@ test("native preload and personal words persist while language activation stays 
         const filter = page.getByRole("searchbox", { name: "Filter languages" });
         await expect(filter).toBeVisible();
         expect((await languageList.boundingBox())!.y).toBeGreaterThan((await filter.boundingBox())!.y);
-        await expect(languageList.getByRole("button", { name: /Unload.*en-US/ })).toBeVisible();
-        await expect(languageList.getByRole("checkbox", { name: /en-US/ })).toHaveCount(0);
+        const unloadPattern = /Unload.*en-US/;
+        await expect(languageList.getByRole("button", { name: unloadPattern })).toBeVisible();
+        const punctuationPattern = /en-US/;
+        await expect(languageList.getByRole("checkbox", { name: punctuationPattern })).toHaveCount(0);
         await filter.fill("en-US");
         await expect(languageList.getByRole("checkbox")).toHaveCount(0);
-        await languageList.getByRole("button", { name: /Unload.*en-US/ }).click();
+        const unloadPattern = /Unload.*en-US/;
+        await languageList.getByRole("button", { name: unloadPattern }).click();
         await expect(languageList.getByText("Unloaded", { exact: true })).toBeVisible();
-        await expect(languageList.getByRole("checkbox", { name: /en-US/ })).not.toBeChecked();
+        const punctuationPattern = /en-US/;
+        await expect(languageList.getByRole("checkbox", { name: punctuationPattern })).not.toBeChecked();
         expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.webContents.session.getSpellCheckerLanguages())).not.toContain("en-US");
-        await languageList.getByRole("checkbox", { name: /en-US/ }).check();
+        const punctuationPattern = /en-US/;
+        await languageList.getByRole("checkbox", { name: punctuationPattern }).check();
         await page.getByRole("button", { name: "Download dictionaries" }).click();
-        await expect(languageList.getByRole("button", { name: /Unload.*en-US/ })).toBeVisible();
+        const unloadPattern = /Unload.*en-US/;
+        await expect(languageList.getByRole("button", { name: unloadPattern })).toBeVisible();
         await expect(page.getByRole("button", { name: "Download dictionaries" })).toBeDisabled();
         await filter.clear();
         await page.screenshot({ path: test.info().outputPath("spelling-settings-stacked.png") });
