@@ -1,4 +1,5 @@
 import multilineManyJsxAttributes from "./multiline-many-jsx-attributes.mjs";
+import maxDataProperties from "./max-data-properties.mjs";
 import multilineLongStrings from "./multiline-long-strings.mjs";
 import sqlQueryLayout from "./sql-query-layout.mjs";
 
@@ -428,6 +429,7 @@ const twoBlankLinesBetweenDeclarations = {
 
 export default {
     rules: {
+        "max-data-properties": maxDataProperties,
         "conditional-braces": conditionalBraces,
         "no-accessible-label-selector": noAccessibleLabelSelector,
         "no-production-intl-provider": noProductionIntlProvider,

@@ -34,6 +34,7 @@ export default defineConfig(
             "project-style": projectStyle,
         },
         rules: {
+            "@typescript-eslint/max-params": ["error", { max: 9 }],
             "project-style/conditional-braces": "error",
             "project-style/multiline-long-strings": "error",
             "project-style/multiline-many-jsx-attributes": "error",
@@ -67,6 +68,18 @@ export default defineConfig(
             }],
             "@stylistic/semi": ["error", "always"],
             "@stylistic/space-before-blocks": "error",
+        },
+    },
+    {
+        files: ["packages/*/src/**/*.{ts,tsx}"],
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+        rules: {
+            "project-style/max-data-properties": "error",
         },
     },
     {
