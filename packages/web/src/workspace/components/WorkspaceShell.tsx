@@ -74,7 +74,11 @@ function ResizeHandle({ label, value, minimum, maximum, direction = 1, edge = "e
     }
 
 
-    return <div role="separator" aria-orientation="vertical" aria-label={label} aria-valuemin={minimum} aria-valuemax={maximum} aria-valuenow={value} tabIndex={0} onKeyDown={handleKeyDown} onPointerDown={startResize} className={`absolute inset-y-0 z-10 w-4 cursor-col-resize touch-none before:absolute before:inset-y-0 before:left-1/2 before:w-px before:bg-border hover:before:bg-brand focus-visible:outline-none focus-visible:before:w-0.5 focus-visible:before:bg-brand ${edge === "start" ? "-left-2" : "-right-2"}`} />;
+    return <div role="separator" aria-orientation="vertical" aria-label={label} aria-valuemin={minimum} aria-valuemax={maximum} aria-valuenow={value} tabIndex={0} onKeyDown={handleKeyDown} onPointerDown={startResize} className={[
+        "absolute inset-y-0 z-10 w-4 cursor-col-resize touch-none before:absolute before:inset-y-0 before:left-1/2 before:w-px before:bg-border ",
+        "hover:before:bg-brand focus-visible:outline-none focus-visible:before:w-0.5 focus-visible:before:bg-brand ",
+        edge === "start" ? "-left-2" : "-right-2",
+    ].join("")} />;
 }
 
 

@@ -21,7 +21,8 @@ const traitDescriptions: Record<string, MessageId> = {
     "uses explicit transitions": "styleProfile.trait.usesExplicitTransitions",
     "uses few explicit transitions": "styleProfile.trait.usesFewExplicitTransitions",
 };
-const quietScrollbar = "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong";
+const quietScrollbar = ("[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
 
 
 interface StyleProfileInsightsData {

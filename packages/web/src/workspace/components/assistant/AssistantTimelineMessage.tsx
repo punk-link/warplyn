@@ -129,7 +129,8 @@ function AuthorMessageContent({ visible, content, selectionText, skillOffset, sk
         return null;
 
     return <p className="whitespace-pre-wrap text-sm leading-6 text-ink">
-        {selectionText && <span className="mx-1 inline-flex h-5 max-w-[calc(100%-0.5rem)] items-center align-middle rounded-full border border-border bg-surface-raised px-1.5 text-xs font-semibold text-muted" aria-label={intl.formatMessage({ id: "assistant.articleSelection" })} title={selectionText}>
+        {selectionText && <span className={("mx-1 inline-flex h-5 max-w-[calc(100%-0.5rem)] items-center align-middle rounded-full border border-border bg-surface-raised px-1.5 text-xs " +
+            "font-semibold text-muted")} aria-label={intl.formatMessage({ id: "assistant.articleSelection" })} title={selectionText}>
             <span className="relative -top-px max-w-48 truncate">{getSelectionPreview(selectionText)}</span>
         </span>}
         {skillOffset === undefined ? content : <>{content.slice(0, skillOffset)}
@@ -190,7 +191,8 @@ function AssistantMessageActions({ message, skillId, view, openView, openSkillFo
 
 function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl, onCheckpoint, actions }: { message: AssistantMessage; dateTime: string; skillId: string | undefined; skillNames: ReadonlyMap<string, string>; intl: Intl; onCheckpoint?: (messageId: string) => void; actions?: ReactNode }) {
     if (message.role === "author")
-        return <div className="pointer-events-none mt-2 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+        return <div className={("pointer-events-none mt-2 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:pointer-events-auto " +
+            "group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100")}>
             <time className="text-xs text-muted">{dateTime}</time>
             {message.requestId && <IconButton className="!size-6" variant="secondary" label={intl.formatMessage({ id: "assistant.checkpoint.accessible" }, { time: dateTime })} title={intl.formatMessage({ id: "assistant.checkpoint.action" })} onClick={() => onCheckpoint?.(message.id)}>
                 <UndoIcon className="size-3" />

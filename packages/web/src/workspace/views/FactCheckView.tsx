@@ -12,7 +12,8 @@ const tone = {
     [FACT_CHECK_STATUS.DISPUTED]: "error",
     [FACT_CHECK_STATUS.UNVERIFIABLE]: "warning",
 } as const;
-const quietScrollbar = "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong";
+const quietScrollbar = ("[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
 
 
 interface FactCheckData {
@@ -225,16 +226,19 @@ function FactCheckRunSelector({ data, selectRun }: { data: FactCheckData; select
             <span className="truncate" title={selectedLabel}>{selectedLabel}</span>
             <ChevronDownIcon className={`size-3 shrink-0 transition-transform duration-150 motion-reduce:transition-none ${historyOpen ? "rotate-180" : ""}`} />
         </Button>
-        {historyOpen && <div id={historyMenuId} className="absolute right-0 top-full z-20 mt-1 max-h-72 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-control border border-border bg-surface-raised p-1 shadow-raised" role="menu" aria-label={intl.formatMessage({ id: "views.factCheckHistory" })} onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
+        {historyOpen && <div id={historyMenuId} className={("absolute right-0 top-full z-20 mt-1 max-h-72 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-control border border-border " +
+            "bg-surface-raised p-1 shadow-raised")} role="menu" aria-label={intl.formatMessage({ id: "views.factCheckHistory" })} onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
             setHistoryOpen(false);
             historyTrigger.current?.focus();
         })}>
-            <button className="flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" role="menuitemradio" aria-checked={selectedRun === undefined} onClick={() => selectRunOption(undefined)}>
+            <button className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                "focus-visible:ring-2 focus-visible:ring-brand")} type="button" role="menuitemradio" aria-checked={selectedRun === undefined} onClick={() => selectRunOption(undefined)}>
                 <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border bg-surface-raised text-brand"><UpdateIcon className="size-3" /></span>
                 <span className="min-w-0 flex-1 truncate" title={currentRevisionLabel}>{currentRevisionLabel}</span>
                 <span className="text-micro font-semibold text-muted">{intl.formatMessage({ id: "revisions.current" })}</span>
             </button>
-            {runs.map((run, index) => index !== currentRunIndex && <button key={index} className="flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" role="menuitemradio" aria-checked={selectedRun === index} onClick={() => selectRunOption(index)}>
+            {runs.map((run, index) => index !== currentRunIndex && <button key={index} className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                "focus-visible:ring-2 focus-visible:ring-brand")} type="button" role="menuitemradio" aria-checked={selectedRun === index} onClick={() => selectRunOption(index)}>
                 <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border bg-surface-raised text-brand"><UpdateIcon className="size-3" /></span>
                 <span className="font-semibold">{revisionLabel(run.reviewedRevisionId ?? "")}</span>
                 <span className="min-w-0 flex-1 truncate" title={runOptionLabel(run)}>{run.createdAt ? formatCheckedAt(run.createdAt) : "—"}</span>

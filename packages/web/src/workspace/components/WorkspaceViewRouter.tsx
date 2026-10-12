@@ -88,7 +88,8 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
         case "translations":
             return renderPanel(<TranslationsView key={article.id} data={{ article, sourceContent: workspace.content, requestActive: content.requestActive, generation: content.translationGeneration, generalSettings, revisionNumbers: Object.fromEntries(articleRevisions.map((revision, index) => [revision.id, index + 1])), revisions: translationRevisions, sourceArticle: workspace.sourceArticle, linkedTranslations: workspace.articles.filter((item) => item.sourceArticleId === article.id), translations: editorial.translations, stale: Boolean(article.sourceArticleId && workspace.articles.find((item) => item.id === article.sourceArticleId)?.currentRevisionId !== article.sourceRevisionId), translationLanguages: generalSettings.defaultTranslationLanguages.filter((language) => language !== article.language), publishProfile, publishProfileLabel, selectedTargetLanguage: selectedTranslationLanguages[article.id] }} actions={{ create: editorial.createTranslation, reject: rejectTranslation ?? editorial.rejectTranslation, edit: openWrite, openArticle: workspace.selectArticle, selectTargetLanguage: (targetLanguage) => setSelectedTranslationLanguage(article.id, targetLanguage), translate: runTranslation }} />);
 
-        default: return null;
+        default:
+            return null;
     }
 }
 
@@ -104,6 +105,7 @@ function panelClassName(view: WorkspaceView): string {
         case "style-profile":
             return "min-h-0 flex-1 overflow-hidden p-4";
         default:
-            return "min-h-0 flex-1 overflow-y-auto p-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong";
+            return ("min-h-0 flex-1 overflow-y-auto p-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] " +
+                "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
     }
 }

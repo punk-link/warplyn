@@ -8,7 +8,8 @@ import { FileAssistantSkillSource } from "./file-assistant-skill-source.js";
 import { parseSkillPackage } from "./skill-package-parser.js";
 
 
-const validSkill = "---\nid: author-review\nname: Author review\ndescription: Review a draft with the Author's editorial preferences.\nversion: 1\nreferences:\n  - references/guidance.md\n---\n# Review\n\nKeep the Author in control.\n";
+const validSkill = ("---\nid: author-review\nname: Author review\ndescription: Review a draft with the Author's editorial preferences.\nversion: 1\nreferences:\n  - " +
+    "references/guidance.md\n---\n# Review\n\nKeep the Author in control.\n");
 
 
 test("Author Skill packages validate, refresh after edits, and isolate invalid packages", () => {

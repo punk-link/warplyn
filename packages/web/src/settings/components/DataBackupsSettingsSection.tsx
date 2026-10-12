@@ -80,7 +80,8 @@ function BackupAutomationSettings({ backupPolicy, save }: { backupPolicy: Backup
     const intl = useIntl();
     return <SettingsGroup label={intl.formatMessage({ id: "settings.backupAutomation" })}>
         <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.automaticBackups" })} hint={intl.formatMessage({ id: "settings.automaticBackupsHint" })}>
-            <button type="button" role="switch" aria-checked={backupPolicy.schedule === "daily"} aria-label={intl.formatMessage({ id: "settings.automaticBackups" })} className="group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" onClick={() => void save({ ...backupPolicy, schedule: backupPolicy.schedule === "daily" ? "off" : "daily" })}>
+            <button type="button" role="switch" aria-checked={backupPolicy.schedule === "daily"} aria-label={intl.formatMessage({ id: "settings.automaticBackups" })} className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink " +
+                "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")} onClick={() => void save({ ...backupPolicy, schedule: backupPolicy.schedule === "daily" ? "off" : "daily" })}>
                 <span aria-hidden="true" className={`relative inline-flex h-5 w-9 items-center rounded-full border p-0.5 transition-colors group-hover:border-brand ${backupPolicy.schedule === "daily" ? "border-brand bg-brand" : "border-border-strong bg-surface-raised"}`}>
                     <span className={`size-4 rounded-full border border-border-strong bg-surface transition-transform ${backupPolicy.schedule === "daily" ? "translate-x-4" : "translate-x-0"}`} />
                 </span>

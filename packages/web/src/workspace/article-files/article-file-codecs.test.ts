@@ -6,7 +6,8 @@ import { importArticleDocx } from "./article-docx-import.js";
 import { importArticleRtf } from "./article-rtf-import.js";
 
 
-const fixture = "# Title café 🙂\n\nA **bold** and *italic* with ~~strike~~, `inline`, [URL](https://example.com/a_(b)).\n\nSecond paragraph.\n\n- First\n    - Nested\n- Last\n\n3. Three\n4. Four\n\n> Quote\n\n```ts\nconst value = 34;\nnext();\n```";
+const fixture = ("# Title café 🙂\n\nA **bold** and *italic* with ~~strike~~, `inline`, [URL](https://example.com/a_(b)).\n\nSecond paragraph.\n\n- First\n    - " +
+    "Nested\n- Last\n\n3. Three\n4. Four\n\n> Quote\n\n```ts\nconst value = 34;\nnext();\n```");
 
 
 describe("Article format conversion", () => {
@@ -15,10 +16,17 @@ describe("Article format conversion", () => {
         const namespace = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
         const paragraph = (text: string, level: number) => `<w:p><w:pPr><w:numPr><w:ilvl w:val="${level}"/><w:numId w:val="7"/></w:numPr></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>${text}</w:t></w:r></w:p>`;
         const bytes = zipSync({
-            "[Content_Types].xml": new TextEncoder().encode('<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'),
+            "[Content_Types].xml": new TextEncoder().encode(("<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\"><Override PartName=\"/word/document.xml\" " +
+                "ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml\"/></Types>")),
             "word/document.xml": new TextEncoder().encode(`<w:document xmlns:w="${namespace}"><w:body>${paragraph("Three", 0)}${paragraph("Nested", 1)}${paragraph("Four", 0)}</w:body></w:document>`),
-            "word/numbering.xml": new TextEncoder().encode(`<w:numbering xmlns:w="${namespace}"><w:abstractNum w:abstractNumId="1"><w:lvl w:ilvl="0"><w:start w:val="3"/><w:numFmt w:val="decimal"/><w:lvlText w:val="%1."/></w:lvl><w:lvl w:ilvl="1"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="•"/></w:lvl></w:abstractNum><w:num w:numId="7"><w:abstractNumId w:val="1"/></w:num></w:numbering>`),
-            "word/_rels/document.xml.rels": new TextEncoder().encode('<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="r1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/></Relationships>'),
+            "word/numbering.xml": new TextEncoder().encode([
+                `<w:numbering xmlns:w="${namespace}"><w:abstractNum w:abstractNumId="1">`,
+                "<w:lvl w:ilvl=\"0\"><w:start w:val=\"3\"/><w:numFmt w:val=\"decimal\"/><w:lvlText w:val=\"%1.\"/></w:lvl>",
+                "<w:lvl w:ilvl=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"•\"/></w:lvl></w:abstractNum>",
+                "<w:num w:numId=\"7\"><w:abstractNumId w:val=\"1\"/></w:num></w:numbering>",
+            ].join("")),
+            "word/_rels/document.xml.rels": new TextEncoder().encode(("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"r1\" " +
+                "Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering\" Target=\"numbering.xml\"/></Relationships>")),
         });
         const html = await importArticleDocx(bytes);
         const markdown = articleHtmlToMarkdown(html);
@@ -43,7 +51,9 @@ describe("Article format conversion", () => {
     });
 
     it("retains external HTML formatting and table text while removing executable/resource markup", () => {
-        const html = '<head><base href="https://private.test"><style>bad</style></head><p>First <span style="font-weight:bold;font-style:italic">both</span></p><ul><li>One<ul><li>Nested</li></ul></li></ul><p>Second</p><table><tr><td>A</td><td>B</td></tr></table><script>private</script><img src="https://private.test"><a href="javascript:alert(1)" onclick="private()">safe text</a>';
+        const html = ("<head><base href=\"https://private.test\"><style>bad</style></head><p>First <span " +
+            "style=\"font-weight:bold;font-style:italic\">both</span></p><ul><li>One<ul><li>Nested</li></ul></li></ul><p>Second</p><table><tr><td>A</td><td" +
+            ">B</td></tr></table><script>private</script><img src=\"https://private.test\"><a href=\"javascript:alert(1)\" onclick=\"private()\">safe text</a>");
         const safe = createSafeArticleHtml(html);
         expect(safe.querySelector("img,script,style,base,[onclick],[src]" )).toBeNull();
         expect(safe.querySelector("a")?.hasAttribute("href")).toBe(false);
@@ -98,7 +108,10 @@ describe("Article format conversion", () => {
     });
 
     it("imports independently authored RTF list levels and ignores embedded destinations", () => {
-        const rtf = String.raw`{\rtf1\ansi{\*\listtable{\list\listtemplateid1{\listlevel\levelnfc0\levelstartat3{\leveltext\'02\'00.;}{\levelnumbers\'01;}}{\listlevel\levelnfc23\levelstartat1{\leveltext\'01\u8226?;}{\levelnumbers;}}\listid1}}{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}\pard\ls1\ilvl0 Three\par\pard\ls1\ilvl1 Nested\par\pard\ls1\ilvl0 Four\par{\object\objdata 001122}{\pict\pngblip 001122}}`;
+        const rtf = ("{\\rtf1\\ansi{\\*\\listtable{\\list\\listtemplateid1{\\listlevel\\levelnfc0\\levelstartat3{\\leveltext\\'02\\'00.;}{\\levelnumbers\\'01;}}{\\listlevel\\leve" +
+            "lnfc23\\levelstartat1{\\leveltext\\'01\\u8226?;}{\\levelnumbers;}}\\listid1}}{\\*\\listoverridetable{\\listoverride\\listid1\\listoverridecount0\\ls1}}\\" +
+            "pard\\ls1\\ilvl0 Three\\par\\pard\\ls1\\ilvl1 Nested\\par\\pard\\ls1\\ilvl0 Four\\par{\\object\\objdata 001122}{\\pict\\pngblip " +
+            "001122}}");
         const html = importArticleRtf(new TextEncoder().encode(rtf));
         const markdown = articleHtmlToMarkdown(html);
         expect(markdown).toContain("3. Three");

@@ -57,7 +57,8 @@ export function RevisionHistoryDetails({ revisions, bypassedRevisionIds, selecte
                 </div>
             </div>
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto bg-editor-surface px-6 py-5 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
+        <div className={("min-h-0 flex-1 overflow-y-auto bg-editor-surface px-6 py-5 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] " +
+            "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
             {preview
                 ? <article className="mx-auto w-full max-w-3xl">
                     <RevisionArticlePreview revisionId={preview.id} content={preview.content} />

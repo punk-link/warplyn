@@ -34,7 +34,9 @@ export function validateTranslationArtifact(database: SqliteDatabase, source: Ar
     if (typeof artifactId !== "string")
         throwInvalidRefresh();
 
-    const row = database.prepare("SELECT revision_id, content FROM editorial_artifacts WHERE id = ? AND article_id = ? AND kind IN ('assistant-proposal', 'editorial-proposal') AND rejected_at IS NULL AND NOT EXISTS (SELECT 1 FROM assistant_messages WHERE editorial_artifact_id = editorial_artifacts.id AND status = 'rejected')")
+    const row = database.prepare(("SELECT revision_id, content FROM editorial_artifacts WHERE id = ? AND article_id = ? AND kind IN ('assistant-proposal', " +
+        "'editorial-proposal') AND rejected_at IS NULL AND NOT EXISTS (SELECT 1 FROM assistant_messages WHERE editorial_artifact_id = " +
+        "editorial_artifacts.id AND status = 'rejected')"))
         .get(artifactId, source.id);
     if (!row)
         throwInvalidRefresh();

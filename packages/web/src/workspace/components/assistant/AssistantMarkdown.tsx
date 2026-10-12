@@ -48,7 +48,8 @@ function MarkdownContent({ content }: { content: string }) {
 
 export function AssistantMarkdown({ content }: { content: string }) {
     return <LexicalComposer initialConfig={{ namespace: "skladno-assistant-markdown", editable: false, nodes: articleEditorNodes, onError: () => undefined }}>
-        <RichTextPlugin contentEditable={<ContentEditable className="mt-1 whitespace-pre-wrap text-sm leading-6 text-ink [&_a]:text-brand [&_a]:underline [&_blockquote]:border-l-2 [&_blockquote]:border-border-strong [&_blockquote]:pl-3 [&_pre]:overflow-x-auto [&_pre]:rounded-control [&_pre]:bg-surface [&_pre]:p-2 [&_pre]:font-mono" />} placeholder={null} ErrorBoundary={LexicalErrorBoundary} />
+        <RichTextPlugin contentEditable={<ContentEditable className={("mt-1 whitespace-pre-wrap text-sm leading-6 text-ink [&_a]:text-brand [&_a]:underline [&_blockquote]:border-l-2 " +
+            "[&_blockquote]:border-border-strong [&_blockquote]:pl-3 [&_pre]:overflow-x-auto [&_pre]:rounded-control [&_pre]:bg-surface [&_pre]:p-2 [&_pre]:font-mono")} />} placeholder={null} ErrorBoundary={LexicalErrorBoundary} />
         <MarkdownContent content={content} />
     </LexicalComposer>;
 }

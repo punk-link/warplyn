@@ -50,7 +50,8 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
             {languages.map((language) => <Tab key={language} selected={language === selectedLanguage} onClick={() => selectTargetLanguage?.(language)}>{language}</Tab>)}
         </TabList>}
         {results.length > 1 && translation && <div className="relative mt-3">
-            <button ref={trigger} className="flex min-h-10 w-full items-center justify-between gap-3 rounded-control border border-border bg-surface-raised px-3 py-2 text-left text-sm text-ink transition-colors hover:border-brand/45 hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" aria-label={intl.formatMessage({ id: "views.translationResultSelector" })} aria-controls={resultMenuOpen ? resultMenuId : undefined} aria-expanded={resultMenuOpen} aria-haspopup="menu" onClick={() => setResultMenuOpen((open) => !open)} onKeyDown={(event) => {
+            <button ref={trigger} className={("flex min-h-10 w-full items-center justify-between gap-3 rounded-control border border-border bg-surface-raised px-3 py-2 text-left text-sm " +
+                "text-ink transition-colors hover:border-brand/45 hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")} type="button" aria-label={intl.formatMessage({ id: "views.translationResultSelector" })} aria-controls={resultMenuOpen ? resultMenuId : undefined} aria-expanded={resultMenuOpen} aria-haspopup="menu" onClick={() => setResultMenuOpen((open) => !open)} onKeyDown={(event) => {
                 if (event.key === "Escape")
                     setResultMenuOpen(false);
 
@@ -68,7 +69,8 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
                         const index = results.indexOf(result);
                         const id = translationResultId(result);
                         const selected = id === selectedResultId;
-                        return <button key={id} className="flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" role="menuitemradio" aria-checked={selected} onClick={() => {
+                        return <button key={id} className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                            "focus-visible:ring-2 focus-visible:ring-brand")} type="button" role="menuitemradio" aria-checked={selected} onClick={() => {
                             selectResult(id);
                             setResultMenuOpen(false);
                         }}>

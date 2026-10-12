@@ -16,7 +16,8 @@ export function RevisionStatusControl({ revisionNumber, revisionSelector, open, 
         return <span className="font-normal text-muted">{intl.formatMessage({ id: "status.revision" }, { revisionNumber })}</span>;
 
     return <div className="relative shrink-0">
-        <button data-focus-area-entry ref={trigger} className="inline-flex h-6 items-center gap-1 border-x border-border px-1.5 text-xs text-muted hover:bg-brand-soft hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" aria-label={intl.formatMessage({ id: "status.revisionSelector" }, { revisionNumber })} aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" onClick={onToggle} onKeyDown={(event) => {
+        <button data-focus-area-entry ref={trigger} className={("inline-flex h-6 items-center gap-1 border-x border-border px-1.5 text-xs text-muted hover:bg-brand-soft hover:text-brand focus:outline-none " +
+            "focus-visible:ring-2 focus-visible:ring-brand")} type="button" aria-label={intl.formatMessage({ id: "status.revisionSelector" }, { revisionNumber })} aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" onClick={onToggle} onKeyDown={(event) => {
             if (event.key === "Escape")
                 onClose();
 
@@ -37,7 +38,8 @@ export function RevisionStatusControl({ revisionNumber, revisionSelector, open, 
                     const kind = getTimelineKind(revision, availableRevisions);
                     const TimelineIcon = timelineIcons[kind];
 
-                    return <button key={revision.id} className="flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" role="menuitem" aria-label={[description, current ? intl.formatMessage({ id: "revisions.current" }) : undefined].filter(Boolean).join(", ")} onClick={() => {
+                    return <button key={revision.id} className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                        "focus-visible:ring-2 focus-visible:ring-brand")} type="button" role="menuitem" aria-label={[description, current ? intl.formatMessage({ id: "revisions.current" }) : undefined].filter(Boolean).join(", ")} onClick={() => {
                         if (!current) {
                             revisionSelector.selectForRestore(revision);
                             onClose();

@@ -155,9 +155,11 @@ export class AssistantRepository {
         const timestamp = getCurrentTimestamp();
         this.database.exec("BEGIN IMMEDIATE;");
         try {
-            this.database.prepare("INSERT INTO assistant_requests (id, article_id, base_revision_id, scope_json, explicit_skill_id, target_language, status, retry_of_request_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+            this.database.prepare(("INSERT INTO assistant_requests (id, article_id, base_revision_id, scope_json, explicit_skill_id, target_language, status, " +
+                "retry_of_request_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))
                 .run(input.id, input.articleId, input.scope.baseRevisionId, JSON.stringify(input.scope), input.explicitSkillId ?? null, input.targetLanguage ?? null, "running", input.retryOfRequestId ?? null, timestamp, timestamp);
-            this.database.prepare("INSERT INTO assistant_messages (id, article_id, request_id, role, kind, status, content, skill_offset, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+            this.database.prepare(("INSERT INTO assistant_messages (id, article_id, request_id, role, kind, status, content, skill_offset, created_at, updated_at) VALUES (?, " +
+                "?, ?, ?, ?, ?, ?, ?, ?, ?)"))
                 .run(createId(), input.articleId, input.id, "author", "message", "completed", input.authorMessage ?? "", input.skillOffset ?? null, timestamp, timestamp);
             this.database.exec("COMMIT;");
         } catch (error) {
@@ -186,12 +188,14 @@ export class AssistantRepository {
         const timestamp = getCurrentTimestamp();
         this.database.prepare("UPDATE assistant_requests SET capability_name = ?, updated_at = ? WHERE id = ?").run(capability, timestamp, requestId);
         if (status === "started") {
-            this.database.prepare("INSERT INTO assistant_capability_executions (request_id, capability_name, status, base_revision_id, started_at) SELECT id, ?, 'started', base_revision_id, ? FROM assistant_requests WHERE id = ?")
+            this.database.prepare(("INSERT INTO assistant_capability_executions (request_id, capability_name, status, base_revision_id, started_at) SELECT id, ?, 'started', " +
+                "base_revision_id, ? FROM assistant_requests WHERE id = ?"))
                 .run(capability, timestamp, requestId);
             return;
         }
 
-        this.database.prepare("UPDATE assistant_capability_executions SET status = ?, completed_at = ? WHERE id = (SELECT id FROM assistant_capability_executions WHERE request_id = ? AND capability_name = ? AND status = 'started' ORDER BY id DESC LIMIT 1)")
+        this.database.prepare(("UPDATE assistant_capability_executions SET status = ?, completed_at = ? WHERE id = (SELECT id FROM assistant_capability_executions WHERE " +
+            "request_id = ? AND capability_name = ? AND status = 'started' ORDER BY id DESC LIMIT 1)"))
             .run(status, timestamp, requestId, capability);
     }
 
@@ -219,7 +223,8 @@ export class AssistantRepository {
         const timestamp = getCurrentTimestamp();
         const messageId = createId();
         return this.completeRun(() => {
-            this.database.prepare("INSERT INTO assistant_messages (id, article_id, request_id, role, kind, status, content, proposal_content, skill_id, response_kind, editorial_artifact_id, edit_candidate_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+            this.database.prepare(("INSERT INTO assistant_messages (id, article_id, request_id, role, kind, status, content, proposal_content, skill_id, response_kind, " +
+                "editorial_artifact_id, edit_candidate_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))
                 .run(messageId, input.articleId, input.requestId, "assistant", "response", "completed", input.content, input.proposalContent ?? null, input.skillId ?? null, input.responseKind, input.editorialArtifactId ?? null, input.editCandidate ? JSON.stringify(input.editCandidate) : null, timestamp, timestamp);
             this.database.prepare("UPDATE assistant_requests SET status = 'completed', updated_at = ? WHERE id = ?").run(timestamp, input.requestId);
             if (input.directEdit && input.editCandidate)
@@ -233,7 +238,8 @@ export class AssistantRepository {
     rejectTranslation(articleId: string, editorialArtifactId: string): boolean {
         return this.completeRun(() => {
             const timestamp = getCurrentTimestamp();
-            const changed = this.database.prepare("UPDATE assistant_messages SET status = 'rejected', updated_at = ? WHERE article_id = ? AND editorial_artifact_id = ? AND response_kind = 'translation_proposal_prepared' AND status = 'completed'")
+            const changed = this.database.prepare(("UPDATE assistant_messages SET status = 'rejected', updated_at = ? WHERE article_id = ? AND editorial_artifact_id = ? AND response_kind = " +
+                "'translation_proposal_prepared' AND status = 'completed'"))
                 .run(timestamp, articleId, editorialArtifactId).changes > 0;
             if (changed)
                 this.database.prepare("UPDATE editorial_artifacts SET rejected_at = ? WHERE id = ? AND article_id = ? AND rejected_at IS NULL").run(timestamp, editorialArtifactId, articleId);
@@ -284,7 +290,8 @@ export class AssistantRepository {
 
             this.database.prepare("UPDATE assistant_requests SET status = ?, error_code = ?, updated_at = ? WHERE id = ?").run(status, errorCode, timestamp, requestId);
             this.database.prepare("UPDATE assistant_capability_executions SET status = ?, completed_at = ? WHERE request_id = ? AND status = 'started'").run(status, timestamp, requestId);
-            this.database.prepare("INSERT INTO assistant_messages (id, article_id, request_id, role, kind, status, created_at, updated_at) SELECT ?, article_id, id, 'assistant', 'status', ?, ?, ? FROM assistant_requests WHERE id = ? AND NOT EXISTS (SELECT 1 FROM assistant_messages WHERE request_id = ? AND kind = 'status')")
+            this.database.prepare(("INSERT INTO assistant_messages (id, article_id, request_id, role, kind, status, created_at, updated_at) SELECT ?, article_id, id, " +
+                "'assistant', 'status', ?, ?, ? FROM assistant_requests WHERE id = ? AND NOT EXISTS (SELECT 1 FROM assistant_messages WHERE request_id = ? AND kind = 'status')"))
                 .run(createId(), status, timestamp, timestamp, requestId, requestId);
             this.database.exec("COMMIT;");
         } catch (error) {

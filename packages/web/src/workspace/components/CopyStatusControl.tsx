@@ -34,7 +34,8 @@ export function CopyStatusControl({ copyMarkdown, copyPlainText, open, onToggle,
             {copyStatus === "copied" ? <SuccessIcon className="size-3 motion-safe:animate-pulse" /> : <CopyIcon className="size-3" />}
             <span>{intl.formatMessage({ id: copyMessages[copyStatus] })}</span>
         </button>
-        <button ref={trigger} className="grid size-6 place-items-center border-r border-border text-muted transition-colors hover:bg-brand-soft hover:text-brand focus-visible:outline focus-visible:outline-brand" type="button" aria-label={menuLabel} aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" onClick={onToggle} onKeyDown={(event) => {
+        <button ref={trigger} className={("grid size-6 place-items-center border-r border-border text-muted transition-colors hover:bg-brand-soft hover:text-brand " +
+            "focus-visible:outline focus-visible:outline-brand")} type="button" aria-label={menuLabel} aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" onClick={onToggle} onKeyDown={(event) => {
             if (event.key === "Escape")
                 onClose();
 

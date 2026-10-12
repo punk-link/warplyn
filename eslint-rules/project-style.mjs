@@ -1,3 +1,6 @@
+import multilineLongStrings from "./multiline-long-strings.mjs";
+
+
 const conditionalBraces = {
     meta: {
         type: "layout",
@@ -427,6 +430,7 @@ export default {
         "no-accessible-label-selector": noAccessibleLabelSelector,
         "no-production-intl-provider": noProductionIntlProvider,
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
+        "multiline-long-strings": multilineLongStrings,
         "switch-case-body-newline": switchCaseBodyNewline,
         "two-blank-lines-between-declarations": twoBlankLinesBetweenDeclarations,
     },

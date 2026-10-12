@@ -23,12 +23,26 @@ export function PublishingProfileStatusControl({ length, profile, customProfiles
 
 
     return <div className="relative ml-auto">
-        <button ref={trigger} className={`inline-flex h-6 items-center gap-1 border-x border-border px-1.5 hover:bg-brand-soft hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${toneClasses[tone]}`} type="button" aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" aria-label={intl.formatMessage({ id: "status.characterCount.ariaLabel" }, { characterCount: intl.formatNumber(length.count), characterLimit: intl.formatNumber(profile.characterLimit ?? 0) })} title={publishingTitle(length, intl)} onClick={onToggle} onKeyDown={(event) => {
-            if (event.key === "Escape")
-                onClose();
+        <button
+            ref={trigger}
+            className={[
+                "inline-flex h-6 items-center gap-1 border-x border-border px-1.5 hover:bg-brand-soft ",
+                "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ",
+                toneClasses[tone],
+            ].join("")}
+            type="button"
+            aria-controls={open ? menuId : undefined}
+            aria-expanded={open}
+            aria-haspopup="menu"
+            aria-label={intl.formatMessage({ id: "status.characterCount.ariaLabel" }, { characterCount: intl.formatNumber(length.count), characterLimit: intl.formatNumber(profile.characterLimit ?? 0) })}
+            title={publishingTitle(length, intl)}
+            onClick={onToggle}
+            onKeyDown={(event) => {
+                if (event.key === "Escape")
+                    onClose();
 
-            openStatusMenu(event, onOpen, menuId);
-        }}>
+                openStatusMenu(event, onOpen, menuId);
+            }}>
             {tone !== "info" && <StatusIcon tone={tone} className="size-3 shrink-0" />}
             <span>{profile.characterLimit === undefined ? intl.formatMessage({ id: "publishing.characterCount" }, { count: intl.formatNumber(length.count) }) : intl.formatMessage({ id: "status.characterCount" }, { characterCount: intl.formatNumber(length.count), characterLimit: intl.formatNumber(profile.characterLimit) })}</span>
             <ChevronDownIcon className={`size-3 transition-transform ${open ? "rotate-180" : ""}`} />

@@ -96,7 +96,9 @@ export class StyleCorpusRepository {
 
 
     getStyleCorpus(): StyleCorpus {
-        const rows = this.database.prepare("SELECT author_materials.*, style_corpus_items.included, style_corpus_items.origin, style_corpus_items.article_id, style_corpus_items.revision_id FROM style_corpus_items JOIN author_materials ON author_materials.id = style_corpus_items.author_material_id ORDER BY style_corpus_items.created_at, author_materials.id").all() as Row[];
+        const rows = this.database.prepare(("SELECT author_materials.*, style_corpus_items.included, style_corpus_items.origin, style_corpus_items.article_id, " +
+            "style_corpus_items.revision_id FROM style_corpus_items JOIN author_materials ON author_materials.id = style_corpus_items.author_material_id " +
+            "ORDER BY style_corpus_items.created_at, author_materials.id")).all() as Row[];
         const rules = String((this.database.prepare("SELECT rules FROM style_corpus_settings WHERE id = 1").get() as Row | undefined)?.rules ?? "");
         const profileRow = this.database.prepare("SELECT profile_json FROM style_profile_versions ORDER BY version DESC LIMIT 1").get() as Row | undefined;
         const profile = profileRow ? JSON.parse(String(profileRow.profile_json)) as StyleProfile : undefined;
@@ -156,7 +158,8 @@ export class StyleCorpusRepository {
 
 
     rebuildStyleProfile(): StyleCorpus {
-        const rows = this.database.prepare("SELECT author_materials.id, author_materials.content FROM style_corpus_items JOIN author_materials ON author_materials.id = style_corpus_items.author_material_id WHERE style_corpus_items.included = 1 ORDER BY style_corpus_items.created_at, author_materials.id").all() as Row[];
+        const rows = this.database.prepare(("SELECT author_materials.id, author_materials.content FROM style_corpus_items JOIN author_materials ON author_materials.id = " +
+            "style_corpus_items.author_material_id WHERE style_corpus_items.included = 1 ORDER BY style_corpus_items.created_at, author_materials.id")).all() as Row[];
         if (!rows.length)
             throw new Error("Include at least one style corpus item before rebuilding.");
 
@@ -179,7 +182,8 @@ export class StyleCorpusRepository {
 
 
     setArticleStyleRules(articleId: string, rules: string): string {
-        this.database.prepare("INSERT INTO article_style_rules (article_id, rules, updated_at) VALUES (?, ?, ?) ON CONFLICT(article_id) DO UPDATE SET rules = excluded.rules, updated_at = excluded.updated_at")
+        this.database.prepare(("INSERT INTO article_style_rules (article_id, rules, updated_at) VALUES (?, ?, ?) ON CONFLICT(article_id) DO UPDATE SET rules = " +
+            "excluded.rules, updated_at = excluded.updated_at"))
             .run(articleId, rules, getCurrentTimestamp());
 
         return rules;

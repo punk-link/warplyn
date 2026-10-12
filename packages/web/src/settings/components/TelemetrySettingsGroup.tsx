@@ -20,7 +20,8 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
     return <section className="mt-6 pt-6" aria-labelledby="settings-privacy-and-diagnostics">
         <h2 id="settings-privacy-and-diagnostics" className="text-base font-semibold">{intl.formatMessage({ id: "settings.privacyAndDiagnostics" })}</h2>
         <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.telemetry" })} hint={intl.formatMessage({ id: "settings.telemetryHint" })} status={status}>
-            <button type="button" role="switch" aria-checked={consent?.enabled ?? false} aria-label={intl.formatMessage({ id: "settings.telemetry" })} disabled={!consent || saving || (!consent.supported && !consent.enabled)} className="group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55" onClick={() => {
+            <button type="button" role="switch" aria-checked={consent?.enabled ?? false} aria-label={intl.formatMessage({ id: "settings.telemetry" })} disabled={!consent || saving || (!consent.supported && !consent.enabled)} className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink " +
+                "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55")} onClick={() => {
                 const enabled = !consent?.enabled;
                 setSaving(true);
                 setError(false);
@@ -33,7 +34,8 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
         {consent?.installationId && <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.telemetryIdentifier" })} hint={intl.formatMessage({ id: "settings.telemetryIdentifierHint" })} status={copied ? intl.formatMessage({ id: "settings.telemetryIdentifierCopied" }) : undefined}>
             <div className="flex flex-wrap items-center gap-3">
                 <code className="rounded bg-surface-raised px-2 py-1 text-xs text-ink">{consent.installationId}</code>
-                <button type="button" className="min-h-9 rounded border border-border-strong px-3 text-xs font-semibold text-ink hover:border-brand hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" onClick={() => void navigator.clipboard.writeText(consent.installationId!).then(() => setCopied(true)).catch(() => setCopied(false))}>{intl.formatMessage({ id: "settings.copyTelemetryIdentifier" })}</button>
+                <button type="button" className={("min-h-9 rounded border border-border-strong px-3 text-xs font-semibold text-ink hover:border-brand hover:text-brand focus:outline-none " +
+                    "focus-visible:ring-2 focus-visible:ring-brand")} onClick={() => void navigator.clipboard.writeText(consent.installationId!).then(() => setCopied(true)).catch(() => setCopied(false))}>{intl.formatMessage({ id: "settings.copyTelemetryIdentifier" })}</button>
             </div>
         </SettingRow>}
         <p className="mt-4 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.telemetryDisclosure" })} <a className="text-brand underline" href="https://warplyn.com/docs/telemetry.html" target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.telemetryDetails" })}</a></p>

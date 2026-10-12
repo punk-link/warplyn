@@ -9,7 +9,8 @@ function ProtectedValue({ value, count }: { value: string; count: number }) {
     const explanation = intl.formatMessage({ id: "views.translationProtectedExplanation" }, { count });
     return <span>
         <button type="button" data-protected-value aria-label={intl.formatMessage({ id: "views.translationProtectedValue" }, { value })} aria-describedby={id} aria-controls={id} aria-expanded={expanded} title={explanation}
-            className="min-h-9 max-w-full whitespace-pre-wrap break-anywhere rounded-control text-left text-brand underline decoration-dotted underline-offset-4 hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className={("min-h-9 max-w-full whitespace-pre-wrap break-anywhere rounded-control text-left text-brand underline decoration-dotted underline-offset-4 " +
+                "hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
             onClick={() => setExpanded(!expanded)} onKeyDown={(event) => {
                 if (event.key === "Escape") {
                     event.preventDefault();

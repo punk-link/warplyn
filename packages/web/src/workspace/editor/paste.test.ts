@@ -53,15 +53,13 @@ function normalizeMarkdown(markdown: string): string {
 
 describe("Word and rich-text paste", () => {
     test("preserves blocks, combined inline formatting, and one contiguous Word list", () => {
-        const html = `
-            <h2>10. Situación política hipotética<br><span></span></h2>
-            <p><span style="font-weight: bold">Situación:</span><br><span></span></p>
-            <p>Sos <span style="font-style: italic">asesor</span> de un gobernador argentino.</p>
-            <p class="MsoListParagraphCxSpFirst" style="mso-list: l0 level1 lfo1"><span style="mso-list: Ignore">•&nbsp;</span>qué harías primero;<br></p>
-            <p class="MsoListParagraphCxSpMiddle" style="mso-list: l0 level1 lfo1"><span style="mso-list: Ignore">•&nbsp;</span><span style="font-weight: 700; font-style: italic">qué medidas evitarías;</span><br></p>
-            <p class="MsoListParagraphCxSpLast" style="mso-list: l0 level1 lfo1"><span style="mso-list: Ignore">•&nbsp;</span>qué consecuencias podrían aparecer.<br></p>
-            <p><strong>Debés usar:</strong></p>
-        `;
+        const html = ("\n            <h2>10. Situación política hipotética<br><span></span></h2>\n            <p><span style=\"font-weight: " +
+            "bold\">Situación:</span><br><span></span></p>\n            <p>Sos <span style=\"font-style: italic\">asesor</span> de un gobernador " +
+            "argentino.</p>\n            <p class=\"MsoListParagraphCxSpFirst\" style=\"mso-list: l0 level1 lfo1\"><span style=\"mso-list: " +
+            "Ignore\">•&nbsp;</span>qué harías primero;<br></p>\n            <p class=\"MsoListParagraphCxSpMiddle\" style=\"mso-list: l0 level1 lfo1\"><span " +
+            "style=\"mso-list: Ignore\">•&nbsp;</span><span style=\"font-weight: 700; font-style: italic\">qué medidas evitarías;</span><br></p>\n            " +
+            "<p class=\"MsoListParagraphCxSpLast\" style=\"mso-list: l0 level1 lfo1\"><span style=\"mso-list: Ignore\">•&nbsp;</span>qué consecuencias podrían " +
+            "aparecer.<br></p>\n            <p><strong>Debés usar:</strong></p>\n        ");
 
         const markdown = importHtmlAsMarkdown(html);
         expect(markdown).toBe([

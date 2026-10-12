@@ -124,7 +124,8 @@ test("HTML, DOCX and RTF retain basic formatting through browser file import and
     await page.goto("/");
     await createBlankArticle(page);
 
-    const content = "# Portable café 🙂\n\nFirst **bold** and *italic*.\n\nSecond paragraph.\n\n- One\n    - Nested\n- Two\n\n3. Three\n4. Four\n\n```\nconst value = 34;\nnext();\n```";
+    const content = ("# Portable café 🙂\n\nFirst **bold** and *italic*.\n\nSecond paragraph.\n\n- One\n    - Nested\n- Two\n\n3. Three\n4. Four\n\n```\nconst value = " +
+        "34;\nnext();\n```");
     const choosing = page.waitForEvent("filechooser");
     await page.getByRole("button", { name: "Load from file" }).click();
     await (await choosing).setFiles({ name: "portable.md", mimeType: "text/markdown", buffer: Buffer.from(content) });

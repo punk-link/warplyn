@@ -20,7 +20,8 @@ export function RevisionHistoryNavigation({ revisions, bypassedRevisionIds, sele
             <h2 className="text-base font-semibold">{intl.formatMessage({ id: "revisions.heading" })}</h2>
             <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "views.restoreDescription" })}</p>
         </div>
-        <ol className="min-h-0 flex-1 overflow-y-auto p-2 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
+        <ol className={("min-h-0 flex-1 overflow-y-auto p-2 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] " +
+            "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
             {newestFirst.map((revision) => {
                 const selected = revision.id === selectedRevisionId;
                 const inactive = bypassedRevisionIds.has(revision.id);

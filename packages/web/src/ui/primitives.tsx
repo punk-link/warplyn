@@ -59,7 +59,8 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonHTML
     const { children, className, variant = "primary", compact = true, state = "default", loadingLabel, disabled, ...buttonProps } = props;
     const intl = useIntl();
     const loading = state === "loading";
-    return <button ref={ref} {...buttonProps} disabled={disabled || loading} className={joinClassNames("self-center inline-flex min-h-9 items-center justify-center rounded-control border py-1.5 text-xs font-semibold leading-5 transition-colors active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55", compact ? "px-2" : "px-3", buttonVariantClasses[variant], controlStateClasses[state], className)} aria-busy={loading || undefined}>
+    return <button ref={ref} {...buttonProps} disabled={disabled || loading} className={joinClassNames(("self-center inline-flex min-h-9 items-center justify-center rounded-control border py-1.5 text-xs font-semibold leading-5 transition-colors " +
+        "active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55"), compact ? "px-2" : "px-3", buttonVariantClasses[variant], controlStateClasses[state], className)} aria-busy={loading || undefined}>
         {loading ? <>
             <span className="invisible" aria-hidden="true">{children}</span>
             <ActivityIndicator className="absolute inset-0 m-auto" />
@@ -80,7 +81,8 @@ const iconButtonVariantClasses = {
 
 
 export function IconButton({ label, children, className, variant = "default", round = false, ...props }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement> & { label: string; variant?: keyof typeof iconButtonVariantClasses; round?: boolean }>) {
-    return <button {...props} className={joinClassNames("inline-grid size-9 place-items-center border p-0 transition-colors active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55", round ? "rounded-full" : "rounded-control", iconButtonVariantClasses[variant], className)} aria-label={label}>{children}</button>;
+    return <button {...props} className={joinClassNames(("inline-grid size-9 place-items-center border p-0 transition-colors active:translate-y-px focus:outline-none focus-visible:ring-2 " +
+        "focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55"), round ? "rounded-full" : "rounded-control", iconButtonVariantClasses[variant], className)} aria-label={label}>{children}</button>;
 }
 
 
@@ -96,7 +98,10 @@ export function TextareaField({ className, state = "default", ...props }: Textar
 
 export function Select({ className, disabled, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
     return <span className={joinClassNames("relative block w-full", className)}>
-        <select {...props} disabled={disabled} className={joinClassNames("min-h-10 w-full appearance-none rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink transition-colors hover:border-brand/45 hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-55 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong", className)} />
+        <select {...props} disabled={disabled} className={joinClassNames(("min-h-10 w-full appearance-none rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink " +
+            "transition-colors hover:border-brand/45 hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-55 " +
+            "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+            "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong"), className)} />
         <ChevronDownIcon className={joinClassNames("pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted", disabled ? "opacity-55" : undefined)} />
     </span>;
 }
@@ -170,7 +175,8 @@ export function EmptyState({ title, children, className }: PropsWithChildren<{ t
 
 export function Tooltip({ children, content }: { children: ReactNode; content: string }) {
     return <span className="group relative">{children}
-        <span role="tooltip" className="pointer-events-none absolute z-10 w-max max-w-64 translate-y-1 rounded-control bg-ink p-2 text-xs text-on-brand opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">{content}</span>
+        <span role="tooltip" className={("pointer-events-none absolute z-10 w-max max-w-64 translate-y-1 rounded-control bg-ink p-2 text-xs text-on-brand opacity-0 " +
+            "transition-opacity group-hover:opacity-100 group-focus-within:opacity-100")}>{content}</span>
     </span>;
 }
 
@@ -182,11 +188,15 @@ export function Diff({ removed, added, layout = "stacked", state = "pending" }: 
 
     return (
         <div className={joinClassNames("grid gap-3 rounded-panel border border-border bg-canvas p-3", layout === "columns" ? "md:grid-cols-2" : undefined)} aria-label={intl.formatMessage({ id: "ui.proposedChange" })}>
-            <del className={joinClassNames("block min-w-0 whitespace-pre-wrap rounded-control border-l-4 border-danger bg-[repeating-linear-gradient(-45deg,var(--color-diff-removed),var(--color-diff-removed)_6px,var(--color-diff-removed-stripe)_6px,var(--color-diff-removed-stripe)_12px)] p-4 no-underline", state === "accepted" ? "opacity-55" : undefined)}>
+            <del className={joinClassNames(("block min-w-0 whitespace-pre-wrap rounded-control border-l-4 border-danger " +
+                "bg-[repeating-linear-gradient(-45deg,var(--color-diff-removed),var(--color-diff-removed)_6px,var(--color-diff-removed-stripe)_6px,var(--colo" +
+                "r-diff-removed-stripe)_12px)] p-4 no-underline"), state === "accepted" ? "opacity-55" : undefined)}>
                 <strong className="mb-3 block font-ui text-micro uppercase tracking-overline text-danger">{intl.formatMessage({ id: "ui.original" })}</strong>
                 {removedContent}
             </del>
-            <ins className={joinClassNames("block min-w-0 whitespace-pre-wrap rounded-control border-l-4 border-success bg-[repeating-linear-gradient(-45deg,var(--color-diff-added),var(--color-diff-added)_6px,var(--color-diff-added-stripe)_6px,var(--color-diff-added-stripe)_12px)] p-4 no-underline", state === "rejected" ? "opacity-55" : undefined)}>
+            <ins className={joinClassNames(("block min-w-0 whitespace-pre-wrap rounded-control border-l-4 border-success " +
+                "bg-[repeating-linear-gradient(-45deg,var(--color-diff-added),var(--color-diff-added)_6px,var(--color-diff-added-stripe)_6px,var(--color-diff" +
+                "-added-stripe)_12px)] p-4 no-underline"), state === "rejected" ? "opacity-55" : undefined)}>
                 <strong className="mb-3 block font-ui text-micro uppercase tracking-overline text-success">{intl.formatMessage({ id: "ui.proposed" })}</strong>
                 {addedContent}
             </ins>

@@ -66,7 +66,10 @@ function mapArticleMetadataFromRow(row: Row): Omit<Article, "currentRevision" | 
 }
 
 
-const articleMetadataColumns = "a.id article_id, a.title, a.language, a.audience, a.publishing_profile_id, a.source_article_id, a.source_revision_id, a.archived, a.pin_order, (SELECT COUNT(*) FROM article_revisions numbered JOIN article_revisions linked ON linked.id = a.source_revision_id WHERE numbered.article_id = a.source_article_id AND (numbered.created_at < linked.created_at OR (numbered.created_at = linked.created_at AND numbered.id <= linked.id))) source_revision_number, a.created_at article_created_at, a.updated_at article_updated_at";
+const articleMetadataColumns = ("a.id article_id, a.title, a.language, a.audience, a.publishing_profile_id, a.source_article_id, a.source_revision_id, a.archived, " +
+    "a.pin_order, (SELECT COUNT(*) FROM article_revisions numbered JOIN article_revisions linked ON linked.id = a.source_revision_id WHERE " +
+    "numbered.article_id = a.source_article_id AND (numbered.created_at < linked.created_at OR (numbered.created_at = linked.created_at AND " +
+    "numbered.id <= linked.id))) source_revision_number, a.created_at article_created_at, a.updated_at article_updated_at");
 const draftMetadataColumns = "d.article_id draft_article_id, d.base_revision_id draft_base_revision_id, d.version draft_version, d.updated_at draft_updated_at";
 const articleJoins = "FROM articles a JOIN article_revisions r ON r.id = a.current_revision_id LEFT JOIN article_drafts d ON d.article_id = a.id";
 

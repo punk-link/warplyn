@@ -165,7 +165,8 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
 
     return <div className="flex min-h-0 flex-1 flex-col">
         <ProposalReviewHeader presentation={presentation} counts={counts} stale={stale} accepted={accepted} displayMode={displayMode} setDisplayMode={setDisplayMode} highlightChanges={highlightChanges} setHighlightChanges={setHighlightChanges} rejectAll={rejectAll} acceptAll={acceptAll} applyAccepted={applyAccepted} acceptanceBlocked={acceptanceBlocked} allResolved={allResolved} moveChange={moveChange} openWrite={openWrite} openAssistant={openAssistant} dismissProposal={dismissProposal} />
-        <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">
+        <div className={("min-h-0 flex-1 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+            "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
             <div className="mx-auto w-full max-w-6xl p-4 pb-5">
                 {accepted && <Status className="mb-4" label={intl.formatMessage({ id: "views.proposalAccepted" })} tone="success" />}
                 <ProposalWarnings warnings={presentation.warnings} dismissed={warningsDismissed} dismiss={dismissWarnings} />
