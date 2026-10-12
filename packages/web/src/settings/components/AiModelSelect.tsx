@@ -62,7 +62,7 @@ function ProviderMark({ provider, className, viaProvider }: { provider: AiProvid
         case AI_PROVIDER.DEEPSEEK:
             return <DeepSeekIcon {...props} />;
         default:
-            { const _exhaustive: never = provider; return _exhaustive; }
+        { const _exhaustive: never = provider; return _exhaustive; }
     }
 }
 
