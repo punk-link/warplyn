@@ -274,23 +274,27 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                     close();
                     openStyleProfile();
                 }}><UserIcon className="size-4" /></IconButton>
-                <IconButton label={intl.formatMessage({ id: "navigation.settings" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={() => {
-                    close();
-                    openSettings();
-                }}><SettingsIcon className="size-4" /></IconButton>
-                <UpdateController /></>
+                    <IconButton label={intl.formatMessage({ id: "navigation.settings" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={() => {
+                        close();
+                        openSettings();
+                    }}><SettingsIcon className="size-4" /></IconButton>
+                    <UpdateController /></>
                 : <><Button
                     compact
                     className="flex w-full items-center justify-start !py-1.5 text-left"
                     variant="quiet"
                     onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span></Button>
-                <Button
-                    compact
-                    className="flex w-full items-center justify-start !py-1.5 text-left"
-                    variant="quiet"
-                    title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)}
-                    onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span></Button>
-                <div className="relative flex items-center justify-between px-2 pb-1 pt-2 pr-11 text-micro font-medium text-muted"><span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span><UpdateController className="absolute right-2 top-1/2 -translate-y-1/2" /></div></>}
+                    <Button
+                        compact
+                        className="flex w-full items-center justify-start !py-1.5 text-left"
+                        variant="quiet"
+                        title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)}
+                        onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span></Button>
+                    <div className="flex items-center justify-between px-2 pb-1 pt-2 text-micro font-medium text-muted">
+                        <span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span>
+                        <UpdateController className="shrink-0" />
+                    </div>
+                </>}
         </footer>
         {activeView && <Drawer className="absolute inset-y-0 left-full z-10 flex w-52 max-w-[calc(100vw-2.5rem)] flex-col !border-l-0 !bg-surface-supporting" aria-labelledby={headingId}>
             <div ref={drawerRef} className="flex min-h-0 flex-1 flex-col">

@@ -83,7 +83,7 @@ function UpdateActions({ client, state, status, details, onState, intl }: { clie
 
     return <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {state.kind === "available" && state.downloadable && <Button onClick={() => void client.download().then(onState)}>{intl.formatMessage({ id: "settings.downloadUpdate" })}</Button>}
-        {state.kind === "downloading" && <Button state="loading" loadingLabel={status}>{status}</Button>}
+        {state.kind === "downloading" && <Button disabled aria-busy="true" className="!cursor-progress">{status}</Button>}
         {state.kind === "ready" && <Button onClick={() => void client.restartAndUpdate()}>{intl.formatMessage({ id: "settings.restartAndUpdate" })}</Button>}
         {state.kind === "failed" && <Button variant="secondary" onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.retry" })}</Button>}
         {canCheckNow && <Button variant="secondary" state={state.kind === "checking" ? "loading" : "default"} onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.checkNow" })}</Button>}
