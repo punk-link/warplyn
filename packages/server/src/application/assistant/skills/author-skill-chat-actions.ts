@@ -104,10 +104,14 @@ export class AuthorSkillChatActions {
 
     private actionFor(change: AuthorSkillChange): AssistantAuthorizedAction {
         switch (change.kind) {
-            case "create": return "create_author_skill";
-            case "update": return "update_author_skill";
-            case "restore": return "restore_author_skill";
-            case "delete": return "delete_author_skill";
+            case "create":
+                return "create_author_skill";
+            case "update":
+                return "update_author_skill";
+            case "restore":
+                return "restore_author_skill";
+            case "delete":
+                return "delete_author_skill";
         }
     }
 }

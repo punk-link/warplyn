@@ -35,6 +35,7 @@ export default defineConfig(
         },
         rules: {
             "project-style/conditional-braces": "error",
+            "project-style/switch-case-body-newline": "error",
             "project-style/two-blank-lines-between-declarations": "error",
             "@stylistic/brace-style": ["error", "1tbs"],
             "@stylistic/comma-spacing": "error",

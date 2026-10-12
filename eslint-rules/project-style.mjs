@@ -270,6 +270,56 @@ const noAccessibleLabelSelector = {
 };
 
 
+const switchCaseBodyNewline = {
+    meta: {
+        type: "layout",
+        docs: {
+            description: "Put switch case statements on a new line after the case label.",
+        },
+        fixable: "whitespace",
+        messages: {
+            bodyNewline: "Put the switch case statement on a new line.",
+        },
+        schema: [],
+    },
+
+    create(context) {
+        const sourceCode = context.sourceCode;
+
+        return {
+            SwitchCase(node) {
+                const statement = node.consequent[0];
+                if (!statement || statement.type === "BlockStatement")
+                    return;
+
+                const colon = sourceCode.getTokenAfter(node.test ?? sourceCode.getFirstToken(node));
+                if (colon?.value !== ":" || colon.loc.end.line !== statement.loc.start.line)
+                    return;
+
+                const comments = sourceCode.getTokensBetween(colon, statement, { includeComments: true })
+                    .filter((token) => token.type === "Line" || token.type === "Block");
+
+                context.report({
+                    node: statement,
+                    messageId: "bodyNewline",
+                    fix(fixer) {
+                        const lastComment = comments.at(-1);
+                        const bodyStart = lastComment?.range[1] ?? colon.range[1];
+                        const caseIndent = /^[ \t]*/u.exec(sourceCode.lines[colon.loc.start.line - 1])?.[0] ?? "";
+                        const newline = sourceCode.text.includes("\r\n") ? "\r\n" : "\n";
+
+                        return fixer.replaceTextRange(
+                            [bodyStart, statement.range[0]],
+                            `${newline}${caseIndent}    `,
+                        );
+                    },
+                });
+            },
+        };
+    },
+};
+
+
 const twoBlankLinesBetweenDeclarations = {
     meta: {
         type: "layout",
@@ -377,6 +427,7 @@ export default {
         "no-accessible-label-selector": noAccessibleLabelSelector,
         "no-production-intl-provider": noProductionIntlProvider,
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
+        "switch-case-body-newline": switchCaseBodyNewline,
         "two-blank-lines-between-declarations": twoBlankLinesBetweenDeclarations,
     },
 };
