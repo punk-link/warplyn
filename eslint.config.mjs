@@ -71,18 +71,6 @@ export default defineConfig(
         },
     },
     {
-        files: ["packages/*/src/**/*.{ts,tsx}"],
-        languageOptions: {
-            parserOptions: {
-                projectService: true,
-                tsconfigRootDir: import.meta.dirname,
-            },
-        },
-        rules: {
-            "project-style/max-data-properties": "error",
-        },
-    },
-    {
         files: ["packages/server/**/*.{ts,tsx}", "packages/electron/**/*.{js,ts}", "packages/web/vite.config.ts", "scripts/**/*.{js,mjs,cjs}"],
         languageOptions: {
             globals: globals.node,
