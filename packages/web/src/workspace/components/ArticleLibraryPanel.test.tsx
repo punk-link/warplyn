@@ -55,7 +55,16 @@ describe("ArticleLibraryPanel", () => {
         const user = userEvent.setup();
         const setCollapsed = vi.fn();
         const panel = (collapsed: boolean) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[]} selectedArticleId={undefined} selectArticle={vi.fn()} collapsed={collapsed} setCollapsed={setCollapsed} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[]}
+                selectedArticleId={undefined}
+                selectArticle={vi.fn()}
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>;
         const { container, rerender } = render(panel(false));
         const expandedIcon = container.querySelector("header img");
@@ -83,7 +92,16 @@ describe("ArticleLibraryPanel", () => {
         const other: Article = { ...source, id: "other", title: "Other Article" };
         const otherTranslation: Article = { ...translation, id: "other-translation", title: "Other Spanish edition", sourceArticleId: other.id };
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[translation, source, otherTranslation, other]} selectedArticleId={source.id} selectArticle={selectArticle} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[translation, source, otherTranslation, other]}
+                selectedArticleId={source.id}
+                selectArticle={selectArticle}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>);
 
         const sourceButton = screen.getByRole("button", { name: /Mother Article/ });
@@ -113,7 +131,16 @@ describe("ArticleLibraryPanel", () => {
         const translation: Article = { ...source, id: "translation", title: "Spanish edition", sourceArticleId: source.id };
         const added: Article = { ...translation, id: "added", title: "Portuguese edition" };
         const panel = (articles: Article[], selectedArticleId = source.id) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={articles} selectedArticleId={selectedArticleId} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={articles}
+                selectedArticleId={selectedArticleId}
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>;
         const { rerender } = render(panel([source, translation, other]));
         expect(screen.getByRole("button", { name: /Spanish edition/ })).toBeTruthy();
@@ -139,7 +166,16 @@ describe("ArticleLibraryPanel", () => {
         const archived = { ...source, archived: true };
         const translation: Article = { ...archived, id: "translation", title: "Spanish edition", sourceArticleId: source.id };
         const panel = (selected: string | undefined) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[archived, translation]} selectedArticleId={selected} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[archived, translation]}
+                selectedArticleId={selected}
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>;
         const { rerender } = render(panel(selectedArticleId));
         const archive = screen.getByRole("button", { name: "Archived (1)" });
@@ -158,7 +194,16 @@ describe("ArticleLibraryPanel", () => {
 
     it("moves between Library controls with Up and Down without taking search editing keys", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[source]} selectedArticleId={source.id} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[source]}
+                selectedArticleId={source.id}
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>);
 
         const article = screen.getByRole("button", { name: /Mother Article/ });
@@ -180,7 +225,16 @@ describe("ArticleLibraryPanel", () => {
             setNetworkAccess: vi.fn(), setAutomaticChecks: vi.fn(), setIncludePrereleases: vi.fn(), checkNow: vi.fn(), download: vi.fn(), restartAndUpdate: vi.fn(), openReleaseNotes: vi.fn(), openRecoveryGuide: vi.fn(), rendererReady: vi.fn(), subscribe: () => () => undefined,
         } satisfies DesktopUpdateClient;
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[]} selectedArticleId={undefined} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[]}
+                selectedArticleId={undefined}
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>);
 
         const updateButton = await screen.findByRole("button", { name: "Update 0.1.1-preview.1 is available" });
@@ -196,7 +250,17 @@ describe("ArticleLibraryPanel", () => {
         const selectArticle = vi.fn();
         const setArchived = vi.fn().mockResolvedValue(undefined);
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[source]} selectedArticleId={undefined} selectArticle={selectArticle} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" setArchived={setArchived} />
+            <ArticleLibraryPanel
+                articles={[source]}
+                selectedArticleId={undefined}
+                selectArticle={selectArticle}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en"
+                setArchived={setArchived} />
         </IntlProvider>);
 
         fireEvent.contextMenu(screen.getByRole("button", { name: /Mother Article/ }));
@@ -210,7 +274,16 @@ describe("ArticleLibraryPanel", () => {
     it("offers only Delete for a translation row", () => {
         const translation: Article = { ...source, id: "translation", title: "Spanish edition", sourceArticleId: source.id, sourceRevisionId: source.currentRevisionId };
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[source, translation]} selectedArticleId="translation" selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[source, translation]}
+                selectedArticleId="translation"
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>);
 
         fireEvent.contextMenu(screen.getByRole("button", { name: /Spanish edition/ }));

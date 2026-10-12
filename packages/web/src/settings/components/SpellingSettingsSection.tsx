@@ -33,20 +33,39 @@ export function SpellingSettingsSection() {
         {!snapshot && <Button variant="quiet" disabled={busy} onClick={() => void spelling.retryLoad()}>{intl.formatMessage({ id: "spelling.retry" })}</Button>}
         <SettingsGroup className="mt-6 pt-6" label={intl.formatMessage({ id: "spelling.dictionaries" })}>
             <div className="mt-4 border-l border-border-strong pl-4">
-                <SettingRow className="border-none" layout="stacked" headingLevel={3} label={intl.formatMessage({ id: "spelling.preload" })} hint={intl.formatMessage({ id: "spelling.preloadHint" })} action={<Button variant="quiet" disabled={busy || !snapshot || !spelling.selected.length} onClick={() => void spelling.prepare()}>{intl.formatMessage({ id: "spelling.download" })}</Button>}>
+                <SettingRow
+                    className="border-none"
+                    layout="stacked"
+                    headingLevel={3}
+                    label={intl.formatMessage({ id: "spelling.preload" })}
+                    hint={intl.formatMessage({ id: "spelling.preloadHint" })}
+                    action={<Button variant="quiet" disabled={busy || !snapshot || !spelling.selected.length} onClick={() => void spelling.prepare()}>{intl.formatMessage({ id: "spelling.download" })}</Button>}>
                     <div>
                         <label className="mb-3 block text-sm font-medium">
                             {intl.formatMessage({ id: "spelling.filterLanguages" })}
-                            <Field type="search" value={languageSearch} onChange={(event) => setLanguageSearch(event.target.value)} className="mt-2 w-full" />
+                            <Field
+                                type="search"
+                                value={languageSearch}
+                                onChange={(event) => setLanguageSearch(event.target.value)}
+                                className="mt-2 w-full" />
                         </label>
                         <fieldset disabled={busy} className="max-h-64 divide-y divide-border overflow-y-auto border-b border-border" aria-label={intl.formatMessage({ id: "spelling.dictionaries" })}>
                             {languages.map(({ code: language, label, downloaded }) => <div key={language} className="flex min-h-9 items-center gap-2 py-2.5 text-sm">
                                 {downloaded ? <span className="min-w-0 flex-1">{label}</span> : <label className="flex min-w-0 flex-1 items-center gap-2">
-                                    <input type="checkbox" className="size-4 accent-brand" disabled={snapshot?.dictionaries.states[language] === "preparing"} checked={spelling.selected.includes(language)} onChange={(event) => spelling.setSelected((current) => event.target.checked ? [...current, language] : current.filter((item) => item !== language))} />
+                                    <input
+                                        type="checkbox"
+                                        className="size-4 accent-brand"
+                                        disabled={snapshot?.dictionaries.states[language] === "preparing"}
+                                        checked={spelling.selected.includes(language)}
+                                        onChange={(event) => spelling.setSelected((current) => event.target.checked ? [...current, language] : current.filter((item) => item !== language))} />
                                     <span>{label}</span>
                                 </label>}
                                 <span className="shrink-0 text-xs text-muted" role={spelling.selected.includes(language) ? "status" : undefined}>{snapshot?.dictionaries.states[language] === "preparing" && <ActivityIndicator className="mr-2 inline-block align-middle" />}{intl.formatMessage({ id: stateMessages[snapshot?.dictionaries.states[language] ?? "unverified"] })}</span>
-                                {downloaded && <Button variant="quiet" disabled={busy} aria-label={intl.formatMessage({ id: "spelling.unloadLanguage" }, { language: label })} onClick={() => void spelling.unload(language)}>{intl.formatMessage({ id: "spelling.unload" })}</Button>}
+                                {downloaded && <Button
+                                    variant="quiet"
+                                    disabled={busy}
+                                    aria-label={intl.formatMessage({ id: "spelling.unloadLanguage" }, { language: label })}
+                                    onClick={() => void spelling.unload(language)}>{intl.formatMessage({ id: "spelling.unload" })}</Button>}
                             </div>)}
                         </fieldset>
                         {snapshot && !languages.length && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "spelling.noLanguages" })}</p>}
@@ -62,19 +81,42 @@ export function SpellingSettingsSection() {
                 </p>
                 <section className="border-b border-border py-4">
                     <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "spelling.addWords" })}</h3>
-                    <TextareaField aria-label={intl.formatMessage({ id: "spelling.addWords" })} aria-describedby={wordsHintId} value={spelling.input} onChange={(event) => spelling.setInput(event.target.value)} disabled={busy} className="mt-4 min-h-24 w-full" />
+                    <TextareaField
+                        aria-label={intl.formatMessage({ id: "spelling.addWords" })}
+                        aria-describedby={wordsHintId}
+                        value={spelling.input}
+                        onChange={(event) => spelling.setInput(event.target.value)}
+                        disabled={busy}
+                        className="mt-4 min-h-24 w-full" />
                     <div className="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-                        <Button className="shrink-0" variant="quiet" disabled={busy || !snapshot || !spelling.input.trim()} onClick={() => void spelling.addWords()}>{intl.formatMessage({ id: "spelling.add" })}</Button>
+                        <Button
+                            className="shrink-0"
+                            variant="quiet"
+                            disabled={busy || !snapshot || !spelling.input.trim()}
+                            onClick={() => void spelling.addWords()}>{intl.formatMessage({ id: "spelling.add" })}</Button>
                         <p id={wordsHintId} className="min-w-0 flex-1 text-xs leading-5 text-muted">{intl.formatMessage({ id: "spelling.wordsHint" })}</p>
                     </div>
                 </section>
-                <SettingRow className="border-none" layout="stacked" headingLevel={3} label={intl.formatMessage({ id: "spelling.savedWords" })} hint={intl.formatMessage({ id: "spelling.searchHint" })}>
-                    <Field aria-label={intl.formatMessage({ id: "spelling.search" })} value={spelling.search} onChange={(event) => spelling.setSearch(event.target.value)} className="w-full" />
+                <SettingRow
+                    className="border-none"
+                    layout="stacked"
+                    headingLevel={3}
+                    label={intl.formatMessage({ id: "spelling.savedWords" })}
+                    hint={intl.formatMessage({ id: "spelling.searchHint" })}>
+                    <Field
+                        aria-label={intl.formatMessage({ id: "spelling.search" })}
+                        value={spelling.search}
+                        onChange={(event) => spelling.setSearch(event.target.value)}
+                        className="w-full" />
                 </SettingRow>
                 <ul className="max-h-64 divide-y divide-border overflow-y-auto border-b border-border" aria-label={intl.formatMessage({ id: "spelling.savedWords" })}>
                     {words.map((word) => <li key={word} className="flex min-h-9 items-center justify-between gap-3 py-2.5 text-sm">
                         <span className="min-w-0 break-words">{word}</span>
-                        <Button variant="quiet" disabled={busy} aria-label={intl.formatMessage({ id: "spelling.removeWord" }, { word })} onClick={() => void spelling.removeWord(word)}>{intl.formatMessage({ id: "spelling.remove" })}</Button>
+                        <Button
+                            variant="quiet"
+                            disabled={busy}
+                            aria-label={intl.formatMessage({ id: "spelling.removeWord" }, { word })}
+                            onClick={() => void spelling.removeWord(word)}>{intl.formatMessage({ id: "spelling.remove" })}</Button>
                     </li>)}
                 </ul>
                 {!words.length && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "spelling.noWords" })}</p>}

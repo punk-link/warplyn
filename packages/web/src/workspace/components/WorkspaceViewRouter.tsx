@@ -56,7 +56,12 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
     const { view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, publishProfile, publishProfileLabel } = content;
     const { runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection } = actions;
     const { proposalWarningsDismissed, dismissProposalWarnings, openWrite, openAssistant, selectedTranslationLanguages, setSelectedTranslationLanguage } = navigation;
-    const renderPanel = (children: ReactNode) => <section data-focus-area={view === "write" ? undefined : "article-editor"} role="tabpanel" id={`workspace-panel-${view}`} aria-labelledby={`workspace-tab-${view}`} className={panelClassName(view)}>{children}</section>;
+    const renderPanel = (children: ReactNode) => <section
+        data-focus-area={view === "write" ? undefined : "article-editor"}
+        role="tabpanel"
+        id={`workspace-panel-${view}`}
+        aria-labelledby={`workspace-tab-${view}`}
+        className={panelClassName(view)}>{children}</section>;
     const articleRevisions = revisions.revisions.length ? revisions.revisions : [article.currentRevision];
     const translationRevisions: ArticleRevisionSummary[] = articleRevisions.map((revision) => {
         if (!("content" in revision))
@@ -68,13 +73,25 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
 
     switch (view) {
         case "write":
-            return renderPanel(<ArticleEditorView articleId={article.id} content={workspace.content} setContent={workspace.setContent} onSelectionChange={onSelectionChange} assistantSelection={assistantSelection} language={article.language} />);
+            return renderPanel(<ArticleEditorView
+                articleId={article.id}
+                content={workspace.content}
+                setContent={workspace.setContent}
+                onSelectionChange={onSelectionChange}
+                assistantSelection={assistantSelection}
+                language={article.language} />);
 
         case "proposal":
             return renderPanel(<ProposalReviewView data={{ review: editorial.review, accepted: editorial.accepted, stale: editorial.stale, decisions: editorial.decisions, summaries: editorial.proposalSummaries, summaryState: editorial.proposalSummaryState, warningsDismissed: proposalWarningsDismissed }} actions={{ setDecision: editorial.setDecision, acceptAll: editorial.acceptAll, applyAccepted: editorial.applyAccepted, rejectAll: editorial.rejectAll, dismissProposal: editorial.dismissProposal, dismissWarnings: dismissProposalWarnings, openWrite, openAssistant }} />);
 
         case "revisions":
-            return renderPanel(<RevisionHistoryView loadRevision={revisions.loadRevision} revisions={revisions.revisions} currentRevisionId={article.currentRevisionId} select={revisions.setCandidate} generalSettings={generalSettings} files={actions.articleFiles} />);
+            return renderPanel(<RevisionHistoryView
+                loadRevision={revisions.loadRevision}
+                revisions={revisions.revisions}
+                currentRevisionId={article.currentRevisionId}
+                select={revisions.setCandidate}
+                generalSettings={generalSettings}
+                files={actions.articleFiles} />);
 
         case "fact-check": {
             const revisionNumber = revisions.revisions.findIndex((revision) => revision.id === editorial.factCheck?.reviewedRevisionId);

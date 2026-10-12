@@ -104,13 +104,27 @@ export function EditorialAssistantPanel({ data, actions, layout }: { data: Edito
     }, [closeCheckpoint]);
 
     if (collapsed)
-        return <aside data-workspace-panel="editorial-assistant" data-focus-area="assistant-chat" className="flex h-full min-w-0 w-full flex-col border-l border-border bg-surface-supporting p-1" aria-label={intl.formatMessage({ id: "assistant.panel" })}>
-            <header className="flex min-h-18 w-full items-center justify-center"><Button data-focus-area-entry className="inline-grid size-9 place-items-center !p-0" variant="quiet" aria-label={intl.formatMessage({ id: "assistant.expand" })} onClick={() => setCollapsed(false)}><AssistantIcon className="size-5 text-brand" /></Button></header>
+        return <aside
+            data-workspace-panel="editorial-assistant"
+            data-focus-area="assistant-chat"
+            className="flex h-full min-w-0 w-full flex-col border-l border-border bg-surface-supporting p-1"
+            aria-label={intl.formatMessage({ id: "assistant.panel" })}>
+            <header className="flex min-h-18 w-full items-center justify-center"><Button
+                data-focus-area-entry
+                className="inline-grid size-9 place-items-center !p-0"
+                variant="quiet"
+                aria-label={intl.formatMessage({ id: "assistant.expand" })}
+                onClick={() => setCollapsed(false)}><AssistantIcon className="size-5 text-brand" /></Button></header>
         </aside>;
 
     return <aside data-workspace-panel="editorial-assistant" className="flex h-full min-h-0 min-w-0 w-full flex-col border-l border-border bg-surface-supporting" aria-label={intl.formatMessage({ id: "assistant.panel" })}>
         <header className="flex min-h-18 items-center gap-3 border-b border-border pl-2 pr-5">
-            <Button className="inline-grid size-9 place-items-center p-1" variant="quiet" title={getShortcutHint(intl.formatMessage({ id: "assistant.collapse" }), KEY_BINDING_COMMAND.TOGGLE_EDITORIAL_ASSISTANT, shortcutOverrides)} aria-label={intl.formatMessage({ id: "assistant.collapse" })} onClick={() => setCollapsed(true)}>
+            <Button
+                className="inline-grid size-9 place-items-center p-1"
+                variant="quiet"
+                title={getShortcutHint(intl.formatMessage({ id: "assistant.collapse" }), KEY_BINDING_COMMAND.TOGGLE_EDITORIAL_ASSISTANT, shortcutOverrides)}
+                aria-label={intl.formatMessage({ id: "assistant.collapse" })}
+                onClick={() => setCollapsed(true)}>
                 <ChevronRightIcon className="size-3" />
             </Button>
             <AssistantIcon className="size-5 shrink-0 text-brand" />
@@ -121,6 +135,10 @@ export function EditorialAssistantPanel({ data, actions, layout }: { data: Edito
             state={{ state, canSend: composerState.canSend, guidance: composerState.guidance, selectedSkill: composerState.selectedSkill, skillOffset: composerState.skillOffset, caretOffset: composerState.caretOffset, selection, clearSelection, incompatibleSelectionSkill: composerState.incompatibleSelectionSkill, editMode }}
             picker={{ quickActionsOpen: composerState.quickActionsOpen, availableSkills: composerState.availableSkills, activeSkillIndex: composerState.activeSkillIndex, setQuickActionsOpen: composerState.setQuickActionsOpen, setActiveSkillIndex: composerState.setActiveSkillIndex, selectSkill: composerState.selectSkill, focusQuickAction: composerState.focusQuickAction }}
             actions={{ send: composerState.send, onCancel, onChange: composerState.onChange, onKeyDown: composerState.onKeyDown, shortcutOverrides, setEditMode }} />
-        {checkpointPreview && restoreCheckpoint && closeCheckpoint && <AssistantCheckpointDialog preview={checkpointPreview} replacingComposer={Boolean(composerState.guidance || composerState.selectedSkill)} close={closeCheckpointAndRestoreFocus} restore={restoreCheckpoint} />}
+        {checkpointPreview && restoreCheckpoint && closeCheckpoint && <AssistantCheckpointDialog
+            preview={checkpointPreview}
+            replacingComposer={Boolean(composerState.guidance || composerState.selectedSkill)}
+            close={closeCheckpointAndRestoreFocus}
+            restore={restoreCheckpoint} />}
     </aside>;
 }

@@ -28,9 +28,14 @@ export function resolveAcceptedCorrections(database: SqliteDatabase, articleId: 
     if (input.content === baseContent || input.content !== expectedContent)
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
-    const resolve = database.prepare(("INSERT INTO fact_check_resolutions (occurrence_id, resolution, updated_at) SELECT o.id, 'corrected_or_removed', ? FROM fact_occurrences o " +
-        "JOIN facts f ON f.id = o.fact_id WHERE o.id = ? AND o.revision_id = ? AND f.article_id = ? AND NOT EXISTS (SELECT 1 FROM " +
-        "fact_check_resolutions r WHERE r.occurrence_id = o.id)"));
+    const resolve = database.prepare((`INSERT INTO fact_check_resolutions (occurrence_id, resolution, updated_at)
+        SELECT o.id, 'corrected_or_removed', ?
+        FROM fact_occurrences o
+        JOIN facts f ON f.id = o.fact_id
+        WHERE o.id = ? AND o.revision_id = ? AND f.article_id = ? AND NOT EXISTS (
+        SELECT 1
+        FROM fact_check_resolutions r
+        WHERE r.occurrence_id = o.id)`));
     if (ids.some((id) => resolve.run(timestamp, id, input.baseRevisionId, articleId).changes !== 1))
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 }

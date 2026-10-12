@@ -127,7 +127,11 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
             </div>
             <div className="flex flex-wrap items-center justify-end gap-3">
                 {rebuilt && <span className="text-xs text-success" role="status">{intl.formatMessage({ id: "styleProfile.rebuilt" }, { count: activeCount })}</span>}
-                <Button variant="secondary" state={pendingAction === "rebuild" ? "loading" : "default"} disabled={corpus?.status === "empty" || Boolean(pendingAction)} onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}>{intl.formatMessage({ id: "styleProfile.rebuild" })}</Button>
+                <Button
+                    variant="secondary"
+                    state={pendingAction === "rebuild" ? "loading" : "default"}
+                    disabled={corpus?.status === "empty" || Boolean(pendingAction)}
+                    onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}>{intl.formatMessage({ id: "styleProfile.rebuild" })}</Button>
             </div>
         </header>
         {corpus?.profile?.confidence === "low" && <Banner className="mb-4" tone="warning">{intl.formatMessage({ id: "styleProfile.lowConfidence" })}</Banner>}

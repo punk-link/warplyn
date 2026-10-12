@@ -170,25 +170,59 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
             tone = "bg-brand-soft text-ink";
 
         const canReorder = !child && article.pinOrder !== undefined && !article.archived;
-        return <div key={article.id} draggable={canReorder} onDragStart={() => setDraggedArticleId(article.id)} onDragOver={(event) => canReorder && event.preventDefault()} onDrop={(event) => handlePinnedArticleDrop(event, article, draggedArticleId, pinnedRoots, reorderPinned, run)}>
-            <button data-library-article data-focus-area-entry={selectedRow || undefined} ref={(element) => {
-                if (element)
-                    triggerRefs.current.set(article.id, element);
-            }} type="button" onClick={() => {
-                selectArticle(article.id);
-                close();
-            }} onContextMenu={(event) => {
-                event.preventDefault();
-                setMenuArticleId(article.id);
-            }} onKeyDown={(event) => {
-                if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) {
+        return <div
+            key={article.id}
+            draggable={canReorder}
+            onDragStart={() => setDraggedArticleId(article.id)}
+            onDragOver={(event) => canReorder && event.preventDefault()}
+            onDrop={(event) => handlePinnedArticleDrop(event, article, draggedArticleId, pinnedRoots, reorderPinned, run)}>
+            <button
+                data-library-article
+                data-focus-area-entry={selectedRow || undefined}
+                ref={(element) => {
+                    if (element)
+                        triggerRefs.current.set(article.id, element);
+                }}
+                type="button"
+                onClick={() => {
+                    selectArticle(article.id);
+                    close();
+                }}
+                onContextMenu={(event) => {
                     event.preventDefault();
                     setMenuArticleId(article.id);
-                }
-            }} className={`${child ? "ml-4 w-[calc(100%-1rem)] border-l border-border py-1" : "w-full py-1.5"} rounded-panel px-2 text-left transition-colors ${tone}`} aria-current={selectedRow ? "page" : undefined} aria-expanded={childCount > 0 ? expanded : undefined} tabIndex={hidden ? -1 : undefined}>
-                <ArticleLibraryRowLabel article={article} child={child} childCount={childCount} expanded={expanded} />
+                }}
+                onKeyDown={(event) => {
+                    if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) {
+                        event.preventDefault();
+                        setMenuArticleId(article.id);
+                    }
+                }}
+                className={`${child ? "ml-4 w-[calc(100%-1rem)] border-l border-border py-1" : "w-full py-1.5"} rounded-panel px-2 text-left transition-colors ${tone}`}
+                aria-current={selectedRow ? "page" : undefined}
+                aria-expanded={childCount > 0 ? expanded : undefined}
+                tabIndex={hidden ? -1 : undefined}>
+                <ArticleLibraryRowLabel
+                    article={article}
+                    child={child}
+                    childCount={childCount}
+                    expanded={expanded} />
             </button>
-            {menuArticleId === article.id && <ArticleLibraryRowMenu article={article} anchor={triggerRefs.current.get(article.id)} canReorder={canReorder} pinnedRoots={pinnedRoots} menuRef={menuRef} handleMenuKeyDown={handleMenuKeyDown} movePinned={movePinned} run={run} setDeleteTarget={setDeleteTarget} closeMenu={closeMenu} setPinned={setPinned} setArchived={setArchived} files={files} runFile={runFile} />}
+            {menuArticleId === article.id && <ArticleLibraryRowMenu
+                article={article}
+                anchor={triggerRefs.current.get(article.id)}
+                canReorder={canReorder}
+                pinnedRoots={pinnedRoots}
+                menuRef={menuRef}
+                handleMenuKeyDown={handleMenuKeyDown}
+                movePinned={movePinned}
+                run={run}
+                setDeleteTarget={setDeleteTarget}
+                closeMenu={closeMenu}
+                setPinned={setPinned}
+                setArchived={setArchived}
+                files={files}
+                runFile={runFile} />}
         </div>;
     };
 
@@ -202,7 +236,11 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
 
 
     return <>
-        <ArticleLibraryFrame data={{ collapsed, language, pinnedArticles: pinnedRoots, selectedArticleId }} navigation={navigation} search={{ query, setQuery }} overlay={{ menuRef, modalOpen: Boolean(deleteTarget), dismissMenu: () => setMenuArticleId(undefined) }}>
+        <ArticleLibraryFrame
+            data={{ collapsed, language, pinnedArticles: pinnedRoots, selectedArticleId }}
+            navigation={navigation}
+            search={{ query, setQuery }}
+            overlay={{ menuRef, modalOpen: Boolean(deleteTarget), dismissMenu: () => setMenuArticleId(undefined) }}>
             {(view, close) => {
                 const archiveOnly = view === "archive";
                 const visiblePinned = archiveOnly ? [] : pinnedRoots;
@@ -210,13 +248,27 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                 const visibleArchived = view === "articles" && !query ? [] : archivedRoots;
                 const archivedContent = renderRoots(visibleArchived, close);
                 const empty = [...visiblePinned, ...visibleRecent, ...visibleArchived].every((article) => !isArticleMatch(article) && !getChildArticles(article.id).some(isArticleMatch));
-                return <ArticleLibraryNavigation pinnedRoots={visiblePinned} recentRoots={visibleRecent} archivedRoots={visibleArchived} archivedOpen={archivedOpen || archivedRoots.some((article) => article.id === expandedRootId)} setArchivedOpen={setArchivedOpen} query={query} archivedContent={archivedContent} empty={empty} renderRoots={(items) => renderRoots(items, close)} archiveOnly={archiveOnly} />;
+                return <ArticleLibraryNavigation
+                    pinnedRoots={visiblePinned}
+                    recentRoots={visibleRecent}
+                    archivedRoots={visibleArchived}
+                    archivedOpen={archivedOpen || archivedRoots.some((article) => article.id === expandedRootId)}
+                    setArchivedOpen={setArchivedOpen}
+                    query={query}
+                    archivedContent={archivedContent}
+                    empty={empty}
+                    renderRoots={(items) => renderRoots(items, close)}
+                    archiveOnly={archiveOnly} />;
             }}
         </ArticleLibraryFrame>
-        {deleteTarget && <Dialog className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl" open aria-labelledby="delete-library-article-title" onCancel={(event) => {
-            event.preventDefault();
-            setDeleteTarget(undefined);
-        }}>
+        {deleteTarget && <Dialog
+            className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+            open
+            aria-labelledby="delete-library-article-title"
+            onCancel={(event) => {
+                event.preventDefault();
+                setDeleteTarget(undefined);
+            }}>
             <h2 id="delete-library-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
             <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: deleteTarget.title.trim() || intl.formatMessage({ id: "article.defaultTitle" }), count: groupCount })}</p>
             <div className="mt-5 flex justify-end gap-2">

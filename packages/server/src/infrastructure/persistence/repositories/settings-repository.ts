@@ -11,8 +11,10 @@ export class SettingsRepository {
     saveSetting(key: string, value: unknown): AppSetting {
         requireNonEmpty(key, "Setting key");
         const updatedAt = getCurrentTimestamp();
-        this.database.prepare(("INSERT INTO app_settings (key, value_json, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json, " +
-            "updated_at = excluded.updated_at"))
+        this.database.prepare((`INSERT INTO app_settings (key, value_json, updated_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(key) DO UPDATE
+            SET value_json = excluded.value_json, updated_at = excluded.updated_at`))
             .run(key, JSON.stringify(value), updatedAt);
 
         return { key, value, updatedAt };

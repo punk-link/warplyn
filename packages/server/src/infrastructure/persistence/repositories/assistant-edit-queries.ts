@@ -9,7 +9,8 @@ import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
 function readEditRow(database: SqliteDatabase, articleId: string, messageId: string): Row {
     const row = database.prepare(`SELECT m.*, r.base_revision_id, r.scope_json, b.content AS base_content, a.current_revision_id,
         d.version AS draft_version
-        FROM assistant_messages m JOIN assistant_requests r ON r.id = m.request_id
+        FROM assistant_messages m
+        JOIN assistant_requests r ON r.id = m.request_id
         JOIN articles a ON a.id = m.article_id
         JOIN article_revisions b ON b.id = r.base_revision_id
         LEFT JOIN article_drafts d ON d.article_id = m.article_id

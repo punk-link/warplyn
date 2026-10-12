@@ -6,10 +6,14 @@ import { Button, Dialog } from "../../ui/primitives.js";
 export function CustomProfileRemovalDialog({ profile, isDefault, close, remove }: { profile: CustomPublishLimitProfile; isDefault: boolean; close: () => void; remove: () => void }) {
     const intl = useIntl();
 
-    return <Dialog className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl" open aria-labelledby="remove-custom-profile-title" onCancel={(event) => {
-        event.preventDefault();
-        close();
-    }}><h2 id="remove-custom-profile-title" className="text-lg font-semibold">{intl.formatMessage({ id: "settings.removeCustomProfileTitle" })}</h2>
+    return <Dialog
+        className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+        open
+        aria-labelledby="remove-custom-profile-title"
+        onCancel={(event) => {
+            event.preventDefault();
+            close();
+        }}><h2 id="remove-custom-profile-title" className="text-lg font-semibold">{intl.formatMessage({ id: "settings.removeCustomProfileTitle" })}</h2>
         <p className="mt-2 text-sm leading-6 text-muted">
             <FormattedMessage id={isDefault ? "settings.removeCustomDefaultDescription" : "settings.removeCustomProfileDescription"} values={{ name: profile.name, profile: (chunks) => <strong className="font-semibold text-ink">{chunks}</strong> }} />
         </p>

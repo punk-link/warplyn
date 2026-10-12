@@ -54,7 +54,8 @@ export function NotificationViewport({ notifications, label, dismissLabel, dismi
                     dismiss(notification.id);
                 }}>{notification.action.label}</button>}
             </div>
-            <button className="absolute right-1 top-1 grid size-9 place-items-center rounded-control hover:bg-surface-raised/45 active:translate-y-px"
+            <button
+                className="absolute right-1 top-1 grid size-9 place-items-center rounded-control hover:bg-surface-raised/45 active:translate-y-px"
                 type="button"
                 aria-label={dismissLabel(notification.title)}
                 onClick={() => dismiss(notification.id)}>

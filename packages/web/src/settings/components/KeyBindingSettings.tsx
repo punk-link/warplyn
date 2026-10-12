@@ -64,17 +64,27 @@ export function KeyBindingSettings({ overrides, save, general, saveGeneral }: { 
                 const isOverridden = Object.prototype.hasOwnProperty.call(overrides, command.id)
                     && (override === null || (override !== undefined && !areKeyBindingsEqual(override, command.defaultBinding)));
                 const listening = recording === command.id;
-                return <SettingRow key={command.id} headingLevel={3} label={intl.formatMessage({ id: command.labelMessageId })} hint={intl.formatMessage({ id: command.hintMessageId })}>
+                return <SettingRow
+                    key={command.id}
+                    headingLevel={3}
+                    label={intl.formatMessage({ id: command.labelMessageId })}
+                    hint={intl.formatMessage({ id: command.hintMessageId })}>
                     <div className="flex flex-wrap items-center gap-2">
-                        <Button variant={listening ? "secondary" : "quiet"} aria-label={intl.formatMessage({ id: "settings.recordKeyBinding" }, { command: intl.formatMessage({ id: command.labelMessageId }) })} aria-describedby={error?.commandId === command.id ? `key-binding-error-${command.id}` : undefined} onBlur={() => {
-                            if (recording === command.id) {
-                                setRecording(undefined);
-                                setError((current) => current?.commandId === command.id ? undefined : current);
-                            }
-                        }} onClick={() => {
-                            setError(undefined);
-                            setRecording(command.id);
-                        }} onKeyDown={(event) => void record(command.id, event)}>{listening ? intl.formatMessage({ id: "settings.recordingKeyBinding" }) : formatKeyBinding(effective[command.id], platform)}
+                        <Button
+                            variant={listening ? "secondary" : "quiet"}
+                            aria-label={intl.formatMessage({ id: "settings.recordKeyBinding" }, { command: intl.formatMessage({ id: command.labelMessageId }) })}
+                            aria-describedby={error?.commandId === command.id ? `key-binding-error-${command.id}` : undefined}
+                            onBlur={() => {
+                                if (recording === command.id) {
+                                    setRecording(undefined);
+                                    setError((current) => current?.commandId === command.id ? undefined : current);
+                                }
+                            }}
+                            onClick={() => {
+                                setError(undefined);
+                                setRecording(command.id);
+                            }}
+                            onKeyDown={(event) => void record(command.id, event)}>{listening ? intl.formatMessage({ id: "settings.recordingKeyBinding" }) : formatKeyBinding(effective[command.id], platform)}
                         </Button>
                         <Button variant="quiet" onClick={() => {
                             setError(undefined);

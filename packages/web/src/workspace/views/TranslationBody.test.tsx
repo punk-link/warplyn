@@ -21,10 +21,18 @@ const source: Article = {
 
 
 function comparison(protectedSpans = values, displayMode: "aligned" | "side-by-side" = "side-by-side", warnings: string[] = []) {
-    return <IntlProvider locale="en" messages={messages}><TranslationBody source={source} translatedContent={text} targetLanguage="Spanish"
-        sourceParagraphs={splitTranslationParagraphs(text, protectedSpans)} translatedParagraphs={splitTranslationParagraphs(text, protectedSpans)} paragraphCount={splitTranslationParagraphs(text, protectedSpans).length}
-        translation={{ content: text, baseRevisionId: "revision", metadata: { targetLanguage: "Spanish", protectedSpans } }} protectedSpanWarnings={warnings}
-        displayMode={displayMode} visibleText="source" setVisibleText={vi.fn()} /></IntlProvider>;
+    return <IntlProvider locale="en" messages={messages}><TranslationBody
+        source={source}
+        translatedContent={text}
+        targetLanguage="Spanish"
+        sourceParagraphs={splitTranslationParagraphs(text, protectedSpans)}
+        translatedParagraphs={splitTranslationParagraphs(text, protectedSpans)}
+        paragraphCount={splitTranslationParagraphs(text, protectedSpans).length}
+        translation={{ content: text, baseRevisionId: "revision", metadata: { targetLanguage: "Spanish", protectedSpans } }}
+        protectedSpanWarnings={warnings}
+        displayMode={displayMode}
+        visibleText="source"
+        setVisibleText={vi.fn()} /></IntlProvider>;
 }
 
 

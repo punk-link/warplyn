@@ -32,7 +32,7 @@ export const migrations = [
         CREATE TABLE app_settings (
             key TEXT PRIMARY KEY, value_json TEXT NOT NULL, updated_at TEXT NOT NULL
         );
-        `,
+`,
     },
     {
         version: 2,
@@ -43,7 +43,7 @@ export const migrations = [
             previous_response_id TEXT NOT NULL,
             updated_at TEXT NOT NULL
         );
-        `,
+`,
     },
     {
         version: 3,
@@ -57,17 +57,19 @@ export const migrations = [
             id INTEGER PRIMARY KEY CHECK (id = 1),
             profile_json TEXT NOT NULL, updated_at TEXT NOT NULL
         );
-        `,
+`,
     },
     {
         version: 4,
         name: "translation_article_links",
         sql: `
         ALTER TABLE articles ADD COLUMN language TEXT;
-        ALTER TABLE articles ADD COLUMN source_article_id TEXT REFERENCES articles(id) ON DELETE SET NULL;
-        ALTER TABLE articles ADD COLUMN source_revision_id TEXT REFERENCES article_revisions(id) ON DELETE SET NULL;
+        ALTER TABLE articles ADD COLUMN source_article_id TEXT REFERENCES articles(id) ON DELETE
+            SET NULL;
+        ALTER TABLE articles ADD COLUMN source_revision_id TEXT REFERENCES article_revisions(id) ON DELETE
+            SET NULL;
         CREATE INDEX articles_source_article ON articles(source_article_id);
-        `,
+`,
     },
     {
         version: 5,
@@ -95,7 +97,7 @@ export const migrations = [
             version INTEGER NOT NULL CHECK (version > 0),
             updated_at TEXT NOT NULL
         );
-        `,
+`,
     },
     {
         version: 8,
@@ -110,7 +112,8 @@ export const migrations = [
             resolved_skill_id TEXT,
             skill_source TEXT,
             status TEXT NOT NULL,
-            retry_of_request_id TEXT REFERENCES assistant_requests(id) ON DELETE SET NULL,
+            retry_of_request_id TEXT REFERENCES assistant_requests(id) ON DELETE
+            SET NULL,
             error_code TEXT,
             error_parameters_json TEXT,
             created_at TEXT NOT NULL,
@@ -127,12 +130,13 @@ export const migrations = [
             content TEXT,
             skill_id TEXT,
             response_kind TEXT,
-            editorial_artifact_id TEXT REFERENCES editorial_artifacts(id) ON DELETE SET NULL,
+            editorial_artifact_id TEXT REFERENCES editorial_artifacts(id) ON DELETE
+            SET NULL,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
         );
         CREATE INDEX assistant_messages_article_created ON assistant_messages(article_id, created_at, id);
-        `,
+`,
     },
     {
         version: 9,
@@ -164,7 +168,7 @@ export const migrations = [
             resolution TEXT NOT NULL,
             updated_at TEXT NOT NULL
         );
-        `,
+`,
     },
     {
         version: 12,
@@ -175,9 +179,11 @@ export const migrations = [
         ALTER TABLE style_corpus_items ADD COLUMN article_id TEXT;
         ALTER TABLE style_corpus_items ADD COLUMN revision_id TEXT;
         CREATE TABLE style_corpus_settings (id INTEGER PRIMARY KEY CHECK (id = 1), rules TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL);
-        INSERT INTO style_corpus_settings (id, rules, updated_at) VALUES (1, '', '') ON CONFLICT(id) DO NOTHING;
+        INSERT INTO style_corpus_settings (id, rules, updated_at)
+            VALUES (1, '', '')
+            ON CONFLICT(id) DO NOTHING;
         CREATE TABLE style_profile_versions (version INTEGER PRIMARY KEY, profile_json TEXT NOT NULL, created_at TEXT NOT NULL);
-        `,
+`,
     },
     {
         version: 13,
@@ -187,7 +193,7 @@ export const migrations = [
             article_id TEXT PRIMARY KEY REFERENCES articles(id) ON DELETE CASCADE,
             rules TEXT NOT NULL, updated_at TEXT NOT NULL
         );
-        `,
+`,
     },
     {
         version: 14,
@@ -210,7 +216,7 @@ export const migrations = [
             completed_at TEXT
         );
         CREATE INDEX assistant_capability_executions_request_id ON assistant_capability_executions(request_id, id);
-        `,
+`,
     },
     {
         version: 16,
@@ -226,7 +232,7 @@ export const migrations = [
         ALTER TABLE editorial_sessions ADD COLUMN connection_id TEXT;
         ALTER TABLE editorial_sessions ADD COLUMN provider TEXT;
         ALTER TABLE editorial_sessions ADD COLUMN model TEXT;
-        `,
+`,
     },
     {
         version: 18,
@@ -234,8 +240,9 @@ export const migrations = [
         sql: `
         ALTER TABLE articles ADD COLUMN archived INTEGER NOT NULL DEFAULT 0 CHECK (archived IN (0, 1));
         ALTER TABLE articles ADD COLUMN pin_order INTEGER;
-        CREATE INDEX articles_active_pins ON articles(archived, pin_order) WHERE pin_order IS NOT NULL;
-        `,
+        CREATE INDEX articles_active_pins ON articles(archived, pin_order)
+            WHERE pin_order IS NOT NULL;
+`,
     },
     {
         version: 19,
@@ -256,10 +263,11 @@ export const migrations = [
             mode TEXT NOT NULL CHECK (mode IN ('review', 'direct'))
         );
         INSERT INTO assistant_conversation_modes (article_id, mode)
-            SELECT DISTINCT article_id, 'review' FROM assistant_requests;
+            SELECT DISTINCT article_id, 'review'
+            FROM assistant_requests;
         ALTER TABLE assistant_messages ADD COLUMN edit_candidate_json TEXT;
         ALTER TABLE assistant_messages ADD COLUMN applied_revision_id TEXT REFERENCES article_revisions(id);
-        `,
+`,
     },
     {
         version: 22,
@@ -281,7 +289,7 @@ export const migrations = [
             reused_from_revision_id TEXT REFERENCES article_revisions(id)
         );
         CREATE INDEX fact_occurrences_fact_revision ON fact_occurrences(fact_id, revision_id);
-        `,
+`,
     },
     {
         version: 23,

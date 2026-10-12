@@ -74,8 +74,8 @@ export class ArticlesRepository {
 
     private insertArticleRows(input: CreateArticleInput, { articleId, revisionId, sourceArticleId, language, timestamp }: { articleId: string; revisionId: string; sourceArticleId: string | undefined; language: CreateArticleInput["language"]; timestamp: string }): void {
         const archived = sourceArticleId ? Number(this.database.prepare("SELECT archived FROM articles WHERE id = ?").get(sourceArticleId)?.archived ?? 0) : 0;
-        this.database.prepare(("INSERT INTO articles (id, title, language, audience, publishing_profile_id, source_article_id, source_revision_id, archived, created_at, " +
-            "updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))
+        this.database.prepare((`INSERT INTO articles (id, title, language, audience, publishing_profile_id, source_article_id, source_revision_id, archived, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`))
             .run(articleId, input.title.trim(), language ?? null, input.audience ?? null, input.publishingProfileId ?? null, sourceArticleId ?? null, input.sourceRevisionId ?? null, archived, timestamp, timestamp);
         this.database.prepare("INSERT INTO article_revisions (id, article_id, content, provenance_json, created_at) VALUES (?, ?, ?, ?, ?)")
             .run(revisionId, articleId, input.content, JSON.stringify({ ...(input.provenance ?? { kind: REVISION_PROVENANCE_KIND.INITIAL }), ...(input.sourceRevisionId ? { sourceRevisionId: input.sourceRevisionId } : {}) }), timestamp);
@@ -192,8 +192,10 @@ export class ArticlesRepository {
 
             const timestamp = getCurrentTimestamp();
             const version = (existing?.version ?? 0) + 1;
-            this.database.prepare(("INSERT INTO article_drafts (article_id, content, base_revision_id, version, updated_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(article_id) DO " +
-                "UPDATE SET content = excluded.content, base_revision_id = excluded.base_revision_id, version = excluded.version, updated_at = excluded.updated_at"))
+            this.database.prepare((`INSERT INTO article_drafts (article_id, content, base_revision_id, version, updated_at)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(article_id) DO UPDATE
+                SET content = excluded.content, base_revision_id = excluded.base_revision_id, version = excluded.version, updated_at = excluded.updated_at`))
                 .run(articleId, input.content, input.baseRevisionId, version, timestamp);
             this.database.exec("COMMIT;");
         } catch (error) {

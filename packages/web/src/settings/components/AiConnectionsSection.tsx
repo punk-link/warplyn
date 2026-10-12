@@ -102,9 +102,18 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                 <div className="mb-4">{providerControl}</div>
                 <div className="grid gap-3">
                     <Control label={intl.formatMessage({ id: "settings.connectionName" })} hint={intl.formatMessage({ id: "settings.connectionNameHint" })}>
-                        <Field type="text" value={props.managedConnectionName} placeholder={intl.formatMessage({ id: "settings.connectionNamePlaceholder" })} onChange={(event) => props.setManagedConnectionName(event.target.value)} /></Control>
+                        <Field
+                            type="text"
+                            value={props.managedConnectionName}
+                            placeholder={intl.formatMessage({ id: "settings.connectionNamePlaceholder" })}
+                            onChange={(event) => props.setManagedConnectionName(event.target.value)} /></Control>
                     <Control label={intl.formatMessage({ id: "settings.apiKey" })} hint={intl.formatMessage({ id: "settings.apiKeyHint" })}>
-                        <Field type="password" value={props.apiKey} placeholder={intl.formatMessage({ id: "settings.apiKeyPlaceholder" })} autoComplete="off" onChange={(event) => props.setApiKey(event.target.value)} />
+                        <Field
+                            type="password"
+                            value={props.apiKey}
+                            placeholder={intl.formatMessage({ id: "settings.apiKeyPlaceholder" })}
+                            autoComplete="off"
+                            onChange={(event) => props.setApiKey(event.target.value)} />
                     </Control>
                 </div>
                 <div className="mt-4">
@@ -119,10 +128,20 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                 <div className="mb-4">{providerControl}</div>
                 <div className="grid gap-3">
                     <Control label={intl.formatMessage({ id: "settings.connectionName" })} hint={intl.formatMessage({ id: "settings.connectionNameHint" })}>
-                        <Field type="text" value={props.connectionName} placeholder={intl.formatMessage({ id: "settings.connectionNamePlaceholder" })} onChange={(event) => props.setConnectionName(event.target.value)} onPaste={handleTextFieldPaste(props.connectionName, props.setConnectionName)} />
+                        <Field
+                            type="text"
+                            value={props.connectionName}
+                            placeholder={intl.formatMessage({ id: "settings.connectionNamePlaceholder" })}
+                            onChange={(event) => props.setConnectionName(event.target.value)}
+                            onPaste={handleTextFieldPaste(props.connectionName, props.setConnectionName)} />
                     </Control>
                     <Control label={intl.formatMessage({ id: "settings.environmentName" })} hint={intl.formatMessage({ id: "settings.environmentNameHint" })}>
-                        <Field type="text" value={props.environmentName} placeholder={intl.formatMessage({ id: "settings.environmentNamePlaceholder" })} onChange={(event) => props.setEnvironmentName(event.target.value)} onPaste={handleTextFieldPaste(props.environmentName, props.setEnvironmentName)} />
+                        <Field
+                            type="text"
+                            value={props.environmentName}
+                            placeholder={intl.formatMessage({ id: "settings.environmentNamePlaceholder" })}
+                            onChange={(event) => props.setEnvironmentName(event.target.value)}
+                            onPaste={handleTextFieldPaste(props.environmentName, props.setEnvironmentName)} />
                     </Control>
                 </div>
                 {props.connectionError && <Banner className="mt-4" tone="warning" role="alert">

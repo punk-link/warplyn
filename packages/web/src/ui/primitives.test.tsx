@@ -24,7 +24,11 @@ describe("IconButton", () => {
     it("preserves keyboard activation, pressed semantics, and disabled behavior across variants", async () => {
         const user = userEvent.setup();
         const onClick = vi.fn();
-        const { rerender } = render(<IconButton variant="toolbar" label="Bold" aria-pressed={false} onClick={onClick}>B</IconButton>);
+        const { rerender } = render(<IconButton
+            variant="toolbar"
+            label="Bold"
+            aria-pressed={false}
+            onClick={onClick}>B</IconButton>);
         const button = screen.getByRole("button", { name: "Bold", pressed: false });
 
         await user.tab();
@@ -32,10 +36,18 @@ describe("IconButton", () => {
         await user.keyboard(" ");
         expect(onClick).toHaveBeenCalledTimes(1);
 
-        rerender(<IconButton variant="quiet" label="Bold" aria-pressed onClick={onClick}>B</IconButton>);
+        rerender(<IconButton
+            variant="quiet"
+            label="Bold"
+            aria-pressed
+            onClick={onClick}>B</IconButton>);
         expect(screen.getByRole("button", { name: "Bold", pressed: true })).toBe(button);
 
-        rerender(<IconButton variant="danger" label="Stop" disabled onClick={onClick}>S</IconButton>);
+        rerender(<IconButton
+            variant="danger"
+            label="Stop"
+            disabled
+            onClick={onClick}>S</IconButton>);
         await user.click(screen.getByRole("button", { name: "Stop" }));
         expect(onClick).toHaveBeenCalledTimes(1);
     });

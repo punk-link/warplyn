@@ -37,7 +37,11 @@ export function RevisionHistoryNavigation({ revisions, bypassedRevisionIds, sele
                     <span className={`absolute left-0 top-3 z-10 grid size-8 place-items-center rounded-full border border-border bg-surface-raised ${inactive ? "text-muted" : "text-brand"}`} data-revision-timeline-icon={kind}>
                         <TimelineIcon className={kind === "ai" || kind === "restored" ? "size-3" : "size-4"} />
                     </span>
-                    <button className={`w-full rounded-control border p-3 text-left focus:outline-none ${selected ? "border-brand bg-brand-soft" : "border-transparent hover:bg-surface"}`} type="button" aria-pressed={selected} onClick={() => onSelect(revision)}>
+                    <button
+                        className={`w-full rounded-control border p-3 text-left focus:outline-none ${selected ? "border-brand bg-brand-soft" : "border-transparent hover:bg-surface"}`}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() => onSelect(revision)}>
                         <span className={`line-clamp-2 text-sm ${titleStyle}`} title={displayTitle}>{displayTitle}</span>
                         {inactive && <span className="mt-1 block text-micro text-muted">{intl.formatMessage({ id: "revisions.inactive" })}</span>}
                         <span className="mt-1 block text-xs text-muted">{formatRevisionDate(revision.createdAt)} · {intl.formatMessage({ id: "revisions.characterCount" }, { count: intl.formatNumber(getRevisionCharacterCount(revision)) })}</span>

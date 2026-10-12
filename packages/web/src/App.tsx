@@ -126,7 +126,11 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
                 bindings={{ dispatcher, keyBindingOverrides: keyBindingOverrides ?? {}, onKeyBindingsUpdated: setKeyBindingOverrides, onThemeApplied: setTheme }}
                 updates={{ focusUpdates, onUpdatesFocused: () => setFocusUpdates(false) }}
             />
-            {quickStartOpen && quickStartConnectionReady !== undefined && <QuickStartDialog hasUsableAiConnection={quickStartConnectionReady} close={closeQuickStart} openModelSettings={openModelSettings} startWriting={startWriting} />}
+            {quickStartOpen && quickStartConnectionReady !== undefined && <QuickStartDialog
+                hasUsableAiConnection={quickStartConnectionReady}
+                close={closeQuickStart}
+                openModelSettings={openModelSettings}
+                startWriting={startWriting} />}
         </NotificationProvider>
     </I18nProvider>;
 }

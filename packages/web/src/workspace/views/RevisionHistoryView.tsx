@@ -48,7 +48,23 @@ export function RevisionHistoryView({ revisions, currentRevisionId, loadRevision
         return null;
 
     return <div className="flex min-h-0 flex-1 overflow-hidden rounded-panel border border-border bg-surface-raised">
-        <RevisionHistoryNavigation revisions={revisions} bypassedRevisionIds={bypassedRevisionIds} selectedRevisionId={selected.id} onSelect={(revision) => setSelectedRevisionId(revision.id)} generalSettings={generalSettings} />
-        <RevisionHistoryDetails preview={fullRevision?.id === selected.id ? fullRevision : undefined} failed={failed} retry={() => setAttempt((value) => value + 1)} onSelect={setSelectedRevisionId} revisions={revisions} bypassedRevisionIds={bypassedRevisionIds} selected={selected} currentRevisionId={currentRevisionId} select={select} generalSettings={generalSettings} files={files} />
+        <RevisionHistoryNavigation
+            revisions={revisions}
+            bypassedRevisionIds={bypassedRevisionIds}
+            selectedRevisionId={selected.id}
+            onSelect={(revision) => setSelectedRevisionId(revision.id)}
+            generalSettings={generalSettings} />
+        <RevisionHistoryDetails
+            preview={fullRevision?.id === selected.id ? fullRevision : undefined}
+            failed={failed}
+            retry={() => setAttempt((value) => value + 1)}
+            onSelect={setSelectedRevisionId}
+            revisions={revisions}
+            bypassedRevisionIds={bypassedRevisionIds}
+            selected={selected}
+            currentRevisionId={currentRevisionId}
+            select={select}
+            generalSettings={generalSettings}
+            files={files} />
     </div>;
 }

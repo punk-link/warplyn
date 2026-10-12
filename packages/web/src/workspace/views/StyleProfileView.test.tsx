@@ -20,7 +20,18 @@ afterEach(cleanup);
 describe("StyleProfileView", () => {
     it("warns when adding an empty writing sample", async () => {
         const user = userEvent.setup();
-        render(<IntlProvider locale="en" messages={messages}><StyleProfileView articleId="article-1" corpus={undefined} findings={undefined} findingsStale={false} add={vi.fn()} remove={vi.fn()} setIncluded={vi.fn()} setRules={vi.fn()} rebuild={vi.fn()} getArticleRules={vi.fn().mockResolvedValue("")} setArticleRules={vi.fn()} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><StyleProfileView
+            articleId="article-1"
+            corpus={undefined}
+            findings={undefined}
+            findingsStale={false}
+            add={vi.fn()}
+            remove={vi.fn()}
+            setIncluded={vi.fn()}
+            setRules={vi.fn()}
+            rebuild={vi.fn()}
+            getArticleRules={vi.fn().mockResolvedValue("")}
+            setArticleRules={vi.fn()} /></IntlProvider>);
 
         expect(screen.queryByRole("button", { name: "Add rule" })).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.addWritingSample") }));
@@ -38,7 +49,18 @@ describe("StyleProfileView", () => {
         const add = vi.fn(() => new Promise<void>((resolve) => {
             resolveAdd = resolve;
         }));
-        render(<IntlProvider locale="en" messages={messages}><StyleProfileView articleId="article-1" corpus={undefined} findings={undefined} findingsStale={false} add={add} remove={vi.fn()} setIncluded={vi.fn()} setRules={vi.fn()} rebuild={vi.fn()} getArticleRules={vi.fn().mockResolvedValue("")} setArticleRules={vi.fn()} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><StyleProfileView
+            articleId="article-1"
+            corpus={undefined}
+            findings={undefined}
+            findingsStale={false}
+            add={add}
+            remove={vi.fn()}
+            setIncluded={vi.fn()}
+            setRules={vi.fn()}
+            rebuild={vi.fn()}
+            getArticleRules={vi.fn().mockResolvedValue("")}
+            setArticleRules={vi.fn()} /></IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.addWritingSample") }));
         await user.type(screen.getByPlaceholderText("Sample text"), "A representative writing sample.");
@@ -53,7 +75,18 @@ describe("StyleProfileView", () => {
     it("confirms before removing a writing sample", async () => {
         const user = userEvent.setup();
         const remove = vi.fn().mockResolvedValue(undefined);
-        render(<IntlProvider locale="en" messages={messages}><StyleProfileView articleId="article-1" corpus={{ items: [{ id: "sample-1", name: "Sample", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "outdated" }} findings={undefined} findingsStale={false} add={vi.fn()} remove={remove} setIncluded={vi.fn()} setRules={vi.fn()} rebuild={vi.fn()} getArticleRules={vi.fn().mockResolvedValue("")} setArticleRules={vi.fn()} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><StyleProfileView
+            articleId="article-1"
+            corpus={{ items: [{ id: "sample-1", name: "Sample", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "outdated" }}
+            findings={undefined}
+            findingsStale={false}
+            add={vi.fn()}
+            remove={remove}
+            setIncluded={vi.fn()}
+            setRules={vi.fn()}
+            rebuild={vi.fn()}
+            getArticleRules={vi.fn().mockResolvedValue("")}
+            setArticleRules={vi.fn()} /></IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("views.remove") }));
         expect(remove).not.toHaveBeenCalled();
@@ -63,7 +96,18 @@ describe("StyleProfileView", () => {
 
     it("shows the profile rebuilt confirmation beside the rebuild action", async () => {
         const user = userEvent.setup();
-        render(<IntlProvider locale="en" messages={messages}><StyleProfileView articleId="article-1" corpus={{ items: [{ id: "sample-1", name: "Sample", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "outdated" }} findings={undefined} findingsStale={false} add={vi.fn()} remove={vi.fn()} setIncluded={vi.fn()} setRules={vi.fn()} rebuild={vi.fn().mockResolvedValue(undefined)} getArticleRules={vi.fn().mockResolvedValue("")} setArticleRules={vi.fn()} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><StyleProfileView
+            articleId="article-1"
+            corpus={{ items: [{ id: "sample-1", name: "Sample", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "outdated" }}
+            findings={undefined}
+            findingsStale={false}
+            add={vi.fn()}
+            remove={vi.fn()}
+            setIncluded={vi.fn()}
+            setRules={vi.fn()}
+            rebuild={vi.fn().mockResolvedValue(undefined)}
+            getArticleRules={vi.fn().mockResolvedValue("")}
+            setArticleRules={vi.fn()} /></IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.rebuild") }));
         expect(screen.getByText("Profile rebuilt from 1 active source.")).toBeTruthy();
@@ -72,7 +116,18 @@ describe("StyleProfileView", () => {
     it("shows whether custom rules are applied or unsaved", async () => {
         const user = userEvent.setup();
         const setRules = vi.fn().mockResolvedValue(undefined);
-        render(<IntlProvider locale="en" messages={messages}><StyleProfileView articleId="article-1" corpus={{ items: [], rules: "Use short sentences.", status: "outdated" }} findings={undefined} findingsStale={false} add={vi.fn()} remove={vi.fn()} setIncluded={vi.fn()} setRules={setRules} rebuild={vi.fn()} getArticleRules={vi.fn().mockResolvedValue("Use examples.")} setArticleRules={vi.fn()} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><StyleProfileView
+            articleId="article-1"
+            corpus={{ items: [], rules: "Use short sentences.", status: "outdated" }}
+            findings={undefined}
+            findingsStale={false}
+            add={vi.fn()}
+            remove={vi.fn()}
+            setIncluded={vi.fn()}
+            setRules={setRules}
+            rebuild={vi.fn()}
+            getArticleRules={vi.fn().mockResolvedValue("Use examples.")}
+            setArticleRules={vi.fn()} /></IntlProvider>);
 
         expect(screen.getByText("Applied in style review.")).toBeTruthy();
         await user.clear(screen.getByLabelText("Global style rules"));
@@ -86,7 +141,20 @@ describe("StyleProfileView", () => {
     it("confirms an immutable Article Revision snapshot and explains style findings", async () => {
         const user = userEvent.setup();
         const snapshotArticleRevision = vi.fn().mockResolvedValue(undefined);
-        render(<IntlProvider locale="en" messages={messages}><StyleProfileView articleId="article-1" revisions={[{ id: "revision-1", articleId: "article-1", content: "Older", createdAt: "2026-08-14T00:00:00.000Z", provenance: { kind: "author-draft" } }, { id: "revision-2", articleId: "article-1", content: "Newer", createdAt: "2026-08-15T00:00:00.000Z", provenance: { kind: "author-draft" } }]} corpus={{ items: [{ id: "sample-1", name: "Snapshot", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "ready", profile: { version: 2, corpusItemCount: 1, characterCount: 4, confidence: "low", traits: [], phrasesToAvoid: [], contributorIds: ["sample-1"], rules: "", updatedAt: "2026-08-15T00:00:00.000Z" } }} findings={{ findings: [{ divergence: "Long opening", suggestion: "Shorten it", traitIds: ["transitions"] }], traitLabels: { transitions: "uses explicit transitions" } }} findingsStale={false} add={vi.fn()} remove={vi.fn()} setIncluded={vi.fn()} setRules={vi.fn()} rebuild={vi.fn()} getArticleRules={vi.fn().mockResolvedValue("")} setArticleRules={vi.fn()} snapshotArticleRevision={snapshotArticleRevision} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><StyleProfileView
+            articleId="article-1"
+            revisions={[{ id: "revision-1", articleId: "article-1", content: "Older", createdAt: "2026-08-14T00:00:00.000Z", provenance: { kind: "author-draft" } }, { id: "revision-2", articleId: "article-1", content: "Newer", createdAt: "2026-08-15T00:00:00.000Z", provenance: { kind: "author-draft" } }]}
+            corpus={{ items: [{ id: "sample-1", name: "Snapshot", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "ready", profile: { version: 2, corpusItemCount: 1, characterCount: 4, confidence: "low", traits: [], phrasesToAvoid: [], contributorIds: ["sample-1"], rules: "", updatedAt: "2026-08-15T00:00:00.000Z" } }}
+            findings={{ findings: [{ divergence: "Long opening", suggestion: "Shorten it", traitIds: ["transitions"] }], traitLabels: { transitions: "uses explicit transitions" } }}
+            findingsStale={false}
+            add={vi.fn()}
+            remove={vi.fn()}
+            setIncluded={vi.fn()}
+            setRules={vi.fn()}
+            rebuild={vi.fn()}
+            getArticleRules={vi.fn().mockResolvedValue("")}
+            setArticleRules={vi.fn()}
+            snapshotArticleRevision={snapshotArticleRevision} /></IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.addRevision") }));
         expect(screen.getByText("Choose a saved Revision to add as a writing sample. This creates a separate, immutable copy and does not change the Article.")).toBeTruthy();

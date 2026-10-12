@@ -19,7 +19,13 @@ export function ArticleEditorContents({ content, onChange, onSelectionChange, as
             "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
             <div className="min-h-full px-8 py-7">
                 <div className="relative mx-auto w-full max-w-3xl">
-                    <RichTextPlugin contentEditable={<ContentEditable spellCheck={true} lang={language} data-article-spelling data-focus-area-entry aria-label={intl.formatMessage({ id: "editor.articleDraft" })} className={("min-h-[calc(100vh-16rem)] whitespace-pre-wrap font-editor text-xl leading-8 text-editor-ink outline-none focus-visible:outline " +
+                    <RichTextPlugin contentEditable={<ContentEditable
+                        spellCheck={true}
+                        lang={language}
+                        data-article-spelling
+                        data-focus-area-entry
+                        aria-label={intl.formatMessage({ id: "editor.articleDraft" })}
+                        className={("min-h-[calc(100vh-16rem)] whitespace-pre-wrap font-editor text-xl leading-8 text-editor-ink outline-none focus-visible:outline " +
                         "focus-visible:outline-brand [&_a]:text-brand [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-border-strong " +
                         "[&_pre]:overflow-x-auto [&_pre]:rounded-control [&_pre]:bg-surface [&_pre]:p-4 [&_pre]:font-mono [&_h1]:text-4xl [&_h2]:text-3xl " +
                         "[&_h3]:text-2xl [&_h4]:text-xl [&_h4]:font-bold [&_h4]:leading-7 [&_h5]:text-lg [&_h5]:font-bold [&_h5]:leading-7 [&_h6]:text-base " +

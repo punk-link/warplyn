@@ -75,7 +75,13 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
                         </Control>
                         <div>
                             <Control label={intl.formatMessage({ id: "settings.customProfileLimit" })} hint={intl.formatMessage({ id: "settings.customProfileLimitHint" })}>
-                                <Field aria-label={intl.formatMessage({ id: "settings.customProfileLimit" })} type="number" min="0" step="1" value={limit} onChange={(event) => setLimit(event.target.value)} />
+                                <Field
+                                    aria-label={intl.formatMessage({ id: "settings.customProfileLimit" })}
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    value={limit}
+                                    onChange={(event) => setLimit(event.target.value)} />
                             </Control>
                             {!valid && (name || limit) && <p className="mt-2 text-xs text-muted" role="status">{intl.formatMessage({ id: "settings.customProfileInvalid" })}</p>}
                         </div>
@@ -95,12 +101,20 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
             <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.defaultTranslationLanguages" })} hint={intl.formatMessage({ id: "settings.defaultTranslationLanguagesHint" })}>
                 <div role="group" aria-label={intl.formatMessage({ id: "settings.defaultTranslationLanguages" })} className="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3">
                     {articleLanguages.filter((language) => language !== general.defaultArticleLanguage).map((language) => <label key={language} className="flex min-h-8 items-center gap-2 text-sm text-ink">
-                        <input className="size-4 accent-brand" type="checkbox" checked={general.defaultTranslationLanguages.includes(language)} onChange={(event) => void saveGeneral({ ...general, defaultTranslationLanguages: event.target.checked ? [...general.defaultTranslationLanguages, language] : general.defaultTranslationLanguages.filter((item) => item !== language) })} />
+                        <input
+                            className="size-4 accent-brand"
+                            type="checkbox"
+                            checked={general.defaultTranslationLanguages.includes(language)}
+                            onChange={(event) => void saveGeneral({ ...general, defaultTranslationLanguages: event.target.checked ? [...general.defaultTranslationLanguages, language] : general.defaultTranslationLanguages.filter((item) => item !== language) })} />
                         {intl.formatMessage({ id: languageMessageIds[language] })}
                     </label>)}
                 </div>
             </SettingRow>
         </SettingsGroup>
-        {pendingRemoval && <CustomProfileRemovalDialog profile={pendingRemoval} isDefault={publishing.defaultProfileId === pendingRemoval.id} close={() => setPendingRemoval(undefined)} remove={confirmRemoval} />}
+        {pendingRemoval && <CustomProfileRemovalDialog
+            profile={pendingRemoval}
+            isDefault={publishing.defaultProfileId === pendingRemoval.id}
+            close={() => setPendingRemoval(undefined)}
+            remove={confirmRemoval} />}
     </>;
 }

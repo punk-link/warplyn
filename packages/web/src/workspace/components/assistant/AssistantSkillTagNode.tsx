@@ -26,10 +26,20 @@ function SkillTag({ skill, nodeKey }: { skill: AssistantComposerSkill; nodeKey: 
         editor.focus();
     }, [editor, nodeKey]);
 
-    return <span data-assistant-skill-tag data-assistant-skill-chip contentEditable={false} className={("mx-1 inline-flex h-5 min-h-0 max-w-[calc(100%-0.5rem)] items-center gap-1 align-middle rounded-full border border-brand/45 bg-brand-soft " +
-        "px-1.5 text-xs font-semibold text-brand")} aria-label={intl.formatMessage({ id: "assistant.selectedSkill" }, { skill: label })}>
+    return <span
+        data-assistant-skill-tag
+        data-assistant-skill-chip
+        contentEditable={false}
+        className={("mx-1 inline-flex h-5 min-h-0 max-w-[calc(100%-0.5rem)] items-center gap-1 align-middle rounded-full border border-brand/45 bg-brand-soft " +
+        "px-1.5 text-xs font-semibold text-brand")}
+        aria-label={intl.formatMessage({ id: "assistant.selectedSkill" }, { skill: label })}>
         <span className="relative -top-px">{label}</span>
-        <button type="button" className="inline-grid size-3 min-h-0 place-items-center rounded-full p-0 text-brand/70 hover:bg-brand-soft hover:text-brand" aria-label={intl.formatMessage({ id: "assistant.removeSkill" }, { skill: label })} onMouseDown={(event) => event.preventDefault()} onClick={remove}><CloseIcon className="size-2" /></button>
+        <button
+            type="button"
+            className="inline-grid size-3 min-h-0 place-items-center rounded-full p-0 text-brand/70 hover:bg-brand-soft hover:text-brand"
+            aria-label={intl.formatMessage({ id: "assistant.removeSkill" }, { skill: label })}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={remove}><CloseIcon className="size-2" /></button>
     </span>;
 }
 

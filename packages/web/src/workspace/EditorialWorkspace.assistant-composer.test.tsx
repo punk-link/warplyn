@@ -18,7 +18,15 @@ describe("Editorial Assistant composer", () => {
     it("restores an unsent message only for its Article and clears it after sending", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);
-        const panel = (articleId: string) => <EditorialAssistantPanel articleId={articleId} state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} />;
+        const panel = (articleId: string) => <EditorialAssistantPanel
+            articleId={articleId}
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]} />;
         const first = renderLocalized(panel("one"));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));
@@ -40,7 +48,15 @@ describe("Editorial Assistant composer", () => {
     it("restores saved Author text without sending it", async () => {
         const onRequest = vi.fn().mockResolvedValue(undefined);
         localStorage.setItem("skladno-assistant-composer:one", JSON.stringify({ guidance: "Unsent direction", skillOffset: 0 }));
-        renderLocalized(<EditorialAssistantPanel articleId="one" state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} />);
+        renderLocalized(<EditorialAssistantPanel
+            articleId="one"
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]} />);
 
         await waitFor(() => expect(screen.getByRole("combobox", { name: getMessage("assistant.guidance") }).textContent).toBe("Unsent direction"));
         expect(onRequest).not.toHaveBeenCalled();
@@ -50,7 +66,17 @@ describe("Editorial Assistant composer", () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);
         const updateArticle = vi.fn().mockResolvedValue(undefined);
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} translationLanguages={["Portuguese"]} assistantMessages={[{ id: "greeting", articleId: "one", role: "assistant", kind: "greeting", status: "completed", template: "greeting", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }]} article={createArticleFixture("one", "First Article")} updateArticle={updateArticle} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            translationLanguages={["Portuguese"]}
+            assistantMessages={[{ id: "greeting", articleId: "one", role: "assistant", kind: "greeting", status: "completed", template: "greeting", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }]}
+            article={createArticleFixture("one", "First Article")}
+            updateArticle={updateArticle} />);
         const panelScope = within(panel.container);
 
         expect(panelScope.getByText(/here to help shape this Article/)).toBeTruthy();
@@ -80,7 +106,17 @@ describe("Editorial Assistant composer", () => {
     it("selects a Quick action", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" assistantMessages={[]} article={createArticleFixture("one", "First Article")} updateArticle={vi.fn()} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            assistantMessages={[]}
+            article={createArticleFixture("one", "First Article")}
+            updateArticle={vi.fn()} />);
         const panelScope = within(panel.container);
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(panelScope.getByRole("option", { name: getMessage("assistant.skill.narrativeDraft.label") }));
@@ -93,7 +129,15 @@ describe("Editorial Assistant composer", () => {
 
     it("shows built-in Skills by default", async () => {
         const user = userEvent.setup();
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={vi.fn().mockResolvedValue(undefined)} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} authorSkills={[{ reference: { source: "author", id: "house-style", version: "1" }, name: "House style", description: "Apply the Author's preferred house style." }]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={vi.fn().mockResolvedValue(undefined)}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]}
+            authorSkills={[{ reference: { source: "author", id: "house-style", version: "1" }, name: "House style", description: "Apply the Author's preferred house style." }]} />);
         const panelScope = within(panel.container);
 
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
@@ -122,7 +166,14 @@ describe("Editorial Assistant composer", () => {
 
     it("focuses the composer when clicking empty space beside its actions", async () => {
         const user = userEvent.setup();
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={vi.fn().mockResolvedValue(undefined)} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={vi.fn().mockResolvedValue(undefined)}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]} />);
         const composer = within(panel.container).getByRole("combobox", { name: getMessage("assistant.guidance") });
         const actionRow = panel.container.querySelector("[data-assistant-composer-actions]");
 
@@ -167,7 +218,14 @@ describe("Editorial Assistant composer", () => {
         const onRequest = vi.fn(() => new Promise<void>((resolve) => {
             finishRequest = resolve;
         }));
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]} />);
         const composer = within(panel.container).getByRole("combobox", { name: getMessage("assistant.guidance") });
         const articleControl = document.createElement("button");
         panel.container.append(articleControl);
@@ -182,7 +240,14 @@ describe("Editorial Assistant composer", () => {
     it("clears the composer while an Assistant response streams", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn(() => new Promise<void>(() => undefined));
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]} />);
         const panelScope = within(panel.container);
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(panelScope.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));
@@ -193,7 +258,15 @@ describe("Editorial Assistant composer", () => {
     it("sends the assistant request with Ctrl+Enter when configured", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn(() => new Promise<void>(() => undefined));
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} generalSettings={{ ...defaultGeneralSettings, assistantSendMode: "ctrl-enter" }} assistantMessages={[]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            generalSettings={{ ...defaultGeneralSettings, assistantSendMode: "ctrl-enter" }}
+            assistantMessages={[]} />);
         const composer = within(panel.container).getByRole("combobox", { name: getMessage("assistant.guidance") });
         await user.click(within(panel.container).getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(within(panel.container).getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));
@@ -207,7 +280,15 @@ describe("Editorial Assistant composer", () => {
     it("sends a selected skill without guidance as an Article request", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" assistantMessages={[]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            assistantMessages={[]} />);
         const panelScope = within(panel.container);
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(panelScope.getByRole("option", { name: getMessage("assistant.skill.flowAndClarity.label") }));
@@ -219,7 +300,16 @@ describe("Editorial Assistant composer", () => {
     it("creates a translation proposal for every configured default language", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" translationLanguages={["Spanish", "German"]} assistantMessages={[]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            translationLanguages={["Spanish", "German"]}
+            assistantMessages={[]} />);
         const panelScope = within(panel.container);
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(panelScope.getByRole("option", { name: getMessage("assistant.skill.translation.label") }));

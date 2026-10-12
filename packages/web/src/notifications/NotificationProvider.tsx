@@ -184,8 +184,14 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
     return <NotificationsContext.Provider value={value}>
         {children}
-        {visibleNotifications.map((notification) => <NotificationTimer key={notification.id} notification={notification} paused={(pauseReasons[notification.id]?.length ?? 0) > 0} dismiss={dismiss} start={startTimer} />)}
-        <NotificationViewport notifications={[...visibleNotifications].reverse()}
+        {visibleNotifications.map((notification) => <NotificationTimer
+            key={notification.id}
+            notification={notification}
+            paused={(pauseReasons[notification.id]?.length ?? 0) > 0}
+            dismiss={dismiss}
+            start={startTimer} />)}
+        <NotificationViewport
+            notifications={[...visibleNotifications].reverse()}
             label={intl.formatMessage({ id: "notifications.viewport" })}
             dismissLabel={(title) => intl.formatMessage({ id: "notifications.dismiss" }, { title })}
             dismiss={dismiss}

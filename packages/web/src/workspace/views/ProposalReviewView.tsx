@@ -49,7 +49,9 @@ function HighlightedText({ parts, tone }: { parts: HighlightPart[]; tone: "added
 
 function ProposalDiff({ original, proposed, layout, decision = "pending", highlight }: { original: string; proposed: string; layout: "columns" | "stacked"; decision?: ProposalDecision; highlight: boolean }) {
     const highlights = useMemo(() => highlight ? renderHighlightedText(original, proposed) : undefined, [highlight, original, proposed]);
-    return <Diff layout={layout} state={decision}
+    return <Diff
+        layout={layout}
+        state={decision}
         removed={highlights ? <HighlightedText parts={highlights.original} tone="removed" /> : original}
         added={highlights ? <HighlightedText parts={highlights.proposed} tone="added" /> : proposed} />;
 }
@@ -87,13 +89,36 @@ function ProposalReviewHeader({ presentation, counts, stale, accepted, displayMo
                 </div>
                 <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
                     {presentation.changes.length > 0 && <div className="flex items-center gap-1" aria-label={intl.formatMessage({ id: "views.proposalDisplayMode" })}>
-                        <IconButton variant="quiet" label={intl.formatMessage({ id: "views.proposalSideBySide" })} title={intl.formatMessage({ id: "views.proposalSideBySide" })} aria-pressed={displayMode === "side-by-side"} onClick={() => setDisplayMode("side-by-side")}><SideBySideIcon /></IconButton>
-                        <IconButton variant="quiet" label={intl.formatMessage({ id: "views.proposalStacked" })} title={intl.formatMessage({ id: "views.proposalStacked" })} aria-pressed={displayMode === "stacked"} onClick={() => setDisplayMode("stacked")}><StackedDiffIcon /></IconButton>
-                        <IconButton variant="quiet" label={intl.formatMessage({ id: "views.proposalHighlight" })} title={intl.formatMessage({ id: "views.proposalHighlight" })} aria-pressed={highlightChanges} onClick={() => setHighlightChanges((current) => !current)}><HighlightChangesIcon /></IconButton>
+                        <IconButton
+                            variant="quiet"
+                            label={intl.formatMessage({ id: "views.proposalSideBySide" })}
+                            title={intl.formatMessage({ id: "views.proposalSideBySide" })}
+                            aria-pressed={displayMode === "side-by-side"}
+                            onClick={() => setDisplayMode("side-by-side")}><SideBySideIcon /></IconButton>
+                        <IconButton
+                            variant="quiet"
+                            label={intl.formatMessage({ id: "views.proposalStacked" })}
+                            title={intl.formatMessage({ id: "views.proposalStacked" })}
+                            aria-pressed={displayMode === "stacked"}
+                            onClick={() => setDisplayMode("stacked")}><StackedDiffIcon /></IconButton>
+                        <IconButton
+                            variant="quiet"
+                            label={intl.formatMessage({ id: "views.proposalHighlight" })}
+                            title={intl.formatMessage({ id: "views.proposalHighlight" })}
+                            aria-pressed={highlightChanges}
+                            onClick={() => setHighlightChanges((current) => !current)}><HighlightChangesIcon /></IconButton>
                     </div>}
                     {presentation.changes.length > 1 && <nav className="flex gap-2" aria-label={intl.formatMessage({ id: "views.changeNavigation" })}>
-                        <IconButton variant="quiet" label={intl.formatMessage({ id: "views.previousChange" })} title={intl.formatMessage({ id: "views.previousChange" })} onClick={() => moveChange(-1)}><ChevronRightIcon className="size-4 rotate-180" /></IconButton>
-                        <IconButton variant="quiet" label={intl.formatMessage({ id: "views.nextChange" })} title={intl.formatMessage({ id: "views.nextChange" })} onClick={() => moveChange(1)}><ChevronRightIcon className="size-4" /></IconButton>
+                        <IconButton
+                            variant="quiet"
+                            label={intl.formatMessage({ id: "views.previousChange" })}
+                            title={intl.formatMessage({ id: "views.previousChange" })}
+                            onClick={() => moveChange(-1)}><ChevronRightIcon className="size-4 rotate-180" /></IconButton>
+                        <IconButton
+                            variant="quiet"
+                            label={intl.formatMessage({ id: "views.nextChange" })}
+                            title={intl.formatMessage({ id: "views.nextChange" })}
+                            onClick={() => moveChange(1)}><ChevronRightIcon className="size-4" /></IconButton>
                     </nav>}
                     {stale ? <>
                         <Button variant="secondary" onClick={openWrite}>{intl.formatMessage({ id: "views.reviewCurrentArticle" })}</Button>
@@ -164,13 +189,35 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
     const allResolved = counts.pending === 0 && presentation.changes.length > 0;
 
     return <div className="flex min-h-0 flex-1 flex-col">
-        <ProposalReviewHeader presentation={presentation} counts={counts} stale={stale} accepted={accepted} displayMode={displayMode} setDisplayMode={setDisplayMode} highlightChanges={highlightChanges} setHighlightChanges={setHighlightChanges} rejectAll={rejectAll} acceptAll={acceptAll} applyAccepted={applyAccepted} acceptanceBlocked={acceptanceBlocked} allResolved={allResolved} moveChange={moveChange} openWrite={openWrite} openAssistant={openAssistant} dismissProposal={dismissProposal} />
+        <ProposalReviewHeader
+            presentation={presentation}
+            counts={counts}
+            stale={stale}
+            accepted={accepted}
+            displayMode={displayMode}
+            setDisplayMode={setDisplayMode}
+            highlightChanges={highlightChanges}
+            setHighlightChanges={setHighlightChanges}
+            rejectAll={rejectAll}
+            acceptAll={acceptAll}
+            applyAccepted={applyAccepted}
+            acceptanceBlocked={acceptanceBlocked}
+            allResolved={allResolved}
+            moveChange={moveChange}
+            openWrite={openWrite}
+            openAssistant={openAssistant}
+            dismissProposal={dismissProposal} />
         <div className={("min-h-0 flex-1 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
             "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
             <div className="mx-auto w-full max-w-6xl p-4 pb-5">
                 {accepted && <Status className="mb-4" label={intl.formatMessage({ id: "views.proposalAccepted" })} tone="success" />}
                 <ProposalWarnings warnings={presentation.warnings} dismissed={warningsDismissed} dismiss={dismissWarnings} />
-                <ProposalFallbackDiff review={review} reliable={presentation.reliable} stale={stale} displayMode={displayMode} highlight={highlightChanges} />
+                <ProposalFallbackDiff
+                    review={review}
+                    reliable={presentation.reliable}
+                    stale={stale}
+                    displayMode={displayMode}
+                    highlight={highlightChanges} />
                 {presentation.changes.length === 0
                     ? <EmptyState title={intl.formatMessage({ id: "views.proposalNoChanges" })}>
                         <Button variant="secondary" onClick={dismissProposal}>{intl.formatMessage({ id: "views.dismissProposal" })}</Button>
@@ -179,16 +226,24 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                         const decision = decisions[change.id] ?? "pending";
                         const decisionStyles = { accepted: "border-success bg-success-soft", rejected: "border-danger bg-danger-soft", pending: "border-border bg-surface-raised" };
                         const decisionClasses = decisionStyles[decision];
-                        return <article key={change.id} ref={(element) => {
-                            cards.current[index] = element;
-                        }} tabIndex={-1} className={`rounded-panel border p-3 ${decisionClasses}`}>
+                        return <article
+                            key={change.id}
+                            ref={(element) => {
+                                cards.current[index] = element;
+                            }}
+                            tabIndex={-1}
+                            className={`rounded-panel border p-3 ${decisionClasses}`}>
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div>
                                     <h3 className="text-sm font-semibold">{intl.formatMessage({ id: `views.changeType.${change.kind}` as never }, { index: index + 1, total: presentation.changes.length })}</h3>
                                     <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: `views.decision.${decision}` as never })}</p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="secondary" state={decision === "rejected" ? "error" : "default"} disabled={accepted || stale} onClick={() => setDecision(change.id, "rejected")}>{intl.formatMessage({ id: "views.rejectChange" })}</Button>
+                                    <Button
+                                        variant="secondary"
+                                        state={decision === "rejected" ? "error" : "default"}
+                                        disabled={accepted || stale}
+                                        onClick={() => setDecision(change.id, "rejected")}>{intl.formatMessage({ id: "views.rejectChange" })}</Button>
                                     <Button state={decision === "accepted" ? "success" : "default"} disabled={accepted || stale} onClick={() => setDecision(change.id, "accepted")}>{intl.formatMessage({ id: "views.acceptChange" })}</Button>
                                 </div>
                             </div>
@@ -197,7 +252,12 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                                 <p>{summaries?.[change.id] ?? (summaryState === "loading" ? intl.formatMessage({ id: "views.proposalSummaryLoading" }) : intl.formatMessage({ id: "views.proposalSummaryUnavailable" }))}</p>
                             </div>
                             <div className="mt-4">
-                                <ProposalDiff decision={decision} original={change.baseLines.join("\n")} proposed={change.proposalLines.join("\n")} layout={displayMode === "side-by-side" ? "columns" : "stacked"} highlight={highlightChanges} />
+                                <ProposalDiff
+                                    decision={decision}
+                                    original={change.baseLines.join("\n")}
+                                    proposed={change.proposalLines.join("\n")}
+                                    layout={displayMode === "side-by-side" ? "columns" : "stacked"}
+                                    highlight={highlightChanges} />
                             </div>
                         </article>;
                     })}</div>
@@ -215,7 +275,11 @@ function ProposalFallbackDiff({ review, reliable, stale, displayMode, highlight 
 
     return <div className="mt-4">
         {!reliable && <Banner className="mb-3" tone="warning">{intl.formatMessage({ id: "views.proposalFallback" })}</Banner>}
-        <ProposalDiff original={review.baseContent} proposed={review.proposedContent} layout={displayMode === "side-by-side" ? "columns" : "stacked"} highlight={highlight} />
+        <ProposalDiff
+            original={review.baseContent}
+            proposed={review.proposedContent}
+            layout={displayMode === "side-by-side" ? "columns" : "stacked"}
+            highlight={highlight} />
     </div>;
 }
 

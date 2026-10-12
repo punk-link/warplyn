@@ -51,7 +51,13 @@ export function restoreTranslationSourceRevision(database: SqliteDatabase, histo
 
 
 function findFirstLaterLegacySourceRevision(database: SqliteDatabase, historical: ArticleRevision): unknown {
-    return database.prepare(("SELECT json_extract(provenance_json, '$.previousSourceRevisionId') source_revision_id FROM article_revisions WHERE article_id = ? AND rowid " +
-        "> (SELECT rowid FROM article_revisions WHERE id = ?) AND json_extract(provenance_json, '$.previousSourceRevisionId') IS NOT NULL ORDER BY rowid LIMIT 1"))
+    return database.prepare((`SELECT json_extract(provenance_json, '$.previousSourceRevisionId') source_revision_id
+        FROM article_revisions
+        WHERE article_id = ? AND rowid > (
+        SELECT rowid
+        FROM article_revisions
+        WHERE id = ?) AND json_extract(provenance_json, '$.previousSourceRevisionId') IS NOT NULL
+        ORDER BY rowid
+        LIMIT 1`))
         .get(historical.articleId, historical.id)?.source_revision_id;
 }

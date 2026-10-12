@@ -62,22 +62,38 @@ export function TranslationRefreshControl({ translation, linkedTranslations, sta
     };
 
     return <>
-        <Button variant="secondary" disabled={stale || !selected || Boolean(selected.draft)} aria-describedby={selected?.draft ? "translation-refresh-draft" : undefined} onClick={() => setTarget(selected)}>{intl.formatMessage({ id: "views.translationRefresh" })}</Button>
+        <Button
+            variant="secondary"
+            disabled={stale || !selected || Boolean(selected.draft)}
+            aria-describedby={selected?.draft ? "translation-refresh-draft" : undefined}
+            onClick={() => setTarget(selected)}>{intl.formatMessage({ id: "views.translationRefresh" })}</Button>
         {selected?.draft && <p id="translation-refresh-draft" className="text-xs text-muted">{intl.formatMessage({ id: "views.translationRefreshDraft" })}</p>}
-        {target && <Dialog ref={dialog} className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl" aria-labelledby="translation-refresh-title" onCancel={(event) => {
-            event.preventDefault();
-            if (!applying)
-                setTarget(undefined);
-        }}>
+        {target && <Dialog
+            ref={dialog}
+            className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+            aria-labelledby="translation-refresh-title"
+            onCancel={(event) => {
+                event.preventDefault();
+                if (!applying)
+                    setTarget(undefined);
+            }}>
             <h2 id="translation-refresh-title" className="text-lg font-semibold">{intl.formatMessage({ id: "views.translationRefreshTitle" })}</h2>
             <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "views.translationRefreshDescription" }, { title: target.title, language: translation.metadata.targetLanguage })}</p>
             {targets.length > 1 && <div className="mt-3">
-                <Select aria-label={intl.formatMessage({ id: "views.translationRefreshTarget" })} value={target.id} disabled={applying} onChange={(event) => setTarget(targets.find((article) => article.id === event.target.value))}>
+                <Select
+                    aria-label={intl.formatMessage({ id: "views.translationRefreshTarget" })}
+                    value={target.id}
+                    disabled={applying}
+                    onChange={(event) => setTarget(targets.find((article) => article.id === event.target.value))}>
                     {targets.map((article) => <option key={article.id} value={article.id}>{intl.formatMessage({ id: "views.translationLinkedTarget" }, { title: article.title, articleId: article.id, revisionId: article.sourceRevisionNumber ?? article.sourceRevisionId ?? "" })}</option>)}
                 </Select>
             </div>}
             <div className="mt-5 flex justify-end gap-2">
-                <Button ref={cancel} variant="secondary" disabled={applying} onClick={() => setTarget(undefined)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
+                <Button
+                    ref={cancel}
+                    variant="secondary"
+                    disabled={applying}
+                    onClick={() => setTarget(undefined)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
                 <Button disabled={stale || Boolean(target.draft)} state={applying ? "loading" : "default"} onClick={() => void accept()}>{intl.formatMessage({ id: "views.translationRefreshConfirm" })}</Button>
             </div>
         </Dialog>}

@@ -59,8 +59,13 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonHTML
     const { children, className, variant = "primary", compact = true, state = "default", loadingLabel, disabled, ...buttonProps } = props;
     const intl = useIntl();
     const loading = state === "loading";
-    return <button ref={ref} {...buttonProps} disabled={disabled || loading} className={joinClassNames(("self-center inline-flex min-h-9 items-center justify-center rounded-control border py-1.5 text-xs font-semibold leading-5 transition-colors " +
-        "active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55"), compact ? "px-2" : "px-3", buttonVariantClasses[variant], controlStateClasses[state], className)} aria-busy={loading || undefined}>
+    return <button
+        ref={ref}
+        {...buttonProps}
+        disabled={disabled || loading}
+        className={joinClassNames(("self-center inline-flex min-h-9 items-center justify-center rounded-control border py-1.5 text-xs font-semibold leading-5 transition-colors " +
+        "active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55"), compact ? "px-2" : "px-3", buttonVariantClasses[variant], controlStateClasses[state], className)}
+        aria-busy={loading || undefined}>
         {loading ? <>
             <span className="invisible" aria-hidden="true">{children}</span>
             <ActivityIndicator className="absolute inset-0 m-auto" />
@@ -147,13 +152,23 @@ export function TabList({ children, ...props }: PropsWithChildren<HTMLAttributes
 
 
 export function Tab({ children, selected, ...props }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement> & { selected: boolean }>) {
-    return <button {...props} className={joinClassNames("relative min-h-9 shrink-0 border-b-2 border-transparent px-2 py-2 text-xs text-muted hover:text-ink", selected ? "font-semibold text-brand after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-brand" : undefined, props.className)} role="tab" aria-selected={selected}>{children}</button>;
+    return <button
+        {...props}
+        className={joinClassNames("relative min-h-9 shrink-0 border-b-2 border-transparent px-2 py-2 text-xs text-muted hover:text-ink", selected ? "font-semibold text-brand after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-brand" : undefined, props.className)}
+        role="tab"
+        aria-selected={selected}>{children}</button>;
 }
 
 
 export function Progress({ value, label }: { value?: number; label: string }) {
     const safeValue = Math.max(0, Math.min(value ?? 0, 100));
-    return <div className="h-2 overflow-hidden rounded-full bg-brand-soft" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={safeValue}>
+    return <div
+        className="h-2 overflow-hidden rounded-full bg-brand-soft"
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={safeValue}>
         <span className="block h-full bg-brand transition-[width]" style={{ width: `${safeValue}%` }} />
     </div>;
 }

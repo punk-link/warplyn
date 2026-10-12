@@ -31,36 +31,56 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
 
     return <>
         <SettingsGroup label={intl.formatMessage({ id: "settings.backupStorage" })}>
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.backupFolder" })} hint={intl.formatMessage({ id: "settings.backupFolderHint" })} status={folderStatus ?? (folderName ? intl.formatMessage({ id: "settings.backupFolderSelected" }, { folderName }) : undefined)}><div className="flex gap-2"><Button variant="secondary" onClick={() => void (desktop ? desktop.chooseBackupDirectory() : chooseBackupFolder()).then((name) => {
-                setFolderName(name);
-                setFolderStatus(intl.formatMessage({ id: "settings.backupFolderSelected" }, { folderName: name }));
-                if (!desktop)
-                    void listWebBackups().then(setRestoreNames, () => undefined);
-            }, (error) => setFolderStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupFolderFailed") })))}>{intl.formatMessage({ id: "settings.chooseBackupFolder" })}</Button>
-            {desktop && folderName && <Button variant="quiet" onClick={() => void desktop.revealBackupDirectory()}>{intl.formatMessage({ id: "settings.revealBackupFolder" })}</Button>}</div>
+            <SettingRow
+                headingLevel={3}
+                label={intl.formatMessage({ id: "settings.backupFolder" })}
+                hint={intl.formatMessage({ id: "settings.backupFolderHint" })}
+                status={folderStatus ?? (folderName ? intl.formatMessage({ id: "settings.backupFolderSelected" }, { folderName }) : undefined)}><div className="flex gap-2"><Button variant="secondary" onClick={() => void (desktop ? desktop.chooseBackupDirectory() : chooseBackupFolder()).then((name) => {
+                    setFolderName(name);
+                    setFolderStatus(intl.formatMessage({ id: "settings.backupFolderSelected" }, { folderName: name }));
+                    if (!desktop)
+                        void listWebBackups().then(setRestoreNames, () => undefined);
+                }, (error) => setFolderStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupFolderFailed") })))}>{intl.formatMessage({ id: "settings.chooseBackupFolder" })}</Button>
+                {desktop && folderName && <Button variant="quiet" onClick={() => void desktop.revealBackupDirectory()}>{intl.formatMessage({ id: "settings.revealBackupFolder" })}</Button>}</div>
             </SettingRow>
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.createBackup" })} hint={intl.formatMessage({ id: "settings.createBackupHint" })} status={backupStatus ?? (creating ? intl.formatMessage({ id: "settings.backupCreating" }) : undefined)}>
+            <SettingRow
+                headingLevel={3}
+                label={intl.formatMessage({ id: "settings.createBackup" })}
+                hint={intl.formatMessage({ id: "settings.createBackupHint" })}
+                status={backupStatus ?? (creating ? intl.formatMessage({ id: "settings.backupCreating" }) : undefined)}>
                 <Button disabled={!folderName} state={creating ? "loading" : "default"} onClick={() => {
                     setCreating(true);
                     void (desktop ? desktop.createNativeBackup().then((backup) => backup.path.split(/[\\/]/).at(-1) ?? backup.path) : saveWebBackup(client, "manual", backupPolicy)).then((name) => setBackupStatus(intl.formatMessage({ id: "settings.backupCreated" }, { name })), (error) => setBackupStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupCreateFailed") }))).finally(() => setCreating(false));
                 }}>{intl.formatMessage({ id: "settings.createBackup" })}</Button>
             </SettingRow>
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.restoreBackup" })} hint={intl.formatMessage({ id: "settings.restoreBackupHint" })} status={restoreStatus}>
+            <SettingRow
+                headingLevel={3}
+                label={intl.formatMessage({ id: "settings.restoreBackup" })}
+                hint={intl.formatMessage({ id: "settings.restoreBackupHint" })}
+                status={restoreStatus}>
                 {desktop
                     ? <Button variant="secondary" disabled={!folderName} onClick={() => void desktop.restoreNativeBackup().catch(() => setRestoreStatus(intl.formatMessage({ id: "settings.restoreBackupFailed" })))}>
                         {intl.formatMessage({ id: "settings.restoreBackup" })}
                     </Button>
                     : <div>
-                        <Select aria-label={intl.formatMessage({ id: "settings.restoreBackup" })} value={restoreName ?? ""} onChange={(event) => setRestoreName(event.target.value)} disabled={restoreNames.length === 0}>
+                        <Select
+                            aria-label={intl.formatMessage({ id: "settings.restoreBackup" })}
+                            value={restoreName ?? ""}
+                            onChange={(event) => setRestoreName(event.target.value)}
+                            disabled={restoreNames.length === 0}>
                             <option value="">{intl.formatMessage({ id: "settings.chooseBackup" })}</option>
                             {restoreNames.map((name) => <option key={name} value={name}>{name}</option>)}
                         </Select>
-                        <Button className="mt-3 w-fit" variant="secondary" disabled={!restoreName} onClick={() => {
-                            if (!restoreName || !window.confirm(intl.formatMessage({ id: "settings.restoreBackupConfirm" }, { name: restoreName })))
-                                return;
+                        <Button
+                            className="mt-3 w-fit"
+                            variant="secondary"
+                            disabled={!restoreName}
+                            onClick={() => {
+                                if (!restoreName || !window.confirm(intl.formatMessage({ id: "settings.restoreBackupConfirm" }, { name: restoreName })))
+                                    return;
 
-                            void restoreWebBackup(client, restoreName).then(() => window.location.reload(), (error) => setRestoreStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.restoreBackupFailed") })));
-                        }}>{intl.formatMessage({ id: "settings.restoreBackup" })}
+                                void restoreWebBackup(client, restoreName).then(() => window.location.reload(), (error) => setRestoreStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.restoreBackupFailed") })));
+                            }}>{intl.formatMessage({ id: "settings.restoreBackup" })}
                         </Button>
                     </div>
                 }
@@ -68,7 +88,11 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
         </SettingsGroup>
         <BackupAutomationSettings backupPolicy={backupPolicy} save={save} />
         {desktop && <SettingsGroup label={intl.formatMessage({ id: "settings.deleteData" })}>
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.deleteLocalData" })} hint={intl.formatMessage({ id: "settings.deleteLocalDataHint" })} status={deleteStatus}>
+            <SettingRow
+                headingLevel={3}
+                label={intl.formatMessage({ id: "settings.deleteLocalData" })}
+                hint={intl.formatMessage({ id: "settings.deleteLocalDataHint" })}
+                status={deleteStatus}>
                 <Button variant="danger" onClick={() => void desktop.deleteLocalData().catch(() => setDeleteStatus(intl.formatMessage({ id: "settings.deleteLocalDataFailed" })))}>{intl.formatMessage({ id: "settings.deleteLocalData" })}</Button>
             </SettingRow>
         </SettingsGroup>}
@@ -80,8 +104,14 @@ function BackupAutomationSettings({ backupPolicy, save }: { backupPolicy: Backup
     const intl = useIntl();
     return <SettingsGroup label={intl.formatMessage({ id: "settings.backupAutomation" })}>
         <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.automaticBackups" })} hint={intl.formatMessage({ id: "settings.automaticBackupsHint" })}>
-            <button type="button" role="switch" aria-checked={backupPolicy.schedule === "daily"} aria-label={intl.formatMessage({ id: "settings.automaticBackups" })} className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink " +
-                "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")} onClick={() => void save({ ...backupPolicy, schedule: backupPolicy.schedule === "daily" ? "off" : "daily" })}>
+            <button
+                type="button"
+                role="switch"
+                aria-checked={backupPolicy.schedule === "daily"}
+                aria-label={intl.formatMessage({ id: "settings.automaticBackups" })}
+                className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink " +
+                "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
+                onClick={() => void save({ ...backupPolicy, schedule: backupPolicy.schedule === "daily" ? "off" : "daily" })}>
                 <span aria-hidden="true" className={`relative inline-flex h-5 w-9 items-center rounded-full border p-0.5 transition-colors group-hover:border-brand ${backupPolicy.schedule === "daily" ? "border-brand bg-brand" : "border-border-strong bg-surface-raised"}`}>
                     <span className={`size-4 rounded-full border border-border-strong bg-surface transition-transform ${backupPolicy.schedule === "daily" ? "translate-x-4" : "translate-x-0"}`} />
                 </span>

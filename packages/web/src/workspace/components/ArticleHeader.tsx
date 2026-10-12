@@ -124,66 +124,112 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
     }
 
 
-    return <header data-focus-area="article-header" onKeyDown={handleHeaderKeyDown} className="border-b border-border bg-surface" aria-label={intl.formatMessage({ id: "articleHeader.metadata" })}>
+    return <header
+        data-focus-area="article-header"
+        onKeyDown={handleHeaderKeyDown}
+        className="border-b border-border bg-surface"
+        aria-label={intl.formatMessage({ id: "articleHeader.metadata" })}>
         <div className="flex min-h-12 items-center gap-2 overflow-x-auto px-4 py-1.5">
             <h1 className="min-w-0 flex-1 text-xl font-semibold tracking-tight">
                 {editingTitle
-                    ? <Field autoFocus aria-label={intl.formatMessage({ id: "articleHeader.title" })} className="h-10 min-h-10 w-full px-2 text-xl font-semibold tracking-tight" value={title} onBlur={finishTitleEditing} onChange={(event) => {
-                        setTitle(event.target.value);
-                        clearTimeout(renameTimer.current);
-                        renameTimer.current = setTimeout(() => persistTitle(event.target.value), 500);
-                    }} onKeyDown={(event) => {
-                        if (event.key === "Enter")
-                            event.currentTarget.blur();
-
-                        if (event.key === "Escape") {
+                    ? <Field
+                        autoFocus
+                        aria-label={intl.formatMessage({ id: "articleHeader.title" })}
+                        className="h-10 min-h-10 w-full px-2 text-xl font-semibold tracking-tight"
+                        value={title}
+                        onBlur={finishTitleEditing}
+                        onChange={(event) => {
+                            setTitle(event.target.value);
                             clearTimeout(renameTimer.current);
-                            setTitle(article.title);
-                            setEditingTitle(false);
-                        }
-                    }} />
-                    : <button data-focus-area-entry className="w-full truncate text-left hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" type="button" aria-label={intl.formatMessage({ id: "articleHeader.rename" }, { articleTitle: displayTitle })} onClick={() => setEditingTitle(true)}>{displayTitle}</button>}
+                            renameTimer.current = setTimeout(() => persistTitle(event.target.value), 500);
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter")
+                                event.currentTarget.blur();
+
+                            if (event.key === "Escape") {
+                                clearTimeout(renameTimer.current);
+                                setTitle(article.title);
+                                setEditingTitle(false);
+                            }
+                        }} />
+                    : <button
+                        data-focus-area-entry
+                        className="w-full truncate text-left hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                        type="button"
+                        aria-label={intl.formatMessage({ id: "articleHeader.rename" }, { articleTitle: displayTitle })}
+                        onClick={() => setEditingTitle(true)}>{displayTitle}</button>}
             </h1>
             {article.archived && <Badge className="shrink-0" tone="info">{intl.formatMessage({ id: "articleHeader.archived" })}</Badge>}
             <div className="flex shrink-0 items-center gap-1 text-xs" aria-label={intl.formatMessage({ id: "articleHeader.metadata" })}>
-                <IconButton variant="quiet" label={intl.formatMessage({ id: "articleHeader.saveRevision" })} title={getShortcutHint(intl.formatMessage({ id: "articleHeader.saveRevision" }), KEY_BINDING_COMMAND.SAVE_REVISION, shortcutOverrides)} onClick={() => void save().catch(() => undefined)}>
+                <IconButton
+                    variant="quiet"
+                    label={intl.formatMessage({ id: "articleHeader.saveRevision" })}
+                    title={getShortcutHint(intl.formatMessage({ id: "articleHeader.saveRevision" }), KEY_BINDING_COMMAND.SAVE_REVISION, shortcutOverrides)}
+                    onClick={() => void save().catch(() => undefined)}>
                     <SaveIcon className="size-4" />
                 </IconButton>
                 {files && <>
-                    <IconButton variant="quiet" label={intl.formatMessage({ id: "articleFiles.save" })} title={intl.formatMessage({ id: "articleFiles.menuSave" })} disabled={files.pending} onClick={(event) => {
-                        const trigger = event.currentTarget;
-                        void files.saveArticle().then(() => setFileFocusTarget(trigger));
-                    }}>
+                    <IconButton
+                        variant="quiet"
+                        label={intl.formatMessage({ id: "articleFiles.save" })}
+                        title={intl.formatMessage({ id: "articleFiles.menuSave" })}
+                        disabled={files.pending}
+                        onClick={(event) => {
+                            const trigger = event.currentTarget;
+                            void files.saveArticle().then(() => setFileFocusTarget(trigger));
+                        }}>
                         <SaveFileIcon className="size-4" />
                     </IconButton>
-                    <IconButton variant="quiet" label={intl.formatMessage({ id: "articleFiles.load" })} title={intl.formatMessage({ id: "articleFiles.menuLoad" })} disabled={files.pending} onClick={(event) => {
-                        const trigger = event.currentTarget;
-                        void files.loadArticle().then((loaded) => {
-                            if (!loaded)
-                                setFileFocusTarget(trigger);
-                        });
-                    }}>
+                    <IconButton
+                        variant="quiet"
+                        label={intl.formatMessage({ id: "articleFiles.load" })}
+                        title={intl.formatMessage({ id: "articleFiles.menuLoad" })}
+                        disabled={files.pending}
+                        onClick={(event) => {
+                            const trigger = event.currentTarget;
+                            void files.loadArticle().then((loaded) => {
+                                if (!loaded)
+                                    setFileFocusTarget(trigger);
+                            });
+                        }}>
                         <LoadFileIcon className="size-4" />
                     </IconButton>
                 </>}
                 <span aria-hidden="true" className="h-5 border-l border-border" />
-                <IconButton variant="quiet" label={intl.formatMessage({ id: article.archived ? "articleHeader.unarchiveArticle" : "articleHeader.archiveArticle" })} title={intl.formatMessage({ id: article.archived ? "articleHeader.unarchiveArticle" : "articleHeader.archiveArticle" })} onClick={() => void archive()}>
+                <IconButton
+                    variant="quiet"
+                    label={intl.formatMessage({ id: article.archived ? "articleHeader.unarchiveArticle" : "articleHeader.archiveArticle" })}
+                    title={intl.formatMessage({ id: article.archived ? "articleHeader.unarchiveArticle" : "articleHeader.archiveArticle" })}
+                    onClick={() => void archive()}>
                     <ArchiveIcon className="size-4" />
                 </IconButton>
-                <IconButton variant="danger-quiet" label={intl.formatMessage({ id: "articleHeader.deleteArticle" })} title={intl.formatMessage({ id: "articleHeader.deleteArticle" })} onClick={() => setDeleteConfirmationOpen(true)}>
+                <IconButton
+                    variant="danger-quiet"
+                    label={intl.formatMessage({ id: "articleHeader.deleteArticle" })}
+                    title={intl.formatMessage({ id: "articleHeader.deleteArticle" })}
+                    onClick={() => setDeleteConfirmationOpen(true)}>
                     <DeleteIcon className="size-4" />
                 </IconButton>
                 <span aria-hidden="true" className="h-5 border-l border-border" />
-                <IconButton variant="quiet" label={intl.formatMessage({ id: focusMode ? "articleHeader.leaveFocusMode" : "articleHeader.focusMode" })} title={getShortcutHint(intl.formatMessage({ id: focusMode ? "articleHeader.leaveFocusMode" : "articleHeader.focusMode" }), KEY_BINDING_COMMAND.TOGGLE_FOCUS_MODE, shortcutOverrides)} onClick={() => setFocusMode(!focusMode)}>
+                <IconButton
+                    variant="quiet"
+                    label={intl.formatMessage({ id: focusMode ? "articleHeader.leaveFocusMode" : "articleHeader.focusMode" })}
+                    title={getShortcutHint(intl.formatMessage({ id: focusMode ? "articleHeader.leaveFocusMode" : "articleHeader.focusMode" }), KEY_BINDING_COMMAND.TOGGLE_FOCUS_MODE, shortcutOverrides)}
+                    onClick={() => setFocusMode(!focusMode)}>
                     {focusMode ? <LeaveFocusIcon className="size-4" /> : <FocusIcon className="size-4" />}
                 </IconButton>
 
             </div>
         </div>
-        {deleteConfirmationOpen && <Dialog className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl" open aria-labelledby="delete-article-title" onCancel={(event) => {
-            event.preventDefault();
-            setDeleteConfirmationOpen(false);
-        }}>
+        {deleteConfirmationOpen && <Dialog
+            className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+            open
+            aria-labelledby="delete-article-title"
+            onCancel={(event) => {
+                event.preventDefault();
+                setDeleteConfirmationOpen(false);
+            }}>
             <h2 id="delete-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
             <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: displayTitle, count: groupCount })}</p>
             <div className="mt-5 flex justify-end gap-2">

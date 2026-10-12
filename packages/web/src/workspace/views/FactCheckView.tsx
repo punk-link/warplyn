@@ -109,8 +109,16 @@ export function FactCheckView({ data, actions }: { data: FactCheckData; actions:
                 <div className="ml-auto flex w-max max-w-full flex-col gap-2">
                     <div className="flex flex-wrap items-center justify-end gap-2">
                         {factCheck.findings.length > 1 && <nav className="flex gap-1" aria-label={intl.formatMessage({ id: "views.findingNavigation" })}>
-                            <IconButton variant="quiet" label={intl.formatMessage({ id: "views.previousFinding" })} title={intl.formatMessage({ id: "views.previousFinding" })} onClick={() => moveFinding(-1)}><ChevronRightIcon className="size-4 rotate-180" /></IconButton>
-                            <IconButton variant="quiet" label={intl.formatMessage({ id: "views.nextFinding" })} title={intl.formatMessage({ id: "views.nextFinding" })} onClick={() => moveFinding(1)}><ChevronRightIcon className="size-4" /></IconButton>
+                            <IconButton
+                                variant="quiet"
+                                label={intl.formatMessage({ id: "views.previousFinding" })}
+                                title={intl.formatMessage({ id: "views.previousFinding" })}
+                                onClick={() => moveFinding(-1)}><ChevronRightIcon className="size-4 rotate-180" /></IconButton>
+                            <IconButton
+                                variant="quiet"
+                                label={intl.formatMessage({ id: "views.nextFinding" })}
+                                title={intl.formatMessage({ id: "views.nextFinding" })}
+                                onClick={() => moveFinding(1)}><ChevronRightIcon className="size-4" /></IconButton>
                         </nav>}
                         <Button variant="secondary" onClick={runAgain}>{intl.formatMessage({ id: "views.runFactCheckAgain" })}</Button>
                         {eligible.length > 0 && <>
@@ -128,17 +136,26 @@ export function FactCheckView({ data, actions }: { data: FactCheckData; actions:
             <aside aria-label={intl.formatMessage({ id: "views.factCheckFindings" })} className={`divide-y divide-border overflow-y-auto rounded-panel border border-border ${quietScrollbar}`}>{factCheck.findings.map((finding) => {
                 const id = finding.occurrenceId ?? finding.claim;
                 const active = activeFindingId === id;
-                return <button type="button" key={id} className={`block w-full border-l-2 p-3 text-left text-sm hover:bg-brand-soft ${active ? "border-brand bg-brand-soft" : "border-transparent"}`} aria-current={active || undefined} onClick={() => selectFinding(finding)}>
+                return <button
+                    type="button"
+                    key={id}
+                    className={`block w-full border-l-2 p-3 text-left text-sm hover:bg-brand-soft ${active ? "border-brand bg-brand-soft" : "border-transparent"}`}
+                    aria-current={active || undefined}
+                    onClick={() => selectFinding(finding)}>
                     <span className={`block font-semibold ${finding.resolution ? "text-muted" : ""}`}>{finding.claim}</span>
                     <Badge className="mt-2 !rounded-control border" tone={tone[finding.status]}>{intl.formatMessage({ id: `views.factStatus.${finding.status}` })}</Badge>
                 </button>;
             })}</aside>
             <div ref={findingDetails} className={`space-y-3 overflow-y-auto pr-1 ${quietScrollbar}`}>{factCheck.findings.map((finding, index) => {
                 const id = finding.occurrenceId ?? finding.claim;
-                return <article className="scroll-mt-4 rounded-panel border border-border bg-surface-raised p-3" key={id} tabIndex={-1} ref={(element) => {
-                    findingElements.current[id] = element;
-                    findingNavigation.current[index] = element;
-                }}>
+                return <article
+                    className="scroll-mt-4 rounded-panel border border-border bg-surface-raised p-3"
+                    key={id}
+                    tabIndex={-1}
+                    ref={(element) => {
+                        findingElements.current[id] = element;
+                        findingNavigation.current[index] = element;
+                    }}>
                     <div className="flex flex-wrap items-start justify-between gap-3">
                         <Status compact label={intl.formatMessage({ id: `views.factStatus.${finding.status}` })} tone={tone[finding.status]}>
                             {finding.importance && <span className="ml-2">{intl.formatMessage({ id: "views.factImportance" }, { importance: finding.importance })}</span>}
@@ -159,7 +176,13 @@ export function FactCheckView({ data, actions }: { data: FactCheckData; actions:
                     <p className="mt-3">{finding.rationale}</p>
                     <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "views.uncertainty" }, { value: finding.uncertainty })}</p>
                     <div className="mt-4 space-y-2">
-                        {finding.sources.map((source) => <a className="block px-3 py-1.5 text-sm text-brand underline" key={source.url} href={source.url} title={source.url} target="_blank" rel="noreferrer">
+                        {finding.sources.map((source) => <a
+                            className="block px-3 py-1.5 text-sm text-brand underline"
+                            key={source.url}
+                            href={source.url}
+                            title={source.url}
+                            target="_blank"
+                            rel="noreferrer">
                             <strong>{source.title}</strong>
                             <span className="ml-2 text-muted">{source.quality}{source.publishedAt ? ` · ${source.publishedAt}` : ""}</span>
                         </a>)}
@@ -213,32 +236,59 @@ function FactCheckRunSelector({ data, selectRun }: { data: FactCheckData; select
 
     const selectedLabel = selectedHistoryRun ? runOptionLabel(selectedHistoryRun) : currentRevisionLabel;
     return <div className="relative flex max-w-full justify-end self-end">
-        <Button ref={historyTrigger} type="button" variant="secondary" compact className="!self-end inline-flex max-w-full items-center gap-2 !text-muted text-xs" aria-label={intl.formatMessage({ id: "views.factCheckHistory" })} aria-controls={historyOpen ? historyMenuId : undefined} aria-expanded={historyOpen} aria-haspopup="menu" onClick={() => setHistoryOpen((open) => !open)} onKeyDown={(event) => {
-            if (event.key === "Escape")
-                setHistoryOpen(false);
+        <Button
+            ref={historyTrigger}
+            type="button"
+            variant="secondary"
+            compact
+            className="!self-end inline-flex max-w-full items-center gap-2 !text-muted text-xs"
+            aria-label={intl.formatMessage({ id: "views.factCheckHistory" })}
+            aria-controls={historyOpen ? historyMenuId : undefined}
+            aria-expanded={historyOpen}
+            aria-haspopup="menu"
+            onClick={() => setHistoryOpen((open) => !open)}
+            onKeyDown={(event) => {
+                if (event.key === "Escape")
+                    setHistoryOpen(false);
 
-            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-                event.preventDefault();
-                setHistoryOpen(true);
-                focusHistoryOption(event.key === "ArrowUp");
-            }
-        }}>
+                if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                    event.preventDefault();
+                    setHistoryOpen(true);
+                    focusHistoryOption(event.key === "ArrowUp");
+                }
+            }}>
             <span className="truncate" title={selectedLabel}>{selectedLabel}</span>
             <ChevronDownIcon className={`size-3 shrink-0 transition-transform duration-150 motion-reduce:transition-none ${historyOpen ? "rotate-180" : ""}`} />
         </Button>
-        {historyOpen && <div id={historyMenuId} className={("absolute right-0 top-full z-20 mt-1 max-h-72 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-control border border-border " +
-            "bg-surface-raised p-1 shadow-raised")} role="menu" aria-label={intl.formatMessage({ id: "views.factCheckHistory" })} onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
-            setHistoryOpen(false);
-            historyTrigger.current?.focus();
-        })}>
-            <button className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
-                "focus-visible:ring-2 focus-visible:ring-brand")} type="button" role="menuitemradio" aria-checked={selectedRun === undefined} onClick={() => selectRunOption(undefined)}>
+        {historyOpen && <div
+            id={historyMenuId}
+            className={("absolute right-0 top-full z-20 mt-1 max-h-72 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-control border border-border " +
+            "bg-surface-raised p-1 shadow-raised")}
+            role="menu"
+            aria-label={intl.formatMessage({ id: "views.factCheckHistory" })}
+            onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
+                setHistoryOpen(false);
+                historyTrigger.current?.focus();
+            })}>
+            <button
+                className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                "focus-visible:ring-2 focus-visible:ring-brand")}
+                type="button"
+                role="menuitemradio"
+                aria-checked={selectedRun === undefined}
+                onClick={() => selectRunOption(undefined)}>
                 <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border bg-surface-raised text-brand"><UpdateIcon className="size-3" /></span>
                 <span className="min-w-0 flex-1 truncate" title={currentRevisionLabel}>{currentRevisionLabel}</span>
                 <span className="text-micro font-semibold text-muted">{intl.formatMessage({ id: "revisions.current" })}</span>
             </button>
-            {runs.map((run, index) => index !== currentRunIndex && <button key={index} className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
-                "focus-visible:ring-2 focus-visible:ring-brand")} type="button" role="menuitemradio" aria-checked={selectedRun === index} onClick={() => selectRunOption(index)}>
+            {runs.map((run, index) => index !== currentRunIndex && <button
+                key={index}
+                className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                "focus-visible:ring-2 focus-visible:ring-brand")}
+                type="button"
+                role="menuitemradio"
+                aria-checked={selectedRun === index}
+                onClick={() => selectRunOption(index)}>
                 <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border bg-surface-raised text-brand"><UpdateIcon className="size-3" /></span>
                 <span className="font-semibold">{revisionLabel(run.reviewedRevisionId ?? "")}</span>
                 <span className="min-w-0 flex-1 truncate" title={runOptionLabel(run)}>{run.createdAt ? formatCheckedAt(run.createdAt) : "—"}</span>

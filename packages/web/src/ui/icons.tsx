@@ -3,12 +3,23 @@ import type { Tone } from "./primitives.js";
 
 
 export function Icon({ children, ...props }: SVGProps<SVGSVGElement> & { children?: ReactNode }) {
-    return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>{children}</svg>;
+    return <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        {...props}>{children}</svg>;
 }
 
 
 export function FormatIcon({ children, ...props }: SVGProps<SVGSVGElement> & { children?: ReactNode }) {
-    return <Icon width="16" height="16" strokeWidth="2" {...props}>{children}</Icon>;
+    return <Icon
+        width="16"
+        height="16"
+        strokeWidth="2"
+        {...props}>{children}</Icon>;
 }
 
 
@@ -22,7 +33,14 @@ export const NumberedListIcon = () => <FormatIcon><path d="M10 6h10M10 12h10M10 
 export const SideBySideIcon = () => <FormatIcon><path d="M4 7h6M4 11h6M4 15h6M14 7h6M14 11h4" /></FormatIcon>;
 export const AlignedParagraphsIcon = () => <FormatIcon><path d="M3.5 6h7M13.5 6h7M3.5 10h5M15.5 10h5M3.5 14h7M13.5 14h7M3.5 18h5M15.5 18h5" /></FormatIcon>;
 export const StackedDiffIcon = () => <FormatIcon strokeWidth="1.8"><path d="M5 5h14M5 8h9M5 15h14M5 18h9" /></FormatIcon>;
-export const HighlightChangesIcon = () => <FormatIcon><path d="M4 6h16M4 12h5M15 12h5M4 18h16" /><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" stroke="none" /></FormatIcon>;
+export const HighlightChangesIcon = () => <FormatIcon><path d="M4 6h16M4 12h5M15 12h5M4 18h16" /><rect
+    x="9"
+    y="9"
+    width="6"
+    height="6"
+    rx="1"
+    fill="currentColor"
+    stroke="none" /></FormatIcon>;
 
 
 export function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
@@ -41,7 +59,12 @@ export function ArrowLeftIcon(props: SVGProps<SVGSVGElement>) {
 
 
 export function CopyIcon(props: SVGProps<SVGSVGElement>) {
-    return <Icon strokeWidth="1.8" {...props}><rect x="9" y="8" width="10" height="11" rx="1" /><path d="M15 8V5a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" /></Icon>;
+    return <Icon strokeWidth="1.8" {...props}><rect
+        x="9"
+        y="8"
+        width="10"
+        height="11"
+        rx="1" /><path d="M15 8V5a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" /></Icon>;
 }
 
 
@@ -51,7 +74,12 @@ export function CloseIcon(props: SVGProps<SVGSVGElement>) {
 
 
 export function StopIcon(props: SVGProps<SVGSVGElement>) {
-    return <Icon strokeWidth="1.8" {...props}><rect x="7" y="7" width="10" height="10" rx="1" /></Icon>;
+    return <Icon strokeWidth="1.8" {...props}><rect
+        x="7"
+        y="7"
+        width="10"
+        height="10"
+        rx="1" /></Icon>;
 }
 
 
@@ -123,7 +151,11 @@ export function AssistantIcon(props: SVGProps<SVGSVGElement>) {
 
 
 export function OpenAiIcon(props: SVGProps<SVGSVGElement>) {
-    return <svg viewBox="0 0 721 721" fill="currentColor" aria-hidden="true" {...props}><path d={("M304.246 294.611V249.028c0-3.839 1.441-6.719 4.798-8.636l91.648-52.78c12.475-7.197 27.35-10.554 42.702-10.554 57.577 0 94.046 44.624 94.046 " +
+    return <svg
+        viewBox="0 0 721 721"
+        fill="currentColor"
+        aria-hidden="true"
+        {...props}><path d={("M304.246 294.611V249.028c0-3.839 1.441-6.719 4.798-8.636l91.648-52.78c12.475-7.197 27.35-10.554 42.702-10.554 57.577 0 94.046 44.624 94.046 " +
         "92.124 0 3.358 0 7.197-.481 11.036l-95.005-55.66c-5.757-3.357-11.517-3.357-17.274 0l-120.434 70.053ZM518.245 " +
         "472.145V363.224c0-6.719-2.881-11.517-8.637-14.875l-120.434-70.053 39.345-22.553c3.358-1.917 6.238-1.917 9.596 0l91.647 52.78c26.392 15.356 " +
         "44.143 47.982 44.143 79.648 0 36.465-21.59 70.054-55.66 83.97ZM275.937 " +
@@ -143,24 +175,40 @@ export function OpenAiIcon(props: SVGProps<SVGSVGElement>) {
 
 
 export function AnthropicIcon(props: SVGProps<SVGSVGElement>) {
-    return <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}><path d="M17.304 3.541h-3.672l6.696 16.918H24Zm-10.608 0L0 20.459h3.744l1.37-3.553h7.005l1.37 3.553h3.744L10.536 3.541Zm-.371 10.223L8.616 7.82l2.291 5.946Z" /></svg>;
+    return <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+        {...props}><path d="M17.304 3.541h-3.672l6.696 16.918H24Zm-10.608 0L0 20.459h3.744l1.37-3.553h7.005l1.37 3.553h3.744L10.536 3.541Zm-.371 10.223L8.616 7.82l2.291 5.946Z" /></svg>;
 }
 
 
 export function GoogleIcon(props: SVGProps<SVGSVGElement>) {
-    return <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}><path d={("M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 " +
+    return <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+        {...props}><path d={("M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 " +
         "0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12S5.867 24 12.48 24c3.573 0 6.267-1.173 " +
         "8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053Z")} /></svg>;
 }
 
 
 export function XaiIcon(props: SVGProps<SVGSVGElement>) {
-    return <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}><path d="M3 2h4.2L12 8.2 16.8 2H21l-6.9 9.1L21 22h-4.2L12 15.8 7.2 22H3l6.9-10.9Z" /></svg>;
+    return <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+        {...props}><path d="M3 2h4.2L12 8.2 16.8 2H21l-6.9 9.1L21 22h-4.2L12 15.8 7.2 22H3l6.9-10.9Z" /></svg>;
 }
 
 
 export function DeepSeekIcon(props: SVGProps<SVGSVGElement>) {
-    return <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}><path d={("M23.748 " +
+    return <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+        {...props}><path d={("M23.748 " +
         "4.651c-.254-.124-.364.113-.512.233-.051.04-.094.09-.137.137-.372.397-.806.657-1.373.626-.829-.046-1.537.214-2.163.848-.133-.782-.575-1.248-1" +
         ".247-1.548-.352-.155-.708-.311-.955-.65-.172-.24-.219-.509-.305-.774-.055-.16-.11-.323-.293-.35-.2-.031-.278.136-.356.276-.313.572-.434 " +
         "1.202-.422 1.84.027 1.436.633 2.58 1.838 3.393.137.094.172.187.129.323-.082.28-.18.553-.266.833-.055.179-.137.218-.328.14a5.5 5.5 0 0 " +
@@ -182,7 +230,11 @@ export function DeepSeekIcon(props: SVGProps<SVGSVGElement>) {
 
 
 export function OpenCodeIcon(props: SVGProps<SVGSVGElement>) {
-    return <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}><path d="M22 24H2V0h20zM17 4.8H7v14.4h10z" /></svg>;
+    return <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+        {...props}><path d="M22 24H2V0h20zM17 4.8H7v14.4h10z" /></svg>;
 }
 
 

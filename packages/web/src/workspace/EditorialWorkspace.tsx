@@ -309,15 +309,31 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
         </main>;
 
     if (screen === "application-settings")
-        return <ApplicationSettings client={client} back={backToWorkspace} initialSection={settingsSection} onKeyBindingsUpdated={onKeyBindingsUpdated} onThemeApplied={onThemeApplied} focusUpdates={focusUpdates} onUpdatesFocused={onUpdatesFocused} openQuickStart={openQuickStart} />;
+        return <ApplicationSettings
+            client={client}
+            back={backToWorkspace}
+            initialSection={settingsSection}
+            onKeyBindingsUpdated={onKeyBindingsUpdated}
+            onThemeApplied={onThemeApplied}
+            focusUpdates={focusUpdates}
+            onUpdatesFocused={onUpdatesFocused}
+            openQuickStart={openQuickStart} />;
 
     return <WorkspaceScreen
         content={{ layout, workspace, assistant, editorial, revisions, corpus, publishing, articleFiles, generalSettings, authorSkills: authorSkills.authorSkills }}
         actions={{ ...actions, rejectTranslation, openSettings: actions.enterSettings, openModelSettings }}
         environment={{ dispatcher, shortcutOverrides: keyBindingOverrides, hasUsableAiConnection, loadAuthorSkills: authorSkills.loadAuthorSkills, overlays: <>
             <ArticleFileDialogs state={articleFiles.dialogs} />
-            <ExtractedRestoreRevisionDialog candidate={revisions.candidate} hasUncommittedChanges={workspace.hasUncommittedChanges} close={() => revisions.setCandidate(undefined)} restore={revisions.restore} />
-            <DraftConflictDialog conflict={workspace.conflict} open={Boolean(workspace.comparisonArticleId)} close={workspace.closeComparison} resolve={workspace.resolveConflict} />
+            <ExtractedRestoreRevisionDialog
+                candidate={revisions.candidate}
+                hasUncommittedChanges={workspace.hasUncommittedChanges}
+                close={() => revisions.setCandidate(undefined)}
+                restore={revisions.restore} />
+            <DraftConflictDialog
+                conflict={workspace.conflict}
+                open={Boolean(workspace.comparisonArticleId)}
+                close={workspace.closeComparison}
+                resolve={workspace.resolveConflict} />
         </> }}
         selection={selection} />;
 }

@@ -1,4 +1,6 @@
+import multilineManyJsxAttributes from "./multiline-many-jsx-attributes.mjs";
 import multilineLongStrings from "./multiline-long-strings.mjs";
+import sqlQueryLayout from "./sql-query-layout.mjs";
 
 
 const conditionalBraces = {
@@ -431,6 +433,8 @@ export default {
         "no-production-intl-provider": noProductionIntlProvider,
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
         "multiline-long-strings": multilineLongStrings,
+        "multiline-many-jsx-attributes": multilineManyJsxAttributes,
+        "sql-query-layout": sqlQueryLayout,
         "switch-case-body-newline": switchCaseBodyNewline,
         "two-blank-lines-between-declarations": twoBlankLinesBetweenDeclarations,
     },

@@ -30,25 +30,51 @@ export function CopyStatusControl({ copyMarkdown, copyPlainText, open, onToggle,
 
 
     return <div className="relative flex items-center">
-        <button className={`inline-flex h-6 items-center gap-1 border-x border-border px-1.5 transition-colors hover:bg-brand-soft hover:text-brand ${copyStatus === "failed" ? "text-danger" : "text-muted"}`} type="button" aria-live="polite" onClick={() => copy(copyMarkdown)}>
+        <button
+            className={`inline-flex h-6 items-center gap-1 border-x border-border px-1.5 transition-colors hover:bg-brand-soft hover:text-brand ${copyStatus === "failed" ? "text-danger" : "text-muted"}`}
+            type="button"
+            aria-live="polite"
+            onClick={() => copy(copyMarkdown)}>
             {copyStatus === "copied" ? <SuccessIcon className="size-3 motion-safe:animate-pulse" /> : <CopyIcon className="size-3" />}
             <span>{intl.formatMessage({ id: copyMessages[copyStatus] })}</span>
         </button>
-        <button ref={trigger} className={("grid size-6 place-items-center border-r border-border text-muted transition-colors hover:bg-brand-soft hover:text-brand " +
-            "focus-visible:outline focus-visible:outline-brand")} type="button" aria-label={menuLabel} aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" onClick={onToggle} onKeyDown={(event) => {
-            if (event.key === "Escape")
-                onClose();
+        <button
+            ref={trigger}
+            className={("grid size-6 place-items-center border-r border-border text-muted transition-colors hover:bg-brand-soft hover:text-brand " +
+            "focus-visible:outline focus-visible:outline-brand")}
+            type="button"
+            aria-label={menuLabel}
+            aria-controls={open ? menuId : undefined}
+            aria-expanded={open}
+            aria-haspopup="menu"
+            onClick={onToggle}
+            onKeyDown={(event) => {
+                if (event.key === "Escape")
+                    onClose();
 
-            openStatusMenu(event, onOpen, menuId);
-        }}>
+                openStatusMenu(event, onOpen, menuId);
+            }}>
             <ChevronDownIcon className={`size-3 transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
-        {open && <div id={menuId} className="absolute bottom-6 right-0 z-10 w-40 rounded-control border border-border bg-surface-raised p-1 shadow-raised" role="menu" aria-label={menuLabel} onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
-            onClose();
-            trigger.current?.focus();
-        })}>
-            <button className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none" type="button" role="menuitem" onClick={() => copy(copyMarkdown)}>{intl.formatMessage({ id: "articleHeader.copyMarkdown" })}</button>
-            <button className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none" type="button" role="menuitem" onClick={() => copy(copyPlainText)}>{intl.formatMessage({ id: "articleHeader.copyPlainText" })}</button>
+        {open && <div
+            id={menuId}
+            className="absolute bottom-6 right-0 z-10 w-40 rounded-control border border-border bg-surface-raised p-1 shadow-raised"
+            role="menu"
+            aria-label={menuLabel}
+            onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
+                onClose();
+                trigger.current?.focus();
+            })}>
+            <button
+                className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
+                type="button"
+                role="menuitem"
+                onClick={() => copy(copyMarkdown)}>{intl.formatMessage({ id: "articleHeader.copyMarkdown" })}</button>
+            <button
+                className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
+                type="button"
+                role="menuitem"
+                onClick={() => copy(copyPlainText)}>{intl.formatMessage({ id: "articleHeader.copyPlainText" })}</button>
         </div>}
     </div>;
 }

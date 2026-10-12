@@ -87,10 +87,14 @@ function isReasoningEffort(value: string): value is "low" | "medium" | "high" {
 function ReasoningEffortSelect({ value, onChange }: { value?: ModelPreferences["reasoningEffort"]; onChange: (value: NonNullable<ModelPreferences["reasoningEffort"]>) => void }) {
     const intl = useIntl();
     return <div className="mt-3">
-        <Select aria-label={intl.formatMessage({ id: "settings.reasoningEffort" })} title={intl.formatMessage({ id: "settings.reasoningEffortHint" })} value={value ?? "medium"} onChange={(event) => {
-            if (isReasoningEffort(event.target.value))
-                onChange(event.target.value);
-        }}><option value="low">{intl.formatMessage({ id: "settings.reasoningLow" })}</option>
+        <Select
+            aria-label={intl.formatMessage({ id: "settings.reasoningEffort" })}
+            title={intl.formatMessage({ id: "settings.reasoningEffortHint" })}
+            value={value ?? "medium"}
+            onChange={(event) => {
+                if (isReasoningEffort(event.target.value))
+                    onChange(event.target.value);
+            }}><option value="low">{intl.formatMessage({ id: "settings.reasoningLow" })}</option>
             <option value="medium">{intl.formatMessage({ id: "settings.reasoningMedium" })}</option>
             <option value="high">{intl.formatMessage({ id: "settings.reasoningHigh" })}</option>
         </Select>
@@ -121,21 +125,33 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
         setVendor((current) => current === "favorites" ? current : sourceVendor);
     }, [sourceVendor]);
     if (disabled)
-        return <div aria-label={label} aria-describedby={describedBy} aria-disabled="true" className="relative flex min-h-10 w-full items-center gap-2 rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink opacity-55">{selectedModel && <ProviderIcon provider={getModelProvider(selectedModel.model, selectedModel.provider)} viaProvider={selectedModel.provider} />}<span className="truncate">{selectedLabel}</span><ChevronDownIcon className="absolute right-3 size-4 text-muted" /></div>;
+        return <div
+            aria-label={label}
+            aria-describedby={describedBy}
+            aria-disabled="true"
+            className="relative flex min-h-10 w-full items-center gap-2 rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink opacity-55">{selectedModel && <ProviderIcon provider={getModelProvider(selectedModel.model, selectedModel.provider)} viaProvider={selectedModel.provider} />}<span className="truncate">{selectedLabel}</span><ChevronDownIcon className="absolute right-3 size-4 text-muted" /></div>;
 
-    return <details ref={select} open={open} className="group relative" onKeyDown={(event) => {
-        if (event.key === "Escape") {
-            close(); select.current?.querySelector("summary")?.focus();
-        }
-    }}>
-        <summary role="button" aria-label={label} aria-describedby={describedBy} className={("flex min-h-10 w-full cursor-pointer list-none items-center gap-2 rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 " +
+    return <details
+        ref={select}
+        open={open}
+        className="group relative"
+        onKeyDown={(event) => {
+            if (event.key === "Escape") {
+                close(); select.current?.querySelector("summary")?.focus();
+            }
+        }}>
+        <summary
+            role="button"
+            aria-label={label}
+            aria-describedby={describedBy}
+            className={("flex min-h-10 w-full cursor-pointer list-none items-center gap-2 rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 " +
             "text-sm leading-5 text-ink transition-colors hover:border-brand/45 hover:bg-brand-soft focus:outline-none focus-visible:ring-2 " +
             "focus-visible:ring-brand [&::-webkit-details-marker]:hidden")}
-        onClick={(event) => {
-            event.preventDefault();
-            setOpensUpward(window.innerHeight - event.currentTarget.getBoundingClientRect().bottom < 272);
-            setOpen(!open);
-        }}
+            onClick={(event) => {
+                event.preventDefault();
+                setOpensUpward(window.innerHeight - event.currentTarget.getBoundingClientRect().bottom < 272);
+                setOpen(!open);
+            }}
         >{selectedModel && <ProviderIcon provider={getModelProvider(selectedModel.model, selectedModel.provider)} viaProvider={selectedModel.provider} />}
             <span className="truncate">{selectedLabel}</span>
             <ChevronDownIcon className="absolute right-3 size-4 text-muted transition-transform group-open:rotate-180" />
@@ -143,18 +159,40 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
         <div className={`absolute z-10 w-full rounded-control border border-border bg-surface-raised p-1 shadow-raised ${opensUpward ? "bottom-full mb-1" : "top-full mt-1"}`}>
             <div className="relative">
                 <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
-                <Field ref={search} value={query} onChange={(event) => setQuery(event.target.value)} aria-label={intl.formatMessage({ id: "settings.searchModels" })} placeholder={intl.formatMessage({ id: "settings.searchModels" })} className="pl-9 pr-10" />
-                {query && <button type="button" aria-label={intl.formatMessage({ id: "settings.clearModelSearch" })} className={("absolute right-0 top-1/2 inline-grid size-9 -translate-y-1/2 place-items-center rounded-control border border-transparent p-1 text-brand " +
-                    "transition-colors hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")} onClick={() => {
-                    setQuery(""); search.current?.focus();
-                }}><CloseIcon className="size-4" />
+                <Field
+                    ref={search}
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    aria-label={intl.formatMessage({ id: "settings.searchModels" })}
+                    placeholder={intl.formatMessage({ id: "settings.searchModels" })}
+                    className="pl-9 pr-10" />
+                {query && <button
+                    type="button"
+                    aria-label={intl.formatMessage({ id: "settings.clearModelSearch" })}
+                    className={("absolute right-0 top-1/2 inline-grid size-9 -translate-y-1/2 place-items-center rounded-control border border-transparent p-1 text-brand " +
+                    "transition-colors hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
+                    onClick={() => {
+                        setQuery(""); search.current?.focus();
+                    }}><CloseIcon className="size-4" />
                 </button>}
             </div>
             <div className="mt-1 grid h-52 grid-cols-[3rem_minmax(0,1fr)]">
-                <div className={("flex min-h-0 flex-col items-center gap-1 overflow-x-hidden overflow-y-auto border-r border-border " +
+                <div
+                    className={("flex min-h-0 flex-col items-center gap-1 overflow-x-hidden overflow-y-auto border-r border-border " +
                     "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-                    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")} role="tablist" aria-label={intl.formatMessage({ id: "settings.modelVendorFilters" })} aria-orientation="vertical">
-                    {tabs.map((item) => <button key={item} type="button" role="tab" title={getVendorLabel(item)} aria-label={getVendorLabel(item)} aria-selected={vendor === item} className={`flex size-9 shrink-0 items-center justify-center rounded-control focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${vendor === item ? "bg-brand-soft text-brand" : "text-muted hover:bg-brand-soft hover:text-brand"}`} onClick={() => setVendor(item)}>
+                    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}
+                    role="tablist"
+                    aria-label={intl.formatMessage({ id: "settings.modelVendorFilters" })}
+                    aria-orientation="vertical">
+                    {tabs.map((item) => <button
+                        key={item}
+                        type="button"
+                        role="tab"
+                        title={getVendorLabel(item)}
+                        aria-label={getVendorLabel(item)}
+                        aria-selected={vendor === item}
+                        className={`flex size-9 shrink-0 items-center justify-center rounded-control focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${vendor === item ? "bg-brand-soft text-brand" : "text-muted hover:bg-brand-soft hover:text-brand"}`}
+                        onClick={() => setVendor(item)}>
                         {item === "favorites" ? <StarIcon className="size-4" />
                             : <ProviderMark provider={item === "other"
                                 ? AI_PROVIDER.OPENCODE : item} className={item === AI_PROVIDER.OPENAI ? "size-6" : "size-4"} />}
@@ -162,19 +200,33 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
                 </div>
                 <div className={("min-h-0 overflow-y-auto pl-1 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
                     "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")} role="listbox" aria-label={label}>
-                    {allowEmpty && <button type="button" role="option" aria-selected={!value} className={("flex min-h-9 w-full items-center rounded-control px-2 text-left text-sm text-muted hover:bg-brand-soft hover:text-brand focus:outline-none " +
-                        "focus-visible:ring-2 focus-visible:ring-brand")} onClick={() => {
-                        onChange(""); close();
-                    }}>{placeholder}</button>}
+                    {allowEmpty && <button
+                        type="button"
+                        role="option"
+                        aria-selected={!value}
+                        className={("flex min-h-9 w-full items-center rounded-control px-2 text-left text-sm text-muted hover:bg-brand-soft hover:text-brand focus:outline-none " +
+                        "focus-visible:ring-2 focus-visible:ring-brand")}
+                        onClick={() => {
+                            onChange(""); close();
+                        }}>{placeholder}</button>}
                     {visibleModels.map((model) => <div key={model.id} className="flex items-center gap-1">
-                        <button type="button" role="option" aria-selected={model.id === value || model.model === value} className={("flex min-h-9 min-w-0 flex-1 items-center gap-2 rounded-control px-2 text-left text-sm hover:bg-brand-soft focus:outline-none " +
-                            "focus-visible:ring-2 focus-visible:ring-brand")} onClick={() => {
-                            onChange(model.id); close();
-                        }}>
+                        <button
+                            type="button"
+                            role="option"
+                            aria-selected={model.id === value || model.model === value}
+                            className={("flex min-h-9 min-w-0 flex-1 items-center gap-2 rounded-control px-2 text-left text-sm hover:bg-brand-soft focus:outline-none " +
+                            "focus-visible:ring-2 focus-visible:ring-brand")}
+                            onClick={() => {
+                                onChange(model.id); close();
+                            }}>
                             <ProviderIcon provider={getModelProvider(model.model, model.provider)} viaProvider={model.provider} />
                             <span className="truncate">{getModelLabel(model.model)}</span>
                         </button>
-                        <IconButton label={intl.formatMessage({ id: (favorites.includes(model.id) || favorites.includes(model.model)) ? "settings.removeFavoriteModel" : "settings.addFavoriteModel" }, { model: getModelLabel(model.model) })} aria-pressed={favorites.includes(model.id) || favorites.includes(model.model)} className={favorites.includes(model.id) || favorites.includes(model.model) ? "text-brand" : undefined} onClick={() => onFavoritesChange((favorites.includes(model.id) || favorites.includes(model.model)) ? favorites.filter((favorite) => favorite !== model.id && favorite !== model.model) : [...favorites, model.id])}>
+                        <IconButton
+                            label={intl.formatMessage({ id: (favorites.includes(model.id) || favorites.includes(model.model)) ? "settings.removeFavoriteModel" : "settings.addFavoriteModel" }, { model: getModelLabel(model.model) })}
+                            aria-pressed={favorites.includes(model.id) || favorites.includes(model.model)}
+                            className={favorites.includes(model.id) || favorites.includes(model.model) ? "text-brand" : undefined}
+                            onClick={() => onFavoritesChange((favorites.includes(model.id) || favorites.includes(model.model)) ? favorites.filter((favorite) => favorite !== model.id && favorite !== model.model) : [...favorites, model.id])}>
                             <StarIcon className={favorites.includes(model.id) || favorites.includes(model.model) ? "size-4 fill-current" : "size-4"} />
                         </IconButton>
                     </div>)}
