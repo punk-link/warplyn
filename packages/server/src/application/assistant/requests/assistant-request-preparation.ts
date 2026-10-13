@@ -1,4 +1,4 @@
-import { APPLICATION_ERROR, BUILT_IN_SKILL, builtInSkillScopeCompatibility, getPublishLimitProfile, HTTP_STATUS, isBuiltInSkillId, isPublishLimitProfileId, type AssistantMessage, type EditorialOperation } from "@skladno/shared";
+import { APPLICATION_ERROR, getPublishLimitProfile, HTTP_STATUS, isPublishLimitProfileId, type AssistantMessage, type EditorialOperation } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import type { ArticleStore } from "../../articles/article-store.js";
@@ -11,20 +11,8 @@ import type { PreparedAssistantRequest } from "./prepared-assistant-request.js";
 import type { ReplayedAssistantRequest } from "./replayed-assistant-request.js";
 import type { AssistantServiceRequest } from "./assistant-service-request.js";
 import type { AssistantSkillCatalog } from "../skills/assistant-skill-catalog.js";
-
-
-function getEditorialOperationFor(skill: string): EditorialOperation | undefined {
-    const operations: Partial<Record<string, EditorialOperation>> = {
-        talking_points: "thesis_to_narrative",
-        narrative_draft: "thesis_to_narrative",
-        flow_and_clarity: "flow_revision",
-        fact_checking: "fact_check",
-        style_review: "style_review",
-        translation: "translation",
-    };
-
-    return operations[skill];
-}
+import type { AssistantSkillPackage } from "../skills/assistant-skill-package.js";
+import { resolveSkillExecution } from "../skills/skill-execution.js";
 
 
 export class AssistantRequestPreparation {
@@ -64,7 +52,7 @@ export class AssistantRequestPreparation {
         this.validatePreparation(replay, article.currentRevisionId, articleContent);
 
         const routing = this.resolveRequestRouting(replay);
-        this.validateResolvedRequest(replay, routing.resolvedSkillId, routing.usesCapabilityLoop);
+        this.validateResolvedRequest(replay, routing.operation, routing.usesCapabilityLoop);
         return {
             ...replay,
             articleContent,
@@ -109,35 +97,32 @@ export class AssistantRequestPreparation {
         if (request.explicitSkillId && !this.dependencies.skills.discover().some((skill) => skill.reference.id === request.explicitSkillId))
             throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SKILL_UNSUPPORTED, HTTP_STATUS.BAD_REQUEST);
 
-        if (request.explicitSkillId && isBuiltInSkillId(request.explicitSkillId) && !builtInSkillScopeCompatibility[request.explicitSkillId].includes(request.scope.kind))
-            throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SKILL_SCOPE_INCOMPATIBLE, HTTP_STATUS.BAD_REQUEST);
-
         if (request.scope.kind === "selection" && (request.scope.endOffset > articleContent.length || request.scope.startOffset >= request.scope.endOffset))
             throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SELECTION_INVALID, HTTP_STATUS.BAD_REQUEST);
     }
 
 
-    private resolveRequestRouting(request: ReplayedAssistantRequest): { resolvedSkillId?: string; operation?: EditorialOperation; engine: EditorialEngine; usesCapabilityLoop: boolean } {
+    private resolveRequestRouting(request: ReplayedAssistantRequest): { resolvedSkillId?: string; resolvedSkill?: AssistantSkillPackage; loadedSkills?: AssistantSkillPackage[]; operation?: EditorialOperation; engine: EditorialEngine; usesCapabilityLoop: boolean } {
         const resolvedSkillId = request.explicitSkillId;
         if (!resolvedSkillId) {
             const engine = this.resolveAssistantEngine();
             return { engine, usesCapabilityLoop: Boolean(engine.streamAssistant && this.dependencies.capabilities) };
         }
 
-        const operation = getEditorialOperationFor(resolvedSkillId);
-        if (!operation) {
-            const engine = this.resolveAssistantEngine();
-            return { resolvedSkillId, engine, usesCapabilityLoop: Boolean(engine.streamAssistant && this.dependencies.capabilities) };
-        }
+        const summary = this.dependencies.skills.discover().find((skill) => skill.reference.id === resolvedSkillId);
+        const resolvedSkill = summary && this.dependencies.skills.load([summary.reference])[0];
+        if (!resolvedSkill)
+            throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SKILL_UNSUPPORTED, HTTP_STATUS.BAD_REQUEST);
 
-        const engine = this.resolveEngine(operation, isBuiltInSkillId(resolvedSkillId) ? resolvedSkillId : undefined);
+        const resolved = resolveSkillExecution(resolvedSkill, request.scope.kind);
+        const engine = resolved.operation ? this.resolveEngine(resolved.operation, resolvedSkillId) : this.resolveAssistantEngine();
         const usesCapabilityLoop = Boolean(engine.streamAssistant && this.dependencies.capabilities);
 
-        return { resolvedSkillId, operation, engine, usesCapabilityLoop };
+        return { ...resolved, engine, usesCapabilityLoop };
     }
 
 
-    private resolveEngine(operation: EditorialOperation, skillId?: import("@skladno/shared").BuiltInSkillId): EditorialEngine {
+    private resolveEngine(operation: EditorialOperation, skillId?: string): EditorialEngine {
         const engine = this.dependencies.engines.resolve(operation, skillId);
         if (!engine)
             throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
@@ -155,11 +140,11 @@ export class AssistantRequestPreparation {
     }
 
 
-    private validateResolvedRequest(request: ReplayedAssistantRequest, resolvedSkillId: string | undefined, usesCapabilityLoop: boolean): void {
-        if (!usesCapabilityLoop && resolvedSkillId === BUILT_IN_SKILL.TRANSLATION && !request.targetLanguage?.trim())
+    private validateResolvedRequest(request: ReplayedAssistantRequest, operation: EditorialOperation | undefined, usesCapabilityLoop: boolean): void {
+        if (!usesCapabilityLoop && operation === "translation" && !request.targetLanguage?.trim())
             throw new ApplicationServiceError(APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED, HTTP_STATUS.BAD_REQUEST);
 
-        if (!usesCapabilityLoop && resolvedSkillId === BUILT_IN_SKILL.STYLE_REVIEW && this.dependencies.styleCorpus.getStyleCorpus().status !== "ready")
+        if (!usesCapabilityLoop && operation === "style_review" && this.dependencies.styleCorpus.getStyleCorpus().status !== "ready")
             throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
     }
 

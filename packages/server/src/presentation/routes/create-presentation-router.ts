@@ -22,7 +22,8 @@ const ROUTE_PARAMETER = "__route_parameter__";
 
 
 function createRoutePattern(path: string): RegExp {
-    return new RegExp(`^${path.replaceAll(ROUTE_PARAMETER, "([^/]+)")}$`);
+    const routePattern = new RegExp(`^${path.replaceAll(ROUTE_PARAMETER, "([^/]+)")}$`);
+    return routePattern;
 }
 
 

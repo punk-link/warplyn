@@ -48,15 +48,18 @@ test("an untagged selected edit uses the Article selection instead of asking for
         const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, { method: HTTP_METHOD.POST, headers: { "content-type": "application/json" }, body: JSON.stringify({ requestId: "selected-letter", authorMessage: "Change ё to е", interfaceLocale: "ru", scope: { kind: "selection", baseRevisionId: article.currentRevisionId, startOffset: 0, endOffset: 10 } }) });
 
         const events = await response.text();
-        assert.match(events, /"responseKind":"edit_applied"/);
-        assert.doesNotMatch(events, /"type":"text_delta"/);
+        const responsekindEditAppliedPattern = /"responseKind":"edit_applied"/;
+        assert.match(events, responsekindEditAppliedPattern);
+        const typeTextDeltaPattern = /"type":"text_delta"/;
+        assert.doesNotMatch(events, typeTextDeltaPattern);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "еще, потом");
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.description, "Changed ё to е");
 
         const protectedArticle = repositories.articleService.createArticle({ title: "Code", content: "Use `ё` here." });
         await fetch(`${baseUrl}/api/articles/${protectedArticle.id}/assistant/messages/edit-mode`, { method: HTTP_METHOD.PUT, headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "direct" }) });
         const protectedResponse = await fetch(`${baseUrl}/api/articles/${protectedArticle.id}/assistant/requests`, { method: HTTP_METHOD.POST, headers: { "content-type": "application/json" }, body: JSON.stringify({ requestId: "protected-letter", authorMessage: "Change ё to е", scope: { kind: "article", baseRevisionId: protectedArticle.currentRevisionId } }) });
-        assert.match(await protectedResponse.text(), /assistant_edit_invalid/);
+        const assistantEditInvalidPattern = /assistant_edit_invalid/;
+        assert.match(await protectedResponse.text(), assistantEditInvalidPattern);
         assert.equal(repositories.articles.getArticle(protectedArticle.id)?.currentRevision.content, "Use `ё` here.");
     }, true, verifier, undefined, descriptions);
 });
@@ -109,12 +112,14 @@ test("direct mode applies only an explicitly authorized whole-Article edit", asy
 
         authorized = true;
         const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, { method: HTTP_METHOD.POST, headers: { "content-type": "application/json" }, body: JSON.stringify({ requestId: "authorized", authorMessage: "Replace the Article with the improved wording.", explicitSkillId: "flow_and_clarity", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }) });
-        assert.match(await response.text(), /"responseKind":"edit_applied"/);
+        const responsekindEditAppliedPattern = /"responseKind":"edit_applied"/;
+        assert.match(await response.text(), responsekindEditAppliedPattern);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "After");
         assert.equal(repositories.assistant.listMessages(article.id).find((message) => message.requestId === "authorized" && message.role === "assistant")?.appliedEdit?.revisionId, repositories.articles.getArticle(article.id)?.currentRevisionId);
 
         const invalid = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, { method: HTTP_METHOD.POST, headers: { "content-type": "application/json" }, body: JSON.stringify({ requestId: "invalid-direct-edit", authorMessage: "Replace the Article with better wording.", explicitSkillId: "flow_and_clarity", scope: { kind: "article", baseRevisionId: repositories.articles.getArticle(article.id)!.currentRevisionId } }) });
-        assert.match(await invalid.text(), /assistant_edit_invalid/);
+        const assistantEditInvalidPattern = /assistant_edit_invalid/;
+        assert.match(await invalid.text(), assistantEditInvalidPattern);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "After");
         assert.equal(repositories.assistant.listMessages(article.id).find((message) => message.requestId === "invalid-direct-edit" && message.role === "assistant")?.status, "failed");
     }, true, verifier);
@@ -142,11 +147,16 @@ test("assistant requests persist a revision-bound proposal and splice only the s
         const body = await response.text();
         const artifact = repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!;
 
-        assert.match(body, /"type":"accepted"/);
-        assert.match(body, /"type":"skill_resolved".*"skillId":"flow_and_clarity"/);
-        assert.match(body, /"type":"capability_activity".*"summary":"Preparing a Proposal\.".*"status":"started"/);
-        assert.match(body, /"type":"capability_activity".*"summary":"Preparing a Proposal\.".*"status":"completed"/);
-        assert.match(body, /"type":"completed".*"responseKind":"proposal_prepared"/);
+        const typeAcceptedPattern = /"type":"accepted"/;
+        assert.match(body, typeAcceptedPattern);
+        const typeSkillResolvedPattern = /"type":"skill_resolved".*"skillId":"flow_and_clarity"/;
+        assert.match(body, typeSkillResolvedPattern);
+        const capabilityActivityStartedPattern = /"type":"capability_activity".*"summary":"Preparing a Proposal\.".*"status":"started"/;
+        assert.match(body, capabilityActivityStartedPattern);
+        const capabilityActivityCompletedPattern = /"type":"capability_activity".*"summary":"Preparing a Proposal\.".*"status":"completed"/;
+        assert.match(body, capabilityActivityCompletedPattern);
+        const typeCompletedResponsekindPattern = /"type":"completed".*"responseKind":"proposal_prepared"/;
+        assert.match(body, typeCompletedResponsekindPattern);
         assert.equal(engine.requests[0]?.article, "selected");
         assert.equal(engine.requests[0]?.articleSelection, true);
         assert.equal(JSON.parse(artifact.content).proposal, "before improved after");
@@ -176,8 +186,10 @@ test("the capability loop does not infer a Style Review from conversational tone
         const body = await response.text();
 
         assert.equal(response.status, 200);
-        assert.doesNotMatch(body, /"skillId":"style_review"/);
-        assert.doesNotMatch(body, /style_corpus_required/);
+        const skillidStyleReviewPattern = /"skillId":"style_review"/;
+        assert.doesNotMatch(body, skillidStyleReviewPattern);
+        const styleCorpusRequiredPattern = /style_corpus_required/;
+        assert.doesNotMatch(body, styleCorpusRequiredPattern);
         assert.equal(JSON.parse(repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!.content).capability, "generate_proposal");
     });
 });
@@ -200,8 +212,10 @@ test("the live Assistant routes a plain-language translation request through the
         });
         const body = await response.text();
 
-        assert.doesNotMatch(body, /"skillId":"translation"/);
-        assert.match(body, /"responseKind":"translation_proposal_prepared"/);
+        const skillidTranslationPattern = /"skillId":"translation"/;
+        assert.doesNotMatch(body, skillidTranslationPattern);
+        const responsekindTranslationProposalPattern = /"responseKind":"translation_proposal_prepared"/;
+        assert.match(body, responsekindTranslationProposalPattern);
         assert.equal(JSON.parse(repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!.content).capability, "translate");
     });
 });
@@ -224,9 +238,12 @@ test("the live Assistant tool loop runs no-input artifact capabilities", async (
         });
         const body = await response.text();
 
-        assert.match(body, /"summary":"Preparing claims\."/);
-        assert.match(body, /"type":"staged_completion"/);
-        assert.match(body, /"responseKind":"findings_prepared"/);
+        const summaryPreparingClaimsPattern = /"summary":"Preparing claims\."/;
+        assert.match(body, summaryPreparingClaimsPattern);
+        const typeStagedCompletionPattern = /"type":"staged_completion"/;
+        assert.match(body, typeStagedCompletionPattern);
+        const responsekindFindingsPreparedPattern = /"responseKind":"findings_prepared"/;
+        assert.match(body, responsekindFindingsPreparedPattern);
         assert.equal(repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]?.kind, "fact-check");
         assert.equal(repositories.assistant.getRequest("assistant-tool-fact")?.execution?.capability, "fact_check");
     });
@@ -280,7 +297,8 @@ test("Assistant HTTP rejects an Editorial operation used as a Skill ID", async (
             }),
         });
 
-        assert.match(await response.text(), /assistant_skill_unsupported/);
+        const assistantSkillUnsupportedPattern = /assistant_skill_unsupported/;
+        assert.match(await response.text(), assistantSkillUnsupportedPattern);
         assert.equal(repositories.assistant.getRequest("legacy-flow-request"), undefined);
     });
 });
@@ -363,6 +381,7 @@ test("assistant streams include a stable failure code", async () => {
             }),
         });
 
-        assert.match(await response.text(), /"errorCode":"editorial_provider_failed"/);
+        const errorcodeEditorialProviderPattern = /"errorCode":"editorial_provider_failed"/;
+        assert.match(await response.text(), errorcodeEditorialProviderPattern);
     });
 });

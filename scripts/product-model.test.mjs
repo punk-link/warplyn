@@ -62,5 +62,6 @@ test("product checker accepts linked scenarios and rejects unknown markers", asy
 
     const invalid = spawnSync(process.execPath, [checker, "check"], { cwd: invalidRoot, encoding: "utf8" });
     assert.equal(invalid.status, 1);
-    assert.match(invalid.stderr, /references unknown product scenario example\.unknown/);
+    const referencesUnknownProductPattern = /references unknown product scenario example\.unknown/;
+    assert.match(invalid.stderr, referencesUnknownProductPattern);
 });

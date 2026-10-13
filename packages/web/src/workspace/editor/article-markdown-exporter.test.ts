@@ -51,7 +51,8 @@ describe("Article Markdown block cache", () => {
             const first = root.getFirstChildOrThrow();
             root.append(first);
         });
-        expect(markdown()).toMatch(/# Title$/);
+        const titlePattern = /# Title$/;
+        expect(markdown()).toMatch(titlePattern);
         update(editor, () => $getRoot().getAllTextNodes()[0].getTopLevelElementOrThrow().remove());
         expect(markdown()).not.toContain("café");
         editor.setEditorState(original);

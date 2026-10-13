@@ -17,7 +17,11 @@ it("updates spelling language without replacing the editor or changing Markdown"
     window.warplynSpelling = { setArticleLanguage, request: vi.fn() };
     const setContent = vi.fn();
     const content = "Text `gRPC` [https://example.test](https://example.test) [Readable label](https://example.test)\n\n```\ncodeword\n```";
-    const element = (language?: string) => <IntlProvider locale="en" messages={messages}><NotificationProvider><ArticleRichEditor articleId="one" content={content} setContent={setContent} language={language} /></NotificationProvider></IntlProvider>;
+    const element = (language?: string) => <IntlProvider locale="en" messages={messages}><NotificationProvider><ArticleRichEditor
+        articleId="one"
+        content={content}
+        setContent={setContent}
+        language={language} /></NotificationProvider></IntlProvider>;
     const view = render(element("en"));
     const root = view.getByRole("textbox", { name: "Article draft" });
     expect(root.getAttribute("spellcheck")).toBe("true");
@@ -38,7 +42,11 @@ it("updates spelling language without replacing the editor or changing Markdown"
 });
 
 it("works without a desktop bridge and omits invalid language metadata", async () => {
-    const view = renderLocalized(<NotificationProvider><ArticleRichEditor articleId="one" content="Prose" setContent={vi.fn()} language="not a language" /></NotificationProvider>);
+    const view = renderLocalized(<NotificationProvider><ArticleRichEditor
+        articleId="one"
+        content="Prose"
+        setContent={vi.fn()}
+        language="not a language" /></NotificationProvider>);
     const root = view.getByRole("textbox", { name: "Article draft" });
     await waitFor(() => expect(root.textContent).toContain("Prose"));
     expect(root.hasAttribute("lang")).toBe(false);

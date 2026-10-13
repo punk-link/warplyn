@@ -122,7 +122,8 @@ test("operations begun without consent and stale generations are not delivered",
         owner.captureAtGeneration(createTelemetryEvent(), enabled);
         await tasks.run();
         assert.equal(bodies.length, 1);
-        assert.doesNotMatch(bodies[0]!, /app_failure/);
+        const appFailurePattern = /app_failure/;
+        assert.doesNotMatch(bodies[0]!, appFailurePattern);
     } finally {
         owner.dispose();
         rmSync(root, { recursive: true, force: true });
@@ -186,7 +187,8 @@ test("delivery expires old events, caps retained event rate, and stops an active
             now: () => currentTime,
             fetch: async (_input, init) => {
                 attempts += 1;
-                batchSize = String(init?.body).match(/"event":"app_failure"/g)?.length ?? 0;
+                const eventAppFailurePattern = /"event":"app_failure"/g;
+                batchSize = String(init?.body).match(eventAppFailurePattern)?.length ?? 0;
                 if (attempts === 1)
                     return new Promise<Response>((resolve) => {
                         resolveRequest = () => resolve(new Response(null, { status: 200 }));

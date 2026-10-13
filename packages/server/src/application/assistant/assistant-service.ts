@@ -2,6 +2,7 @@ import { APPLICATION_ERROR, ASSISTANT_EVENT, beginTimedTelemetryCapture, HTTP_ST
 
 import { AssistantCapabilityLoop } from "./capabilities/assistant-capability-loop.js";
 import { AssistantCompletion, getCompletedContent, getEditCandidate, getResponseKind } from "./completion/assistant-completion.js";
+import { requiresProposalReview, validateProposalResult } from "../editorial/proposals/proposal-result-policy.js";
 import { AssistantRequestPreparation } from "./requests/assistant-request-preparation.js";
 import type { FactChecksStore } from "./fact-checks-store.js";
 import type { PreparedAssistantRequest } from "./requests/prepared-assistant-request.js";
@@ -21,7 +22,7 @@ import { normalizeGeneralSettings } from "../settings/application-settings-norma
 import type { SettingsStore } from "../settings/settings-store.js";
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 import { AssistantEditError } from "./assistant-store.js";
-import { streamAssistantEngineEvents } from "./assistant-engine-request.js";
+import { getAssistantArticleExcerpt, streamAssistantEngineEvents } from "./assistant-engine-request.js";
 import { AssistantClaimSelection } from "./requests/assistant-claim-selection.js";
 import { getAssistantInitialEvents } from "./requests/assistant-initial-events.js";
 import { getActivityForEditorialOperation } from "./capabilities/editorial-capability-catalog.js";
@@ -298,7 +299,8 @@ export class AssistantService {
 
 
     private async authorizeCompletedEdit(request: PreparedAssistantRequest, event: Extract<EditorialEngineEvent, { type: "completed" }>, signal: AbortSignal): Promise<void> {
-        if (request.completedCapability !== "generate_proposal")
+        validateProposalResult(getAssistantArticleExcerpt(request), event.text, request.resolvedSkill?.execution);
+        if (request.completedCapability !== "generate_proposal" || requiresProposalReview(request.resolvedSkill?.execution))
             return;
 
         request.editCandidateAuthorized = await this.capabilityLoop.qualifiesReplacement(request, event.text, signal);

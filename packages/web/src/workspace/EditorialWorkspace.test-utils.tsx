@@ -7,6 +7,7 @@ import { vi } from "vitest";
 
 import type { EditorialWorkspaceClient } from "../application/client.js";
 import { messages } from "../i18n/messages.js";
+import { skillCatalogFixture } from "./skill-catalog.test-fixture.js";
 import { EditorialAssistantPanel } from "./components/EditorialAssistantPanel.js";
 import type { AssistantSelectionScope, StreamedAssistantMessage } from "./state/assistant-messages-state.js";
 import type { KeyBindingDispatcher } from "../key-bindings/dispatcher.js";
@@ -43,7 +44,7 @@ export function TestEditorialAssistantPanel(props: {
 }) {
     const { articleId, state, message, errorDetails, activity, factCheckClaims, onRequest, onCancel, onRetry, collapsed, setCollapsed, translationLanguages, assistantMessages, streamedMessage, dispatcher, shortcutOverrides, openView, selection, clearSelection, generalSettings, hasUnavailableAiConnection, openSettings, authorSkills, loadAuthorSkills } = props;
     return <EditorialAssistantPanel
-        data={{ articleId, state, message, errorDetails, activity, factCheckClaims, translationLanguages, assistantMessages, streamedMessage, selection, generalSettings, hasUnavailableAiConnection, authorSkills }}
+        data={{ articleId, state, message, errorDetails, activity, factCheckClaims, translationLanguages, assistantMessages, streamedMessage, selection, generalSettings, hasUnavailableAiConnection, authorSkills: [...skillCatalogFixture, ...(authorSkills ?? [])] }}
         actions={{ onRequest, onCancel, onRetry, loadAuthorSkills, dispatcher, shortcutOverrides, openView, clearSelection, openSettings }}
         layout={{ collapsed, setCollapsed }} />;
 }
@@ -72,7 +73,7 @@ export function createFakeClient(): EditorialWorkspaceClient {
         discardArticleDraft: vi.fn(),
         saveArticleRevision: vi.fn(),
         listArticleRevisions: vi.fn().mockResolvedValue([]),
-        listAssistantSkills: vi.fn().mockResolvedValue([]),
+        listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
         listAssistantMessages: vi.fn().mockResolvedValue([]),
         getAssistantEditMode: vi.fn().mockResolvedValue("review"),
         setAssistantEditMode: vi.fn().mockResolvedValue("direct"),
@@ -142,4 +143,3 @@ export function resetWorkspaceTestEnvironment() {
     window.skladnoShell = undefined;
     window.skladnoUpdates = undefined;
 }
-

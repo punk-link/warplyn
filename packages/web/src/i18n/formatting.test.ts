@@ -47,7 +47,8 @@ describe("date and time formatting", () => {
 
         expect(formatDateTime(value, "en", "day-first-dots", "24-hour", "UTC")).toBe("02.01.2026, 15:45");
         expect(formatTime(value, "en", "12-hour", "UTC")).toContain("03:45");
-        expect(formatTime(value, "en", "12-hour", "UTC")).toMatch(/PM/);
+        const punctuationPattern = /PM/;
+        expect(formatTime(value, "en", "12-hour", "UTC")).toMatch(punctuationPattern);
     });
 
 

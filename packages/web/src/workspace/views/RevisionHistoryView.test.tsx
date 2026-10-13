@@ -26,7 +26,12 @@ function createArticleRevision(id: string, content: string, kind: string, create
 
 function renderHistory(revisions: ArticleRevision[], currentRevisionId = revisions.at(-1)?.id ?? "", generalSettings?: GeneralSettings) {
     const select = vi.fn();
-    const result = render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView loadRevision={vi.fn()} revisions={revisions} currentRevisionId={currentRevisionId} select={select} generalSettings={generalSettings} /></IntlProvider>);
+    const result = render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView
+        loadRevision={vi.fn()}
+        revisions={revisions}
+        currentRevisionId={currentRevisionId}
+        select={select}
+        generalSettings={generalSettings} /></IntlProvider>);
 
     return { ...result, select };
 }
@@ -40,7 +45,12 @@ describe("RevisionHistoryView", () => {
         const loadRevision = vi.fn().mockResolvedValue(old);
         const saveRevision = vi.fn();
         const select = vi.fn();
-        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView revisions={[{ ...metadata, characterCount: content.length }, current]} loadRevision={loadRevision} currentRevisionId={current.id} select={select} files={{ pending: false, saveRevision }} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView
+            revisions={[{ ...metadata, characterCount: content.length }, current]}
+            loadRevision={loadRevision}
+            currentRevisionId={current.id}
+            select={select}
+            files={{ pending: false, saveRevision }} /></IntlProvider>);
         expect(loadRevision).not.toHaveBeenCalled();
         const user = userEvent.setup();
         await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
@@ -56,7 +66,11 @@ describe("RevisionHistoryView", () => {
         const current = createArticleRevision("current", "Current body", "author-draft", "2026-01-02T10:00:00.000Z");
         const { content, ...metadata } = old;
         const loadRevision = vi.fn().mockRejectedValueOnce(new Error("Unavailable")).mockResolvedValue(old);
-        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView revisions={[{ ...metadata, characterCount: content.length }, current]} loadRevision={loadRevision} currentRevisionId={current.id} select={vi.fn()} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView
+            revisions={[{ ...metadata, characterCount: content.length }, current]}
+            loadRevision={loadRevision}
+            currentRevisionId={current.id}
+            select={vi.fn()} /></IntlProvider>);
         const user = userEvent.setup();
         await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
         await screen.findByText(messages["workspace.revisionHistoryFailed"]);
@@ -72,7 +86,12 @@ describe("RevisionHistoryView", () => {
         const current = createArticleRevision("current", "Current Article", "author-draft", "2026-01-02T10:00:00.000Z", undefined, "Updated the Article");
         const saveRevision = vi.fn().mockResolvedValue(undefined);
         const select = vi.fn();
-        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView loadRevision={vi.fn()} revisions={[old, current]} currentRevisionId="current" select={select} files={{ pending: false, saveRevision }} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><RevisionHistoryView
+            loadRevision={vi.fn()}
+            revisions={[old, current]}
+            currentRevisionId="current"
+            select={select}
+            files={{ pending: false, saveRevision }} /></IntlProvider>);
         const user = userEvent.setup();
         await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
         await user.click(screen.getByRole("button", { name: "Save to file" }));
@@ -108,10 +127,11 @@ describe("RevisionHistoryView", () => {
         const restored = createArticleRevision("restored", "Target text", "restore", "2026-01-03T10:00:00.000Z", "target");
         const { select } = renderHistory([target, bypassed, restored]);
         const timeline = screen.getByRole("navigation", { name: "Revision history" });
-        const inactive = within(timeline).getByRole("button", { name: /Added two periods.*Inactive/ });
+        const addedTwoPeriodsPattern = /Added two periods.*Inactive/;
+        const inactive = within(timeline).getByRole("button", { name: addedTwoPeriodsPattern });
         expect(within(inactive).getByTitle("Added two periods").classList.contains("text-muted")).toBe(true);
         expect(within(timeline).getAllByText("Inactive")).toHaveLength(1);
-        expect(screen.getByRole("option", { name: /Added two periods.*Inactive/ })).toBeTruthy();
+        expect(screen.getByRole("option", { name: addedTwoPeriodsPattern })).toBeTruthy();
 
         const user = userEvent.setup();
         await user.click(inactive);
@@ -144,7 +164,8 @@ describe("RevisionHistoryView", () => {
         const current = createArticleRevision("current", "Current text", "accepted-proposal", "2026-01-02T10:00:00.000Z");
         const { select } = renderHistory([initial, current]);
 
-        await user.click(screen.getAllByRole("button", { name: /Initial Revision/ })[0]!);
+        const initialRevisionPattern = /Initial Revision/;
+        await user.click(screen.getAllByRole("button", { name: initialRevisionPattern })[0]!);
 
         expect(screen.getByText("Initial text")).toBeTruthy();
         expect((screen.getByRole("button", { name: getMessage("revisions.restore") }) as HTMLButtonElement).disabled).toBe(false);
@@ -199,7 +220,8 @@ describe("RevisionHistoryView", () => {
         expect(buttons[1]?.textContent).toContain("Empty Revision");
         expect(view.container.querySelectorAll('[data-revision-timeline-icon="initial"]')).toHaveLength(1);
         expect(view.container.querySelectorAll('[data-revision-timeline-icon="manual"]')).toHaveLength(1);
-        expect(screen.getByRole("option", { name: /Empty Revision/ })).toBeTruthy();
+        const emptyRevisionPattern = /Empty Revision/;
+        expect(screen.getByRole("option", { name: emptyRevisionPattern })).toBeTruthy();
     });
 
 
@@ -207,7 +229,9 @@ describe("RevisionHistoryView", () => {
         const initial = createArticleRevision("initial", "Initial", "initial", "2026-01-01T15:45:00.000Z");
         renderHistory([initial], initial.id, { ...defaultGeneralSettings, timeFormat: "24-hour", timeZone: "America/New_York" });
 
-        expect(screen.getAllByText(/10:45/).length).toBeGreaterThan(0);
-        expect(screen.queryByText(/PM/)).toBeNull();
+        const formattedLocalTimePattern = /10:45/;
+        expect(screen.getAllByText(formattedLocalTimePattern).length).toBeGreaterThan(0);
+        const twelveHourClockMarkerPattern = /PM/;
+        expect(screen.queryByText(twelveHourClockMarkerPattern)).toBeNull();
     });
 });

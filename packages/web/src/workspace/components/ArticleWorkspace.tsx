@@ -108,7 +108,11 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
 
     if (!article)
         return <EmptyState title={intl.formatMessage({ id: "navigation.noArticlesYet" })} className="pt-40">
-            <Button data-focus-area="article-editor" data-focus-area-entry title={getShortcutHint(intl.formatMessage({ id: "articleWorkspace.create" }), KEY_BINDING_COMMAND.NEW_ARTICLE, shortcutOverrides)} onClick={() => void createBlank()}>{intl.formatMessage({ id: "articleWorkspace.create" })}</Button>
+            <Button
+                data-focus-area="article-editor"
+                data-focus-area-entry
+                title={getShortcutHint(intl.formatMessage({ id: "articleWorkspace.create" }), KEY_BINDING_COMMAND.NEW_ARTICLE, shortcutOverrides)}
+                onClick={() => void createBlank()}>{intl.formatMessage({ id: "articleWorkspace.create" })}</Button>
         </EmptyState>;
 
     const revisionIndex = revisions.revisions.findIndex((revision) => revision.id === article.currentRevisionId);
@@ -120,7 +124,8 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
     const badges = createWorkspaceBadges(editorial, intl);
 
     return <div className="flex h-full min-h-0 flex-col overflow-hidden" data-article-workspace tabIndex={-1}>
-        <ArticleHeader article={article}
+        <ArticleHeader
+            article={article}
             updateArticle={workspace.updateArticle}
             save={workspace.save}
             files={articleFiles}
@@ -140,7 +145,11 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
             <span>{intl.formatMessage({ id: "draftSave.failure" })}</span>
             <Button className="ml-auto" variant="secondary" onClick={() => void workspace.retry()}>{intl.formatMessage({ id: "draftSave.retry" })}</Button>
         </Banner>}
-        <WorkspaceTabBar view={layout.view} setView={layout.setView} badges={badges} shortcutOverrides={shortcutOverrides} />
+        <WorkspaceTabBar
+            view={layout.view}
+            setView={layout.setView}
+            badges={badges}
+            shortcutOverrides={shortcutOverrides} />
         <WorkspaceViewRouter
             content={{ view: layout.view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, requestActive: state.requestActive, translationGeneration: state.translationGeneration, publishProfile: publishing.profile, publishProfileLabel }}
             actions={{ runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection, articleFiles }}
@@ -150,12 +159,23 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
                     layout.setView("write");
                 }, selectedTranslationLanguages: layout.selectedTranslationLanguages, setSelectedTranslationLanguage: layout.setSelectedTranslationLanguage
             }} />
-        <ArticleStatusBar revisionNumber={revisionNumber} revisionSelector={{ revisions: revisions.revisions.length ? revisions.revisions : [article.currentRevision], currentRevisionId: article.currentRevisionId, selectForRestore: revisions.setCandidate }} language={article.language ?? "en"} setLanguage={async (language) => {
-            try {
-                await workspace.updateArticle(article.id, { language });
-            } catch (error) {
-                notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.updateArticleFailed" }) });
-            }
-        }} saveState={workspace.saveState} length={publishing.length} profile={publishing.profile} customProfiles={publishing.settings.customProfiles} setProfile={publishing.setProfile} copyMarkdown={publishing.copyMarkdown} copyPlainText={publishing.copyPlainText} />
+        <ArticleStatusBar
+            revisionNumber={revisionNumber}
+            revisionSelector={{ revisions: revisions.revisions.length ? revisions.revisions : [article.currentRevision], currentRevisionId: article.currentRevisionId, selectForRestore: revisions.setCandidate }}
+            language={article.language ?? "en"}
+            setLanguage={async (language) => {
+                try {
+                    await workspace.updateArticle(article.id, { language });
+                } catch (error) {
+                    notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.updateArticleFailed" }) });
+                }
+            }}
+            saveState={workspace.saveState}
+            length={publishing.length}
+            profile={publishing.profile}
+            customProfiles={publishing.settings.customProfiles}
+            setProfile={publishing.setProfile}
+            copyMarkdown={publishing.copyMarkdown}
+            copyPlainText={publishing.copyPlainText} />
     </div>;
 }

@@ -156,10 +156,18 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
     let sectionContent = <DataBackupsSettingsSection client={client} backupPolicy={backupPolicy} save={saveBackupPolicy} />;
     switch (settings ? section : undefined) {
         case "general":
-            sectionContent = <GeneralSettingsSection general={general} save={saveGeneral} applyTheme={onThemeApplied} telemetry={telemetry} />;
+            sectionContent = <GeneralSettingsSection
+                general={general}
+                save={saveGeneral}
+                applyTheme={onThemeApplied}
+                telemetry={telemetry} />;
             break;
         case "keyBindings":
-            sectionContent = <KeyBindingSettings general={general} saveGeneral={saveGeneral} overrides={keyBindingOverrides} save={saveKeyBindingOverrides} />;
+            sectionContent = <KeyBindingSettings
+                general={general}
+                saveGeneral={saveGeneral}
+                overrides={keyBindingOverrides}
+                save={saveKeyBindingOverrides} />;
             break;
         case "ai":
             sectionContent = <AiSettingsSection
@@ -169,6 +177,7 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
                 preferences={preferences}
                 appModel={appModel}
                 models={ai.models}
+                skills={ai.skills}
                 connectionProvider={ai.connectionProvider}
                 connectionName={ai.connectionName}
                 environmentName={ai.environmentName}
@@ -191,7 +200,11 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
                 saveAppModel={saveAppModel} />;
             break;
         case "publishing":
-            sectionContent = <PublishingSettingsSection publishing={publishingSettings} save={savePublishingSettings} general={general} saveGeneral={saveGeneral} />;
+            sectionContent = <PublishingSettingsSection
+                publishing={publishingSettings}
+                save={savePublishingSettings}
+                general={general}
+                saveGeneral={saveGeneral} />;
             break;
         case "spelling":
             sectionContent = <SpellingSettingsSection />;
@@ -202,10 +215,22 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
     }
 
 
-    return <main ref={focusAreas.ref} onFocusCapture={focusAreas.onFocusCapture} onKeyDownCapture={focusAreas.onKeyDownCapture} className="flex h-screen flex-col overflow-hidden bg-surface text-ink md:flex-row">
-        <SettingsNavigation section={section} setSection={setSection} back={back} status={status} />
+    return <main
+        ref={focusAreas.ref}
+        onFocusCapture={focusAreas.onFocusCapture}
+        onKeyDownCapture={focusAreas.onKeyDownCapture}
+        className="flex h-screen flex-col overflow-hidden bg-surface text-ink md:flex-row">
+        <SettingsNavigation
+            section={section}
+            setSection={setSection}
+            back={back}
+            status={status} />
         <SettingsContent section={section} settings={settings}>{sectionContent}</SettingsContent>
         {ai.connectionPendingRemoval && <ConnectionRemovalDialog connection={ai.connectionPendingRemoval} close={() => ai.setConnectionPendingRemoval(undefined)} remove={() => void ai.removeConnection()} />}
-        {ai.connectionPendingRename && <ManagedConnectionRenameDialog label={ai.renamedConnectionLabel} setLabel={ai.setRenamedConnectionLabel} close={() => ai.setConnectionPendingRename(undefined)} save={() => void ai.renameManagedConnection()} />}
+        {ai.connectionPendingRename && <ManagedConnectionRenameDialog
+            label={ai.renamedConnectionLabel}
+            setLabel={ai.setRenamedConnectionLabel}
+            close={() => ai.setConnectionPendingRename(undefined)}
+            save={() => void ai.renameManagedConnection()} />}
     </main>;
 }

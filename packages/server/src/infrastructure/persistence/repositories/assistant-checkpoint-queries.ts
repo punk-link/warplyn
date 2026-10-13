@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { isBuiltInSkillId, type AssistantCheckpointPreview } from "@skladno/shared";
+import type { AssistantCheckpointPreview } from "@skladno/shared";
 
 import type { SqliteDatabase } from "../database.js";
 import { parseObject, type Row } from "./repository-utils.js";
@@ -7,13 +7,17 @@ import { parseObject, type Row } from "./repository-utils.js";
 
 export function getCheckpointAnchor(database: SqliteDatabase, articleId: string, messageId: string): Row | undefined {
     return database.prepare(`SELECT m.*, r.id request_id, r.created_at request_created_at, r.base_revision_id, r.scope_json, r.explicit_skill_id, r.resolved_skill_id, r.target_language
-        FROM assistant_messages m JOIN assistant_requests r ON r.id = m.request_id
+        FROM assistant_messages m
+        JOIN assistant_requests r ON r.id = m.request_id
         WHERE m.id = ? AND m.article_id = ? AND m.role = 'author' AND m.kind = 'message'`).get(messageId, articleId) as Row | undefined;
 }
 
 
 export function getCheckpointTail(database: SqliteDatabase, articleId: string, anchor: Row) {
-    const requests = database.prepare("SELECT id, retry_of_request_id, updated_at FROM assistant_requests WHERE article_id = ? AND (created_at > ? OR (created_at = ? AND id >= ?)) ORDER BY created_at, id")
+    const requests = database.prepare((`SELECT id, retry_of_request_id, updated_at
+        FROM assistant_requests
+        WHERE article_id = ? AND (created_at > ? OR (created_at = ? AND id >= ?))
+        ORDER BY created_at, id`))
         .all(articleId, String(anchor.request_created_at), String(anchor.request_created_at), String(anchor.request_id)) as Row[];
     const requestIds = requests.map((row) => String(row.id));
     const messages = database.prepare(`SELECT id, response_kind, editorial_artifact_id, updated_at FROM assistant_messages
@@ -32,7 +36,12 @@ export function createCheckpointPreview(database: SqliteDatabase, messageId: str
     const tailToken = createHash("sha256").update(JSON.stringify(tokenState)).digest("base64url");
     const responseKinds = tail.messages.map((row) => String(row.response_kind ?? ""));
     const revisionId = anchor.base_revision_id === null ? undefined : String(anchor.base_revision_id);
-    const revision = revisionId ? database.prepare("SELECT id, description, provenance_json, restored_from_revision_id, (SELECT COUNT(*) FROM article_revisions earlier WHERE earlier.article_id = r.article_id AND (earlier.created_at < r.created_at OR (earlier.created_at = r.created_at AND earlier.id <= r.id))) number FROM article_revisions r WHERE id = ? AND article_id = ?").get(revisionId, String(anchor.article_id)) as Row | undefined : undefined;
+    const revision = revisionId ? database.prepare((`SELECT id, description, provenance_json, restored_from_revision_id, (
+        SELECT COUNT(*)
+        FROM article_revisions earlier
+        WHERE earlier.article_id = r.article_id AND (earlier.created_at < r.created_at OR (earlier.created_at = r.created_at AND earlier.id <= r.id))) number
+        FROM article_revisions r
+        WHERE id = ? AND article_id = ?`)).get(revisionId, String(anchor.article_id)) as Row | undefined : undefined;
 
     return {
         messageId,
@@ -54,7 +63,7 @@ export function createCheckpointPreview(database: SqliteDatabase, messageId: str
 
 function checkpointComposer(anchor: Row): AssistantCheckpointPreview["composer"] {
     const storedSkillId = String(anchor.explicit_skill_id ?? anchor.resolved_skill_id ?? "");
-    const skillId = isBuiltInSkillId(storedSkillId) ? storedSkillId : undefined;
+    const skillId = storedSkillId || undefined;
     return {
         text: String(anchor.content ?? ""),
         ...(skillId ? { skillId } : {}),

@@ -1,4 +1,4 @@
-import type { BuiltInSkillId, EditorialOperation } from "@skladno/shared";
+import type { EditorialOperation } from "@skladno/shared";
 
 import type { EditorialEngine } from "./editorial-engine.js";
 import type { ProposalSummaryGenerator } from "../proposals/proposal-summary-generator.js";
@@ -8,7 +8,7 @@ import type { AssistantActionIntentVerifier } from "../assistant-action-intent-v
 
 
 export interface EditorialEngineResolver {
-    resolve(operation: EditorialOperation, assistantSkillId?: BuiltInSkillId): EditorialEngine | undefined;
+    resolve(operation: EditorialOperation, assistantSkillId?: string): EditorialEngine | undefined;
     resolveAssistant?(): EditorialEngine | undefined;
     resolveProposalSummaryGenerator?(): ProposalSummaryGenerator | undefined;
     resolveArticleTitleGenerator?(): ArticleTitleGenerator | undefined;

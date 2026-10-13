@@ -32,7 +32,11 @@ export class EditorialSessionsRepository {
             throw new Error("Article not found.");
 
         const updatedAt = getCurrentTimestamp();
-        this.database.prepare("INSERT INTO editorial_sessions (article_id, previous_response_id, connection_id, provider, model, updated_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(article_id) DO UPDATE SET previous_response_id = excluded.previous_response_id, connection_id = excluded.connection_id, provider = excluded.provider, model = excluded.model, updated_at = excluded.updated_at")
+        this.database.prepare((`INSERT INTO editorial_sessions (article_id, previous_response_id, connection_id, provider, model, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(article_id) DO UPDATE
+            SET previous_response_id = excluded.previous_response_id, connection_id = excluded.connection_id, provider = excluded.provider,
+                model = excluded.model, updated_at = excluded.updated_at`))
             .run(articleId, session.continuationToken ?? "", session.connectionId ?? null, session.provider ?? null, session.model ?? null, updatedAt);
 
         return { articleId, ...session, updatedAt };

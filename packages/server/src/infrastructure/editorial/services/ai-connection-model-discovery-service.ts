@@ -27,7 +27,8 @@ function createModelDiscoveryRequestOptions(provider: AiProvider, apiKey: string
 
 
 function normalizeModelId(id: string, provider: AiProvider): string {
-    return provider === AI_PROVIDER.GOOGLE ? id.replace(/^models\//, "") : id;
+    const modelsPattern = /^models\//;
+    return provider === AI_PROVIDER.GOOGLE ? id.replace(modelsPattern, "") : id;
 }
 
 

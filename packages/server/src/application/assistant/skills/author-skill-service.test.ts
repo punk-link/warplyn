@@ -19,7 +19,8 @@ test("Skill Creator supplies a package example that the real store accepts", () 
     const creator = builtInSkillSource.summaries().find((skill) => skill.reference.id === "skill_creator");
     assert.ok(creator);
     const instructions = builtInSkillSource.load(creator.reference)?.instructions ?? "";
-    const markdown = /```markdown\r?\n([\s\S]*?)```/.exec(instructions)?.[1];
+    const lineBreakPattern = /```markdown\r?\n([\s\S]*?)```/;
+    const markdown = lineBreakPattern.exec(instructions)?.[1];
     assert.ok(markdown, "The model needs the required package metadata format");
     const root = mkdtempSync(join(tmpdir(), "skladno-creator-example-"));
     const source = new FileAssistantSkillSource("author", join(root, "skills"));
@@ -28,6 +29,8 @@ test("Skill Creator supplies a package example that the real store accepts", () 
         service.create({ skillId: "concise-review", files: { "SKILL.md": markdown } });
         assert.equal(service.listRevisions("concise-review").length, 1);
         assert.ok(source.get("concise-review"));
+        assert.deepEqual(source.summaries()[0]?.execution, { capability: "generate_proposal", operation: "flow_revision", source: "article", resultPolicy: "shorter_preserving_content" });
+        assert.deepEqual(source.summaries()[0]?.scopes, ["article", "selection"]);
     } finally {
         rmSync(root, { recursive: true, force: true });
     }
@@ -73,7 +76,8 @@ test("a failed chat completion can roll back a Skill revision", () => {
     try {
         service.create({ skillId: "author-review", files: { "SKILL.md": initial } });
         const expectedHash = service.readCurrent("author-review")!.contentHash;
-        assert.throws(() => service.validateChange({ kind: "update", skillId: "author-review", skillMarkdown: revised, expectedHash: "wrong" }), /skill_package_conflict/);
+        const skillPackageConflictPattern = /skill_package_conflict/;
+        assert.throws(() => service.validateChange({ kind: "update", skillId: "author-review", skillMarkdown: revised, expectedHash: "wrong" }), skillPackageConflictPattern);
 
         const change = service.commitChange({ kind: "update", skillId: "author-review", skillMarkdown: revised, expectedHash }, "request-2");
         assert.equal(service.listRevisions("author-review").length, 2);
@@ -160,7 +164,8 @@ test("recovery leaves an unrelated external Skill edit untouched", () => {
         service.commitChange({ kind: "create", skillId: "author-review", skillMarkdown: initial }, "incomplete-request");
         writeFileSync(join(root, "skills", "author-review", "SKILL.md"), external);
 
-        assert.throws(() => service.recoverIncompleteChanges(() => false), /skill_package_conflict/);
+        const skillPackageConflictPattern = /skill_package_conflict/;
+        assert.throws(() => service.recoverIncompleteChanges(() => false), skillPackageConflictPattern);
         assert.equal(service.readCurrent("author-review")?.files["SKILL.md"], external);
         assert.equal(journal.list().length, 1);
     } finally {

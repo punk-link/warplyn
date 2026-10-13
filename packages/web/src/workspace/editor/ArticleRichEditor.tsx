@@ -25,7 +25,12 @@ export function ArticleRichEditor({ articleId, content, setContent, onSelectionC
     return <LexicalComposer key={articleId} initialConfig={config}>
         <ArticleSpellingPlugin language={language} />
         <div className="flex h-full min-h-0 flex-col">
-            <ArticleEditorContents content={content} onChange={setContent} onSelectionChange={onSelectionChange} assistantSelection={assistantSelection} language={isSpellingLanguage(language) ? language : undefined} />
+            <ArticleEditorContents
+                content={content}
+                onChange={setContent}
+                onSelectionChange={onSelectionChange}
+                assistantSelection={assistantSelection}
+                language={isSpellingLanguage(language) ? language : undefined} />
         </div>
     </LexicalComposer>;
 }

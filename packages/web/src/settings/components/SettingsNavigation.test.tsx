@@ -10,7 +10,11 @@ it("reaches every desktop section and the back action with arrow keys", async ()
     const user = userEvent.setup();
     const setSection = vi.fn();
     const back = vi.fn();
-    render(<IntlProvider locale="en" messages={messages}><SettingsNavigation section="general" setSection={setSection} back={back} status="" /></IntlProvider>);
+    render(<IntlProvider locale="en" messages={messages}><SettingsNavigation
+        section="general"
+        setSection={setSection}
+        back={back}
+        status="" /></IntlProvider>);
     const general = screen.getByRole("button", { name: "General" });
     general.focus();
     await user.keyboard("{ArrowDown}{Enter}");

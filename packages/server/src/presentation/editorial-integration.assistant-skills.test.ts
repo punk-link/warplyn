@@ -32,7 +32,8 @@ test("the Assistant model creates an Author-requested Skill without changing the
             }),
         });
 
-        assert.match(await response.text(), /"responseKind":"editorial_conversation"/);
+        const responsekindEditorialConversationPattern = /"responseKind":"editorial_conversation"/;
+        assert.match(await response.text(), responsekindEditorialConversationPattern);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "Original Article");
         assert.ok(services.skills.discover().some((skill) => skill.reference.id === "no-em-dashes"));
         assert.equal(services.authorSkills?.listRevisions("no-em-dashes").length, 1);
@@ -66,7 +67,8 @@ test("a Skill tool call followed by an incomplete run installs nothing", async (
             body: JSON.stringify({ requestId: "incomplete-skill", authorMessage: "Create a reusable Skill without em dashes.", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }),
         });
 
-        assert.doesNotMatch(await response.text(), /"type":"completed"/);
+        const typeCompletedPattern = /"type":"completed"/;
+        assert.doesNotMatch(await response.text(), typeCompletedPattern);
         assert.equal(services.skills.discover().some((skill) => skill.reference.id === "no-em-dashes"), false);
         assert.equal(services.authorSkills?.listRevisions("no-em-dashes").length, 0);
     }, true, verifier);
@@ -87,7 +89,8 @@ test("invalid Skill metadata returns a correction and installs nothing", async (
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ requestId: "invalid-skill", authorMessage: "Create a reusable Skill.", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }),
         });
-        assert.match(await response.text(), /"errorCode":"skill_invalid_metadata"/);
+        const errorcodeSkillInvalidPattern = /"errorCode":"skill_invalid_metadata"/;
+        assert.match(await response.text(), errorcodeSkillInvalidPattern);
         assert.equal(services.skills.discover().some((skill) => skill.reference.id === "invalid-skill"), false);
     }, true, verifier);
 });
@@ -126,7 +129,8 @@ test("a failed completion rolls back the created Skill and its history", async (
             body: JSON.stringify({ requestId: "stale-skill", authorMessage: "Create a reusable Skill without em dashes.", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }),
         });
 
-        assert.doesNotMatch(await response.text(), /"type":"completed"/);
+        const typeCompletedPattern = /"type":"completed"/;
+        assert.doesNotMatch(await response.text(), typeCompletedPattern);
         assert.equal(services.skills.discover().some((skill) => skill.reference.id === "no-em-dashes"), false);
         assert.equal(services.authorSkills?.listRevisions("no-em-dashes").length, 0);
     }, true, verifier);
@@ -137,7 +141,8 @@ test("an Author Skill persists its Article result as a Proposal instead of chat"
         async *stream(request): AsyncIterable<EditorialEngineEvent> {
             assert.equal(request.article, "Original Article");
             assert.equal(request.articleTitle, "Draft");
-            assert.match(request.authorContext, /Rewrite without em dashes/);
+            const rewriteWithoutDashesPattern = /Rewrite without em dashes/;
+            assert.match(request.skill?.instructions ?? "", rewriteWithoutDashesPattern);
             yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "proposal", text: "Rephrased without em dashes." };
         },
         streamConversation: createEmptyConversationStream,
@@ -165,7 +170,8 @@ test("an Author Skill persists its Article result as a Proposal instead of chat"
             body: JSON.stringify({ requestId: "author-skill-proposal", authorMessage: "", explicitSkillId: "no-em-dashes", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }),
         });
 
-        assert.match(await response.text(), /"responseKind":"proposal_prepared"/);
+        const responsekindProposalPreparedPattern = /"responseKind":"proposal_prepared"/;
+        assert.match(await response.text(), responsekindProposalPreparedPattern);
         assert.equal(repositories.assistant.listMessages(article.id).at(-1)?.responseKind, "proposal_prepared");
         assert.equal(repositories.editorialArtifacts.listEditorialArtifacts(article.id).at(-1)?.kind, "assistant-proposal");
     });
@@ -201,7 +207,8 @@ test("Assistant chat revises, restores, and deletes an Author Skill only on expl
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({ requestId, authorMessage, explicitSkillId: "skill_creator", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }),
             });
-            assert.match(await response.text(), /"type":"completed"/);
+            const typeCompletedPattern = /"type":"completed"/;
+            assert.match(await response.text(), typeCompletedPattern);
         };
 
         input = { skillId: "author-review", expectedHash: services.authorSkills!.readCurrent("author-review")!.contentHash, skillMarkdown: "---\nid: author-review\nname: Author review\ndescription: Review writing.\nversion: 1\n---\n# Revised review\n" };

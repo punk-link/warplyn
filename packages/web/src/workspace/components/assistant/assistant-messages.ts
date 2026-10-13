@@ -1,15 +1,4 @@
-import type { AssistantResponseKind, BuiltInSkillId } from "@skladno/shared";
-
-
-export const skillMessages: Record<BuiltInSkillId, "assistant.skill.talkingPoints.label" | "assistant.skill.narrativeDraft.label" | "assistant.skill.flowAndClarity.label" | "assistant.skill.factChecking.label" | "assistant.skill.styleReview.label" | "assistant.skill.translation.label" | "assistant.skill.skillCreator.label"> = {
-    talking_points: "assistant.skill.talkingPoints.label",
-    narrative_draft: "assistant.skill.narrativeDraft.label",
-    flow_and_clarity: "assistant.skill.flowAndClarity.label",
-    fact_checking: "assistant.skill.factChecking.label",
-    style_review: "assistant.skill.styleReview.label",
-    translation: "assistant.skill.translation.label",
-    skill_creator: "assistant.skill.skillCreator.label",
-};
+import type { AssistantResponseKind } from "@skladno/shared";
 
 
 export const responseMessages: Record<AssistantResponseKind, "assistant.response.conversation" | "assistant.response.editApplied" | "assistant.response.skill" | "assistant.response.proposal" | "assistant.response.findings" | "assistant.response.partialFindings" | "assistant.response.proposalAndFindings" | "assistant.response.translation" | "assistant.requestCancelled" | "assistant.requestFailed"> = {
@@ -27,7 +16,8 @@ export const responseMessages: Record<AssistantResponseKind, "assistant.response
 
 
 export function getSelectionPreview(selection: string): string {
-    const normalized = selection.replace(/\s+/g, " ").trim();
+    const whitespacePattern = /\s+/g;
+    const normalized = selection.replace(whitespacePattern, " ").trim();
 
     return normalized.length > 20 ? `${normalized.slice(0, 20)}…` : normalized;
 }

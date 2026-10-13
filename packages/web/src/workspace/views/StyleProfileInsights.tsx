@@ -21,7 +21,8 @@ const traitDescriptions: Record<string, MessageId> = {
     "uses explicit transitions": "styleProfile.trait.usesExplicitTransitions",
     "uses few explicit transitions": "styleProfile.trait.usesFewExplicitTransitions",
 };
-const quietScrollbar = "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong";
+const quietScrollbar = ("[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
 
 
 interface StyleProfileInsightsData {
@@ -75,15 +76,35 @@ export function StyleProfileInsights({ data, actions }: { data: StyleProfileInsi
         </div>)}</div>
         {corpus?.profile?.phrasesToAvoid.length ? <><h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.phrasesToAvoid" })}</h3><div className="flex flex-wrap gap-2">{corpus.profile.phrasesToAvoid.map((phrase) => <span className="rounded-control border border-danger/30 bg-danger-soft px-2 py-1 text-sm text-danger" key={phrase}>{phrase}</span>)}</div></> : null}
         <h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.manualRules" })}</h3>
-        <TextareaField id="style-profile-global-rules" aria-label={intl.formatMessage({ id: "styleProfile.rules" })} className="min-h-36" placeholder={intl.formatMessage({ id: "styleProfile.rules" })} value={rules} onChange={(event) => setRules(event.target.value)} />
+        <TextareaField
+            id="style-profile-global-rules"
+            aria-label={intl.formatMessage({ id: "styleProfile.rules" })}
+            className="min-h-36"
+            placeholder={intl.formatMessage({ id: "styleProfile.rules" })}
+            value={rules}
+            onChange={(event) => setRules(event.target.value)} />
         <div className="mt-3 flex items-center gap-3">
-            <Button variant="secondary" state={pendingAction === "rules" ? "loading" : "default"} disabled={Boolean(pendingAction)} onClick={onSaveRules}>{intl.formatMessage({ id: "styleProfile.saveRules" })}</Button>
+            <Button
+                variant="secondary"
+                state={pendingAction === "rules" ? "loading" : "default"}
+                disabled={Boolean(pendingAction)}
+                onClick={onSaveRules}>{intl.formatMessage({ id: "styleProfile.saveRules" })}</Button>
             <p className="text-xs text-muted" role="status">{intl.formatMessage({ id: getRuleStatus(rules, savedRules) })}</p>
         </div>
         <h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.thisArticle" })}</h3>
-        <TextareaField id="style-profile-article-rules" aria-label={intl.formatMessage({ id: "styleProfile.articleRules" })} className="min-h-28" placeholder={intl.formatMessage({ id: "styleProfile.articleRules" })} value={articleRules} onChange={(event) => setArticleRules(event.target.value)} />
+        <TextareaField
+            id="style-profile-article-rules"
+            aria-label={intl.formatMessage({ id: "styleProfile.articleRules" })}
+            className="min-h-28"
+            placeholder={intl.formatMessage({ id: "styleProfile.articleRules" })}
+            value={articleRules}
+            onChange={(event) => setArticleRules(event.target.value)} />
         <div className="mt-3 flex items-center gap-3">
-            <Button variant="secondary" state={pendingAction === "article-rules" ? "loading" : "default"} disabled={Boolean(pendingAction)} onClick={onSaveArticleRules}>{intl.formatMessage({ id: "styleProfile.saveRules" })}</Button>
+            <Button
+                variant="secondary"
+                state={pendingAction === "article-rules" ? "loading" : "default"}
+                disabled={Boolean(pendingAction)}
+                onClick={onSaveArticleRules}>{intl.formatMessage({ id: "styleProfile.saveRules" })}</Button>
             <p className="text-xs text-muted" role="status">{intl.formatMessage({ id: getRuleStatus(articleRules, savedArticleRules) })}</p>
         </div>
         {findings && <h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.review" })}</h3>}
@@ -96,12 +117,21 @@ export function StyleProfileInsights({ data, actions }: { data: StyleProfileInsi
 function ProfileSourceDisclosure({ expanded, toggle, contributors }: { expanded: boolean; toggle: () => void; contributors: string[] }) {
     const intl = useIntl();
     return <>
-        <Button className="mt-2 inline-flex min-h-0 items-center px-0 py-1 text-xs" variant="quiet" aria-expanded={expanded} aria-controls="style-profile-contributors" onClick={toggle}>
+        <Button
+            className="mt-2 inline-flex min-h-0 items-center px-0 py-1 text-xs"
+            variant="quiet"
+            aria-expanded={expanded}
+            aria-controls="style-profile-contributors"
+            onClick={toggle}>
             <span className="inline-flex items-center gap-1 whitespace-nowrap">
                 <ChevronRightIcon className={`size-3 transition-transform motion-reduce:transition-none ${expanded ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "styleProfile.showProfileSources" })}
             </span>
         </Button>
-        <div id="style-profile-contributors" aria-hidden={!expanded} {...(!expanded ? { inert: true } : {}) as Record<string, boolean>} className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
+        <div
+            id="style-profile-contributors"
+            aria-hidden={!expanded}
+            {...(!expanded ? { inert: true } : {}) as Record<string, boolean>}
+            className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
             <div className="overflow-hidden">
                 <ul className="mt-1 space-y-1 border-l border-border pl-3 text-xs">{contributors.map((name) => <li className="break-words" key={name}>{name}</li>)}</ul>
             </div>

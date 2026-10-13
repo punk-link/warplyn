@@ -63,7 +63,8 @@ test("the local service loads custom named keys from the project environment fil
 
 test("AI session continuation configuration rejects ambiguous values", () => {
     withConfigEnvironment({ WARPLYN_AI_SESSION_CONTINUATION: "yes" }, (environment) => {
-        assert.throws(() => loadServerConfig(environment), /WARPLYN_AI_SESSION_CONTINUATION must be either true or false/);
+        const warplynSessionContinuationPattern = /WARPLYN_AI_SESSION_CONTINUATION must be either true or false/;
+        assert.throws(() => loadServerConfig(environment), warplynSessionContinuationPattern);
     });
 });
 

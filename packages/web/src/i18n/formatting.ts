@@ -70,13 +70,19 @@ function formatSystemDate(value: string | Date, timeZone: TimeZonePreference): s
         }).format(new Date(value));
 
     const { year, month, day } = getNumericDateParts(value, timeZone);
+    const fourDigitYearPattern = /yyyy/g;
+    const twoDigitYearPattern = /yy/g;
+    const twoDigitDayPattern = /dd/g;
+    const dayPattern = /d/g;
+    const twoDigitMonthPattern = /MM/g;
+    const monthPattern = /M/g;
     return pattern
-        .replace(/yyyy/g, String(year).padStart(4, "0"))
-        .replace(/yy/g, String(year % 100).padStart(2, "0"))
-        .replace(/dd/g, String(day).padStart(2, "0"))
-        .replace(/d/g, String(day))
-        .replace(/MM/g, String(month).padStart(2, "0"))
-        .replace(/M/g, String(month));
+        .replace(fourDigitYearPattern, String(year).padStart(4, "0"))
+        .replace(twoDigitYearPattern, String(year % 100).padStart(2, "0"))
+        .replace(twoDigitDayPattern, String(day).padStart(2, "0"))
+        .replace(dayPattern, String(day))
+        .replace(twoDigitMonthPattern, String(month).padStart(2, "0"))
+        .replace(monthPattern, String(month));
 }
 
 
@@ -115,17 +121,27 @@ function applySystemTimePattern(pattern: string, valueByType: Record<string, str
     const twelveHour = hour % 12 || 12;
     const dayPeriod = hour < 12 ? "AM" : "PM";
 
+    const twentyFourHourPaddedPattern = /HH/g;
+    const twentyFourHourPattern = /H/g;
+    const twelveHourPaddedPattern = /hh/g;
+    const twelveHourPattern = /h/g;
+    const paddedMinutePattern = /mm/g;
+    const minutePattern = /m/g;
+    const paddedSecondPattern = /ss/g;
+    const secondPattern = /s/g;
+    const dayPeriodPattern = /tt/g;
+    const dayPeriodInitialPattern = /t/g;
     return pattern
-        .replace(/HH/g, String(hour).padStart(2, "0"))
-        .replace(/H/g, String(hour))
-        .replace(/hh/g, String(twelveHour).padStart(2, "0"))
-        .replace(/h/g, String(twelveHour))
-        .replace(/mm/g, valueByType.minute ?? "00")
-        .replace(/m/g, String(Number(valueByType.minute ?? "0")))
-        .replace(/ss/g, valueByType.second ?? "00")
-        .replace(/s/g, String(Number(valueByType.second ?? "0")))
-        .replace(/tt/g, dayPeriod)
-        .replace(/t/g, dayPeriod.slice(0, 1));
+        .replace(twentyFourHourPaddedPattern, String(hour).padStart(2, "0"))
+        .replace(twentyFourHourPattern, String(hour))
+        .replace(twelveHourPaddedPattern, String(twelveHour).padStart(2, "0"))
+        .replace(twelveHourPattern, String(twelveHour))
+        .replace(paddedMinutePattern, valueByType.minute ?? "00")
+        .replace(minutePattern, String(Number(valueByType.minute ?? "0")))
+        .replace(paddedSecondPattern, valueByType.second ?? "00")
+        .replace(secondPattern, String(Number(valueByType.second ?? "0")))
+        .replace(dayPeriodPattern, dayPeriod)
+        .replace(dayPeriodInitialPattern, dayPeriod.slice(0, 1));
 }
 
 
@@ -159,7 +175,8 @@ function getTimeZoneOffset(timeZone: string, date: Date): string {
         timeZone,
         timeZoneName: "longOffset",
     }).formatToParts(date).find((part) => part.type === "timeZoneName")?.value;
-    const match = /^GMT(?:(?<sign>[+-])(?<hours>\d{1,2})(?::(?<minutes>\d{2}))?)?$/.exec(name ?? "");
+    const gmtSignHoursPattern = /^GMT(?:(?<sign>[+-])(?<hours>\d{1,2})(?::(?<minutes>\d{2}))?)?$/;
+    const match = gmtSignHoursPattern.exec(name ?? "");
 
     if (!match)
         return "UTC+00:00";

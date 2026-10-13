@@ -3,6 +3,16 @@ id: flow_and_clarity
 name: Flow and Clarity
 description: Prepare a full-text Proposal that improves coherence and readability.
 version: 2
+execution:
+  capability: generate_proposal
+  operation: flow_revision
+  source: article
+  resultPolicy: verified_edit
+scopes: [article, selection]
+presentation:
+  order: 30
+  label: assistant.skill.flowAndClarity.label
+  hint: assistant.skill.flowAndClarity.hint
 references:
   - references/approval.md
 ---

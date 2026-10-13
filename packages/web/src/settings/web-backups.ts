@@ -30,6 +30,7 @@ const webBackupMessages: Record<WebBackupFailure, WebBackupMessageId> = {
 const databaseName = "skladno-web-backups";
 const storeName = "settings";
 const folderKey = "folder";
+const backupTimestampPattern = /[:.]/g;
 let automaticBackupInProgress = false;
 let selectedFolder: BackupDirectoryHandle | undefined;
 
@@ -43,7 +44,7 @@ export function getWebBackupErrorMessageId(error: unknown, fallback: WebBackupMe
 
 
 function createBackupFilename(kind: BackupKind): string {
-    return `skladno-${kind}-${new Date().toISOString().replaceAll(/[:.]/g, "-")}-${crypto.randomUUID()}.skladno`;
+    return `skladno-${kind}-${new Date().toISOString().replaceAll(backupTimestampPattern, "-")}-${crypto.randomUUID()}.skladno`;
 }
 
 
@@ -192,7 +193,8 @@ export async function saveWebBackup(client: BackupClient, kind: BackupKind, poli
     if (!client.createBackup)
         throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
 
-    const legacyName = name.replace(/\.skladno$/, ".sqlite");
+    const skladnoPattern = /\.skladno$/;
+    const legacyName = name.replace(skladnoPattern, ".sqlite");
     const file = await folder.getFileHandle(legacyName, { create: true });
     const writer = await file.createWritable();
     try {

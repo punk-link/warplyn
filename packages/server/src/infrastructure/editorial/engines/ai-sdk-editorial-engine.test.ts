@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { LanguageModelV3StreamPart } from "@ai-sdk/provider";
-import { AI_PROVIDER, EDITORIAL_OPERATION } from "@skladno/shared";
+import { AI_PROVIDER, BUILT_IN_SKILL, EDITORIAL_OPERATION } from "@skladno/shared";
 import { MockLanguageModelV3 } from "ai/test";
 
 import { EDITORIAL_ENGINE_EVENT } from "../../../application/editorial/engine/editorial-engine-events.js";
@@ -96,6 +96,33 @@ test("editorial prompts route system messages through AI SDK 7 instructions", as
 });
 
 
+test("Concise rewrite sends the complete requested source even beyond the conversational context bound", async () => {
+    const article = "Opening.\n" + "Evidence must survive.\n".repeat(1_200) + "Ending.\n";
+    const model = new MockLanguageModelV3({ doStream: async () => ({ stream: new ReadableStream<LanguageModelV3StreamPart>({ start(controller) {
+        controller.enqueue({ type: "text-start", id: "text" });
+        controller.enqueue({ type: "text-delta", id: "text", delta: article });
+        controller.enqueue({ type: "text-end", id: "text" });
+        controller.enqueue({ type: "finish", finishReason: { unified: "stop", raw: undefined }, usage: {
+            inputTokens: { total: 1, noCache: 1, cacheRead: 0, cacheWrite: 0 }, outputTokens: { total: 1, text: 1, reasoning: 0 },
+        } });
+        controller.close();
+    } }) }) });
+    const engine = new AiSdkEditorialEngine({ provider: AI_PROVIDER.OPENAI, languageModel: model, storeResponses: false });
+    for (const selection of [false, true]) {
+        for await (const event of engine.stream({ operation: EDITORIAL_OPERATION.FLOW_REVISION, skillId: BUILT_IN_SKILL.CONCISE_REWRITE, article, articleSelection: selection, articleTitle: "Private title", authorContext: "" }, new AbortController().signal))
+            assert.notEqual(event.type, "error");
+
+        const prompt = JSON.stringify(model.doStreamCalls.at(-1)?.prompt);
+        assert.ok(prompt.includes(JSON.stringify(article).slice(1, -1)));
+        const middleArticleOmittedPattern = /Middle of article omitted/;
+        assert.doesNotMatch(prompt, middleArticleOmittedPattern);
+        const privateTitlePattern = /Private title/;
+        if (selection)
+            assert.doesNotMatch(prompt, privateTitlePattern);
+    }
+});
+
+
 test("Skill Creator may clarify before it writes", () => {
     assert.deepEqual(getAssistantStepOptions(0, ["create_author_skill"]), {
         activeTools: ["create_author_skill", "find_capabilities", "load_skill"],
@@ -142,10 +169,14 @@ test("fact-check workflow passes the packaged instructions to its provider", asy
         completed ||= event.type === EDITORIAL_ENGINE_EVENT.COMPLETED;
 
     assert.ok(completed);
-    assert.match(instructions, /For claim extraction, include every previously checked claim/);
-    assert.match(instructions, /Extract up to 12 additional externally verifiable factual claims/);
-    assert.match(instructions, /For web research, research the factual claim using web search/);
-    assert.match(instructions, /For evidence evaluation, evaluate each Article claim/);
+    const claimExtractionIncludePattern = /For claim extraction, include every previously checked claim/;
+    assert.match(instructions, claimExtractionIncludePattern);
+    const extractAdditionalExternallyPattern = /Extract up to 12 additional externally verifiable factual claims/;
+    assert.match(instructions, extractAdditionalExternallyPattern);
+    const webResearchFactualPattern = /For web research, research the factual claim using web search/;
+    assert.match(instructions, webResearchFactualPattern);
+    const evidenceEvaluationEvaluatePattern = /For evidence evaluation, evaluate each Article claim/;
+    assert.match(instructions, evidenceEvaluationEvaluatePattern);
 });
 
 
@@ -153,7 +184,8 @@ test("translation constrains the language metadata to the requested value", asyn
     const model = new MockLanguageModelV3({
         doGenerate: async ({ responseFormat }) => {
             const schema = JSON.stringify(responseFormat);
-            assert.match(schema, /"const":"Spanish"|"enum":\["Spanish"\]/);
+            const constSpanishEnumPattern = /"const":"Spanish"|"enum":\["Spanish"\]/;
+            assert.match(schema, constSpanishEnumPattern);
             return {
                 content: [{ type: "text", text: JSON.stringify({ translation: "Hola mundo.", title: "Prueba", targetLanguage: "Spanish" }) }],
                 finishReason: { unified: "stop", raw: undefined },

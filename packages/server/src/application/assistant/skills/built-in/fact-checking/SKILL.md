@@ -3,6 +3,14 @@ id: fact_checking
 name: Fact Checking
 description: Review factual claims and prepare sourced, advisory Findings.
 version: 1
+execution:
+  capability: fact_check
+scopes: [article, selection]
+presentation:
+  order: 50
+  label: assistant.skill.factChecking.label
+  hint: assistant.skill.factChecking.hint
+  speedHint: assistant.skill.factChecking.speedHint
 references:
   - references/advisory.md
 ---

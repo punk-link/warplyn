@@ -10,18 +10,22 @@ const manifestNames = ["PunkLink.Warplyn.yaml", "PunkLink.Warplyn.locale.en-US.y
 
 
 export function generateWingetManifests(installerPath, outputRoot, { version, author }) {
-    assert.match(version, /^\d+\.\d+\.\d+$/, "WinGet manifests require a stable release version.");
-    assert.match(author, /^[a-zA-Z0-9 .-]+$/, "Expected a plain publisher name.");
+    const numberPattern = /^\d+\.\d+\.\d+$/;
+    assert.match(version, numberPattern, "WinGet manifests require a stable release version.");
+    const punctuationPattern = /^[a-zA-Z0-9 .-]+$/;
+    assert.match(author, punctuationPattern, "Expected a plain publisher name.");
     assert.equal(basename(installerPath), `Warplyn-${version}-win32-x64-setup.exe`, "Installer filename must match the release version.");
     const checksum = createHash("sha256").update(readFileSync(installerPath)).digest("hex").toUpperCase();
     const directory = join(outputRoot, version);
     mkdirSync(directory, { recursive: true });
 
     for (const name of manifestNames) {
+        const installershaPattern = /^ {4}InstallerSha256: .+$/m;
+        const whitespacePrefixPattern = /^(\s*Publisher:) .+$/gm;
         const manifest = readFileSync(new URL(name, templateDirectory), "utf8")
             .replaceAll("0.6.2", version)
-            .replace(/^(\s*Publisher:) .+$/gm, `$1 ${author}`)
-            .replace(/^ {4}InstallerSha256: .+$/m, `    InstallerSha256: ${checksum}`);
+            .replace(whitespacePrefixPattern, `$1 ${author}`)
+            .replace(installershaPattern, `    InstallerSha256: ${checksum}`);
         writeFileSync(join(directory, name), manifest);
     }
 

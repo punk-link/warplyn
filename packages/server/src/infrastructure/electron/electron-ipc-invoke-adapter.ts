@@ -52,7 +52,8 @@ function setAssistantClaimSelected(args: readonly unknown[], services: Applicati
 
 async function invokeApplicationMethod(method: ElectronApplicationMethod, args: readonly unknown[], services: ApplicationServices, now: () => string): Promise<unknown> {
     switch (method) {
-        case ELECTRON_APPLICATION_METHOD.listArticleSummaries: return services.articles.listArticleSummaries();
+        case ELECTRON_APPLICATION_METHOD.listArticleSummaries:
+            return services.articles.listArticleSummaries();
         case ELECTRON_APPLICATION_METHOD.getArticle: {
             const article = services.articles.getArticle(readIdentifier(args[0]));
             if (!article)
@@ -60,7 +61,8 @@ async function invokeApplicationMethod(method: ElectronApplicationMethod, args: 
 
             return article;
         }
-        case ELECTRON_APPLICATION_METHOD.listArticleRevisionSummaries: return services.articles.listRevisionSummaries(readIdentifier(args[0]));
+        case ELECTRON_APPLICATION_METHOD.listArticleRevisionSummaries:
+            return services.articles.listRevisionSummaries(readIdentifier(args[0]));
         case ELECTRON_APPLICATION_METHOD.getArticleRevision: {
             const revision = services.articles.getRevision(readIdentifier(args[0]), readIdentifier(args[1]));
             if (!revision)
@@ -68,68 +70,115 @@ async function invokeApplicationMethod(method: ElectronApplicationMethod, args: 
 
             return revision;
         }
-        case ELECTRON_APPLICATION_METHOD.getHealth: return { status: "ok", service: "skladno-local-service", timestamp: now() };
-        case ELECTRON_APPLICATION_METHOD.getApplicationSettings: return services.settings.getSnapshot();
-        case ELECTRON_APPLICATION_METHOD.updateGeneralSettings: return services.settings.updateGeneral(args[0]);
-        case ELECTRON_APPLICATION_METHOD.updateBackupPolicy: return services.settings.updateBackupPolicy(args[0]);
-        case ELECTRON_APPLICATION_METHOD.updateKeyBindingOverrides: return services.settings.updateKeyBindingOverrides(args[0]);
-        case ELECTRON_APPLICATION_METHOD.addAiConnection: return services.settings.createAiConnection(args[0] as { label?: unknown; environmentVariableName?: unknown });
-        case ELECTRON_APPLICATION_METHOD.updateAiConnection: return services.settings.updateAiConnection(String(args[0]), args[1] as { label?: unknown; environmentVariableName?: unknown });
-        case ELECTRON_APPLICATION_METHOD.removeAiConnection: return services.settings.deleteAiConnection(String(args[0]));
-        case ELECTRON_APPLICATION_METHOD.setAiConnectionActive: return services.settings.setAiConnectionActive(String(args[0]), args[1] === true);
-        case ELECTRON_APPLICATION_METHOD.testAiConnection: return services.settings.testAiConnection(String(args[0]));
-        case ELECTRON_APPLICATION_METHOD.refreshAiModels: return services.settings.listAiModels();
-        case ELECTRON_APPLICATION_METHOD.updateModelPreferences: return services.settings.updateModelPreferences(args[0]);
-        case ELECTRON_APPLICATION_METHOD.updateAppModel: return services.settings.updateAppModel(args[0]);
-        case ELECTRON_APPLICATION_METHOD.listArticles: return services.articles.listArticles();
-        case ELECTRON_APPLICATION_METHOD.createArticle: return services.articles.createArticle(args[0] as import("@skladno/shared").CreateArticleInput);
-        case ELECTRON_APPLICATION_METHOD.updateArticle: return services.articles.updateArticle(String(args[0]), args[1] as import("@skladno/shared").UpdateArticleInput);
-        case ELECTRON_APPLICATION_METHOD.deleteArticle: return services.articles.deleteArticle(String(args[0]));
-        case ELECTRON_APPLICATION_METHOD.setArticleArchived: return services.articles.setArticleArchived(String(args[0]), args[1] === true);
-        case ELECTRON_APPLICATION_METHOD.setArticlePinned: return services.articles.setArticlePinned(String(args[0]), args[1] === true);
+        case ELECTRON_APPLICATION_METHOD.getHealth:
+            return { status: "ok", service: "skladno-local-service", timestamp: now() };
+        case ELECTRON_APPLICATION_METHOD.getApplicationSettings:
+            return services.settings.getSnapshot();
+        case ELECTRON_APPLICATION_METHOD.updateGeneralSettings:
+            return services.settings.updateGeneral(args[0]);
+        case ELECTRON_APPLICATION_METHOD.updateBackupPolicy:
+            return services.settings.updateBackupPolicy(args[0]);
+        case ELECTRON_APPLICATION_METHOD.updateKeyBindingOverrides:
+            return services.settings.updateKeyBindingOverrides(args[0]);
+        case ELECTRON_APPLICATION_METHOD.addAiConnection:
+            return services.settings.createAiConnection(args[0] as { label?: unknown; environmentVariableName?: unknown });
+        case ELECTRON_APPLICATION_METHOD.updateAiConnection:
+            return services.settings.updateAiConnection(String(args[0]), args[1] as { label?: unknown; environmentVariableName?: unknown });
+        case ELECTRON_APPLICATION_METHOD.removeAiConnection:
+            return services.settings.deleteAiConnection(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.setAiConnectionActive:
+            return services.settings.setAiConnectionActive(String(args[0]), args[1] === true);
+        case ELECTRON_APPLICATION_METHOD.testAiConnection:
+            return services.settings.testAiConnection(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.refreshAiModels:
+            return services.settings.listAiModels();
+        case ELECTRON_APPLICATION_METHOD.updateModelPreferences:
+            return services.settings.updateModelPreferences(args[0]);
+        case ELECTRON_APPLICATION_METHOD.updateAppModel:
+            return services.settings.updateAppModel(args[0]);
+        case ELECTRON_APPLICATION_METHOD.listArticles:
+            return services.articles.listArticles();
+        case ELECTRON_APPLICATION_METHOD.createArticle:
+            return services.articles.createArticle(args[0] as import("@skladno/shared").CreateArticleInput);
+        case ELECTRON_APPLICATION_METHOD.updateArticle:
+            return services.articles.updateArticle(String(args[0]), args[1] as import("@skladno/shared").UpdateArticleInput);
+        case ELECTRON_APPLICATION_METHOD.deleteArticle:
+            return services.articles.deleteArticle(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.setArticleArchived:
+            return services.articles.setArticleArchived(String(args[0]), args[1] === true);
+        case ELECTRON_APPLICATION_METHOD.setArticlePinned:
+            return services.articles.setArticlePinned(String(args[0]), args[1] === true);
         case ELECTRON_APPLICATION_METHOD.reorderPinnedArticles:
             if (!Array.isArray(args[0]) || args[0].some((id) => typeof id !== "string"))
                 throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
             return services.articles.reorderPinnedArticles(args[0]);
-        case ELECTRON_APPLICATION_METHOD.saveArticleDraft: return services.articles.saveDraft(String(args[0]), args[1] as import("@skladno/shared").SaveArticleDraftInput);
-        case ELECTRON_APPLICATION_METHOD.discardArticleDraft: return services.articles.discardDraft(String(args[0]), Number(args[1]));
-        case ELECTRON_APPLICATION_METHOD.saveArticleRevision: return services.articles.saveRevisionWithDescription(String(args[0]), args[1] as import("@skladno/shared").SaveArticleRevisionInput, new AbortController().signal);
-        case ELECTRON_APPLICATION_METHOD.listArticleRevisions: return services.articles.listRevisions(String(args[0]));
-        case ELECTRON_APPLICATION_METHOD.acceptProposal: return services.articles.acceptProposalWithDescription(String(args[0]), args[1] as import("@skladno/shared").AcceptProposalInput, new AbortController().signal);
-        case ELECTRON_APPLICATION_METHOD.summarizeProposal: return services.proposalSummaries.summarize(String(args[0]), args[1], new AbortController().signal);
-        case ELECTRON_APPLICATION_METHOD.restoreRevision: return services.articles.restoreRevisionWithTitle(String(args[0]), String(args[1]));
-        case ELECTRON_APPLICATION_METHOD.listAssistantSkills: return services.skills.discover();
-        case ELECTRON_APPLICATION_METHOD.listAssistantMessageHistory: return services.assistant.listMessageHistory(readIdentifier(args[0]));
-        case ELECTRON_APPLICATION_METHOD.listAssistantMessages: return services.assistant.listMessages(String(args[0]));
-        case ELECTRON_APPLICATION_METHOD.setAssistantClaimSelected: return setAssistantClaimSelected(args, services);
-        case ELECTRON_APPLICATION_METHOD.getAssistantEditMode: return services.assistant.getEditMode(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.saveArticleDraft:
+            return services.articles.saveDraft(String(args[0]), args[1] as import("@skladno/shared").SaveArticleDraftInput);
+        case ELECTRON_APPLICATION_METHOD.discardArticleDraft:
+            return services.articles.discardDraft(String(args[0]), Number(args[1]));
+        case ELECTRON_APPLICATION_METHOD.saveArticleRevision:
+            return services.articles.saveRevisionWithDescription(String(args[0]), args[1] as import("@skladno/shared").SaveArticleRevisionInput, new AbortController().signal);
+        case ELECTRON_APPLICATION_METHOD.listArticleRevisions:
+            return services.articles.listRevisions(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.acceptProposal:
+            return services.articles.acceptProposalWithDescription(String(args[0]), args[1] as import("@skladno/shared").AcceptProposalInput, new AbortController().signal);
+        case ELECTRON_APPLICATION_METHOD.summarizeProposal:
+            return services.proposalSummaries.summarize(String(args[0]), args[1], new AbortController().signal);
+        case ELECTRON_APPLICATION_METHOD.restoreRevision:
+            return services.articles.restoreRevisionWithTitle(String(args[0]), String(args[1]));
+        case ELECTRON_APPLICATION_METHOD.listAssistantSkills:
+            return services.skills.discover();
+        case ELECTRON_APPLICATION_METHOD.listAssistantMessageHistory:
+            return services.assistant.listMessageHistory(readIdentifier(args[0]));
+        case ELECTRON_APPLICATION_METHOD.listAssistantMessages:
+            return services.assistant.listMessages(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.setAssistantClaimSelected:
+            return setAssistantClaimSelected(args, services);
+        case ELECTRON_APPLICATION_METHOD.getAssistantEditMode:
+            return services.assistant.getEditMode(String(args[0]));
         case ELECTRON_APPLICATION_METHOD.setAssistantEditMode:
             if (args[1] !== "review" && args[1] !== "direct")
                 throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
             return services.assistant.setEditMode(String(args[0]), args[1]);
-        case ELECTRON_APPLICATION_METHOD.applyAssistantEdit: return services.assistant.applyEdit(String(args[0]), String(args[1]));
-        case ELECTRON_APPLICATION_METHOD.rejectTranslation: return services.assistant.rejectTranslation(String(args[0]), String(args[1]));
-        case ELECTRON_APPLICATION_METHOD.previewAssistantCheckpoint: return services.assistant.previewCheckpoint(String(args[0]), String(args[1]));
-        case ELECTRON_APPLICATION_METHOD.restoreAssistantCheckpoint: return restoreAssistantCheckpoint(args, services);
-        case ELECTRON_APPLICATION_METHOD.listFactChecks: return services.factChecks.list(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.applyAssistantEdit:
+            return services.assistant.applyEdit(String(args[0]), String(args[1]));
+        case ELECTRON_APPLICATION_METHOD.rejectTranslation:
+            return services.assistant.rejectTranslation(String(args[0]), String(args[1]));
+        case ELECTRON_APPLICATION_METHOD.previewAssistantCheckpoint:
+            return services.assistant.previewCheckpoint(String(args[0]), String(args[1]));
+        case ELECTRON_APPLICATION_METHOD.restoreAssistantCheckpoint:
+            return restoreAssistantCheckpoint(args, services);
+        case ELECTRON_APPLICATION_METHOD.listFactChecks:
+            return services.factChecks.list(String(args[0]));
         case ELECTRON_APPLICATION_METHOD.resolveFactCheckFinding:
             if (!isFactCheckResolution(args[2]))
                 throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
             return services.factChecks.resolve(String(args[1]), args[2]);
-        case ELECTRON_APPLICATION_METHOD.getStyleCorpus: return services.styleCorpus.get();
-        case ELECTRON_APPLICATION_METHOD.addStyleCorpusItem: return services.styleCorpus.add(args[0] as import("@skladno/shared").CreateStyleCorpusItemInput, new AbortController().signal);
-        case ELECTRON_APPLICATION_METHOD.setStyleCorpusItemIncluded: return services.styleCorpus.setIncluded(String(args[0]), Boolean(args[1]));
-        case ELECTRON_APPLICATION_METHOD.setStyleCorpusRules: return services.styleCorpus.setRules(String(args[0]));
-        case ELECTRON_APPLICATION_METHOD.rebuildStyleCorpus: return services.styleCorpus.rebuild();
-        case ELECTRON_APPLICATION_METHOD.getArticleStyleRules: return services.styleCorpus.getArticleRules(String(args[0]));
-        case ELECTRON_APPLICATION_METHOD.setArticleStyleRules: return services.styleCorpus.setArticleRules(String(args[0]), String(args[1]));
-        case ELECTRON_APPLICATION_METHOD.addArticleRevisionStyleCorpusItem: return services.styleCorpus.addArticleRevision(String(args[0]), String(args[1]));
-        case ELECTRON_APPLICATION_METHOD.removeStyleCorpusItem: return services.styleCorpus.remove(String(args[0]));
-        case ELECTRON_APPLICATION_METHOD.getPublishingSettings: return services.publishing.getSettings();
-        case ELECTRON_APPLICATION_METHOD.setPublishingSettings: return services.publishing.setSettings(args[0] as import("@skladno/shared").PublishingSettings);
+        case ELECTRON_APPLICATION_METHOD.getStyleCorpus:
+            return services.styleCorpus.get();
+        case ELECTRON_APPLICATION_METHOD.addStyleCorpusItem:
+            return services.styleCorpus.add(args[0] as import("@skladno/shared").CreateStyleCorpusItemInput, new AbortController().signal);
+        case ELECTRON_APPLICATION_METHOD.setStyleCorpusItemIncluded:
+            return services.styleCorpus.setIncluded(String(args[0]), Boolean(args[1]));
+        case ELECTRON_APPLICATION_METHOD.setStyleCorpusRules:
+            return services.styleCorpus.setRules(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.rebuildStyleCorpus:
+            return services.styleCorpus.rebuild();
+        case ELECTRON_APPLICATION_METHOD.getArticleStyleRules:
+            return services.styleCorpus.getArticleRules(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.setArticleStyleRules:
+            return services.styleCorpus.setArticleRules(String(args[0]), String(args[1]));
+        case ELECTRON_APPLICATION_METHOD.addArticleRevisionStyleCorpusItem:
+            return services.styleCorpus.addArticleRevision(String(args[0]), String(args[1]));
+        case ELECTRON_APPLICATION_METHOD.removeStyleCorpusItem:
+            return services.styleCorpus.remove(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.getPublishingSettings:
+            return services.publishing.getSettings();
+        case ELECTRON_APPLICATION_METHOD.setPublishingSettings:
+            return services.publishing.setSettings(args[0] as import("@skladno/shared").PublishingSettings);
     }
 }
 

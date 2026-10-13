@@ -34,7 +34,11 @@ export function NotificationViewport({ notifications, label, dismissLabel, dismi
     return <section aria-label={label} className="pointer-events-none fixed inset-x-4 top-4 z-40 flex flex-col gap-3 sm:inset-x-auto sm:right-4 sm:w-96">
         {notifications.map((notification) => <article
             key={notification.id}
-            className={`pointer-events-auto relative flex gap-3 rounded-panel border p-3 text-xs leading-5 shadow-raised transition duration-150 motion-safe:animate-[notification-enter_180ms_ease-out] motion-reduce:transition-none ${getNotificationClasses(notification.tone)}`}
+            className={[
+                "pointer-events-auto relative flex gap-3 rounded-panel border p-3 text-xs leading-5 shadow-raised transition duration-150 ",
+                "motion-safe:animate-[notification-enter_180ms_ease-out] motion-reduce:transition-none ",
+                getNotificationClasses(notification.tone),
+            ].join("")}
             role={notification.tone === "info" || notification.tone === "success" ? "status" : "alert"}
             onPointerEnter={() => pause(notification.id, "pointer")}
             onPointerLeave={(event) => resumeAfterPointer(notification, event)}
@@ -50,7 +54,8 @@ export function NotificationViewport({ notifications, label, dismissLabel, dismi
                     dismiss(notification.id);
                 }}>{notification.action.label}</button>}
             </div>
-            <button className="absolute right-1 top-1 grid size-9 place-items-center rounded-control hover:bg-surface-raised/45 active:translate-y-px"
+            <button
+                className="absolute right-1 top-1 grid size-9 place-items-center rounded-control hover:bg-surface-raised/45 active:translate-y-px"
                 type="button"
                 aria-label={dismissLabel(notification.title)}
                 onClick={() => dismiss(notification.id)}>

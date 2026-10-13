@@ -46,7 +46,7 @@ test("Assistant execution loads Skills from its catalog", async () => {
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [], discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* () {
@@ -59,7 +59,10 @@ test("Assistant execution loads Skills from its catalog", async () => {
     for await (const event of loop.stream(request, new AbortController().signal))
         assert.equal(event.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
 
-    assert.deepEqual(received?.instructions, ["Catalog instructions."]);
+    const catalogInstructionsPattern = /Catalog instructions/;
+    assert.match(received?.instructions[0] ?? "", catalogInstructionsPattern);
+    const operationFlowRevisionPattern = /"operation":"flow_revision"/;
+    assert.match(received?.instructions[0] ?? "", operationFlowRevisionPattern);
     assert.deepEqual(received?.skills.map((skill) => skill.name), ["Catalog Skill"]);
 });
 
@@ -90,7 +93,7 @@ test("streams extracted Fact Check claims while the capability is still running"
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => editorialCapabilityDefinitions.filter((definition) => definition.id === "fact_check"),
             discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
@@ -148,7 +151,7 @@ test("an Author Skill inspects the current Article before following its instruct
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [
                 { id: "inspect_article", execution: "read", allowedContext: "article", input: "none", result: "article", retry: "transient-read", activity: "Reviewing the current Article." },
@@ -156,7 +159,7 @@ test("an Author Skill inspects the current Article before following its instruct
             ],
             discover: () => [], read: () => ({ content: "Article" }), executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* (input) {
-                proposalAuthorContext = input.authorContext;
+                proposalAuthorContext = input.skill?.instructions ?? "";
                 yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "proposal", text: "Rephrased without em dashes." } as const;
             },
         },
@@ -179,7 +182,7 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         summaries: () => [summary],
         load: (candidate) => candidate === reference ? { ...summary, instructions: "Rephrase without em dashes." } : undefined,
     };
-    let streamInput: { articleContent?: string; articleSelection?: boolean; authorContext: string } | undefined;
+    let streamInput: { articleContent?: string; articleSelection?: boolean; authorContext: string; skill?: { instructions: string } } | undefined;
     const engine = {
         async *stream() {
             return;
@@ -202,7 +205,7 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [{ id: "generate_proposal", execution: "artifact", allowedContext: "article", selectionCompatible: true, input: "proposal-operation", result: "proposal", retry: "never", activity: "Preparing a Proposal." }],
             discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
@@ -219,7 +222,8 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
 
     assert.equal(streamInput?.articleContent, "selected");
     assert.equal(streamInput?.articleSelection, true);
-    assert.equal(streamInput?.authorContext, "Rephrase without em dashes.");
+    assert.equal(streamInput?.authorContext, "");
+    assert.equal(streamInput?.skill?.instructions, "Rephrase without em dashes.");
 });
 
 
@@ -242,7 +246,7 @@ test("an Author Skill cannot complete as chat instead of a Proposal", async () =
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [], discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* () {
@@ -280,7 +284,8 @@ test("the Assistant model can create an explicitly requested Author Skill withou
             assert.equal(creator.description, "Save a validated local Author Skill Markdown package.");
             assert.ok(request.initialActiveCapabilities?.includes("create_author_skill"));
             assert.ok(request.initialActiveCapabilities?.includes("update_author_skill"));
-            assert.match(request.skills.find((skill) => skill.id === "skill_creator")?.instructions ?? "", /Ask a concise clarifying question/);
+            const askConciseClarifyingPattern = /Ask a concise clarifying question/;
+            assert.match(request.skills.find((skill) => skill.id === "skill_creator")?.instructions ?? "", askConciseClarifyingPattern);
             await creator.execute({
                 skillId: "no-em-dashes",
                 skillMarkdown: "---\nid: no-em-dashes\nname: No em dashes\ndescription: Rephrase writing without em dashes.\nversion: 1\n---\n# Rewrite\n\nRewrite without em dashes.\n",
@@ -295,7 +300,7 @@ test("the Assistant model can create an explicitly requested Author Skill withou
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined },
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined },
         engines: { resolveAssistantActionIntentVerifier: () => ({ verify: async (_message, action) => action === "create_author_skill" }) },
         authorSkills,
         capabilities: {
@@ -314,7 +319,8 @@ test("the Assistant model can create an explicitly requested Author Skill withou
         assert.equal(source.get("no-em-dashes"), undefined);
         assert.equal(authorSkills.listRevisions("no-em-dashes").length, 0);
         loop.commitPendingSkill(request);
-        assert.match(source.get("no-em-dashes")?.instructions ?? "", /Rewrite without em dashes/);
+        const rewriteWithoutDashesPattern = /Rewrite without em dashes/;
+        assert.match(source.get("no-em-dashes")?.instructions ?? "", rewriteWithoutDashesPattern);
         assert.equal(authorSkills.listRevisions("no-em-dashes").length, 1);
     } finally {
         rmSync(root, { recursive: true, force: true });

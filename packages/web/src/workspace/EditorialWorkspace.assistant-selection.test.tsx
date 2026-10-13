@@ -22,7 +22,17 @@ describe("Editorial Workspace assistant", () => {
 
     it("summarizes an Article selection in a compact composer chip", () => {
         const selection = { articleId: "one", fingerprint: "fingerprint", preview: "The first selected sentence provides enough context to identify the excerpt.", startOffset: 0, endOffset: 72 };
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={vi.fn()} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" assistantMessages={[]} selection={selection} clearSelection={vi.fn()} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={vi.fn()}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            assistantMessages={[]}
+            selection={selection}
+            clearSelection={vi.fn()} />);
         const selectionChip = panel.container.querySelector<HTMLElement>("[data-assistant-composer-decoration]")!;
 
         expect(selectionChip.textContent).toContain("The first selected s…");
@@ -71,12 +81,30 @@ describe("Editorial Workspace assistant", () => {
     it("keeps Talking points active when an Article selection becomes the priority source", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" assistantMessages={[]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            assistantMessages={[]} />);
         await user.click(within(panel.container).getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(within(panel.container).getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));
         expect(panel.container.querySelector("[data-assistant-skill-chip]")).toBeTruthy();
 
-        panel.rerender(<IntlProvider locale="en" messages={messages}><EditorialAssistantPanel state="idle" message="" onRequest={onRequest} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" assistantMessages={[]} selection={{ articleId: "one", fingerprint: "fingerprint", preview: "Selected Article text", startOffset: 0, endOffset: 21 }} clearSelection={vi.fn()} /></IntlProvider>);
+        panel.rerender(<IntlProvider locale="en" messages={messages}><EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            assistantMessages={[]}
+            selection={{ articleId: "one", fingerprint: "fingerprint", preview: "Selected Article text", startOffset: 0, endOffset: 21 }}
+            clearSelection={vi.fn()} /></IntlProvider>);
 
         await waitFor(() => expect(panel.container.querySelector("[data-assistant-skill-chip]")).toBeTruthy());
         await user.click(within(panel.container).getByRole("button", { name: getMessage("assistant.quickActions") }));
@@ -101,10 +129,18 @@ describe("Editorial Workspace assistant", () => {
         function AssistantPanelHarness() {
             const [collapsed, setCollapsed] = useState(false);
 
-            return <EditorialAssistantPanel state="idle" message="" onRequest={vi.fn()} onCancel={vi.fn()} collapsed={collapsed} setCollapsed={setCollapsed} language="Portuguese" assistantMessages={[
-                { id: "greeting", articleId: "one", role: "assistant", kind: "greeting", status: "completed", template: "greeting", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" },
-                { id: "latest", articleId: "one", role: "assistant", kind: "response", status: "completed", content: "The latest response.", createdAt: "2026-01-01T00:01:00.000Z", updatedAt: "2026-01-01T00:01:00.000Z" },
-            ]} />;
+            return <EditorialAssistantPanel
+                state="idle"
+                message=""
+                onRequest={vi.fn()}
+                onCancel={vi.fn()}
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                language="Portuguese"
+                assistantMessages={[
+                    { id: "greeting", articleId: "one", role: "assistant", kind: "greeting", status: "completed", template: "greeting", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" },
+                    { id: "latest", articleId: "one", role: "assistant", kind: "response", status: "completed", content: "The latest response.", createdAt: "2026-01-01T00:01:00.000Z", updatedAt: "2026-01-01T00:01:00.000Z" },
+                ]} />;
         }
 
 
@@ -128,24 +164,41 @@ describe("Editorial Workspace assistant", () => {
 
 
     it("formats Assistant timeline timestamps with the configured preferences", () => {
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={vi.fn()} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" generalSettings={{ ...defaultGeneralSettings, dateFormat: "iso", timeFormat: "24-hour", timeZone: "America/New_York" }} assistantMessages={[{ id: "greeting", articleId: "one", role: "assistant", kind: "greeting", status: "completed", template: "greeting", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={vi.fn()}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            generalSettings={{ ...defaultGeneralSettings, dateFormat: "iso", timeFormat: "24-hour", timeZone: "America/New_York" }}
+            assistantMessages={[{ id: "greeting", articleId: "one", role: "assistant", kind: "greeting", status: "completed", template: "greeting", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }]} />);
 
         expect(within(panel.container).getByText("2025-12-31, 19:00")).toBeTruthy();
     });
 
 
     it("shows an Article selection chip in the persisted Author message", () => {
-        renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={vi.fn()} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" assistantMessages={[{
-            id: "author-selection",
-            articleId: "one",
-            role: "author",
-            kind: "message",
-            status: "completed",
-            content: "Please review this.",
-            selectionText: "Selected Article text",
-            createdAt: "2026-01-01T00:00:00.000Z",
-            updatedAt: "2026-01-01T00:00:00.000Z",
-        }]} />);
+        renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={vi.fn()}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            assistantMessages={[{
+                id: "author-selection",
+                articleId: "one",
+                role: "author",
+                kind: "message",
+                status: "completed",
+                content: "Please review this.",
+                selectionText: "Selected Article text",
+                createdAt: "2026-01-01T00:00:00.000Z",
+                updatedAt: "2026-01-01T00:00:00.000Z",
+            }]} />);
 
         const selection = screen.getByLabelText("Article selection");
         expect(selection.getAttribute("title")).toBe("Selected Article text");
@@ -156,12 +209,20 @@ describe("Editorial Workspace assistant", () => {
 
     // product: editorial-workflows.assistant-request-proposal
     it("shows selected skills without Author text and names skill-specific proposals", () => {
-        const panel = renderLocalized(<EditorialAssistantPanel state="idle" message="" onRequest={vi.fn()} onCancel={vi.fn()} collapsed={false} setCollapsed={vi.fn()} language="Portuguese" assistantMessages={[
-            { id: "author", articleId: "one", requestId: "request", role: "author", kind: "message", status: "completed", content: "Organize these ideas.", skillOffset: "Organize ".length, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" },
-            { id: "response", articleId: "one", requestId: "request", role: "assistant", kind: "response", status: "completed", skillId: "talking_points", responseKind: "proposal_prepared", editorialArtifactId: "proposal", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" },
-            { id: "narrative-author", articleId: "one", requestId: "narrative-request", role: "author", kind: "message", status: "completed", content: "", skillId: "narrative_draft", skillOffset: 0, createdAt: "2026-01-01T00:00:02.000Z", updatedAt: "2026-01-01T00:00:02.000Z" },
-            { id: "narrative-response", articleId: "one", requestId: "narrative-request", role: "assistant", kind: "response", status: "completed", responseKind: "proposal_prepared", editorialArtifactId: "narrative-proposal", createdAt: "2026-01-01T00:00:03.000Z", updatedAt: "2026-01-01T00:00:03.000Z" },
-        ]} />);
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={vi.fn()}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            language="Portuguese"
+            assistantMessages={[
+                { id: "author", articleId: "one", requestId: "request", role: "author", kind: "message", status: "completed", content: "Organize these ideas.", skillOffset: "Organize ".length, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" },
+                { id: "response", articleId: "one", requestId: "request", role: "assistant", kind: "response", status: "completed", skillId: "talking_points", responseKind: "proposal_prepared", editorialArtifactId: "proposal", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" },
+                { id: "narrative-author", articleId: "one", requestId: "narrative-request", role: "author", kind: "message", status: "completed", content: "", skillId: "narrative_draft", skillOffset: 0, createdAt: "2026-01-01T00:00:02.000Z", updatedAt: "2026-01-01T00:00:02.000Z" },
+                { id: "narrative-response", articleId: "one", requestId: "narrative-request", role: "assistant", kind: "response", status: "completed", responseKind: "proposal_prepared", editorialArtifactId: "narrative-proposal", createdAt: "2026-01-01T00:00:03.000Z", updatedAt: "2026-01-01T00:00:03.000Z" },
+            ]} />);
         const panelScope = within(panel.container);
         const [review] = panelScope.getAllByRole("button", { name: "Review Proposal" });
         const timestamp = [...panel.container.querySelectorAll("time")].at(-1)!;

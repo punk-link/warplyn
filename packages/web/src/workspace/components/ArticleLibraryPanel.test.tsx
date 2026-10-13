@@ -55,7 +55,16 @@ describe("ArticleLibraryPanel", () => {
         const user = userEvent.setup();
         const setCollapsed = vi.fn();
         const panel = (collapsed: boolean) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[]} selectedArticleId={undefined} selectArticle={vi.fn()} collapsed={collapsed} setCollapsed={setCollapsed} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[]}
+                selectedArticleId={undefined}
+                selectArticle={vi.fn()}
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>;
         const { container, rerender } = render(panel(false));
         const expandedIcon = container.querySelector("header img");
@@ -83,12 +92,24 @@ describe("ArticleLibraryPanel", () => {
         const other: Article = { ...source, id: "other", title: "Other Article" };
         const otherTranslation: Article = { ...translation, id: "other-translation", title: "Other Spanish edition", sourceArticleId: other.id };
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[translation, source, otherTranslation, other]} selectedArticleId={source.id} selectArticle={selectArticle} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[translation, source, otherTranslation, other]}
+                selectedArticleId={source.id}
+                selectArticle={selectArticle}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>);
 
-        const sourceButton = screen.getByRole("button", { name: /Mother Article/ });
-        const translationButton = screen.getByRole("button", { name: /Spanish edition/ });
-        const otherButton = screen.getByRole("button", { name: /Other Article/ });
+        const motherArticlePattern = /Mother Article/;
+        const sourceButton = screen.getByRole("button", { name: motherArticlePattern });
+        const spanishEditionPattern = /Spanish edition/;
+        const translationButton = screen.getByRole("button", { name: spanishEditionPattern });
+        const otherArticlePattern = /Other Article/;
+        const otherButton = screen.getByRole("button", { name: otherArticlePattern });
         expect(screen.getByText("Mother Article").title).toBe("Mother Article");
         expect(screen.getByText("Mother Article").classList.contains("truncate")).toBe(true);
         expect(sourceButton.classList.contains("py-1.5")).toBe(true);
@@ -97,13 +118,15 @@ describe("ArticleLibraryPanel", () => {
         expect(screen.getByText("Spanish edition").classList.contains("text-xs")).toBe(true);
         expect(sourceButton.getAttribute("aria-expanded")).toBe("true");
         expect(otherButton.getAttribute("aria-expanded")).toBe("false");
-        expect(screen.queryByRole("button", { name: /Other Spanish edition/ })).toBeNull();
+        const collapsedSpanishEditionPattern = /Other Spanish edition/;
+        expect(screen.queryByRole("button", { name: collapsedSpanishEditionPattern })).toBeNull();
         expect(otherButton.querySelector("svg")?.classList.contains("transition-transform")).toBe(true);
         expect(screen.getByText("Other Spanish edition").closest("[aria-hidden]")?.classList.contains("grid-rows-[0fr]")).toBe(true);
         expect(sourceButton.compareDocumentPosition(translationButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
         await user.type(screen.getByRole("textbox", { name: getMessage("navigation.searchArticles") }), "Other Spanish");
-        await user.click(screen.getByRole("button", { name: /Other Spanish edition/ }));
-        expect(screen.getByRole("button", { name: /Other Article/ })).toBeTruthy();
+        const expandedSpanishEditionPattern = /Other Spanish edition/;
+        await user.click(screen.getByRole("button", { name: expandedSpanishEditionPattern }));
+        expect(screen.getByRole("button", { name: otherArticlePattern })).toBeTruthy();
         expect(selectArticle).toHaveBeenCalledWith("other-translation");
     });
 
@@ -113,24 +136,39 @@ describe("ArticleLibraryPanel", () => {
         const translation: Article = { ...source, id: "translation", title: "Spanish edition", sourceArticleId: source.id };
         const added: Article = { ...translation, id: "added", title: "Portuguese edition" };
         const panel = (articles: Article[], selectedArticleId = source.id) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={articles} selectedArticleId={selectedArticleId} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={articles}
+                selectedArticleId={selectedArticleId}
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>;
         const { rerender } = render(panel([source, translation, other]));
-        expect(screen.getByRole("button", { name: /Spanish edition/ })).toBeTruthy();
+        const spanishEditionPattern = /Spanish edition/;
+        expect(screen.getByRole("button", { name: spanishEditionPattern })).toBeTruthy();
 
         rerender(panel([source, added, translation, other]));
-        const first = screen.getByRole("button", { name: /Portuguese edition/ });
-        const second = screen.getByRole("button", { name: /Spanish edition/ });
+        const portugueseEditionPattern = /Portuguese edition/;
+        const first = screen.getByRole("button", { name: portugueseEditionPattern });
+        const secondSpanishEditionPattern = /Spanish edition/;
+        const second = screen.getByRole("button", { name: secondSpanishEditionPattern });
         expect(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
         rerender(panel([source, { ...translation, sourceArticleId: other.id }, other]));
-        expect(screen.queryByRole("button", { name: /Portuguese edition/ })).toBeNull();
-        expect(screen.queryByRole("button", { name: /Spanish edition/ })).toBeNull();
-        expect(screen.getByRole("button", { name: /Mother Article/ }).hasAttribute("aria-expanded")).toBe(false);
+        expect(screen.queryByRole("button", { name: portugueseEditionPattern })).toBeNull();
+        expect(screen.queryByRole("button", { name: secondSpanishEditionPattern })).toBeNull();
+        const motherArticlePattern = /Mother Article/;
+        expect(screen.getByRole("button", { name: motherArticlePattern }).hasAttribute("aria-expanded")).toBe(false);
 
         rerender(panel([source, { ...translation, sourceArticleId: other.id }, other], other.id));
-        const otherButton = screen.getByRole("button", { name: /Other Article/ });
-        const moved = screen.getByRole("button", { name: /Spanish edition/ });
+        const otherArticlePattern = /Other Article/;
+        const otherButton = screen.getByRole("button", { name: otherArticlePattern });
+        const movedSpanishEditionPattern = /Spanish edition/;
+        const moved = screen.getByRole("button", { name: movedSpanishEditionPattern });
         expect(otherButton.compareDocumentPosition(moved) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
 
@@ -139,12 +177,23 @@ describe("ArticleLibraryPanel", () => {
         const archived = { ...source, archived: true };
         const translation: Article = { ...archived, id: "translation", title: "Spanish edition", sourceArticleId: source.id };
         const panel = (selected: string | undefined) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[archived, translation]} selectedArticleId={selected} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[archived, translation]}
+                selectedArticleId={selected}
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>;
         const { rerender } = render(panel(selectedArticleId));
         const archive = screen.getByRole("button", { name: "Archived (1)" });
         expect(archive.getAttribute("aria-expanded")).toBe("true");
-        expect(screen.getByRole("button", { name: selectedArticleId === "source" ? /Mother Article/ : /Spanish edition/ }).getAttribute("aria-current")).toBe("page");
+        const motherArticlePattern = /Mother Article/;
+        const spanishEditionPattern = /Spanish edition/;
+        expect(screen.getByRole("button", { name: selectedArticleId === "source" ? motherArticlePattern : spanishEditionPattern }).getAttribute("aria-current")).toBe("page");
         fireEvent.click(archive);
         fireEvent.click(archive);
         expect(archive.getAttribute("aria-expanded")).toBe("true");
@@ -158,10 +207,20 @@ describe("ArticleLibraryPanel", () => {
 
     it("moves between Library controls with Up and Down without taking search editing keys", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[source]} selectedArticleId={source.id} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[source]}
+                selectedArticleId={source.id}
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>);
 
-        const article = screen.getByRole("button", { name: /Mother Article/ });
+        const motherArticlePattern = /Mother Article/;
+        const article = screen.getByRole("button", { name: motherArticlePattern });
         article.focus();
         fireEvent.keyDown(article, { key: "ArrowDown" });
         expect(document.activeElement).toBe(screen.getByRole("button", { name: "Style Profile" }));
@@ -180,14 +239,24 @@ describe("ArticleLibraryPanel", () => {
             setNetworkAccess: vi.fn(), setAutomaticChecks: vi.fn(), setIncludePrereleases: vi.fn(), checkNow: vi.fn(), download: vi.fn(), restartAndUpdate: vi.fn(), openReleaseNotes: vi.fn(), openRecoveryGuide: vi.fn(), rendererReady: vi.fn(), subscribe: () => () => undefined,
         } satisfies DesktopUpdateClient;
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[]} selectedArticleId={undefined} selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[]}
+                selectedArticleId={undefined}
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>);
 
         const updateButton = await screen.findByRole("button", { name: "Update 0.1.1-preview.1 is available" });
         expect(updateButton.textContent).not.toContain(getMessage("settings.updates"));
         expect(updateButton.parentElement?.querySelector("span")?.textContent).toBe("EN · Local");
-        expect(updateButton.parentElement?.classList.contains("relative")).toBe(true);
-        expect(updateButton.classList.contains("absolute")).toBe(true);
+        expect(updateButton.parentElement?.classList.contains("justify-between")).toBe(true);
+        expect(updateButton.classList.contains("shrink-0")).toBe(true);
+        expect(updateButton.classList.contains("relative")).toBe(true);
         expect(updateButton.classList.contains("hover:bg-brand-soft")).toBe(true);
     });
 
@@ -196,10 +265,21 @@ describe("ArticleLibraryPanel", () => {
         const selectArticle = vi.fn();
         const setArchived = vi.fn().mockResolvedValue(undefined);
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[source]} selectedArticleId={undefined} selectArticle={selectArticle} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" setArchived={setArchived} />
+            <ArticleLibraryPanel
+                articles={[source]}
+                selectedArticleId={undefined}
+                selectArticle={selectArticle}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en"
+                setArchived={setArchived} />
         </IntlProvider>);
 
-        fireEvent.contextMenu(screen.getByRole("button", { name: /Mother Article/ }));
+        const motherArticlePattern = /Mother Article/;
+        fireEvent.contextMenu(screen.getByRole("button", { name: motherArticlePattern }));
         expect(selectArticle).not.toHaveBeenCalled();
         expect(screen.getByRole("menuitem", { name: "Pin" })).toBeTruthy();
         fireEvent.click(screen.getByRole("menuitem", { name: "Archive" }));
@@ -210,10 +290,20 @@ describe("ArticleLibraryPanel", () => {
     it("offers only Delete for a translation row", () => {
         const translation: Article = { ...source, id: "translation", title: "Spanish edition", sourceArticleId: source.id, sourceRevisionId: source.currentRevisionId };
         render(<IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel articles={[source, translation]} selectedArticleId="translation" selectArticle={vi.fn()} collapsed={false} setCollapsed={vi.fn()} createBlank={vi.fn()} openStyleProfile={vi.fn()} openSettings={vi.fn()} language="en" />
+            <ArticleLibraryPanel
+                articles={[source, translation]}
+                selectedArticleId="translation"
+                selectArticle={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                createBlank={vi.fn()}
+                openStyleProfile={vi.fn()}
+                openSettings={vi.fn()}
+                language="en" />
         </IntlProvider>);
 
-        fireEvent.contextMenu(screen.getByRole("button", { name: /Spanish edition/ }));
+        const spanishEditionPattern = /Spanish edition/;
+        fireEvent.contextMenu(screen.getByRole("button", { name: spanishEditionPattern }));
         expect(screen.getAllByRole("menuitem").map((item) => item.textContent)).toEqual(["Delete"]);
     });
 });

@@ -8,9 +8,18 @@ function ProtectedValue({ value, count }: { value: string; count: number }) {
     const [expanded, setExpanded] = useState(false);
     const explanation = intl.formatMessage({ id: "views.translationProtectedExplanation" }, { count });
     return <span>
-        <button type="button" data-protected-value aria-label={intl.formatMessage({ id: "views.translationProtectedValue" }, { value })} aria-describedby={id} aria-controls={id} aria-expanded={expanded} title={explanation}
-            className="min-h-9 max-w-full whitespace-pre-wrap break-anywhere rounded-control text-left text-brand underline decoration-dotted underline-offset-4 hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-            onClick={() => setExpanded(!expanded)} onKeyDown={(event) => {
+        <button
+            type="button"
+            data-protected-value
+            aria-label={intl.formatMessage({ id: "views.translationProtectedValue" }, { value })}
+            aria-describedby={id}
+            aria-controls={id}
+            aria-expanded={expanded}
+            title={explanation}
+            className={("min-h-9 max-w-full whitespace-pre-wrap break-anywhere rounded-control text-left text-brand underline decoration-dotted underline-offset-4 " +
+                "hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
+            onClick={() => setExpanded(!expanded)}
+            onKeyDown={(event) => {
                 if (event.key === "Escape") {
                     event.preventDefault();
                     setExpanded(false);
@@ -32,7 +41,8 @@ export function ProtectedTranslationText({ content, protectedSpans }: { content:
         return <>{content}</>;
 
     const values = [...counts.keys()].sort((a, b) => b.length - a.length);
-    const pattern = new RegExp(values.map((value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
+    const punctuationPattern = /[.*+?^${}()|[\]\\]/g;
+    const pattern = new RegExp(values.map((value) => value.replace(punctuationPattern, "\\$&")).join("|"), "g");
     const pieces = [];
     let end = 0;
 

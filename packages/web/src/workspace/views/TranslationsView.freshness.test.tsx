@@ -33,7 +33,8 @@ describe("translation freshness and refresh", () => {
     it("shows accepted translations becoming stale without changing their text", () => {
         const source = { ...article, currentRevisionId: "new-source", currentRevision: { ...article.currentRevision, id: "new-source", content: "Edited source" } };
         render(<IntlProvider locale="en" messages={messages}><TranslationsView data={{ article: target, sourceArticle: source, stale: true }} actions={{ create: vi.fn(), translate: vi.fn(), openArticle: vi.fn() }} /></IntlProvider>);
-        expect(screen.getByText(/Its text has been preserved/)).toBeTruthy();
+        const itsTextHasPattern = /Its text has been preserved/;
+        expect(screen.getByText(itsTextHasPattern)).toBeTruthy();
         expect(screen.getByText(target.currentRevision.content)).toBeTruthy();
     });
 

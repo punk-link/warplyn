@@ -24,7 +24,11 @@ describe("RestoreRevisionDialog", () => {
         const restore = vi.fn(() => new Promise<void>((resolve) => {
             resolveRestore = resolve;
         }));
-        render(<IntlProvider locale="en" messages={messages}><RestoreRevisionDialog candidate={candidate} hasUncommittedChanges close={vi.fn()} restore={restore} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><RestoreRevisionDialog
+            candidate={candidate}
+            hasUncommittedChanges
+            close={vi.fn()}
+            restore={restore} /></IntlProvider>);
 
         expect(screen.getByRole("dialog").className).toContain("sm:max-w-3xl");
         const button = screen.getByRole("button", { name: getMessage("views.saveAndRestore") });

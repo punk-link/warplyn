@@ -96,11 +96,30 @@ export function TranslationBody({ source, translatedContent, targetLanguage, sou
         : <>
             <div className="@container">
                 {displayMode === "side-by-side"
-                    ? <SideBySideTranslation source={source} translatedContent={translatedContent} targetLanguage={targetLanguage} visibleText={visibleText} setVisibleText={setVisibleText} protectedSpans={protectedSpans} />
-                    : <AlignedTranslation targetLanguage={targetLanguage} sourceParagraphs={sourceParagraphs} translatedParagraphs={translatedParagraphs} paragraphCount={paragraphCount} protectedSpans={protectedSpans} />}
+                    ? <SideBySideTranslation
+                        source={source}
+                        translatedContent={translatedContent}
+                        targetLanguage={targetLanguage}
+                        visibleText={visibleText}
+                        setVisibleText={setVisibleText}
+                        protectedSpans={protectedSpans} />
+                    : <AlignedTranslation
+                        targetLanguage={targetLanguage}
+                        sourceParagraphs={sourceParagraphs}
+                        translatedParagraphs={translatedParagraphs}
+                        paragraphCount={paragraphCount}
+                        protectedSpans={protectedSpans} />}
             </div>
             <ProtectedSpanNotice protectedSpanWarnings={protectedSpanWarnings} />
         </>;
 
-    return <div data-focus-area="article-editor" data-focus-area-entry tabIndex={0} aria-label={intl.formatMessage({ id: "views.translationComparison" })} onKeyDown={navigateProtectedValues} className="mt-4 min-h-0 flex-1 overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong">{content}</div>;
+    return <div
+        data-focus-area="article-editor"
+        data-focus-area-entry
+        tabIndex={0}
+        aria-label={intl.formatMessage({ id: "views.translationComparison" })}
+        onKeyDown={navigateProtectedValues}
+        className={("mt-4 min-h-0 flex-1 overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand " +
+        "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+        "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>{content}</div>;
 }

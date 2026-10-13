@@ -60,6 +60,8 @@ for (const width of [1280, 760]) {
         const library = page.locator('[data-workspace-panel="article-library"]');
         const archivedTitle = `Rail archive fixture ${width}`;
         const activeTitle = `Rail active fixture ${width}`;
+        const archivedTitlePattern = new RegExp(archivedTitle);
+        const activeTitlePattern = new RegExp(activeTitle);
         await createAndNameArticle(page, archivedTitle);
         await page.getByRole("button", { name: "Archive Article", exact: true }).click();
         await createAndNameArticle(page, activeTitle);
@@ -70,8 +72,8 @@ for (const width of [1280, 760]) {
         const before = await draft.boundingBox();
         const articles = library.getByRole("button", { name: "Articles", exact: true });
         await articles.click();
-        await expect(library.getByRole("navigation").getByRole("button", { name: new RegExp(activeTitle) })).toBeVisible();
-        await expect(library.getByRole("navigation").getByRole("button", { name: new RegExp(archivedTitle) })).toHaveCount(0);
+        await expect(library.getByRole("navigation").getByRole("button", { name: activeTitlePattern })).toBeVisible();
+        await expect(library.getByRole("navigation").getByRole("button", { name: archivedTitlePattern })).toHaveCount(0);
         expect((await draft.boundingBox())?.width).toBe(before?.width);
         expect((await library.boundingBox())?.width).toBe(40);
         if (process.env.WARPLYN_RAIL_SCREENSHOT_DIR)
@@ -90,18 +92,18 @@ for (const width of [1280, 760]) {
         await expect(page.getByRole("button", { name: `Rename article: ${archivedTitle}` })).toBeVisible();
         const archive = library.getByRole("button", { name: "Archive", exact: true });
         await archive.click();
-        await expect(library.getByRole("navigation").getByRole("button", { name: new RegExp(archivedTitle) })).toBeVisible();
-        await expect(library.getByRole("navigation").getByRole("button", { name: new RegExp(activeTitle) })).toHaveCount(0);
+        await expect(library.getByRole("navigation").getByRole("button", { name: archivedTitlePattern })).toBeVisible();
+        await expect(library.getByRole("navigation").getByRole("button", { name: activeTitlePattern })).toHaveCount(0);
         await draft.click();
         await expect(library.getByRole("navigation")).toHaveCount(0);
         await articles.click();
-        await library.getByRole("navigation").getByRole("button", { name: new RegExp(activeTitle) }).click();
+        await library.getByRole("navigation").getByRole("button", { name: activeTitlePattern }).click();
         await expect(draft).toContainText("Rail draft recovery text.");
         await page.reload();
         await expect(draft).toContainText("Rail draft recovery text.");
         await expect(library.getByRole("navigation")).toHaveCount(0);
         await articles.click();
-        await library.getByRole("navigation").getByRole("button", { name: new RegExp(activeTitle) }).click({ button: "right" });
+        await library.getByRole("navigation").getByRole("button", { name: activeTitlePattern }).click({ button: "right" });
         await page.getByRole("menuitem", { name: "Pin", exact: true }).click();
         const pinned = library.getByRole("button", { name: `Open pinned article: ${activeTitle}` });
         await expect(pinned).toBeVisible();

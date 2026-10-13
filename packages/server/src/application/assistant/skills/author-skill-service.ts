@@ -300,7 +300,8 @@ export class AuthorSkillService {
     private withVersionAfterHistory(skillId: string, files: Readonly<Record<string, string>>): Readonly<Record<string, string>> {
         const latest = this.revisions.list(skillId).at(-1);
         const markdown = latest && this.revisions.readFiles({ skillId, revisionId: latest.id })?.["SKILL.md"];
-        const version = markdown && /^version:\s*["']?(\d+(?:\.\d+){0,2})["']?\s*$/m.exec(markdown)?.[1];
+        const whitespacePrefixPattern = /^version:\s*["']?(\d+(?:\.\d+){0,2})["']?\s*$/m;
+        const version = markdown && whitespacePrefixPattern.exec(markdown)?.[1];
         if (!version)
             throw new Error("invalid_skill_revision");
 
@@ -319,7 +320,8 @@ export class AuthorSkillService {
         if (!markdown)
             throw new Error("invalid_skill_package");
 
-        const nextMarkdown = markdown.replace(/^(version:\s*)(?:"[^"]+"|'[^']+'|\d+(?:\.\d+){0,2})\s*$/m, `$1${parts.join(".")}`);
+        const whitespacePrefixPattern = /^(version:\s*)(?:"[^"]+"|'[^']+'|\d+(?:\.\d+){0,2})\s*$/m;
+        const nextMarkdown = markdown.replace(whitespacePrefixPattern, `$1${parts.join(".")}`);
         return { ...files, "SKILL.md": nextMarkdown };
     }
 }

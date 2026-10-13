@@ -7,8 +7,11 @@ import type { BackupSnapshotCreator } from "../../application/settings/backup-sn
 import type { SqliteDatabase } from "./database.js";
 
 
+const backupTimestampPattern = /[:.]/g;
+
+
 function createBackupFilename(now: Date): string {
-    const timestamp = now.toISOString().replaceAll(/[:.]/g, "-");
+    const timestamp = now.toISOString().replaceAll(backupTimestampPattern, "-");
     return `skladno-backup-${timestamp}.sqlite`;
 }
 

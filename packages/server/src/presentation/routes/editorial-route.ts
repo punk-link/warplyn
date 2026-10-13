@@ -97,7 +97,8 @@ function editorialErrorCategory(error: unknown): Extract<EditorialEvent, { type:
             [EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED]: EDITORIAL_ERROR_CATEGORY.SESSION_EXPIRED,
         } as const)[error.code];
 
-    return error instanceof Error && /network|fetch|connect|timeout|ECONN|ENOTFOUND/i.test(error.message)
+    const networkFetchConnectPattern = /network|fetch|connect|timeout|ECONN|ENOTFOUND/i;
+    return error instanceof Error && networkFetchConnectPattern.test(error.message)
         ? EDITORIAL_ERROR_CATEGORY.NETWORK
         : EDITORIAL_ERROR_CATEGORY.PROVIDER;
 }

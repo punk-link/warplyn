@@ -52,11 +52,13 @@ async function refreshLinkedTranslation(client: EditorialWorkspaceClient, worksp
 
 
 export function withFindingFreshness(factCheck: FactCheck, revisionId: string, content: string): FactCheck {
-    const normalizedContent = content.replace(/\s+/g, " ").toLowerCase();
+    const contentWhitespacePattern = /\s+/g;
+    const normalizedContent = content.replace(contentWhitespacePattern, " ").toLowerCase();
+    const claimWhitespacePattern = /\s+/g;
     return {
         ...factCheck, findings: factCheck.findings.map((finding) => ({
             ...finding,
-            stale: factCheck.reviewedRevisionId !== revisionId && !finding.resolution && !normalizedContent.includes(finding.claim.replace(/\s+/g, " ").toLowerCase()),
+            stale: factCheck.reviewedRevisionId !== revisionId && !finding.resolution && !normalizedContent.includes(finding.claim.replace(claimWhitespacePattern, " ").toLowerCase()),
         }))
     };
 }

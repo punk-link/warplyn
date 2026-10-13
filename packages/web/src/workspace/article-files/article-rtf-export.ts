@@ -29,6 +29,7 @@ function inline(node: Node): string {
         return "";
 
     const content = [...node.childNodes].map(inline).join("");
+    const punctuationPattern = /"/g;
     switch (node.tagName.toLowerCase()) {
         case "b":
         case "strong":
@@ -45,7 +46,7 @@ function inline(node: Node): string {
         case "br":
             return "\\line ";
         case "a":
-            return `{\\field{\\*\\fldinst HYPERLINK "${escape((node.getAttribute("href") ?? "").replace(/"/g, "%22"))}"}{\\fldrslt ${content}}}`;
+            return `{\\field{\\*\\fldinst HYPERLINK "${escape((node.getAttribute("href") ?? "").replace(punctuationPattern, "%22"))}"}{\\fldrslt ${content}}}`;
         default:
             return content;
     }
@@ -71,7 +72,8 @@ export function exportArticleRtf(html: string): Uint8Array<ArrayBuffer> {
 
         const children = [...element.childNodes].filter((child) => !(child instanceof HTMLElement) || !["UL", "OL"].includes(child.tagName));
         const text = children.map(inline).join("");
-        const heading = /^h([1-6])$/.exec(tag)?.[1];
+        const punctuationPattern = /^h([1-6])$/;
+        const heading = punctuationPattern.exec(tag)?.[1];
         let controls = "\\pard ";
         if (listId)
             controls += `\\ls${listId}\\ilvl${Math.min(8, level)}\\li${720 * (level + 1)} `;

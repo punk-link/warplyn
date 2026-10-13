@@ -74,7 +74,8 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         if (!file)
             return;
 
-        if (!/\.(txt|md)$/i.test(file.name)) {
+        const txtPattern = /\.(txt|md)$/i;
+        if (!txtPattern.test(file.name)) {
             setUploadFailed(true);
             event.target.value = "";
             return;
@@ -82,7 +83,8 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
 
         void file.text().then((text) => {
             setUploadFailed(false);
-            setName(file.name.replace(/\.(txt|md)$/i, ""));
+            const txtPattern = /\.(txt|md)$/i;
+            setName(file.name.replace(txtPattern, ""));
             setContent(text);
         }, () => setUploadFailed(true));
         event.target.value = "";
@@ -127,7 +129,11 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
             </div>
             <div className="flex flex-wrap items-center justify-end gap-3">
                 {rebuilt && <span className="text-xs text-success" role="status">{intl.formatMessage({ id: "styleProfile.rebuilt" }, { count: activeCount })}</span>}
-                <Button variant="secondary" state={pendingAction === "rebuild" ? "loading" : "default"} disabled={corpus?.status === "empty" || Boolean(pendingAction)} onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}>{intl.formatMessage({ id: "styleProfile.rebuild" })}</Button>
+                <Button
+                    variant="secondary"
+                    state={pendingAction === "rebuild" ? "loading" : "default"}
+                    disabled={corpus?.status === "empty" || Boolean(pendingAction)}
+                    onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}>{intl.formatMessage({ id: "styleProfile.rebuild" })}</Button>
             </div>
         </header>
         {corpus?.profile?.confidence === "low" && <Banner className="mb-4" tone="warning">{intl.formatMessage({ id: "styleProfile.lowConfidence" })}</Banner>}

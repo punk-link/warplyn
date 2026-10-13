@@ -24,7 +24,11 @@ export class FactChecksRepository {
 
 
     listFactChecks(articleId: string): FactCheck[] {
-        return (this.database.prepare("SELECT a.content, r.revision_id, r.created_at FROM fact_check_runs r JOIN editorial_artifacts a ON a.id = r.editorial_artifact_id WHERE r.article_id = ? AND a.rejected_at IS NULL ORDER BY r.created_at DESC, r.rowid DESC").all(articleId) as Row[])
+        return (this.database.prepare((`SELECT a.content, r.revision_id, r.created_at
+            FROM fact_check_runs r
+            JOIN editorial_artifacts a ON a.id = r.editorial_artifact_id
+            WHERE r.article_id = ? AND a.rejected_at IS NULL
+            ORDER BY r.created_at DESC, r.rowid DESC`)).all(articleId) as Row[])
             .flatMap((row) => {
                 try {
                     const factCheck = JSON.parse(String(row.content)) as { factCheck?: FactCheck };
@@ -41,7 +45,10 @@ export class FactChecksRepository {
 
 
     resolveFactCheckFinding(occurrenceId: string, resolution: "corrected_or_removed" | "accepted_as_written" | "evidence_accepted"): void {
-        this.database.prepare("INSERT INTO fact_check_resolutions (occurrence_id, resolution, updated_at) VALUES (?, ?, ?) ON CONFLICT(occurrence_id) DO UPDATE SET resolution = excluded.resolution, updated_at = excluded.updated_at")
+        this.database.prepare((`INSERT INTO fact_check_resolutions (occurrence_id, resolution, updated_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(occurrence_id) DO UPDATE
+            SET resolution = excluded.resolution, updated_at = excluded.updated_at`))
             .run(occurrenceId, resolution, getCurrentTimestamp());
     }
 

@@ -45,7 +45,11 @@ describe("TranslationsView", () => {
 
     it("uses the standard workspace width for translation comparison", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} stale={false} create={vi.fn()} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                stale={false}
+                create={vi.fn()}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByRole("heading", { name: getMessage("views.translations") }).parentElement?.parentElement?.parentElement?.className).toContain("w-full");
@@ -53,7 +57,12 @@ describe("TranslationsView", () => {
 
     it("uses comparison-sized text for translated content", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Texto traducido", baseRevisionId: "revision-2" }]} stale={false} create={vi.fn()} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Texto traducido", baseRevisionId: "revision-2" }]}
+                stale={false}
+                create={vi.fn()}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByText("Source Article").className).toContain("text-base");
@@ -64,11 +73,17 @@ describe("TranslationsView", () => {
         const user = userEvent.setup();
         const translate = vi.fn();
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={{ ...article, language: "ru" }} stale={false} create={vi.fn()} translate={translate} translationLanguages={["es", "de"]} />
+            <TranslationsView
+                article={{ ...article, language: "ru" }}
+                stale={false}
+                create={vi.fn()}
+                translate={translate}
+                translationLanguages={["es", "de"]} />
         </IntlProvider>);
 
         expect(screen.getByText("Generate a translation, then review it here. Previous results are kept.")).toBeTruthy();
-        expect(screen.queryByText(/ru source/)).toBeNull();
+        const sourcePattern = /ru source/;
+        expect(screen.queryByText(sourcePattern)).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("views.translate") }));
         expect(translate).not.toHaveBeenCalled();
         await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Generate translations" }));
@@ -78,7 +93,12 @@ describe("TranslationsView", () => {
 
     it("workspace.translations.stale-source blocks creating a translation from stale source content", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-1" }]} stale create={vi.fn()} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-1" }]}
+                stale
+                create={vi.fn()}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByText("The source Article has changed since this translation proposal was made.")).toBeTruthy();
@@ -87,7 +107,12 @@ describe("TranslationsView", () => {
 
     it("warns and blocks creation when protected content changed", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: ["https://example.com", "API-v2"] }, content: "Texto sin los valores protegidos.", baseRevisionId: "revision-2" }]} stale={false} create={vi.fn()} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: ["https://example.com", "API-v2"] }, content: "Texto sin los valores protegidos.", baseRevisionId: "revision-2" }]}
+                stale={false}
+                create={vi.fn()}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByRole("alert").textContent).toBe("Protected content changed or missing: https://example.com, API-v2");
@@ -101,7 +126,12 @@ describe("TranslationsView", () => {
             resolveCreate = resolve;
         }));
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-2" }]} stale={false} create={create} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-2" }]}
+                stale={false}
+                create={create}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         const button = screen.getByRole("button", { name: getMessage("views.editTranslation") });
@@ -117,7 +147,13 @@ describe("TranslationsView", () => {
         const user = userEvent.setup();
         const edit = vi.fn();
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-2" }]} stale={false} create={vi.fn().mockResolvedValue(undefined)} edit={edit} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-2" }]}
+                stale={false}
+                create={vi.fn().mockResolvedValue(undefined)}
+                edit={edit}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("views.editTranslation") }));
@@ -128,7 +164,13 @@ describe("TranslationsView", () => {
         const user = userEvent.setup();
         const reject = vi.fn().mockResolvedValue(undefined);
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-2", editorialArtifactId: "translation-artifact" }]} stale={false} create={vi.fn()} reject={reject} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Borrador traducido", baseRevisionId: "revision-2", editorialArtifactId: "translation-artifact" }]}
+                stale={false}
+                create={vi.fn()}
+                reject={reject}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("views.rejectTranslation") }));
@@ -144,7 +186,14 @@ describe("TranslationsView", () => {
         const edit = vi.fn();
         const openArticle = vi.fn();
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={{ ...article, language: "en", sourceArticleId: "source-article", sourceRevisionId: "source-revision", sourceRevisionNumber: 2 }} sourceArticle={{ ...article, id: "source-article", title: "Original Article" }} stale={false} create={vi.fn()} edit={edit} openArticle={openArticle} translate={vi.fn()} />
+            <TranslationsView
+                article={{ ...article, language: "en", sourceArticleId: "source-article", sourceRevisionId: "source-revision", sourceRevisionNumber: 2 }}
+                sourceArticle={{ ...article, id: "source-article", title: "Original Article" }}
+                stale={false}
+                create={vi.fn()}
+                edit={edit}
+                openArticle={openArticle}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByText((_, element) => element?.tagName === "P" && element.textContent === "This translation is linked to Original Article at source Revision 2.")).toBeTruthy();
@@ -159,7 +208,13 @@ describe("TranslationsView", () => {
         const user = userEvent.setup();
         const openArticle = vi.fn();
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} linkedTranslations={[{ ...article, id: "spanish-article", title: "Source — Spanish", language: "es", sourceArticleId: article.id, sourceRevisionId: article.currentRevisionId, sourceRevisionNumber: 1 }]} stale={false} create={vi.fn()} openArticle={openArticle} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                linkedTranslations={[{ ...article, id: "spanish-article", title: "Source — Spanish", language: "es", sourceArticleId: article.id, sourceRevisionId: article.currentRevisionId, sourceRevisionNumber: 1 }]}
+                stale={false}
+                create={vi.fn()}
+                openArticle={openArticle}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: "Edit" }));
@@ -170,10 +225,15 @@ describe("TranslationsView", () => {
         const user = userEvent.setup();
         const create = vi.fn().mockResolvedValue(undefined);
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[
-                { metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Texto en español", baseRevisionId: "revision-2" },
-                { metadata: { targetLanguage: "German", protectedSpans: [] }, content: "Deutscher Text", baseRevisionId: "revision-2" },
-            ]} stale={false} create={create} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={[
+                    { metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "Texto en español", baseRevisionId: "revision-2" },
+                    { metadata: { targetLanguage: "German", protectedSpans: [] }, content: "Deutscher Text", baseRevisionId: "revision-2" },
+                ]}
+                stale={false}
+                create={create}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByText("Deutscher Text")).toBeTruthy();
@@ -189,12 +249,24 @@ describe("TranslationsView", () => {
             { metadata: { targetLanguage: "German", protectedSpans: [] }, content: "Deutscher Text", baseRevisionId: "revision-2" },
         ];
         const { rerender } = render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={translations} selectedTargetLanguage="Spanish" stale={false} create={vi.fn()} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={translations}
+                selectedTargetLanguage="Spanish"
+                stale={false}
+                create={vi.fn()}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByText("Texto en espaÃ±ol")).toBeTruthy();
         rerender(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[translations[1]!]} selectedTargetLanguage="Spanish" stale={false} create={vi.fn()} translate={vi.fn()} />
+            <TranslationsView
+                article={article}
+                translations={[translations[1]!]}
+                selectedTargetLanguage="Spanish"
+                stale={false}
+                create={vi.fn()}
+                translate={vi.fn()} />
         </IntlProvider>);
         expect(screen.getByText("Deutscher Text")).toBeTruthy();
     });
@@ -202,10 +274,17 @@ describe("TranslationsView", () => {
     it("shows selected-profile character guidance for the selected translation", async () => {
         const user = userEvent.setup();
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={article} translations={[
-                { metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "a".repeat(3_001), baseRevisionId: "revision-2" },
-                { metadata: { targetLanguage: "German", protectedSpans: [] }, content: "Kurz", baseRevisionId: "revision-2" },
-            ]} stale={false} create={vi.fn()} translate={vi.fn()} publishProfile={publishLimitProfiles[2]!} publishProfileLabel="LinkedIn post" />
+            <TranslationsView
+                article={article}
+                translations={[
+                    { metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "a".repeat(3_001), baseRevisionId: "revision-2" },
+                    { metadata: { targetLanguage: "German", protectedSpans: [] }, content: "Kurz", baseRevisionId: "revision-2" },
+                ]}
+                stale={false}
+                create={vi.fn()}
+                translate={vi.fn()}
+                publishProfile={publishLimitProfiles[2]!}
+                publishProfileLabel="LinkedIn post" />
         </IntlProvider>);
 
         expect(screen.getByText((_, element) => element?.tagName === "P" && element.textContent === "4 / 3,000 characters")).toBeTruthy();
@@ -216,7 +295,12 @@ describe("TranslationsView", () => {
     it("aligns source and translated paragraphs by order", async () => {
         const user = userEvent.setup();
         render(<IntlProvider locale="en" messages={messages}>
-            <TranslationsView article={{ ...article, currentRevision: { ...article.currentRevision, content: "1. First source paragraph.\n2. Second source paragraph." } }} translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "1. Primer párrafo traducido.\n2. Segundo párrafo traducido.", baseRevisionId: "revision-2" }]} stale={false} create={vi.fn()} translate={vi.fn()} />
+            <TranslationsView
+                article={{ ...article, currentRevision: { ...article.currentRevision, content: "1. First source paragraph.\n2. Second source paragraph." } }}
+                translations={[{ metadata: { targetLanguage: "Spanish", protectedSpans: [] }, content: "1. Primer párrafo traducido.\n2. Segundo párrafo traducido.", baseRevisionId: "revision-2" }]}
+                stale={false}
+                create={vi.fn()}
+                translate={vi.fn()} />
         </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("views.translationAligned") }));

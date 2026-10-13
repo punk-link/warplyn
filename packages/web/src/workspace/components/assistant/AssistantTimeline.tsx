@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import { getSkillPresentation } from "../../../i18n/skill-presentation.js";
 import { useIntl } from "react-intl";
 import type { AssistantCapabilityActivity, AssistantMessage, AssistantSkillSummary, FactCheckClaimPreview, GeneralSettings } from "@skladno/shared";
 import { ActivityIndicator, Banner, Button, IconButton } from "../../../ui/primitives.js";
@@ -50,7 +51,7 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
     const greeting = assistantMessages?.find((item) => item.template === "greeting" || item.kind === "greeting");
     const lastMessage = assistantMessages?.at(-1);
     const skillByRequest = new Map(assistantMessages?.flatMap((item) => item.requestId && item.skillId ? [[item.requestId, item.skillId] as const] : []));
-    const skillNames = new Map(authorSkills.map((skill) => [skill.reference.id, skill.name] as const));
+    const skillNames = new Map(authorSkills.map((skill) => [skill.reference.id, getSkillPresentation(skill, intl).name] as const));
     const completedFactCheck = state === "idle" ? findLatestCompletedFactCheck(assistantMessages) : undefined;
 
     useLayoutEffect(() => {
@@ -126,11 +127,33 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
 
 
     return <div data-focus-area="assistant-chat" onKeyDown={handleChatKeyDown} className="relative min-h-0 flex-1">
-        <div ref={timeline} data-focus-area-entry tabIndex={0} onScroll={trackScroll} className="h-full select-text cursor-default flex flex-col gap-2 overflow-y-auto px-4 py-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong" aria-label={intl.formatMessage({ id: "assistant.response.conversation" })} aria-live="polite">
-            <AssistantTimelineMessages data={data} actions={actions} greeting={greeting} lastMessage={lastMessage} completedFactCheck={completedFactCheck} skillByRequest={skillByRequest} skillNames={skillNames} />
+        <div
+            ref={timeline}
+            data-focus-area-entry
+            tabIndex={0}
+            onScroll={trackScroll}
+            className={("h-full select-text cursor-default flex flex-col gap-2 overflow-y-auto px-4 py-4 [scrollbar-color:var(--color-border-strong)_transparent] " +
+            "[scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full " +
+            "[&::-webkit-scrollbar-thumb]:bg-border-strong")}
+            aria-label={intl.formatMessage({ id: "assistant.response.conversation" })}
+            aria-live="polite">
+            <AssistantTimelineMessages
+                data={data}
+                actions={actions}
+                greeting={greeting}
+                lastMessage={lastMessage}
+                completedFactCheck={completedFactCheck}
+                skillByRequest={skillByRequest}
+                skillNames={skillNames} />
             <AssistantTimelineStatus data={data} actions={actions} />
         </div>
-        {!atEnd && <IconButton className="absolute bottom-3 left-1/2 -translate-x-1/2 shadow-raised" variant="secondary" round label={intl.formatMessage({ id: "assistant.scrollToEnd" })} title={intl.formatMessage({ id: "assistant.scrollToEnd" })} onClick={scrollToEnd}>
+        {!atEnd && <IconButton
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 shadow-raised"
+            variant="secondary"
+            round
+            label={intl.formatMessage({ id: "assistant.scrollToEnd" })}
+            title={intl.formatMessage({ id: "assistant.scrollToEnd" })}
+            onClick={scrollToEnd}>
             <ChevronDownIcon className="size-4" />
         </IconButton>}
     </div>;
@@ -160,11 +183,35 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
     const { openView, openSkillFolder, onRetry, onCheckpoint, applyEdit, setClaimSelected } = actions;
     const intl = useIntl();
     return <>
-        {greeting && <AssistantTimelineMessage message={greeting} generalSettings={generalSettings} skillByRequest={skillByRequest} skillNames={skillNames} />}
-        {assistantMessages?.filter((item) => item !== greeting).map((item) => <AssistantTimelineMessage key={item.id} message={item} factCheckClaims={item === completedFactCheck ? factCheckClaims : undefined} openView={openView} openSkillFolder={openSkillFolder} onRetry={item === lastMessage && !streamedMessage ? onRetry : undefined} onCheckpoint={state === "streaming" ? undefined : onCheckpoint} applyEdit={applyEdit} generalSettings={generalSettings} skillByRequest={skillByRequest} skillNames={skillNames} />)}
-        <StreamedTimelineMessage message={streamedMessage} openView={openView} onRetry={onRetry} generalSettings={generalSettings} skillByRequest={skillByRequest} />
+        {greeting && <AssistantTimelineMessage
+            message={greeting}
+            generalSettings={generalSettings}
+            skillByRequest={skillByRequest}
+            skillNames={skillNames} />}
+        {assistantMessages?.filter((item) => item !== greeting).map((item) => <AssistantTimelineMessage
+            key={item.id}
+            message={item}
+            factCheckClaims={item === completedFactCheck ? factCheckClaims : undefined}
+            openView={openView}
+            openSkillFolder={openSkillFolder}
+            onRetry={item === lastMessage && !streamedMessage ? onRetry : undefined}
+            onCheckpoint={state === "streaming" ? undefined : onCheckpoint}
+            applyEdit={applyEdit}
+            generalSettings={generalSettings}
+            skillByRequest={skillByRequest}
+            skillNames={skillNames} />)}
+        <StreamedTimelineMessage
+            message={streamedMessage}
+            openView={openView}
+            onRetry={onRetry}
+            generalSettings={generalSettings}
+            skillByRequest={skillByRequest} />
         {!assistantMessages?.length && <p className="text-sm leading-6 text-muted">{intl.formatMessage({ id: "assistant.intro" })}</p>}
-        {factCheckClaims?.length && !completedFactCheck ? <FactCheckClaims key={activeRequestId} claims={factCheckClaims} className="mr-6" onSelectionChange={state === "streaming" && activeRequestId ? setClaimSelected : undefined} /> : null}
+        {factCheckClaims?.length && !completedFactCheck ? <FactCheckClaims
+            key={activeRequestId}
+            claims={factCheckClaims}
+            className="mr-6"
+            onSelectionChange={state === "streaming" && activeRequestId ? setClaimSelected : undefined} /> : null}
     </>;
 }
 
@@ -172,7 +219,12 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
 function StreamedTimelineMessage({ message, openView, onRetry, generalSettings, skillByRequest }: Pick<AssistantTimelineActions, "openView" | "onRetry"> & { message: StreamedAssistantMessage | undefined; generalSettings: GeneralSettings; skillByRequest: Map<string, string> }) {
     const intl = useIntl();
     if (message?.responseKind)
-        return <AssistantTimelineMessage message={{ id: message.id, articleId: message.articleId, role: "assistant", kind: "response", status: message.status, responseKind: message.responseKind, createdAt: message.createdAt, updatedAt: message.createdAt }} openView={openView} onRetry={onRetry} generalSettings={generalSettings} skillByRequest={skillByRequest} />;
+        return <AssistantTimelineMessage
+            message={{ id: message.id, articleId: message.articleId, role: "assistant", kind: "response", status: message.status, responseKind: message.responseKind, createdAt: message.createdAt, updatedAt: message.createdAt }}
+            openView={openView}
+            onRetry={onRetry}
+            generalSettings={generalSettings}
+            skillByRequest={skillByRequest} />;
 
     if (message?.blocks.length)
         return <article className="p-0">

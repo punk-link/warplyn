@@ -25,8 +25,10 @@ test("editorial endpoint streams a typed proposal and saves context only after c
         });
         const body = await response.text();
 
-        assert.match(body, /"type":"text_delta","delta":"A "/);
-        assert.match(body, /"type":"completed","responseId":"local-1","continuationToken":"resp-1","text":"A proposal"/);
+        const typeTextDeltaPattern = /"type":"text_delta","delta":"A "/;
+        assert.match(body, typeTextDeltaPattern);
+        const typeCompletedResponseidPattern = /"type":"completed","responseId":"local-1","continuationToken":"resp-1","text":"A proposal"/;
+        assert.match(body, typeCompletedResponseidPattern);
         assert.equal(repositories.editorialSessions.getEditorialSession(article.id)?.continuationToken, "resp-1");
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "Original article");
         assert.equal(engine.requests[0]?.article, "Original article");
@@ -55,8 +57,10 @@ test("failed or incomplete editorial streams leave the Article and session uncha
         });
         const body = await response.text();
 
-        assert.match(body, /"type":"text_delta"/);
-        assert.match(body, /"type":"error","requestId":"request-2","code":"malformed_stream"/);
+        const typeTextDeltaPattern = /"type":"text_delta"/;
+        assert.match(body, typeTextDeltaPattern);
+        const typeErrorRequestidPattern = /"type":"error","requestId":"request-2","code":"malformed_stream"/;
+        assert.match(body, typeErrorRequestidPattern);
         assert.equal(repositories.editorialSessions.getEditorialSession(article.id), undefined);
         assert.deepEqual(repositories.editorialArtifacts.listEditorialArtifacts(article.id), []);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "Original article");
@@ -73,7 +77,8 @@ test("an unavailable model capability is a configuration error before Article co
             body: JSON.stringify({ requestId: "unavailable-capability", operation: EDITORIAL_OPERATION.FACT_CHECK }),
         });
 
-        assert.match(await response.text(), /"code":"configuration","errorCode":"editorial_configuration_missing","retryable":true/);
+        const codeConfigurationErrorcodePattern = /"code":"configuration","errorCode":"editorial_configuration_missing","retryable":true/;
+        assert.match(await response.text(), codeConfigurationErrorcodePattern);
         assert.deepEqual(repositories.editorialArtifacts.listEditorialArtifacts(article.id), []);
     });
 });
@@ -139,7 +144,8 @@ test("expired provider session is cleared and can be retried as a fresh session"
             body: JSON.stringify({ requestId: "request-expired", operation: EDITORIAL_OPERATION.FLOW_REVISION }),
         });
 
-        assert.match(await response.text(), /"code":"session_expired"/);
+        const codeSessionExpiredPattern = /"code":"session_expired"/;
+        assert.match(await response.text(), codeSessionExpiredPattern);
         assert.equal(repositories.editorialSessions.getEditorialSession(article.id), undefined);
     });
 });
@@ -162,8 +168,10 @@ test("provider errors are actionable and leave the article unchanged", async () 
         });
         const body = await response.text();
 
-        assert.match(body, /"type":"error","requestId":"request-provider-error","code":"network"/);
-        assert.match(body, /"errorCode":"editorial_provider_failed"/);
+        const typeErrorRequestidPattern = /"type":"error","requestId":"request-provider-error","code":"network"/;
+        assert.match(body, typeErrorRequestidPattern);
+        const errorcodeEditorialProviderPattern = /"errorCode":"editorial_provider_failed"/;
+        assert.match(body, errorcodeEditorialProviderPattern);
         assert.equal(repositories.editorialSessions.getEditorialSession(article.id), undefined);
         assert.deepEqual(repositories.editorialArtifacts.listEditorialArtifacts(article.id), []);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "Original article");

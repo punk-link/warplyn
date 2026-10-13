@@ -56,7 +56,9 @@ function renderShell(props: Partial<Parameters<typeof WorkspaceShell>[0]> = {}) 
     };
 
     return render(<IntlProvider locale="en" messages={messages}>
-        <WorkspaceShell {...defaults} {...props}
+        <WorkspaceShell
+            {...defaults}
+            {...props}
             library={<aside aria-label="Article Library Panel">Library</aside>}
             assistant={<aside aria-label="Editorial Assistant Panel">Assistant</aside>}>
             <div data-article-workspace tabIndex={-1}>Article Workspace</div>

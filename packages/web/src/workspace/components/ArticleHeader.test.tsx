@@ -18,7 +18,13 @@ const article: Article = {
 afterEach(cleanup);
 
 it("shows archive status beside the title and removes it after unarchiving", () => {
-    const header = (archived: boolean) => <IntlProvider locale="en" messages={messages}><ArticleHeader article={{ ...article, archived }} updateArticle={vi.fn()} save={vi.fn()} remove={vi.fn()} focusMode={false} setFocusMode={vi.fn()} /></IntlProvider>;
+    const header = (archived: boolean) => <IntlProvider locale="en" messages={messages}><ArticleHeader
+        article={{ ...article, archived }}
+        updateArticle={vi.fn()}
+        save={vi.fn()}
+        remove={vi.fn()}
+        focusMode={false}
+        setFocusMode={vi.fn()} /></IntlProvider>;
     const { rerender } = render(header(true));
     expect(screen.getByText("Archived")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Unarchive Article" })).toBeTruthy();
@@ -28,7 +34,13 @@ it("shows archive status beside the title and removes it after unarchiving", () 
 
 
 it("moves across Article Header controls with Left and Right", () => {
-    render(<IntlProvider locale="en" messages={messages}><ArticleHeader article={article} updateArticle={vi.fn().mockResolvedValue(undefined)} save={vi.fn().mockResolvedValue(undefined)} remove={vi.fn().mockResolvedValue(undefined)} focusMode={false} setFocusMode={vi.fn()} /></IntlProvider>);
+    render(<IntlProvider locale="en" messages={messages}><ArticleHeader
+        article={article}
+        updateArticle={vi.fn().mockResolvedValue(undefined)}
+        save={vi.fn().mockResolvedValue(undefined)}
+        remove={vi.fn().mockResolvedValue(undefined)}
+        focusMode={false}
+        setFocusMode={vi.fn()} /></IntlProvider>);
 
     const title = screen.getByRole("button", { name: "Rename article: Draft" });
     expect(title.className).toContain("focus-visible:ring-brand");

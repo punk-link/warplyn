@@ -23,7 +23,8 @@ test("the live Assistant tool loop stages one catalog Proposal before completion
         const body = await response.text();
         const artifact = repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!;
 
-        assert.match(body, /"type":"completed".*"responseKind":"proposal_prepared"/);
+        const typeCompletedResponsekindPattern = /"type":"completed".*"responseKind":"proposal_prepared"/;
+        assert.match(body, typeCompletedResponsekindPattern);
         assert.equal(JSON.parse(artifact.content).capability, "generate_proposal");
         assert.equal(JSON.parse(artifact.content).proposal, "Improved Article");
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "Original Article");
@@ -48,7 +49,8 @@ test("proposal Skills create revision-bound Proposals and review handoffs", asyn
             const artifact = repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!;
             const message = repositories.assistant.listMessages(article.id).find((item) => item.requestId === requestId && item.role === "assistant");
 
-            assert.match(body, /"type":"completed".*"responseKind":"proposal_prepared"/);
+            const typeCompletedResponsekindPattern = /"type":"completed".*"responseKind":"proposal_prepared"/;
+            assert.match(body, typeCompletedResponsekindPattern);
             assert.equal(JSON.parse(artifact.content).proposal, `Proposal from ${skillId}`);
             assert.equal(artifact.revisionId, article.currentRevisionId);
             assert.equal(message?.responseKind, "proposal_prepared");

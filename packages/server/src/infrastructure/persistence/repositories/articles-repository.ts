@@ -12,6 +12,7 @@ import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
 import { resolveAcceptedCorrections } from "./accepted-corrections-resolution.js";
 import { listArticleSummaries, listRevisionSummaries } from "./article-summary-queries.js";
 import { setGeneratedArticleTitle } from "./article-title-query.js";
+import { discardArticleDraft, saveArticleDraft } from "./article-draft-operations.js";
 
 
 export class ArticlesRepository {
@@ -74,7 +75,8 @@ export class ArticlesRepository {
 
     private insertArticleRows(input: CreateArticleInput, { articleId, revisionId, sourceArticleId, language, timestamp }: { articleId: string; revisionId: string; sourceArticleId: string | undefined; language: CreateArticleInput["language"]; timestamp: string }): void {
         const archived = sourceArticleId ? Number(this.database.prepare("SELECT archived FROM articles WHERE id = ?").get(sourceArticleId)?.archived ?? 0) : 0;
-        this.database.prepare("INSERT INTO articles (id, title, language, audience, publishing_profile_id, source_article_id, source_revision_id, archived, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        this.database.prepare((`INSERT INTO articles (id, title, language, audience, publishing_profile_id, source_article_id, source_revision_id, archived, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`))
             .run(articleId, input.title.trim(), language ?? null, input.audience ?? null, input.publishingProfileId ?? null, sourceArticleId ?? null, input.sourceRevisionId ?? null, archived, timestamp, timestamp);
         this.database.prepare("INSERT INTO article_revisions (id, article_id, content, provenance_json, created_at) VALUES (?, ?, ?, ?, ?)")
             .run(revisionId, articleId, input.content, JSON.stringify({ ...(input.provenance ?? { kind: REVISION_PROVENANCE_KIND.INITIAL }), ...(input.sourceRevisionId ? { sourceRevisionId: input.sourceRevisionId } : {}) }), timestamp);
@@ -176,50 +178,12 @@ export class ArticlesRepository {
 
 
     saveDraft(articleId: string, input: SaveArticleDraftInput): ArticleDraft {
-        this.database.exec("BEGIN IMMEDIATE;");
-        try {
-            const current = this.getArticle(articleId);
-            if (!current)
-                throwArticleNotFound();
-
-            if (current.currentRevisionId !== input.baseRevisionId)
-                throw new ArticleRevisionConflictError(current);
-
-            const existing = current.draft;
-            if (existing?.version !== input.expectedDraftVersion)
-                throw new ArticleDraftConflictError(current, existing);
-
-            const timestamp = getCurrentTimestamp();
-            const version = (existing?.version ?? 0) + 1;
-            this.database.prepare("INSERT INTO article_drafts (article_id, content, base_revision_id, version, updated_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(article_id) DO UPDATE SET content = excluded.content, base_revision_id = excluded.base_revision_id, version = excluded.version, updated_at = excluded.updated_at")
-                .run(articleId, input.content, input.baseRevisionId, version, timestamp);
-            this.database.exec("COMMIT;");
-        } catch (error) {
-            this.database.exec("ROLLBACK;");
-            throw error;
-        }
-
-        return this.getArticle(articleId)!.draft!;
+        return saveArticleDraft(this.database, articleId, input, (id) => this.getArticle(id));
     }
 
 
     discardDraft(articleId: string, expectedDraftVersion: number): void {
-        this.database.exec("BEGIN IMMEDIATE;");
-        try {
-            const current = this.getArticle(articleId);
-            if (!current)
-                throwArticleNotFound();
-
-            if (current.draft?.version !== expectedDraftVersion)
-                throw new ArticleDraftConflictError(current, current.draft);
-
-            this.database.prepare("DELETE FROM article_drafts WHERE article_id = ? AND version = ?")
-                .run(articleId, expectedDraftVersion);
-            this.database.exec("COMMIT;");
-        } catch (error) {
-            this.database.exec("ROLLBACK;");
-            throw error;
-        }
+        discardArticleDraft(this.database, articleId, expectedDraftVersion, (id) => this.getArticle(id));
     }
 
 

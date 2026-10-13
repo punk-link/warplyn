@@ -27,7 +27,11 @@ function setup({ articles = [original, recent, archived, translation], collapsed
     };
     const mutations = { setArchived: vi.fn().mockResolvedValue(undefined), setPinned: vi.fn().mockResolvedValue(undefined) };
     const panel = (isCollapsed: boolean) => <IntlProvider locale="en" messages={messages}>
-        <ArticleLibraryPanel data={{ articles, selectedArticleId: original.id, collapsed: isCollapsed, language: "en" }} navigation={navigation} mutations={mutations} responsiveCollapsed={responsiveCollapsed} />
+        <ArticleLibraryPanel
+            data={{ articles, selectedArticleId: original.id, collapsed: isCollapsed, language: "en" }}
+            navigation={navigation}
+            mutations={mutations}
+            responsiveCollapsed={responsiveCollapsed} />
         <button type="button">Outside</button>
     </IntlProvider>;
     const result = render(panel(collapsed));
@@ -49,9 +53,12 @@ describe("Library Rail", () => {
         expect(articles.getAttribute("aria-pressed")).toBe("true");
         expect(screen.getByText("Pinned")).toBeTruthy();
         expect(screen.getByText("Recent")).toBeTruthy();
-        expect(screen.queryByRole("button", { name: /Archived story/ })).toBeNull();
-        expect(document.activeElement).toBe(within(screen.getByRole("navigation")).getByRole("button", { name: /Pinned story/ }));
-        await user.click(screen.getByRole("button", { name: /Recent story/ }));
+        const archivedStoryPattern = /Archived story/;
+        expect(screen.queryByRole("button", { name: archivedStoryPattern })).toBeNull();
+        const pinnedStoryPattern = /Pinned story/;
+        expect(document.activeElement).toBe(within(screen.getByRole("navigation")).getByRole("button", { name: pinnedStoryPattern }));
+        const recentStoryPattern = /Recent story/;
+        await user.click(screen.getByRole("button", { name: recentStoryPattern }));
         expect(navigation.selectArticle).toHaveBeenCalledWith(recent.id);
         expect(screen.queryByRole("navigation")).toBeNull();
         expect(document.activeElement).toBe(articles);
@@ -69,8 +76,10 @@ describe("Library Rail", () => {
         const field = screen.getByRole("textbox", { name: "Search articles" });
         expect(document.activeElement).toBe(field);
         await user.type(field, "Spanish");
-        expect(within(screen.getByRole("navigation")).queryByRole("button", { name: /Pinned story/ })).toBeNull();
-        const row = screen.getByRole("button", { name: /Spanish edition/ });
+        const pinnedStoryPattern = /Pinned story/;
+        expect(within(screen.getByRole("navigation")).queryByRole("button", { name: pinnedStoryPattern })).toBeNull();
+        const spanishEditionPattern = /Spanish edition/;
+        const row = screen.getByRole("button", { name: spanishEditionPattern });
         expect(fireEvent.keyDown(field, { key: "ArrowDown" })).toBe(true);
         expect(document.activeElement).toBe(field);
         await user.keyboard("{Enter}{ArrowDown}{Enter}");
@@ -85,8 +94,10 @@ describe("Library Rail", () => {
         const user = userEvent.setup();
         setup();
         await user.click(screen.getByRole("button", { name: "Archive" }));
-        expect(screen.getByRole("button", { name: /Archived story/ })).toBeTruthy();
-        expect(within(screen.getByRole("navigation")).queryByRole("button", { name: /Pinned story/ })).toBeNull();
+        const archivedStoryPattern = /Archived story/;
+        expect(screen.getByRole("button", { name: archivedStoryPattern })).toBeTruthy();
+        const pinnedStoryPattern = /Pinned story/;
+        expect(within(screen.getByRole("navigation")).queryByRole("button", { name: pinnedStoryPattern })).toBeNull();
         await user.type(screen.getByRole("textbox"), "missing");
         expect(screen.getByText("No articles match your search.")).toBeTruthy();
         cleanup();
@@ -128,11 +139,12 @@ describe("Library Rail", () => {
         const user = userEvent.setup();
         const { mutations } = setup();
         await user.click(screen.getByRole("button", { name: "Articles" }));
-        fireEvent.contextMenu(within(screen.getByRole("navigation")).getByRole("button", { name: /Pinned story/ }));
+        const pinnedStoryPattern = /Pinned story/;
+        fireEvent.contextMenu(within(screen.getByRole("navigation")).getByRole("button", { name: pinnedStoryPattern }));
         await user.keyboard("{Escape}");
         expect(screen.queryByRole("menu")).toBeNull();
         expect(screen.getByRole("navigation")).toBeTruthy();
-        fireEvent.contextMenu(within(screen.getByRole("navigation")).getByRole("button", { name: /Pinned story/ }));
+        fireEvent.contextMenu(within(screen.getByRole("navigation")).getByRole("button", { name: pinnedStoryPattern }));
         await user.click(within(screen.getByRole("menu")).getByRole("menuitem", { name: "Archive" }));
         expect(mutations.setArchived).toHaveBeenCalledWith(original.id, true);
         expect(screen.getByRole("navigation")).toBeTruthy();
@@ -155,7 +167,8 @@ describe("Library Rail", () => {
         const user = userEvent.setup();
         setup();
         await user.click(screen.getByRole("button", { name: "Articles" }));
-        fireEvent.contextMenu(within(screen.getByRole("navigation")).getByRole("button", { name: /Pinned story/ }));
+        const pinnedStoryPattern = /Pinned story/;
+        fireEvent.contextMenu(within(screen.getByRole("navigation")).getByRole("button", { name: pinnedStoryPattern }));
         await user.click(screen.getByRole("menuitem", { name: "Delete" }));
         const dialog = screen.getByRole("dialog");
         await user.click(within(dialog).getByRole("button", { name: "Cancel" }));

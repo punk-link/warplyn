@@ -26,7 +26,7 @@ export class FileAssistantSkillSource {
 
     summaries(): readonly AssistantSkillSummary[] {
         this.refresh();
-        return [...this.packages.values()].map(({ reference, name, description }) => ({ reference, name, description }));
+        return [...this.packages.values()].map(({ reference, name, description, execution, scopes, presentation }) => ({ reference, name, description, execution, scopes, presentation }));
     }
 
 

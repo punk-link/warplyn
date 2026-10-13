@@ -8,7 +8,8 @@ import { FileAssistantSkillSource } from "./file-assistant-skill-source.js";
 import { parseSkillPackage } from "./skill-package-parser.js";
 
 
-const validSkill = "---\nid: author-review\nname: Author review\ndescription: Review a draft with the Author's editorial preferences.\nversion: 1\nreferences:\n  - references/guidance.md\n---\n# Review\n\nKeep the Author in control.\n";
+const validSkill = ("---\nid: author-review\nname: Author review\ndescription: Review a draft with the Author's editorial preferences.\nversion: 1\nreferences:\n  - " +
+    "references/guidance.md\n---\n# Review\n\nKeep the Author in control.\n");
 
 
 test("Author Skill packages validate, refresh after edits, and isolate invalid packages", () => {
@@ -17,7 +18,8 @@ test("Author Skill packages validate, refresh after edits, and isolate invalid p
         const source = new FileAssistantSkillSource("author", root, () => ({ ids: ["flow_and_clarity"], names: ["Flow and Clarity"] }));
         const installed = source.install({ directory: "author-review", files: { "SKILL.md": validSkill, "references/guidance.md": "Use concise feedback." } });
         assert.equal(source.summaries()[0]?.reference.id, "author-review");
-        assert.match(source.load(installed.reference)?.references?.[0] ?? "", /concise/);
+        const concisePattern = /concise/;
+        assert.match(source.load(installed.reference)?.references?.[0] ?? "", concisePattern);
         writeFileSync(join(root, "broken.md"), "not a package");
         assert.equal(source.summaries().length, 1);
         assert.equal(source.status().length, 1);
@@ -48,12 +50,13 @@ test("Author Skill packages ignore interrupted staging and reject normalized nam
         writeFileSync(join(root, "author-review.staged", "SKILL.md"), validSkill);
 
         assert.equal(source.summaries().length, 1);
+        const skillPackageConflictPattern = /skill_package_conflict/;
         assert.throws(
             () => source.install({ directory: "other-review", files: {
                 "SKILL.md": validSkill.replace("id: author-review", "id: other-review").replace("name: Author review", "name: Ａuthor review"),
                 "references/guidance.md": "Use concise feedback.",
             } }),
-            /skill_package_conflict/,
+            skillPackageConflictPattern,
         );
     } finally {
         rmSync(root, { recursive: true, force: true });

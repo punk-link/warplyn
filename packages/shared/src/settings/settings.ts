@@ -1,4 +1,4 @@
-import type { AssistantEditMode, BuiltInSkillId } from "../assistant/assistant.js";
+import type { AssistantEditMode } from "../assistant/assistant.js";
 import type { KeyBindingOverrides } from "../cross-cutting/key-bindings.js";
 
 export const applicationSettingsPath = "/api/settings";
@@ -164,8 +164,8 @@ export interface AppModelPreference {
 export interface ModelPreferences {
     defaultModel: string;
     reasoningEffort?: ReasoningEffort;
-    skillOverrides: Partial<Record<BuiltInSkillId, string>>;
-    skillReasoningEfforts?: Partial<Record<BuiltInSkillId, ReasoningEffort>>;
+    skillOverrides: Partial<Record<string, string>>;
+    skillReasoningEfforts?: Partial<Record<string, ReasoningEffort>>;
     favoriteModels?: string[];
 }
 

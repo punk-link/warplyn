@@ -34,7 +34,7 @@ test("each translation request binds its explicit language even when the model c
         capabilityActivities: [], pendingActions: [], authorizedActions: [],
     };
     const loop = new AssistantCapabilityLoop({
-        assistant: { setExecution: () => undefined }, engines: {},
+        assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => editorialCapabilityDefinitions.filter((definition) => definition.id === "translate"),
             discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),

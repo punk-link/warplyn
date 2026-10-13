@@ -24,8 +24,10 @@ function assertRequestQueriesUseIndex(database: DatabaseSync): void {
     ];
     for (const query of queries) {
         const plan = database.prepare(`EXPLAIN QUERY PLAN ${query}`).all("legacy-request").map((row) => String(row.detail)).join("\n");
-        assert.match(plan, /USING (?:COVERING )?INDEX assistant_messages_request_role_created/, query);
-        assert.doesNotMatch(plan, /SCAN assistant_messages|USE TEMP B-TREE/, query);
+        const usingCoveringIndexPattern = /USING (?:COVERING )?INDEX assistant_messages_request_role_created/;
+        assert.match(plan, usingCoveringIndexPattern, query);
+        const scanAssistantMessagesPattern = /SCAN assistant_messages|USE TEMP B-TREE/;
+        assert.doesNotMatch(plan, scanAssistantMessagesPattern, query);
     }
 }
 

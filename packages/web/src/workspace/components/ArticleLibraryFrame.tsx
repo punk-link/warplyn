@@ -58,7 +58,16 @@ function PinnedArticleShortcuts({ articles, selectedArticleId, drawerOpen, onSel
             const initials = Array.from(article.title.trim().toLocaleUpperCase(intl.locale)).slice(0, 2).join("");
             const selected = article.id === selectedArticleId;
 
-            return <IconButton key={article.id} variant="quiet" className="shrink-0 text-xs font-medium aria-current:border-brand" label={intl.formatMessage({ id: "navigation.openPinnedArticle" }, { articleTitle: title })} title={title} data-focus-area-entry={selected && !drawerOpen || undefined} aria-current={selected ? "page" : undefined} aria-pressed={selected} onClick={(event) => onSelect(article.id, event.currentTarget)}>{initials || <ArticleIcon className="size-4" />}</IconButton>;
+            return <IconButton
+                key={article.id}
+                variant="quiet"
+                className="shrink-0 text-xs font-medium aria-current:border-brand"
+                label={intl.formatMessage({ id: "navigation.openPinnedArticle" }, { articleTitle: title })}
+                title={title}
+                data-focus-area-entry={selected && !drawerOpen || undefined}
+                aria-current={selected ? "page" : undefined}
+                aria-pressed={selected}
+                onClick={(event) => onSelect(article.id, event.currentTarget)}>{initials || <ArticleIcon className="size-4" />}</IconButton>;
         })}
     </div>;
 }
@@ -194,14 +203,29 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
 
     function railButton(next: LibraryView, label: string, icon: ReactNode) {
         const title = next === "search" ? getShortcutHint(label, KEY_BINDING_COMMAND.SEARCH_ARTICLES, shortcutOverrides) : label;
-        return <IconButton variant="quiet" label={label} title={title} data-library-view={next} aria-controls={activeView ? drawerId : undefined} aria-expanded={activeView === next} aria-pressed={activeView === next} onClick={(event) => openView(next, event.currentTarget)}>{icon}</IconButton>;
+        return <IconButton
+            variant="quiet"
+            label={label}
+            title={title}
+            data-library-view={next}
+            aria-controls={activeView ? drawerId : undefined}
+            aria-expanded={activeView === next}
+            aria-pressed={activeView === next}
+            onClick={(event) => openView(next, event.currentTarget)}>{icon}</IconButton>;
     }
 
 
     const searchField = <div className="pl-3 pr-2 pt-3 pb-2">
         <div className="relative">
             <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
-            <Field ref={searchRef} className="min-h-9 py-1.5 pl-8 pr-2" aria-label={intl.formatMessage({ id: "navigation.searchArticles" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.searchArticles" }), KEY_BINDING_COMMAND.SEARCH_ARTICLES, shortcutOverrides)} value={search.query} onChange={(event) => search.setQuery(event.target.value)} placeholder={intl.formatMessage({ id: "navigation.searchArticles" })} />
+            <Field
+                ref={searchRef}
+                className="min-h-9 py-1.5 pl-8 pr-2"
+                aria-label={intl.formatMessage({ id: "navigation.searchArticles" })}
+                title={getShortcutHint(intl.formatMessage({ id: "navigation.searchArticles" }), KEY_BINDING_COMMAND.SEARCH_ARTICLES, shortcutOverrides)}
+                value={search.query}
+                onChange={(event) => search.setQuery(event.target.value)}
+                placeholder={intl.formatMessage({ id: "navigation.searchArticles" })} />
         </div>
     </div>;
     const newArticle = <IconButton label={intl.formatMessage({ id: "navigation.newArticle" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.newArticle" }), KEY_BINDING_COMMAND.NEW_ARTICLE, shortcutOverrides)} onClick={() => {
@@ -211,7 +235,13 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
     const headings = { articles: "navigation.articles", search: "navigation.searchArticles", archive: "navigation.archive" } as const;
     const heading = intl.formatMessage({ id: activeView ? headings[activeView] : "navigation.articles" });
 
-    return <aside ref={frameRef} data-workspace-panel="article-library" data-focus-area="library" onKeyDown={handleKeyDown} className={`relative flex h-full w-full flex-col border-r border-border bg-surface-supporting ${collapsed ? "px-0.5 pb-2" : ""}`} aria-label={intl.formatMessage({ id: "navigation.articleLibrary" })}>
+    return <aside
+        ref={frameRef}
+        data-workspace-panel="article-library"
+        data-focus-area="library"
+        onKeyDown={handleKeyDown}
+        className={`relative flex h-full w-full flex-col border-r border-border bg-surface-supporting ${collapsed ? "px-0.5 pb-2" : ""}`}
+        aria-label={intl.formatMessage({ id: "navigation.articleLibrary" })}>
         <header className={collapsed ? "flex min-h-18 shrink-0 items-center justify-center border-b border-transparent" : "flex min-h-18 shrink-0 items-center justify-between border-b border-border pl-4 pr-2"}>
             {collapsed
                 ? <IconButton className="text-base font-semibold text-brand" label={intl.formatMessage({ id: "navigation.expandArticleLibrary" })} onClick={() => {
@@ -229,11 +259,15 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                 {railButton("archive", intl.formatMessage({ id: "navigation.archive" }), <ArchiveIcon className="size-4" />)}
             </div>
             : <>{searchField}{children(undefined, close)}</>}
-        {collapsed && <PinnedArticleShortcuts articles={pinnedArticles} selectedArticleId={selectedArticleId} drawerOpen={Boolean(activeView)} onSelect={(articleId, trigger) => {
-            triggerRef.current = trigger;
-            close();
-            selectArticle(articleId);
-        }} />}
+        {collapsed && <PinnedArticleShortcuts
+            articles={pinnedArticles}
+            selectedArticleId={selectedArticleId}
+            drawerOpen={Boolean(activeView)}
+            onSelect={(articleId, trigger) => {
+                triggerRef.current = trigger;
+                close();
+                selectArticle(articleId);
+            }} />}
         <footer className={collapsed ? "mt-auto flex shrink-0 flex-col items-center gap-1 border-t border-border px-0.5 py-2" : "shrink-0 border-t border-border px-2 py-2"}>
             {collapsed
                 ? <><IconButton label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={() => {
@@ -245,9 +279,22 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                     openSettings();
                 }}><SettingsIcon className="size-4" /></IconButton>
                 <UpdateController /></>
-                : <><Button compact className="flex w-full items-center justify-start !py-1.5 text-left" variant="quiet" onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span></Button>
-                    <Button compact className="flex w-full items-center justify-start !py-1.5 text-left" variant="quiet" title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span></Button>
-                    <div className="relative flex items-center justify-between px-2 pb-1 pt-2 pr-11 text-micro font-medium text-muted"><span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span><UpdateController className="absolute right-2 top-1/2 -translate-y-1/2" /></div></>}
+                : <><Button
+                    compact
+                    className="flex w-full items-center justify-start !py-1.5 text-left"
+                    variant="quiet"
+                    onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span></Button>
+                <Button
+                    compact
+                    className="flex w-full items-center justify-start !py-1.5 text-left"
+                    variant="quiet"
+                    title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)}
+                    onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span></Button>
+                <div className="flex items-center justify-between px-2 pb-1 pt-2 text-micro font-medium text-muted">
+                    <span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span>
+                    <UpdateController className="shrink-0" />
+                </div>
+                </>}
         </footer>
         {activeView && <Drawer className="absolute inset-y-0 left-full z-10 flex w-52 max-w-[calc(100vw-2.5rem)] flex-col !border-l-0 !bg-surface-supporting" aria-labelledby={headingId}>
             <div ref={drawerRef} className="flex min-h-0 flex-1 flex-col">

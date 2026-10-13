@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { EventEmitter, once } from "node:events";
 import test from "node:test";
 import { EDITORIAL_OPERATION, HTTP_METHOD, restoreRevisionPath, type TelemetryEvent } from "@skladno/shared";
 import type { EditorialEngine } from "../application/editorial/engine/editorial-engine.js";
@@ -30,7 +31,8 @@ test("server records one private-content-free terminal event for each explicit A
         { kind: "ai_operation_finished", operation: "flow_revision", outcome: "completed" },
         { kind: "ai_operation_finished", operation: "assistant", outcome: "completed" },
     ]);
-    assert.doesNotMatch(JSON.stringify(events), /Private (title|Article content|prompt|generated output)/);
+    const privateTitleArticlePattern = /Private (title|Article content|prompt|generated output)/;
+    assert.doesNotMatch(JSON.stringify(events), privateTitleArticlePattern);
 });
 
 
@@ -58,7 +60,11 @@ test("a failed direct Editorial operation records one safe failure", async () =>
 
 test("a cancelled direct Editorial operation records one cancellation", async () => {
     const events: TelemetryEvent[] = [];
-    const telemetry = { beginCapture: () => (event: TelemetryEvent) => events.push(event) };
+    const captured = new EventEmitter();
+    const telemetry = { beginCapture: () => (event: TelemetryEvent) => {
+        events.push(event);
+        captured.emit("terminal");
+    } };
     const engine: EditorialEngine = {
         async *stream(_request, signal): AsyncIterable<EditorialEngineEvent> {
             yield { type: EDITORIAL_ENGINE_EVENT.TEXT_DELTA, delta: "Partial" };
@@ -77,8 +83,9 @@ test("a cancelled direct Editorial operation records one cancellation", async ()
             signal: controller.signal,
         });
         await response.body!.getReader().read();
+        const terminal = once(captured, "terminal", { signal: AbortSignal.timeout(5000) });
         controller.abort();
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await terminal;
     }, true, undefined, telemetry);
 
     assert.equal(events.length, 1);
@@ -107,5 +114,6 @@ test("Article revision recovery records only its terminal outcome", async () => 
         { kind: "recovery_finished", recovery: "revision", outcome: "completed" },
         { kind: "recovery_finished", recovery: "revision", outcome: "failed", failure: "unknown" },
     ]);
-    assert.doesNotMatch(JSON.stringify(events), /Private (title|first Revision|second Revision|other Revision)/);
+    const privateTitleFirstPattern = /Private (title|first Revision|second Revision|other Revision)/;
+    assert.doesNotMatch(JSON.stringify(events), privateTitleFirstPattern);
 });

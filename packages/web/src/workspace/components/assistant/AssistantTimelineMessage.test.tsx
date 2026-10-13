@@ -1,6 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { IntlProvider } from "react-intl";
+import { createIntl, IntlProvider } from "react-intl";
+import { skillCatalogFixture } from "../../skill-catalog.test-fixture.js";
+import { getSkillPresentation } from "../../../i18n/skill-presentation.js";
 import type { ComponentProps } from "react";
 import { defaultGeneralSettings, type AssistantMessage } from "@skladno/shared";
 import { describe, expect, it, vi } from "vitest";
@@ -10,7 +12,14 @@ import { AssistantMarkdown } from "./AssistantMarkdown.js";
 
 
 function renderMessage(message: AssistantMessage, props: Partial<ComponentProps<typeof AssistantTimelineMessage>> = {}) {
-    return render(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage message={message} generalSettings={{ ...defaultGeneralSettings, dateFormat: "iso", timeFormat: "24-hour", timeZone: "UTC" }} skillByRequest={new Map()} {...props} /></IntlProvider>);
+    const intl = createIntl({ locale: "en", messages });
+    const skillNames = new Map(skillCatalogFixture.map((skill) => [skill.reference.id, getSkillPresentation(skill, intl).name]));
+    return render(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage
+        message={message}
+        generalSettings={{ ...defaultGeneralSettings, dateFormat: "iso", timeFormat: "24-hour", timeZone: "UTC" }}
+        skillByRequest={new Map()}
+        skillNames={skillNames}
+        {...props} /></IntlProvider>);
 }
 
 
@@ -29,7 +38,11 @@ describe("AssistantTimelineMessage", () => {
         await userEvent.setup().click(within(view.container).getByRole("button", { name: "Apply to selection" }));
         expect(applyEdit).toHaveBeenCalledWith("reply");
 
-        view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage message={{ ...message, appliedEdit: { revisionId: "revision" } }} generalSettings={defaultGeneralSettings} skillByRequest={new Map()} applyEdit={applyEdit} /></IntlProvider>);
+        view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage
+            message={{ ...message, appliedEdit: { revisionId: "revision" } }}
+            generalSettings={defaultGeneralSettings}
+            skillByRequest={new Map()}
+            applyEdit={applyEdit} /></IntlProvider>);
         expect(within(view.container).queryByRole("button", { name: "Apply to selection" })).toBeNull();
         expect(within(view.container).getByText("Applied as a new Revision")).toBeTruthy();
     });
@@ -39,7 +52,11 @@ describe("AssistantTimelineMessage", () => {
         const message: AssistantMessage = { id: "reply", articleId: "article", requestId: "request", role: "assistant", kind: "response", status: "completed", content: "Option one or two", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
         const view = renderMessage(message, { applyEdit });
         expect(within(view.container).queryByRole("button", { name: "Replace Article" })).toBeNull();
-        view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage message={{ ...message, status: "failed", editCandidate: { target: "article", replacement: "After" } }} generalSettings={defaultGeneralSettings} skillByRequest={new Map()} applyEdit={applyEdit} /></IntlProvider>);
+        view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage
+            message={{ ...message, status: "failed", editCandidate: { target: "article", replacement: "After" } }}
+            generalSettings={defaultGeneralSettings}
+            skillByRequest={new Map()}
+            applyEdit={applyEdit} /></IntlProvider>);
         expect(within(view.container).queryByRole("button", { name: "Replace Article" })).toBeNull();
     });
     it("replaces Markdown when a response body changes", async () => {
@@ -70,7 +87,8 @@ describe("AssistantTimelineMessage", () => {
 
         expect(scope.getByText("Talking points prepared")).toBeTruthy();
         expect(scope.getByText("Completed")).toBeTruthy();
-        expect(scope.getByText(/Used skill/).getAttribute("title")).toBe("Talking points");
+        const usedSkillPattern = /Used skill/;
+        expect(scope.getByText(usedSkillPattern).getAttribute("title")).toBe("Talking points");
         expect(scope.queryByText("A long proposal owned by the Proposal View.")).toBeNull();
         const review = scope.getByRole("button", { name: "Review Proposal" });
         expect(review.classList.contains("!size-6")).toBe(true);
@@ -94,7 +112,8 @@ describe("AssistantTimelineMessage", () => {
     it("identifies a persisted Skill Creator response without its request source", () => {
         const view = renderMessage({ id: "skill", articleId: "article", requestId: "request", role: "assistant", kind: "response", status: "completed", skillId: "skill_creator", content: "Created a Skill.", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" });
 
-        expect(within(view.container).getByText(/Used skill/).getAttribute("title")).toBe("Skill Creator");
+        const usedSkillPattern = /Used skill/;
+        expect(within(view.container).getByText(usedSkillPattern).getAttribute("title")).toBe("Skill Creator");
     });
 
 
@@ -111,7 +130,8 @@ describe("AssistantTimelineMessage", () => {
         const onCheckpoint = vi.fn();
         const view = renderMessage({ id: "author-message", articleId: "article", requestId: "request", role: "author", kind: "message", status: "completed", content: "Author message", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }, { onCheckpoint });
 
-        const action = within(view.container).getByRole("button", { name: /Edit from Author message at/ });
+        const editAuthorMessagePattern = /Edit from Author message at/;
+        const action = within(view.container).getByRole("button", { name: editAuthorMessagePattern });
         expect(action.previousElementSibling?.textContent).toBe("2026-01-01, 00:00");
         const bubble = screen.getByText("Author message").closest("div.rounded-panel");
         expect(bubble?.classList.contains("p-2")).toBe(true);

@@ -68,7 +68,8 @@ describe("fresh translations through Assistant", () => {
         await waitFor(() => expect(client.streamAssistantRequest).toHaveBeenCalledTimes(4));
         expect(screen.getByText("Translating into Spanish…").closest("[role=status]")).toBeTruthy();
         expect(screen.getByText("Spanish result 1").closest("[inert]")?.getAttribute("aria-busy")).toBe("true");
-        expect(screen.queryByRole("button", { name: /^Cancel$/ })).toBeNull();
+        const cancelPattern = /^Cancel$/;
+        expect(screen.queryByRole("button", { name: cancelPattern })).toBeNull();
         await user.click(screen.getByRole("button", { name: "Expand Editorial Assistant Panel" }));
         await user.click(screen.getByRole("button", { name: "Stop request" }));
         await waitFor(() => expect(screen.queryByRole("button", { name: "Stop request" })).toBeNull());

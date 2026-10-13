@@ -1,4 +1,4 @@
-import type { AiConnection, AiProvider, AppModelPreference, ApplicationSettingsSnapshot, AvailableAiModel, GeneralSettings, ModelPreferences } from "@skladno/shared";
+import type { AssistantSkillSummary, AiConnection, AiProvider, AppModelPreference, ApplicationSettingsSnapshot, AvailableAiModel, GeneralSettings, ModelPreferences } from "@skladno/shared";
 
 
 export interface AiSettingsSectionProps {
@@ -8,6 +8,7 @@ export interface AiSettingsSectionProps {
     preferences: ModelPreferences;
     appModel?: AppModelPreference;
     models: AvailableAiModel[];
+    skills?: readonly AssistantSkillSummary[];
     connectionProvider: AiProvider;
     connectionName: string;
     environmentName: string;

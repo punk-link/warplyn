@@ -13,5 +13,6 @@ test("chooses stable and preview versions", () => {
 
 
 test("runs npm through the platform-compatible process boundary", () => {
-    assert.match(runNpm(["--version"], { stdio: "pipe" }).trim(), /^\d+\.\d+\.\d+$/);
+    const numberPattern = /^\d+\.\d+\.\d+$/;
+    assert.match(runNpm(["--version"], { stdio: "pipe" }).trim(), numberPattern);
 });

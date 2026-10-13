@@ -56,7 +56,12 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
     const { view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, publishProfile, publishProfileLabel } = content;
     const { runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection } = actions;
     const { proposalWarningsDismissed, dismissProposalWarnings, openWrite, openAssistant, selectedTranslationLanguages, setSelectedTranslationLanguage } = navigation;
-    const renderPanel = (children: ReactNode) => <section data-focus-area={view === "write" ? undefined : "article-editor"} role="tabpanel" id={`workspace-panel-${view}`} aria-labelledby={`workspace-tab-${view}`} className={panelClassName(view)}>{children}</section>;
+    const renderPanel = (children: ReactNode) => <section
+        data-focus-area={view === "write" ? undefined : "article-editor"}
+        role="tabpanel"
+        id={`workspace-panel-${view}`}
+        aria-labelledby={`workspace-tab-${view}`}
+        className={panelClassName(view)}>{children}</section>;
     const articleRevisions = revisions.revisions.length ? revisions.revisions : [article.currentRevision];
     const translationRevisions: ArticleRevisionSummary[] = articleRevisions.map((revision) => {
         if (!("content" in revision))
@@ -68,13 +73,25 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
 
     switch (view) {
         case "write":
-            return renderPanel(<ArticleEditorView articleId={article.id} content={workspace.content} setContent={workspace.setContent} onSelectionChange={onSelectionChange} assistantSelection={assistantSelection} language={article.language} />);
+            return renderPanel(<ArticleEditorView
+                articleId={article.id}
+                content={workspace.content}
+                setContent={workspace.setContent}
+                onSelectionChange={onSelectionChange}
+                assistantSelection={assistantSelection}
+                language={article.language} />);
 
         case "proposal":
             return renderPanel(<ProposalReviewView data={{ review: editorial.review, accepted: editorial.accepted, stale: editorial.stale, decisions: editorial.decisions, summaries: editorial.proposalSummaries, summaryState: editorial.proposalSummaryState, warningsDismissed: proposalWarningsDismissed }} actions={{ setDecision: editorial.setDecision, acceptAll: editorial.acceptAll, applyAccepted: editorial.applyAccepted, rejectAll: editorial.rejectAll, dismissProposal: editorial.dismissProposal, dismissWarnings: dismissProposalWarnings, openWrite, openAssistant }} />);
 
         case "revisions":
-            return renderPanel(<RevisionHistoryView loadRevision={revisions.loadRevision} revisions={revisions.revisions} currentRevisionId={article.currentRevisionId} select={revisions.setCandidate} generalSettings={generalSettings} files={actions.articleFiles} />);
+            return renderPanel(<RevisionHistoryView
+                loadRevision={revisions.loadRevision}
+                revisions={revisions.revisions}
+                currentRevisionId={article.currentRevisionId}
+                select={revisions.setCandidate}
+                generalSettings={generalSettings}
+                files={actions.articleFiles} />);
 
         case "fact-check": {
             const revisionNumber = revisions.revisions.findIndex((revision) => revision.id === editorial.factCheck?.reviewedRevisionId);
@@ -88,7 +105,8 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
         case "translations":
             return renderPanel(<TranslationsView key={article.id} data={{ article, sourceContent: workspace.content, requestActive: content.requestActive, generation: content.translationGeneration, generalSettings, revisionNumbers: Object.fromEntries(articleRevisions.map((revision, index) => [revision.id, index + 1])), revisions: translationRevisions, sourceArticle: workspace.sourceArticle, linkedTranslations: workspace.articles.filter((item) => item.sourceArticleId === article.id), translations: editorial.translations, stale: Boolean(article.sourceArticleId && workspace.articles.find((item) => item.id === article.sourceArticleId)?.currentRevisionId !== article.sourceRevisionId), translationLanguages: generalSettings.defaultTranslationLanguages.filter((language) => language !== article.language), publishProfile, publishProfileLabel, selectedTargetLanguage: selectedTranslationLanguages[article.id] }} actions={{ create: editorial.createTranslation, reject: rejectTranslation ?? editorial.rejectTranslation, edit: openWrite, openArticle: workspace.selectArticle, selectTargetLanguage: (targetLanguage) => setSelectedTranslationLanguage(article.id, targetLanguage), translate: runTranslation }} />);
 
-        default: return null;
+        default:
+            return null;
     }
 }
 
@@ -104,6 +122,7 @@ function panelClassName(view: WorkspaceView): string {
         case "style-profile":
             return "min-h-0 flex-1 overflow-hidden p-4";
         default:
-            return "min-h-0 flex-1 overflow-y-auto p-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong";
+            return ("min-h-0 flex-1 overflow-y-auto p-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] " +
+                "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
     }
 }

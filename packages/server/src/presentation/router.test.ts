@@ -8,7 +8,8 @@ import { Router } from "./router.js";
 test("Router dispatches one matching method and decodes route parameters", async () => {
     const router = new Router();
     let articleId: string | undefined;
-    router.register("GET", /^\/api\/articles\/([^/]+)$/, (_request, _response, parameters) => {
+    const apiArticlesPattern = /^\/api\/articles\/([^/]+)$/;
+    router.register("GET", apiArticlesPattern, (_request, _response, parameters) => {
         articleId = parameters[0];
     });
 

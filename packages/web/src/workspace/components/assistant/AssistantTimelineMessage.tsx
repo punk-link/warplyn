@@ -1,10 +1,10 @@
-import { BUILT_IN_SKILL, isBuiltInSkillId, type AssistantMessage, type FactCheckClaimPreview, type GeneralSettings } from "@skladno/shared";
+import { BUILT_IN_SKILL, type AssistantMessage, type FactCheckClaimPreview, type GeneralSettings } from "@skladno/shared";
 import { Button, IconButton } from "../../../ui/primitives.js";
 import { ArticleIcon, FolderIcon, StatusIcon, UndoIcon, UpdateIcon } from "../../../ui/icons.js";
 import { formatDateTime } from "../../../i18n/formatting.js";
 import { useIntl } from "react-intl";
 import { useState, type ReactNode } from "react";
-import { getSelectionPreview, responseMessages, skillMessages } from "./assistant-messages.js";
+import { getSelectionPreview, responseMessages } from "./assistant-messages.js";
 import { FactCheckClaims } from "./FactCheckClaims.js";
 import { AssistantMarkdown } from "./AssistantMarkdown.js";
 
@@ -27,8 +27,8 @@ interface MessagePresentation {
 }
 
 
-function getSkillLabel(skillId: string, intl: Intl, skillNames: ReadonlyMap<string, string>): string {
-    return isBuiltInSkillId(skillId) ? intl.formatMessage({ id: skillMessages[skillId] }) : skillNames.get(skillId) ?? skillId;
+function getSkillLabel(skillId: string, skillNames: ReadonlyMap<string, string>): string {
+    return skillNames.get(skillId) ?? skillId;
 }
 
 
@@ -40,10 +40,10 @@ function getMessageLabel(message: AssistantMessage, skillId: string | undefined,
         return intl.formatMessage({ id: "assistant.response.narrativeDraftProposal" });
 
     if (message.responseKind)
-        return intl.formatMessage({ id: responseMessages[message.responseKind] }, skillId ? { skill: getSkillLabel(skillId, intl, skillNames) } : {});
+        return intl.formatMessage({ id: responseMessages[message.responseKind] }, skillId ? { skill: getSkillLabel(skillId, skillNames) } : {});
 
     if (skillId)
-        return getSkillLabel(skillId, intl, skillNames);
+        return getSkillLabel(skillId, skillNames);
 
     return message.role === "author"
         ? intl.formatMessage({ id: "assistant.authorMessage" })
@@ -129,11 +129,12 @@ function AuthorMessageContent({ visible, content, selectionText, skillOffset, sk
         return null;
 
     return <p className="whitespace-pre-wrap text-sm leading-6 text-ink">
-        {selectionText && <span className="mx-1 inline-flex h-5 max-w-[calc(100%-0.5rem)] items-center align-middle rounded-full border border-border bg-surface-raised px-1.5 text-xs font-semibold text-muted" aria-label={intl.formatMessage({ id: "assistant.articleSelection" })} title={selectionText}>
+        {selectionText && <span className={("mx-1 inline-flex h-5 max-w-[calc(100%-0.5rem)] items-center align-middle rounded-full border border-border bg-surface-raised px-1.5 text-xs " +
+            "font-semibold text-muted")} aria-label={intl.formatMessage({ id: "assistant.articleSelection" })} title={selectionText}>
             <span className="relative -top-px max-w-48 truncate">{getSelectionPreview(selectionText)}</span>
         </span>}
         {skillOffset === undefined ? content : <>{content.slice(0, skillOffset)}
-            <span className="mx-1 inline-flex h-5 items-center align-middle rounded-full border border-brand/45 bg-surface-raised px-1.5 text-xs font-semibold text-brand">{skillId && getSkillLabel(skillId, intl, skillNames)}</span>
+            <span className="mx-1 inline-flex h-5 items-center align-middle rounded-full border border-brand/45 bg-surface-raised px-1.5 text-xs font-semibold text-brand">{skillId && getSkillLabel(skillId, skillNames)}</span>
             {skillId === BUILT_IN_SKILL.TRANSLATION && targetLanguage && <>{intl.formatMessage({ id: "assistant.translationTarget" }, { language: targetLanguage })}{content.slice(skillOffset) && " "}</>}
             {content.slice(skillOffset)}
         </>}
@@ -144,10 +145,14 @@ function AuthorMessageContent({ visible, content, selectionText, skillOffset, sk
 function AssistantApplyButton({ message, applyEdit, intl }: { message: AssistantMessage; applyEdit: (messageId: string) => Promise<void>; intl: Intl }) {
     const [applying, setApplying] = useState(false);
 
-    return <Button compact variant="secondary" disabled={applying} onClick={() => {
-        setApplying(true);
-        void applyEdit(message.id).finally(() => setApplying(false));
-    }}>{intl.formatMessage({ id: message.editCandidate?.target === "selection" ? "assistant.applySelection" : "assistant.applyArticle" })}
+    return <Button
+        compact
+        variant="secondary"
+        disabled={applying}
+        onClick={() => {
+            setApplying(true);
+            void applyEdit(message.id).finally(() => setApplying(false));
+        }}>{intl.formatMessage({ id: message.editCandidate?.target === "selection" ? "assistant.applySelection" : "assistant.applyArticle" })}
     </Button>;
 }
 
@@ -179,9 +184,24 @@ function AssistantMessageActions({ message, skillId, view, openView, openSkillFo
         return null;
 
     return <div className="flex shrink-0 gap-1">
-        {available.review && view && <IconButton className="!size-6" variant="secondary" label={getViewLabel(view, intl)} title={getViewLabel(view, intl)} onClick={() => openView?.(view)}><ArticleIcon className="size-3" /></IconButton>}
-        {available.folder && message.requestId && <IconButton className="!size-6" variant="secondary" label={intl.formatMessage({ id: "assistant.openSkillFolder" })} title={intl.formatMessage({ id: "assistant.openSkillFolder" })} onClick={() => openSkillFolder?.(message.requestId!)}><FolderIcon className="size-3" /></IconButton>}
-        {available.retry && message.requestId && <IconButton className="!size-6" variant="secondary" label={intl.formatMessage({ id: "assistant.retry" })} title={intl.formatMessage({ id: "assistant.retry" })} onClick={() => onRetry?.(message.requestId!)}><UpdateIcon className="size-3" /></IconButton>}
+        {available.review && view && <IconButton
+            className="!size-6"
+            variant="secondary"
+            label={getViewLabel(view, intl)}
+            title={getViewLabel(view, intl)}
+            onClick={() => openView?.(view)}><ArticleIcon className="size-3" /></IconButton>}
+        {available.folder && message.requestId && <IconButton
+            className="!size-6"
+            variant="secondary"
+            label={intl.formatMessage({ id: "assistant.openSkillFolder" })}
+            title={intl.formatMessage({ id: "assistant.openSkillFolder" })}
+            onClick={() => openSkillFolder?.(message.requestId!)}><FolderIcon className="size-3" /></IconButton>}
+        {available.retry && message.requestId && <IconButton
+            className="!size-6"
+            variant="secondary"
+            label={intl.formatMessage({ id: "assistant.retry" })}
+            title={intl.formatMessage({ id: "assistant.retry" })}
+            onClick={() => onRetry?.(message.requestId!)}><UpdateIcon className="size-3" /></IconButton>}
         {available.apply && applyEdit && <AssistantApplyButton message={message} applyEdit={applyEdit} intl={intl} />}
         {message.appliedEdit && <span className="text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.appliedEdit" })}</span>}
     </div>;
@@ -190,16 +210,22 @@ function AssistantMessageActions({ message, skillId, view, openView, openSkillFo
 
 function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl, onCheckpoint, actions }: { message: AssistantMessage; dateTime: string; skillId: string | undefined; skillNames: ReadonlyMap<string, string>; intl: Intl; onCheckpoint?: (messageId: string) => void; actions?: ReactNode }) {
     if (message.role === "author")
-        return <div className="pointer-events-none mt-2 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+        return <div className={("pointer-events-none mt-2 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:pointer-events-auto " +
+            "group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100")}>
             <time className="text-xs text-muted">{dateTime}</time>
-            {message.requestId && <IconButton className="!size-6" variant="secondary" label={intl.formatMessage({ id: "assistant.checkpoint.accessible" }, { time: dateTime })} title={intl.formatMessage({ id: "assistant.checkpoint.action" })} onClick={() => onCheckpoint?.(message.id)}>
+            {message.requestId && <IconButton
+                className="!size-6"
+                variant="secondary"
+                label={intl.formatMessage({ id: "assistant.checkpoint.accessible" }, { time: dateTime })}
+                title={intl.formatMessage({ id: "assistant.checkpoint.action" })}
+                onClick={() => onCheckpoint?.(message.id)}>
                 <UndoIcon className="size-3" />
             </IconButton>}
         </div>;
 
     const statusLabel = getStatusLabel(message.status, intl);
     const skillUsedLabel = skillId ? intl.formatMessage({ id: "assistant.skillUsed" }) : undefined;
-    const skillTitle = skillId ? getSkillLabel(skillId, intl, skillNames) : undefined;
+    const skillTitle = skillId ? getSkillLabel(skillId, skillNames) : undefined;
 
     return <div className="mt-2 flex items-center gap-2">
         <p className="flex min-w-0 flex-wrap items-center gap-1 text-xs text-muted">
@@ -241,12 +267,39 @@ export function AssistantTimelineMessage({ message, factCheckClaims, openView, o
     return <article className={authorMessage ? "group ml-6 mt-2" : "p-0"} aria-label={authorMessage ? label : undefined}>
         <div className={authorMessage ? "rounded-panel border border-brand/45 bg-brand-soft p-2" : undefined}>
             {!authorMessage && <p className="text-xs font-semibold text-muted">{label}</p>}
-            <AuthorMessageContent visible={authorMessage} content={messageContent} selectionText={selectionText} skillOffset={skillOffset} skillId={skillId} targetLanguage={message.targetLanguage} skillNames={skillNames} intl={intl} />
-            <AssistantMessageContent message={message} visible={!authorMessage} content={messageContent} handoffOwnsContent={handoffOwnsContent} />
+            <AuthorMessageContent
+                visible={authorMessage}
+                content={messageContent}
+                selectionText={selectionText}
+                skillOffset={skillOffset}
+                skillId={skillId}
+                targetLanguage={message.targetLanguage}
+                skillNames={skillNames}
+                intl={intl} />
+            <AssistantMessageContent
+                message={message}
+                visible={!authorMessage}
+                content={messageContent}
+                handoffOwnsContent={handoffOwnsContent} />
             {message.editCandidate?.target === "selection" && <div className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.editOriginal" })}<pre className="max-h-32 overflow-auto whitespace-pre-wrap text-sm text-ink">{message.editCandidate.original}</pre></div>}
             {message.editCandidate && <div className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.editReplacement" })}<pre className="max-h-52 overflow-auto whitespace-pre-wrap rounded-control border border-border bg-surface-raised p-2 text-sm text-ink">{message.editCandidate.replacement}</pre></div>}
             {factCheckClaims?.length ? <FactCheckClaims claims={factCheckClaims} embedded className="mt-3" /> : null}
         </div>
-        <AssistantMessageMetadata message={message} dateTime={dateTime} skillId={skillId} skillNames={skillNames} intl={intl} onCheckpoint={onCheckpoint} actions={<AssistantMessageActions message={message} skillId={skillId} view={view} openView={openView} openSkillFolder={openSkillFolder} onRetry={onRetry} applyEdit={applyEdit} intl={intl} />} />
+        <AssistantMessageMetadata
+            message={message}
+            dateTime={dateTime}
+            skillId={skillId}
+            skillNames={skillNames}
+            intl={intl}
+            onCheckpoint={onCheckpoint}
+            actions={<AssistantMessageActions
+                message={message}
+                skillId={skillId}
+                view={view}
+                openView={openView}
+                openSkillFolder={openSkillFolder}
+                onRetry={onRetry}
+                applyEdit={applyEdit}
+                intl={intl} />} />
     </article>;
 }

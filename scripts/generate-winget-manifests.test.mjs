@@ -16,22 +16,29 @@ test("generates a release manifest with the matching publisher, URLs, and instal
     const output = generateWingetManifests(installer, directory, metadata);
     for (const [name, type] of [["PunkLink.Warplyn.yaml", "version"], ["PunkLink.Warplyn.locale.en-US.yaml", "defaultLocale"], ["PunkLink.Warplyn.installer.yaml", "installer"]]) {
         const generated = readFileSync(join(output, name), "utf8");
-        assert.equal(generated.split(/\r?\n/, 1)[0], `# yaml-language-server: $schema=https://aka.ms/winget-manifest.${type}.1.10.0.schema.json`);
-        assert.match(generated, /^ManifestVersion: 1\.10\.0$/m);
+        const lineBreakPattern = /\r?\n/;
+        assert.equal(generated.split(lineBreakPattern, 1)[0], `# yaml-language-server: $schema=https://aka.ms/winget-manifest.${type}.1.10.0.schema.json`);
+        const manifestversionPattern = /^ManifestVersion: 1\.10\.0$/m;
+        assert.match(generated, manifestversionPattern);
     }
 
     const manifest = readFileSync(join(output, "PunkLink.Warplyn.installer.yaml"), "utf8");
     const locale = readFileSync(join(output, "PunkLink.Warplyn.locale.en-US.yaml"), "utf8");
     const checksum = createHash("sha256").update("installer fixture").digest("hex").toUpperCase();
-    assert.match(manifest, /PackageVersion: 1\.2\.3/);
-    assert.match(manifest, /Publisher: punk\.link/);
-    assert.match(manifest, /DisplayVersion: 1\.2\.3/);
+    const packageversionPattern = /PackageVersion: 1\.2\.3/;
+    assert.match(manifest, packageversionPattern);
+    const manifestPublisherPattern = /Publisher: punk\.link/;
+    assert.match(manifest, manifestPublisherPattern);
+    const displayversionPattern = /DisplayVersion: 1\.2\.3/;
+    assert.match(manifest, displayversionPattern);
     assert(manifest.includes("/v1.2.3/Warplyn-1.2.3-win32-x64-setup.exe"));
     assert(manifest.includes(`InstallerSha256: ${checksum}`));
-    assert.match(locale, /Publisher: punk\.link/);
+    const localePublisherPattern = /Publisher: punk\.link/;
+    assert.match(locale, localePublisherPattern);
     assert(locale.includes("/blob/v1.2.3/LICENSE"));
     assert(locale.includes("/releases/tag/v1.2.3"));
-    assert.match(readFileSync(join(output, "PunkLink.Warplyn.yaml"), "utf8"), /PackageVersion: 1\.2\.3/);
+    const generatedPackageVersionPattern = /PackageVersion: 1\.2\.3/;
+    assert.match(readFileSync(join(output, "PunkLink.Warplyn.yaml"), "utf8"), generatedPackageVersionPattern);
     assert.throws(() => generateWingetManifests(installer, directory, { ...metadata, version: "1.2.3-preview.1" }));
     assert.throws(() => generateWingetManifests(installer, directory, { ...metadata, version: "1.2.4" }));
 });

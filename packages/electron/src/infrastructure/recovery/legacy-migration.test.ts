@@ -30,15 +30,19 @@ function hashes(directory: string): Record<string, string> {
 function populateLegacySnapshot(path: string): void {
     const db = openDatabase(path);
     try {
-        db.exec(`
-            INSERT INTO articles (id,title,current_revision_id,created_at,updated_at) VALUES ('article','Legacy Article',NULL,'2026-01-01','2026-01-01');
-            INSERT INTO article_revisions (id,article_id,content,provenance_json,created_at) VALUES ('revision','article','Immutable Revision','{"kind":"author-draft"}','2026-01-01');
-            UPDATE articles SET current_revision_id='revision';
-            INSERT INTO article_drafts VALUES ('article','Latest Draft','revision',1,'2026-01-02');
-            INSERT INTO assistant_messages (id,article_id,role,kind,status,content,created_at,updated_at) VALUES ('message','article','assistant','text','completed','Legacy conversation','2026-01-01','2026-01-01');
-            INSERT INTO app_settings VALUES ('application-ai-connections','{"connections":[{"id":"legacy-connection","provider":"openai","label":"Legacy","credentialSource":{"kind":"managed"},"active":true,"status":"connected"},{"id":"legacy-env","provider":"openai","label":"Environment","credentialSource":{"kind":"environment-variable","environmentVariableName":"LEGACY_MODEL_KEY"},"active":true,"status":"unchecked"}]}','2026-01-01');
-            INSERT INTO app_settings VALUES ('publish-limit-profile','{"defaultProfileId":"custom-00000000-0000-0000-0000-000000000001","customProfiles":[{"id":"custom-00000000-0000-0000-0000-000000000001","name":"Legacy publication","characterLimit":1234}]}','2026-01-01');
-        `);
+        db.exec(((("\n            INSERT INTO articles (id,title,current_revision_id,created_at,updated_at)\n            VALUES ('article','Legacy " +
+            "Article',NULL,'2026-01-01','2026-01-01');\n            INSERT INTO article_revisions (id,article_id,content,provenance_json,created_at)\n            VALUES " +
+            "('revision','article','Immutable Revision','{\"kind\":\"author-draft\"}','2026-01-01');\n            UPDATE articles\n            SET " +
+            "current_revision_id='revision';\n            INSERT INTO article_drafts\n            VALUES ('article','Latest Draft','revision',1,'2026-01-02');\n          " +
+            "  INSERT INTO assistant_messages (id,article_id,role,kind,status,content,created_at,updated_at)\n            VALUES " +
+            "('message','article','assistant','text','completed','Legacy conversation','2026-01-01','2026-01-01');\n            INSERT INTO app_settings\n            " +
+            "VALUES ('application-ai-connections',\n                " +
+            "'{\"connections\":[{\"id\":\"legacy-connection\",\"provider\":\"openai\",\"label\":\"Legacy\",\"credentialSource\":{\"kind\":\"managed\"},\"active\":true,\"s" +
+            "tatus\":\"connected\"},{\"id\":\"legacy-env\",\"provider\":\"openai\",\"label\":\"Environment\",\"credentialSource\":{\"kind\":\"environment-variable\",\"env" +
+            "ironmentVariableName\":\"LEGACY_MODEL_KEY\"},\"active\":true,\"status\":\"unchecked\"}]}','2026-01-01');\n            INSERT INTO app_settings\n            " +
+            "VALUES ('publish-limit-profile',\n                " +
+            "'{\"defaultProfileId\":\"custom-00000000-0000-0000-0000-000000000001\",\"customProfiles\":[{\"id\":\"custom-00000000-0000-0000-0000-000000000001\",\"name\":" +
+            "\"Legacy publication\",\"characterLimit\":1234}]}','2026-01-01');\n"))));
     } finally {
         db.close();
     }
@@ -79,7 +83,8 @@ test("legacy backup pairs and database-only snapshots restore without changing t
                 closeApplication: () => assert.fail("Disk failure must leave the destination open"),
                 restart: () => assert.fail("Disk failure must not restart"),
             });
-            await assert.rejects(diskFailure.execute(snapshot), /ENOSPC/);
+            const enospcPattern = /ENOSPC/;
+            await assert.rejects(diskFailure.execute(snapshot), enospcPattern);
             assert.equal(readRuntimeSettings(runtimePath).pendingRestore, undefined);
             assert.deepEqual(hashes(source), before);
             const restoration = createNativeBackupRestoration({

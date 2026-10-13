@@ -106,8 +106,10 @@ function encodeDestination(line: string, start: number): { value: string; end: n
                 value += "%29";
                 break;
             case " ":
-            case "\t": return undefined;
-            default: value += character;
+            case "\t":
+                return undefined;
+            default:
+                value += character;
         }
     }
 

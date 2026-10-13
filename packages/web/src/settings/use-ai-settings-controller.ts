@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import type { IntlShape } from "react-intl";
-import { getAiModelPreferenceId, AI_PROVIDER, type AiConnection, type AiProvider, type ApplicationSettingsSnapshot, type AvailableAiModel } from "@skladno/shared";
+import { getAiModelPreferenceId, AI_PROVIDER, type AssistantSkillSummary, type AiConnection, type AiProvider, type ApplicationSettingsSnapshot, type AvailableAiModel } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../application/client.js";
 import { useNotifications } from "../notifications/NotificationProvider.js";
 import type { DesktopSettingsClient } from "@skladno/shared";
@@ -38,6 +38,7 @@ interface AiSettingsControllerInput {
 
 export function useAiSettingsController({ client, intl, settings, desktopSettings, setSettings, setStatus, aiSettingsOpen }: AiSettingsControllerInput) {
     const { notifyError } = useNotifications();
+    const [skills, setSkills] = useState<AssistantSkillSummary[]>([]);
     const [models, setModels] = useState<AvailableAiModel[]>([]);
     const [connectionProvider, setConnectionProvider] = useState<AiProvider>(AI_PROVIDER.OPENAI);
     const [connectionName, setConnectionName] = useState("");
@@ -158,7 +159,25 @@ export function useAiSettingsController({ client, intl, settings, desktopSetting
         void refreshModels();
     }, [aiSettingsOpen, refreshModels, settings?.connections]);
 
+    useEffect(() => {
+        if (!aiSettingsOpen)
+            return;
+
+        let active = true;
+        void client.listAssistantSkills().then((catalog) => {
+            if (active)
+                setSkills(catalog);
+        }).catch((error: unknown) => {
+            if (active)
+                notifyError(error, { fallbackMessage: intl.formatMessage({ id: "skills.loadFailed" }) });
+        });
+        return () => {
+            active = false;
+        };
+    }, [aiSettingsOpen, client, intl, notifyError]);
+
     return {
+        skills,
         models,
         connectionProvider,
         connectionName,

@@ -24,13 +24,16 @@ test("development and packaged Electron resolve built-in Skills from application
 test("desktop shell does not install native menu chrome", () => {
     const source = readFileSync(new URL("main.ts", import.meta.url), "utf8");
 
-    assert.match(source, /Menu\.setApplicationMenu\(null\)/);
+    const menuSetapplicationmenuNullPattern = /Menu\.setApplicationMenu\(null\)/;
+    assert.match(source, menuSetapplicationmenuNullPattern);
 });
 
 
 test("updating bypasses the ordinary Draft-checkpoint close flow after teardown", () => {
     const source = readFileSync(new URL("main.ts", import.meta.url), "utf8");
 
-    assert.match(source, /window\.on\("close", \(event\) => \{\s+if \(closing\)\s+return;/);
-    assert.match(source, /application\.database\.close\(\);\s+closing = true;/);
+    const windowCloseEventPattern = /window\.on\("close", \(event\) => \{\s+if \(closing\)\s+return;/;
+    assert.match(source, windowCloseEventPattern);
+    const applicationDatabaseClosePattern = /application\.database\.close\(\);\s+closing = true;/;
+    assert.match(source, applicationDatabaseClosePattern);
 });

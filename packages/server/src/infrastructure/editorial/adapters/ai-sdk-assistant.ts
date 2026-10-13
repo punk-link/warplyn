@@ -127,6 +127,7 @@ export function createAssistantTools(request: EditorialAssistantRequest, execute
                     return "Unknown Skill.";
 
                 onSkillLoaded?.(skill.capabilities ?? []);
+                request.onSkillLoaded?.(id);
                 return skill.instructions;
             },
         }),

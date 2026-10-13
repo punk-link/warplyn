@@ -11,4 +11,5 @@ export interface EditorialAssistantRequest {
     skills: readonly { id: string; name: string; description: string; instructions: string; capabilities?: readonly string[] }[];
     tools: readonly EditorialAssistantTool[];
     initialActiveCapabilities?: readonly string[];
+    onSkillLoaded?: (id: string) => void;
 }

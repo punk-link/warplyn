@@ -32,5 +32,6 @@ export function restoreProtectedSpans(text: string, protectedSpans: readonly str
         restored = restored.replace(token, protectedSpans[index]);
     }
 
-    return /\[\[SKLADNO_PROTECTED_\d+\]\]/.test(restored) ? undefined : restored;
+    const numberPattern = /\[\[SKLADNO_PROTECTED_\d+\]\]/;
+    return numberPattern.test(restored) ? undefined : restored;
 }

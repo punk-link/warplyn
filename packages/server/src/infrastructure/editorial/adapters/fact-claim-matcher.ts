@@ -12,7 +12,9 @@ export function createFactClaimMatcher(model: LanguageModel): NonNullable<FactCh
     return async (claims, candidates, signal) => {
         const result = await generateText({
             ...createAiSdkGenerationOptions({ model, signal }),
-            system: "Compare factual claims for identity after editing. Match only when they assert the same fact with the same entities, quantities, dates, scope, certainty, and negation. Wording and sentence structure may change. Omit uncertain or materially changed claims. Each candidate may match at most once. Do not research or infer truth.",
+            system: ("Compare factual claims for identity after editing. Match only when they assert the same fact with the same entities, quantities, dates, " +
+                "scope, certainty, and negation. Wording and sentence structure may change. Omit uncertain or materially changed claims. Each candidate may " +
+                "match at most once. Do not research or infer truth."),
             prompt: JSON.stringify({ claims: claims.map((claim, claimIndex) => ({ claimIndex, claim })), candidates }),
             output: Output.object({ schema: z.object({ matches: z.array(z.object({ claimIndex: z.number().int().nonnegative(), factId: z.string() })) }) }),
         });

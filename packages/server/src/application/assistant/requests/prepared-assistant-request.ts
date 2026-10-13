@@ -4,6 +4,7 @@ import type { EditorialEngine } from "../../editorial/engine/editorial-engine.js
 import type { ActionCapability } from "../capabilities/action-capability.js";
 import type { AuthorSkillChange } from "../skills/author-skill-change.js";
 import type { ReplayedAssistantRequest } from "./replayed-assistant-request.js";
+import type { AssistantSkillPackage } from "../skills/assistant-skill-package.js";
 
 
 export interface PreparedAssistantRequest extends ReplayedAssistantRequest {
@@ -17,6 +18,8 @@ export interface PreparedAssistantRequest extends ReplayedAssistantRequest {
     editDescription?: string;
     publishingCharacterLimit?: number;
     resolvedSkillId?: string;
+    resolvedSkill?: AssistantSkillPackage;
+    loadedSkills?: AssistantSkillPackage[];
     operation?: EditorialOperation;
     engine: EditorialEngine;
     usesCapabilityLoop: boolean;

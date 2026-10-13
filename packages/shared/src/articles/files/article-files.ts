@@ -101,15 +101,17 @@ export function isArticleFileBytesArray(value: unknown): value is Uint8Array<Arr
 
 
 export function isArticleFileBytes(value: unknown): value is ArticleFileBytes {
+    const punctuationPattern = /[\\/\0]/;
     return value !== null && typeof value === "object" && Object.keys(value).length === 2
         && "fileName" in value && typeof value.fileName === "string" && value.fileName.length <= 1024
-        && !/[\\/\0]/.test(value.fileName)
+        && !punctuationPattern.test(value.fileName)
         && "bytes" in value && isArticleFileBytesArray(value.bytes);
 }
 
 
 export function getArticleFileFormat(fileName: string): ArticleFileFormat {
-    const extension = /\.([^.]+)$/.exec(fileName)?.[1]?.toLowerCase();
+    const punctuationPattern = /\.([^.]+)$/;
+    const extension = punctuationPattern.exec(fileName)?.[1]?.toLowerCase();
     switch (extension) {
         case "md":
             return "markdown";
@@ -134,7 +136,8 @@ export const articleFileMimeTypes: Record<ArticleFileFormat, string> = {
 
 
 export function getArticleFileName(title: string, format: ArticleFileFormat): string {
-    const base = getArticleMarkdownFileName(title.replace(/\.(md|html?|docx|rtf)$/i, "")).slice(0, -3);
+    const htmlDocxRtfPattern = /\.(md|html?|docx|rtf)$/i;
+    const base = getArticleMarkdownFileName(title.replace(htmlDocxRtfPattern, "")).slice(0, -3);
     return `${base}.${articleFileExtensions[format]}`;
 }
 
@@ -146,7 +149,8 @@ export function validateArticleMarkdownSize(size: number): void {
 
 
 export function validateArticleMarkdownName(fileName: string): void {
-    if (!/\.md$/i.test(fileName))
+    const markdownExtensionPattern = /\.md$/i;
+    if (!markdownExtensionPattern.test(fileName))
         throw new ApplicationClientError("article_file_invalid", undefined, 400);
 }
 
@@ -174,15 +178,21 @@ export function decodeArticleMarkdown(bytes: Uint8Array): string {
     if (content.includes("\0"))
         throw new ApplicationClientError("article_file_invalid", undefined, 400);
 
-    return content.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+    const ufeffPattern = /^\uFEFF/;
+    const lineBreakPattern = /\r\n?/g;
+    return content.replace(ufeffPattern, "").replace(lineBreakPattern, "\n");
 }
 
 
 export function getArticleMarkdownFileName(title: string): string {
     const cleanTitle = [...title].map((character) => character.charCodeAt(0) < 32 ? "_" : character).join("");
-    let name = cleanTitle.replace(/[<>:"/\\|?*]/g, "_").replace(/[. ]+$/g, "").trim();
-    name = [...name.replace(/\.md$/i, "")].slice(0, 160).join("").replace(/[. ]+$/g, "");
-    if (!name || /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(name))
+    const invalidFilenameCharacterPattern = /[<>:"/\\|?*]/g;
+    const trailingFilenamePeriodOrSpacePattern = /[. ]+$/g;
+    let name = cleanTitle.replace(invalidFilenameCharacterPattern, "_").replace(trailingFilenamePeriodOrSpacePattern, "").trim();
+    const markdownExtensionPattern = /\.md$/i;
+    name = [...name.replace(markdownExtensionPattern, "")].slice(0, 160).join("").replace(trailingFilenamePeriodOrSpacePattern, "");
+    const conPrnAuxPattern = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i;
+    if (!name || conPrnAuxPattern.test(name))
         name = `Article${name ? `_${name}` : ""}`;
 
     return `${name}.md`;
@@ -191,6 +201,9 @@ export function getArticleMarkdownFileName(title: string): string {
 
 export function getImportedArticleTitle(file: ArticleMarkdownFile, defaultTitle: string): string {
     const firstLine = file.content.split("\n").find((line) => line.trim()) ?? "";
-    const heading = /^ {0,3}#\s+(.+?)\s*$/.exec(firstLine)?.[1]?.replace(/\s+#+\s*$/, "").trim();
-    return heading || file.fileName.replace(/\.(md|html?|docx|rtf)$/i, "").trim() || defaultTitle;
+    const whitespacePrefixPattern = /^ {0,3}#\s+(.+?)\s*$/;
+    const whitespacePattern = /\s+#+\s*$/;
+    const heading = whitespacePrefixPattern.exec(firstLine)?.[1]?.replace(whitespacePattern, "").trim();
+    const htmlDocxRtfPattern = /\.(md|html?|docx|rtf)$/i;
+    return heading || file.fileName.replace(htmlDocxRtfPattern, "").trim() || defaultTitle;
 }

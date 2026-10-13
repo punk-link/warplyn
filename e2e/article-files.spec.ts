@@ -25,7 +25,8 @@ async function downloadArticle(page: Page): Promise<string> {
     await page.locator("[data-focus-area=article-header]").getByRole("button", { name: "Save to file" }).click();
     await page.getByRole("dialog", { name: "Save to file…" }).getByRole("button", { name: "Download" }).click();
     const download = await downloaded;
-    expect(download.suggestedFilename()).toMatch(/\.md$/);
+    const markdownExtensionPattern = /\.md$/;
+    expect(download.suggestedFilename()).toMatch(markdownExtensionPattern);
     const path = await download.path();
     if (!path)
         throw new Error("Expected a completed test download.");
@@ -44,7 +45,8 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
     await editor.fill("Whole Article café 🙂");
     await editor.press("ControlOrMeta+a");
     expect(await downloadArticle(page)).toBe("Whole Article café 🙂");
-    const originalTitle = await page.getByRole("button", { name: /^Rename article:/ }).getAttribute("aria-label");
+    const renameArticlePattern = /^Rename article:/;
+    const originalTitle = await page.getByRole("button", { name: renameArticlePattern }).getAttribute("aria-label");
     const content = "# Imported café 🙂\n\nA **technical** term, [URL](https://example.com/docs).\n\n```ts\nconst value = 34;\n```";
     const choosing = page.waitForEvent("filechooser");
     await page.getByRole("button", { name: "Load from file" }).click();
@@ -59,7 +61,8 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
     await expect(editor).toContainText("Imported café 🙂");
     await expect(page.getByRole("button", { name: "Rename article: Imported café 🙂" })).toBeVisible();
     await editor.fill("New Draft, not the saved Revision.");
-    await page.getByRole("button", { name: /^Imported café 🙂/ }).click({ button: "right" });
+    const importedCafePattern = /^Imported café 🙂/;
+    await page.getByRole("button", { name: importedCafePattern }).click({ button: "right" });
     const libraryDownload = page.waitForEvent("download");
     await page.getByRole("menuitem", { name: "Save to file…" }).click();
     await page.getByRole("dialog", { name: "Save to file…" }).getByRole("button", { name: "Download" }).click();
@@ -75,7 +78,7 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
     expect(await readFile(revisionPath!, "utf8")).toBe(content);
     await page.getByRole("tab", { name: "Write", exact: true }).click();
     await expect(editor).toContainText("New Draft, not the saved Revision.");
-    await page.getByRole("button", { name: /^Imported café 🙂/ }).click({ button: "right" });
+    await page.getByRole("button", { name: importedCafePattern }).click({ button: "right" });
     const invalidChoosing = page.waitForEvent("filechooser");
     await page.getByRole("menuitem", { name: "Load from file…" }).click();
     await (await invalidChoosing).setFiles({ name: "invalid.md", mimeType: "text/markdown", buffer: Buffer.from([0xff]) });
@@ -88,8 +91,9 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
     await expect(page.getByRole("button", { name: "Load from file" })).toBeInViewport();
     await expect(page.getByRole("button", { name: "Rename article: Imported café 🙂" })).toBeVisible();
     await page.getByRole("button", { name: "Archive Article", exact: true }).click();
-    await page.getByRole("button", { name: /^Archived \(/ }).click();
-    await page.getByRole("button", { name: /^Imported café 🙂/ }).click({ button: "right" });
+    const archivedPattern = /^Archived \(/;
+    await page.getByRole("button", { name: archivedPattern }).click();
+    await page.getByRole("button", { name: importedCafePattern }).click({ button: "right" });
     const archivedDownload = page.waitForEvent("download");
     await page.getByRole("menuitem", { name: "Save to file…" }).click();
     await page.getByRole("dialog", { name: "Save to file…" }).getByRole("button", { name: "Download" }).click();
@@ -124,7 +128,8 @@ test("HTML, DOCX and RTF retain basic formatting through browser file import and
     await page.goto("/");
     await createBlankArticle(page);
 
-    const content = "# Portable café 🙂\n\nFirst **bold** and *italic*.\n\nSecond paragraph.\n\n- One\n    - Nested\n- Two\n\n3. Three\n4. Four\n\n```\nconst value = 34;\nnext();\n```";
+    const content = ("# Portable café 🙂\n\nFirst **bold** and *italic*.\n\nSecond paragraph.\n\n- One\n    - Nested\n- Two\n\n3. Three\n4. Four\n\n```\nconst value = " +
+        "34;\nnext();\n```");
     const choosing = page.waitForEvent("filechooser");
     await page.getByRole("button", { name: "Load from file" }).click();
     await (await choosing).setFiles({ name: "portable.md", mimeType: "text/markdown", buffer: Buffer.from(content) });
@@ -132,7 +137,8 @@ test("HTML, DOCX and RTF retain basic formatting through browser file import and
     await expect(editor).toContainText("Portable café 🙂");
     const externalRequests: string[] = [];
     page.on("request", (request) => {
-        if (!new URL(request.url()).hostname.match(/^(localhost|127\.0\.0\.1)$/))
+        const localhostPattern = /^(localhost|127\.0\.0\.1)$/;
+        if (!new URL(request.url()).hostname.match(localhostPattern))
             externalRequests.push(request.url());
     });
     for (const format of ["html", "docx", "rtf"]) {
@@ -142,7 +148,8 @@ test("HTML, DOCX and RTF retain basic formatting through browser file import and
         await dialog.getByRole("combobox", { name: "File format" }).selectOption(format);
         await dialog.getByRole("button", { name: "Download" }).click();
         const download = await downloaded;
-        expect(download.suggestedFilename()).toMatch(new RegExp(`\\.${format}$`));
+        const downloadedFilenamePattern = new RegExp(`\\.${format}$`);
+        expect(download.suggestedFilename()).toMatch(downloadedFilenamePattern);
         const path = await download.path();
         if (!path)
             throw new Error("Missing format download");

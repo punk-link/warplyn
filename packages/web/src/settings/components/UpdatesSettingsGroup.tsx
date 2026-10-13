@@ -34,7 +34,14 @@ function getUpdateStatus(state: DesktopUpdateState, intl: IntlShape): string {
 
 
 function UpdateSwitch({ label, checked, onClick, intl }: { label: string; checked: boolean; onClick: () => void; intl: IntlShape }) {
-    return <button type="button" role="switch" aria-checked={checked} aria-label={label} className="group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand" onClick={onClick}>
+    return <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink " +
+        "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
+        onClick={onClick}>
         <span aria-hidden="true" className={`relative inline-flex h-5 w-9 items-center rounded-full border p-0.5 transition-colors group-hover:border-brand ${checked ? "border-brand bg-brand" : "border-border-strong bg-surface-raised"}`}>
             <span className={`size-4 rounded-full border border-border-strong bg-surface transition-transform ${checked ? "translate-x-4" : "translate-x-0"}`} />
         </span>
@@ -54,10 +61,18 @@ function NetworkSettings({ client, state, intl, onRequestPermission, onState }: 
             />
         </SettingRow>
         {state.networkAccess && <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.automaticUpdates" })} hint={intl.formatMessage({ id: "settings.automaticUpdatesHint" })}>
-            <UpdateSwitch label={intl.formatMessage({ id: "settings.automaticUpdates" })} checked={state.automaticChecks} intl={intl} onClick={() => void client.setAutomaticChecks(!state.automaticChecks).then(onState)} />
+            <UpdateSwitch
+                label={intl.formatMessage({ id: "settings.automaticUpdates" })}
+                checked={state.automaticChecks}
+                intl={intl}
+                onClick={() => void client.setAutomaticChecks(!state.automaticChecks).then(onState)} />
         </SettingRow>}
         {state.networkAccess && <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })} hint={intl.formatMessage({ id: "settings.includePrereleaseUpdatesHint" })}>
-            <UpdateSwitch label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })} checked={state.includePrereleases} intl={intl} onClick={() => void client.setIncludePrereleases(!state.includePrereleases).then(onState)} />
+            <UpdateSwitch
+                label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })}
+                checked={state.includePrereleases}
+                intl={intl}
+                onClick={() => void client.setIncludePrereleases(!state.includePrereleases).then(onState)} />
         </SettingRow>}
     </>;
 }
@@ -68,12 +83,13 @@ function UpdateActions({ client, state, status, details, onState, intl }: { clie
 
     return <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {state.kind === "available" && state.downloadable && <Button onClick={() => void client.download().then(onState)}>{intl.formatMessage({ id: "settings.downloadUpdate" })}</Button>}
-        {state.kind === "downloading" && <Button state="loading" loadingLabel={status}>{status}</Button>}
+        {state.kind === "downloading" && <Button disabled aria-busy="true" className="!cursor-progress">{status}</Button>}
         {state.kind === "ready" && <Button onClick={() => void client.restartAndUpdate()}>{intl.formatMessage({ id: "settings.restartAndUpdate" })}</Button>}
         {state.kind === "failed" && <Button variant="secondary" onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.retry" })}</Button>}
         {canCheckNow && <Button variant="secondary" state={state.kind === "checking" ? "loading" : "default"} onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.checkNow" })}</Button>}
         {details && <Button variant="quiet" onClick={() => void client.openReleaseNotes()}>{intl.formatMessage({ id: "settings.viewReleaseNotes" })}</Button>}
-        {state.recoveryAvailable && <button type="button" className="col-span-2 inline-flex min-h-9 cursor-pointer items-center justify-self-start text-sm font-semibold text-brand underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:col-span-4" onClick={() => void client.openRecoveryGuide()}>{intl.formatMessage({ id: "settings.updateRecovery" })}</button>}
+        {state.recoveryAvailable && <button type="button" className={("col-span-2 inline-flex min-h-9 cursor-pointer items-center justify-self-start text-sm font-semibold text-brand underline underline-offset-2 " +
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:col-span-4")} onClick={() => void client.openRecoveryGuide()}>{intl.formatMessage({ id: "settings.updateRecovery" })}</button>}
     </div>;
 }
 
@@ -82,10 +98,14 @@ function NetworkPermissionDialog({ client, open, onClose, onState, intl }: { cli
     if (!open)
         return null;
 
-    return <Dialog className="w-full max-w-[calc(100vw-2rem)] sm:max-w-xl" open aria-labelledby="update-network-permission-title" onCancel={(event) => {
-        event.preventDefault();
-        onClose();
-    }}>
+    return <Dialog
+        className="w-full max-w-[calc(100vw-2rem)] sm:max-w-xl"
+        open
+        aria-labelledby="update-network-permission-title"
+        onCancel={(event) => {
+            event.preventDefault();
+            onClose();
+        }}>
         <h2 id="update-network-permission-title" className="text-lg font-semibold">{intl.formatMessage({ id: "settings.updateNetworkPermissionTitle" })}</h2>
         <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "settings.updateNetworkPermissionDescription" })}</p>
         <div className="mt-5 flex justify-end gap-2">
@@ -101,7 +121,11 @@ function NetworkPermissionDialog({ client, open, onClose, onState, intl }: { cli
 
 function UnavailableUpdates({ intl }: { intl: IntlShape }) {
     return <SettingsGroup label={intl.formatMessage({ id: "settings.updates" })}>
-        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.updateStatus" })} hint={intl.formatMessage({ id: "settings.updateStatusUnavailableHint" })} status={intl.formatMessage({ id: "settings.updatesUnavailable" })}><span /></SettingRow>
+        <SettingRow
+            headingLevel={3}
+            label={intl.formatMessage({ id: "settings.updateStatus" })}
+            hint={intl.formatMessage({ id: "settings.updateStatusUnavailableHint" })}
+            status={intl.formatMessage({ id: "settings.updatesUnavailable" })}><span /></SettingRow>
     </SettingsGroup>;
 }
 
@@ -128,10 +152,32 @@ export function UpdatesSettingsGroup({ client, desktop }: { client: DesktopUpdat
     const status = getUpdateStatus(state, intl);
 
     return <SettingsGroup label={intl.formatMessage({ id: "settings.updates" })}>
-        <NetworkSettings client={client} state={state} intl={intl} onRequestPermission={() => setNetworkPermissionOpen(true)} onState={setState} />
-        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.updateStatus" })} hint={intl.formatMessage({ id: "settings.updateStatusHint" }, { version: state.currentVersion })} status={<>{(state.kind === "checking" || state.kind === "downloading") && <ActivityIndicator className="mr-2 inline-block align-middle" />}{status}</>} fullWidthAction action={<UpdateActions client={client} state={state} status={status} details={isUpdateDetails(state)} onState={setState} intl={intl} />}>
+        <NetworkSettings
+            client={client}
+            state={state}
+            intl={intl}
+            onRequestPermission={() => setNetworkPermissionOpen(true)}
+            onState={setState} />
+        <SettingRow
+            headingLevel={3}
+            label={intl.formatMessage({ id: "settings.updateStatus" })}
+            hint={intl.formatMessage({ id: "settings.updateStatusHint" }, { version: state.currentVersion })}
+            status={<>{(state.kind === "checking" || state.kind === "downloading") && <ActivityIndicator className="mr-2 inline-block align-middle" />}{status}</>}
+            fullWidthAction
+            action={<UpdateActions
+                client={client}
+                state={state}
+                status={status}
+                details={isUpdateDetails(state)}
+                onState={setState}
+                intl={intl} />}>
             <span />
         </SettingRow>
-        <NetworkPermissionDialog client={client} open={networkPermissionOpen} onClose={() => setNetworkPermissionOpen(false)} onState={setState} intl={intl} />
+        <NetworkPermissionDialog
+            client={client}
+            open={networkPermissionOpen}
+            onClose={() => setNetworkPermissionOpen(false)}
+            onState={setState}
+            intl={intl} />
     </SettingsGroup>;
 }

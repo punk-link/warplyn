@@ -1,3 +1,6 @@
+const paragraphBoundaryPattern = /\n\s*\n|(?=^\s*(?:#{1,6}\s|[-*+]\s+|\d+\.\s))/gm;
+
+
 function insideProtectedValue(content: string, position: number, protectedSpans: readonly string[]): boolean {
     return protectedSpans.some((value) => {
         if (!value)
@@ -12,7 +15,7 @@ function insideProtectedValue(content: string, position: number, protectedSpans:
 export function splitTranslationParagraphs(content: string, protectedSpans: readonly string[] = []): string[] {
     const paragraphs: string[] = [];
     let start = 0;
-    for (const match of content.matchAll(/\n\s*\n|(?=^\s*(?:#{1,6}\s|[-*+]\s+|\d+\.\s))/gm)) {
+    for (const match of content.matchAll(paragraphBoundaryPattern)) {
         if (insideProtectedValue(content, match.index, protectedSpans))
             continue;
 

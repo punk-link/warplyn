@@ -15,10 +15,26 @@ export function AboutSettingsSection({ openQuickStart }: { openQuickStart?: () =
         <p className="mt-2 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.aboutDescription" })}</p>
         <SettingsGroup label={intl.formatMessage({ id: "settings.projectResources" })}>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-                <a className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2" href={repositoryUrl} target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.sourceCode" })}</a>
-                <a className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2" href={`${repositoryUrl}/issues`} target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.reportProblem" })}</a>
-                <a className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2" href={`${repositoryUrl}/blob/main/LICENSE`} target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.mitLicense" })}</a>
-                <a className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2" href="https://warplyn.com/docs/" target="_blank" rel="noreferrer">{intl.formatMessage({ id: "settings.documentation" })}</a>
+                <a
+                    className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2"
+                    href={repositoryUrl}
+                    target="_blank"
+                    rel="noreferrer">{intl.formatMessage({ id: "settings.sourceCode" })}</a>
+                <a
+                    className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2"
+                    href={`${repositoryUrl}/issues`}
+                    target="_blank"
+                    rel="noreferrer">{intl.formatMessage({ id: "settings.reportProblem" })}</a>
+                <a
+                    className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2"
+                    href={`${repositoryUrl}/blob/main/LICENSE`}
+                    target="_blank"
+                    rel="noreferrer">{intl.formatMessage({ id: "settings.mitLicense" })}</a>
+                <a
+                    className="inline-flex min-h-9 items-center text-sm font-semibold text-brand underline underline-offset-2"
+                    href="https://warplyn.com/docs/"
+                    target="_blank"
+                    rel="noreferrer">{intl.formatMessage({ id: "settings.documentation" })}</a>
             </div>
         </SettingsGroup>
         {openQuickStart && <SettingRow label={intl.formatMessage({ id: "settings.quickStart" })} hint={intl.formatMessage({ id: "settings.quickStartHint" })}>

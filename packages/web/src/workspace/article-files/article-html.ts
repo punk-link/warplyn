@@ -12,7 +12,11 @@ const supportedElements = new Set(["p", "br", "h1", "h2", "h3", "h4", "h5", "h6"
 
 
 export function escapeArticleHtml(value: string): string {
-    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const ampersandPattern = /&/g;
+    const lessThanPattern = /</g;
+    const greaterThanPattern = />/g;
+    const doubleQuotePattern = /"/g;
+    return value.replace(ampersandPattern, "&amp;").replace(lessThanPattern, "&lt;").replace(greaterThanPattern, "&gt;").replace(doubleQuotePattern, "&quot;");
 }
 
 
@@ -22,17 +26,21 @@ function applySafeAttributes(element: HTMLElement, source: DefaultTreeAdapterMap
     if (source.tagName === "a" && href && isSupportedArticleLink(href))
         element.setAttribute("href", href);
 
-    if (source.tagName === "ol" && /^\d{1,6}$/.test(attributes.get("start") ?? ""))
+    const numberPattern = /^\d{1,6}$/;
+    if (source.tagName === "ol" && numberPattern.test(attributes.get("start") ?? ""))
         element.setAttribute("start", attributes.get("start") ?? "1");
 
     const style = attributes.get("style") ?? "";
-    if (/font-weight\s*:\s*(bold|[7-9]00)/i.test(style))
+    const fontWeightBoldPattern = /font-weight\s*:\s*(bold|[7-9]00)/i;
+    if (fontWeightBoldPattern.test(style))
         element.style.fontWeight = "700";
 
-    if (/font-style\s*:\s*italic/i.test(style))
+    const fontStyleItalicPattern = /font-style\s*:\s*italic/i;
+    if (fontStyleItalicPattern.test(style))
         element.style.fontStyle = "italic";
 
-    if (/text-decoration(?:-line)?\s*:[^;]*line-through/i.test(style))
+    const textDecorationLinePattern = /text-decoration(?:-line)?\s*:[^;]*line-through/i;
+    if (textDecorationLinePattern.test(style))
         element.style.textDecoration = "line-through";
 }
 

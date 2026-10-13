@@ -153,12 +153,14 @@ export function formatKeyBinding(binding: KeyBinding | null, platform = ""): str
 
 
 function formatPrimary(binding: KeyBinding, platform: string): string {
-    return binding.primary ? (/mac|iphone|ipad/i.test(platform) ? "Command" : "Ctrl") : "";
+    const macIphoneIpadPattern = /mac|iphone|ipad/i;
+    return binding.primary ? (macIphoneIpadPattern.test(platform) ? "Command" : "Ctrl") : "";
 }
 
 
 function formatAlt(binding: KeyBinding, platform: string): string {
-    return binding.alt ? (/mac|iphone|ipad/i.test(platform) ? "Option" : "Alt") : "";
+    const macIphoneIpadPattern = /mac|iphone|ipad/i;
+    return binding.alt ? (macIphoneIpadPattern.test(platform) ? "Option" : "Alt") : "";
 }
 
 

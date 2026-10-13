@@ -32,10 +32,14 @@ export function ArticleFileDialogs({ state }: { state: ReturnType<typeof useArti
         return null;
 
     const reviewing = dialog.kind === "review";
-    return <Dialog ref={ref} aria-labelledby="article-file-dialog-heading" className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl" onCancel={(event) => {
-        event.preventDefault();
-        close();
-    }}>
+    return <Dialog
+        ref={ref}
+        aria-labelledby="article-file-dialog-heading"
+        className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+        onCancel={(event) => {
+            event.preventDefault();
+            close();
+        }}>
         <h2 id="article-file-dialog-heading" className="font-semibold">{intl.formatMessage({ id: reviewing ? "articleFiles.review" : "articleFiles.menuSave" })}</h2>
         {dialog.kind === "format" && <label className="mt-4 block text-sm">
             <span>{intl.formatMessage({ id: "articleFiles.format" })}</span>

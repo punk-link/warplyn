@@ -151,13 +151,14 @@ async function checkClaim(claim: { claim: string }, instructions: string, signal
     if (evaluation.findings.some((finding) => finding.sources.some((source) => !evidenceUrls.has(source.url))))
         throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
+    const punctuationPattern = /^https:\/\//;
     return {
         responseId: evaluation.responseId,
         findings: evaluation.findings.map((finding) => ({
             ...finding,
             ...inheritFactIdentity(finding.claim, claims, matched),
             sources: finding.sources
-                .filter((source) => /^https:\/\//.test(source.url))
+                .filter((source) => punctuationPattern.test(source.url))
                 .map(({ excerpt, publishedAt, ...source }) => ({
                     ...source,
                     ...(excerpt ? { excerpt } : {}),
@@ -171,8 +172,10 @@ async function checkClaim(claim: { claim: string }, instructions: string, signal
 function getEvidenceUrls(research: FactCheckResearch[]): Set<string> {
     const urls = new Set<string>();
     for (const { evidence, sources } of research) {
-        for (const url of evidence.match(/https?:\/\/[^\s<>"'`]+/g) ?? [])
-            urls.add(url.replace(/[.,;:!?)}\]]+$/, ""));
+        const evidenceUrlPattern = /https?:\/\/[^\s<>"'`]+/g;
+        const trailingCitationPunctuationPattern = /[.,;:!?)}\]]+$/;
+        for (const url of evidence.match(evidenceUrlPattern) ?? [])
+            urls.add(url.replace(trailingCitationPunctuationPattern, ""));
 
         for (const url of getProviderSourceUrls(sources))
             urls.add(url);

@@ -1,3 +1,4 @@
+import { skillCatalogFixture } from "../workspace/skill-catalog.test-fixture.js";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
@@ -25,6 +26,7 @@ describe("ApplicationSettings AI", () => {
             status: "unchecked",
         });
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             addAiConnection,
@@ -64,6 +66,7 @@ describe("ApplicationSettings AI", () => {
         const user = userEvent.setup();
         const addAiConnection = vi.fn().mockResolvedValue({ id: "connection-2", provider: "opencode", label: "OpenCode Zen", credentialSource: { kind: "environment-variable" as const, environmentVariableName: "AI_API_KEY" }, status: "unchecked" as const });
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [{ id: "connection-1", provider: "openai" as const, label: "OpenAI", credentialSource: { kind: "environment-variable" as const, environmentVariableName: "AI_API_KEY" }, status: "connected" as const }] }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             addAiConnection,
@@ -98,6 +101,7 @@ describe("ApplicationSettings AI", () => {
         };
         window.skladnoDesktop = desktop;
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             refreshAiModels: vi.fn().mockResolvedValue([]),
@@ -123,6 +127,7 @@ describe("ApplicationSettings AI", () => {
         const user = userEvent.setup();
         const addAiConnection = vi.fn().mockResolvedValue({ id: "connection-1", provider: "anthropic", label: "Personal Claude", credentialSource: { kind: "environment-variable" as const, environmentVariableName: "ANTHROPIC_API_KEY" }, status: "connected" as const });
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [{ id: "existing", provider: "deepseek", label: "DeepSeek", credentialSource: { kind: "managed" as const }, status: "connected" as const }] }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             addAiConnection,
@@ -152,6 +157,7 @@ describe("ApplicationSettings AI", () => {
         };
         window.skladnoDesktop = desktop;
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [connection], activeConnectionId: connection.id }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             refreshAiModels: vi.fn().mockResolvedValue([]),
@@ -175,6 +181,7 @@ describe("ApplicationSettings AI", () => {
         const connection = { id: "connection-1", provider: "openai", label: "Personal AI", credentialSource: { kind: "environment-variable" as const, environmentVariableName: "AI_API_KEY" }, status: "connected" as const };
         const updateAiConnection = vi.fn().mockResolvedValue({ ...connection, label: "Work AI" });
         const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
             getApplicationSettings: vi.fn().mockResolvedValue({ ...settingsSnapshot(), connections: [connection], activeConnectionId: connection.id }),
             getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
             refreshAiModels: vi.fn().mockResolvedValue([]),

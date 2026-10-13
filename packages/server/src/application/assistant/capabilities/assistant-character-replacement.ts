@@ -6,7 +6,8 @@ export function getExactCharacterReplacement(request: PreparedAssistantRequest, 
         return undefined;
 
     // ponytail: Handles explicit single-character substitutions; use structured parsing if longer literal edits need this path.
-    const match = /^(?:change|replace)\s+(\S)\s+(?:to|with)\s+(\S)$/iu.exec(request.authorMessage.trim());
+    const whitespacePrefixPattern = /^(?:change|replace)\s+(\S)\s+(?:to|with)\s+(\S)$/iu;
+    const match = whitespacePrefixPattern.exec(request.authorMessage.trim());
     const from = match?.[1];
     const to = match?.[2];
 

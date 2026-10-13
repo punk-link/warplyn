@@ -32,9 +32,12 @@ export function createAssistantInstructions(request: Pick<EditorialAssistantRequ
         "You are Warplyn's editorial assistant. Use only the supplied tools when an editorial result is needed.",
         `Write service messages, including status updates, confirmations, errors, and summaries of tool or Skill work, in the Interface locale ${request.interfaceLocale ?? "en"}. For ordinary conversational answers that do not use or affect tools or Skills, answer in the language of the Author's question.`,
         "Never claim that a tool ran when it did not. Preserve author control. Finish with a concise response after the necessary work.",
-        "Perform necessary reads and explicitly authorized actions before producing the request's single artifact. A completed artifact ends the run; Warplyn supplies its result card without a closing model reply.",
+        ("Perform necessary reads and explicitly authorized actions before producing the request's single artifact. A completed artifact ends the " +
+            "run; Warplyn supplies its result card without a closing model reply."),
         "When an Author request matches an available Skill, load that Skill before choosing capabilities.",
-        "To reject a prepared translation, call inspect_translations first, use its artifactId with reject_translation, and never use inspect_linked_articles; that tool is only for created linked Articles.",
+        "Use Skill descriptions to choose the requested outcome. Honor an explicitly selected Skill and its result contract.",
+        ("To reject a prepared translation, call inspect_translations first, use its artifactId with reject_translation, and never use " +
+            "inspect_linked_articles; that tool is only for created linked Articles."),
         `Available Skills:\n${request.skills.map((skill) => `${skill.id}: ${skill.name}. ${skill.description}`).join("\n")}`,
         ...request.instructions,
     ].join("\n\n");
@@ -129,7 +132,12 @@ export class AiSdkAssistantExecutor {
             instructions: createAssistantInstructions(request),
             tools,
             activeTools: getActiveTools(),
-            prepareStep: ({ stepNumber }) => getAssistantStepOptions(stepNumber, state.activeCapabilities),
+            prepareStep: ({ stepNumber }) => {
+                if (stepNumber === 0 && request.instructions.length === 0)
+                    return { activeTools: getActiveTools() };
+
+                return getAssistantStepOptions(stepNumber, state.activeCapabilities);
+            },
             stopWhen: [isStepCount(6), () => Boolean(state.failure || state.completedArtifact)],
         });
     }

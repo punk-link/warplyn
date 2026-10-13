@@ -6,7 +6,7 @@ export function createBuiltInSkillSource(root?: string): AssistantSkillSource {
     const packages = () => loadBuiltInSkillPackages(root);
     return {
         id: "built-in",
-        summaries: () => packages().map(({ reference, name, description }) => ({ reference, name, description })),
+        summaries: () => packages().map(({ reference, name, description, execution, scopes, presentation }) => ({ reference, name, description, execution, scopes, presentation })),
         load: (reference) => packages()
             .find((skillPackage) => skillPackage.reference.source === reference.source
                 && skillPackage.reference.id === reference.id

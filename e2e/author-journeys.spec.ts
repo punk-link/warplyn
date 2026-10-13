@@ -56,6 +56,24 @@ async function createArticle(page: import("@playwright/test").Page, content = "O
 }
 
 
+test("Concise rewrite stays a Proposal until acceptance and survives reload", async ({ page }) => {
+    await page.goto("/");
+    await createArticle(page, "It is important to note that retries need limits.");
+    await page.getByRole("button", { name: "Quick actions" }).click();
+    await page.getByRole("option", { name: "Concise rewrite" }).click();
+    await page.getByRole("button", { name: "Send editorial request" }).click();
+    await expect(page.getByRole("tab", { name: "Proposals: Review" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
+    const proposalPattern = /Proposal/;
+    await page.getByRole("tab", { name: proposalPattern }).click();
+    await page.getByRole("button", { name: "Accept all" }).click();
+    await page.getByRole("tab", { name: "Write" }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need limits.");
+    await page.reload();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need limits.");
+});
+
+
 test("critical local-first author journeys use deterministic provider output", async ({ page }) => {
     await page.goto("/");
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: "http://127.0.0.1:5173" });
@@ -68,14 +86,16 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.getByRole("button", { name: "Back to workspace" }).click();
     await createArticle(page);
     await expect(page.getByRole("button", { name: "Character count: 25 of 3,000 characters" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /publish/i })).toHaveCount(0);
+    const publishPattern = /publish/i;
+    await expect(page.getByRole("button", { name: publishPattern })).toHaveCount(0);
 
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("Improve flow");
     await page.getByRole("button", { name: "Quick actions" }).click();
     await page.getByRole("option", { name: "Flow and clarity" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await expect(page.getByRole("tab", { name: "Proposals: Review" })).toBeVisible();
-    await page.getByRole("tab", { name: /Proposal/ }).click();
+    const proposalPattern = /Proposal/;
+    await page.getByRole("tab", { name: proposalPattern }).click();
     await expect(page.getByText("Improved fixture note.")).toBeVisible();
 
     await page.getByRole("button", { name: "Accept all" }).click();
@@ -93,11 +113,13 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.getByRole("button", { name: "Quick actions" }).click();
     await page.getByRole("option", { name: "Fact checking" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
-    await expect(page.getByRole("tab", { name: /Fact Check/ })).toBeVisible();
-    await page.getByRole("tab", { name: /Fact Check/ }).click();
+    const factCheckPattern = /Fact Check/;
+    await expect(page.getByRole("tab", { name: factCheckPattern })).toBeVisible();
+    await page.getByRole("tab", { name: factCheckPattern }).click();
     await expect(page.getByText("The fixture claim is supported.").first()).toBeVisible();
 
-    await page.getByRole("tab", { name: /Style Profile/ }).click();
+    const styleProfilePattern = /Style Profile/;
+    await page.getByRole("tab", { name: styleProfilePattern }).click();
     await expect(page.getByRole("heading", { name: "Style Profile" })).toBeVisible();
 
     await page.getByRole("tab", { name: "Write" }).click();
@@ -148,7 +170,8 @@ test("extracted claims appear during Fact Check and an Author can skip one", asy
     await claims.getByRole("checkbox", { name: "The first fixture claim." }).focus();
     await page.keyboard.press("Space");
     await expect(page.getByText("Findings prepared")).toBeVisible();
-    await page.getByRole("tab", { name: /Fact Check/ }).click();
+    const factCheckPattern = /Fact Check/;
+    await page.getByRole("tab", { name: factCheckPattern }).click();
     await expect(page.getByText("The second fixture claim.").first()).toBeVisible();
     await expect(page.getByText("The first fixture claim.")).toHaveCount(0);
 });
@@ -167,7 +190,8 @@ test("an Author can reselect a claim before Fact Check finishes", async ({ page 
     await expect(claim).toBeEnabled();
     await claim.check();
     await expect(page.getByText("Findings prepared")).toBeVisible();
-    await page.getByRole("tab", { name: /Fact Check/ }).click();
+    const factCheckPattern = /Fact Check/;
+    await page.getByRole("tab", { name: factCheckPattern }).click();
     await expect(page.getByText("The first fixture claim.").first()).toBeVisible();
     await expect(page.getByText("The second fixture claim.").first()).toBeVisible();
 });
@@ -181,7 +205,8 @@ test("a provider failure leaves the Article unchanged and clears after checkpoin
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await expect(page.getByRole("alert")).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Original fixture Article.");
-    await activateWithKeyboard(page, page.getByRole("button", { name: /Edit from Author message at/ }));
+    const editAuthorMessagePattern = /Edit from Author message at/;
+    await activateWithKeyboard(page, page.getByRole("button", { name: editAuthorMessagePattern }));
     await page.getByRole("dialog", { name: "Edit from this message?" }).getByRole("button", { name: "Restore conversation" }).click();
     await expect(page.getByRole("alert")).toHaveCount(0);
     await expect(page.getByText("Error details")).toHaveCount(0);
@@ -434,8 +459,9 @@ for (const run of [
         await activateWithKeyboard(page, page.getByRole("button", { name: "Back to workspace" }));
 
         await page.keyboard.press("Tab");
+        const clickableElementPattern = /BUTTON|DIV/;
         await expect(page.evaluate(() => document.activeElement?.tagName))
-            .resolves.toMatch(/BUTTON|DIV/);
+            .resolves.toMatch(clickableElementPattern);
 
         await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth))
             .resolves.toBeTruthy();

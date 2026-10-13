@@ -67,11 +67,13 @@ describe("fresh translation review", () => {
         await user.click(screen.getByRole("button", { name: "New translation…" }));
         expect(screen.getByRole("checkbox", { name: "Spanish" }).getAttribute("checked")).not.toBeNull();
         rerender(view("Changed Draft"));
-        expect(screen.getByText(/unsaved Draft will be saved/)).toBeTruthy();
+        const unsavedDraftWillPattern = /unsaved Draft will be saved/;
+        expect(screen.getByText(unsavedDraftWillPattern)).toBeTruthy();
         expect(screen.getByRole("button", { name: "Generate Spanish translation" }).hasAttribute("disabled")).toBe(true);
         await user.click(screen.getByRole("button", { name: "Review updated source" }));
         rerender(view("Changed Draft", true));
-        expect(screen.queryByText(/Translating into/)).toBeNull();
+        const translatingIntoPattern = /Translating into/;
+        expect(screen.queryByText(translatingIntoPattern)).toBeNull();
         expect(screen.getByRole("button", { name: "Generate Spanish translation" }).hasAttribute("disabled")).toBe(true);
         rerender(view("Changed Draft"));
         await user.dblClick(screen.getByRole("button", { name: "Generate Spanish translation" }));

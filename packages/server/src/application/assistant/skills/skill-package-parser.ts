@@ -4,6 +4,7 @@ import { parseDocument } from "yaml";
 
 import { createSkillPackage } from "./create-skill-package.js";
 import { normalizeSkillName } from "./normalize-skill-name.js";
+import { parseSkillBehavior } from "./skill-package-metadata.js";
 import type { SkillPackageIssue } from "./skill-package-issue.js";
 import type { SkillPackageParseResult } from "./skill-package-parse-result.js";
 
@@ -13,7 +14,7 @@ const maximumInstructionsBytes = 64 * 1024;
 const maximumReferenceCount = 8;
 const maximumReferenceBytes = 16 * 1024;
 const skillId = /^[a-z][a-z0-9_-]{2,63}$/;
-const supportedMetadata = new Set(["id", "name", "description", "version", "references"]);
+const supportedMetadata = new Set(["id", "name", "description", "version", "references", "execution", "scopes", "presentation"]);
 const messageIds: Record<SkillPackageIssue["code"], SkillPackageIssue["messageId"]> = {
     invalid_frontmatter: "skills.validation.invalid_frontmatter",
     invalid_metadata: "skills.validation.invalid_metadata",
@@ -25,6 +26,7 @@ const messageIds: Record<SkillPackageIssue["code"], SkillPackageIssue["messageId
 
 
 interface ParsedSkillMetadata {
+    behavior: NonNullable<ReturnType<typeof parseSkillBehavior>>;
     id: string;
     name: string;
     description: string;
@@ -50,7 +52,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 
 function splitFrontmatter(text: string): { frontmatter: string; instructions: string } | undefined {
-    const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]+)$/.exec(text);
+    const lineBreakPattern = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]+)$/;
+    const match = lineBreakPattern.exec(text);
     return match ? { frontmatter: match[1]!, instructions: match[2]!.trim() } : undefined;
 }
 
@@ -139,8 +142,9 @@ function readInstructions(text: string): { frontmatter: string; instructions: st
 function validateSkillIdentity(input: { reservedIds?: readonly string[]; reservedNames?: readonly string[] }, metadata: Record<string, unknown>): { id: string; name: string; description: string; version: string } | SkillPackageParseResult {
     const { id, name, description, version } = metadata;
     const versionText = typeof version === "string" || typeof version === "number" ? String(version) : undefined;
+    const numberPattern = /^\d+(?:\.\d+){0,2}$/;
     if (typeof id !== "string" || !skillId.test(id) || typeof name !== "string" || !name.trim() || name.length > 80
-        || typeof description !== "string" || !description.trim() || description.length > 280 || !versionText || !/^\d+(?:\.\d+){0,2}$/.test(versionText))
+        || typeof description !== "string" || !description.trim() || description.length > 280 || !versionText || !numberPattern.test(versionText))
         return issue("invalid_metadata");
 
     if ((input.reservedIds ?? []).includes(id) || (input.reservedNames ?? []).some((candidate) => normalizeSkillName(candidate) === normalizeSkillName(name)))
@@ -175,7 +179,8 @@ function readSkillMetadata(frontmatter: string, instructions: string, input: { r
     if (!validateSkillReferences(references))
         return issue("invalid_reference");
 
-    return { ...identity, instructions, references };
+    const behavior = parseSkillBehavior(metadata);
+    return behavior ? { ...identity, instructions, references, behavior } : issue("invalid_metadata");
 }
 
 
@@ -251,6 +256,7 @@ export function parseSkillPackage(input: { root: string; source: string; reserve
             reference: { source: input.source, id: metadata.id, version: metadata.version },
             name: metadata.name,
             description: metadata.description,
+            ...metadata.behavior,
             instructions: metadata.instructions,
             references: loadedReferences
         })

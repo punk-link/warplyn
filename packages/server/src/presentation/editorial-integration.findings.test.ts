@@ -47,8 +47,10 @@ test("fact checks persist completed findings and citations against the reviewed 
         const body = await response.text();
         const artifact = repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!;
 
-        assert.match(body, /"type":"tool_status","tool":"claim_extraction"/);
-        assert.match(body, /"status":"unverifiable"/);
+        const typeToolStatusPattern = /"type":"tool_status","tool":"claim_extraction"/;
+        assert.match(body, typeToolStatusPattern);
+        const statusUnverifiablePattern = /"status":"unverifiable"/;
+        assert.match(body, statusUnverifiablePattern);
         assert.equal(artifact.kind, "fact-check");
         assert.equal(artifact.revisionId, article.currentRevisionId);
         assert.equal(repositories.editorialArtifacts.listSourceCitations(artifact.id)[0]?.url, "https://www.rfc-editor.org/rfc/rfc2616");
@@ -89,8 +91,10 @@ test("Assistant Fact Check results persist revision-bound findings for review", 
         const checks = await (await fetch(`${baseUrl}/api/articles/${article.id}/fact-checks`)).json() as { reviewedRevisionId: string; findings: { occurrenceId?: string }[] }[];
         const artifact = repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!;
 
-        assert.match(body, /"claims":\[{"claim":"HTTP was standardized in 1999\.","checked":false}\]/);
-        assert.match(body, /"reviewedRevisionId":"[^"]+"/);
+        const claimsClaimWasPattern = /"claims":\[{"claim":"HTTP was standardized in 1999\.","checked":false}\]/;
+        assert.match(body, claimsClaimWasPattern);
+        const reviewedrevisionidPattern = /"reviewedRevisionId":"[^"]+"/;
+        assert.match(body, reviewedrevisionidPattern);
         assert.equal(checks[0]?.reviewedRevisionId, article.currentRevisionId);
         assert.ok(checks[0]?.findings[0]?.occurrenceId);
         assert.equal(repositories.editorialArtifacts.listSourceCitations(artifact.id)[0]?.url, "https://www.rfc-editor.org/rfc/rfc2616");
@@ -220,7 +224,8 @@ test("Assistant streams claims before completion and restores a deselected claim
         for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read())
             events += decoder.decode(chunk.value);
 
-        assert.match(events, /"type":"completed"/);
+        const typeCompletedPattern = /"type":"completed"/;
+        assert.match(events, typeCompletedPattern);
         assert.deepEqual(repositories.factChecks.listFactChecks(article.id)[0]?.findings.map(({ claim }) => claim), ["First claim", "Second claim"]);
     });
 });

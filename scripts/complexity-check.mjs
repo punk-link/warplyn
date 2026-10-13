@@ -23,7 +23,8 @@ async function sourceFiles(directory) {
         if (entry.isDirectory())
             return sourceFiles(path);
 
-        return extensions.has(path.slice(path.lastIndexOf("."))) && !/\.test\.[^.]+$/.test(entry.name)
+        const testFilenamePattern = /\.test\.[^.]+$/;
+        return extensions.has(path.slice(path.lastIndexOf("."))) && !testFilenamePattern.test(entry.name)
             ? [path]
             : [];
     }));
@@ -90,7 +91,9 @@ async function main() {
 
     for (const path of files) {
         const content = await readFile(path, "utf8");
-        const lineCount = content === "" ? 0 : content.split(/\r\n|\r|\n/).length - (/(\r\n|\r|\n)$/.test(content) ? 1 : 0);
+        const newlineSeparatorPattern = /\r\n|\r|\n/;
+        const trailingNewlinePattern = /(\r\n|\r|\n)$/;
+        const lineCount = content === "" ? 0 : content.split(newlineSeparatorPattern).length - (trailingNewlinePattern.test(content) ? 1 : 0);
         const relativePath = relative(root, path).replaceAll("\\", "/");
         const sourceFile = ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true,
             path.endsWith(".tsx") || path.endsWith(".jsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS);

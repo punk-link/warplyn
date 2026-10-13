@@ -21,11 +21,25 @@ describe("ProposalReviewView", () => {
 
     it("shows an advisory summary above the corresponding change diff", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <ProposalReviewView review={{
-                baseContent: "Original",
-                proposedContent: "Proposed",
-                changes: [{ id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] }],
-            }} stale={false} decisions={{}} summaries={{ "change-1": "Clarifies the opening statement." }} summaryState="idle" setDecision={vi.fn()} acceptAll={vi.fn()} applyAccepted={vi.fn()} rejectAll={vi.fn()} dismissProposal={vi.fn()} warningsDismissed={false} dismissWarnings={vi.fn()} openWrite={vi.fn()} openAssistant={vi.fn()} />
+            <ProposalReviewView
+                review={{
+                    baseContent: "Original",
+                    proposedContent: "Proposed",
+                    changes: [{ id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] }],
+                }}
+                stale={false}
+                decisions={{}}
+                summaries={{ "change-1": "Clarifies the opening statement." }}
+                summaryState="idle"
+                setDecision={vi.fn()}
+                acceptAll={vi.fn()}
+                applyAccepted={vi.fn()}
+                rejectAll={vi.fn()}
+                dismissProposal={vi.fn()}
+                warningsDismissed={false}
+                dismissWarnings={vi.fn()}
+                openWrite={vi.fn()}
+                openAssistant={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByText("Clarifies the opening statement.")).toBeTruthy();
@@ -38,14 +52,26 @@ describe("ProposalReviewView", () => {
         const dismissProposal = vi.fn();
 
         render(<IntlProvider locale="en" messages={messages}>
-            <ProposalReviewView review={{
-                baseContent: "Original\nSecond original",
-                proposedContent: "Proposed\nSecond proposed",
-                changes: [
-                    { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
-                    { id: "change-2", baseStart: 1, baseEnd: 2, baseLines: ["Second original"], proposalLines: ["Second proposed"] },
-                ],
-            }} stale decisions={{ "change-1": "accepted" }} setDecision={vi.fn()} acceptAll={vi.fn()} applyAccepted={vi.fn()} rejectAll={vi.fn()} dismissProposal={dismissProposal} warningsDismissed={false} dismissWarnings={vi.fn()} openWrite={vi.fn()} openAssistant={vi.fn()} />
+            <ProposalReviewView
+                review={{
+                    baseContent: "Original\nSecond original",
+                    proposedContent: "Proposed\nSecond proposed",
+                    changes: [
+                        { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
+                        { id: "change-2", baseStart: 1, baseEnd: 2, baseLines: ["Second original"], proposalLines: ["Second proposed"] },
+                    ],
+                }}
+                stale
+                decisions={{ "change-1": "accepted" }}
+                setDecision={vi.fn()}
+                acceptAll={vi.fn()}
+                applyAccepted={vi.fn()}
+                rejectAll={vi.fn()}
+                dismissProposal={dismissProposal}
+                warningsDismissed={false}
+                dismissWarnings={vi.fn()}
+                openWrite={vi.fn()}
+                openAssistant={vi.fn()} />
         </IntlProvider>);
 
         const warning = screen.getByText("This proposal is stale because the article has a newer revision. Generate a new proposal before accepting changes.");
@@ -65,14 +91,26 @@ describe("ProposalReviewView", () => {
 
     it("uses labelled chevron buttons to navigate between changes", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <ProposalReviewView review={{
-                baseContent: "Original\nSecond original",
-                proposedContent: "Proposed\nSecond proposed",
-                changes: [
-                    { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
-                    { id: "change-2", baseStart: 1, baseEnd: 2, baseLines: ["Second original"], proposalLines: ["Second proposed"] },
-                ],
-            }} stale={false} decisions={{}} setDecision={vi.fn()} acceptAll={vi.fn()} applyAccepted={vi.fn()} rejectAll={vi.fn()} dismissProposal={vi.fn()} warningsDismissed={false} dismissWarnings={vi.fn()} openWrite={vi.fn()} openAssistant={vi.fn()} />
+            <ProposalReviewView
+                review={{
+                    baseContent: "Original\nSecond original",
+                    proposedContent: "Proposed\nSecond proposed",
+                    changes: [
+                        { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
+                        { id: "change-2", baseStart: 1, baseEnd: 2, baseLines: ["Second original"], proposalLines: ["Second proposed"] },
+                    ],
+                }}
+                stale={false}
+                decisions={{}}
+                setDecision={vi.fn()}
+                acceptAll={vi.fn()}
+                applyAccepted={vi.fn()}
+                rejectAll={vi.fn()}
+                dismissProposal={vi.fn()}
+                warningsDismissed={false}
+                dismissWarnings={vi.fn()}
+                openWrite={vi.fn()}
+                openAssistant={vi.fn()} />
         </IntlProvider>);
 
         expect(screen.getByRole("button", { name: getMessage("views.previousChange") }).querySelector("svg")).toBeTruthy();
@@ -86,14 +124,26 @@ describe("ProposalReviewView", () => {
 
         try {
             render(<IntlProvider locale="en" messages={messages}>
-                <ProposalReviewView review={{
-                    baseContent: "Original\nSecond original",
-                    proposedContent: "Proposed\nSecond proposed",
-                    changes: [
-                        { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
-                        { id: "change-2", baseStart: 1, baseEnd: 2, baseLines: ["Second original"], proposalLines: ["Second proposed"] },
-                    ],
-                }} stale={false} decisions={{}} setDecision={vi.fn()} acceptAll={vi.fn()} applyAccepted={vi.fn()} rejectAll={vi.fn()} dismissProposal={vi.fn()} warningsDismissed={false} dismissWarnings={vi.fn()} openWrite={vi.fn()} openAssistant={vi.fn()} />
+                <ProposalReviewView
+                    review={{
+                        baseContent: "Original\nSecond original",
+                        proposedContent: "Proposed\nSecond proposed",
+                        changes: [
+                            { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
+                            { id: "change-2", baseStart: 1, baseEnd: 2, baseLines: ["Second original"], proposalLines: ["Second proposed"] },
+                        ],
+                    }}
+                    stale={false}
+                    decisions={{}}
+                    setDecision={vi.fn()}
+                    acceptAll={vi.fn()}
+                    applyAccepted={vi.fn()}
+                    rejectAll={vi.fn()}
+                    dismissProposal={vi.fn()}
+                    warningsDismissed={false}
+                    dismissWarnings={vi.fn()}
+                    openWrite={vi.fn()}
+                    openAssistant={vi.fn()} />
             </IntlProvider>);
 
             const nextChange = screen.getByRole("button", { name: getMessage("views.nextChange") });
@@ -111,14 +161,26 @@ describe("ProposalReviewView", () => {
 
     it("keeps change navigation outside the scrolling review content", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <ProposalReviewView review={{
-                baseContent: "Original\nSecond original",
-                proposedContent: "Proposed\nSecond proposed",
-                changes: [
-                    { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
-                    { id: "change-2", baseStart: 1, baseEnd: 2, baseLines: ["Second original"], proposalLines: ["Second proposed"] },
-                ],
-            }} stale={false} decisions={{}} setDecision={vi.fn()} acceptAll={vi.fn()} applyAccepted={vi.fn()} rejectAll={vi.fn()} dismissProposal={vi.fn()} warningsDismissed={false} dismissWarnings={vi.fn()} openWrite={vi.fn()} openAssistant={vi.fn()} />
+            <ProposalReviewView
+                review={{
+                    baseContent: "Original\nSecond original",
+                    proposedContent: "Proposed\nSecond proposed",
+                    changes: [
+                        { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
+                        { id: "change-2", baseStart: 1, baseEnd: 2, baseLines: ["Second original"], proposalLines: ["Second proposed"] },
+                    ],
+                }}
+                stale={false}
+                decisions={{}}
+                setDecision={vi.fn()}
+                acceptAll={vi.fn()}
+                applyAccepted={vi.fn()}
+                rejectAll={vi.fn()}
+                dismissProposal={vi.fn()}
+                warningsDismissed={false}
+                dismissWarnings={vi.fn()}
+                openWrite={vi.fn()}
+                openAssistant={vi.fn()} />
         </IntlProvider>);
 
         const header = screen.getByRole("heading", { name: getMessage("views.proposalReview") }).closest("header");
@@ -131,11 +193,23 @@ describe("ProposalReviewView", () => {
 
     it("applies exact-text highlights to both layouts", () => {
         render(<IntlProvider locale="en" messages={messages}>
-            <ProposalReviewView review={{
-                baseContent: "Original sentence.",
-                proposedContent: "Improved sentence.",
-                changes: [{ id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original sentence."], proposalLines: ["Improved sentence."] }],
-            }} stale={false} decisions={{}} setDecision={vi.fn()} acceptAll={vi.fn()} applyAccepted={vi.fn()} rejectAll={vi.fn()} dismissProposal={vi.fn()} warningsDismissed dismissWarnings={vi.fn()} openWrite={vi.fn()} openAssistant={vi.fn()} />
+            <ProposalReviewView
+                review={{
+                    baseContent: "Original sentence.",
+                    proposedContent: "Improved sentence.",
+                    changes: [{ id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original sentence."], proposalLines: ["Improved sentence."] }],
+                }}
+                stale={false}
+                decisions={{}}
+                setDecision={vi.fn()}
+                acceptAll={vi.fn()}
+                applyAccepted={vi.fn()}
+                rejectAll={vi.fn()}
+                dismissProposal={vi.fn()}
+                warningsDismissed
+                dismissWarnings={vi.fn()}
+                openWrite={vi.fn()}
+                openAssistant={vi.fn()} />
         </IntlProvider>);
 
         const sideBySide = screen.getByRole("button", { name: getMessage("views.proposalSideBySide") });
@@ -167,11 +241,23 @@ describe("ProposalReviewView", () => {
         const dismissProposal = vi.fn();
 
         render(<IntlProvider locale="en" messages={messages}>
-            <ProposalReviewView review={{
-                baseContent: "Original",
-                proposedContent: "Proposed",
-                changes: [{ id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] }],
-            }} stale={false} decisions={{}} setDecision={vi.fn()} acceptAll={vi.fn()} applyAccepted={vi.fn()} rejectAll={rejectAll} dismissProposal={dismissProposal} warningsDismissed={false} dismissWarnings={vi.fn()} openWrite={vi.fn()} openAssistant={vi.fn()} />
+            <ProposalReviewView
+                review={{
+                    baseContent: "Original",
+                    proposedContent: "Proposed",
+                    changes: [{ id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] }],
+                }}
+                stale={false}
+                decisions={{}}
+                setDecision={vi.fn()}
+                acceptAll={vi.fn()}
+                applyAccepted={vi.fn()}
+                rejectAll={rejectAll}
+                dismissProposal={dismissProposal}
+                warningsDismissed={false}
+                dismissWarnings={vi.fn()}
+                openWrite={vi.fn()}
+                openAssistant={vi.fn()} />
         </IntlProvider>);
 
         fireEvent.click(screen.getByRole("button", { name: getMessage("views.rejectAll") }));

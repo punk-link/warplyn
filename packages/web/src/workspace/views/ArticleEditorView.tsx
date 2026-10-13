@@ -10,5 +10,11 @@ export function ArticleEditorView({ articleId, content, setContent, onSelectionC
     assistantSelection?: string;
     language?: string;
 }) {
-    return <ArticleRichEditor articleId={articleId} content={content} setContent={setContent} onSelectionChange={onSelectionChange} assistantSelection={assistantSelection} language={language} />;
+    return <ArticleRichEditor
+        articleId={articleId}
+        content={content}
+        setContent={setContent}
+        onSelectionChange={onSelectionChange}
+        assistantSelection={assistantSelection}
+        language={language} />;
 }

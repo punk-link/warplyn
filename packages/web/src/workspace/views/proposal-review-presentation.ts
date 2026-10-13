@@ -24,13 +24,16 @@ export function presentProposalReview(review: TextProposal): ProposalReviewPrese
     const changed = changes.flatMap((change) => [...change.baseLines, ...change.proposalLines]).join("\n");
     const warnings: ProposalReviewPresentation["warnings"] = [];
 
-    if (/https?:\/\/|\bwww\./i.test(changed))
+    const urlPattern = /https?:\/\/|\bwww\./i;
+    if (urlPattern.test(changed))
         warnings.push("url");
 
-    if (/\b\d+(?:[.,]\d+)?\b/.test(changed))
+    const numberPattern = /\b\d+(?:[.,]\d+)?\b/;
+    if (numberPattern.test(changed))
         warnings.push("number");
 
-    if (/`{1,3}/.test(changed))
+    const punctuationPattern = /`{1,3}/;
+    if (punctuationPattern.test(changed))
         warnings.push("code");
 
     if (changes.length > 0)

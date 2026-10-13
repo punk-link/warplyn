@@ -208,8 +208,16 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
     ] as const;
 
     return <div className="shrink-0 overflow-x-auto border-b border-border bg-surface-raised px-4 py-1 [scrollbar-width:thin]">
-        <div data-focus-area="formatting-toolbar" role="toolbar" aria-label={intl.formatMessage({ id: "editor.formatting" })} onKeyDown={handleKeyNavigation} className="flex w-max min-w-full items-center gap-1">
-            <select data-focus-area-entry aria-label={intl.formatMessage({ id: "editor.blockStyle" })} title={intl.formatMessage({ id: "editor.blockStyle" })}
+        <div
+            data-focus-area="formatting-toolbar"
+            role="toolbar"
+            aria-label={intl.formatMessage({ id: "editor.formatting" })}
+            onKeyDown={handleKeyNavigation}
+            className="flex w-max min-w-full items-center gap-1">
+            <select
+                data-focus-area-entry
+                aria-label={intl.formatMessage({ id: "editor.blockStyle" })}
+                title={intl.formatMessage({ id: "editor.blockStyle" })}
                 value={block}
                 onMouseDown={rememberBlockSelection}
                 onChange={(event) => applyBlockType(event.target.value as BlockType)}
@@ -221,9 +229,19 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
             </select>
             {controls.map(([label, Icon, format, shortcut]) => {
                 const controlLabel = intl.formatMessage({ id: label });
-                return <IconButton variant="toolbar" key={format} type="button" label={controlLabel} title={getToolbarHint(controlLabel, shortcut)} aria-pressed={formats.has(format)} onMouseDown={(event) => event.preventDefault()} onClick={() => applyTextFormat(format)}><Icon /></IconButton>;
+                return <IconButton
+                    variant="toolbar"
+                    key={format}
+                    type="button"
+                    label={controlLabel}
+                    title={getToolbarHint(controlLabel, shortcut)}
+                    aria-pressed={formats.has(format)}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => applyTextFormat(format)}><Icon /></IconButton>;
             })}
-            <IconButton variant="toolbar" type="button"
+            <IconButton
+                variant="toolbar"
+                type="button"
                 label={intl.formatMessage({ id: "editor.link" })}
                 title={intl.formatMessage({ id: "editor.link" })}
                 aria-pressed={linkActive}
@@ -231,8 +249,15 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                 onClick={() => activate(openLink)}>
                 <LinkIcon />
             </IconButton>
-            {linkUrl && <a href={linkUrl} target="_blank" rel="noreferrer" aria-label={intl.formatMessage({ id: "editor.openLink" }, { url: linkUrl })} className="inline-flex min-h-9 max-w-32 items-center truncate rounded-control px-2 text-xs font-semibold text-brand underline underline-offset-2 hover:bg-brand-soft">{linkUrl}</a>}
-            <IconButton variant="toolbar" type="button"
+            {linkUrl && <a
+                href={linkUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={intl.formatMessage({ id: "editor.openLink" }, { url: linkUrl })}
+                className="inline-flex min-h-9 max-w-32 items-center truncate rounded-control px-2 text-xs font-semibold text-brand underline underline-offset-2 hover:bg-brand-soft">{linkUrl}</a>}
+            <IconButton
+                variant="toolbar"
+                type="button"
                 label={intl.formatMessage({ id: "editor.bulletedList" })}
                 title={intl.formatMessage({ id: "editor.bulletedList" })}
                 aria-pressed={listType === "bullet"}
@@ -240,7 +265,9 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                 onClick={() => applyList("bullet")}>
                 <ListIcon />
             </IconButton>
-            <IconButton variant="toolbar" type="button"
+            <IconButton
+                variant="toolbar"
+                type="button"
                 label={intl.formatMessage({ id: "editor.numberedList" })}
                 title={intl.formatMessage({ id: "editor.numberedList" })}
                 aria-pressed={listType === "number"}

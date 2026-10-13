@@ -1,15 +1,8 @@
 import { readdirSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { builtInSkills } from "@skladno/shared";
-
 import type { AssistantSkillPackage } from "./assistant-skill-package.js";
 import { parseSkillPackage } from "./skill-package-parser.js";
-
-
-function isBuiltInSkillPackageId(id: string): boolean {
-    return builtInSkills.some((candidate) => candidate === id);
-}
 
 
 export function loadBuiltInSkillPackages(root = process.env.WARPLYN_BUILT_IN_SKILLS_DIR ?? resolve(import.meta.dirname, "built-in")): readonly AssistantSkillPackage[] {
@@ -25,8 +18,8 @@ export function loadBuiltInSkillPackages(root = process.env.WARPLYN_BUILT_IN_SKI
         packages.push(parsed.skillPackage);
     }
 
-    if (packages.length !== builtInSkills.length || packages.some((skillPackage) => !isBuiltInSkillPackageId(skillPackage.reference.id)))
+    if (new Set(packages.map((skill) => skill.reference.id)).size !== packages.length)
         throw new Error("invalid_builtin_skill_package");
 
-    return packages.sort((left, right) => builtInSkills.findIndex((id) => id === left.reference.id) - builtInSkills.findIndex((id) => id === right.reference.id));
+    return packages.sort((left, right) => (left.presentation?.order ?? 0) - (right.presentation?.order ?? 0) || left.reference.id.localeCompare(right.reference.id));
 }

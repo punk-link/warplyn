@@ -90,7 +90,8 @@ export function useSpellingSettings() {
 
 
     async function addWords() {
-        const words = [...new Set(input.split(/\r?\n/).map((word) => word.trim()).filter(Boolean))];
+        const lineBreakPattern = /\r?\n/;
+        const words = [...new Set(input.split(lineBreakPattern).map((word) => word.trim()).filter(Boolean))];
         if (!words.length || words.length > 500 || new TextEncoder().encode(input).length > 65_536 || words.some((word) => word.length > 256)) {
             setStatus("spelling.invalidWords");
             return;

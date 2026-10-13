@@ -53,7 +53,8 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
             const dotClasses = { warning: "bg-warning", error: "bg-danger", default: "bg-brand" };
             const badgeClassName = badgeClasses[badge?.tone ?? "default"];
 
-            return <Tab key={item.id}
+            return <Tab
+                key={item.id}
                 id={`workspace-tab-${item.id}`}
                 aria-controls={`workspace-panel-${item.id}`}
                 aria-label={accessibleName}

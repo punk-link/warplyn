@@ -2,7 +2,7 @@ import { APPLICATION_ERROR, ASSISTANT_EVENT, HTTP_STATUS, type AssistantEditCand
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import { persistFactCheckArtifact } from "../../editorial/fact-checking/persist-fact-check-artifact.js";
-import { protectArticleSpans } from "../../editorial/translation/translation.js";
+import { preservesProtectedContent } from "../../editorial/proposals/proposal-result-policy.js";
 import { EDITORIAL_CAPABILITY } from "../capabilities/editorial-capability-catalog.js";
 import type { CompletionEvent } from "./completion-event.js";
 import type { PreparedAssistantRequest } from "../requests/prepared-assistant-request.js";
@@ -22,17 +22,6 @@ export function getCompletedContent(request: PreparedAssistantRequest, text: str
 }
 
 
-function preservesProtectedContent(source: string, replacement: string): boolean {
-    const protectedSpans = protectArticleSpans(source).protectedSpans;
-    const sourceNumbers = source.match(/\b\d+(?:[.,]\d+)*\b/g) ?? [];
-    const replacementNumbers = replacement.match(/\b\d+(?:[.,]\d+)*\b/g) ?? [];
-    if (sourceNumbers.sort().join("\u0000") !== replacementNumbers.sort().join("\u0000"))
-        return false;
-
-    return ![...new Set(protectedSpans)].some((span) => source.split(span).length !== replacement.split(span).length);
-}
-
-
 export function getEditCandidate(request: PreparedAssistantRequest, event: CompletionEvent): AssistantEditCandidate | undefined {
     if (!request.editCandidateAuthorized || request.completedCapability !== EDITORIAL_CAPABILITY.GENERATE_PROPOSAL || !event.text.trim())
         return undefined;
@@ -41,7 +30,8 @@ export function getEditCandidate(request: PreparedAssistantRequest, event: Compl
         ? request.articleContent.slice(request.scope.startOffset, request.scope.endOffset)
         : request.articleContent;
     const replacement = event.text;
-    if (replacement === source || /(?:^|\n)\s*(?:option|version|alternative)\s*[12]\s*[:.)]/i.test(replacement) || !preservesProtectedContent(source, replacement))
+    const lineEndingPattern = /(?:^|\n)\s*(?:option|version|alternative)\s*[12]\s*[:.)]/i;
+    if (replacement === source || lineEndingPattern.test(replacement) || !preservesProtectedContent(source, replacement))
         return undefined;
 
     return request.scope.kind === "selection"

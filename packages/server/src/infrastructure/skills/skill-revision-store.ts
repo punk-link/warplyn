@@ -12,7 +12,8 @@ const revisionId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 
 
 function isPackageFile(path: string): boolean {
-    return path === "SKILL.md" || /^references\/[A-Za-z0-9_-]+\.md$/.test(path);
+    const markdownExtensionPattern = /^references\/[A-Za-z0-9_-]+\.md$/;
+    return path === "SKILL.md" || markdownExtensionPattern.test(path);
 }
 
 

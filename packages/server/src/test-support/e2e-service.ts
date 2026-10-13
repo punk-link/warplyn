@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { EDITORIAL_OPERATION, FACT_CHECK_STATUS } from "@skladno/shared";
+import { BUILT_IN_SKILL, EDITORIAL_OPERATION, FACT_CHECK_STATUS } from "@skladno/shared";
 
 import { createApplicationServices } from "../application/create-application-services.js";
 import { EditorialService } from "../application/editorial/editorial-service.js";
@@ -81,6 +81,11 @@ class E2eFixtureEngine implements EditorialEngine {
 
         if (request.authorContext.startsWith("E2E edit")) {
             yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "e2e-edit", text: request.article === "Original fixture Article." ? "Improved fixture Article." : "Original fixture Article. Improved." };
+            return;
+        }
+
+        if (request.skillId === BUILT_IN_SKILL.CONCISE_REWRITE) {
+            yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "e2e-concise", text: "Retries need limits." };
             return;
         }
 

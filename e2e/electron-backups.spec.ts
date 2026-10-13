@@ -32,7 +32,8 @@ test("native backup finishes through the production bridge before desktop shutdo
             dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [path] });
         }, destination);
         await page.getByRole("button", { name: "Choose backup folder" }).click();
-        await expect(page.getByText(/Using .*backups/)).toBeVisible();
+        const usingBackupsPattern = /Using .*backups/;
+        await expect(page.getByText(usingBackupsPattern)).toBeVisible();
         await page.getByRole("button", { name: "Create backup", exact: true }).click();
         if (process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true")
             expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isVisible())).toBe(false);
@@ -102,7 +103,8 @@ test("daily native backups create a complete bundle at every application startup
         }
 
         for (const name of (await readdir(destination)).filter((entry) => entry.endsWith(".sqlite"))) {
-            expect(name).toMatch(/^warplyn-automatic-/);
+            const warplynAutomaticPattern = /^warplyn-automatic-/;
+            expect(name).toMatch(warplynAutomaticPattern);
             const snapshot = join(destination, name);
             expect(await readFile(join(`${snapshot}.skills`, "skills", "fixture", "SKILL.md"), "utf8")).toBe("Synthetic automatic backup Skill");
             expect(JSON.parse(await readFile(join(`${snapshot}.skills`, "manifest.json"), "utf8")).files["database.sqlite"].size).toBeGreaterThan(0);

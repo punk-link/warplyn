@@ -3,6 +3,13 @@ id: style_review
 name: Style Review
 description: Review the Article against its prepared Style Profile.
 version: 2
+execution:
+  capability: style_review
+scopes: [article, selection]
+presentation:
+  order: 60
+  label: assistant.skill.styleReview.label
+  hint: assistant.skill.styleReview.hint
 references:
   - references/profile.md
 ---

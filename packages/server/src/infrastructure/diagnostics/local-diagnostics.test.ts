@@ -36,12 +36,17 @@ test("local diagnostics redact private values and ignore writer failures", () =>
         detail: "[REDACTED]",
         status: 200,
     });
-    assert.doesNotMatch(lines[0]!, /secret-key|custom-secret|private Article body|private model body/);
+    const secretKeyCustomPattern = /secret-key|custom-secret|private Article body|private model body/;
+    assert.doesNotMatch(lines[0]!, secretKeyCustomPattern);
 
-    assert.match(lines[1]!, /"event":"request.failed"/);
-    assert.match(lines[1]!, /"errorName":"Error"/);
-    assert.match(lines[1]!, /"errorCode":"EFAIL"/);
-    assert.doesNotMatch(lines[1]!, /private request|private error/);
+    const eventRequestFailedPattern = /"event":"request.failed"/;
+    assert.match(lines[1]!, eventRequestFailedPattern);
+    const errornameErrorPattern = /"errorName":"Error"/;
+    assert.match(lines[1]!, errornameErrorPattern);
+    const errorcodeEfailPattern = /"errorCode":"EFAIL"/;
+    assert.match(lines[1]!, errorcodeEfailPattern);
+    const privateRequestErrorPattern = /private request|private error/;
+    assert.doesNotMatch(lines[1]!, privateRequestErrorPattern);
 
     const loadedAfterStartup: NodeJS.ProcessEnv = {};
     const delayedLines: string[] = [];
@@ -53,7 +58,8 @@ test("local diagnostics redact private values and ignore writer failures", () =>
     });
     loadedAfterStartup.CUSTOM_KEY = "loaded-secret";
     delayedDiagnostics.write("service.started", { detail: "loaded-secret" });
-    assert.doesNotMatch(delayedLines[0]!, /loaded-secret/);
+    const loadedSecretPattern = /loaded-secret/;
+    assert.doesNotMatch(delayedLines[0]!, loadedSecretPattern);
 
     createLocalDiagnostics({ stdout: () => {
         throw new Error("unavailable stream");

@@ -59,10 +59,14 @@ export function NewTranslationDialog({ article, content, defaults, viewedLanguag
         close();
     };
 
-    return <Dialog ref={dialog} className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl" aria-labelledby="new-translation-title" onCancel={(event) => {
-        event.preventDefault();
-        close();
-    }}>
+    return <Dialog
+        ref={dialog}
+        className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+        aria-labelledby="new-translation-title"
+        onCancel={(event) => {
+            event.preventDefault();
+            close();
+        }}>
         <h2 id="new-translation-title" className="text-lg font-semibold">{intl.formatMessage({ id: "views.translate" })}</h2>
         <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "views.translationGenerateDescription" }, { title: article.title.trim() || intl.formatMessage({ id: "article.defaultTitle" }), revisionId: revisionNumber ?? article.currentRevisionId })}</p>
         {content !== article.currentRevision.content && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "views.translationGenerateDraft" })}</p>}
@@ -71,7 +75,11 @@ export function NewTranslationDialog({ article, content, defaults, viewedLanguag
             <legend className="text-sm font-semibold">{intl.formatMessage({ id: "views.translationGenerateTargets" })}</legend>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {supported.map((language) => <label key={language} className="flex min-h-9 items-center gap-2 text-sm text-ink">
-                    <input type="checkbox" className="size-4 accent-brand" checked={selected.includes(language)} onChange={(event) => setLanguages(event.target.checked ? [...selected, language] : selected.filter((item) => item !== language))} />
+                    <input
+                        type="checkbox"
+                        className="size-4 accent-brand"
+                        checked={selected.includes(language)}
+                        onChange={(event) => setLanguages(event.target.checked ? [...selected, language] : selected.filter((item) => item !== language))} />
                     {intl.formatMessage({ id: languageMessageIds[language] })}
                 </label>)}
             </div>

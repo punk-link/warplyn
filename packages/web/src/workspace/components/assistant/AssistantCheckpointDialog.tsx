@@ -32,10 +32,14 @@ export function AssistantCheckpointDialog({ preview, replacingComposer, close, r
     const revisionDescription = describeCheckpointRevision(preview.revision, intl);
     const restoreMode = preview.draftDecisionRequired ? "preserve" : "restore";
 
-    return <Dialog ref={dialog} className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl" aria-labelledby="assistant-checkpoint-title" onCancel={(event) => {
-        event.preventDefault();
-        close();
-    }}>
+    return <Dialog
+        ref={dialog}
+        className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+        aria-labelledby="assistant-checkpoint-title"
+        onCancel={(event) => {
+            event.preventDefault();
+            close();
+        }}>
         <h2 id="assistant-checkpoint-title" className="font-semibold">{intl.formatMessage({ id: "assistant.checkpoint.heading" })}</h2>
         {rejectedDescriptions.length > 0 && <div className="mt-2 text-sm">
             <p>{intl.formatMessage({ id: "assistant.checkpoint.work" })}</p>
@@ -49,8 +53,16 @@ export function AssistantCheckpointDialog({ preview, replacingComposer, close, r
         {preview.draftDecisionRequired && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "assistant.checkpoint.draft" })}</p>}
         <div className="mt-4 flex justify-end gap-2">
             <Button variant="secondary" disabled={Boolean(pending)} onClick={close}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
-            {preview.draftDecisionRequired && <Button variant="danger" disabled={Boolean(pending)} state={pending === "discard" ? "loading" : "default"} onClick={() => start("discard")}>{intl.formatMessage({ id: "assistant.checkpoint.discard" })}</Button>}
-            <Button variant="primary" disabled={Boolean(pending)} state={pending === restoreMode ? "loading" : "default"} onClick={() => start(preview.draftDecisionRequired ? "preserve" : undefined)}>
+            {preview.draftDecisionRequired && <Button
+                variant="danger"
+                disabled={Boolean(pending)}
+                state={pending === "discard" ? "loading" : "default"}
+                onClick={() => start("discard")}>{intl.formatMessage({ id: "assistant.checkpoint.discard" })}</Button>}
+            <Button
+                variant="primary"
+                disabled={Boolean(pending)}
+                state={pending === restoreMode ? "loading" : "default"}
+                onClick={() => start(preview.draftDecisionRequired ? "preserve" : undefined)}>
                 {intl.formatMessage({ id: preview.draftDecisionRequired ? "assistant.checkpoint.save" : "assistant.checkpoint.restore" })}
             </Button>
         </div>

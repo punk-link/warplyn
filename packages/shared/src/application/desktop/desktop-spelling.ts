@@ -34,13 +34,15 @@ export interface DesktopSpellingClient {
 
 
 export function isSpellingLanguage(value: unknown): value is string {
-    return typeof value === "string" && /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,2}$/.test(value);
+    const punctuationPattern = /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,2}$/;
+    return typeof value === "string" && punctuationPattern.test(value);
 }
 
 
 export function isPersonalSpellingWord(value: unknown): value is string {
+    const punctuationPattern = /[\p{Cc}\p{Zl}\p{Zp}]/u;
     return typeof value === "string" && value.length > 0 && value === value.trim()
-        && Array.from(value).length <= 128 && !/[\p{Cc}\p{Zl}\p{Zp}]/u.test(value);
+        && Array.from(value).length <= 128 && !punctuationPattern.test(value);
 }
 
 

@@ -1,46 +1,24 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEventHandler } from "react";
 import { type IntlShape } from "react-intl";
-import { BUILT_IN_SKILL, KEY_BINDING_COMMAND, areKeyBindingsEqual, builtInSkillScopeCompatibility, builtInSkills, isBuiltInSkillId, resolveKeyBindings, type AssistantCheckpointComposer, type AssistantSkillSummary, type BuiltInSkillId, type GeneralSettings, type KeyBindingOverrides } from "@skladno/shared";
+import { KEY_BINDING_COMMAND, areKeyBindingsEqual, resolveKeyBindings, type AssistantCheckpointComposer, type AssistantSkillSummary, type GeneralSettings, type KeyBindingOverrides } from "@skladno/shared";
 import { getEventKeyBinding, type KeyBindingDispatcher } from "../../../key-bindings/dispatcher.js";
 import type { AssistantComposerValue } from "./AssistantComposer.js";
-import { skillMessages } from "./assistant-messages.js";
+import { getSkillPresentation } from "../../../i18n/skill-presentation.js";
 import type { AssistantSelectionScope } from "../../state/assistant-messages-state.js";
 import type { AssistantComposerSkill } from "./AssistantSkillTagNode.js";
 
 type AssistantState = "idle" | "streaming" | "error";
 
 
-function getSkillAliasKey(skill: BuiltInSkillId) {
-    switch (skill) {
-        case BUILT_IN_SKILL.TALKING_POINTS:
-            return "talkingPoints";
-        case BUILT_IN_SKILL.NARRATIVE_DRAFT:
-            return "narrativeDraft";
-        case BUILT_IN_SKILL.FLOW_AND_CLARITY:
-            return "flowAndClarity";
-        case BUILT_IN_SKILL.FACT_CHECKING:
-            return "factChecking";
-        case BUILT_IN_SKILL.STYLE_REVIEW:
-            return "styleReview";
-        case BUILT_IN_SKILL.SKILL_CREATOR:
-            return "skillCreator";
-        case BUILT_IN_SKILL.TRANSLATION:
-            return "translation";
-        default: {
-            const unhandledSkill: never = skill;
-            return unhandledSkill;
-        }
-    }
-}
-
-
 function getSlashQueryAt(guidance: string, caretOffset: number): { start: number; query: string } | undefined {
     const start = guidance.lastIndexOf("/", caretOffset - 1);
-    if (start < 0 || (start > 0 && !/\s/.test(guidance[start - 1] ?? "")))
+    const characterWhitespacePattern = /\s/;
+    if (start < 0 || (start > 0 && !characterWhitespacePattern.test(guidance[start - 1] ?? "")))
         return undefined;
 
     const query = guidance.slice(start + 1, caretOffset);
-    return /\s/.test(query) ? undefined : { start, query };
+    const queryWhitespacePattern = /\s/;
+    return queryWhitespacePattern.test(query) ? undefined : { start, query };
 }
 
 
@@ -179,28 +157,30 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         else
             localStorage.removeItem(draftKey(articleId));
     }, [articleId, guidance, selectedSkill, skillOffset]);
+    const restoredCheckpoint = useRef<AssistantCheckpointComposer>();
     useEffect(() => {
-        if (!restoredComposer)
+        if (!restoredComposer || restoredCheckpoint.current === restoredComposer)
             return;
 
+        restoredCheckpoint.current = restoredComposer;
+        const skill = authorSkills.find((candidate) => candidate.reference.id === restoredComposer.skillId);
         setGuidance(restoredComposer.text);
-        setSelectedSkill(restoredComposer.skillId ? { id: restoredComposer.skillId, name: isBuiltInSkillId(restoredComposer.skillId) ? intl.formatMessage({ id: skillMessages[restoredComposer.skillId] }) : restoredComposer.skillId } : undefined);
+        setSelectedSkill(restoredComposer.skillId ? { id: restoredComposer.skillId, name: skill ? getSkillPresentation(skill, intl).name : restoredComposer.skillId } : undefined);
         setSkillOffset(restoredComposer.skillOffset ?? 0);
         setCaretOffset(restoredComposer.text.length);
         setRestoredTargetLanguage(restoredComposer.targetLanguage);
         clearSelection?.();
         window.requestAnimationFrame(() => document.querySelector<HTMLElement>("[data-assistant-composer]")?.focus());
-    }, [clearSelection, intl, restoredComposer]);
-    const canSend = state !== "streaming" && Boolean(guidance.trim() || selectedSkill) && (selectedSkill?.id !== BUILT_IN_SKILL.TRANSLATION || translationLanguages.length > 0) && (!selection || !selectedSkill || !isBuiltInSkillId(selectedSkill.id) || builtInSkillScopeCompatibility[selectedSkill.id].includes("selection"));
-    const builtInPickerSkills = builtInSkills.map((id) => ({ id, name: intl.formatMessage({ id: skillMessages[id] }) }));
-    const pickerSkills = (slashRange === undefined ? builtInPickerSkills : [...builtInPickerSkills, ...authorSkills.map(({ reference, name }) => ({ id: reference.id, name }))]).filter((skill) => {
-        const aliases = isBuiltInSkillId(skill.id) ? intl.formatMessage({ id: `assistant.skill.${getSkillAliasKey(skill.id)}.aliases` }) : "";
-        const query = slashQuery.toLocaleLowerCase();
-
-        return !query
-            || skill.name.toLocaleLowerCase().includes(query)
-            || aliases.toLocaleLowerCase().split(",").some((alias) => alias.trim().startsWith(query));
-    });
+    }, [clearSelection, restoredComposer, authorSkills, intl]);
+    const selectedDefinition = authorSkills.find((skill) => skill.reference.id === selectedSkill?.id);
+    const isTranslation = selectedDefinition?.execution?.capability === "translate";
+    const incompatibleSelectionSkill = Boolean(selection && selectedDefinition && !(selectedDefinition.scopes ?? ["article", "selection"]).includes("selection"));
+    const canSend = state !== "streaming" && Boolean(guidance.trim() || selectedSkill) && (!isTranslation || translationLanguages.length > 0) && !incompatibleSelectionSkill;
+    const pickerSkills = authorSkills
+        .filter((skill) => slashRange !== undefined || skill.reference.source === "built-in")
+        .filter((skill) => !selection || (skill.scopes ?? ["article", "selection"]).includes("selection"))
+        .map((skill) => getSkillPresentation(skill, intl))
+        .filter((skill) => !slashQuery || skill.name.toLocaleLowerCase().includes(slashQuery.toLocaleLowerCase()));
 
     const slashPickerWasOpen = useRef(false);
     useEffect(() => {
@@ -226,12 +206,13 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         const guidanceWithoutSlash = slashRange
             ? `${guidance.slice(0, slashRange.start)}${guidance.slice(slashRange.end)}`
             : guidance;
-        const needsTrailingSpace = insertionOffset === guidanceWithoutSlash.length || !/\s/.test(guidanceWithoutSlash[insertionOffset] ?? "");
+        const whitespacePattern = /\s/;
+        const needsTrailingSpace = insertionOffset === guidanceWithoutSlash.length || !whitespacePattern.test(guidanceWithoutSlash[insertionOffset] ?? "");
         const nextGuidance = needsTrailingSpace
             ? `${guidanceWithoutSlash.slice(0, insertionOffset)} ${guidanceWithoutSlash.slice(insertionOffset)}`
             : guidanceWithoutSlash;
         setQuickActionsOpen(false);
-        setSelectedSkill(skill);
+        setSelectedSkill({ id: skill.id, name: skill.name, source: skill.source });
         setRestoredTargetLanguage(undefined);
         setSkillOffset(insertionOffset);
         setCaretOffset(insertionOffset + (needsTrailingSpace ? 1 : 0));
@@ -252,9 +233,9 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         setGuidance("");
         setSelectedSkill(undefined);
         clearSelection?.();
-        void onRequest(authorMessage, requestSkill, requestSkill === BUILT_IN_SKILL.TRANSLATION ? restoredTargetLanguage ?? translationLanguages : undefined, selectedSkillOffset);
+        void onRequest(authorMessage, requestSkill, isTranslation ? restoredTargetLanguage ?? translationLanguages : undefined, selectedSkillOffset);
         setRestoredTargetLanguage(undefined);
-    }, [canSend, clearSelection, guidance, onRequest, restoredTargetLanguage, selectedSkill, skillOffset, translationLanguages]);
+    }, [canSend, clearSelection, guidance, isTranslation, onRequest, restoredTargetLanguage, selectedSkill, skillOffset, translationLanguages]);
 
     useEffect(() => {
         const unregisterSend = dispatcher?.register(KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST, send);
@@ -306,7 +287,7 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         quickActionsOpen,
         availableSkills: pickerSkills,
         activeSkillIndex,
-        incompatibleSelectionSkill: Boolean(selection && selectedSkill && isBuiltInSkillId(selectedSkill.id) && !builtInSkillScopeCompatibility[selectedSkill.id].includes("selection")),
+        incompatibleSelectionSkill,
         setQuickActionsOpen,
         setActiveSkillIndex,
         selectSkill,

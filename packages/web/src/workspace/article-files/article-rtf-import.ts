@@ -8,13 +8,18 @@ type ArticleParagraph = Extract<ArticleBlock, { kind: "paragraph" }>;
 
 
 function escape(value: string): string {
-    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const ampersandPattern = /&/g;
+    const lessThanPattern = /</g;
+    const greaterThanPattern = />/g;
+    const doubleQuotePattern = /"/g;
+    return value.replace(ampersandPattern, "&amp;").replace(lessThanPattern, "&lt;").replace(greaterThanPattern, "&gt;").replace(doubleQuotePattern, "&quot;");
 }
 
 
 function paragraphHtml(block: ArticleParagraph): string {
     return block.runs.map((run) => {
-        let text = escape(run.text).replace(/\n/g, "<br>");
+        const lineEndingPattern = /\n/g;
+        let text = escape(run.text).replace(lineEndingPattern, "<br>");
         if (run.bold)
             text = `<strong>${text}</strong>`;
 
@@ -24,7 +29,8 @@ function paragraphHtml(block: ArticleParagraph): string {
         if (run.strike)
             text = `<s>${text}</s>`;
 
-        if (/courier|monospace|consolas/i.test(run.fontFamily ?? ""))
+        const courierMonospaceConsolasPattern = /courier|monospace|consolas/i;
+        if (courierMonospaceConsolasPattern.test(run.fontFamily ?? ""))
             text = `<code>${text}</code>`;
 
         if (run.hyperlink)

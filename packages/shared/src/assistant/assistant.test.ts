@@ -1,18 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { ASSISTANT_EVENT, BUILT_IN_SKILL, builtInSkillScopeCompatibility, builtInSkills, editorialOperationSkillMap, isAssistantEvent, isBuiltInSkillId, type AssistantEvent, type AssistantExecutionMetadata, type AssistantRequest, type AssistantSkillSummary, type ElectronStreamRequest, type StartAssistantRequest } from "../index.js";
+import { ASSISTANT_EVENT, BUILT_IN_SKILL, editorialOperationSkillMap, isAssistantEvent, type AssistantEvent, type AssistantExecutionMetadata, type AssistantRequest, type AssistantSkillSummary, type ElectronStreamRequest, type StartAssistantRequest } from "../index.js";
 
 test("keeps Editorial operations distinct from Skill IDs", () => {
-    for (const skillId of builtInSkills)
-        assert.equal(isBuiltInSkillId(skillId), true);
-
-    assert.equal(isBuiltInSkillId("thesis_to_narrative"), false);
-    assert.equal(isBuiltInSkillId("flow_revision"), false);
     assert.equal(editorialOperationSkillMap.translation, BUILT_IN_SKILL.TRANSLATION);
-    assert.deepEqual(builtInSkillScopeCompatibility.talking_points, ["article", "selection"]);
-    assert.deepEqual(builtInSkillScopeCompatibility.narrative_draft, ["article", "selection"]);
-    assert.deepEqual(builtInSkillScopeCompatibility.skill_creator, ["article", "selection"]);
 });
 
 

@@ -4,7 +4,8 @@ import { ArticleService } from "../../application/articles/article-service.js";
 import { withRepository } from "./repositories.test-utils.js";
 
 // Product scenarios: history-and-publishing.missing-article-title
-const content = "Community gardens give neighbors a place to grow fresh vegetables together. Shared tools and weekly meetings help new gardeners learn practical skills and build lasting friendships.";
+const content = ("Community gardens give neighbors a place to grow fresh vegetables together. Shared tools and weekly meetings help new gardeners learn " +
+    "practical skills and build lasting friendships.");
 
 
 test("promotion generates missing metadata once, preserving immutable history and language", () => withRepository(async ({ articles, assistant }) => {

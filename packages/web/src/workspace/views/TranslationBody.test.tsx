@@ -21,22 +21,32 @@ const source: Article = {
 
 
 function comparison(protectedSpans = values, displayMode: "aligned" | "side-by-side" = "side-by-side", warnings: string[] = []) {
-    return <IntlProvider locale="en" messages={messages}><TranslationBody source={source} translatedContent={text} targetLanguage="Spanish"
-        sourceParagraphs={splitTranslationParagraphs(text, protectedSpans)} translatedParagraphs={splitTranslationParagraphs(text, protectedSpans)} paragraphCount={splitTranslationParagraphs(text, protectedSpans).length}
-        translation={{ content: text, baseRevisionId: "revision", metadata: { targetLanguage: "Spanish", protectedSpans } }} protectedSpanWarnings={warnings}
-        displayMode={displayMode} visibleText="source" setVisibleText={vi.fn()} /></IntlProvider>;
+    return <IntlProvider locale="en" messages={messages}><TranslationBody
+        source={source}
+        translatedContent={text}
+        targetLanguage="Spanish"
+        sourceParagraphs={splitTranslationParagraphs(text, protectedSpans)}
+        translatedParagraphs={splitTranslationParagraphs(text, protectedSpans)}
+        paragraphCount={splitTranslationParagraphs(text, protectedSpans).length}
+        translation={{ content: text, baseRevisionId: "revision", metadata: { targetLanguage: "Spanish", protectedSpans } }}
+        protectedSpanWarnings={warnings}
+        displayMode={displayMode}
+        visibleText="source"
+        setVisibleText={vi.fn()} /></IntlProvider>;
 }
 
 
 it.each(["side-by-side", "aligned"] as const)("attaches accessible explanations to exact protected values in %s without changing the text", async (mode) => {
     const user = userEvent.setup();
     const { container } = render(comparison(values, mode));
-    const buttons = screen.getAllByRole("button", { name: /^Validated protected content:/ });
+    const validatedProtectedContentPattern = /^Validated protected content:/;
+    const buttons = screen.getAllByRole("button", { name: validatedProtectedContentPattern });
     expect(buttons).toHaveLength(values.length * 2);
     expect(screen.queryByRole("status")).toBeNull();
     const repeated = screen.getAllByRole("button", { name: "Validated protected content: 42" });
     expect(repeated).toHaveLength(4);
-    expect(repeated[0]).toHaveAccessibleDescription(/All 2 expected occurrences are present unchanged/);
+    const allExpectedOccurrencesPattern = /All 2 expected occurrences are present unchanged/;
+    expect(repeated[0]).toHaveAccessibleDescription(allExpectedOccurrencesPattern);
     expect(buttons[0]).toHaveAttribute("title", expect.stringContaining("Marked for exact preservation"));
     await user.click(buttons[0]!);
     expect(buttons[0]).toHaveAttribute("aria-expanded", "true");
@@ -67,9 +77,11 @@ it("keeps changed-value warnings and annotates only validated values", () => {
 
 it("renders plain text with no annotations or success notice when no protected content exists", () => {
     const { container } = render(comparison([]));
-    expect(screen.queryByRole("button", { name: /^Validated protected content:/ })).toBeNull();
+    const validatedProtectedContentPattern = /^Validated protected content:/;
+    expect(screen.queryByRole("button", { name: validatedProtectedContentPattern })).toBeNull();
     expect(screen.queryByRole("status")).toBeNull();
     expect(screen.queryByRole("alert")).toBeNull();
     expect(container.querySelectorAll("pre")[0]?.textContent).toBe(text);
-    expect(within(container).getByLabelText(/^Translation comparison/)).toHaveAttribute("data-focus-area-entry");
+    const translationComparisonPattern = /^Translation comparison/;
+    expect(within(container).getByLabelText(translationComparisonPattern)).toHaveAttribute("data-focus-area-entry");
 });

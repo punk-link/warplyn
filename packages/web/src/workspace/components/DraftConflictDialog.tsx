@@ -37,10 +37,16 @@ export function DraftConflictDialog({ conflict, open, close, resolve }: {
 
 
     const latestContent = conflict.draft?.content ?? conflict.article.currentRevision.content;
-    return <dialog ref={dialog} className="fixed inset-0 z-50 m-auto max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100vw-2rem)] overflow-auto rounded-panel border border-border bg-surface-raised p-4 text-ink shadow-dialog sm:max-w-3xl" aria-labelledby="draft-conflict-title" onCancel={(event) => {
-        event.preventDefault();
-        close();
-    }} onClose={close}>
+    return <dialog
+        ref={dialog}
+        className={("fixed inset-0 z-50 m-auto max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100vw-2rem)] overflow-auto rounded-panel border border-border " +
+        "bg-surface-raised p-4 text-ink shadow-dialog sm:max-w-3xl")}
+        aria-labelledby="draft-conflict-title"
+        onCancel={(event) => {
+            event.preventDefault();
+            close();
+        }}
+        onClose={close}>
         <h2 id="draft-conflict-title" className="text-lg font-semibold">{intl.formatMessage({ id: "draftConflict.heading" })}</h2>
         <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "draftConflict.description" })}</p>
         <div className="mt-5">

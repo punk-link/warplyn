@@ -87,13 +87,16 @@ export function inheritFactIdentity(claim: string, claims: Claim[], matched: Map
 
 
 function normalizeClaim(claim: string): string {
-    return claim.trim().toLowerCase().replace(/\s+/g, " ");
+    const whitespacePattern = /\s+/g;
+    return claim.trim().toLowerCase().replace(whitespacePattern, " ");
 }
 
 
 function sameMaterialAnchors(current: string, previous: string): boolean {
-    const numbers = (text: string) => [...text.matchAll(/\b\d+(?:[.,]\d+)*%?\b/g)].map(([value]) => value).sort().join("|");
-    const negated = (text: string) => /\b(?:not|no|never|none|without|cannot|can't|won't|isn't|wasn't|doesn't|didn't)\b/i.test(text);
+    const numberPattern = /\b\d+(?:[.,]\d+)*%?\b/g;
+    const numbers = (text: string) => [...text.matchAll(numberPattern)].map(([value]) => value).sort().join("|");
+    const neverNoneWithoutPattern = /\b(?:not|no|never|none|without|cannot|can't|won't|isn't|wasn't|doesn't|didn't)\b/i;
+    const negated = (text: string) => neverNoneWithoutPattern.test(text);
 
     return numbers(current) === numbers(previous) && negated(current) === negated(previous);
 }

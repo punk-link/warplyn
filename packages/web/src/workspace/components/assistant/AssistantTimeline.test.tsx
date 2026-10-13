@@ -37,13 +37,26 @@ function AssistantTimeline({ state, message, errorDetails, activity, factCheckCl
 
 describe("AssistantTimeline", () => {
     it("shows the custom Skill name in used-skill metadata", () => {
-        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={[{ id: "response", requestId: "request", articleId: "article", role: "assistant", kind: "response", status: "completed", skillId: "em_dash_free_rephrase", content: "Done", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }]} authorSkills={[{ reference: { source: "author", id: "em_dash_free_rephrase", version: "1" }, name: "Em dash-free rephrase", description: "Rephrase without em dashes." }]} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="idle"
+            message=""
+            collapsed={false}
+            assistantMessages={[{ id: "response", requestId: "request", articleId: "article", role: "assistant", kind: "response", status: "completed", skillId: "em_dash_free_rephrase", content: "Done", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }]}
+            authorSkills={[{ reference: { source: "author", id: "em_dash_free_rephrase", version: "1" }, name: "Em dash-free rephrase", description: "Rephrase without em dashes." }]}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
 
-        expect(screen.getByText(/Used skill/).getAttribute("title")).toBe("Em dash-free rephrase");
+        const usedSkillPattern = /Used skill/;
+        expect(screen.getByText(usedSkillPattern).getAttribute("title")).toBe("Em dash-free rephrase");
     });
 
     it("keeps conversation text selectable with the default cursor", () => {
-        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="idle"
+            message=""
+            collapsed={false}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
         const timeline = view.container.querySelector<HTMLElement>("[aria-live='polite']")!;
 
         expect(timeline.classList.contains("select-text")).toBe(true);
@@ -55,7 +68,13 @@ describe("AssistantTimeline", () => {
         const assistantMessages = [
             { id: "proposal", articleId: "article", role: "assistant" as const, kind: "response" as const, status: "completed" as const, responseKind: "proposal_prepared" as const, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" },
         ];
-        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={assistantMessages} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="idle"
+            message=""
+            collapsed={false}
+            assistantMessages={assistantMessages}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
         const timeline = view.container.querySelector<HTMLElement>("[aria-live='polite']")!;
         timeline.focus();
 
@@ -71,9 +90,17 @@ describe("AssistantTimeline", () => {
             { id: "first", requestId: "request-1", articleId: "article", role: "author", kind: "message", status: "completed", content: "First", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" },
             { id: "second", requestId: "request-2", articleId: "article", role: "author", kind: "message", status: "completed", content: "Second", createdAt: "2026-01-01T00:01:00.000Z", updatedAt: "2026-01-01T00:01:00.000Z" },
         ];
-        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={assistantMessages} onCheckpoint={onCheckpoint} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="idle"
+            message=""
+            collapsed={false}
+            assistantMessages={assistantMessages}
+            onCheckpoint={onCheckpoint}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
         const timeline = view.container.querySelector<HTMLElement>("[aria-live='polite']")!;
-        const actions = screen.getAllByRole("button", { name: /later conversation and work will be rejected/ });
+        const laterConversationWorkPattern = /later conversation and work will be rejected/;
+        const actions = screen.getAllByRole("button", { name: laterConversationWorkPattern });
 
         fireEvent.keyDown(timeline, { key: "End" });
         expect(document.activeElement).toBe(actions[1]);
@@ -90,14 +117,28 @@ describe("AssistantTimeline", () => {
             { id: "continued", requestId: "continued-request", articleId: "article", role: "author", kind: "message", status: "completed", content: "Continue the chat", createdAt: "2026-01-01T00:01:00.000Z", updatedAt: "2026-01-01T00:01:00.000Z" },
         ];
 
-        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={assistantMessages} onRetry={vi.fn()} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="idle"
+            message=""
+            collapsed={false}
+            assistantMessages={assistantMessages}
+            onRetry={vi.fn()}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
 
         expect(screen.queryByRole("button", { name: "Retry" })).toBeNull();
     });
 
 
     it("shows persisted Fact Check claims in their Findings prepared message", () => {
-        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={[{ id: "findings", articleId: "article", role: "assistant", kind: "response", status: "completed", responseKind: "findings_prepared", createdAt: "2026-08-13T20:30:00.000Z", updatedAt: "2026-08-13T20:30:00.000Z" }]} factCheckClaims={[{ claim: "HTTP was standardized in 1999.", checked: true }]} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="idle"
+            message=""
+            collapsed={false}
+            assistantMessages={[{ id: "findings", articleId: "article", role: "assistant", kind: "response", status: "completed", responseKind: "findings_prepared", createdAt: "2026-08-13T20:30:00.000Z", updatedAt: "2026-08-13T20:30:00.000Z" }]}
+            factCheckClaims={[{ claim: "HTTP was standardized in 1999.", checked: true }]}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
 
         expect(screen.getByRole("region", { name: getMessage("assistant.factCheckClaimsChecked") })).toBeTruthy();
         expect(screen.getByText("HTTP was standardized in 1999.")).toBeTruthy();
@@ -106,7 +147,15 @@ describe("AssistantTimeline", () => {
 
     it("shows extracted claims during the check and lets the Author restore a skipped claim", async () => {
         const setClaimSelected = vi.fn(async () => undefined);
-        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="streaming" message="" collapsed={false} activeRequestId="request" factCheckClaims={[{ claim: "First claim", checked: false, checking: true }, { claim: "Second claim", checked: true }]} setClaimSelected={setClaimSelected} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="streaming"
+            message=""
+            collapsed={false}
+            activeRequestId="request"
+            factCheckClaims={[{ claim: "First claim", checked: false, checking: true }, { claim: "Second claim", checked: true }]}
+            setClaimSelected={setClaimSelected}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
 
         expect(screen.getByRole("region", { name: "Claims to check" })).toBeTruthy();
         const marks = view.container.querySelectorAll("li svg");
@@ -129,7 +178,14 @@ describe("AssistantTimeline", () => {
 
 
     it("links a partial Fact Check result to its findings", () => {
-        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={[{ id: "partial", articleId: "article", role: "assistant", kind: "response", status: "completed", responseKind: "findings_partial", createdAt: "2026-08-13T20:30:00.000Z", updatedAt: "2026-08-13T20:30:00.000Z" }]} factCheckClaims={[{ claim: "The RFC was published in 1999.", checked: true }]} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="idle"
+            message=""
+            collapsed={false}
+            assistantMessages={[{ id: "partial", articleId: "article", role: "assistant", kind: "response", status: "completed", responseKind: "findings_partial", createdAt: "2026-08-13T20:30:00.000Z", updatedAt: "2026-08-13T20:30:00.000Z" }]}
+            factCheckClaims={[{ claim: "The RFC was published in 1999.", checked: true }]}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
 
         expect(within(view.container).getByText(getMessage("assistant.response.partialFindings"))).toBeTruthy();
         expect(within(view.container).getByRole("region", { name: getMessage("assistant.factCheckClaimsChecked") })).toBeTruthy();
@@ -137,7 +193,13 @@ describe("AssistantTimeline", () => {
 
 
     it("keeps human-readable activity secondary while a request streams", () => {
-        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="streaming" message="" activity={{ summary: "Checking facts.", status: "started" }} collapsed={false} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="streaming"
+            message=""
+            activity={{ summary: "Checking facts.", status: "started" }}
+            collapsed={false}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
 
         expect(screen.getByRole("status").textContent).toContain("Checking facts.");
         expect(screen.queryByText("Working for 1 second")).toBeNull();
@@ -146,7 +208,12 @@ describe("AssistantTimeline", () => {
 
     it("offers scrolling to the end when the timeline is away from it", async () => {
         const user = userEvent.setup();
-        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="idle"
+            message=""
+            collapsed={false}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" /></IntlProvider>);
         const timeline = view.container.querySelector<HTMLElement>("[aria-live='polite']")!;
         Object.defineProperties(timeline, {
             clientHeight: { configurable: true, value: 200 },
@@ -180,11 +247,22 @@ describe("AssistantTimeline", () => {
         let scrollHeight = 100;
         const persistedMessage = { id: "persisted", articleId: "article", role: "assistant" as const, kind: "response" as const, status: "completed" as const, content: "Persisted response.", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
         try {
-            const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+            const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+                state="idle"
+                message=""
+                collapsed={false}
+                generalSettings={defaultGeneralSettings}
+                elapsedDuration="1 second" /></IntlProvider>);
             const timeline = view.container.querySelector<HTMLElement>("[aria-live='polite']")!;
             Object.defineProperty(timeline, "scrollHeight", { configurable: true, get: () => scrollHeight });
 
-            view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={[persistedMessage]} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+            view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+                state="idle"
+                message=""
+                collapsed={false}
+                assistantMessages={[persistedMessage]}
+                generalSettings={defaultGeneralSettings}
+                elapsedDuration="1 second" /></IntlProvider>);
 
             scrollHeight = 500;
             expect(frames).toHaveLength(1);
@@ -209,13 +287,31 @@ describe("AssistantTimeline", () => {
         const message = { id: "response", articleId: "article", role: "assistant" as const, kind: "response" as const, status: "completed" as const, content: "Completed response.", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
 
         try {
-            const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="streaming" message="" collapsed={false} assistantMessages={[]} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+            const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+                state="streaming"
+                message=""
+                collapsed={false}
+                assistantMessages={[]}
+                generalSettings={defaultGeneralSettings}
+                elapsedDuration="1 second" /></IntlProvider>);
             const timeline = view.container.querySelector<HTMLElement>("[aria-live='polite']")!;
             Object.defineProperty(timeline, "scrollHeight", { configurable: true, get: () => scrollHeight });
-            view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={[message]} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+            view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+                state="idle"
+                message=""
+                collapsed={false}
+                assistantMessages={[message]}
+                generalSettings={defaultGeneralSettings}
+                elapsedDuration="1 second" /></IntlProvider>);
 
             expect(frames).toHaveLength(1);
-            view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="idle" message="" collapsed={false} assistantMessages={[message]} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" /></IntlProvider>);
+            view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+                state="idle"
+                message=""
+                collapsed={false}
+                assistantMessages={[message]}
+                generalSettings={defaultGeneralSettings}
+                elapsedDuration="1 second" /></IntlProvider>);
             expect(cancelFrame).not.toHaveBeenCalled();
             frames[0]?.(0);
             expect(frames).toHaveLength(2);
@@ -232,7 +328,14 @@ describe("AssistantTimeline", () => {
     it("offers Application Settings only for an unavailable AI connection", async () => {
         const user = userEvent.setup();
         const openSettings = vi.fn();
-        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline state="error" message="Couldn’t complete this editorial request." collapsed={false} generalSettings={defaultGeneralSettings} elapsedDuration="1 second" hasUnavailableAiConnection openSettings={openSettings} /></IntlProvider>);
+        render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="error"
+            message="Couldn’t complete this editorial request."
+            collapsed={false}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second"
+            hasUnavailableAiConnection
+            openSettings={openSettings} /></IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: "Open Application Settings" }));
 

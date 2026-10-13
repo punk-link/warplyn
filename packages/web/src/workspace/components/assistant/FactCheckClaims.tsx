@@ -23,7 +23,11 @@ export function FactCheckClaims({ claims, className = "", embedded = false, onSe
         {onSelectionChange && <p className="mt-1 text-xs leading-5 text-muted">{intl.formatMessage({ id: "assistant.claimSelectionHelp" })}</p>}
         <ul className="mt-1 space-y-1 text-xs leading-5 text-muted">{claims.map((item) => <li className="py-0.5" key={item.claim}>
             {onSelectionChange && (!item.checked || skipped.has(item.claim))
-                ? <SelectableClaim item={item} skipped={skipped.has(item.claim)} disabled={changing.has(item.claim) || (!skipped.has(item.claim) && selectedCount === 1)} onChange={toggleClaim} />
+                ? <SelectableClaim
+                    item={item}
+                    skipped={skipped.has(item.claim)}
+                    disabled={changing.has(item.claim) || (!skipped.has(item.claim) && selectedCount === 1)}
+                    onChange={toggleClaim} />
                 : <span className="flex gap-2">
                     <ClaimStatusIcon checked={item.checked} checking={item.checking} />
                     <span>{item.claim}</span>
@@ -48,7 +52,13 @@ function updateSkipped(current: ReadonlySet<string>, claim: string, skipped: boo
 function SelectableClaim({ item, skipped, disabled, onChange }: { item: FactCheckClaimPreview; skipped: boolean; disabled: boolean; onChange: (claim: string) => void }) {
     const intl = useIntl();
     return <label className={`relative -mx-2 flex min-h-9 items-start gap-2 rounded-control px-2 ${disabled ? "cursor-default opacity-70" : "cursor-pointer text-ink hover:bg-brand-soft"}`}>
-        <input type="checkbox" className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-default" checked={!skipped} disabled={disabled} title={disabled && !skipped ? intl.formatMessage({ id: "assistant.keepOneClaim" }) : undefined} onChange={() => onChange(item.claim)} />
+        <input
+            type="checkbox"
+            className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-default"
+            checked={!skipped}
+            disabled={disabled}
+            title={disabled && !skipped ? intl.formatMessage({ id: "assistant.keepOneClaim" }) : undefined}
+            onChange={() => onChange(item.claim)} />
         <ClaimStatusIcon checked={!skipped && item.checked} checking={!skipped && item.checking} className="text-brand peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-brand" />
         <span className={skipped ? "line-through" : ""}>{item.claim}</span>
     </label>;
@@ -65,7 +75,12 @@ function claimStatusId(item: FactCheckClaimPreview): "assistant.factCheckClaimCh
 
 function ClaimStatusIcon({ checked, checking, className = "text-muted" }: { checked?: boolean; checking?: boolean; className?: string }) {
     return <Icon className={`mt-1 size-3 shrink-0 ${className}`} strokeWidth="1.8">
-        <rect x="4" y="4" width="16" height="16" rx="2" />
+        <rect
+            x="4"
+            y="4"
+            width="16"
+            height="16"
+            rx="2" />
         {checked ? <path d="m8 12 2.5 2.5L16 9" /> : checking ? <path d="M8 12h8" /> : null}
     </Icon>;
 }

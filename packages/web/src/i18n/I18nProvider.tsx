@@ -16,5 +16,9 @@ export function I18nProvider({ client, children }: { client: ApplicationSettings
     }, [client]);
 
     const catalog = catalogByLocale.get(locale)?.messages ?? messages;
-    return <IntlProvider locale={locale} defaultLocale={defaultInterfaceLocale} messages={catalog} defaultFormats={{}}>{children}</IntlProvider>;
+    return <IntlProvider
+        locale={locale}
+        defaultLocale={defaultInterfaceLocale}
+        messages={catalog}
+        defaultFormats={{}}>{children}</IntlProvider>;
 }

@@ -9,7 +9,8 @@ test("Electron native dialogs use the interface locale catalog", () => {
     const mainSource = readFileSync(new URL("main.ts", import.meta.url), "utf8");
     const messages = getElectronMessagesFor("en");
 
-    assert.doesNotMatch(mainSource, /Draft checkpoint failed|Warplyn could not start|Warplyn could not close cleanly/);
+    const draftCheckpointFailedPattern = /Draft checkpoint failed|Warplyn could not start|Warplyn could not close cleanly/;
+    assert.doesNotMatch(mainSource, draftCheckpointFailedPattern);
     assert.equal(messages["electron.draftCheckpointFailed.return"], "Return to Article");
     assert.equal(messages["electron.startFailed.title"], "Warplyn could not start");
 });

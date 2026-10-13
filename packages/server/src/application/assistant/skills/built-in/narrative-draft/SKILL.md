@@ -3,6 +3,16 @@ id: narrative_draft
 name: Narrative Draft
 description: Develop the Author's material into a reviewable narrative Proposal.
 version: 2
+execution:
+  capability: generate_proposal
+  operation: thesis_to_narrative
+  source: article
+  resultPolicy: verified_edit
+scopes: [article, selection]
+presentation:
+  order: 20
+  label: assistant.skill.narrativeDraft.label
+  hint: assistant.skill.narrativeDraft.hint
 ---
 # Narrative Draft
 

@@ -33,7 +33,8 @@ it("moves between status controls with Left and Right", () => {
     expect(language.className).toContain("focus-visible:ring-brand");
     language.focus();
     fireEvent.keyDown(language, { key: "ArrowRight" });
-    const characterCount = screen.getByRole("button", { name: /Character count/ });
+    const characterCountPattern = /Character count/;
+    const characterCount = screen.getByRole("button", { name: characterCountPattern });
     expect(document.activeElement).toBe(characterCount);
     expect(characterCount.className).toContain("focus-visible:ring-brand");
 });
@@ -81,7 +82,8 @@ it("lists Revisions newest first by description and opens restore confirmation f
         copyPlainText={vi.fn().mockResolvedValue(true)}
     /></IntlProvider>);
 
-    await user.click(screen.getByRole("button", { name: /Current Revision v2/ }));
+    const currentRevisionPattern = /Current Revision v2/;
+    await user.click(screen.getByRole("button", { name: currentRevisionPattern }));
     const menu = screen.getByRole("menu", { name: "Saved Revisions" });
     const items = within(menu).getAllByRole("menuitem");
 
@@ -119,7 +121,8 @@ it("labels the first saved text as the initial Revision in the status menu", asy
         copyPlainText={vi.fn().mockResolvedValue(true)}
     /></IntlProvider>);
 
-    await user.click(screen.getByRole("button", { name: /Current Revision v2/ }));
+    const currentRevisionPattern = /Current Revision v2/;
+    await user.click(screen.getByRole("button", { name: currentRevisionPattern }));
     const items = within(screen.getByRole("menu", { name: "Saved Revisions" })).getAllByRole("menuitem");
     expect(items[0]?.textContent).toContain("Initial Revision");
     expect(items[1]?.textContent).toContain("Empty Revision");

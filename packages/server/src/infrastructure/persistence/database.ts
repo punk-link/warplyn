@@ -98,7 +98,7 @@ export function openDatabase(filename: string): SqliteDatabase {
             CREATE TABLE IF NOT EXISTS schema_migrations (
             version INTEGER PRIMARY KEY, name TEXT NOT NULL, applied_at TEXT NOT NULL
             );
-        `);
+`);
         const applied = new Set(
             database.prepare("SELECT version FROM schema_migrations ORDER BY version")
                 .all()
