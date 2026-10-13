@@ -78,7 +78,6 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
     expect(await readFile(revisionPath!, "utf8")).toBe(content);
     await page.getByRole("tab", { name: "Write", exact: true }).click();
     await expect(editor).toContainText("New Draft, not the saved Revision.");
-    const importedCafePattern = /^Imported café 🙂/;
     await page.getByRole("button", { name: importedCafePattern }).click({ button: "right" });
     const invalidChoosing = page.waitForEvent("filechooser");
     await page.getByRole("menuitem", { name: "Load from file…" }).click();
@@ -94,7 +93,6 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
     await page.getByRole("button", { name: "Archive Article", exact: true }).click();
     const archivedPattern = /^Archived \(/;
     await page.getByRole("button", { name: archivedPattern }).click();
-    const importedCafePattern = /^Imported café 🙂/;
     await page.getByRole("button", { name: importedCafePattern }).click({ button: "right" });
     const archivedDownload = page.waitForEvent("download");
     await page.getByRole("menuitem", { name: "Save to file…" }).click();

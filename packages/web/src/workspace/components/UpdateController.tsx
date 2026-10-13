@@ -31,7 +31,7 @@ export function UpdateController({ className = "" }: { className?: string }) {
             "relative grid size-9 place-items-center rounded-control border border-transparent transition-colors hover:bg-brand-soft ",
             "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ",
             warning || state.kind === "failed" ? "text-warning" : "text-brand",
-        ].join("")}
+        ].join(" ")}
         type="button"
         aria-label={label}
         title={label}

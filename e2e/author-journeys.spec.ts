@@ -115,7 +115,6 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.getByRole("button", { name: "Send editorial request" }).click();
     const factCheckPattern = /Fact Check/;
     await expect(page.getByRole("tab", { name: factCheckPattern })).toBeVisible();
-    const factCheckPattern = /Fact Check/;
     await page.getByRole("tab", { name: factCheckPattern }).click();
     await expect(page.getByText("The fixture claim is supported.").first()).toBeVisible();
 

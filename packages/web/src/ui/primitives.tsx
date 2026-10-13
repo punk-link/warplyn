@@ -65,7 +65,7 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonHTML
         disabled={disabled || loading}
         className={joinClassNames(("self-center inline-flex min-h-9 items-center justify-center rounded-control border py-1.5 text-xs font-semibold leading-5 transition-colors " +
         "active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55"), compact ? "px-2" : "px-3", buttonVariantClasses[variant], controlStateClasses[state], className)}
-        aria-busy={loading || undefined}>
+        aria-busy={loading || buttonProps["aria-busy"]}>
         {loading ? <>
             <span className="invisible" aria-hidden="true">{children}</span>
             <ActivityIndicator className="absolute inset-0 m-auto" />

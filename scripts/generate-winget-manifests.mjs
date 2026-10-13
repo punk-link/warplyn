@@ -24,8 +24,8 @@ export function generateWingetManifests(installerPath, outputRoot, { version, au
         const whitespacePrefixPattern = /^(\s*Publisher:) .+$/gm;
         const manifest = readFileSync(new URL(name, templateDirectory), "utf8")
             .replaceAll("0.6.2", version)
-            .replace(installershaPattern, `$1 ${author}`)
-            .replace(whitespacePrefixPattern, `    InstallerSha256: ${checksum}`);
+            .replace(whitespacePrefixPattern, `$1 ${author}`)
+            .replace(installershaPattern, `    InstallerSha256: ${checksum}`);
         writeFileSync(join(directory, name), manifest);
     }
 

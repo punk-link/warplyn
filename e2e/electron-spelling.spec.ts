@@ -238,10 +238,10 @@ test("native preload and personal words persist while language activation stays 
         await expect(page.getByRole("status").filter({ hasText: "Spelling settings loaded." })).toBeVisible();
         await page.evaluate(() => window.warplynSpelling?.setArticleLanguage(null));
         const languageList = page.getByRole("group", { name: "Language dictionaries", exact: true });
-        const punctuationPattern = /en-US/;
-        await languageList.getByRole("checkbox", { name: punctuationPattern }).check();
-        const punctuationPattern = /\(es\)/;
-        await languageList.getByRole("checkbox", { name: punctuationPattern }).check();
+        const englishLanguagePattern = /en-US/;
+        const spanishLanguagePattern = /\(es\)/;
+        await languageList.getByRole("checkbox", { name: englishLanguagePattern }).check();
+        await languageList.getByRole("checkbox", { name: spanishLanguagePattern }).check();
         await page.getByRole("button", { name: "Download dictionaries" }).click();
         await expect.poll(() => page.evaluate(async () => {
             const result = await window.warplynSpelling?.request({ method: "snapshot" });
@@ -254,20 +254,15 @@ test("native preload and personal words persist while language activation stays 
         expect((await languageList.boundingBox())!.y).toBeGreaterThan((await filter.boundingBox())!.y);
         const unloadPattern = /Unload.*en-US/;
         await expect(languageList.getByRole("button", { name: unloadPattern })).toBeVisible();
-        const punctuationPattern = /en-US/;
-        await expect(languageList.getByRole("checkbox", { name: punctuationPattern })).toHaveCount(0);
+        await expect(languageList.getByRole("checkbox", { name: englishLanguagePattern })).toHaveCount(0);
         await filter.fill("en-US");
         await expect(languageList.getByRole("checkbox")).toHaveCount(0);
-        const unloadPattern = /Unload.*en-US/;
         await languageList.getByRole("button", { name: unloadPattern }).click();
         await expect(languageList.getByText("Unloaded", { exact: true })).toBeVisible();
-        const punctuationPattern = /en-US/;
-        await expect(languageList.getByRole("checkbox", { name: punctuationPattern })).not.toBeChecked();
+        await expect(languageList.getByRole("checkbox", { name: englishLanguagePattern })).not.toBeChecked();
         expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.webContents.session.getSpellCheckerLanguages())).not.toContain("en-US");
-        const punctuationPattern = /en-US/;
-        await languageList.getByRole("checkbox", { name: punctuationPattern }).check();
+        await languageList.getByRole("checkbox", { name: englishLanguagePattern }).check();
         await page.getByRole("button", { name: "Download dictionaries" }).click();
-        const unloadPattern = /Unload.*en-US/;
         await expect(languageList.getByRole("button", { name: unloadPattern })).toBeVisible();
         await expect(page.getByRole("button", { name: "Download dictionaries" })).toBeDisabled();
         await filter.clear();

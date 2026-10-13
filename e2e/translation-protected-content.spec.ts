@@ -36,7 +36,6 @@ test("protected translation values support pointer, keyboard, and narrow compari
     await expect(first).toHaveAttribute("aria-expanded", "true");
     await page.keyboard.press("Escape");
     await expect(first).toHaveAttribute("aria-expanded", "false");
-    const translationsPattern = /Translations/;
     await page.getByRole("tab", { name: translationsPattern }).focus();
     await page.keyboard.press("Tab");
     await expect(comparison).toBeFocused();
