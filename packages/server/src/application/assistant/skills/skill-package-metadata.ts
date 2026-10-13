@@ -21,19 +21,20 @@ function parsePresentation(presentation: unknown, behavior: PackageBehavior): Pa
 
     if (!presentation || typeof presentation !== "object" || Array.isArray(presentation)
         || !("order" in presentation) || typeof presentation.order !== "number" || !Number.isSafeInteger(presentation.order)
-        || Object.keys(presentation).some((key) => !["order", "label", "hint"].includes(key)))
+        || Object.keys(presentation).some((key) => !["order", "label", "hint", "speedHint"].includes(key)))
         return undefined;
 
     const label = "label" in presentation ? presentation.label : undefined;
     const hint = "hint" in presentation ? presentation.hint : undefined;
-    if ((label !== undefined && !isMessageId(label)) || (hint !== undefined && !isMessageId(hint)))
+    const speedHint = "speedHint" in presentation ? presentation.speedHint : undefined;
+    if ((label !== undefined && !isMessageId(label)) || (hint !== undefined && !isMessageId(hint)) || (speedHint !== undefined && !isMessageId(speedHint)))
         return undefined;
 
-    return { ...behavior, presentation: { order: presentation.order, ...(label ? { label } : {}), ...(hint ? { hint } : {}) } };
+    return { ...behavior, presentation: { order: presentation.order, ...(label ? { label } : {}), ...(hint ? { hint } : {}), ...(speedHint ? { speedHint } : {}) } };
 }
 
 
 function isMessageId(value: unknown): value is string {
-    const assistantSkillLabelPattern = /^assistant\.skill\.[a-zA-Z]+\.(label|hint)$/;
+    const assistantSkillLabelPattern = /^assistant\.skill\.[a-zA-Z]+\.(label|hint|speedHint)$/;
     return typeof value === "string" && assistantSkillLabelPattern.test(value);
 }

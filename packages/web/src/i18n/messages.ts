@@ -342,6 +342,7 @@ export const messages = {
     "assistant.skill.conciseRewrite.hint": "Cut repetition and filler while preserving meaning, evidence, and your voice.",
     "assistant.skill.factChecking.label": "Fact checking",
     "assistant.skill.factChecking.hint": "Review claims and prepare advisory findings with sources and uncertainty.",
+    "assistant.skill.factChecking.speedHint": "Fact checking can take a while.",
     "assistant.factCheckCorrectionPrompt": "Correct or remove only these fact-check findings. Preserve every other claim and the author's voice.\n\n{findings}",
     "assistant.factCheckClaims": "Claims to check",
     "assistant.claimSelectionHelp": "Use the highlighted checkboxes to include or skip claims while this check runs. Plain rows have finished.",

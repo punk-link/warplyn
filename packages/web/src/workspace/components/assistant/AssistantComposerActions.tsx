@@ -2,7 +2,7 @@ import { useEffect, useRef, type RefObject } from "react";
 import { useIntl } from "react-intl";
 
 import { Button } from "../../../ui/primitives.js";
-import { AssistantIcon, ChevronDownIcon, CloseIcon, UserIcon } from "../../../ui/icons.js";
+import { AssistantIcon, ChevronDownIcon, CloseIcon, InfoIcon, UserIcon } from "../../../ui/icons.js";
 import type { AssistantSelectionScope } from "../../state/assistant-messages-state.js";
 import { getSelectionPreview } from "./assistant-messages.js";
 import type { AssistantSkillPickerControls } from "./assistant-composer-plugins.js";
@@ -74,11 +74,18 @@ export function AssistantQuickActions({ context, picker }: { context: { state: "
 
 
 function SkillOption({ skill, index, state, activeSkillIndex, selectSkill, focusQuickAction, setQuickActionsOpen, composer }: { skill: AssistantComposerSkill; index: number; state: "idle" | "streaming" | "error"; activeSkillIndex: number; selectSkill: (skill: AssistantComposerSkill) => void; focusQuickAction: (index: number) => void; setQuickActionsOpen: AssistantSkillPickerControls["setQuickActionsOpen"]; composer: RefObject<HTMLDivElement> }) {
+    const hintId = `assistant-skill-hint-${skill.id}`;
+    const speedHintId = `assistant-skill-speed-hint-${skill.id}`;
+    const describedBy = [skill.description ? hintId : undefined, skill.speedHint ? speedHintId : undefined].filter(Boolean).join(" ");
+
     return <Button
         data-assistant-skill
-        className="flex w-full justify-start text-xs"
+        className="flex w-full justify-start gap-2 text-xs"
         id={`assistant-skill-option-${skill.id}`}
         role="option"
+        aria-label={skill.name}
+        aria-describedby={describedBy || undefined}
+        title={skill.description || undefined}
         aria-selected={index === activeSkillIndex}
         disabled={state === "streaming"}
         variant="quiet"
@@ -105,8 +112,17 @@ function SkillOption({ skill, index, state, activeSkillIndex, selectSkill, focus
                 composer.current?.focus();
             }
         }}>
-        {skill.source === "built-in" ? <AssistantIcon className="mr-2 size-4 shrink-0 text-muted" /> : <UserIcon className="mr-2 size-4 shrink-0 text-muted" />}
-        {skill.name}
+        <span className="flex min-w-0 items-center">
+            {skill.source === "built-in" ? <AssistantIcon className="mr-2 size-4 shrink-0 text-muted" /> : <UserIcon className="mr-2 size-4 shrink-0 text-muted" />}
+            <span className="truncate">{skill.name}</span>
+        </span>
+        {skill.description && <>
+            <span id={hintId} className="sr-only">{skill.description}</span>
+        </>}
+        {skill.speedHint && <>
+            <span title={skill.speedHint} className="ml-auto shrink-0 text-muted" aria-hidden="true"><InfoIcon className="size-4" /></span>
+            <span id={speedHintId} className="sr-only">{skill.speedHint}</span>
+        </>}
     </Button>;
 }
 

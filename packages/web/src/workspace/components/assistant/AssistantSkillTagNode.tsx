@@ -9,6 +9,8 @@ export interface AssistantComposerSkill {
     id: string;
     name: string;
     source?: string;
+    description?: string;
+    speedHint?: string;
 }
 
 

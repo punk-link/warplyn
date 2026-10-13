@@ -10,6 +10,7 @@ presentation:
   order: 50
   label: assistant.skill.factChecking.label
   hint: assistant.skill.factChecking.hint
+  speedHint: assistant.skill.factChecking.speedHint
 references:
   - references/advisory.md
 ---

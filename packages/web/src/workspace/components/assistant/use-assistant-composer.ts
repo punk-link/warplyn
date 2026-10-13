@@ -212,7 +212,7 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
             ? `${guidanceWithoutSlash.slice(0, insertionOffset)} ${guidanceWithoutSlash.slice(insertionOffset)}`
             : guidanceWithoutSlash;
         setQuickActionsOpen(false);
-        setSelectedSkill(skill);
+        setSelectedSkill({ id: skill.id, name: skill.name, source: skill.source });
         setRestoredTargetLanguage(undefined);
         setSkillOffset(insertionOffset);
         setCaretOffset(insertionOffset + (needsTrailingSpace ? 1 : 0));

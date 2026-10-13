@@ -15,5 +15,6 @@ export function getSkillPresentation(skill: AssistantSkillSummary, intl: IntlSha
         source: skill.reference.source,
         name: isMessageId(presentation?.label) ? intl.formatMessage({ id: presentation.label }) : skill.name,
         description: isMessageId(presentation?.hint) ? intl.formatMessage({ id: presentation.hint }) : skill.description,
+        speedHint: isMessageId(presentation?.speedHint) ? intl.formatMessage({ id: presentation.speedHint }) : undefined,
     };
 }

@@ -44,7 +44,7 @@ export interface AssistantSkillSummary {
     description: string;
     execution?: import("./skill-execution.js").SkillExecution;
     scopes?: readonly ("article" | "selection")[];
-    presentation?: { order: number; label?: string; hint?: string };
+    presentation?: { order: number; label?: string; hint?: string; speedHint?: string };
 }
 
 
