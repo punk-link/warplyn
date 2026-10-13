@@ -77,9 +77,9 @@ The release workflow uses the `WARPLYN_POSTHOG_PROJECT_KEY` variable from the Gi
 
 Environment-variable credentials remain supported. Managed credentials use Windows Credential Manager and never enter SQLite, backup snapshots, or renderer responses. The installer does not create or import a `.env` file.
 
-Run `npm run release` to release the next stable patch or `npm run release -- 1.2.3` to release an explicit stable version. Run `npm run release:preview` from a stable version to start the next patch's preview series, or from a preview to advance that series. Use `npm run release:preview -- 1.2.3` to release the next available preview of `1.2.3`. Both commands require a clean worktree, update both package versions and the lockfile, run verification, commit, tag, and atomically push the commit and tag.
+Run release commands from `main`: `npm run release` to release the next stable patch or `npm run release -- 1.2.3` to release an explicit stable version. Run `npm run release:preview` from a stable version to start the next patch's preview series, or from a preview to advance that series. Use `npm run release:preview -- 1.2.3` to release the next available preview of `1.2.3`. Both commands require a clean worktree, update both package versions and the lockfile, run verification, commit, tag, and atomically push the commit and tag. CI publishes only when the tag points to a commit already contained in `main`; tags created on feature branches are rejected until their commit reaches `main`.
 
-If a tag exists without a release, run `gh workflow run electron-windows.yml -f tag=v1.2.3` after the workflow change reaches the default branch.
+If a tag was pushed before its commit reached `main`, wait until it is contained in `main`, then dispatch from `main`: `gh workflow run electron-windows.yml --ref main -f tag=v1.2.3`. A rejected tag push does not trigger again when its commit later merges.
 
 For each stable Windows release, CI generates and validates WinGet manifests from the built installer and saves a `winget-v<version>` workflow artifact. Complete the disposable installation, upgrade, and uninstall checks before submitting it using the [WinGet submission procedure](../../../distribution/winget/README.md). Preview releases do not generate WinGet manifests.
 
