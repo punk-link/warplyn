@@ -34,6 +34,7 @@ describe("StyleProfileView", () => {
             setArticleRules={vi.fn()} /></IntlProvider>);
 
         expect(screen.queryByRole("button", { name: "Add rule" })).toBeNull();
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.addWritingSample") }));
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.add") }));
 
@@ -62,6 +63,7 @@ describe("StyleProfileView", () => {
             getArticleRules={vi.fn().mockResolvedValue("")}
             setArticleRules={vi.fn()} /></IntlProvider>);
 
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.addWritingSample") }));
         await user.type(screen.getByPlaceholderText("Sample text"), "A representative writing sample.");
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.add") }));
@@ -88,6 +90,7 @@ describe("StyleProfileView", () => {
             getArticleRules={vi.fn().mockResolvedValue("")}
             setArticleRules={vi.fn()} /></IntlProvider>);
 
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
         await user.click(screen.getByRole("button", { name: getMessage("views.remove") }));
         expect(remove).not.toHaveBeenCalled();
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.confirmRemove") }));
@@ -129,10 +132,15 @@ describe("StyleProfileView", () => {
             getArticleRules={vi.fn().mockResolvedValue("Use examples.")}
             setArticleRules={vi.fn()} /></IntlProvider>);
 
-        expect(screen.getByText("Applied in style review.")).toBeTruthy();
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.manualRules") }));
+        expect(screen.getAllByText("Applied in style review.").length).toBeGreaterThan(0);
         await user.clear(screen.getByLabelText("Global style rules"));
         await user.type(screen.getByLabelText("Global style rules"), "Use plain language.");
-        expect(screen.getByText("Unsaved changes.")).toBeTruthy();
+        expect(screen.getAllByText("Unsaved changes.").length).toBeGreaterThan(0);
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.manualRules") }));
+        expect(screen.queryByRole("textbox", { name: "Global style rules" })).toBeNull();
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.manualRules") }));
+        expect(screen.getByRole("textbox", { name: "Global style rules" }).textContent).toBe("Use plain language.");
         await user.click(screen.getAllByRole("button", { name: getMessage("styleProfile.saveRules") })[0]);
 
         await waitFor(() => expect(screen.getAllByText("Applied in style review.").length).toBeGreaterThan(0));
@@ -156,12 +164,14 @@ describe("StyleProfileView", () => {
             setArticleRules={vi.fn()}
             snapshotArticleRevision={snapshotArticleRevision} /></IntlProvider>);
 
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.addRevision") }));
         expect(screen.getByText("Choose a saved Revision to add as a writing sample. This creates a separate, immutable copy and does not change the Article.")).toBeTruthy();
         expect([...screen.getByLabelText("Saved Revision").querySelectorAll("option")].map((option) => [option.textContent, option.value])).toEqual([["Revision 2", "revision-2"], ["Revision 1", "revision-1"]]);
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.confirmAddRevision") }));
 
         await waitFor(() => expect(snapshotArticleRevision).toHaveBeenCalledWith("article-1", "revision-2"));
+        expect(screen.queryByRole("button", { name: getMessage("styleProfile.detectedCharacteristics") })).toBeNull();
         expect(screen.getByText("1 source")).toBeTruthy();
         await user.click(screen.getByText("Show sources"));
         expect(screen.getAllByText("Snapshot")).toHaveLength(2);

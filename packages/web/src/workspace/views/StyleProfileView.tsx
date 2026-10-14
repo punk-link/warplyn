@@ -5,6 +5,8 @@ import { useIntl } from "react-intl";
 import type { MessageId } from "../../i18n/messages.js";
 import { StyleProfileDialogs } from "./StyleProfileDialogs.js";
 import { StyleProfileInsights } from "./StyleProfileInsights.js";
+import { StyleProfileGuidance } from "./StyleProfileGuidance.js";
+import { StyleProfileReview } from "./StyleProfileReview.js";
 import { StyleProfileSources } from "./StyleProfileSources.js";
 import { TypographyRulesBlock } from "./TypographyRulesBlock.js";
 
@@ -106,7 +108,15 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         setSavedRules(nextRules);
     }, [corpus?.rules]);
 
-    const getRuleStatus = (draft: string, saved: string): MessageId => !draft.trim() ? "styleProfile.rulesNone" : draft === saved ? "styleProfile.rulesApplied" : "styleProfile.rulesUnsaved";
+    const getRuleStatus = (draft: string, saved: string): MessageId => {
+        if (!draft.trim())
+            return "styleProfile.rulesNone";
+
+        if (draft === saved)
+            return "styleProfile.rulesApplied";
+
+        return "styleProfile.rulesUnsaved";
+    };
     const confirmRemove = () => {
         if (!removingId)
             return;
@@ -132,7 +142,7 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         }
     };
 
-    return <div className="flex h-full min-h-0 max-w-[120rem] flex-col">
+    return <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-4xl flex-col">
         <header className="mb-6 shrink-0 flex flex-wrap items-start justify-between gap-3">
             <div>
                 <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.styleProfile" })}</h2>
@@ -148,10 +158,11 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
             </div>
         </header>
         {corpus?.profile?.confidence === "low" && <Banner className="mb-4" tone="warning">{intl.formatMessage({ id: corpus.profile.corpusItemCount ? "styleProfile.lowConfidence" : "typography.rulesOnly" })}</Banner>}
-        <div className="grid min-h-0 min-w-0 flex-1 gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] xl:grid-rows-[minmax(0,1fr)]">
-            <StyleProfileSources data={{ corpus, revisions: selectableRevisions, generalSettings, pendingAction, adding, name, content, validationFailed, uploadFailed }} actions={{ setAdding, setName, setContent, onImport: importFile, onSubmit: submit, onRemove: setRemovingId, onSetIncluded: (id, included) => run(`include:${id}`, () => setIncluded(id, included)), onSnapshot: setSnapshotRevisionId }} />
-            <div className={("min-h-0 min-w-0 overflow-y-auto pl-1 pr-5 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+        <div className={("min-h-0 min-w-0 flex-1 overflow-y-auto pl-1 pr-5 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
                 "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
+            <div className="w-full">
+                <StyleProfileInsights corpus={corpus} generalSettings={generalSettings} />
+                <StyleProfileReview findings={findings} stale={findingsStale} />
                 {actions.typography && <TypographyRulesBlock
                     rules={corpus?.typographyRules}
                     save={saveTypography}
@@ -160,7 +171,8 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
                 {data.typographyStatus?.message && <Banner tone="error" role="alert">{data.typographyStatus.message}</Banner>}
                 {data.typographyStatus?.hasProposal && actions.typography && <Button variant="secondary" className="mb-4" onClick={actions.typography.openProposal}>{intl.formatMessage({ id: "typography.reviewProposal" })}</Button>}
                 {findings?.typography && <TypographyReviewStatus findings={findings} currentVersion={corpus?.profile?.version} />}
-                <StyleProfileInsights data={{ corpus, findings, findingsStale, generalSettings, pendingAction, rules, savedRules, articleRules, savedArticleRules }} actions={{ setRules: setRulesDraft, setArticleRules: setArticleRulesDraft, onSaveRules: () => run("rules", () => setRules(rules), () => setSavedRules(rules)), onSaveArticleRules: () => run("article-rules", () => setArticleRules(articleId, articleRules), () => setSavedArticleRules(articleRules)), getRuleStatus }} />
+                <StyleProfileGuidance data={{ pendingAction, rules, savedRules, articleRules, savedArticleRules }} actions={{ setRules: setRulesDraft, setArticleRules: setArticleRulesDraft, onSaveRules: () => run("rules", () => setRules(rules), () => setSavedRules(rules)), onSaveArticleRules: () => run("article-rules", () => setArticleRules(articleId, articleRules), () => setSavedArticleRules(articleRules)), getRuleStatus }} />
+                <StyleProfileSources data={{ corpus, revisions: selectableRevisions, generalSettings, pendingAction, adding, name, content, validationFailed, uploadFailed }} actions={{ setAdding, setName, setContent, onImport: importFile, onSubmit: submit, onRemove: setRemovingId, onSetIncluded: (id, included) => run(`include:${id}`, () => setIncluded(id, included)), onSnapshot: setSnapshotRevisionId }} />
             </div>
         </div>
         <StyleProfileDialogs data={{ removingId, snapshotRevisionId, revisions: selectableRevisions }} actions={{ onCloseRemove: () => setRemovingId(undefined), onConfirmRemove: confirmRemove, onCloseSnapshot: () => setSnapshotRevisionId(undefined), onSelectSnapshot: setSnapshotRevisionId, onConfirmSnapshot: confirmSnapshot }} />

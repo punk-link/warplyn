@@ -4,10 +4,7 @@ import { Banner, Button, Field, IconButton, TextareaField } from "../../ui/primi
 import { DeleteIcon } from "../../ui/icons.js";
 import { formatDate } from "../../i18n/formatting.js";
 import { useIntl } from "react-intl";
-
-
-const quietScrollbar = ("[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
+import { StyleProfileDisclosure } from "./StyleProfileDisclosure.js";
 
 
 interface StyleProfileSourcesData {
@@ -41,10 +38,11 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
     const intl = useIntl();
     const upload = useRef<HTMLInputElement>(null);
 
-    return <section className={`min-h-0 min-w-0 overflow-y-auto px-1 ${quietScrollbar}`}>
+    return <StyleProfileDisclosure
+        label={intl.formatMessage({ id: "styleProfile.writingSamples" })}
+        summary={intl.formatMessage({ id: "styleProfile.activeSources" }, { count: corpus?.items.filter((item) => item.included).length ?? 0 })}>
         <div className="mb-3 flex flex-col items-start gap-3">
             <div className="min-w-0">
-                <h3 className="text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.writingSamples" })}</h3>
                 <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.corpusHint" })}</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -126,5 +124,5 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
                 <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.words" }, { count: item.wordCount })} · {intl.formatMessage({ id: "styleProfile.addedDate" }, { date: formatDate(item.createdAt, generalSettings.dateFormat, generalSettings.timeZone) })}</p>
             </article>)}
         </div>
-    </section>;
+    </StyleProfileDisclosure>;
 }
