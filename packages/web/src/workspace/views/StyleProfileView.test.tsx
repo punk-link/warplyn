@@ -144,7 +144,7 @@ describe("StyleProfileView", () => {
         render(<IntlProvider locale="en" messages={messages}><StyleProfileView
             articleId="article-1"
             revisions={[{ id: "revision-1", articleId: "article-1", content: "Older", createdAt: "2026-08-14T00:00:00.000Z", provenance: { kind: "author-draft" } }, { id: "revision-2", articleId: "article-1", content: "Newer", createdAt: "2026-08-15T00:00:00.000Z", provenance: { kind: "author-draft" } }]}
-            corpus={{ items: [{ id: "sample-1", name: "Snapshot", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "ready", profile: { version: 2, corpusItemCount: 1, characterCount: 4, confidence: "low", traits: [], phrasesToAvoid: [], contributorIds: ["sample-1"], rules: "", updatedAt: "2026-08-15T00:00:00.000Z" } }}
+            corpus={{ items: [{ id: "sample-1", name: "Snapshot", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "ready", profile: { version: 2, corpusItemCount: 1, characterCount: 4, confidence: "low", traits: [], phrasesToAvoid: [], contributorIds: ["sample-1"], rules: { manual: "", typography: [] }, updatedAt: "2026-08-15T00:00:00.000Z" } }}
             findings={{ findings: [{ divergence: "Long opening", suggestion: "Shorten it", traitIds: ["transitions"] }], traitLabels: { transitions: "uses explicit transitions" } }}
             findingsStale={false}
             add={vi.fn()}

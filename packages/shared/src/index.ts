@@ -1,3 +1,6 @@
+export * from "./style/typography.js";
+export * from "./style/typography-validation.js";
+
 export {
     healthPath,
     isHealthResponse,
@@ -149,14 +152,17 @@ export {
 export {
     styleCorpusPath,
     styleCorpusRulesPath,
+    styleCorpusTypographyPath,
     styleCorpusRebuildPath,
     createArticleStyleRulesPath,
+    createArticleTypographyReviewPath,
     createArticleStyleCorpusSnapshotPath,
     type CreateStyleCorpusItemInput,
     type StyleCorpus,
     type StyleCorpusClient,
     type StyleCorpusItem,
     type StyleProfile,
+    type StyleProfileRules,
     type StyleTrait,
     type ArticleStyleRulesClient,
     type ArticleStyleCorpusSnapshotClient,

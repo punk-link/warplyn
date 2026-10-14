@@ -186,7 +186,7 @@ test("style review sends a compact profile rather than raw corpus text", async (
             traits: [{ id: "paragraphing", label: "Compact paragraphs", evidence: "Observed locally." }],
             phrasesToAvoid: [],
             contributorIds: ["sample-1"],
-            rules: "",
+            rules: { manual: "", typography: [] },
         },
     });
 

@@ -45,6 +45,12 @@ export function rebuildStyleCorpusRoute(response: ServerResponse, styleCorpus: S
 }
 
 
+export async function updateTypographyRulesRoute(request: IncomingMessage, response: ServerResponse, styleCorpus: StyleCorpusService): Promise<void> {
+    const body = parseObject(await readJson(request));
+    writeJson(response, HTTP_STATUS.OK, styleCorpus.setTypographyRules(body.rules));
+}
+
+
 export function addArticleRevisionStyleCorpusItemRoute(response: ServerResponse, articleId: string, revisionId: string, styleCorpus: StyleCorpusService): void {
     writeJson(response, HTTP_STATUS.CREATED, styleCorpus.addArticleRevision(articleId, revisionId));
 }

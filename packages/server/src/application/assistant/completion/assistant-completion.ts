@@ -12,6 +12,7 @@ import type { StyleCorpusStore } from "../../editorial/style/style-corpus-store.
 import type { AssistantArtifactStore } from "../assistant-artifact-store.js";
 import type { AssistantStore } from "../assistant-store.js";
 import type { EditorialCapabilityCatalog } from "../capabilities/editorial-capability-catalog.js";
+import { scopeTypographyReview } from "../../editorial/style/typography-review-scope.js";
 
 
 export function getCompletedContent(request: PreparedAssistantRequest, text: string): string {
@@ -111,6 +112,9 @@ export class AssistantCompletion {
         if (!article || article.currentRevisionId !== request.scope.baseRevisionId)
             throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_CONFLICT, HTTP_STATUS.CONFLICT);
 
+        const styleReview = scopeTypographyReview(request.articleContent, event.text, event.styleReview, request.scope);
+        event = { ...event, ...(styleReview ? { styleReview } : {}) };
+
         const metadataChanged = this.applyPendingActions(request);
         const editCandidate = getEditCandidate(request, event);
         const directEdit = Boolean(editCandidate && request.editMode === "direct" && request.directEditAuthorized);
@@ -178,8 +182,9 @@ export class AssistantCompletion {
             scope: request.scope,
             responseId: event.responseId,
             proposal: content,
+            ...(event.styleReview ? { styleReview: event.styleReview, baseContent: request.articleContent } : {}),
             ...(request.completedCapability === EDITORIAL_CAPABILITY.STYLE_REVIEW
-                ? { styleProfile: this.dependencies.styleCorpus.getStyleCorpus().profile, articleStyleRules: this.dependencies.styleCorpus.getArticleStyleRules(request.articleId) }
+                ? { styleProfile: event.styleReview?.profileSnapshot, articleStyleRules: event.styleReview?.articleRules?.join("\n") }
                 : {}
             ),
             translation: event.translation

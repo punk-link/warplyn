@@ -200,6 +200,8 @@ export function createElectronApplicationClient(ipcRenderer: ElectronIpcRenderer
         addStyleCorpusItem: (input) => invoke(ELECTRON_APPLICATION_METHOD.addStyleCorpusItem, input),
         setStyleCorpusItemIncluded: (id, included) => invoke(ELECTRON_APPLICATION_METHOD.setStyleCorpusItemIncluded, id, included),
         setStyleCorpusRules: (rules) => invoke(ELECTRON_APPLICATION_METHOD.setStyleCorpusRules, rules),
+        setTypographyRules: (rules) => invoke(ELECTRON_APPLICATION_METHOD.setTypographyRules, rules),
+        getTypographyReview: (articleId) => invoke(ELECTRON_APPLICATION_METHOD.getTypographyReview, articleId),
         rebuildStyleCorpus: () => invoke(ELECTRON_APPLICATION_METHOD.rebuildStyleCorpus),
         getArticleStyleRules: (articleId) => invoke(ELECTRON_APPLICATION_METHOD.getArticleStyleRules, articleId),
         setArticleStyleRules: (articleId, rules) => invoke(ELECTRON_APPLICATION_METHOD.setArticleStyleRules, articleId, rules),

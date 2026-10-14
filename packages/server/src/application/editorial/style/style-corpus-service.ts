@@ -1,13 +1,19 @@
-import { APPLICATION_ERROR, HTTP_STATUS, type CreateStyleCorpusItemInput, type StyleCorpus } from "@skladno/shared";
+import { APPLICATION_ERROR, HTTP_STATUS, isTypographyRules, typographyIssues, type CreateStyleCorpusItemInput, type StyleCorpus } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import type { EditorialEngineResolver } from "../engine/editorial-engine-resolver.js";
 import type { StyleCorpusStore } from "./style-corpus-store.js";
 import type { ArticleStore } from "../../articles/article-store.js";
+import { typographyReviewResult } from "./typography-review-result.js";
 
 
 export class StyleCorpusService {
-    constructor(private readonly store: StyleCorpusStore, private readonly engines?: EditorialEngineResolver, private readonly articles?: ArticleStore) { }
+    constructor(private readonly store: StyleCorpusStore, private readonly engines?: EditorialEngineResolver, private readonly articles?: ArticleStore, private readonly artifacts?: { getLatestTypographyArtifact(articleId: string): import("@skladno/shared").EditorialArtifact | undefined }) { }
+
+
+    getTypographyReview(articleId: string) {
+        return typographyReviewResult(this.artifacts?.getLatestTypographyArtifact(articleId));
+    }
 
 
     get(): StyleCorpus {
@@ -50,6 +56,16 @@ export class StyleCorpusService {
 
     rebuild(): StyleCorpus {
         return this.store.rebuildStyleProfile();
+    }
+
+
+    setTypographyRules(input: unknown): StyleCorpus {
+        if (!isTypographyRules(input)) {
+            const issue = typographyIssues(input)[0];
+            throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST, { rule: (issue?.index ?? 0) + 1 });
+        }
+
+        return this.store.setTypographyRules(input);
     }
 
 

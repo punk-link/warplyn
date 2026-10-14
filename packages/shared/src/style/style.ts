@@ -1,7 +1,9 @@
 export const styleCorpusPath = "/api/style-corpus";
 export const styleCorpusRulesPath = `${styleCorpusPath}/rules`;
+export const styleCorpusTypographyPath = `${styleCorpusPath}/typography`;
 export const styleCorpusRebuildPath = `${styleCorpusPath}/rebuild`;
 export const createArticleStyleRulesPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/style-rules`;
+export const createArticleTypographyReviewPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/typography-review`;
 export const createArticleStyleCorpusSnapshotPath = (articleId: string, revisionId: string) => `/api/articles/${encodeURIComponent(articleId)}/revisions/${encodeURIComponent(revisionId)}/style-corpus-snapshot`;
 
 
@@ -9,6 +11,12 @@ export interface StyleTrait {
     id: string;
     label: string;
     evidence: string;
+}
+
+
+export interface StyleProfileRules {
+    manual: string;
+    typography: import("./typography.js").TypographyRule[];
 }
 
 
@@ -20,7 +28,7 @@ export interface StyleProfile {
     traits: StyleTrait[];
     phrasesToAvoid: string[];
     contributorIds: string[];
-    rules: string;
+    rules: StyleProfileRules;
     updatedAt: string;
 }
 
@@ -44,6 +52,7 @@ export interface StyleCorpus {
     items: StyleCorpusItem[];
     profile?: StyleProfile;
     rules: string;
+    typographyRules?: import("./typography.js").TypographyRule[];
     status: "empty" | "outdated" | "ready";
 }
 
@@ -62,6 +71,8 @@ export interface StyleCorpusClient {
     addStyleCorpusItem(input: CreateStyleCorpusItemInput): Promise<StyleCorpus>;
     setStyleCorpusItemIncluded(itemId: string, included: boolean): Promise<StyleCorpus>;
     setStyleCorpusRules(rules: string): Promise<StyleCorpus>;
+    setTypographyRules(rules: import("./typography.js").TypographyRule[]): Promise<StyleCorpus>;
+    getTypographyReview(articleId: string): Promise<import("./typography.js").TypographyReviewResult | undefined>;
     rebuildStyleCorpus(): Promise<StyleCorpus>;
     removeStyleCorpusItem(materialId: string): Promise<void>;
 }

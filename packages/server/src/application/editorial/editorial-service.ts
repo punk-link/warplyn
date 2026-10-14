@@ -25,6 +25,8 @@ import type { FactCheckArtifactStore } from "./fact-checking/fact-check-artifact
 import type { FactCheckRunStore } from "./fact-checking/fact-check-run-store.js";
 import { correctionContext, verifyCorrectionSelection } from "./fact-checking/verified-correction-selection.js";
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
+import { TypographyLocalEngine } from "./style/typography-local-engine.js";
+import { reviewTypography } from "./style/typography-review.js";
 
 
 interface EditorialStreamContext {
@@ -93,12 +95,18 @@ function prepareEditorialStream(articles: EditorialArticleStore, sessions: Edito
     const translation = request.operation === EDITORIAL_OPERATION.TRANSLATION;
     const styleProfile = getReadyStyleProfile(request.operation, styleCorpus);
 
-    const engine = engines.resolve(request.operation, request.skillId);
+    if (request.reviewMode && request.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
+        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
+    if (request.reviewMode && !styleProfile?.rules.typography.some((rule) => rule.definition.kind !== "contextual"))
+        throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+
+    const engine: EditorialEngine | undefined = request.reviewMode ? new TypographyLocalEngine() : engines.resolve(request.operation, request.skillId);
     if (!engine)
         throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
 
     const continuationScope = engine.continuationScope;
-    const previousResponseId = prepareContinuation(sessions, request.articleId, !factCheck && !translation, sessionContinuationEnabled, continuationScope);
+    const previousResponseId = request.reviewMode ? undefined : prepareContinuation(sessions, request.articleId, !factCheck && !translation, sessionContinuationEnabled, continuationScope);
 
     return {
         article,
@@ -211,9 +219,11 @@ function createEditorialArtifactMetadata(request: EditorialServiceRequest, conte
         ...(request.targetLanguage ? { targetLanguage: request.targetLanguage } : {}),
         responseId: event.responseId,
         proposal: event.text,
-        styleProfile: context.styleProfile,
+        ...(event.styleReview?.typography ? { baseContent: request.articleContent ?? context.article.currentRevision.content } : {}),
+        styleProfile: event.styleReview?.profileSnapshot ?? context.styleProfile,
         articleStyleRules: context.articleStyleRules,
         findings: event.styleReview?.findings,
+        ...(event.styleReview ? { styleReview: event.styleReview } : {}),
         ...(includeFactCheck ? { factCheck: event.factCheck } : {}),
         translation: event.translation,
         ...(context.correctionSelection ? { correctionSelection: context.correctionSelection } : {}),
@@ -248,10 +258,16 @@ async function* streamEditorialOperation(request: EditorialServiceRequest, conte
     let completed = false;
     for await (const event of context.engine.stream(createEngineRequest(request, context, factChecks), signal)) {
         if (event.type === EDITORIAL_ENGINE_EVENT.COMPLETED) {
-            validateProposalResult(request.articleContent ?? context.article.currentRevision.content, event.text, request.skill?.execution);
+            if (signal.aborted)
+                return;
+
+            const source = request.articleContent ?? context.article.currentRevision.content;
+            const result = context.styleProfile ? { ...event, ...reviewTypography(source, event.text, context.styleProfile, event.styleReview, Boolean(request.reviewMode)) } : event;
+            validateProposalResult(source, result.text, request.skill?.execution);
             completed = true;
-            const editorialArtifactId = onCompleted(event);
-            yield { ...event, ...(editorialArtifactId ? { editorialArtifactId } : {}) };
+            const editorialArtifactId = onCompleted(result);
+
+            yield { ...result, ...(editorialArtifactId ? { editorialArtifactId } : {}) };
 
             continue;
         }
@@ -282,7 +298,12 @@ export class EditorialService {
                 context,
                 this.stores.factChecks,
                 signal,
-                (event) => persistCompletedEditorialOutput(this.stores.sessions, this.stores.artifacts, this.stores.factChecks, request, context, this.runtime.sessionContinuationEnabled, event),
+                (event) => {
+                    if (this.stores.articles.getArticle(request.articleId)?.currentRevisionId !== context.article.currentRevisionId)
+                        throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_CONFLICT, HTTP_STATUS.CONFLICT);
+
+                    return persistCompletedEditorialOutput(this.stores.sessions, this.stores.artifacts, this.stores.factChecks, request, context, this.runtime.sessionContinuationEnabled, event);
+                },
             );
 
             for await (const event of events) {

@@ -1,4 +1,6 @@
-import { EDITORIAL_OPERATION } from "@skladno/shared";
+import { APPLICATION_ERROR, HTTP_STATUS, EDITORIAL_OPERATION, type StyleProfile } from "@skladno/shared";
+import { ApplicationServiceError } from "../errors/application-service-error.js";
+import { reviewTypography } from "../editorial/style/typography-review.js";
 import { createSkillGuidance } from "./skills/create-skill-guidance.js";
 
 import { getReusableFactFindings } from "../editorial/fact-checking/reusable-fact-findings.js";
@@ -20,7 +22,14 @@ export function streamAssistantEngineEvents(request: PreparedAssistantRequest, s
     if (!request.operation)
         throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
-    return request.engine.stream({
+    const corpus = request.operation === EDITORIAL_OPERATION.STYLE_REVIEW ? stores.styleCorpus.getStyleCorpus() : undefined;
+    if (corpus && (corpus.status !== "ready" || !corpus.profile))
+        throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+
+    const profile = corpus?.profile;
+    const articleRules = profile ? stores.styleCorpus.getArticleStyleRules(request.articleId) : "";
+
+    const events = request.engine.stream({
         operation: request.operation,
         article: excerpt,
         articleTitle: request.articleTitle,
@@ -31,12 +40,27 @@ export function streamAssistantEngineEvents(request: PreparedAssistantRequest, s
         ...(request.scope.kind === "selection" ? { surroundingArticleCharacterCount: request.articleContent.length - excerpt.length } : {}),
         ...(request.publishingCharacterLimit ? { targetArticleCharacterLimit: request.publishingCharacterLimit } : {}),
         ...(request.targetLanguage ? { targetLanguage: request.targetLanguage } : {}),
-        ...(request.operation === EDITORIAL_OPERATION.STYLE_REVIEW
-            ? { styleProfile: stores.styleCorpus.getStyleCorpus().profile, articleStyleRules: stores.styleCorpus.getArticleStyleRules(request.articleId) }
+        ...(profile
+            ? { styleProfile: profile, articleStyleRules: articleRules }
             : {}
         ),
         ...(request.operation === EDITORIAL_OPERATION.FACT_CHECK ? { reusableFactFindings: getReusableFactFindings(stores.factChecks, request.articleId), skipFactCheckClaim: request.skipFactCheckClaim } : {})
     }, signal);
+    return profile ? streamTypographyReviewedEvents(events, excerpt, profile, articleRules, signal) : events;
+}
+
+
+async function* streamTypographyReviewedEvents(events: AsyncIterable<EditorialEngineEvent>, source: string, profile: StyleProfile, articleRules: string, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+    for await (const event of events) {
+        if (event.type !== "completed") {
+            yield event;
+            continue;
+        }
+
+        signal.throwIfAborted();
+        const reviewed = reviewTypography(source, event.text, profile, event.styleReview);
+        yield { ...event, ...reviewed, styleReview: { ...reviewed.styleReview, articleRules: articleRules.split("\n").filter(Boolean) } };
+    }
 }
 
 

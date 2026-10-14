@@ -21,6 +21,7 @@ export interface StartEditorialRequest {
     authorContext?: string;
     targetLanguage?: string;
     correctionSelection?: { expectedRevisionId: string; occurrenceIds: string[] };
+    reviewMode?: "typography";
 }
 
 
@@ -73,6 +74,7 @@ export interface StyleFinding {
     divergence: string;
     suggestion: string;
     traitIds: string[];
+    typographyOccurrence?: import("../style/typography.js").TypographyReview["occurrences"][number];
 }
 
 
@@ -83,6 +85,8 @@ export interface StyleReview {
     traitLabels?: Record<string, string>;
     globalRules?: string[];
     articleRules?: string[];
+    typography?: import("../style/typography.js").TypographyReview;
+    profileSnapshot?: import("../style/style.js").StyleProfile;
 }
 
 

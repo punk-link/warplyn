@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-21
-- Updated: 2026-10-02
+- Updated: 2026-10-13
 - Scope: AI generation, streaming, provider storage, and generated artifact persistence
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-005](adr-005-article-state-and-consistency.md)
 
@@ -13,6 +13,8 @@ Provider streams may fail, be cancelled, or contain invalid output. Provider mec
 ## Decision
 
 Application services depend on a provider-neutral Editorial Engine. Infrastructure adapters own provider SDKs, options, tools, metadata, errors, context bounding, and configured model resolution.
+
+The explicit typography-only Style review uses a local engine before provider resolution. Mechanical rules operate on conservatively identified prose spans. Full Style review combines these corrections with validated contextual output in one Proposal. Completion retains the captured profile version and rule provenance. Local checking, recovery, and Proposal descriptions make no provider calls.
 
 Consume and validate the full stream before completion: required text, finish reason, structured output, and domain validation must succeed. Propagate cancellation and expose only safe domain events and errors. Completion has a local identity independent of provider response IDs.
 

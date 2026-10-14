@@ -296,4 +296,9 @@ export const migrations = [
         name: "assistant_message_request_lookup",
         sql: "CREATE INDEX assistant_messages_request_role_created ON assistant_messages(request_id, role, created_at, id);",
     },
+    {
+        version: 24,
+        name: "style_profile_typography_rules",
+        sql: "ALTER TABLE style_corpus_settings ADD COLUMN typography_json TEXT NOT NULL DEFAULT '[]';",
+    },
 ] as const;

@@ -1,10 +1,12 @@
-import type { CreateStyleCorpusItemInput, StyleCorpus, StyleCorpusItem, StyleProfile, StyleTrait } from "@skladno/shared";
+import { APPLICATION_ERROR, HTTP_STATUS, isTypographyRules, type CreateStyleCorpusItemInput, type StyleCorpus, type StyleCorpusItem, type StyleProfile, type StyleProfileRules, type StyleTrait, type TypographyRule } from "@skladno/shared";
+import { ApplicationServiceError } from "../../../application/errors/application-service-error.js";
+import { decodeStyleProfile, decodeTypographyRules } from "./style-profile-decoder.js";
 
 import type { SqliteDatabase } from "../database.js";
 import { createId, getCurrentTimestamp, requireNonEmpty, type Row } from "./repository-utils.js";
 
 
-function createStyleProfile(items: { id: string; content: string }[], rules: string, version: number): StyleProfile {
+function createStyleProfile(items: { id: string; content: string }[], rules: StyleProfileRules, version: number): StyleProfile {
     const content = items.map((item) => item.content).join("\n");
     const punctuationPattern = /[.!?]+/;
     const sentences = content.split(punctuationPattern).map((sentence) => sentence.trim()).filter(Boolean);
@@ -56,7 +58,7 @@ function createStyleProfile(items: { id: string; content: string }[], rules: str
         corpusItemCount: items.length,
         characterCount,
         confidence,
-        traits,
+        traits: items.length ? traits : [],
         phrasesToAvoid,
         contributorIds: items.map((item) => item.id),
         rules,
@@ -109,13 +111,14 @@ export class StyleCorpusRepository {
             JOIN author_materials ON author_materials.id = style_corpus_items.author_material_id
             ORDER BY style_corpus_items.created_at, author_materials.id`)).all() as Row[];
         const rules = String((this.database.prepare("SELECT rules FROM style_corpus_settings WHERE id = 1").get() as Row | undefined)?.rules ?? "");
+        const typographyRules = this.getTypographyRules();
         const profileRow = this.database.prepare("SELECT profile_json FROM style_profile_versions ORDER BY version DESC LIMIT 1").get() as Row | undefined;
-        const profile = profileRow ? JSON.parse(String(profileRow.profile_json)) as StyleProfile : undefined;
+        const profile = profileRow ? decodeStyleProfile(String(profileRow.profile_json)) : undefined;
         const includedIds = rows.filter((row) => Number(row.included) === 1).map((row) => String(row.id));
         let status: "empty" | "ready" | "outdated" = "outdated";
-        if (includedIds.length === 0)
+        if (includedIds.length === 0 && !rules.trim() && !typographyRules.length)
             status = "empty";
-        else if (profile && profile.rules === rules && profile.contributorIds.length === includedIds.length && profile.contributorIds.every((id) => includedIds.includes(id)))
+        else if (profile && profile.rules.manual === rules && JSON.stringify(profile.rules.typography) === JSON.stringify(typographyRules) && profile.contributorIds.length === includedIds.length && profile.contributorIds.every((id) => includedIds.includes(id)))
             status = "ready";
 
         const corpusTokenPattern = /[\p{L}\p{N}]+/gu;
@@ -133,7 +136,7 @@ export class StyleCorpusRepository {
                 ...(row.article_id ? { articleId: String(row.article_id) } : {}),
                 ...(row.revision_id ? { revisionId: String(row.revision_id) } : {})
             })),
-            ...(profile ? { profile } : {}), rules, status
+            ...(profile ? { profile } : {}), rules, typographyRules, status
         };
     }
 
@@ -167,18 +170,46 @@ export class StyleCorpusRepository {
     }
 
 
+    private getTypographyRules(): TypographyRule[] {
+        const row = this.database.prepare("SELECT typography_json FROM style_corpus_settings WHERE id = 1").get() as Row;
+        return decodeTypographyRules(String(row.typography_json));
+    }
+
+
+    setTypographyRules(rules: TypographyRule[]): StyleCorpus {
+        if (!isTypographyRules(rules))
+            throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST);
+
+        this.database.exec("BEGIN IMMEDIATE;");
+        try {
+            const corpus = this.getStyleCorpus();
+            const changed = JSON.stringify(corpus.typographyRules) !== JSON.stringify(rules);
+            if (changed)
+                this.database.prepare("UPDATE style_corpus_settings SET typography_json = ?, updated_at = ? WHERE id = 1").run(JSON.stringify(rules), getCurrentTimestamp());
+
+            if (changed || corpus.status === "outdated")
+                this.rebuildStyleProfile();
+
+            this.database.exec("COMMIT;");
+        } catch (error) {
+            this.database.exec("ROLLBACK;");
+            throw error;
+        }
+
+        return this.getStyleCorpus();
+    }
+
+
     rebuildStyleProfile(): StyleCorpus {
         const rows = this.database.prepare((`SELECT author_materials.id, author_materials.content
             FROM style_corpus_items
             JOIN author_materials ON author_materials.id = style_corpus_items.author_material_id
             WHERE style_corpus_items.included = 1
             ORDER BY style_corpus_items.created_at, author_materials.id`)).all() as Row[];
-        if (!rows.length)
-            throw new Error("Include at least one style corpus item before rebuilding.");
-
         const rules = String((this.database.prepare("SELECT rules FROM style_corpus_settings WHERE id = 1").get() as Row).rules);
+        const typography = this.getTypographyRules();
         const version = Number((this.database.prepare("SELECT COALESCE(MAX(version), 0) + 1 AS version FROM style_profile_versions").get() as Row).version);
-        const profile = createStyleProfile(rows.map((row) => ({ id: String(row.id), content: String(row.content) })), rules, version);
+        const profile = createStyleProfile(rows.map((row) => ({ id: String(row.id), content: String(row.content) })), { manual: rules, typography }, version);
         this.database.prepare("INSERT INTO style_profile_versions (version, profile_json, created_at) VALUES (?, ?, ?)").run(version, JSON.stringify(profile), profile.updatedAt);
 
         return this.getStyleCorpus();

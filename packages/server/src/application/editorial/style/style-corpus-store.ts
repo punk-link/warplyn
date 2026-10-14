@@ -7,6 +7,7 @@ export interface StyleCorpusStore {
     addStyleCorpusItem(input: CreateStyleCorpusItemInput & { name: string; origin?: "manual" | "import" | "article-revision"; articleId?: string; revisionId?: string }): StyleCorpus;
     setStyleCorpusItemIncluded(id: string, included: boolean): StyleCorpus;
     setStyleCorpusRules(rules: string): StyleCorpus;
+    setTypographyRules(rules: import("@skladno/shared").TypographyRule[]): StyleCorpus;
     rebuildStyleProfile(): StyleCorpus;
     getArticleStyleRules(articleId: string): string;
     setArticleStyleRules(articleId: string, rules: string): string;

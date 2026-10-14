@@ -154,6 +154,7 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
             content={{ view: layout.view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, requestActive: state.requestActive, translationGeneration: state.translationGeneration, publishProfile: publishing.profile, publishProfileLabel }}
             actions={{ runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection, articleFiles }}
             navigation={{
+                openProposal: () => layout.setView("proposal"),
                 proposalWarningsDismissed: layout.proposalWarningsDismissed, dismissProposalWarnings: () => layout.setProposalWarningsDismissed(true), openWrite: () => layout.setView("write"), openAssistant: () => {
                     layout.setAssistantCollapsed(false);
                     layout.setView("write");

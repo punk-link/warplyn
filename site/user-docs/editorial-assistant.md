@@ -30,3 +30,13 @@ Opening a result does not change the *Article*. Review and accept a *Proposal* i
 Ask the Assistant to create a reusable [Skill](skills.md) when a procedure should be available again. It may ask a short follow-up when the purpose, steps, or references are unclear. A created *Skill* is available at once and has its own local *Skill Revision* history. Creating it does not read your *Article* body or change its *Draft*, *Proposal*, or *Revision*.
 
 You can ask the Editorial Assistant to inspect **Revision History**, saved editorial work, publishing guidance, or Style Corpus readiness. On an explicit request, it can add the current immutable *Revision* to the local Style Corpus and rebuild the Style Profile. It cannot accept *Proposals*, restore *Revisions*, resolve *Findings*, edit *Drafts*, delete style samples, or publish.
+
+## Typography rules
+
+Open **Style Profile** and use **Add rule** in **Typography rules** to choose quotation marks, prose dashes, ellipsis, repeated spaces, or a non-breaking token pair such as `10 kg`. **Literal punctuation replacement** applies an exact punctuation or spacing convention. Use **Contextual typography instruction** when a rule needs judgment.
+
+Rules appear as compact summaries labeled **Saved** or **Unsaved**. Choose **Edit** to open a rule; only one rule is edited at a time. **Save** in Typography rules saves the whole list and rebuilds the *Style Profile* locally. The rebuild includes current included samples and saved guidance, including changes to sample inclusion. Unsaved text in other forms stays unsaved. You can use explicit typography rules without writing samples; samples are needed to derive voice characteristics.
+
+Save the current *Draft*, then select **Check typography** to check the selected *Article* without an AI connection. The check uses the saved *Revision*. Code, URLs, technical identifiers, and ambiguous quotation cases remain unchanged. Contextual rules require a full **Style review** through the Assistant.
+
+Open **Review Proposal** to inspect corrections and their supporting rules. Accept all or selected changes to create a *Revision*. Saving rules or running a check does not apply corrections. A review retains the rule version it used; rerun the check after changing rules.

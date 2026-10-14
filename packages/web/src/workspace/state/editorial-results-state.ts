@@ -209,6 +209,7 @@ function translationStillCurrent(workspace: ArticleWorkspaceState, results: read
 
 export function useEditorialResults(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState) {
     const [styleReviewResult, setStyleReviewResult] = useState<EditorialResult<StyleReview>>();
+    const setStyleReview = useCallback((articleId: string, baseRevisionId: string, value: StyleReview) => setStyleReviewResult({ articleId, baseRevisionId, value }), []);
     const { setFactCheck, ...factChecks } = useFactCheckResults(client, workspace);
     const { retainTranslation, ...translationResults } = useTranslationResults(client, workspace);
     const selectedArticleId = workspace.selectedArticle?.id;
@@ -233,7 +234,7 @@ export function useEditorialResults(client: EditorialWorkspaceClient, workspace:
         styleReviewStale,
         applyResult,
         setFactCheck: (articleId: string, baseRevisionId: string, value: FactCheck) => setFactCheck({ articleId, baseRevisionId, value }),
-        setStyleReview: (articleId: string, baseRevisionId: string, value: StyleReview) => setStyleReviewResult({ articleId, baseRevisionId, value }),
+        setStyleReview,
         retainTranslation,
     };
 }

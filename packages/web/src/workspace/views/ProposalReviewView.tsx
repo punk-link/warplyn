@@ -4,6 +4,7 @@ import { Banner, Button, Diff, EmptyState, IconButton, Status } from "../../ui/p
 import { useIntl } from "react-intl";
 import { presentProposalReview, type ProposalDecision } from "./proposal-review-presentation.js";
 import { AssistantIcon, ChevronRightIcon, CloseIcon, HighlightChangesIcon, SideBySideIcon, StackedDiffIcon } from "../../ui/icons.js";
+import { TypographyChangeSupport } from "./TypographyChangeSupport.js";
 
 
 interface HighlightPart { changed: boolean; text: string }
@@ -147,6 +148,7 @@ interface ProposalReviewData {
     summaries?: Record<string, string>;
     summaryState?: "idle" | "loading" | "unavailable";
     warningsDismissed: boolean;
+    typography?: import("@skladno/shared").TypographyReview;
 }
 
 
@@ -251,7 +253,7 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                             </div>
                             <div className="mt-4 flex min-h-9 items-start gap-2 border-y border-border py-3 text-sm" aria-live="polite">
                                 <AssistantIcon className="mt-0.5 size-4 shrink-0 text-brand" />
-                                <p>{summaries?.[change.id] ?? (summaryState === "loading" ? intl.formatMessage({ id: "views.proposalSummaryLoading" }) : intl.formatMessage({ id: "views.proposalSummaryUnavailable" }))}</p>
+                                {data.typography?.changes.some((item) => item.changeId === change.id) ? <TypographyChangeSupport typography={data.typography} changeId={change.id} /> : <p>{summaries?.[change.id] ?? (summaryState === "loading" ? intl.formatMessage({ id: "views.proposalSummaryLoading" }) : intl.formatMessage({ id: "views.proposalSummaryUnavailable" }))}</p>}
                             </div>
                             <div className="mt-4">
                                 <ProposalDiff

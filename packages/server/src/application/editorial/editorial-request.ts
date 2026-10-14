@@ -16,4 +16,5 @@ export interface EditorialServiceRequest {
     articleSelection?: boolean;
     surroundingArticleCharacterCount?: number;
     correctionSelection?: { expectedRevisionId: string; occurrenceIds: string[] };
+    reviewMode?: "typography";
 }

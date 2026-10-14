@@ -78,6 +78,7 @@ export function readEditorialCapability(
                 status: corpus.status,
                 itemCount: corpus.items.length,
                 rules: corpus.rules,
+                typographyRuleCount: corpus.typographyRules?.length ?? 0,
                 currentRevisionIncluded: corpus.items.some((item) => item.revisionId === article.currentRevisionId)
             };
         }

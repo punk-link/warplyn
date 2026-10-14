@@ -6,6 +6,7 @@ import type { MessageId } from "../../i18n/messages.js";
 import { StyleProfileDialogs } from "./StyleProfileDialogs.js";
 import { StyleProfileInsights } from "./StyleProfileInsights.js";
 import { StyleProfileSources } from "./StyleProfileSources.js";
+import { TypographyRulesBlock } from "./TypographyRulesBlock.js";
 
 
 interface StyleProfileViewData {
@@ -15,6 +16,7 @@ interface StyleProfileViewData {
     articleId: string;
     revisions?: readonly (ArticleRevisionSummary | import("@skladno/shared").ArticleRevision)[];
     generalSettings?: GeneralSettings;
+    typographyStatus?: { busy: boolean; message: string; hasProposal: boolean };
 }
 
 
@@ -27,6 +29,7 @@ interface StyleProfileViewActions {
     getArticleRules: (articleId: string) => Promise<string>;
     setArticleRules: (articleId: string, rules: string) => Promise<string>;
     snapshotArticleRevision?: (articleId: string, revisionId: string) => Promise<void>;
+    typography?: { save: (rules: import("@skladno/shared").TypographyRule[]) => Promise<void>; check: () => Promise<void>; openProposal: () => void };
 }
 
 
@@ -120,6 +123,14 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         setSnapshotRevisionId(undefined);
         run(`snapshot:${revisionId}`, () => snapshotArticleRevision(articleId, revisionId));
     };
+    const saveTypography = async (nextRules: import("@skladno/shared").TypographyRule[]) => {
+        setPendingAction("typography");
+        try {
+            await actions.typography?.save(nextRules);
+        } finally {
+            setPendingAction(undefined);
+        }
+    };
 
     return <div className="flex h-full min-h-0 max-w-[120rem] flex-col">
         <header className="mb-6 shrink-0 flex flex-wrap items-start justify-between gap-3">
@@ -136,11 +147,37 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
                     onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}>{intl.formatMessage({ id: "styleProfile.rebuild" })}</Button>
             </div>
         </header>
-        {corpus?.profile?.confidence === "low" && <Banner className="mb-4" tone="warning">{intl.formatMessage({ id: "styleProfile.lowConfidence" })}</Banner>}
+        {corpus?.profile?.confidence === "low" && <Banner className="mb-4" tone="warning">{intl.formatMessage({ id: corpus.profile.corpusItemCount ? "styleProfile.lowConfidence" : "typography.rulesOnly" })}</Banner>}
         <div className="grid min-h-0 min-w-0 flex-1 gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] xl:grid-rows-[minmax(0,1fr)]">
             <StyleProfileSources data={{ corpus, revisions: selectableRevisions, generalSettings, pendingAction, adding, name, content, validationFailed, uploadFailed }} actions={{ setAdding, setName, setContent, onImport: importFile, onSubmit: submit, onRemove: setRemovingId, onSetIncluded: (id, included) => run(`include:${id}`, () => setIncluded(id, included)), onSnapshot: setSnapshotRevisionId }} />
-            <StyleProfileInsights data={{ corpus, findings, findingsStale, generalSettings, pendingAction, rules, savedRules, articleRules, savedArticleRules }} actions={{ setRules: setRulesDraft, setArticleRules: setArticleRulesDraft, onSaveRules: () => run("rules", () => setRules(rules), () => setSavedRules(rules)), onSaveArticleRules: () => run("article-rules", () => setArticleRules(articleId, articleRules), () => setSavedArticleRules(articleRules)), getRuleStatus }} />
+            <div className={("min-h-0 min-w-0 overflow-y-auto pl-1 pr-5 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+                "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
+                {actions.typography && <TypographyRulesBlock
+                    rules={corpus?.typographyRules}
+                    save={saveTypography}
+                    check={actions.typography.check}
+                    busy={Boolean(pendingAction) || data.typographyStatus?.busy} />}
+                {data.typographyStatus?.message && <Banner tone="error" role="alert">{data.typographyStatus.message}</Banner>}
+                {data.typographyStatus?.hasProposal && actions.typography && <Button variant="secondary" className="mb-4" onClick={actions.typography.openProposal}>{intl.formatMessage({ id: "typography.reviewProposal" })}</Button>}
+                {findings?.typography && <TypographyReviewStatus findings={findings} currentVersion={corpus?.profile?.version} />}
+                <StyleProfileInsights data={{ corpus, findings, findingsStale, generalSettings, pendingAction, rules, savedRules, articleRules, savedArticleRules }} actions={{ setRules: setRulesDraft, setArticleRules: setArticleRulesDraft, onSaveRules: () => run("rules", () => setRules(rules), () => setSavedRules(rules)), onSaveArticleRules: () => run("article-rules", () => setArticleRules(articleId, articleRules), () => setSavedArticleRules(articleRules)), getRuleStatus }} />
+            </div>
         </div>
         <StyleProfileDialogs data={{ removingId, snapshotRevisionId, revisions: selectableRevisions }} actions={{ onCloseRemove: () => setRemovingId(undefined), onConfirmRemove: confirmRemove, onCloseSnapshot: () => setSnapshotRevisionId(undefined), onSelectSnapshot: setSnapshotRevisionId, onConfirmSnapshot: confirmSnapshot }} />
+    </div>;
+}
+
+
+function TypographyReviewStatus({ findings, currentVersion }: { findings: StyleReview; currentVersion: number | undefined }) {
+    const intl = useIntl();
+    const typography = findings.typography;
+    if (!typography)
+        return null;
+
+    return <div className="mb-4 space-y-2 text-xs text-muted" role="status">
+        {findings.profileVersion !== currentVersion && <Banner tone="warning">{intl.formatMessage({ id: "typography.olderProfile" }, { version: findings.profileVersion })}</Banner>}
+        {!typography.occurrences.length && <p>{intl.formatMessage({ id: "typography.noViolations" })}</p>}
+        {typography.skipped > 0 && <p>{intl.formatMessage({ id: "typography.skipped" }, { count: typography.skipped })}</p>}
+        {typography.local && typography.contextualRuleIds.length > 0 && <p>{intl.formatMessage({ id: "typography.contextualSkipped" }, { count: typography.contextualRuleIds.length })}</p>}
     </div>;
 }

@@ -7,5 +7,6 @@ export interface AssistantArtifactStore {
     createSourceCitation(input: CreateSourceCitationInput): SourceCitation;
     listEditorialArtifacts(articleId: string): EditorialArtifact[];
     getEditorialArtifact(artifactId: string, articleId: string): EditorialArtifact | undefined;
+    getLatestTypographyArtifact(articleId: string): EditorialArtifact | undefined;
     updateEditorialArtifactContent(artifactId: string, articleId: string, content: string): void;
 }

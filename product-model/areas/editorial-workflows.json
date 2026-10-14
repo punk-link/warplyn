@@ -71,8 +71,8 @@
             "title": "Style review",
             "status": "implemented",
             "owners": ["packages/server/src/application/editorial", "packages/server/src/index.ts", "packages/server/src/infrastructure/persistence/repositories/style-corpus-repository.ts"],
-            "contract": "Style review uses only the current compact, explicitly rebuilt profile plus Article-specific manual rules; its full-body Proposal keeps the existing Article title separate, raw style samples remain local, and review findings retain freshness state with the grounded trait or rule that supports each finding.",
-            "persistence": "Raw style corpus and derived review artifacts stay local."
+            "contract": "Style review captures the ready compact profile and Article-specific guidance. Mechanical typography is checked locally in safe prose spans and combines with contextual model output in one full-body Proposal, with the Article title separate. Check typography is an independent local action on the saved Revision requiring no AI configuration, provider context, automatic Draft promotion, or model summaries; changed Drafts must be saved explicitly first. Findings and changed Proposal ranges retain supporting typography rule IDs, definitions, and profile version; local Proposals recover after reload. Ambiguous quotation cases remain unchanged, contextual rules require full review, and changed profiles prompt rerun. Raw samples stay local, and corrections require explicit Author acceptance with existing Revision and Draft guards.",
+            "persistence": "Raw style corpus and derived review artifacts stay local; completion stores the captured profile and typography provenance, never a profile reread after generation."
         },
         {
             "id": "editorial-workflows.translation-request",
@@ -323,6 +323,16 @@
             "expected": ["Only environment-variable references and active connection metadata persist."],
             "forbidden": ["Storing or exposing secret values."],
             "evidence": { "kind": "automated", "path": "packages/server/src/presentation/server.ai-connections.test.ts" }
+        },
+        {
+            "id": "editorial-workflows.typography-local-review",
+            "title": "Local typography produces a recoverable rule-supported Proposal without AI",
+            "capabilityIds": ["editorial-workflows.style-review", "editorial-workflows.proposal-lifecycle", "editorial-workflows.ai-safety"],
+            "preconditions": ["A ready Style Profile has a mechanical typography rule and the Author selects an Article."],
+            "event": "The Author checks typography or runs full Style review.",
+            "expected": ["The local path works without an engine, retains the source Article, produces a completed Proposal with supporting rule IDs, and recovers the result after reload without model summary generation. Full review combines contextual and mechanical changes in one artifact."],
+            "forbidden": ["Sending local-check Article content to a provider, silent Article changes, or unsupported review modes."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/presentation/editorial-integration.typography.test.ts" }
         },
         {
             "id": "editorial-workflows.ai-model-preferences",

@@ -5,6 +5,7 @@ import { ChevronRightIcon } from "../../ui/icons.js";
 import { formatDateTime } from "../../i18n/formatting.js";
 import type { MessageId } from "../../i18n/messages.js";
 import { useIntl } from "react-intl";
+import { formatTypographyRule, formatTypographyText } from "./typography-presentation.js";
 
 
 const traitTitles: Record<string, MessageId> = { voice: "styleProfile.trait.voice", rhythm: "styleProfile.trait.rhythm", structure: "styleProfile.trait.structure", vocabulary: "styleProfile.trait.vocabulary", transitions: "styleProfile.trait.transitions" };
@@ -21,8 +22,6 @@ const traitDescriptions: Record<string, MessageId> = {
     "uses explicit transitions": "styleProfile.trait.usesExplicitTransitions",
     "uses few explicit transitions": "styleProfile.trait.usesFewExplicitTransitions",
 };
-const quietScrollbar = ("[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
 
 
 interface StyleProfileInsightsData {
@@ -53,9 +52,12 @@ export function StyleProfileInsights({ data, actions }: { data: StyleProfileInsi
     const intl = useIntl();
     const [sourcesExpanded, setSourcesExpanded] = useState(false);
     const contributors = corpus?.profile?.contributorIds.map((id) => corpus.items.find((item) => item.id === id)?.name).filter((name): name is string => Boolean(name)) ?? [];
-    const findingSupport = (finding: StyleReview["findings"][number]) => finding.traitIds.map((id) => findings?.traitLabels?.[id] ?? id).join(", ");
+    const findingSupport = (finding: StyleReview["findings"][number]) => finding.traitIds.map((id) => {
+        const rule = findings?.typography?.rules.find((item) => `typography-rule:${item.id}` === id);
+        return rule ? formatTypographyRule(rule, intl) : findings?.traitLabels?.[id] ?? id;
+    }).join(", ");
 
-    return <section className={`min-h-0 min-w-0 overflow-y-auto px-1 ${quietScrollbar}`}>
+    return <section className="min-w-0 px-1">
         <h3 className="mb-4 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.detectedCharacteristics" })}</h3>
         <p className="-mt-2 mb-4 text-xs text-muted">{intl.formatMessage({ id: corpus?.profile ? "styleProfile.detectedHint" : "styleProfile.detectedEmpty" })}</p>
         {corpus?.profile && <div className="mb-5 text-xs text-muted">
@@ -109,7 +111,7 @@ export function StyleProfileInsights({ data, actions }: { data: StyleProfileInsi
         </div>
         {findings && <h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.review" })}</h3>}
         {findingsStale && <Banner className="mb-3" tone="warning" role="alert">{intl.formatMessage({ id: "styleProfile.staleReview" })}</Banner>}
-        {findings?.findings.map((finding) => <div key={finding.divergence} className="mt-3 text-sm"><p>{finding.divergence}: {finding.suggestion}</p><p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.reviewEvidence" }, { sources: findingSupport(finding) })}</p></div>)}
+        {findings?.findings.map((finding, index) => <div key={`${finding.divergence}:${index}`} className="mt-3 text-sm"><p>{finding.typographyOccurrence ? intl.formatMessage({ id: "typography.correction" }, { source: formatTypographyText(finding.divergence, intl), replacement: formatTypographyText(finding.suggestion, intl) }) : `${finding.divergence}: ${finding.suggestion}`}</p><p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.reviewEvidence" }, { sources: findingSupport(finding) })}</p></div>)}
     </section>;
 }
 

@@ -1,7 +1,7 @@
 import { articleLanguages, isPublishLimitProfileId, PUBLISH_LIMIT_PROFILE, publishLimitProfiles, type CustomPublishLimitProfile, type GeneralSettings, type PublishingSettings } from "@skladno/shared";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { Button, Field, Select } from "../../ui/primitives.js";
+import { Badge, Button, Field, Select } from "../../ui/primitives.js";
 import { CustomProfileRemovalDialog } from "./CustomProfileRemovalDialog.js";
 import { Control, SettingRow, SettingsGroup } from "./SettingRow.js";
 
@@ -62,7 +62,7 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
                 {publishing.customProfiles.length > 0 && <ul className="mt-4 divide-y divide-border border-y border-border">
                     {publishing.customProfiles.map((profile) => <li key={profile.id} className="flex items-center gap-3 py-2.5 text-sm">
                         <span className="min-w-0 flex-1 truncate text-ink">{profile.name}</span>
-                        <span className="shrink-0 rounded-control bg-surface-raised px-2 py-1 text-xs text-muted">{intl.formatNumber(profile.characterLimit)}</span>
+                        <Badge className="shrink-0">{intl.formatNumber(profile.characterLimit)}</Badge>
                         <Button variant="quiet" onClick={() => setPendingRemoval(profile)} aria-label={intl.formatMessage({ id: "settings.removeCustomProfile" }, { name: profile.name })}>{intl.formatMessage({ id: "settings.remove" })}</Button>
                     </li>)}
                 </ul>}

@@ -49,6 +49,9 @@ export class ProposalSummaryService {
             throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
         const content = JSON.parse(artifact.content) as { proposalSummaries?: ProposalChangeSummary[]; proposalSummaryLocale?: string; [key: string]: unknown };
+        if (isLocalTypography(content.styleReview))
+            return [];
+
         if (content.proposalSummaryLocale === input.interfaceLocale && Array.isArray(content.proposalSummaries))
             return content.proposalSummaries;
 
@@ -65,4 +68,13 @@ export class ProposalSummaryService {
 
         return summaries;
     }
+}
+
+
+function isLocalTypography(value: unknown): boolean {
+    if (!value || typeof value !== "object" || !("typography" in value))
+        return false;
+
+    const typography = value.typography;
+    return Boolean(typography && typeof typography === "object" && "local" in typography && typography.local === true);
 }

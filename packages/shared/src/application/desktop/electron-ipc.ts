@@ -70,6 +70,8 @@ export interface ElectronApplicationOperationMap {
     addStyleCorpusItem: { args: [CreateStyleCorpusItemInput]; result: StyleCorpus };
     setStyleCorpusItemIncluded: { args: [string, boolean]; result: StyleCorpus };
     setStyleCorpusRules: { args: [string]; result: StyleCorpus };
+    setTypographyRules: { args: [import("../../style/typography.js").TypographyRule[]]; result: StyleCorpus };
+    getTypographyReview: { args: [string]; result: import("../../style/typography.js").TypographyReviewResult | undefined };
     rebuildStyleCorpus: { args: []; result: StyleCorpus };
     getArticleStyleRules: { args: [string]; result: string };
     setArticleStyleRules: { args: [string, string]; result: string };
@@ -130,6 +132,8 @@ export const ELECTRON_APPLICATION_METHOD = {
     addStyleCorpusItem: "addStyleCorpusItem",
     setStyleCorpusItemIncluded: "setStyleCorpusItemIncluded",
     setStyleCorpusRules: "setStyleCorpusRules",
+    setTypographyRules: "setTypographyRules",
+    getTypographyReview: "getTypographyReview",
     rebuildStyleCorpus: "rebuildStyleCorpus",
     getArticleStyleRules: "getArticleStyleRules",
     setArticleStyleRules: "setArticleStyleRules",
