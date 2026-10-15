@@ -4,7 +4,8 @@ Use the smallest check that can fail for the changed behavior, then run the appl
 
 ## Commands
 
-- `npm run verify:core` runs the product check, complexity check, lint, typecheck, and workspace and script tests. `npm run verify` remains an alias for this core gate; neither command runs E2E.
+- `npm run verify:pr -- 83` resolves PR #83's current base through GitHub CLI and checks the prepared PR branch, including staged, unstaged, and untracked changes. It runs core verification and browser journeys. Omit the number to use the current branch's PR. Add `--desktop` when the journey table below requires Electron coverage. GitHub CLI must be authenticated; Chromium must be installed with `npx playwright install chromium`.
+- `npm run verify:core` attempts every static check, reports their results together, then runs workspace and script tests only when all static checks pass. `npm run verify` remains an alias for this core gate; neither command runs E2E.
 - `npm run verify:browser` runs Chromium author journeys, also available as `npm run test:e2e`.
 - `npm run verify:desktop` runs Electron journeys against development and packaged builds. Build prerequisites are below.
 - `npm test --workspace <workspace>` runs the selected workspace tests.
@@ -14,7 +15,17 @@ Use the smallest check that can fail for the changed behavior, then run the appl
 - `npm run product:impact -- <affected paths>` returns capabilities and scenarios that the change must preserve.
 - `npm run product:check` validates canonical records, generated inventories, and product-scenario markers in workspace tests.
 
-Use focused tests while editing. Before pushing or handing off source changes, run `verify:core` and the applicable journey gates against the final changes:
+### PR comparison and final verification
+
+Both changed-code checkers print their comparison scope. With no refs, local lint compares against `HEAD`; this does not check earlier commits on the branch. With both `BASE_SHA` and `HEAD_SHA`, they compare those commits as CI does. With only `BASE_SHA`, they compare the current working tree against its merge base with that commit, including all PR commits and local edits.
+
+Use `verify:pr` while fixing a PR so a clean local diff cannot hide failures elsewhere in the PR. It obtains the current base commit, fetches it if missing, and checks that the current branch matches the PR. It prints the candidate HEAD and distinguishes dirty working-tree verification from a clean committed candidate. After the final commit, rerun it and push that same verified commit. Rerun after any further edits, commits, rebases, or base changes.
+
+To reproduce an existing CI failure, read the failed step's log and use its exact base and head SHAs. Run independent static checks even if the first one fails; `verify:core` now does this automatically. Do not describe a HEAD-only local pass as CI-equivalent PR verification.
+
+On Windows, `verify:pr -- 83 --desktop` packages Electron before running desktop journeys. On Linux, build and install the package first as described below, then run the command with `WARPLYN_ELECTRON_EXECUTABLE` set under `xvfb-run`. Core, browser, and desktop outcomes must still be reported separately.
+
+Use focused tests while editing. Before pushing or handing off changes on a PR, run `verify:pr` against the final changes and add `--desktop` when the table below requires it. For work without a PR, run `verify:core` and the applicable journey gates:
 
 | Changed behavior | Additional gate |
 | --- | --- |

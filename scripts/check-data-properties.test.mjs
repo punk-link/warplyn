@@ -54,6 +54,11 @@ test("CI checks return objects throughout changed functions while preserving unr
         assert.match(local.stderr, changedShapePattern);
         const head = commit();
 
+        const workingTreePr = check(base);
+        assert.equal(workingTreePr.status, 1, workingTreePr.stdout + workingTreePr.stderr);
+        assert.match(workingTreePr.stderr, changedShapePattern);
+        assert.doesNotMatch(workingTreePr.stderr, untouchedShapePattern);
+
         const changed = check(base, head);
         assert.equal(changed.status, 1, changed.stdout + changed.stderr);
         assert.match(changed.stderr, changedShapePattern);

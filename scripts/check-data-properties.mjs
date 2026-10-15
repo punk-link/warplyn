@@ -6,15 +6,15 @@ import tseslint from "typescript-eslint";
 
 import projectStyle from "../eslint-rules/project-style.mjs";
 import { getDataPropertyChangeScope } from "./data-property-change-scope.mjs";
+import { getSourceChangeComparison } from "./source-change-comparison.mjs";
 
 
 const root = process.cwd();
 const allMode = process.argv.includes("--all");
 const argumentsWithoutMode = process.argv.slice(2).filter((argument) => argument !== "--all");
 const [baseArgument, headArgument] = argumentsWithoutMode;
-const base = baseArgument ?? process.env.BASE_SHA;
-const head = headArgument ?? process.env.HEAD_SHA;
-const revision = base && head ? `${base}...${head}` : "HEAD";
+const comparison = allMode ? undefined : getSourceChangeComparison(baseArgument, headArgument);
+console.log(`Data-property comparison: ${comparison?.description ?? "all source files"}`);
 const sourcePattern = "packages/*/src/**/*.{ts,tsx}";
 const hunkPattern = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/u;
 const lineBreakPattern = /\r?\n/u;
@@ -29,7 +29,7 @@ function runGit(args) {
 
 
 function getChangedLines() {
-    const diff = runGit(["diff", "--no-ext-diff", "--unified=0", revision, "--", "packages"]);
+    const diff = runGit(["diff", "--no-ext-diff", "--unified=0", comparison.revision, "--", "packages"]);
     const linesByPath = new Map();
     let path = "";
     let currentLine = 0;

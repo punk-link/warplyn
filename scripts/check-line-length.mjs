@@ -1,9 +1,12 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { extname, join } from "node:path";
+import { getSourceChangeComparison } from "./source-change-comparison.mjs";
 
 
 const [base, head] = process.argv.slice(2);
+const comparison = getSourceChangeComparison(base, head);
+console.log(`Line-length comparison: ${comparison.description}`);
 const lineLimit = 160;
 const sourceExtensions = new Set([".cjs", ".js", ".mjs", ".ts", ".tsx"]);
 const lineBreakPattern = /\r?\n/u;
@@ -12,8 +15,7 @@ const nullCharacter = "\0";
 
 
 function getChangedLines() {
-    const revision = base && head ? `${base}...${head}` : "HEAD";
-    return execFileSync("git", ["diff", "--no-ext-diff", "--unified=0", revision, "--"], {
+    return execFileSync("git", ["diff", "--no-ext-diff", "--unified=0", comparison.revision, "--"], {
         encoding: "utf8",
     });
 }
