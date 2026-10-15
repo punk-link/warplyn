@@ -101,7 +101,6 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
         review,
         base,
         accepted,
-        stale,
         proposalStale: stale,
         decisions,
         state,

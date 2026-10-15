@@ -5,6 +5,7 @@ import { relative, resolve, sep } from "node:path";
 import tseslint from "typescript-eslint";
 
 import projectStyle from "../eslint-rules/project-style.mjs";
+import { getDataPropertyChangeScope } from "./data-property-change-scope.mjs";
 
 
 const root = process.cwd();
@@ -88,8 +89,7 @@ function getChangedLines() {
 }
 
 
-function declarationWasChanged(path, message) {
-    const changed = changedLines?.get(path);
+function declarationWasChanged(changed, message) {
     if (!changed)
         return false;
 
@@ -124,8 +124,10 @@ async function findChangedViolations() {
 
     for (const result of results) {
         const path = relative(root, result.filePath).replaceAll("/", sep);
+        const changed = changedLines?.get(path);
+        const scope = changed && getDataPropertyChangeScope(path, readFileSync(result.filePath, "utf8"), changed);
         for (const message of result.messages) {
-            if (message.ruleId !== "project-style/max-data-properties" || !allMode && !declarationWasChanged(path, message))
+            if (message.ruleId !== "project-style/max-data-properties" || !allMode && !declarationWasChanged(scope, message))
                 continue;
 
             violations.push({ path, line: message.line, message: message.message });

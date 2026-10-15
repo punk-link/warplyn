@@ -88,7 +88,7 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
                     data={{
                         review: editorial.review,
                         accepted: editorial.accepted,
-                        stale: editorial.stale,
+                        stale: editorial.proposalStale,
                         decisions: editorial.decisions,
                         summaries: editorial.proposalSummaries,
                         summaryState: editorial.proposalSummaryState,

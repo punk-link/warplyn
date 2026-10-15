@@ -27,7 +27,7 @@ export function KeyBindingSettings({ overrides, save, general, saveGeneral }: { 
         if (!binding)
             return;
 
-        const next = { ...overrides, [commandId]: binding };
+        const next: KeyBindingOverrides = { ...overrides, [commandId]: binding };
         const conflict = findKeyBindingConflict(resolveKeyBindings(next));
         if (conflict) {
             const other = conflict.find((id) => id !== commandId) ?? commandId;
@@ -92,7 +92,7 @@ export function KeyBindingSettings({ overrides, save, general, saveGeneral }: { 
                         }}>{intl.formatMessage({ id: "settings.clearKeyBinding" })}
                         </Button>
                         {isOverridden && <Button variant="quiet" onClick={() => {
-                            const next = { ...overrides };
+                            const next: KeyBindingOverrides = { ...overrides };
                             delete next[command.id];
                             setError(undefined);
                             void save(next);
