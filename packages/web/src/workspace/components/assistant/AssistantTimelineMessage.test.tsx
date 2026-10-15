@@ -33,7 +33,18 @@ describe("AssistantTimelineMessage", () => {
 
     it("shows one exact completed replacement and applies it on click", async () => {
         const applyEdit = vi.fn().mockResolvedValue(undefined);
-        const message: AssistantMessage = { id: "reply", articleId: "article", requestId: "request", role: "assistant", kind: "response", status: "completed", responseKind: "proposal_prepared", editCandidate: { target: "selection", original: "Original text", replacement: "Exact replacement" }, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
+        const message = {
+            id: "reply",
+            articleId: "article",
+            requestId: "request",
+            role: "assistant",
+            kind: "response",
+            status: "completed",
+            responseKind: "proposal_prepared",
+            editCandidate: { target: "selection", original: "Original text", replacement: "Exact replacement" },
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+        } satisfies AssistantMessage;
         const view = renderMessage(message, { applyEdit });
         expect(within(view.container).getByText("Exact replacement")).toBeTruthy();
         await userEvent.setup().click(within(view.container).getByRole("button", { name: "Apply to selection" }));
@@ -51,7 +62,17 @@ describe("AssistantTimelineMessage", () => {
 
     it("does not offer replacement for ordinary or incomplete replies", () => {
         const applyEdit = vi.fn();
-        const message: AssistantMessage = { id: "reply", articleId: "article", requestId: "request", role: "assistant", kind: "response", status: "completed", content: "Option one or two", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
+        const message = {
+            id: "reply",
+            articleId: "article",
+            requestId: "request",
+            role: "assistant",
+            kind: "response",
+            status: "completed",
+            content: "Option one or two",
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+        } satisfies AssistantMessage;
         const view = renderMessage(message, { applyEdit });
         expect(within(view.container).queryByRole("button", { name: "Replace Article" })).toBeNull();
         view.rerender(<IntlProvider locale="en" messages={messages}><AssistantTimelineMessage
