@@ -78,7 +78,11 @@ const multilineJsxOpeningTag = {
                 const element = node.parent;
                 const closingElement = element.closingElement ?? (node.selfClosing ? node : undefined);
                 const openingTagIsSingleLine = node.loc.start.line === node.loc.end.line;
-                if (!closingElement || (!node.selfClosing && element.closingElement.loc.start.line === node.loc.start.line) || (node.selfClosing && openingTagIsSingleLine))
+                if (
+                    !closingElement ||
+                    (!node.selfClosing && element.closingElement.loc.start.line === node.loc.start.line) ||
+                    (node.selfClosing && openingTagIsSingleLine)
+                )
                     return;
 
                 const previousToken = sourceCode.getTokenBefore(node);

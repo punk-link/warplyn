@@ -51,10 +51,14 @@ export function NotificationViewport({ notifications, label, dismissLabel, dismi
                     <p className="font-semibold">{notification.title}</p>
                     {notification.message && <p className="mt-1">{notification.message}</p>}
                     {notification.action && (
-                        <button className="mt-2 min-h-9 rounded-control border border-current px-3 py-1 text-xs font-semibold leading-5 hover:bg-surface-raised/45 active:translate-y-px" type="button" onClick={() => {
-                            runNotificationActionIgnoringErrors(notification.action?.onAction);
-                            dismiss(notification.id);
-                        }}>{notification.action.label}
+                        <button
+                            className={("mt-2 min-h-9 rounded-control border border-current px-3 py-1 text-xs font-semibold leading-5 " +
+                            "hover:bg-surface-raised/45 active:translate-y-px")}
+                            type="button"
+                            onClick={() => {
+                                runNotificationActionIgnoringErrors(notification.action?.onAction);
+                                dismiss(notification.id);
+                            }}>{notification.action.label}
                         </button>
                     )}
                 </div>

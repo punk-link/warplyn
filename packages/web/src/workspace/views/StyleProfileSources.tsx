@@ -127,7 +127,12 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
                         </IconButton>
                     </div>
                     <p className="mt-2 text-sm italic text-muted">{item.excerpt}</p>
-                    <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.words" }, { count: item.wordCount })} · {intl.formatMessage({ id: "styleProfile.addedDate" }, { date: formatDate(item.createdAt, generalSettings.dateFormat, generalSettings.timeZone) })}</p>
+                    <p className="mt-2 text-xs text-muted">
+                        {intl.formatMessage({ id: "styleProfile.words" }, { count: item.wordCount })} · {intl.formatMessage(
+                            { id: "styleProfile.addedDate" },
+                            { date: formatDate(item.createdAt, generalSettings.dateFormat, generalSettings.timeZone) }
+                        )}
+                    </p>
                 </article>
             ))}
         </div>

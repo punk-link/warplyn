@@ -37,7 +37,8 @@ export function RestoreRevisionDialog({ candidate, hasUncommittedChanges, close,
                 variant={hasUncommittedChanges ? "danger" : "primary"}
                 state={pendingMode === (hasUncommittedChanges ? "discard" : "keep") ? "loading" : "default"}
                 disabled={Boolean(pendingMode)}
-                onClick={() => startRestore(hasUncommittedChanges ? "discard" : "keep")}>{intl.formatMessage({ id: hasUncommittedChanges ? "views.discardDraftAndRestore" : "views.restoreRevision" })}
+                onClick={() => startRestore(hasUncommittedChanges ? "discard" : "keep")}>
+                {intl.formatMessage({ id: hasUncommittedChanges ? "views.discardDraftAndRestore" : "views.restoreRevision" })}
             </Button>
         </div>
     </Dialog>;

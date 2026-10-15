@@ -74,17 +74,35 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                             <div className="min-w-0 flex-1">
                                 <div className="flex flex-wrap items-center gap-2">
                                     <p className="text-sm font-medium">{connection.label}</p>
-                                    {connection.active !== false && <Badge className="shrink-0" role="status">{intl.formatMessage({ id: "settings.activeConnectionShort" })}</Badge>}
+                                    {connection.active !== false && (
+                                        <Badge className="shrink-0" role="status">
+                                            {intl.formatMessage({ id: "settings.activeConnectionShort" })}
+                                        </Badge>
+                                    )}
                                 </div>
                                 <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
-                                    <span className="truncate">{getCredentialSourceLabel(connection, intl.formatMessage({ id: "settings.managedCredential" }))}</span>
+                                    <span className="truncate">
+                                        {getCredentialSourceLabel(connection, intl.formatMessage({ id: "settings.managedCredential" }))}
+                                    </span>
                                     <span className="shrink-0">{getProviderLabel(connection.provider)}</span>
                                 </div>
                             </div>
                             <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
-                                {props.onRequestConnectionRename && (getCredentialSource(connection).kind !== "managed" || props.canRenameManagedConnection) && <Button compact variant="quiet" onClick={() => props.onRequestConnectionRename?.(connection)}>{intl.formatMessage({ id: "settings.renameConnectionShort" })}</Button>}
-                                <Button compact variant="quiet" onClick={() => props.onSetConnectionActive(connection.id, connection.active === false)}>{intl.formatMessage({ id: connection.active === false ? "settings.activateConnectionShort" : "settings.deactivateConnectionShort" })}</Button>
-                                <Button compact variant="danger" onClick={() => props.onRequestConnectionRemoval(connection)}>{intl.formatMessage({ id: "settings.removeConnectionShort" })}</Button>
+                                {props.onRequestConnectionRename &&
+                                    (getCredentialSource(connection).kind !== "managed" || props.canRenameManagedConnection) &&
+                                    (
+                                        <Button compact variant="quiet" onClick={() => props.onRequestConnectionRename?.(connection)}>
+                                            {intl.formatMessage({ id: "settings.renameConnectionShort" })}
+                                        </Button>
+                                    )}
+                                <Button compact variant="quiet" onClick={() => props.onSetConnectionActive(connection.id, connection.active === false)}>
+                                    {intl.formatMessage(
+                                        { id: connection.active === false ? "settings.activateConnectionShort" : "settings.deactivateConnectionShort" }
+                                    )}
+                                </Button>
+                                <Button compact variant="danger" onClick={() => props.onRequestConnectionRemoval(connection)}>
+                                    {intl.formatMessage({ id: "settings.removeConnectionShort" })}
+                                </Button>
                             </div>
                         </div>
                     ))}
@@ -96,8 +114,18 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                 <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.chooseConnectionMethod" })}</h3>
                 <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.chooseConnectionMethodHint" })}</p>
                 <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={intl.formatMessage({ id: "settings.chooseConnectionMethod" })}>
-                    <Button variant={connectionMethod === "managed" ? "secondary" : "quiet"} aria-pressed={connectionMethod === "managed"} onClick={() => setConnectionMethod("managed")}>{intl.formatMessage({ id: "settings.apiKey" })}</Button>
-                    <Button variant={connectionMethod === "environment-variable" ? "secondary" : "quiet"} aria-pressed={connectionMethod === "environment-variable"} onClick={() => setConnectionMethod("environment-variable")}>{intl.formatMessage({ id: "settings.environmentVariable" })}</Button>
+                    <Button
+                        variant={connectionMethod === "managed" ? "secondary" : "quiet"}
+                        aria-pressed={connectionMethod === "managed"}
+                        onClick={() => setConnectionMethod("managed")}>
+                        {intl.formatMessage({ id: "settings.apiKey" })}
+                    </Button>
+                    <Button
+                        variant={connectionMethod === "environment-variable" ? "secondary" : "quiet"}
+                        aria-pressed={connectionMethod === "environment-variable"}
+                        onClick={() => setConnectionMethod("environment-variable")}>
+                        {intl.formatMessage({ id: "settings.environmentVariable" })}
+                    </Button>
                 </div>
             </div>
         )}
@@ -125,7 +153,9 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                         </Control>
                     </div>
                     <div className="mt-4">
-                        <Button className="w-fit" variant="secondary" onClick={props.onAddManagedConnection}>{intl.formatMessage({ id: "settings.addApiKeyButton" })}</Button>
+                        <Button className="w-fit" variant="secondary" onClick={props.onAddManagedConnection}>
+                            {intl.formatMessage({ id: "settings.addApiKeyButton" })}
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -145,7 +175,9 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                                 onChange={(event) => props.setConnectionName(event.target.value)}
                                 onPaste={handleTextFieldPaste(props.connectionName, props.setConnectionName)} />
                         </Control>
-                        <Control label={intl.formatMessage({ id: "settings.environmentName" })} hint={intl.formatMessage({ id: "settings.environmentNameHint" })}>
+                        <Control
+                            label={intl.formatMessage({ id: "settings.environmentName" })}
+                            hint={intl.formatMessage({ id: "settings.environmentNameHint" })}>
                             <Field
                                 type="text"
                                 value={props.environmentName}
@@ -160,7 +192,9 @@ export function AiConnectionsSection(props: Pick<AiSettingsSectionProps, "settin
                         </Banner>
                     )}
                     <div className="mt-4">
-                        <Button className="w-fit" variant="secondary" onClick={props.onAddConnection}>{intl.formatMessage({ id: "settings.addConnectionButton" })}</Button>
+                        <Button className="w-fit" variant="secondary" onClick={props.onAddConnection}>
+                            {intl.formatMessage({ id: "settings.addConnectionButton" })}
+                        </Button>
                     </div>
                 </div>
             </div>

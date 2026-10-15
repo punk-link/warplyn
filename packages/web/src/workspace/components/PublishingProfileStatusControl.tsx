@@ -60,12 +60,21 @@ export function PublishingProfileStatusControl({ length, profile, customProfiles
                 {profileOptions.map((preset) => (
                     <button
                         key={preset.id}
-                        className="flex min-h-9 w-full items-center justify-between rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
+                        className={("flex min-h-9 w-full items-center justify-between rounded-control px-2 py-1 text-left text-xs " +
+                            "text-ink hover:bg-brand-soft focus:outline-none")}
                         type="button"
                         role="menuitemradio"
                         aria-checked={preset.id === profile.id}
                         onClick={() => void selectProfile(preset.id)}>
-                        <span>{"name" in preset ? preset.name : preset.id === PUBLISH_LIMIT_PROFILE.NO_RESTRICTIONS ? intl.formatMessage({ id: "publishing.noRestrictions" }) : intl.formatMessage({ id: publishingProfileMessageId(preset.id) })}</span>
+                        <span>
+                            {"name" in
+                                preset
+                                ? preset.name
+                                : preset.id ===
+                                PUBLISH_LIMIT_PROFILE.NO_RESTRICTIONS
+                                    ? intl.formatMessage({ id: "publishing.noRestrictions" })
+                                    : intl.formatMessage({ id: publishingProfileMessageId(preset.id) })}
+                        </span>
                         {preset.characterLimit !== undefined && <span className="text-muted">{intl.formatNumber(preset.characterLimit)}</span>}
                     </button>
                 ))}

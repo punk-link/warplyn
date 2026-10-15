@@ -66,7 +66,12 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
                 onKeyDown={(event) => handleKeyDown(event, index)}>
                 {label}
                 {badge && (
-                    <span aria-hidden="true" className={badge.display === "dot" ? `ml-1.5 inline-block size-2 rounded-full ${dotClasses[badge.tone]}` : `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`}>
+                    <span
+                        aria-hidden="true"
+                        className={badge.display ===
+                            "dot"
+                            ? `ml-1.5 inline-block size-2 rounded-full ${dotClasses[badge.tone]}`
+                            : `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`}>
                         {badge.display === "dot" ? undefined : badge.label}
                     </span>
                 )}

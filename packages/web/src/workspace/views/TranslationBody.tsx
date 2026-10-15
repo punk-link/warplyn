@@ -51,8 +51,24 @@ function AlignedTranslation({ targetLanguage, sourceParagraphs, translatedParagr
         </div>
         {Array.from({ length: paragraphCount }, (_, index) => (
             <div className="grid gap-3 border-b border-border px-3 py-2 last:border-b-0 @[42rem]:grid-cols-2" key={index}>
-                <pre className="whitespace-pre-wrap break-anywhere font-serif text-base leading-7 text-ink">{sourceParagraphs[index] === undefined ? <span className="font-ui text-xs italic text-muted">{intl.formatMessage({ id: "views.translationMissingOriginal" })}</span> : <ProtectedTranslationText content={sourceParagraphs[index]} protectedSpans={protectedSpans} />}</pre>
-                <pre className="whitespace-pre-wrap break-anywhere font-serif text-base leading-7 text-ink">{translatedParagraphs[index] === undefined ? <span className="font-ui text-xs italic text-muted">{intl.formatMessage({ id: "views.translationMissingResult" })}</span> : <ProtectedTranslationText content={translatedParagraphs[index]} protectedSpans={protectedSpans} />}</pre>
+                <pre className="whitespace-pre-wrap break-anywhere font-serif text-base leading-7 text-ink">
+                    {sourceParagraphs[index] === undefined ? (
+                        <span className="font-ui text-xs italic text-muted">
+                            {intl.formatMessage({ id: "views.translationMissingOriginal" })}
+                        </span>
+                    ) : (
+                        <ProtectedTranslationText content={sourceParagraphs[index]} protectedSpans={protectedSpans} />
+                    )}
+                </pre>
+                <pre className="whitespace-pre-wrap break-anywhere font-serif text-base leading-7 text-ink">
+                    {translatedParagraphs[index] === undefined ? (
+                        <span className="font-ui text-xs italic text-muted">
+                            {intl.formatMessage({ id: "views.translationMissingResult" })}
+                        </span>
+                    ) : (
+                        <ProtectedTranslationText content={translatedParagraphs[index]} protectedSpans={protectedSpans} />
+                    )}
+                </pre>
             </div>
         ))}
     </div>;

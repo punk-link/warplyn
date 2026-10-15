@@ -68,7 +68,11 @@ describe("translation freshness and refresh", () => {
         const create = vi.fn();
         const german = { ...target, id: "german", language: "de", title: "German edition" };
         const view = (selectedTargetLanguage: string) => (
-            <IntlProvider locale="en" messages={messages}><TranslationsView data={{ article, translations: [translations[1]!], linkedTranslations: [target, german], selectedTargetLanguage, stale: false }} actions={{ create, openArticle, selectTargetLanguage, translate: vi.fn() }} /></IntlProvider>
+            <IntlProvider locale="en" messages={messages}>
+                <TranslationsView
+                    data={{ article, translations: [translations[1]!], linkedTranslations: [target, german], selectedTargetLanguage, stale: false }}
+                    actions={{ create, openArticle, selectTargetLanguage, translate: vi.fn() }} />
+            </IntlProvider>
         );
         const { rerender } = render(view("German"));
         await user.click(screen.getByRole("tab", { name: "Spanish" }));

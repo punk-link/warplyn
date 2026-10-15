@@ -256,7 +256,9 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                     target="_blank"
                     rel="noreferrer"
                     aria-label={intl.formatMessage({ id: "editor.openLink" }, { url: linkUrl })}
-                    className="inline-flex min-h-9 max-w-32 items-center truncate rounded-control px-2 text-xs font-semibold text-brand underline underline-offset-2 hover:bg-brand-soft">{linkUrl}
+                    className={("inline-flex min-h-9 max-w-32 items-center truncate rounded-control px-2 text-xs font-semibold " +
+                        "text-brand underline underline-offset-2 hover:bg-brand-soft")}>
+                    {linkUrl}
                 </a>
             )}
             <IconButton

@@ -53,13 +53,19 @@ export function StyleProfileDialogs({ data, actions }: { data: StyleProfileDialo
                 }}>
                 <h2 id="add-style-revision-title" className="text-lg font-semibold">{intl.formatMessage({ id: "styleProfile.addRevisionTitle" })}</h2>
                 <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "styleProfile.addRevisionDescription" })}</p>
-                <label className="mt-4 block text-sm font-medium" htmlFor="style-profile-revision">{intl.formatMessage({ id: "styleProfile.savedRevision" })}</label>
+                <label className="mt-4 block text-sm font-medium" htmlFor="style-profile-revision">
+                    {intl.formatMessage({ id: "styleProfile.savedRevision" })}
+                </label>
                 <Select
                     id="style-profile-revision"
                     className="mt-1"
                     value={snapshotRevisionId}
                     onChange={(event) => onSelectSnapshot(event.target.value)}>
-                    {revisions.map(({ revision, number }) => <option key={revision.id} value={revision.id}>{intl.formatMessage({ id: "styleProfile.revision" }, { number })}</option>)}
+                    {revisions.map(({ revision, number }) => (
+                        <option key={revision.id} value={revision.id}>
+                            {intl.formatMessage({ id: "styleProfile.revision" }, { number })}
+                        </option>
+                    ))}
                 </Select>
                 <div className="mt-5 flex justify-end gap-3">
                     <Button variant="secondary" autoFocus onClick={onCloseSnapshot}>{intl.formatMessage({ id: "editor.cancel" })}</Button>

@@ -48,14 +48,19 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
     return <>
         {languages.length > 1 && (
             <TabList className="mt-4">
-                {languages.map((language) => <Tab key={language} selected={language === selectedLanguage} onClick={() => selectTargetLanguage?.(language)}>{language}</Tab>)}
+                {languages.map((language) => (
+                    <Tab key={language} selected={language === selectedLanguage} onClick={() => selectTargetLanguage?.(language)}>
+                        {language}
+                    </Tab>
+                ))}
             </TabList>
         )}
         {results.length > 1 && translation && (
             <div className="relative mt-3">
                 <button
                     ref={trigger}
-                    className={("flex min-h-10 w-full items-center justify-between gap-3 rounded-control border border-border bg-surface-raised px-3 py-2 text-left text-sm " +
+                    className={(("flex min-h-10 w-full items-center justify-between gap-3 rounded-control border border-border " +
+                        "bg-surface-raised px-3 py-2 text-left text-sm ") +
                 "text-ink transition-colors hover:border-brand/45 hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
                     type="button"
                     aria-label={intl.formatMessage({ id: "views.translationResultSelector" })}
@@ -69,7 +74,9 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
 
                         openStatusMenu(event, () => setResultMenuOpen(true), resultMenuId);
                     }}>
-                    <span className="min-w-0 truncate">{resultLabel(translation, results.findIndex((result) => translationResultId(result) === selectedResultId))}</span>
+                    <span className="min-w-0 truncate">
+                        {resultLabel(translation, results.findIndex((result) => translationResultId(result) === selectedResultId))}
+                    </span>
                     <ChevronDownIcon className={`size-4 shrink-0 text-muted transition-transform ${resultMenuOpen ? "rotate-180" : ""}`} />
                 </button>
                 {resultMenuOpen && (
@@ -88,7 +95,8 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
                                 const selected = id === selectedResultId;
                                 return <button
                                     key={id}
-                                    className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                                    className={(("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink " +
+                                        "hover:bg-brand-soft focus:outline-none ") +
                             "focus-visible:ring-2 focus-visible:ring-brand")}
                                     type="button"
                                     role="menuitemradio"
@@ -109,7 +117,14 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
         {sourceArticle && openArticle && (
             <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1">
                 <p className="text-xs text-muted">
-                    {intl.formatMessage({ id: "views.sourceLinkedPrefix" })} <button type="button" className="font-semibold text-brand underline underline-offset-2" onClick={() => openArticle(sourceArticle.id)}>{sourceArticle.title}</button>{article.sourceRevisionNumber ? ` ${intl.formatMessage({ id: "views.sourceLinkedRevision" }, { revisionNumber: article.sourceRevisionNumber })}` : null}
+                    {intl.formatMessage({ id: "views.sourceLinkedPrefix" })} <button
+                        type="button"
+                        className="font-semibold text-brand underline underline-offset-2"
+                        onClick={() => openArticle(sourceArticle.id)}>
+                        {sourceArticle.title}
+                    </button>{article.sourceRevisionNumber
+                        ? ` ${intl.formatMessage({ id: "views.sourceLinkedRevision" }, { revisionNumber: article.sourceRevisionNumber })}`
+                        : null}
                 </p>
             </div>
         )}

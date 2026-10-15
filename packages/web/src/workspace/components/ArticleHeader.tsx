@@ -237,9 +237,13 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
                     setDeleteConfirmationOpen(false);
                 }}>
                 <h2 id="delete-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: displayTitle, count: groupCount })}</p>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                    {intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: displayTitle, count: groupCount })}
+                </p>
                 <div className="mt-5 flex justify-end gap-2">
-                    <Button variant="secondary" autoFocus onClick={() => setDeleteConfirmationOpen(false)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
+                    <Button variant="secondary" autoFocus onClick={() => setDeleteConfirmationOpen(false)}>
+                        {intl.formatMessage({ id: "editor.cancel" })}
+                    </Button>
                     <Button variant="danger" onClick={() => void confirmDelete()}>{intl.formatMessage({ id: "articleHeader.confirmDeleteArticle" })}</Button>
                 </div>
             </Dialog>

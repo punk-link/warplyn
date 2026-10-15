@@ -50,8 +50,13 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
                 status={copied ? intl.formatMessage({ id: "settings.telemetryIdentifierCopied" }) : undefined}>
                 <div className="flex flex-wrap items-center gap-3">
                     <code className="rounded bg-surface-raised px-2 py-1 text-xs text-ink">{consent.installationId}</code>
-                    <button type="button" className={("min-h-9 rounded border border-border-strong px-3 text-xs font-semibold text-ink hover:border-brand hover:text-brand focus:outline-none " +
-                    "focus-visible:ring-2 focus-visible:ring-brand")} onClick={() => void navigator.clipboard.writeText(consent.installationId!).then(() => setCopied(true)).catch(() => setCopied(false))}>{intl.formatMessage({ id: "settings.copyTelemetryIdentifier" })}
+                    <button
+                        type="button"
+                        className={(("min-h-9 rounded border border-border-strong px-3 text-xs font-semibold text-ink hover:border-brand " +
+                        "hover:text-brand focus:outline-none ") +
+                        "focus-visible:ring-2 focus-visible:ring-brand")}
+                        onClick={() => void navigator.clipboard.writeText(consent.installationId!).then(() => setCopied(true)).catch(() => setCopied(false))}>
+                        {intl.formatMessage({ id: "settings.copyTelemetryIdentifier" })}
                     </button>
                 </div>
             </SettingRow>

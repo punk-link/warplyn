@@ -278,7 +278,8 @@ function FactCheckRunSelector({ data, selectRun }: { data: FactCheckData; select
         {historyOpen && (
             <div
                 id={historyMenuId}
-                className={("absolute right-0 top-full z-20 mt-1 max-h-72 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-control border border-border " +
+                className={(("absolute right-0 top-full z-20 mt-1 max-h-72 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto " +
+                    "rounded-control border border-border ") +
                 "bg-surface-raised p-1 shadow-raised")}
                 role="menu"
                 aria-label={intl.formatMessage({ id: "views.factCheckHistory" })}
@@ -287,13 +288,16 @@ function FactCheckRunSelector({ data, selectRun }: { data: FactCheckData; select
                     historyTrigger.current?.focus();
                 })}>
                 <button
-                    className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                    className={(("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink " +
+                        "hover:bg-brand-soft focus:outline-none ") +
                     "focus-visible:ring-2 focus-visible:ring-brand")}
                     type="button"
                     role="menuitemradio"
                     aria-checked={selectedRun === undefined}
                     onClick={() => selectRunOption(undefined)}>
-                    <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border bg-surface-raised text-brand"><UpdateIcon className="size-3" /></span>
+                    <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border bg-surface-raised text-brand">
+                        <UpdateIcon className="size-3" />
+                    </span>
                     <span className="min-w-0 flex-1 truncate" title={currentRevisionLabel}>{currentRevisionLabel}</span>
                     <span className="text-micro font-semibold text-muted">{intl.formatMessage({ id: "revisions.current" })}</span>
                 </button>
@@ -301,13 +305,16 @@ function FactCheckRunSelector({ data, selectRun }: { data: FactCheckData; select
                     index !== currentRunIndex && (
                         <button
                             key={index}
-                            className={("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none " +
+                            className={(("flex min-h-9 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs text-ink " +
+                                "hover:bg-brand-soft focus:outline-none ") +
                     "focus-visible:ring-2 focus-visible:ring-brand")}
                             type="button"
                             role="menuitemradio"
                             aria-checked={selectedRun === index}
                             onClick={() => selectRunOption(index)}>
-                            <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border bg-surface-raised text-brand"><UpdateIcon className="size-3" /></span>
+                            <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border bg-surface-raised text-brand">
+                                <UpdateIcon className="size-3" />
+                            </span>
                             <span className="font-semibold">{revisionLabel(run.reviewedRevisionId ?? "")}</span>
                             <span className="min-w-0 flex-1 truncate" title={runOptionLabel(run)}>{run.createdAt ? formatCheckedAt(run.createdAt) : "—"}</span>
                         </button>

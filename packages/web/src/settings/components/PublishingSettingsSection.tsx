@@ -65,7 +65,12 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
                             <li key={profile.id} className="flex items-center gap-3 py-2.5 text-sm">
                                 <span className="min-w-0 flex-1 truncate text-ink">{profile.name}</span>
                                 <Badge className="shrink-0">{intl.formatNumber(profile.characterLimit)}</Badge>
-                                <Button variant="quiet" onClick={() => setPendingRemoval(profile)} aria-label={intl.formatMessage({ id: "settings.removeCustomProfile" }, { name: profile.name })}>{intl.formatMessage({ id: "settings.remove" })}</Button>
+                                <Button
+                                    variant="quiet"
+                                    onClick={() => setPendingRemoval(profile)}
+                                    aria-label={intl.formatMessage({ id: "settings.removeCustomProfile" }, { name: profile.name })}>
+                                    {intl.formatMessage({ id: "settings.remove" })}
+                                </Button>
                             </li>
                         ))}
                     </ul>
@@ -110,7 +115,14 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
                                 className="size-4 accent-brand"
                                 type="checkbox"
                                 checked={general.defaultTranslationLanguages.includes(language)}
-                                onChange={(event) => void saveGeneral({ ...general, defaultTranslationLanguages: event.target.checked ? [...general.defaultTranslationLanguages, language] : general.defaultTranslationLanguages.filter((item) => item !== language) })} />
+                                onChange={(event) => void saveGeneral(
+                                    {
+                                        ...general,
+                                        defaultTranslationLanguages: event.target.checked
+                                            ? [...general.defaultTranslationLanguages, language]
+                                            : general.defaultTranslationLanguages.filter((item) => item !== language)
+                                    }
+                                )} />
                             {intl.formatMessage({ id: languageMessageIds[language] })}
                         </label>
                     ))}

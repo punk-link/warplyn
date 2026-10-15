@@ -127,7 +127,9 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
         {workspace.conflict && (
             <Banner className="m-3" tone="error" role="alert">
                 <span>{intl.formatMessage({ id: "draftConflict.banner" })}</span>
-                <Button className="ml-auto" variant="secondary" onClick={workspace.openComparison}>{intl.formatMessage({ id: "draftConflict.compare" })}</Button>
+                <Button className="ml-auto" variant="secondary" onClick={workspace.openComparison}>
+                    {intl.formatMessage({ id: "draftConflict.compare" })}
+                </Button>
             </Banner>
         )}
         {workspace.saveState === "error" && (

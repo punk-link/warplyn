@@ -56,7 +56,9 @@ export function AssistantQuickActions({ context, picker }: { context: { state: "
                         ))
                         : <p className="px-3 py-2 text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.skillNoMatches" })}</p>}
                 </div>
-                <p id="assistant-skill-picker-hint" className="border-t border-border px-3 py-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.customSkillsHint" })}</p>
+                <p id="assistant-skill-picker-hint" className="border-t border-border px-3 py-2 text-xs text-muted">
+                    {intl.formatMessage({ id: "assistant.customSkillsHint" })}
+                </p>
             </div>
         )}
         {quickActionsOpen && <span className="sr-only" aria-live="polite">{availableSkills.length ? intl.formatMessage({ id: "assistant.skillResultCount" }, { count: availableSkills.length }) : intl.formatMessage({ id: "assistant.skillNoMatches" })}</span>}

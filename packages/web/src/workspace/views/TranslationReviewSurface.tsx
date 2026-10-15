@@ -14,9 +14,16 @@ export function TranslationReviewSurface({ generation, children }: PropsWithChil
         </div>
         {generation && (
             <div className="absolute inset-0 z-10 grid place-items-center bg-canvas/40 p-4">
-                <div role="status" className="flex max-w-full items-center gap-3 rounded-panel border border-border bg-surface-raised p-5 text-center text-sm text-ink shadow-raised">
+                <div
+                    role="status"
+                    className={("flex max-w-full items-center gap-3 rounded-panel border border-border bg-surface-raised p-5 " +
+                        "text-center text-sm text-ink shadow-raised")}>
                     <ActivityIndicator />
-                    <span>{languages?.length ? intl.formatMessage({ id: "views.translationGeneratingLanguages" }, { languages: languages.join(", ") }) : intl.formatMessage({ id: "views.translationGenerating" })}</span>
+                    <span>
+                        {languages?.length
+                            ? intl.formatMessage({ id: "views.translationGeneratingLanguages" }, { languages: languages.join(", ") })
+                            : intl.formatMessage({ id: "views.translationGenerating" })}
+                    </span>
                 </div>
             </div>
         )}

@@ -61,7 +61,10 @@ function NetworkSettings({ client, state, intl, onRequestPermission, onState }: 
             />
         </SettingRow>
         {state.networkAccess && (
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.automaticUpdates" })} hint={intl.formatMessage({ id: "settings.automaticUpdatesHint" })}>
+            <SettingRow
+                headingLevel={3}
+                label={intl.formatMessage({ id: "settings.automaticUpdates" })}
+                hint={intl.formatMessage({ id: "settings.automaticUpdatesHint" })}>
                 <UpdateSwitch
                     label={intl.formatMessage({ id: "settings.automaticUpdates" })}
                     checked={state.automaticChecks}
@@ -70,7 +73,10 @@ function NetworkSettings({ client, state, intl, onRequestPermission, onState }: 
             </SettingRow>
         )}
         {state.networkAccess && (
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })} hint={intl.formatMessage({ id: "settings.includePrereleaseUpdatesHint" })}>
+            <SettingRow
+                headingLevel={3}
+                label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })}
+                hint={intl.formatMessage({ id: "settings.includePrereleaseUpdatesHint" })}>
                 <UpdateSwitch
                     label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })}
                     checked={state.includePrereleases}
@@ -93,8 +99,13 @@ function UpdateActions({ client, state, status, details, onState, intl }: { clie
         {canCheckNow && <Button variant="secondary" state={state.kind === "checking" ? "loading" : "default"} onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.checkNow" })}</Button>}
         {details && <Button variant="quiet" onClick={() => void client.openReleaseNotes()}>{intl.formatMessage({ id: "settings.viewReleaseNotes" })}</Button>}
         {state.recoveryAvailable && (
-            <button type="button" className={("col-span-2 inline-flex min-h-9 cursor-pointer items-center justify-self-start text-sm font-semibold text-brand underline underline-offset-2 " +
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:col-span-4")} onClick={() => void client.openRecoveryGuide()}>{intl.formatMessage({ id: "settings.updateRecovery" })}
+            <button
+                type="button"
+                className={(("col-span-2 inline-flex min-h-9 cursor-pointer items-center justify-self-start text-sm font-semibold " +
+                "text-brand underline underline-offset-2 ") +
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:col-span-4")}
+                onClick={() => void client.openRecoveryGuide()}>
+                {intl.formatMessage({ id: "settings.updateRecovery" })}
             </button>
         )}
     </div>;

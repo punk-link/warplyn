@@ -131,7 +131,14 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
             aria-label={label}
             aria-describedby={describedBy}
             aria-disabled="true"
-            className="relative flex min-h-10 w-full items-center gap-2 rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink opacity-55">{selectedModel && <ProviderIcon provider={getModelProvider(selectedModel.model, selectedModel.provider)} viaProvider={selectedModel.provider} />}<span className="truncate">{selectedLabel}</span><ChevronDownIcon className="absolute right-3 size-4 text-muted" />
+            className={("relative flex min-h-10 w-full items-center gap-2 rounded-control border border-border " +
+                "bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink opacity-55")}>
+            {selectedModel &&
+                (
+                    <ProviderIcon provider={getModelProvider(selectedModel.model, selectedModel.provider)} viaProvider={selectedModel.provider} />
+                )}<span className="truncate">
+                {selectedLabel}
+                </span><ChevronDownIcon className="absolute right-3 size-4 text-muted" />
         </div>;
 
     return <details
@@ -173,7 +180,8 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
                     <button
                         type="button"
                         aria-label={intl.formatMessage({ id: "settings.clearModelSearch" })}
-                        className={("absolute right-0 top-1/2 inline-grid size-9 -translate-y-1/2 place-items-center rounded-control border border-transparent p-1 text-brand " +
+                        className={(("absolute right-0 top-1/2 inline-grid size-9 -translate-y-1/2 place-items-center rounded-control " +
+                            "border border-transparent p-1 text-brand ") +
                             "transition-colors hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
                         onClick={() => {
                             setQuery(""); search.current?.focus();
@@ -197,7 +205,10 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
                             title={getVendorLabel(item)}
                             aria-label={getVendorLabel(item)}
                             aria-selected={vendor === item}
-                            className={`flex size-9 shrink-0 items-center justify-center rounded-control focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${vendor === item ? "bg-brand-soft text-brand" : "text-muted hover:bg-brand-soft hover:text-brand"}`}
+                            className={"flex size-9 shrink-0 items-center justify-center rounded-control focus:outline-none " +
+                                "focus-visible:ring-2 focus-visible:ring-brand " + (vendor === item
+                                ? "bg-brand-soft text-brand"
+                                : "text-muted hover:bg-brand-soft hover:text-brand")}
                             onClick={() => setVendor(item)}>
                             {item === "favorites" ? <StarIcon className="size-4" />
                                 : (
@@ -214,7 +225,8 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
                             type="button"
                             role="option"
                             aria-selected={!value}
-                            className={("flex min-h-9 w-full items-center rounded-control px-2 text-left text-sm text-muted hover:bg-brand-soft hover:text-brand focus:outline-none " +
+                            className={(("flex min-h-9 w-full items-center rounded-control px-2 text-left text-sm text-muted " +
+                                "hover:bg-brand-soft hover:text-brand focus:outline-none ") +
                                 "focus-visible:ring-2 focus-visible:ring-brand")}
                             onClick={() => {
                                 onChange(""); close();
@@ -227,7 +239,8 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
                                 type="button"
                                 role="option"
                                 aria-selected={model.id === value || model.model === value}
-                                className={("flex min-h-9 min-w-0 flex-1 items-center gap-2 rounded-control px-2 text-left text-sm hover:bg-brand-soft focus:outline-none " +
+                                className={(("flex min-h-9 min-w-0 flex-1 items-center gap-2 rounded-control px-2 text-left text-sm " +
+                                    "hover:bg-brand-soft focus:outline-none ") +
                                     "focus-visible:ring-2 focus-visible:ring-brand")}
                                 onClick={() => {
                                     onChange(model.id); close();
@@ -236,10 +249,21 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
                                 <span className="truncate">{getModelLabel(model.model)}</span>
                             </button>
                             <IconButton
-                                label={intl.formatMessage({ id: (favorites.includes(model.id) || favorites.includes(model.model)) ? "settings.removeFavoriteModel" : "settings.addFavoriteModel" }, { model: getModelLabel(model.model) })}
+                                label={intl.formatMessage(
+                                    {
+                                        id: (favorites.includes(model.id) || favorites.includes(model.model))
+                                            ? "settings.removeFavoriteModel"
+                                            : "settings.addFavoriteModel"
+                                    },
+                                    { model: getModelLabel(model.model) }
+                                )}
                                 aria-pressed={favorites.includes(model.id) || favorites.includes(model.model)}
                                 className={favorites.includes(model.id) || favorites.includes(model.model) ? "text-brand" : undefined}
-                                onClick={() => onFavoritesChange((favorites.includes(model.id) || favorites.includes(model.model)) ? favorites.filter((favorite) => favorite !== model.id && favorite !== model.model) : [...favorites, model.id])}>
+                                onClick={() => onFavoritesChange(
+                                    (favorites.includes(model.id) || favorites.includes(model.model))
+                                        ? favorites.filter((favorite) => favorite !== model.id && favorite !== model.model)
+                                        : [...favorites, model.id]
+                                )}>
                                 <StarIcon className={favorites.includes(model.id) || favorites.includes(model.model) ? "size-4 fill-current" : "size-4"} />
                             </IconButton>
                         </div>

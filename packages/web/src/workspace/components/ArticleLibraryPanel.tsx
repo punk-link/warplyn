@@ -272,8 +272,15 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                     event.preventDefault();
                     setDeleteTarget(undefined);
                 }}>
-                <h2 id="delete-library-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: deleteTarget.title.trim() || intl.formatMessage({ id: "article.defaultTitle" }), count: groupCount })}</p>
+                <h2 id="delete-library-article-title" className="text-lg font-semibold">
+                    {intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                    {intl.formatMessage(
+                        { id: "articleHeader.deleteGroupConfirmationDescription" },
+                        { articleTitle: deleteTarget.title.trim() || intl.formatMessage({ id: "article.defaultTitle" }), count: groupCount }
+                    )}
+                </p>
                 <div className="mt-5 flex justify-end gap-2">
                     <Button variant="secondary" autoFocus onClick={() => setDeleteTarget(undefined)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
                     <Button variant="danger"

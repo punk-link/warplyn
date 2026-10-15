@@ -130,7 +130,9 @@ function AuthorMessageContent({ visible, content, selectionText, skillOffset, sk
 
     return <p className="whitespace-pre-wrap text-sm leading-6 text-ink">
         {selectionText && (
-            <span className={("mx-1 inline-flex h-5 max-w-[calc(100%-0.5rem)] items-center align-middle rounded-full border border-border bg-surface-raised px-1.5 text-xs " +
+            <span
+                className={(("mx-1 inline-flex h-5 max-w-[calc(100%-0.5rem)] items-center align-middle rounded-full border " +
+                "border-border bg-surface-raised px-1.5 text-xs ") +
             "font-semibold text-muted")} aria-label={intl.formatMessage({ id: "assistant.articleSelection" })} title={selectionText}>
                 <span className="relative -top-px max-w-48 truncate">{getSelectionPreview(selectionText)}</span>
             </span>

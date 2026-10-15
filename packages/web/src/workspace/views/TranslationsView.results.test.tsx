@@ -62,7 +62,11 @@ describe("fresh translation review", () => {
         const user = userEvent.setup();
         const translate = vi.fn();
         const view = (content: string, active = false) => (
-            <IntlProvider locale="en" messages={messages}><TranslationsView data={{ article, sourceContent: content, translations: [first], stale: false, requestActive: active }} actions={{ create: vi.fn(), translate }} /></IntlProvider>
+            <IntlProvider locale="en" messages={messages}>
+                <TranslationsView
+                    data={{ article, sourceContent: content, translations: [first], stale: false, requestActive: active }}
+                    actions={{ create: vi.fn(), translate }} />
+            </IntlProvider>
         );
         const { rerender } = render(view(article.currentRevision.content));
         await user.click(screen.getByRole("button", { name: "New translation…" }));

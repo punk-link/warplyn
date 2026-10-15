@@ -40,9 +40,16 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                     setFolderStatus(intl.formatMessage({ id: "settings.backupFolderSelected" }, { folderName: name }));
                     if (!desktop)
                         void listWebBackups().then(setRestoreNames, () => undefined);
-                }, (error) => setFolderStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupFolderFailed") })))}>{intl.formatMessage({ id: "settings.chooseBackupFolder" })}
+                },
+                (error) => setFolderStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupFolderFailed") }))
+                )}>
+                    {intl.formatMessage({ id: "settings.chooseBackupFolder" })}
                 </Button>
-                {desktop && folderName && <Button variant="quiet" onClick={() => void desktop.revealBackupDirectory()}>{intl.formatMessage({ id: "settings.revealBackupFolder" })}</Button>}
+                {desktop && folderName && (
+                    <Button variant="quiet" onClick={() => void desktop.revealBackupDirectory()}>
+                        {intl.formatMessage({ id: "settings.revealBackupFolder" })}
+                    </Button>
+                )}
                 </div>
             </SettingRow>
             <SettingRow
@@ -64,7 +71,12 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                 status={restoreStatus}>
                 {desktop
                     ? (
-                        <Button variant="secondary" disabled={!folderName} onClick={() => void desktop.restoreNativeBackup().catch(() => setRestoreStatus(intl.formatMessage({ id: "settings.restoreBackupFailed" })))}>
+                        <Button
+                            variant="secondary"
+                            disabled={!folderName}
+                            onClick={() => void desktop.restoreNativeBackup().catch(
+                                () => setRestoreStatus(intl.formatMessage({ id: "settings.restoreBackupFailed" }))
+                            )}>
                             {intl.formatMessage({ id: "settings.restoreBackup" })}
                         </Button>
                     )
@@ -86,7 +98,12 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                                     if (!restoreName || !window.confirm(intl.formatMessage({ id: "settings.restoreBackupConfirm" }, { name: restoreName })))
                                         return;
 
-                                    void restoreWebBackup(client, restoreName).then(() => window.location.reload(), (error) => setRestoreStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.restoreBackupFailed") })));
+                                    void restoreWebBackup(client, restoreName).then(
+                                        () => window.location.reload(),
+                                        (error) => setRestoreStatus(
+                                            intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.restoreBackupFailed") })
+                                        )
+                                    );
                                 }}>{intl.formatMessage({ id: "settings.restoreBackup" })}
                             </Button>
                         </div>
@@ -102,7 +119,13 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                     label={intl.formatMessage({ id: "settings.deleteLocalData" })}
                     hint={intl.formatMessage({ id: "settings.deleteLocalDataHint" })}
                     status={deleteStatus}>
-                    <Button variant="danger" onClick={() => void desktop.deleteLocalData().catch(() => setDeleteStatus(intl.formatMessage({ id: "settings.deleteLocalDataFailed" })))}>{intl.formatMessage({ id: "settings.deleteLocalData" })}</Button>
+                    <Button
+                        variant="danger"
+                        onClick={() => void desktop.deleteLocalData().catch(
+                            () => setDeleteStatus(intl.formatMessage({ id: "settings.deleteLocalDataFailed" }))
+                        )}>
+                        {intl.formatMessage({ id: "settings.deleteLocalData" })}
+                    </Button>
                 </SettingRow>
             </SettingsGroup>
         )}

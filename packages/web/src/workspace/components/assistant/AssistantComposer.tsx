@@ -120,7 +120,8 @@ function AssistantEditModeControl({ mode, disabled, setMode }: { mode?: Assistan
                         type="button"
                         role="menuitemradio"
                         aria-checked={mode === option}
-                        className="flex min-h-9 w-full items-center rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none focus-visible:bg-brand-soft"
+                        className={("flex min-h-9 w-full items-center rounded-control px-2 py-1 text-left text-xs text-ink " +
+                            "hover:bg-brand-soft focus:outline-none focus-visible:bg-brand-soft")}
                         onClick={() => {
                             void setMode?.(option);
                             close();
@@ -195,7 +196,11 @@ export function AssistantComposer({ state, picker, actions }: { state: Assistant
                             <IconButton
                                 className="rounded-r-none"
                                 variant="quiet"
-                                title={getShortcutHint(intl.formatMessage({ id: "assistant.send" }), KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST, shortcutOverrides)}
+                                title={getShortcutHint(
+                                    intl.formatMessage({ id: "assistant.send" }),
+                                    KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST,
+                                    shortcutOverrides
+                                )}
                                 label={intl.formatMessage({ id: "assistant.send" })}
                                 disabled={!canSend}
                                 onClick={send}>

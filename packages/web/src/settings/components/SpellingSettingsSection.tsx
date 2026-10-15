@@ -60,11 +60,19 @@ export function SpellingSettingsSection() {
                                                     className="size-4 accent-brand"
                                                     disabled={snapshot?.dictionaries.states[language] === "preparing"}
                                                     checked={spelling.selected.includes(language)}
-                                                    onChange={(event) => spelling.setSelected((current) => event.target.checked ? [...current, language] : current.filter((item) => item !== language))} />
+                                                    onChange={(event) => spelling.setSelected(
+                                                        (current) => event.target.checked
+                                                            ? [...current, language]
+                                                            : current.filter((item) => item !== language)
+                                                    )} />
                                                 <span>{label}</span>
                                             </label>
                                         )}
-                                    <span className="shrink-0 text-xs text-muted" role={spelling.selected.includes(language) ? "status" : undefined}>{snapshot?.dictionaries.states[language] === "preparing" && <ActivityIndicator className="mr-2 inline-block align-middle" />}{intl.formatMessage({ id: stateMessages[snapshot?.dictionaries.states[language] ?? "unverified"] })}</span>
+                                    <span className="shrink-0 text-xs text-muted" role={spelling.selected.includes(language) ? "status" : undefined}>
+                                        {snapshot?.dictionaries.states[language] === "preparing" && (
+                                            <ActivityIndicator className="mr-2 inline-block align-middle" />
+                                        )}{intl.formatMessage({ id: stateMessages[snapshot?.dictionaries.states[language] ?? "unverified"] })}
+                                    </span>
                                     {downloaded && (
                                         <Button
                                             variant="quiet"

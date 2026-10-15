@@ -7,6 +7,7 @@ import { ArchiveIcon, ArticleIcon, CloseIcon, SearchIcon, SettingsIcon, UserIcon
 import { Button, Drawer, Field, IconButton } from "../../ui/primitives.js";
 import { WarplynIcon } from "../../ui/WarplynIcon.js";
 import { UpdateController } from "./UpdateController.js";
+import { enterLibraryResults, moveLibraryFocus } from "./article-library-focus.js";
 
 
 function getLanguageCode(language: string | undefined): string {
@@ -16,30 +17,6 @@ function getLanguageCode(language: string | undefined): string {
 
 
 type LibraryView = "articles" | "search" | "archive";
-
-
-function moveLibraryFocus(event: KeyboardEvent<HTMLElement>, scope: HTMLElement) {
-    if (!(document.activeElement instanceof HTMLButtonElement))
-        return;
-
-    const controls = [...scope.querySelectorAll<HTMLButtonElement>("button:not([role^=menuitem]):not(:disabled)")].filter((button) => !button.closest("[inert], [aria-hidden=true]"));
-    const index = controls.indexOf(document.activeElement);
-    if (index < 0)
-        return;
-
-    event.preventDefault();
-    controls[(index + (event.key === "ArrowDown" ? 1 : controls.length - 1)) % controls.length]?.focus();
-}
-
-
-function enterLibraryResults(event: KeyboardEvent<HTMLElement>, drawer: HTMLElement | null) {
-    const first = drawer?.querySelector<HTMLButtonElement>("[data-library-article]");
-    if (!first)
-        return;
-
-    event.preventDefault();
-    first.focus();
-}
 
 
 function PinnedArticleShortcuts({ articles, selectedArticleId, drawerOpen, onSelect }: {
@@ -248,14 +225,28 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
         <header className={collapsed ? "flex min-h-18 shrink-0 items-center justify-center border-b border-transparent" : "flex min-h-18 shrink-0 items-center justify-between border-b border-border pl-4 pr-2"}>
             {collapsed
                 ? (
-                    <IconButton className="text-base font-semibold text-brand" label={intl.formatMessage({ id: "navigation.expandArticleLibrary" })} onClick={() => {
-                        close();
-                        setCollapsed(false);
-                    }}><WarplynIcon />
+                    <IconButton
+                        className="text-base font-semibold text-brand"
+                        label={intl.formatMessage({ id: "navigation.expandArticleLibrary" })}
+                        onClick={() => {
+                            close();
+                            setCollapsed(false);
+                        }}><WarplynIcon />
                     </IconButton>
                 )
                 : <><span className="flex items-center gap-2 text-base font-semibold text-brand"><WarplynIcon />Warplyn</span>
-                    <div className="flex items-center gap-1">{newArticle}<IconButton label={intl.formatMessage({ id: "navigation.collapseArticleLibrary" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.collapseArticleLibrary" }), KEY_BINDING_COMMAND.TOGGLE_ARTICLE_LIBRARY, shortcutOverrides)} onClick={() => setCollapsed(true)}>‹</IconButton></div>
+                    <div className="flex items-center gap-1">
+                        {newArticle}<IconButton
+                            label={intl.formatMessage({ id: "navigation.collapseArticleLibrary" })}
+                            title={getShortcutHint(
+                                intl.formatMessage({ id: "navigation.collapseArticleLibrary" }),
+                                KEY_BINDING_COMMAND.TOGGLE_ARTICLE_LIBRARY,
+                                shortcutOverrides
+                            )}
+                            onClick={() => setCollapsed(true)}>
+                            ‹
+                        </IconButton>
+                    </div>
                 </>}
         </header>
         {collapsed
@@ -297,14 +288,18 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                     compact
                     className="flex w-full items-center justify-start !py-1.5 text-left"
                     variant="quiet"
-                    onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span>
+                    onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">
+                        {intl.formatMessage({ id: "navigation.styleProfile" })}
+                    </span>
                 </Button>
                 <Button
                     compact
                     className="flex w-full items-center justify-start !py-1.5 text-left"
                     variant="quiet"
                     title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)}
-                    onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span>
+                    onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">
+                        {intl.formatMessage({ id: "navigation.settings" })}
+                    </span>
                 </Button>
                 <div className="flex items-center justify-between px-2 pb-1 pt-2 text-micro font-medium text-muted">
                     <span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span>
@@ -313,9 +308,17 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                 </>}
         </footer>
         {activeView && (
-            <Drawer className="absolute inset-y-0 left-full z-10 flex w-52 max-w-[calc(100vw-2.5rem)] flex-col !border-l-0 !bg-surface-supporting" aria-labelledby={headingId}>
+            <Drawer
+                className="absolute inset-y-0 left-full z-10 flex w-52 max-w-[calc(100vw-2.5rem)] flex-col !border-l-0 !bg-surface-supporting"
+                aria-labelledby={headingId}>
                 <div ref={drawerRef} className="flex min-h-0 flex-1 flex-col">
-                    <header className="flex min-h-18 items-center justify-between border-b border-border pl-4 pr-2"><h2 id={headingId} className="text-sm font-semibold">{heading}</h2><IconButton label={intl.formatMessage({ id: "navigation.closeArticleLibrary" })} onClick={close}><CloseIcon className="size-4" /></IconButton></header>
+                    <header className="flex min-h-18 items-center justify-between border-b border-border pl-4 pr-2">
+                        <h2 id={headingId} className="text-sm font-semibold">
+                            {heading}
+                        </h2><IconButton label={intl.formatMessage({ id: "navigation.closeArticleLibrary" })} onClick={close}>
+                            <CloseIcon className="size-4" />
+                        </IconButton>
+                    </header>
                     <div id={drawerId} className="flex min-h-0 flex-1 flex-col">{searchField}{children(activeView, close)}</div>
                 </div>
             </Drawer>

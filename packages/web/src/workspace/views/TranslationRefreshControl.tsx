@@ -80,7 +80,9 @@ export function TranslationRefreshControl({ translation, linkedTranslations, sta
                         setTarget(undefined);
                 }}>
                 <h2 id="translation-refresh-title" className="text-lg font-semibold">{intl.formatMessage({ id: "views.translationRefreshTitle" })}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "views.translationRefreshDescription" }, { title: target.title, language: translation.metadata.targetLanguage })}</p>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                    {intl.formatMessage({ id: "views.translationRefreshDescription" }, { title: target.title, language: translation.metadata.targetLanguage })}
+                </p>
                 {targets.length > 1 && (
                     <div className="mt-3">
                         <Select
@@ -88,7 +90,20 @@ export function TranslationRefreshControl({ translation, linkedTranslations, sta
                             value={target.id}
                             disabled={applying}
                             onChange={(event) => setTarget(targets.find((article) => article.id === event.target.value))}>
-                            {targets.map((article) => <option key={article.id} value={article.id}>{intl.formatMessage({ id: "views.translationLinkedTarget" }, { title: article.title, articleId: article.id, revisionId: article.sourceRevisionNumber ?? article.sourceRevisionId ?? "" })}</option>)}
+                            {targets.map((article) => (
+                                <option key={article.id} value={article.id}>
+                                    {intl.formatMessage(
+                                        { id: "views.translationLinkedTarget" },
+                                        {
+                                            title: article.title,
+                                            articleId: article.id,
+                                            revisionId: article.sourceRevisionNumber ??
+                                        article.sourceRevisionId ??
+                                        ""
+                                        }
+                                    )}
+                                </option>
+                            ))}
                         </Select>
                     </div>
                 )}
@@ -99,7 +114,9 @@ export function TranslationRefreshControl({ translation, linkedTranslations, sta
                         disabled={applying}
                         onClick={() => setTarget(undefined)}>{intl.formatMessage({ id: "editor.cancel" })}
                     </Button>
-                    <Button disabled={stale || Boolean(target.draft)} state={applying ? "loading" : "default"} onClick={() => void accept()}>{intl.formatMessage({ id: "views.translationRefreshConfirm" })}</Button>
+                    <Button disabled={stale || Boolean(target.draft)} state={applying ? "loading" : "default"} onClick={() => void accept()}>
+                        {intl.formatMessage({ id: "views.translationRefreshConfirm" })}
+                    </Button>
                 </div>
             </Dialog>
         )}

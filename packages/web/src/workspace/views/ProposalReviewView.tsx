@@ -1,49 +1,14 @@
 import { useMemo, useRef, useState } from "react";
-import { findSequenceMatches, type TextProposal } from "@skladno/shared";
+import { type TextProposal } from "@skladno/shared";
 import { Banner, Button, Diff, EmptyState, IconButton, Status } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import { presentProposalReview, type ProposalDecision } from "./proposal-review-presentation.js";
 import { AssistantIcon, ChevronRightIcon, CloseIcon, HighlightChangesIcon, SideBySideIcon, StackedDiffIcon } from "../../ui/icons.js";
 import { TypographyChangeSupport } from "./TypographyChangeSupport.js";
+import { renderHighlightedText } from "./proposal-highlight.js";
 
 
-interface HighlightPart { changed: boolean; text: string }
-
-
-function appendChangedTokens(parts: HighlightPart[], tokens: string[], start: number, end: number): void {
-    for (let index = start; index < end; index += 1)
-        parts.push({ changed: true, text: tokens[index] });
-}
-
-
-function renderHighlightedText(original: string, proposed: string) {
-    const originalTokenPattern = /\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu;
-    const originalTokens = original.match(originalTokenPattern) ?? [];
-    const proposedTokenPattern = /\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu;
-    const proposedTokens = proposed.match(proposedTokenPattern) ?? [];
-    const originalParts: HighlightPart[] = [];
-    const proposedParts: HighlightPart[] = [];
-    let originalIndex = 0;
-    let proposedIndex = 0;
-
-    const deletionFirstMatches = findSequenceMatches(proposedTokens, originalTokens);
-    for (const match of deletionFirstMatches) {
-        appendChangedTokens(originalParts, originalTokens, originalIndex, match.proposalIndex);
-        appendChangedTokens(proposedParts, proposedTokens, proposedIndex, match.baseIndex);
-        originalParts.push({ changed: false, text: originalTokens[match.proposalIndex] });
-        proposedParts.push({ changed: false, text: proposedTokens[match.baseIndex] });
-        originalIndex = match.proposalIndex + 1;
-        proposedIndex = match.baseIndex + 1;
-    }
-
-    appendChangedTokens(originalParts, originalTokens, originalIndex, originalTokens.length);
-    appendChangedTokens(proposedParts, proposedTokens, proposedIndex, proposedTokens.length);
-
-    return { original: originalParts, proposed: proposedParts };
-}
-
-
-function HighlightedText({ parts, tone }: { parts: HighlightPart[]; tone: "added" | "removed" }) {
+function HighlightedText({ parts, tone }: { parts: ReturnType<typeof renderHighlightedText>["original"]; tone: "added" | "removed" }) {
     return parts.map((part, index) => part.changed
         ? <mark className={tone === "added" ? "bg-success text-on-brand" : "bg-danger text-on-brand"} key={index}>{part.text}</mark>
         : part.text);
@@ -88,7 +53,10 @@ function ProposalReviewHeader({ presentation, counts, stale, accepted, displayMo
                     <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.proposalReview" })}</h2>
                     <p className="mt-1 text-xs text-muted">{stale || !presentation.reliable
                         ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length })
-                        : intl.formatMessage({ id: "views.proposalCounts" }, { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected })}
+                        : intl.formatMessage(
+                            { id: "views.proposalCounts" },
+                            { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected }
+                        )}
                     </p>
                 </div>
                 <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
@@ -241,7 +209,11 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                     : presentation.reliable && !stale && (
                         <div className="mt-3 space-y-3">{presentation.changes.map((change, index) => {
                             const decision = decisions[change.id] ?? "pending";
-                            const decisionStyles = { accepted: "border-success bg-success-soft", rejected: "border-danger bg-danger-soft", pending: "border-border bg-surface-raised" };
+                            const decisionStyles = {
+                                accepted: "border-success bg-success-soft",
+                                rejected: "border-danger bg-danger-soft",
+                                pending: "border-border bg-surface-raised"
+                            };
                             const decisionClasses = decisionStyles[decision];
 
                             return (

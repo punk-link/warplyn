@@ -70,7 +70,19 @@ export function AiModelsSection({ data, actions }: { data: AiModelsData; actions
                         headingLevel={3}
                         label={skill.name}
                         hint={skill.description}>
-                        <ModelAndReasoning model={modelProps(preferences.skillOverrides[skill.id] ?? "", skill.name, (model) => void savePreferences({ ...preferences, skillOverrides: { ...preferences.skillOverrides, [skill.id]: model } }), true)} effort={preferences.skillReasoningEfforts?.[skill.id]} onEffortChange={selectedProvider(preferences.skillOverrides[skill.id] ?? "") === AI_PROVIDER.OPENAI ? (reasoningEffort) => void savePreferences({ ...preferences, skillReasoningEfforts: { ...preferences.skillReasoningEfforts, [skill.id]: reasoningEffort } }) : undefined} />
+                        <ModelAndReasoning
+                            model={modelProps(
+                                preferences.skillOverrides[skill.id] ?? "",
+                                skill.name,
+                                (model) => void savePreferences({ ...preferences, skillOverrides: { ...preferences.skillOverrides, [skill.id]: model } }),
+                                true
+                            )}
+                            effort={preferences.skillReasoningEfforts?.[skill.id]}
+                            onEffortChange={selectedProvider(preferences.skillOverrides[skill.id] ?? "") === AI_PROVIDER.OPENAI
+                                ? (reasoningEffort) => void savePreferences(
+                                    { ...preferences, skillReasoningEfforts: { ...preferences.skillReasoningEfforts, [skill.id]: reasoningEffort } }
+                                )
+                                : undefined} />
                     </SettingRow>
                 ))}
                 </div>

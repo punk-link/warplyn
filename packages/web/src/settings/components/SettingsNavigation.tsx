@@ -59,7 +59,10 @@ export function SettingsNavigation({ section, setSection, back, status }: { sect
                     <button
                         key={item.id}
                         aria-current={section === item.id ? "page" : undefined}
-                        className={`min-h-10 w-full rounded-control px-3 text-left text-sm ${section === item.id ? "bg-brand-soft font-semibold text-brand" : "text-muted hover:bg-surface"}`}
+                        className={`min-h-10 w-full rounded-control px-3 text-left text-sm ${section ===
+                            item.id
+                            ? "bg-brand-soft font-semibold text-brand"
+                            : "text-muted hover:bg-surface"}`}
                         onClick={() => setSection(item.id)}>{intl.formatMessage({ id: item.label })}
                     </button>
                 ))}

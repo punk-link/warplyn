@@ -11,11 +11,15 @@ function ArchivedArticleSection({ count, expanded, archiveOnly, toggle, children
             ? <p className="px-2 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "navigation.archived" }, { count })}</p>
             : (
                 <button
-                    className="flex w-full items-center gap-2 px-2 text-micro font-semibold uppercase tracking-overline text-muted focus-visible:outline focus-visible:outline-brand"
+                    className={("flex w-full items-center gap-2 px-2 text-micro font-semibold uppercase tracking-overline text-muted " +
+                        "focus-visible:outline focus-visible:outline-brand")}
                     type="button"
                     aria-expanded={expanded}
                     onClick={toggle}>
-                    <ChevronRightIcon className={`size-3 transition-transform ${expanded ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "navigation.archived" }, { count })}
+                    <ChevronRightIcon className={`size-3 transition-transform ${expanded ? "rotate-90" : ""}`} />{intl.formatMessage(
+                        { id: "navigation.archived" },
+                        { count }
+                    )}
                 </button>
             )}
         <div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`} aria-hidden={!expanded} {...(!expanded ? { inert: true } : {}) as Record<string, boolean>}>

@@ -261,10 +261,16 @@ function AssistantTimelineStatus({ data, actions }: { data: AssistantTimelineDat
             <Banner tone="error" className="border-danger/35 bg-surface-raised text-ink" role="alert">
                 <div>
                     <p>{message}</p>
-                    {hasUnavailableAiConnection && openSettings ? <Button className="mt-2" variant="secondary" onClick={openSettings}>{intl.formatMessage({ id: "assistant.openSettings" })}</Button> : null}
+                    {hasUnavailableAiConnection && openSettings ? (
+                        <Button className="mt-2" variant="secondary" onClick={openSettings}>
+                            {intl.formatMessage({ id: "assistant.openSettings" })}
+                        </Button>
+                    ) : null}
                     {errorDetails && (
                         <details className="mt-1 border-t border-border pt-1 text-xs leading-5 text-muted">
-                            <summary className="flex min-h-9 cursor-pointer items-center hover:text-ink">{intl.formatMessage({ id: "assistant.errorDetails" })}</summary>
+                            <summary className="flex min-h-9 cursor-pointer items-center hover:text-ink">
+                                {intl.formatMessage({ id: "assistant.errorDetails" })}
+                            </summary>
                             <p className="mb-1 whitespace-pre-wrap break-words font-mono text-[11px] leading-4">{errorDetails}</p>
                         </details>
                     )}
