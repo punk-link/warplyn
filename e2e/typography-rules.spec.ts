@@ -1,17 +1,29 @@
 import { expect, test } from "@playwright/test";
 
-test("typography rules rebuild automatically and corrections retain provenance after reload", async ({ page }) => {
+test("typography rules rebuild automatically and corrections retain provenance after reload", async ({ page, request }) => {
+    await request.put("http://127.0.0.1:8787/api/style-corpus/typography", { data: { rules: [] } });
+    await request.post("http://127.0.0.1:8787/api/articles", { data: { title: "Existing fixture", content: "Existing fixture." } });
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");
+    const created = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");
     const create = page.getByRole("button", { name: "Create", exact: true });
     if (await create.isVisible())
         await create.click();
     else
         await page.getByRole("button", { name: "New article", exact: true }).click();
 
+    const article = await (await created).json();
     const editor = page.getByRole("textbox", { name: "Article draft" });
-    await editor.fill("Wait...");
+    await expect(editor).toBeEmpty();
+    const checkpointed = page.waitForResponse((response) => response.url().endsWith(`/articles/${article.id}/draft`) &&
+        response.request().method() === "PUT");
+    await editor.pressSequentially("Wait...");
+    await expect(editor).toContainText("Wait...");
+    await checkpointed;
+    const saved = page.waitForResponse((response) => response.url().endsWith(`/articles/${article.id}/revisions`) &&
+        response.request().method() === "POST");
     await page.getByRole("button", { name: "Save revision", exact: true }).click();
+    expect((await (await saved).json()).content).toBe("Wait...");
     await expect(page.getByRole("status", { name: "Saved", exact: true })).toBeVisible();
     const olderProposal = page.waitForResponse((response) => response.url().includes("/assistant/requests") && response.request().method() === "POST");
     await page.getByRole("button", { name: "Quick actions", exact: true }).click();
