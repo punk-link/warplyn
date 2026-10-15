@@ -1,8 +1,11 @@
+import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE } from "../text/unicode-characters.js";
+
+
 export type TypographyDefinition =
     | { kind: "quotes"; outer: "curly" | "guillemets" | "straight"; nested: "curly" | "guillemets" | "straight" }
     | { kind: "dash"; mark: "—" | "–"; spacing: "space" | "none" }
     | { kind: "ellipsis"; form: "…" | "..." }
-    | { kind: "nonbreaking-space"; left: string; right: string; space: "\u00a0" | "\u202f" }
+    | { kind: "nonbreaking-space"; left: string; right: string; space: typeof NO_BREAK_SPACE | typeof NARROW_NO_BREAK_SPACE }
     | { kind: "horizontal-space" }
     | { kind: "literal"; source: string; replacement: string }
     | { kind: "contextual"; instruction: string };

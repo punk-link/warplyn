@@ -231,8 +231,8 @@ function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl
         <p className="flex min-w-0 flex-wrap items-center gap-1 text-xs text-muted">
             <StatusIcon className="size-3" tone={getStatusTone(message.status)} />
             <span>{statusLabel}</span>
-            {skillUsedLabel && <span className="before:mr-1 before:content-['\00b7']" title={skillTitle}>{skillUsedLabel}</span>}
-            <span aria-hidden="true" className="before:content-['\00b7']" />
+            {skillUsedLabel && <span className="before:mr-1 before:content-['·']" title={skillTitle}>{skillUsedLabel}</span>}
+            <span aria-hidden="true" className="before:content-['·']" />
             <time>{dateTime}</time>
         </p>
         {actions}

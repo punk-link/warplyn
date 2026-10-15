@@ -1,4 +1,5 @@
 import { ApplicationClientError, type ApplicationErrorCode } from "../../cross-cutting/errors.js";
+import { BYTE_ORDER_MARK, NULL_CHARACTER } from "../../text/unicode-characters.js";
 
 
 export const articleMarkdownByteLimit = 10 * 1024 * 1024;
@@ -101,10 +102,10 @@ export function isArticleFileBytesArray(value: unknown): value is Uint8Array<Arr
 
 
 export function isArticleFileBytes(value: unknown): value is ArticleFileBytes {
-    const punctuationPattern = /[\\/\0]/;
+    const pathSeparatorPattern = /[\\/]/;
     return value !== null && typeof value === "object" && Object.keys(value).length === 2
         && "fileName" in value && typeof value.fileName === "string" && value.fileName.length <= 1024
-        && !punctuationPattern.test(value.fileName)
+        && !pathSeparatorPattern.test(value.fileName) && !value.fileName.includes(NULL_CHARACTER)
         && "bytes" in value && isArticleFileBytesArray(value.bytes);
 }
 
@@ -157,7 +158,7 @@ export function validateArticleMarkdownName(fileName: string): void {
 
 export function encodeArticleMarkdown(content: string): Uint8Array<ArrayBuffer> {
     validateArticleMarkdownSize(content.length);
-    if (content.includes("\0"))
+    if (content.includes(NULL_CHARACTER))
         throw new ApplicationClientError("article_file_invalid", undefined, 400);
 
     const bytes = new TextEncoder().encode(content);
@@ -175,12 +176,12 @@ export function decodeArticleMarkdown(bytes: Uint8Array): string {
         throw new ApplicationClientError("article_file_invalid", undefined, 400);
     }
 
-    if (content.includes("\0"))
+    if (content.includes(NULL_CHARACTER))
         throw new ApplicationClientError("article_file_invalid", undefined, 400);
 
-    const ufeffPattern = /^\uFEFF/;
     const lineBreakPattern = /\r\n?/g;
-    return content.replace(ufeffPattern, "").replace(lineBreakPattern, "\n");
+    const contentWithoutBom = content.startsWith(BYTE_ORDER_MARK) ? content.slice(BYTE_ORDER_MARK.length) : content;
+    return contentWithoutBom.replace(lineBreakPattern, "\n");
 }
 
 

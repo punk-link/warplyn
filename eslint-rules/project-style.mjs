@@ -1,5 +1,6 @@
 import multilineManyJsxAttributes from "./multiline-many-jsx-attributes.mjs";
 import multilineLongStrings from "./multiline-long-strings.mjs";
+import namedUnicodeCharacters from "./named-unicode-characters.mjs";
 import sqlQueryLayout from "./sql-query-layout.mjs";
 
 
@@ -665,6 +666,7 @@ export default {
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
         "multiline-long-strings": multilineLongStrings,
         "multiline-many-jsx-attributes": multilineManyJsxAttributes,
+        "named-unicode-characters": namedUnicodeCharacters,
         "sql-query-layout": sqlQueryLayout,
         "switch-case-body-newline": switchCaseBodyNewline,
         "two-blank-lines-between-declarations": twoBlankLinesBetweenDeclarations,

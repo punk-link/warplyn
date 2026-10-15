@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { hydrateAssistantMessageHistory, summarizeArticle } from "@skladno/shared";
+import { hydrateAssistantMessageHistory, NULL_CHARACTER, summarizeArticle } from "@skladno/shared";
 import { withRepository } from "./repositories.test-utils.js";
 
 
 test("Article summaries preserve library metadata and Draft recovery without bodies", () => withRepository(({ articles }) => {
-    const source = articles.createArticle({ title: "Source", content: "Original 😀\0text", language: "en" });
+    const source = articles.createArticle({ title: "Source", content: `Original 😀${NULL_CHARACTER}text`, language: "en" });
     const target = articles.createArticle({ title: "Translation", content: "Translated", sourceArticleId: source.id, sourceRevisionId: source.currentRevisionId });
     articles.saveDraft(target.id, { baseRevisionId: target.currentRevisionId, content: "Recover this Draft" });
     articles.setArticlePinned(source.id, true);

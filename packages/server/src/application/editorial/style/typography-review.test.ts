@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { StyleProfile, TypographyRule } from "@skladno/shared";
+import { NO_BREAK_SPACE, type StyleProfile, type TypographyRule } from "@skladno/shared";
 import { reviewTypography } from "./typography-review.js";
 
 
@@ -14,13 +14,13 @@ const rules: TypographyRule[] = [
     { id: "ellipsis", definition: { kind: "ellipsis", form: "…" } },
     { id: "dash", definition: { kind: "dash", mark: "—", spacing: "space" } },
     { id: "space", definition: { kind: "horizontal-space" } },
-    { id: "nbsp", definition: { kind: "nonbreaking-space", left: "10", right: "kg", space: "\u00a0" } },
+    { id: "nbsp", definition: { kind: "nonbreaking-space", left: "10", right: "kg", space: NO_BREAK_SPACE } },
 ];
 
 test("checks prose punctuation with stable rule provenance and idempotent output", () => {
     const source = '😀 "Hello..."  words – words, 10 kg. 3.14 and 1–2 stay.\r\n';
     const result = reviewTypography(source, source, profile(rules), undefined, true);
-    assert.equal(result.text, "😀 “Hello…” words — words, 10\u00a0kg. 3.14 and 1–2 stay.\r\n");
+    assert.equal(result.text, `😀 “Hello…” words — words, 10${NO_BREAK_SPACE}kg. 3.14 and 1–2 stay.\r\n`);
     assert.ok(result.styleReview.typography?.local);
     assert.equal(result.styleReview.typography?.rules.length, rules.length);
     assert.equal(result.styleReview.typography?.changes[0]?.ruleIds.length, 5);

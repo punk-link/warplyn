@@ -1,3 +1,4 @@
+import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE } from "../text/unicode-characters.js";
 import type { TypographyDefinition, TypographyIssue, TypographyRule } from "./typography.js";
 
 
@@ -39,7 +40,7 @@ function isDefinition(value: unknown): value is TypographyDefinition {
         case "ellipsis":
             return value.form === "…" || value.form === "...";
         case "nonbreaking-space":
-            return isText(value.left, 40) && isText(value.right, 40) && !whitespacePattern.test(value.left + value.right) && (value.space === "\u00a0" || value.space === "\u202f");
+            return isText(value.left, 40) && isText(value.right, 40) && !whitespacePattern.test(value.left + value.right) && (value.space === NO_BREAK_SPACE || value.space === NARROW_NO_BREAK_SPACE);
         case "horizontal-space":
             return true;
         case "literal":
@@ -85,7 +86,7 @@ function literalConflicts(literal: Extract<TypographyDefinition, { kind: "litera
     const ellipsisMarks = /[.…]/u;
     const repeatedSpaces = / {2,}/u;
     const spacesOnly = /^ +$/u;
-    const horizontalSpaces = /[ \u00a0\u202f]/u;
+    const horizontalSpaces = new RegExp(`[ ${NO_BREAK_SPACE}${NARROW_NO_BREAK_SPACE}]`, "u");
     switch (other.kind) {
         case "quotes":
             return quoteMarks.test(text);

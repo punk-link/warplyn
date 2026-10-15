@@ -1,4 +1,4 @@
-import type { TypographyDefinition } from "@skladno/shared";
+import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE, type TypographyDefinition } from "@skladno/shared";
 import { typographyQuoteMatches } from "./typography-quote-matches.js";
 
 
@@ -24,7 +24,7 @@ function escapePattern(text: string): string {
 
 
 function nonbreakingMatches(text: string, definition: Extract<TypographyDefinition, { kind: "nonbreaking-space" }>): TypographyPatch[] {
-    const pattern = new RegExp(`(?<![\\p{L}\\p{N}_])${escapePattern(definition.left)}[ \\u00a0\\u202f]+${escapePattern(definition.right)}(?![\\p{L}\\p{N}_])`, "gu");
+    const pattern = new RegExp(`(?<![\\p{L}\\p{N}_])${escapePattern(definition.left)}[ ${NO_BREAK_SPACE}${NARROW_NO_BREAK_SPACE}]+${escapePattern(definition.right)}(?![\\p{L}\\p{N}_])`, "gu");
     return patternMatches(text, pattern, () => `${definition.left}${definition.space}${definition.right}`);
 }
 
@@ -44,7 +44,7 @@ function dashMatches(text: string, definition: Extract<TypographyDefinition, { k
 
 
 function hasNumericNeighbour(text: string, start: number, end: number): boolean {
-    const horizontalSpace = /[ \t\u00a0\u202f]/u;
+    const horizontalSpace = new RegExp(`[ \\t${NO_BREAK_SPACE}${NARROW_NO_BREAK_SPACE}]`, "u");
     const numericCharacter = /\p{N}/u;
     const numericOperators = /[-–—−]/u;
     const immediateBefore = Array.from(text.slice(Math.max(0, start - 2), start)).at(-1) ?? "";

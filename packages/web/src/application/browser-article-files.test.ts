@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ApplicationClientError, type ArticleFilesClient } from "@skladno/shared";
+import { ApplicationClientError, BYTE_ORDER_MARK, type ArticleFilesClient } from "@skladno/shared";
 import { createBrowserArticleFilesClient } from "./browser-article-files.js";
 import { createRendererArticleFilesClient } from "./article-files-client.js";
 
@@ -25,7 +25,7 @@ describe("browser Article files", () => {
     it("imports Unicode Markdown, handles cancellation and reselection, and maps failures", async () => {
         vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
         const client = createBrowserArticleFilesClient();
-        const content = "\uFEFF# café 🙂\r\n\r\n`code`";
+        const content = `${BYTE_ORDER_MARK}# café 🙂\r\n\r\n\`code\``;
         for (let index = 0; index < 2; index++) {
             const result = client.loadFile();
             chooseFile("café.md", new TextEncoder().encode(content));

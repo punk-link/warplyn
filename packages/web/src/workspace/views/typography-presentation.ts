@@ -1,5 +1,5 @@
 import type { IntlShape } from "react-intl";
-import { typographyRuleLabel, type TypographyDefinition, type TypographyRule } from "@skladno/shared";
+import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE, typographyRuleLabel, type TypographyDefinition, type TypographyRule } from "@skladno/shared";
 import type { MessageId } from "../../i18n/messages.js";
 
 export const typographyKindMessages: Record<TypographyDefinition["kind"], MessageId> = {
@@ -21,8 +21,8 @@ export function formatTypographyText(text: string, intl: IntlShape): string {
         return intl.formatMessage({ id: "typography.deleted" });
 
     return text.replaceAll(" ", `[${intl.formatMessage({ id: "typography.ordinarySpace" })}]`)
-        .replaceAll("\u00a0", `[${intl.formatMessage({ id: "typography.nbsp" })}]`)
-        .replaceAll("\u202f", `[${intl.formatMessage({ id: "typography.narrowNbsp" })}]`);
+        .replaceAll(NO_BREAK_SPACE, `[${intl.formatMessage({ id: "typography.nbsp" })}]`)
+        .replaceAll(NARROW_NO_BREAK_SPACE, `[${intl.formatMessage({ id: "typography.narrowNbsp" })}]`);
 }
 
 
@@ -35,7 +35,7 @@ export function defaultTypographyDefinition(kind: string): TypographyDefinition 
         case "ellipsis":
             return { kind, form: "…" };
         case "nonbreaking-space":
-            return { kind, left: "", right: "", space: "\u00a0" };
+            return { kind, left: "", right: "", space: NO_BREAK_SPACE };
         case "horizontal-space":
             return { kind };
         case "literal":

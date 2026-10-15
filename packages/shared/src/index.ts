@@ -1,5 +1,6 @@
 export * from "./style/typography.js";
 export * from "./style/typography-validation.js";
+export * from "./text/unicode-characters.js";
 
 export {
     healthPath,

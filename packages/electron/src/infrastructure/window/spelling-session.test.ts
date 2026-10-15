@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { isDesktopSpellingRequest, isDesktopSpellingResult, isPersonalSpellingWord } from "@skladno/shared";
+import { isDesktopSpellingRequest, isDesktopSpellingResult, isPersonalSpellingWord, NULL_CHARACTER } from "@skladno/shared";
 import { readRuntimeSettings, updateRuntimeSettings } from "../runtime/runtime-settings.js";
 import { SpellingSession } from "./spelling-session.js";
 
@@ -137,8 +137,8 @@ test("personal words preserve punctuation and case and report partial native fai
     const native = new TestSpellingSession();
     const spelling = new SpellingSession(native, join(root, "runtime.json"), "win32", ["en-US"]);
     t.after(() => spelling.dispose());
-    const failed = await spelling.addWords([" gRPC ", "PostgreSQL", "gRPC", "café", "foo::bar", "failedterm", "bad\u0000word", "x".repeat(129)]);
-    assert.deepEqual(failed, ["failedterm", "bad\u0000word", "x".repeat(129)]);
+    const failed = await spelling.addWords([" gRPC ", "PostgreSQL", "gRPC", "café", "foo::bar", "failedterm", `bad${NULL_CHARACTER}word`, "x".repeat(129)]);
+    assert.deepEqual(failed, ["failedterm", `bad${NULL_CHARACTER}word`, "x".repeat(129)]);
     const snapshot = await spelling.snapshot(failed);
     assert.deepEqual(snapshot.personal.words, ["PostgreSQL", "café", "foo::bar", "gRPC"]);
     assert.equal(snapshot.personal.affectsSystem, true);
