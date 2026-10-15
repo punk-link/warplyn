@@ -75,8 +75,8 @@ export function ScopedTypographyPanel({ data, actions }: {
     const current = resolveTypography(data.language, data.corpus?.typographyConfiguration, article);
     const previous = data.findings?.typography?.capture;
 
-    return <div className="mb-7 space-y-3">
-        <label className="block text-xs text-muted">
+    return <div className="mb-7 space-y-3 border-l border-border-strong p-4">
+        <label className="flex flex-col gap-2 text-xs font-semibold">
             {intl.formatMessage({ id: "typography.languageScope" })}
             <Select
                 value={language}
@@ -90,7 +90,7 @@ export function ScopedTypographyPanel({ data, actions }: {
         <p id={languageHelpId} className="text-xs text-muted">{intl.formatMessage({ id: "typography.languageHint" })}</p>
         {!articleLanguage && <p role="status">{intl.formatMessage({ id: "typography.missingLanguage" })}</p>}
         {articleLanguage && <p className="text-xs text-muted">{intl.formatMessage({ id: "typography.effectiveLanguage" }, { language: articleLanguage })}</p>}
-        <label className="block text-xs text-muted">
+        <label className="flex flex-col gap-2 text-xs font-semibold">
             {intl.formatMessage({ id: "typography.scope" })}
             <Select value={scope} disabled={saving} onChange={(event) => activate(event.target.value, language)}>
                 <option value="language">{intl.formatMessage({ id: "typography.languagePreferences" })}</option>

@@ -17,7 +17,7 @@ export function TypographyQuoteFields({ definition, change }: {
             const pair = typographyQuotePair(form);
             const update = (next: TypographyQuoteForm) => change({ ...definition, [level]: next });
             return <div key={level} className="space-y-2">
-                <label className="text-xs text-muted">
+                <label className="flex flex-col gap-2 text-xs font-semibold">
                     {intl.formatMessage({ id: level === "outer" ? "typography.outer" : "typography.nested" })}
                     <Select value={typeof form === "string" ? form : "custom"} onChange={(event) => {
                         const selected = quoteForms.find((item) => item === event.target.value);
@@ -32,15 +32,15 @@ export function TypographyQuoteFields({ definition, change }: {
                     </Select>
                 </label>
                 {typeof form !== "string" && <>
-                    <label className="block text-xs text-muted">
+                    <label className="flex flex-col gap-2 text-xs font-semibold">
                         {intl.formatMessage({ id: "typography.openingMark" })}
                         <Field value={pair.open} maxLength={1} onChange={(event) => update({ ...pair, open: event.target.value })} />
                     </label>
-                    <label className="block text-xs text-muted">
+                    <label className="flex flex-col gap-2 text-xs font-semibold">
                         {intl.formatMessage({ id: "typography.closingMark" })}
                         <Field value={pair.close} maxLength={1} onChange={(event) => update({ ...pair, close: event.target.value })} />
                     </label>
-                    <label className="block text-xs text-muted">
+                    <label className="flex flex-col gap-2 text-xs font-semibold">
                         {intl.formatMessage({ id: "typography.innerSpace" })}
                         <Select value={pair.space ?? ""} onChange={(event) => {
                             const space = event.target.value;

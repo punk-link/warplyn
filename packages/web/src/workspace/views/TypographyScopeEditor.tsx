@@ -64,19 +64,23 @@ export function TypographyScopeEditor({ data, actions }: {
                 language: data.language, articleId: data.articleId, preferences: { preset, rules: [], disabled: [] },
             }))} />
         <p className="my-2 text-xs text-muted">{intl.formatMessage({ id: "typography.inheritanceHint" })}</p>
-        {Boolean(data.legacy?.length) && (
-            <div className="my-3 space-y-2">
-                <p className="text-xs text-muted">{intl.formatMessage({ id: "typography.legacyHint" })}</p>
-                <Button disabled={data.busy} onClick={() => void perform(() => save(data.legacy ?? []))}>
-                    {intl.formatMessage({ id: "typography.copyLegacy" })}
+        <div className="my-3">
+            {Boolean(data.legacy?.length) && (
+                <p className="mb-2 text-xs text-muted">{intl.formatMessage({ id: "typography.legacyHint" })}</p>
+            )}
+            <div className="flex flex-wrap items-center gap-2">
+                {Boolean(data.legacy?.length) && (
+                    <Button variant="quiet" disabled={data.busy} onClick={() => void perform(() => save(data.legacy ?? []))}>
+                        {intl.formatMessage({ id: "typography.copyLegacy" })}
+                    </Button>
+                )}
+                <Button variant="quiet" disabled={data.busy} onClick={() => void perform(() => actions.save({
+                    language: data.language, articleId: data.articleId,
+                    preferences: { ...(!data.articleId && preferences.preset ? { preset: preferences.preset } : {}), rules: [], disabled: [] },
+                }))}>{intl.formatMessage({ id: "typography.resetInheritance" })}
                 </Button>
             </div>
-        )}
-        <Button variant="quiet" disabled={data.busy} onClick={() => void perform(() => actions.save({
-            language: data.language, articleId: data.articleId,
-            preferences: { ...(!data.articleId && preferences.preset ? { preset: preferences.preset } : {}), rules: [], disabled: [] },
-        }))}>{intl.formatMessage({ id: "typography.resetInheritance" })}
-        </Button>
+        </div>
         {error && <p role="alert" className="text-sm text-error">{intl.formatMessage({ id: "typography.saveFailed" })}</p>}
         {!capture.rules.some((rule) => rule.definition.kind !== "contextual") &&
             <p className="my-2 text-xs text-muted">{intl.formatMessage({ id: "typography.noConvention" })}</p>}

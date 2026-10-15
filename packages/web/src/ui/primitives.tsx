@@ -93,18 +93,18 @@ export function IconButton({ label, children, className, variant = "default", ro
 
 
 export const Field = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { state?: ControlState }>(function Field({ className, state = "default", ...props }, ref) {
-    return <input ref={ref} {...props} className={joinClassNames("min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm leading-5 text-ink placeholder:text-ink/45", controlStateClasses[state], className)} />;
+    return <input ref={ref} {...props} className={joinClassNames("min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm font-normal leading-5 text-ink placeholder:text-ink/45", controlStateClasses[state], className)} />;
 });
 
 
 export function TextareaField({ className, state = "default", ...props }: TextareaHTMLAttributes<HTMLTextAreaElement> & { state?: ControlState }) {
-    return <textarea {...props} className={joinClassNames("min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm leading-5 text-ink placeholder:text-ink/45", controlStateClasses[state], className)} />;
+    return <textarea {...props} className={joinClassNames("min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm font-normal leading-5 text-ink placeholder:text-ink/45", controlStateClasses[state], className)} />;
 }
 
 
 export function Select({ className, disabled, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
     return <span className={joinClassNames("relative block w-full", className)}>
-        <select {...props} disabled={disabled} className={joinClassNames(("min-h-10 w-full appearance-none rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink " +
+        <select {...props} disabled={disabled} className={joinClassNames(("min-h-10 w-full appearance-none rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm font-normal leading-5 text-ink " +
             "transition-colors hover:border-brand/45 hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-55 " +
             "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
             "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong"), className)} />
