@@ -4,7 +4,6 @@ import type { ArticleRevisionsState } from "../state/article-revisions-state.js"
 import type { ArticleWorkspaceState } from "../state/article-workspace-state.js";
 import type { EditorialProposalState } from "../state/editorial-proposal-state.js";
 import type { PublishingState } from "../state/publishing-state.js";
-import type { StyleCorpusState } from "../state/style-corpus-state.js";
 import type { WorkspaceLayoutState } from "../state/useWorkspaceLayout.js";
 import { ArticleHeader } from "./ArticleHeader.js";
 import { ArticleStatusBar } from "./ArticleStatusBar.js";
@@ -27,7 +26,6 @@ interface ArticleWorkspaceViewState {
     layout: WorkspaceLayoutState;
     editorial: EditorialProposalState;
     revisions: ArticleRevisionsState;
-    corpus: StyleCorpusState;
     publishing: PublishingState;
     articleFiles?: ArticleFilesState;
     generalSettings: GeneralSettings;
@@ -55,7 +53,6 @@ function createWorkspaceBadges(editorial: EditorialProposalState, intl: IntlShap
 
     addProposalBadge(badges, editorial, staleLabel, reviewLabel);
     addFactCheckBadge(badges, editorial, intl, staleLabel);
-    addStyleBadge(badges, editorial, intl, staleLabel);
     addTranslationBadge(badges, editorial, intl, staleLabel);
 
     return badges;
@@ -79,17 +76,6 @@ function addFactCheckBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabBad
 }
 
 
-function addStyleBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabBadgeDescriptor>>, editorial: EditorialProposalState, intl: IntlShape, staleLabel: string) {
-    if (!editorial.styleReview)
-        return;
-
-    const stale = editorial.styleReviewStale;
-    const countLabel = intl.formatMessage({ id: "workspace.badges.findings" }, { count: editorial.styleReview.findings.length });
-    const accessibleLabel = stale ? staleLabel : countLabel;
-    badges["style-profile"] = { label: stale ? staleLabel : countLabel, accessibleLabel, tone: stale ? "warning" : "default" };
-}
-
-
 function addTranslationBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabBadgeDescriptor>>, editorial: EditorialProposalState, intl: IntlShape, staleLabel: string) {
     if (!editorial.translation)
         return;
@@ -100,7 +86,7 @@ function addTranslationBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabB
 
 
 export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceViewState; actions: ArticleWorkspaceActions }) {
-    const { workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, checkingClaimCount } = state;
+    const { workspace, layout, editorial, revisions, publishing, articleFiles, generalSettings, checkingClaimCount } = state;
     const { createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection } = actions;
     const intl = useIntl();
     const { notifyError } = useNotifications();
@@ -156,10 +142,13 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
             badges={badges}
             shortcutOverrides={shortcutOverrides} />
         <WorkspaceViewRouter
-            content={{ view: layout.view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, requestActive: state.requestActive, translationGeneration: state.translationGeneration, publishProfile: publishing.profile, publishProfileLabel }}
+            content={{
+                view: layout.view, article, workspace, editorial, revisions, generalSettings, checkingClaimCount,
+                requestActive: state.requestActive, translationGeneration: state.translationGeneration,
+                publishProfile: publishing.profile, publishProfileLabel,
+            }}
             actions={{ runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection, articleFiles }}
             navigation={{
-                openProposal: () => layout.setView("proposal"),
                 proposalWarningsDismissed: layout.proposalWarningsDismissed, dismissProposalWarnings: () => layout.setProposalWarningsDismissed(true), openWrite: () => layout.setView("write"), openAssistant: () => {
                     layout.setAssistantCollapsed(false);
                     layout.setView("write");

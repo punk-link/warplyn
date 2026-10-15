@@ -1,10 +1,10 @@
 import { useIntl } from "react-intl";
 import { Button, TextareaField } from "../../ui/primitives.js";
 import type { MessageId } from "../../i18n/messages.js";
-import { StyleProfileDisclosure } from "./StyleProfileDisclosure.js";
 
 
 interface StyleProfileGuidanceData {
+    hasArticle: boolean;
     pendingAction: string | undefined;
     rules: string;
     savedRules: string;
@@ -34,7 +34,9 @@ export function StyleProfileGuidance({ data, actions }: { data: StyleProfileGuid
         status = "styleProfile.rulesApplied";
 
     return (
-        <StyleProfileDisclosure label={intl.formatMessage({ id: "styleProfile.manualRules" })} summary={intl.formatMessage({ id: status })}>
+        <section className="mb-7">
+            <h2 className="mb-3 text-base font-semibold">{intl.formatMessage({ id: "styleProfile.manualRules" })}</h2>
+            <p className="mb-3 text-xs text-muted" role="status">{intl.formatMessage({ id: status })}</p>
             <label className="field-label mb-2" htmlFor="style-profile-global-rules">
                 {intl.formatMessage({ id: "styleProfile.rules" })}
             </label>
@@ -59,31 +61,33 @@ export function StyleProfileGuidance({ data, actions }: { data: StyleProfileGuid
                     {intl.formatMessage({ id: getRuleStatus(rules, savedRules) })}
                 </p>
             </div>
-            <label className="field-label mb-2 mt-5" htmlFor="style-profile-article-rules">
-                {intl.formatMessage({ id: "styleProfile.thisArticle" })}
-            </label>
-            <TextareaField
-                id="style-profile-article-rules"
-                aria-label={intl.formatMessage({ id: "styleProfile.articleRules" })}
-                className="min-h-28"
-                placeholder={intl.formatMessage({ id: "styleProfile.articleRules" })}
-                value={articleRules}
-                onChange={(event) => setArticleRules(event.target.value)}
-            />
-            <div className="mt-3 flex items-center gap-3">
-                <Button
-                    variant="secondary"
-                    state={pendingAction === "article-rules" ? "loading" : "default"}
-                    disabled={Boolean(pendingAction)}
-                    onClick={onSaveArticleRules}
-                >
-                    {intl.formatMessage({ id: "styleProfile.saveRules" })}
-                </Button>
-                <p className="text-xs text-muted" role="status">
-                    {intl.formatMessage({ id: getRuleStatus(articleRules, savedArticleRules) })}
-                </p>
-            </div>
-        </StyleProfileDisclosure>
+            {data.hasArticle && <>
+                <label className="field-label mb-2 mt-5" htmlFor="style-profile-article-rules">
+                    {intl.formatMessage({ id: "styleProfile.thisArticle" })}
+                </label>
+                <TextareaField
+                    id="style-profile-article-rules"
+                    aria-label={intl.formatMessage({ id: "styleProfile.articleRules" })}
+                    className="min-h-28"
+                    placeholder={intl.formatMessage({ id: "styleProfile.articleRules" })}
+                    value={articleRules}
+                    onChange={(event) => setArticleRules(event.target.value)}
+                />
+                <div className="mt-3 flex items-center gap-3">
+                    <Button
+                        variant="secondary"
+                        state={pendingAction === "article-rules" ? "loading" : "default"}
+                        disabled={Boolean(pendingAction)}
+                        onClick={onSaveArticleRules}
+                    >
+                        {intl.formatMessage({ id: "styleProfile.saveRules" })}
+                    </Button>
+                    <p className="text-xs text-muted" role="status">
+                        {intl.formatMessage({ id: getRuleStatus(articleRules, savedArticleRules) })}
+                    </p>
+                </div>
+            </>}
+        </section>
     );
 }
 

@@ -5,13 +5,22 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { messages } from "../../i18n/messages.js";
 import { getMessage } from "../../i18n/test-message.js";
 import { StyleProfileView as RenderStyleProfileView } from "./StyleProfileView.js";
+import { useState } from "react";
+import { StyleProfileNavigation } from "../components/StyleProfileNavigation.js";
+import type { StyleProfileSection } from "../style-profile-sections.js";
 
-type StyleProfileViewTestProps = Parameters<typeof RenderStyleProfileView>[0]["data"] & Parameters<typeof RenderStyleProfileView>[0]["actions"];
+type StyleProfileViewTestProps = Omit<Parameters<typeof RenderStyleProfileView>[0]["data"], "section"> &
+    Parameters<typeof RenderStyleProfileView>[0]["actions"];
 
 
 function StyleProfileView(props: StyleProfileViewTestProps) {
+    const [section, setSection] = useState<StyleProfileSection>("profile");
     const { articleId, revisions, corpus, findings, findingsStale, generalSettings, add, remove, setIncluded, setRules, rebuild, getArticleRules, setArticleRules, snapshotArticleRevision } = props;
-    return <RenderStyleProfileView data={{ articleId, revisions, corpus, findings, findingsStale, generalSettings }} actions={{ add, remove, setIncluded, setRules, rebuild, getArticleRules, setArticleRules, snapshotArticleRevision }} />;
+    return <>
+        <StyleProfileNavigation section={section} setSection={setSection} back={() => undefined} />
+        <RenderStyleProfileView data={{ section, articleId, revisions, corpus, findings, findingsStale, generalSettings }}
+            actions={{ add, remove, setIncluded, setRules, rebuild, getArticleRules, setArticleRules, snapshotArticleRevision }} />
+    </>;
 }
 
 
@@ -142,7 +151,7 @@ describe("StyleProfileView", () => {
         await user.clear(screen.getByLabelText("Global style rules"));
         await user.type(screen.getByLabelText("Global style rules"), "Use plain language.");
         expect(screen.getAllByText("Unsaved changes.").length).toBeGreaterThan(0);
-        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.manualRules") }));
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
         expect(screen.queryByRole("textbox", { name: "Global style rules" })).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.manualRules") }));
         expect(screen.getByRole("textbox", { name: "Global style rules" }).textContent).toBe("Use plain language.");
@@ -226,10 +235,10 @@ describe("StyleProfileView", () => {
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.confirmAddRevision") }));
 
         await waitFor(() => expect(snapshotArticleRevision).toHaveBeenCalledWith("article-1", "revision-2"));
-        expect(screen.queryByRole("button", { name: getMessage("styleProfile.detectedCharacteristics") })).toBeNull();
+        await user.click(screen.getByRole("button", { name: getMessage("styleProfile.detectedCharacteristics") }));
         expect(screen.getByText("1 source")).toBeTruthy();
         await user.click(screen.getByText("Show sources"));
-        expect(screen.getAllByText("Snapshot")).toHaveLength(2);
+        expect(screen.getByText("Snapshot", { selector: "li" })).toBeTruthy();
         expect(screen.getByText("Grounded in uses explicit transitions")).toBeTruthy();
     });
 });

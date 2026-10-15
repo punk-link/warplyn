@@ -7,7 +7,6 @@ export const workspaceViews = [
     "proposal",
     "revisions",
     "fact-check",
-    "style-profile",
     "translations",
 ] as const;
 
@@ -26,7 +25,6 @@ export const workspaceViewDefinitions: readonly WorkspaceViewDefinition[] = [
     { id: "proposal", label: "workspace.tabs.proposal", command: KEY_BINDING_COMMAND.VIEW_PROPOSAL },
     { id: "revisions", label: "workspace.tabs.revisions", command: KEY_BINDING_COMMAND.VIEW_REVISIONS },
     { id: "fact-check", label: "workspace.tabs.factCheck", command: KEY_BINDING_COMMAND.VIEW_FACT_CHECK },
-    { id: "style-profile", label: "workspace.tabs.styleProfile", command: KEY_BINDING_COMMAND.VIEW_STYLE_PROFILE },
     { id: "translations", label: "workspace.tabs.translations", command: KEY_BINDING_COMMAND.VIEW_TRANSLATIONS },
 ];
 

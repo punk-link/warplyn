@@ -9,7 +9,7 @@ import { TypographyScopeEditor } from "./TypographyScopeEditor.js";
 
 
 export function ScopedTypographyPanel({ data, actions }: {
-    data: { corpus?: StyleCorpus; articleId: string; language?: string; findings?: StyleReview; busy?: boolean };
+    data: { corpus?: StyleCorpus; articleId?: string; language?: string; findings?: StyleReview; busy?: boolean };
     actions: {
         save: (input: TypographyConfigurationUpdate) => Promise<void>;
         getArticle: (articleId: string) => Promise<ArticleTypography | undefined>;
@@ -38,6 +38,11 @@ export function ScopedTypographyPanel({ data, actions }: {
         let active = true;
         setLoaded(false);
         setLoadFailed(false);
+        if (!data.articleId) {
+            setLoaded(true);
+            return;
+        }
+
         void getArticle(data.articleId).then((next) => {
             if (active) {
                 setArticle(next);
@@ -75,7 +80,7 @@ export function ScopedTypographyPanel({ data, actions }: {
     const current = resolveTypography(data.language, data.corpus?.typographyConfiguration, article);
     const previous = data.findings?.typography?.capture;
 
-    return <div className="mb-7 space-y-3 border-l border-border-strong p-4">
+    return <div className="mb-7 space-y-3">
         <label className="field-label">
             {intl.formatMessage({ id: "typography.languageScope" })}
             <Select
@@ -94,7 +99,7 @@ export function ScopedTypographyPanel({ data, actions }: {
             {intl.formatMessage({ id: "typography.scope" })}
             <Select value={scope} disabled={saving} onChange={(event) => activate(event.target.value, language)}>
                 <option value="language">{intl.formatMessage({ id: "typography.languagePreferences" })}</option>
-                <option value="article">{intl.formatMessage({ id: "typography.articlePreferences" })}</option>
+                {data.articleId && <option value="article">{intl.formatMessage({ id: "typography.articlePreferences" })}</option>}
             </Select>
         </label>
         {loadFailed && (
@@ -115,7 +120,7 @@ export function ScopedTypographyPanel({ data, actions }: {
                     language: editorLanguage, articleLanguage, articleId: editorScope === "article" ? data.articleId : undefined,
                     configuration: data.corpus?.typographyConfiguration, article, legacy: data.corpus?.typographyRules,
                     busy: data.busy || !loaded || saving,
-                    checkAvailable: current.rules.some((rule) => rule.definition.kind !== "contextual"),
+                    checkAvailable: Boolean(data.articleId) && current.rules.some((rule) => rule.definition.kind !== "contextual"),
                 }} actions={{ save, check: actions.check }} />
             </div>;
         })}

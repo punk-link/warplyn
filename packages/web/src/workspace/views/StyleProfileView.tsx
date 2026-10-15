@@ -9,13 +9,15 @@ import { StyleProfileGuidance } from "./StyleProfileGuidance.js";
 import { StyleProfileReview } from "./StyleProfileReview.js";
 import { StyleProfileSources } from "./StyleProfileSources.js";
 import { StyleProfileTypography } from "./StyleProfileTypography.js";
+import type { StyleProfileSection } from "../style-profile-sections.js";
 
 
 interface StyleProfileViewData {
+    section: StyleProfileSection;
     corpus: StyleCorpus | undefined;
     findings: StyleReview | undefined;
     findingsStale: boolean;
-    articleId: string;
+    articleId?: string;
     language?: string;
     revisions?: readonly (ArticleRevisionSummary | import("@skladno/shared").ArticleRevision)[];
     generalSettings?: GeneralSettings;
@@ -101,6 +103,9 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
     };
 
     useEffect(() => {
+        if (!articleId)
+            return;
+
         void getArticleRules(articleId).then((nextRules) => {
             setArticleRulesDraft(nextRules);
             setSavedArticleRules(nextRules);
@@ -131,7 +136,7 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         run(`remove:${id}`, () => remove(id));
     };
     const confirmSnapshot = () => {
-        if (!snapshotRevisionId)
+        if (!snapshotRevisionId || !articleId)
             return;
 
         const revisionId = snapshotRevisionId;
@@ -148,10 +153,10 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
     };
 
     return (
-        <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-4xl flex-col">
+        <div className="mx-auto w-full min-w-0 max-w-3xl">
             <header className="mb-6 shrink-0 flex flex-wrap items-start justify-between gap-3">
                 <div>
-                    <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.styleProfile" })}</h2>
+                    <h1 className="text-2xl font-semibold">{intl.formatMessage({ id: "views.styleProfile" })}</h1>
                     <p className="mt-1 text-xs text-muted">
                         {summary} · {intl.formatMessage({ id: "styleProfile.activeSources" }, { count: activeCount })}
                         {corpus?.status === "outdated" ? ` · ${intl.formatMessage({ id: "styleProfile.outdated" })}` : ""}
@@ -178,16 +183,12 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
                     {intl.formatMessage({ id: corpus.profile.corpusItemCount ? "styleProfile.lowConfidence" : "typography.rulesOnly" })}
                 </Banner>
             )}
-            <div
-                className={
-                    "min-h-0 min-w-0 flex-1 overflow-y-auto pl-1 pr-5 [scrollbar-color:var(--color-border-strong)_transparent] " +
-                    "[scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-                    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong"
-                }
-            >
-                <div className="w-full">
+            <div className="min-w-0">
+                <div hidden={data.section !== "profile"}>
                     <StyleProfileInsights corpus={corpus} generalSettings={generalSettings} />
                     <StyleProfileReview findings={findings} stale={findingsStale} />
+                </div>
+                <div hidden={data.section !== "typography"}>
                     <StyleProfileTypography
                         data={{ corpus, articleId, language: data.language, findings, busy: Boolean(pendingAction) || data.typographyStatus?.busy }}
                         actions={{ typography: actions.typography && { ...actions.typography, save: saveTypography }, scoped: actions.scopedTypography }} />
@@ -202,8 +203,10 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
                         </Button>
                     )}
                     {findings?.typography && <TypographyReviewStatus findings={findings} currentVersion={corpus?.profile?.version} />}
+                </div>
+                <div hidden={data.section !== "guidance"}>
                     <StyleProfileGuidance
-                        data={{ pendingAction, rules, savedRules, articleRules, savedArticleRules }}
+                        data={{ pendingAction, rules, savedRules, articleRules, savedArticleRules, hasArticle: Boolean(articleId) }}
                         actions={{
                             setRules: setRulesDraft,
                             setArticleRules: setArticleRulesDraft,
@@ -216,12 +219,14 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
                             onSaveArticleRules: () =>
                                 run(
                                     "article-rules",
-                                    () => setArticleRules(articleId, articleRules),
+                                    () => articleId ? setArticleRules(articleId, articleRules) : Promise.resolve(),
                                     () => setSavedArticleRules(articleRules),
                                 ),
                             getRuleStatus,
                         }}
                     />
+                </div>
+                <div hidden={data.section !== "sources"}>
                     <StyleProfileSources
                         data={{
                             corpus,

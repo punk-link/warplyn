@@ -16,7 +16,7 @@ While revising a short story, select a passage and ask: “Improve the flow whil
 
 *Example request in the Composer. Connect a provider before sending it.*
 
-The Assistant shows a short activity message while it works. It does not expose prompts, private inputs, credentials, or provider errors. When work is ready, use the result card to open the right Workspace View:
+The Assistant shows a short activity message while it works. It does not expose prompts, private inputs, credentials, or provider errors. When work is ready, use the result card to open the result:
 
 - **Proposal Review** for generated or revised text.
 - **Fact Check** for advisory *Findings*.
@@ -31,9 +31,13 @@ Ask the Assistant to create a reusable [Skill](skills.md) when a procedure shoul
 
 You can ask the Editorial Assistant to inspect **Revision History**, saved editorial work, publishing guidance, or Style Corpus readiness. On an explicit request, it can add the current immutable *Revision* to the local Style Corpus and rebuild the Style Profile. It cannot accept *Proposals*, restore *Revisions*, resolve *Findings*, edit *Drafts*, delete style samples, or publish.
 
+## Style Profile
+
+Open **Style Profile** from the Article Library utility area. Use its side menu to select **Detected characteristics**, **Typography rules**, **Manual rules**, or **Writing samples**. Narrow screens use a section selector. Switching sections keeps unfinished input. **Detected characteristics** includes style review *Findings*. **Back to workspace** returns to your *Article* and the previous Workspace View.
+
 ## Typography rules
 
-Open **Style Profile** and select **Typography language**. Conventions are saved separately for each writing language, independently of the interface language. **Apply rules to** chooses between **All Articles in this language** and **This Article only**. A translation uses its own language and preferences.
+Open **Style Profile**, choose **Typography rules**, then select **Typography language**. Conventions are saved separately for each writing language, independently of the interface language. **Apply rules to** chooses between **All Articles in this language** and **This Article only**. A translation uses its own language and preferences.
 
 The status bar's **Source language** menu includes regional languages from the preset catalog. For another language, choose **Other language…** and enter its language code, such as `ja` for Japanese. You can then save custom typography rules for that language without a built-in preset.
 

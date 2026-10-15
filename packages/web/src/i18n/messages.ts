@@ -252,6 +252,7 @@ export const messages = {
     "styleProfile.rebuilt": "Profile rebuilt from {count, plural, one {# active source} other {# active sources}}.",
     "styleProfile.phrasesToAvoid": "Phrases to avoid",
     "styleProfile.manualRules": "Manual rules",
+    "styleProfile.navigation": "Style Profile sections",
     "styleProfile.writingSamples": "Writing samples",
     "styleProfile.detectedCharacteristics": "Detected characteristics",
     "styleProfile.thisArticle": "This Article",

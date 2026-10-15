@@ -9,8 +9,10 @@ import type { KeyBindingDispatcher } from "../key-bindings/dispatcher.js";
 import { DraftConflictDialog } from "./components/DraftConflictDialog.js";
 import { RestoreRevisionDialog as ExtractedRestoreRevisionDialog } from "./components/RestoreRevisionDialog.js";
 import { WorkspaceScreen } from "./components/WorkspaceScreen.js";
+import { StyleProfileScreen } from "./components/StyleProfileScreen.js";
 import { useWorkspaceLayout, type WorkspaceLayoutState } from "./state/useWorkspaceLayout.js";
 import { useWorkspaceGeneralSettings } from "./state/useWorkspaceGeneralSettings.js";
+import { useUsableAiConnection } from "./state/useUsableAiConnection.js";
 import { useArticleWorkspace, getArticleContentForWorkspace, sortArticlesByActivity, type ArticleWorkspaceState } from "./state/article-workspace-state.js";
 import { useArticleRevisions, type ArticleRevisionsState } from "./state/article-revisions-state.js";
 import { useEditorialProposal, type EditorialProposalState } from "./state/editorial-proposal-state.js";
@@ -31,12 +33,13 @@ export type { ArticleWorkspaceState, ArticleRevisionsState, EditorialProposalSta
 
 interface EditorialWorkspaceContext {
     client: EditorialWorkspaceClient;
-    screen: "editorial-workspace" | "application-settings";
+    screen: "editorial-workspace" | "application-settings" | "style-profile";
     settingsSection: import("../settings/settings-sections.js").SettingsSection;
 }
 
 
 interface EditorialWorkspaceNavigation {
+    openStyleProfile: () => void;
     openSettings: () => void;
     openModelSettings: () => void;
     openQuickStart: () => void;
@@ -55,25 +58,6 @@ interface EditorialWorkspaceBindings {
 interface EditorialWorkspaceUpdates {
     focusUpdates?: boolean;
     onUpdatesFocused?: () => void;
-}
-
-
-function useUsableAiConnection(client: EditorialWorkspaceClient, screen: EditorialWorkspaceContext["screen"]) {
-    const [hasUsableAiConnection, setHasUsableAiConnection] = useState<boolean>();
-
-    useEffect(() => {
-        let cancelled = false;
-        void client.getApplicationSettings().then((settings) => {
-            if (!cancelled)
-                setHasUsableAiConnection(settings.connections.some((connection) => connection.active !== false && connection.status === "connected"));
-        }).catch(() => undefined);
-
-        return () => {
-            cancelled = true;
-        };
-    }, [client, screen]);
-
-    return hasUsableAiConnection;
 }
 
 
@@ -194,7 +178,8 @@ function useWorkspaceLifecycle(workspace: ArticleWorkspaceState, assistant: Assi
 }
 
 
-function useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save }: {
+function useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save, openStyleProfile }: {
+    openStyleProfile: () => void;
     dispatcher: KeyBindingDispatcher;
     screen: EditorialWorkspaceContext["screen"];
     actions: ReturnType<typeof useWorkspaceActions>;
@@ -203,6 +188,7 @@ function useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save }: {
 }) {
     const shortcutActions = useRef({
         createBlank: actions.createBlank,
+        openStyleProfile,
         save,
         enterSettings: actions.enterSettings,
         setFocusMode: layout.setFocusMode,
@@ -213,6 +199,7 @@ function useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save }: {
         setView: layout.setView,
     });
     shortcutActions.current = {
+        openStyleProfile,
         createBlank: actions.createBlank,
         save,
         enterSettings: actions.enterSettings,
@@ -253,7 +240,7 @@ function useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save }: {
             dispatcher.register(KEY_BINDING_COMMAND.VIEW_PROPOSAL, () => shortcutActions.current.setView("proposal")),
             dispatcher.register(KEY_BINDING_COMMAND.VIEW_REVISIONS, () => shortcutActions.current.setView("revisions")),
             dispatcher.register(KEY_BINDING_COMMAND.VIEW_FACT_CHECK, () => shortcutActions.current.setView("fact-check")),
-            dispatcher.register(KEY_BINDING_COMMAND.VIEW_STYLE_PROFILE, () => shortcutActions.current.setView("style-profile")),
+            dispatcher.register(KEY_BINDING_COMMAND.VIEW_STYLE_PROFILE, () => shortcutActions.current.openStyleProfile()),
             dispatcher.register(KEY_BINDING_COMMAND.VIEW_TRANSLATIONS, () => shortcutActions.current.setView("translations")),
         ];
 
@@ -264,7 +251,7 @@ function useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save }: {
 
 export function EditorialWorkspaceProvider({ context, navigation, bindings, updates = {} }: { context: EditorialWorkspaceContext; navigation: EditorialWorkspaceNavigation; bindings: EditorialWorkspaceBindings; updates?: EditorialWorkspaceUpdates }) {
     const { client, screen, settingsSection } = context;
-    const { openSettings, openModelSettings, openQuickStart, backToWorkspace } = navigation;
+    const { openSettings, openStyleProfile, openModelSettings, openQuickStart, backToWorkspace } = navigation;
     const { dispatcher, keyBindingOverrides, onKeyBindingsUpdated, onThemeApplied } = bindings;
     const { focusUpdates = false, onUpdatesFocused = () => undefined } = updates;
     const intl = useIntl();
@@ -296,7 +283,11 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
     const articleFiles = useArticleFiles(fileClient, client, workspace, () => layout.setView("write"));
     const actions = useWorkspaceActions({ client, intl, notifyError, workspace, layout, assistant, openSettings });
     useWorkspaceLifecycle(workspace, assistant, editorial.restoreAssistantProposal);
-    useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save: workspace.save });
+    const enterStyleProfile = () => {
+        void workspace.flushSelected().catch(() => undefined);
+        openStyleProfile();
+    };
+    useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save: workspace.save, openStyleProfile: enterStyleProfile });
 
     if (workspace.state === "loading")
         return <main className="grid min-h-screen place-items-center text-muted" role="status">
@@ -319,9 +310,18 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
             onUpdatesFocused={onUpdatesFocused}
             openQuickStart={openQuickStart} />;
 
+    if (screen === "style-profile")
+        return <StyleProfileScreen
+            content={{ workspace, editorial, revisions, corpus, generalSettings, requestActive: assistant.state === "streaming" }}
+            back={backToWorkspace}
+            openProposal={() => {
+                layout.setView("proposal");
+                backToWorkspace();
+            }} />;
+
     return <WorkspaceScreen
-        content={{ layout, workspace, assistant, editorial, revisions, corpus, publishing, articleFiles, generalSettings, authorSkills: authorSkills.authorSkills }}
-        actions={{ ...actions, rejectTranslation, openSettings: actions.enterSettings, openModelSettings }}
+        content={{ layout, workspace, assistant, editorial, revisions, publishing, articleFiles, generalSettings, authorSkills: authorSkills.authorSkills }}
+        actions={{ ...actions, rejectTranslation, openSettings: actions.enterSettings, openStyleProfile: enterStyleProfile, openModelSettings }}
         environment={{ dispatcher, shortcutOverrides: keyBindingOverrides, hasUsableAiConnection, loadAuthorSkills: authorSkills.loadAuthorSkills, overlays: <>
             <ArticleFileDialogs state={articleFiles.dialogs} />
             <ExtractedRestoreRevisionDialog

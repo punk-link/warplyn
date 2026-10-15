@@ -14,12 +14,27 @@ test("packaged typography works without AI and recovers its Proposal after resta
     try {
         app = await launchPackaged(root);
         let page = app.page;
+        await page.emulateMedia({ reducedMotion: "reduce" });
         await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await page.getByRole("button", { name: "Create", exact: true }).click();
         await page.getByRole("textbox", { name: "Article draft" }).fill("Wait...");
         await page.getByRole("button", { name: "Save revision", exact: true }).click();
-        await page.getByRole("tab", { name: "Style Profile", exact: true }).click();
+        await page.getByRole("button", { name: "Style Profile", exact: true }).click();
+        await page.getByRole("button", { name: "Manual rules", exact: true }).click();
+        await page.getByRole("button", { name: "Writing samples", exact: true }).click();
+        await page.getByRole("button", { name: "Add writing sample", exact: true }).click();
+        await expect.poll(() => page.evaluate(() => {
+            const root = document.scrollingElement;
+            return root ? root.scrollHeight - root.clientHeight : 0;
+        })).toBeLessThanOrEqual(1);
+        const styleContent = page.locator('[data-focus-area="settings-content"]');
+        await styleContent.evaluate((element) => {
+            element.scrollTop = element.scrollHeight;
+        });
+        await expect(page.getByRole("button", { name: "Add", exact: true })).toBeInViewport();
+        await expect(page.getByRole("button", { name: "Back to workspace", exact: true })).toBeInViewport();
+        await page.getByRole("button", { name: "Typography rules", exact: true }).click();
         await page.getByRole("button", { name: "Add rule", exact: true }).click();
         await page.getByRole("button", { name: "Save", exact: true }).click();
         await expect(page.getByText("Typography rules saved and Style Profile rebuilt.", { exact: true })).toBeVisible();
@@ -51,8 +66,8 @@ test("packaged typography works without AI and recovers its Proposal after resta
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Wait…");
         await page.getByRole("textbox", { name: "Article draft" }).fill("Wait!!!!");
         await page.getByRole("button", { name: "Save revision", exact: true }).click();
-        const styleProfileTab = /^Style Profile/u;
-        await page.getByRole("tab", { name: styleProfileTab }).click();
+        await page.getByRole("button", { name: "Style Profile", exact: true }).click();
+        await page.getByRole("button", { name: "Typography rules", exact: true }).click();
         await page.getByRole("button", { name: "Edit", exact: true }).click();
         await page.getByRole("combobox", { name: "Rule 1 convention", exact: true }).selectOption("literal");
         await page.getByRole("textbox", { name: "Punctuation to replace", exact: true }).fill("!!");
@@ -67,6 +82,7 @@ test("packaged typography works without AI and recovers its Proposal after resta
                 { exact: true },
             ),
         ).toBeVisible();
+        await page.getByRole("button", { name: "Back to workspace", exact: true }).click();
         await page.getByRole("tab", { name: "Write", exact: true }).click();
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Wait!!!!");
     } finally {

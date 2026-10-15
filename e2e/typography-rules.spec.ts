@@ -33,7 +33,8 @@ test("typography rules rebuild automatically and corrections retain provenance a
     await page.getByRole("option", { name: "Concise rewrite", exact: true }).click();
     await page.getByRole("button", { name: "Send editorial request", exact: true }).click();
     await (await olderProposal).finished();
-    await page.getByRole("tab", { name: "Style Profile", exact: true }).click();
+    await page.getByRole("button", { name: "Style Profile", exact: true }).click();
+    await page.getByRole("button", { name: "Typography rules", exact: true }).click();
     await page.getByRole("button", { name: "Add rule", exact: true }).click();
     await expect(page.getByRole("group", { name: "Rule 1", exact: true }).getByText("Unsaved", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Save", exact: true }).click();

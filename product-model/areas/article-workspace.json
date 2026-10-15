@@ -113,7 +113,7 @@
         {
             "id": "workspace.navigation.views",
             "area": "Workspace Tab Bar",
-            "title": "Six keyboard-operable Workspace Views with revision-aware actionable and stale badges",
+            "title": "Five keyboard-operable Workspace Views with revision-aware actionable and stale badges",
             "status": "implemented",
             "owners": [
                 "packages/web/src/workspace/workspace-views.ts",

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { selectStyleProfileSection } from "./style-profile-navigation.js";
 
 test("language preferences and Article overrides stay isolated and recover after reload", async ({ page, request }) => {
     const root = "http://127.0.0.1:8787/api";
@@ -10,7 +11,8 @@ test("language preferences and Article overrides stay isolated and recover after
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");
     await expect(page.getByRole("button", { name: "Rename article: Scoped typography fixture", exact: true })).toBeVisible();
-    await page.getByRole("tab", { name: "Style Profile", exact: true }).click();
+    await page.getByRole("button", { name: "Style Profile", exact: true }).click();
+    await selectStyleProfileSection(page, "typography");
     const language = page.getByRole("combobox", { name: "Typography language", exact: true });
     await expect(language).toHaveValue("en");
     await expect(language.getByRole("option")).toHaveText(["English", "Spanish", "Portuguese", "Russian", "French", "German", "Italian"]);
@@ -26,7 +28,8 @@ test("language preferences and Article overrides stay isolated and recover after
     await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page.getByText("Article typography preferences saved.", { exact: true })).toBeVisible();
     await page.reload();
-    await page.getByRole("tab", { name: "Style Profile", exact: true }).click();
+    await page.getByRole("button", { name: "Style Profile", exact: true }).click();
+    await selectStyleProfileSection(page, "typography");
     await page.getByRole("combobox", { name: "Apply rules to", exact: true }).selectOption("article");
     await expect(page.getByRole("button", { name: "Check typography", exact: true })).toBeDisabled();
     await page.getByRole("button", { name: "Restore inherited rules", exact: true }).click();
@@ -43,7 +46,8 @@ test("language preferences and Article overrides stay isolated and recover after
     const updated = await request.patch(`${root}/articles/${article.id}`, { data: { language: "ru" } });
     expect(updated.ok()).toBeTruthy();
     await page.reload();
-    await page.getByRole("tab", { name: "Style Profile", exact: true }).click();
+    await page.getByRole("button", { name: "Style Profile", exact: true }).click();
+    await selectStyleProfileSection(page, "typography");
     await expect(page.getByRole("combobox", { name: "Typography language", exact: true })).toHaveValue("ru");
     await expect(page.getByText("This review used earlier language or typography preferences. Run the check again to use the current conventions.", {
         exact: true,

@@ -3,13 +3,11 @@ import type { Article, ArticleRevisionSummary, GeneralSettings, PublishLimitProf
 import type { ArticleRevisionsState } from "../state/article-revisions-state.js";
 import type { ArticleWorkspaceState } from "../state/article-workspace-state.js";
 import type { EditorialProposalState } from "../state/editorial-proposal-state.js";
-import type { StyleCorpusState } from "../state/style-corpus-state.js";
 import { ArticleEditorView } from "../views/ArticleEditorView.js";
 import { FactCheckView } from "../views/FactCheckView.js";
 import { ProposalReviewView } from "../views/ProposalReviewView.js";
 import type { WorkspaceView } from "../workspace-views.js";
 import { RevisionHistoryView } from "../views/RevisionHistoryView.js";
-import { StyleProfileView } from "../views/StyleProfileView.js";
 import { TranslationsView } from "../views/TranslationsView.js";
 import type { AssistantSelectionSnapshot } from "../editor/ArticleEditorPlugins.js";
 import type { ArticleFilesState } from "../state/article-files-state.js";
@@ -22,7 +20,6 @@ interface WorkspaceViewContent {
     workspace: ArticleWorkspaceState;
     editorial: EditorialProposalState;
     revisions: ArticleRevisionsState;
-    corpus: StyleCorpusState;
     generalSettings: GeneralSettings;
     checkingClaimCount?: number;
     requestActive?: boolean;
@@ -47,14 +44,13 @@ interface WorkspaceViewNavigation {
     dismissProposalWarnings: () => void;
     openWrite: () => void;
     openAssistant: () => void;
-    openProposal: () => void;
     selectedTranslationLanguages: Readonly<Record<string, string>>;
     setSelectedTranslationLanguage: (articleId: string, targetLanguage: string) => void;
 }
 
 
 export function WorkspaceViewRouter({ content, actions, navigation }: { content: WorkspaceViewContent; actions: WorkspaceViewActions; navigation: WorkspaceViewNavigation }) {
-    const { view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, publishProfile, publishProfileLabel } = content;
+    const { view, article, workspace, editorial, revisions, generalSettings, checkingClaimCount, publishProfile, publishProfileLabel } = content;
     const { runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection } = actions;
     const { proposalWarningsDismissed, dismissProposalWarnings, openWrite, openAssistant, selectedTranslationLanguages, setSelectedTranslationLanguage } = navigation;
     const renderPanel = (children: ReactNode) => (
@@ -126,42 +122,6 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
             return renderPanel(<FactCheckView data={{ factCheck: editorial.factCheck, currentRevisionId: article.currentRevisionId, revisions: articleRevisions, runs: editorial.factCheckRuns, selectedRun: editorial.selectedFactCheckRun, revisionNumber: revisionNumber < 0 ? undefined : revisionNumber + 1, reusedRevisionNumbers, stale: editorial.factCheckStale, historical: editorial.factCheckHistorical, generalSettings, checkingClaimCount }} actions={{ runAgain: runFactCheck, selectRun: editorial.selectFactCheckRun, resolve: editorial.resolveFactCheck, proposeCorrections: editorial.proposeFactCorrections }} />);
         }
 
-        case "style-profile":
-            return renderPanel(
-                <StyleProfileView
-                    data={{
-                        corpus: corpus.corpus,
-                        findings: editorial.styleReview,
-                        findingsStale: editorial.styleReviewStale,
-                        articleId: article.id,
-                        language: article.language,
-                        revisions: revisions.revisions,
-                        generalSettings,
-                        typographyStatus: {
-                            busy: editorial.state === "streaming" || content.requestActive === true,
-                            message: editorial.message,
-                            hasProposal: Boolean(editorial.review?.changes.length),
-                        },
-                    }}
-                    actions={{
-                        add: corpus.add,
-                        remove: corpus.remove,
-                        setIncluded: corpus.setIncluded,
-                        setRules: corpus.setRules,
-                        rebuild: corpus.rebuild,
-                        getArticleRules: corpus.getArticleRules,
-                        setArticleRules: corpus.setArticleRules,
-                        snapshotArticleRevision: corpus.snapshotArticleRevision,
-                        scopedTypography: { save: corpus.setTypographyConfiguration, getArticle: corpus.getArticleTypography },
-                        typography: {
-                            save: corpus.setTypographyRules,
-                            check: editorial.checkTypography,
-                            openProposal: navigation.openProposal,
-                        },
-                    }}
-                />,
-            );
-
         case "translations":
             return renderPanel(<TranslationsView key={article.id} data={{ article, sourceContent: workspace.content, requestActive: content.requestActive, generation: content.translationGeneration, generalSettings, revisionNumbers: Object.fromEntries(articleRevisions.map((revision, index) => [revision.id, index + 1])), revisions: translationRevisions, sourceArticle: workspace.sourceArticle, linkedTranslations: workspace.articles.filter((item) => item.sourceArticleId === article.id), translations: editorial.translations, stale: Boolean(article.sourceArticleId && workspace.articles.find((item) => item.id === article.sourceArticleId)?.currentRevisionId !== article.sourceRevisionId), translationLanguages: generalSettings.defaultTranslationLanguages.filter((language) => language !== article.language), publishProfile, publishProfileLabel, selectedTargetLanguage: selectedTranslationLanguages[article.id] }} actions={{ create: editorial.createTranslation, reject: rejectTranslation ?? editorial.rejectTranslation, edit: openWrite, openArticle: workspace.selectArticle, selectTargetLanguage: (targetLanguage) => setSelectedTranslationLanguage(article.id, targetLanguage), translate: runTranslation }} />);
 
@@ -179,8 +139,6 @@ function panelClassName(view: WorkspaceView): string {
             return "flex min-h-0 flex-1 flex-col overflow-hidden";
         case "translations":
             return "flex min-h-0 flex-1 flex-col overflow-hidden p-4";
-        case "style-profile":
-            return "min-h-0 flex-1 overflow-hidden p-4";
         default:
             return ("min-h-0 flex-1 overflow-y-auto p-4 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] " +
                 "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");

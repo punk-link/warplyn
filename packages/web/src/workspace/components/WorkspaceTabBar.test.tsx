@@ -52,7 +52,6 @@ describe("WorkspaceTabBar", () => {
             <WorkspaceTabBar view="fact-check" setView={setView} badges={{
                 proposal: { label: "Stale", accessibleLabel: "Stale", tone: "warning" },
                 "fact-check": { label: "1", accessibleLabel: "1 finding", tone: "default" },
-                "style-profile": { label: "0 findings", accessibleLabel: "0 findings", tone: "default" },
                 translations: { label: "Ready", accessibleLabel: "Ready", tone: "default" },
             }} />
         </IntlProvider>);
@@ -71,8 +70,8 @@ describe("WorkspaceTabBar", () => {
         const factCheck = screen.getByRole("tab", { name: `${getMessage("workspace.tabs.factCheck")}: 1 finding` });
         factCheck.focus();
         await user.keyboard("{ArrowRight}");
-        expect(setView).toHaveBeenLastCalledWith("style-profile");
-        expect(document.activeElement).toBe(screen.getByRole("tab", { name: `${getMessage("workspace.tabs.styleProfile")}: 0 findings` }));
+        expect(setView).toHaveBeenLastCalledWith("translations");
+        expect(document.activeElement).toBe(screen.getByRole("tab", { name: `${getMessage("workspace.tabs.translations")}: Ready` }));
         await user.keyboard("{ArrowLeft}");
         expect(setView).toHaveBeenLastCalledWith("fact-check");
         await user.keyboard("{Home}");

@@ -74,9 +74,9 @@ test("Concise rewrite stays a Proposal until acceptance and survives reload", as
 });
 
 
-test("critical local-first author journeys use deterministic provider output", async ({ page }) => {
+test("critical local-first author journeys use deterministic provider output", async ({ page, baseURL }) => {
     await page.goto("/");
-    await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: "http://127.0.0.1:5173" });
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: baseURL });
     await page.getByRole("button", { name: "Settings" }).click();
     await page.getByRole("button", { name: "Publishing" }).click();
     await page.getByRole("group", { name: "Default translation languages" }).getByRole("checkbox", { name: "Spanish" }).check();
@@ -118,10 +118,10 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.getByRole("tab", { name: factCheckPattern }).click();
     await expect(page.getByText("The fixture claim is supported.").first()).toBeVisible();
 
-    const styleProfilePattern = /Style Profile/;
-    await page.getByRole("tab", { name: styleProfilePattern }).click();
+    await page.getByRole("button", { name: "Style Profile", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Style Profile" })).toBeVisible();
 
+    await page.getByRole("button", { name: "Back to workspace", exact: true }).click();
     await page.getByRole("tab", { name: "Write" }).click();
     await page.getByRole("button", { name: "Copy", exact: true }).click();
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toContain("Original fixture Article.");
@@ -259,9 +259,9 @@ test("saving from Revisions updates the open timeline and survives reload", asyn
 });
 
 
-test("the Assistant Lexical composer supports skill tags and slash invocation", async ({ page }) => {
+test("the Assistant Lexical composer supports skill tags and slash invocation", async ({ page, baseURL }) => {
     await page.goto("/");
-    await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: "http://127.0.0.1:5173" });
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: baseURL });
     await createArticle(page);
 
     const composer = page.getByRole("combobox", { name: "Editorial guidance" });

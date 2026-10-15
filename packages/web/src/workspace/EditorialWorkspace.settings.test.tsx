@@ -10,6 +10,55 @@ import { createFakeClient, resetWorkspaceTestEnvironment } from "./EditorialWork
 describe("Editorial Workspace settings", () => {
     afterEach(resetWorkspaceTestEnvironment);
 
+    it("opens Style Profile as a separate screen and returns to the selected Workspace View", async () => {
+        const user = userEvent.setup();
+        render(<App client={createFakeClient()} />);
+        await screen.findByRole("heading", { name: "First Article" });
+        await user.click(screen.getByRole("tab", { name: "Revisions" }));
+        expect(screen.queryByRole("tab", { name: "Style Profile" })).toBeNull();
+        await user.click(screen.getByRole("button", { name: "Style Profile" }));
+        expect(screen.getByRole("heading", { name: "Style Profile" })).toBeTruthy();
+        expect(screen.queryByRole("tablist")).toBeNull();
+        const back = screen.getAllByRole("button", { name: getMessage("settings.backToWorkspace") }).at(-1)!;
+        expect(document.activeElement).toBe(back);
+        await user.tab();
+        expect(document.activeElement).toBe(screen.getByRole("button", { name: "Detected characteristics" }));
+        await user.tab({ shift: true });
+        expect(document.activeElement).toBe(back);
+        await user.click(screen.getByRole("button", { name: "Manual rules" }));
+        await user.type(screen.getByRole("textbox", { name: "Global style rules" }), "Keep my draft.");
+        await user.click(screen.getByRole("button", { name: "Writing samples" }));
+        expect(screen.queryByRole("textbox", { name: "Global style rules" })).toBeNull();
+        await user.click(screen.getByRole("button", { name: "Manual rules" }));
+        expect(screen.getByRole("textbox", { name: "Global style rules" }).textContent).toBe("Keep my draft.");
+        await user.click(back);
+        expect(screen.getByRole("tab", { name: "Revisions" }).getAttribute("aria-selected")).toBe("true");
+        expect(screen.getByRole("heading", { name: "First Article" })).toBeTruthy();
+        await user.keyboard("{Control>}5{/Control}");
+        expect(screen.getByRole("heading", { name: "Style Profile" })).toBeTruthy();
+    });
+
+    it("opens global Style Profile controls without an Article", async () => {
+        const client = createFakeClient();
+        client.listArticles = vi.fn().mockResolvedValue([]);
+        const user = userEvent.setup();
+        render(<App client={client} />);
+        await user.click(await screen.findByRole("button", { name: "Style Profile" }));
+        await user.click(screen.getByRole("button", { name: "Manual rules" }));
+        expect(screen.getByRole("textbox", { name: "Global style rules" })).toBeTruthy();
+        expect(screen.queryByRole("textbox", { name: getMessage("styleProfile.articleRules") })).toBeNull();
+        expect(client.getArticleStyleRules).not.toHaveBeenCalled();
+        expect(client.getArticleTypography).not.toHaveBeenCalled();
+    });
+
+    it("migrates a saved Style Profile tab to Write while keeping Article selection", async () => {
+        localStorage.setItem("skladno-workspace-layout", JSON.stringify({ version: 4, selectedArticleId: "one", view: "style-profile" }));
+        render(<App client={createFakeClient()} />);
+        await screen.findByRole("heading", { name: "First Article" });
+        expect(screen.getByRole("tab", { name: "Write" }).getAttribute("aria-selected")).toBe("true");
+        expect(JSON.parse(localStorage.getItem("skladno-workspace-layout")!).selectedArticleId).toBe("one");
+    });
+
     // Product scenario: application.open-settings-without-empty-workspace
     it("opens Application Settings without replacing the workspace with an empty view", async () => {
         const user = userEvent.setup();

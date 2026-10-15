@@ -4,7 +4,6 @@ import { Banner, Button, Field, IconButton, TextareaField } from "../../ui/primi
 import { DeleteIcon } from "../../ui/icons.js";
 import { formatDate } from "../../i18n/formatting.js";
 import { useIntl } from "react-intl";
-import { StyleProfileDisclosure } from "./StyleProfileDisclosure.js";
 
 
 interface StyleProfileSourcesData {
@@ -38,9 +37,11 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
     const intl = useIntl();
     const upload = useRef<HTMLInputElement>(null);
 
-    return <StyleProfileDisclosure
-        label={intl.formatMessage({ id: "styleProfile.writingSamples" })}
-        summary={intl.formatMessage({ id: "styleProfile.activeSources" }, { count: corpus?.items.filter((item) => item.included).length ?? 0 })}>
+    return <section className="mb-7">
+        <h2 className="mb-3 text-base font-semibold">{intl.formatMessage({ id: "styleProfile.writingSamples" })}</h2>
+        <p className="mb-3 text-xs text-muted">
+            {intl.formatMessage({ id: "styleProfile.activeSources" }, { count: corpus?.items.filter((item) => item.included).length ?? 0 })}
+        </p>
         <div className="mb-3 flex flex-col items-start gap-3">
             <div className="min-w-0">
                 <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.corpusHint" })}</p>
@@ -130,5 +131,5 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
                 </article>
             ))}
         </div>
-    </StyleProfileDisclosure>;
+    </section>;
 }

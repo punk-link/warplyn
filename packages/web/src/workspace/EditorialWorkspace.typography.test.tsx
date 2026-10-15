@@ -37,7 +37,8 @@ it("local typography bypasses saving and model summaries", async () => {
     });
     render(<App client={client} />);
     await screen.findByRole("heading", { name: "First Article" });
-    await user.click(screen.getByRole("tab", { name: "Style Profile" }));
+    await user.click(screen.getByRole("button", { name: "Style Profile" }));
+    await user.click(screen.getByRole("button", { name: "Typography rules" }));
     await user.click(await screen.findByRole("button", { name: "Check typography" }));
     await waitFor(() => expect(client.streamEditorial).toHaveBeenCalledOnce());
     expect(vi.mocked(client.streamEditorial).mock.calls[0]?.[1].reviewMode).toBe("typography");
@@ -67,7 +68,8 @@ it("local checking asks to save a changed Draft without saving or invoking an en
         });
     render(<App client={client} />);
     await screen.findByRole("heading", { name: "First Article" });
-    await user.click(screen.getByRole("tab", { name: "Style Profile" }));
+    await user.click(screen.getByRole("button", { name: "Style Profile" }));
+    await user.click(screen.getByRole("button", { name: "Typography rules" }));
     await user.click(screen.getByRole("button", { name: "Check typography" }));
     expect(await screen.findByText("Save the current Draft before checking typography. The local check uses the saved Revision.")).toBeTruthy();
     expect(client.streamEditorial).not.toHaveBeenCalled();

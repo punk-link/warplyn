@@ -4,7 +4,7 @@ import { TypographyRulesBlock } from "./TypographyRulesBlock.js";
 
 
 export function StyleProfileTypography({ data, actions }: {
-    data: { corpus?: StyleCorpus; articleId: string; language?: string; findings?: import("@skladno/shared").StyleReview; busy?: boolean };
+    data: { corpus?: StyleCorpus; articleId?: string; language?: string; findings?: import("@skladno/shared").StyleReview; busy?: boolean };
     actions: {
         typography?: { save: (rules: TypographyRule[]) => Promise<void>; check: () => Promise<void> };
         scoped?: { save: (input: TypographyConfigurationUpdate) => Promise<void>; getArticle: (id: string) => Promise<ArticleTypography | undefined> };
