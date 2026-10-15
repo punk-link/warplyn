@@ -2,6 +2,8 @@ import type { CreateStyleCorpusItemInput, StyleCorpus } from "@skladno/shared";
 
 
 export interface StyleCorpusStore {
+    setTypographyConfiguration(input: import("@skladno/shared").TypographyConfigurationUpdate): StyleCorpus;
+    getArticleTypography(articleId: string): import("@skladno/shared").ArticleTypography | undefined;
     getStyleCorpus(): StyleCorpus;
     hasStyleCorpusContent(content: string): boolean;
     addStyleCorpusItem(input: CreateStyleCorpusItemInput & { name: string; origin?: "manual" | "import" | "article-revision"; articleId?: string; revisionId?: string }): StyleCorpus;

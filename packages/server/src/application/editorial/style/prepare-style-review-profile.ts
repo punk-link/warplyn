@@ -2,13 +2,19 @@ import { APPLICATION_ERROR, EDITORIAL_OPERATION, HTTP_STATUS, type StyleCorpus, 
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import type { EditorialServiceRequest } from "../editorial-request.js";
+import { captureStyleTypography } from "./capture-style-typography.js";
 
 
 export function prepareStyleReviewProfile(
     editorial: EditorialServiceRequest["editorial"],
-    styleCorpus: { getStyleCorpus(): Pick<StyleCorpus, "profile" | "status"> },
+    styleCorpus: {
+        getStyleCorpus(): Pick<StyleCorpus, "profile" | "status">;
+        getArticleTypography?(articleId: string): import("@skladno/shared").ArticleTypography | undefined;
+    },
+    article?: { id: string; language?: string },
 ): StyleProfile | undefined {
-    const profile = getReadyStyleProfile(editorial.operation, styleCorpus);
+    const ready = getReadyStyleProfile(editorial.operation, styleCorpus);
+    const profile = ready && article ? captureStyleTypography(ready, article.language, styleCorpus.getArticleTypography?.(article.id)) : ready;
     if (editorial.reviewMode && editorial.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
@@ -31,4 +37,21 @@ function getReadyStyleProfile(
         throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
 
     return corpus.profile;
+}
+
+
+export function prepareStyleReviewContext(
+    editorial: EditorialServiceRequest["editorial"],
+    store: Parameters<typeof prepareStyleReviewProfile>[1] & { getArticleStyleRules(id: string): string },
+    article: { id: string; language?: string },
+    captured?: EditorialServiceRequest["styleContext"],
+): EditorialServiceRequest["styleContext"] {
+    if (editorial.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
+        return undefined;
+
+    if (captured)
+        return captured;
+
+    const profile = prepareStyleReviewProfile(editorial, store, article);
+    return profile ? { profile, articleRules: store.getArticleStyleRules(article.id) } : undefined;
 }

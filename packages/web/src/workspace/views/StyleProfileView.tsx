@@ -8,7 +8,7 @@ import { StyleProfileInsights } from "./StyleProfileInsights.js";
 import { StyleProfileGuidance } from "./StyleProfileGuidance.js";
 import { StyleProfileReview } from "./StyleProfileReview.js";
 import { StyleProfileSources } from "./StyleProfileSources.js";
-import { TypographyRulesBlock } from "./TypographyRulesBlock.js";
+import { StyleProfileTypography } from "./StyleProfileTypography.js";
 
 
 interface StyleProfileViewData {
@@ -16,6 +16,7 @@ interface StyleProfileViewData {
     findings: StyleReview | undefined;
     findingsStale: boolean;
     articleId: string;
+    language?: string;
     revisions?: readonly (ArticleRevisionSummary | import("@skladno/shared").ArticleRevision)[];
     generalSettings?: GeneralSettings;
     typographyStatus?: { busy: boolean; message: string; hasProposal: boolean };
@@ -23,6 +24,10 @@ interface StyleProfileViewData {
 
 
 interface StyleProfileViewActions {
+    scopedTypography?: {
+        save: (input: import("@skladno/shared").TypographyConfigurationUpdate) => Promise<void>;
+        getArticle: (articleId: string) => Promise<import("@skladno/shared").ArticleTypography | undefined>;
+    };
     add: (name: string | undefined, content: string, origin?: "import") => Promise<void>;
     remove: (id: string) => Promise<void>;
     setIncluded: (id: string, included: boolean) => Promise<void>;
@@ -183,14 +188,9 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
                 <div className="w-full">
                     <StyleProfileInsights corpus={corpus} generalSettings={generalSettings} />
                     <StyleProfileReview findings={findings} stale={findingsStale} />
-                    {actions.typography && (
-                        <TypographyRulesBlock
-                            rules={corpus?.typographyRules}
-                            save={saveTypography}
-                            check={actions.typography.check}
-                            busy={Boolean(pendingAction) || data.typographyStatus?.busy}
-                        />
-                    )}
+                    <StyleProfileTypography
+                        data={{ corpus, articleId, language: data.language, findings, busy: Boolean(pendingAction) || data.typographyStatus?.busy }}
+                        actions={{ typography: actions.typography && { ...actions.typography, save: saveTypography }, scoped: actions.scopedTypography }} />
                     {data.typographyStatus?.message && (
                         <Banner tone="error" role="alert">
                             {data.typographyStatus.message}
@@ -270,12 +270,24 @@ function TypographyReviewStatus({ findings, currentVersion }: { findings: StyleR
 
     return (
         <div className="mb-4 space-y-2 text-xs text-muted" role="status">
+            {typography.capture && (
+                <p>{intl.formatMessage({ id: "typography.reviewLanguage" }, {
+                    language: typography.capture.language ?? intl.formatMessage({ id: "typography.unknownLanguage" }),
+                })}
+                </p>
+            )}
             {findings.profileVersion !== currentVersion && (
                 <Banner tone="warning">
                     {intl.formatMessage({ id: "typography.olderProfile" }, { version: findings.profileVersion })}
                 </Banner>
             )}
-            {!typography.occurrences.length && <p>{intl.formatMessage({ id: "typography.noViolations" })}</p>}
+            {!typography.occurrences.length && (
+                <p>{intl.formatMessage({
+                    id: typography.capture?.coverage === "unconfigured" || typography.capture?.coverage === "missing-language"
+                        ? "typography.noConvention" : "typography.noViolations",
+                })}
+                </p>
+            )}
             {typography.skipped > 0 && <p>{intl.formatMessage({ id: "typography.skipped" }, { count: typography.skipped })}</p>}
             {typography.local && typography.contextualRuleIds.length > 0 && (
                 <p>{intl.formatMessage({ id: "typography.contextualSkipped" }, { count: typography.contextualRuleIds.length })}</p>

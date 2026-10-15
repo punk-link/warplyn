@@ -34,27 +34,31 @@ export function AssistantQuickActions({ context, picker }: { context: { state: "
 
 
     return <div ref={pickerRoot} className="relative">
-        {quickActionsOpen && <div className="absolute bottom-full right-0 z-10 mb-2 w-56 rounded-panel border border-border bg-surface-raised p-1 shadow-raised">
-            <div
-                id="assistant-skill-picker"
-                role="listbox"
-                aria-label={intl.formatMessage({ id: "assistant.quickActions" })}
-                aria-describedby="assistant-skill-picker-hint">
-                {availableSkills.length
-                    ? availableSkills.map((skill, index) => <SkillOption
-                        key={skill.id}
-                        skill={skill}
-                        index={index}
-                        state={state}
-                        activeSkillIndex={activeSkillIndex}
-                        selectSkill={selectSkill}
-                        focusQuickAction={focusQuickAction}
-                        setQuickActionsOpen={setQuickActionsOpen}
-                        composer={composer} />)
-                    : <p className="px-3 py-2 text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.skillNoMatches" })}</p>}
+        {quickActionsOpen && (
+            <div className="absolute bottom-full right-0 z-10 mb-2 w-56 rounded-panel border border-border bg-surface-raised p-1 shadow-raised">
+                <div
+                    id="assistant-skill-picker"
+                    role="listbox"
+                    aria-label={intl.formatMessage({ id: "assistant.quickActions" })}
+                    aria-describedby="assistant-skill-picker-hint">
+                    {availableSkills.length
+                        ? availableSkills.map((skill, index) => (
+                            <SkillOption
+                                key={skill.id}
+                                skill={skill}
+                                index={index}
+                                state={state}
+                                activeSkillIndex={activeSkillIndex}
+                                selectSkill={selectSkill}
+                                focusQuickAction={focusQuickAction}
+                                setQuickActionsOpen={setQuickActionsOpen}
+                                composer={composer} />
+                        ))
+                        : <p className="px-3 py-2 text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.skillNoMatches" })}</p>}
+                </div>
+                <p id="assistant-skill-picker-hint" className="border-t border-border px-3 py-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.customSkillsHint" })}</p>
             </div>
-            <p id="assistant-skill-picker-hint" className="border-t border-border px-3 py-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.customSkillsHint" })}</p>
-        </div>}
+        )}
         {quickActionsOpen && <span className="sr-only" aria-live="polite">{availableSkills.length ? intl.formatMessage({ id: "assistant.skillResultCount" }, { count: availableSkills.length }) : intl.formatMessage({ id: "assistant.skillNoMatches" })}</span>}
         <Button
             className="inline-grid size-8 place-items-center rounded-l-none border-l-0 !p-0"
@@ -68,7 +72,8 @@ export function AssistantQuickActions({ context, picker }: { context: { state: "
                     setActiveSkillIndex(0);
 
                 return !open;
-            })}><ChevronDownIcon className={`size-4 transition-transform duration-150 motion-reduce:transition-none ${quickActionsOpen ? "rotate-180" : ""}`} /></Button>
+            })}><ChevronDownIcon className={`size-4 transition-transform duration-150 motion-reduce:transition-none ${quickActionsOpen ? "rotate-180" : ""}`} />
+        </Button>
     </div>;
 }
 
@@ -143,6 +148,7 @@ export function SelectionChip({ selection, clearSelection }: { selection?: Assis
             type="button"
             className="inline-grid size-3 min-h-0 place-items-center rounded-full p-0 text-muted hover:bg-surface-supporting"
             aria-label={intl.formatMessage({ id: "assistant.clearArticleSelection" })}
-            onClick={clearSelection}><CloseIcon className="size-2" /></button>
+            onClick={clearSelection}><CloseIcon className="size-2" />
+        </button>
     </span>;
 }

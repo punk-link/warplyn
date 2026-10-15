@@ -65,12 +65,16 @@ function LinkDialog({ editor, close }: { editor: LexicalEditor; close: () => voi
             <Button variant="quiet" onClick={() => {
                 close();
                 editor.focus();
-            }}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
-            {editing && <Button variant="danger" onClick={() => {
-                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-                close();
-                editor.focus();
-            }}>{intl.formatMessage({ id: "editor.removeLink" })}</Button>}
+            }}>{intl.formatMessage({ id: "editor.cancel" })}
+            </Button>
+            {editing && (
+                <Button variant="danger" onClick={() => {
+                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+                    close();
+                    editor.focus();
+                }}>{intl.formatMessage({ id: "editor.removeLink" })}
+                </Button>
+            )}
             <Button onClick={apply}>{intl.formatMessage({ id: "editor.apply" })}</Button>
         </div>
     </Dialog>;

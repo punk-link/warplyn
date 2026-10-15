@@ -13,6 +13,7 @@ import type { AssistantServiceRequest } from "./assistant-service-request.js";
 import type { AssistantSkillCatalog } from "../skills/assistant-skill-catalog.js";
 import type { AssistantSkillPackage } from "../skills/assistant-skill-package.js";
 import { resolveSkillExecution } from "../skills/skill-execution.js";
+import { captureStyleTypography } from "../../editorial/style/capture-style-typography.js";
 
 
 export class AssistantRequestPreparation {
@@ -53,17 +54,26 @@ export class AssistantRequestPreparation {
 
         const routing = this.resolveRequestRouting(replay);
         this.validateResolvedRequest(replay, routing.operation, routing.usesCapabilityLoop);
+        const { engine, usesCapabilityLoop, operation, ...skillRouting } = routing;
         return {
             ...replay,
-            articleContent,
-            articleTitle: article.title,
-            ...this.publishingLimit(article.publishingProfileId),
-            ...routing,
-            capabilityActivities: [],
-            pendingActions: [],
-            authorizedActions: [],
-            ...(!routing.usesCapabilityLoop && routing.operation ? { completedCapability: getCapabilityForEditorialOperation(routing.operation) } : {})
+            article: { content: articleContent, title: article.title, ...this.captureStyle(article), ...this.publishingLimit(article.publishingProfileId) },
+            ...skillRouting,
+            execution: { engine, usesCapabilityLoop, operation, capabilityActivities: [], pendingActions: [], authorizedActions: [],
+                ...(!usesCapabilityLoop && operation ? { completedCapability: getCapabilityForEditorialOperation(operation) } : {}) },
         };
+    }
+
+
+    private captureStyle(article: { id: string; language?: string }) {
+        const corpus = this.dependencies.styleCorpus.getStyleCorpus();
+        if (corpus.status !== "ready" || !corpus.profile)
+            return {};
+
+        return { styleContext: {
+            profile: captureStyleTypography(corpus.profile, article.language, this.dependencies.styleCorpus.getArticleTypography(article.id)),
+            articleRules: this.dependencies.styleCorpus.getArticleStyleRules(article.id),
+        } };
     }
 
 

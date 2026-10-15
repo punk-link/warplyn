@@ -3,7 +3,7 @@ import { acceptProposalPath, aiAppModelPath, aiConnectionsPath, aiModelPreferenc
 import type { ApplicationServices } from "../../application/application-services.js";
 import { styleCorpusTypographyPath } from "@skladno/shared";
 import { createArticleTypographyReviewPath } from "@skladno/shared";
-import { writeJson } from "../transport/json.js";
+import { readJson, writeJson } from "../transport/json.js";
 import { HTTP_STATUS } from "@skladno/shared";
 import { updateTypographyRulesRoute } from "./style-corpus-route.js";
 import type { EditorialService } from "../../application/editorial/editorial-service.js";
@@ -93,6 +93,13 @@ export function createPresentationRouter(editorial: EditorialService, services: 
     router.register(HTTP_METHOD.POST, styleCorpusPath, (request, response) => createStyleCorpusItemRoute(request, response, styleCorpus));
     router.register(HTTP_METHOD.PUT, styleCorpusRulesPath, (request, response) => updateStyleCorpusRulesRoute(request, response, styleCorpus));
     router.register(HTTP_METHOD.PUT, styleCorpusTypographyPath, (request, response) => updateTypographyRulesRoute(request, response, styleCorpus));
+    router.register(HTTP_METHOD.PUT, `${styleCorpusPath}/typography-configuration`, async (request, response) => {
+        writeJson(response, HTTP_STATUS.OK, styleCorpus.setTypographyConfiguration(await readJson(request)));
+    });
+    const articleTypographyPath = /^\/api\/articles\/([^/]+)\/typography$/;
+    router.register(HTTP_METHOD.GET, articleTypographyPath, (_request, response, parameters) => {
+        writeJson(response, HTTP_STATUS.OK, styleCorpus.getArticleTypography(parameters[0]!) ?? null);
+    });
     router.register(HTTP_METHOD.POST, styleCorpusRebuildPath, (_request, response) => rebuildStyleCorpusRoute(response, styleCorpus));
     router.register(HTTP_METHOD.PUT, STYLE_CORPUS_ITEM_PATH, (request, response, parameters) => updateStyleCorpusItemRoute(request, response, parameters[0]!, styleCorpus));
     router.register(HTTP_METHOD.DELETE, STYLE_CORPUS_ITEM_PATH, (_request, response, parameters) => deleteStyleCorpusItemRoute(response, parameters[0]!, styleCorpus));

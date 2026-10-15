@@ -147,15 +147,17 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
                 skillNames={skillNames} />
             <AssistantTimelineStatus data={data} actions={actions} />
         </div>
-        {!atEnd && <IconButton
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 shadow-raised"
-            variant="secondary"
-            round
-            label={intl.formatMessage({ id: "assistant.scrollToEnd" })}
-            title={intl.formatMessage({ id: "assistant.scrollToEnd" })}
-            onClick={scrollToEnd}>
-            <ChevronDownIcon className="size-4" />
-        </IconButton>}
+        {!atEnd && (
+            <IconButton
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 shadow-raised"
+                variant="secondary"
+                round
+                label={intl.formatMessage({ id: "assistant.scrollToEnd" })}
+                title={intl.formatMessage({ id: "assistant.scrollToEnd" })}
+                onClick={scrollToEnd}>
+                <ChevronDownIcon className="size-4" />
+            </IconButton>
+        )}
     </div>;
 }
 
@@ -183,23 +185,27 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
     const { openView, openSkillFolder, onRetry, onCheckpoint, applyEdit, setClaimSelected } = actions;
     const intl = useIntl();
     return <>
-        {greeting && <AssistantTimelineMessage
-            message={greeting}
-            generalSettings={generalSettings}
-            skillByRequest={skillByRequest}
-            skillNames={skillNames} />}
-        {assistantMessages?.filter((item) => item !== greeting).map((item) => <AssistantTimelineMessage
-            key={item.id}
-            message={item}
-            factCheckClaims={item === completedFactCheck ? factCheckClaims : undefined}
-            openView={openView}
-            openSkillFolder={openSkillFolder}
-            onRetry={item === lastMessage && !streamedMessage ? onRetry : undefined}
-            onCheckpoint={state === "streaming" ? undefined : onCheckpoint}
-            applyEdit={applyEdit}
-            generalSettings={generalSettings}
-            skillByRequest={skillByRequest}
-            skillNames={skillNames} />)}
+        {greeting && (
+            <AssistantTimelineMessage
+                message={greeting}
+                generalSettings={generalSettings}
+                skillByRequest={skillByRequest}
+                skillNames={skillNames} />
+        )}
+        {assistantMessages?.filter((item) => item !== greeting).map((item) => (
+            <AssistantTimelineMessage
+                key={item.id}
+                message={item}
+                factCheckClaims={item === completedFactCheck ? factCheckClaims : undefined}
+                openView={openView}
+                openSkillFolder={openSkillFolder}
+                onRetry={item === lastMessage && !streamedMessage ? onRetry : undefined}
+                onCheckpoint={state === "streaming" ? undefined : onCheckpoint}
+                applyEdit={applyEdit}
+                generalSettings={generalSettings}
+                skillByRequest={skillByRequest}
+                skillNames={skillNames} />
+        ))}
         <StreamedTimelineMessage
             message={streamedMessage}
             openView={openView}
@@ -207,11 +213,13 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
             generalSettings={generalSettings}
             skillByRequest={skillByRequest} />
         {!assistantMessages?.length && <p className="text-sm leading-6 text-muted">{intl.formatMessage({ id: "assistant.intro" })}</p>}
-        {factCheckClaims?.length && !completedFactCheck ? <FactCheckClaims
-            key={activeRequestId}
-            claims={factCheckClaims}
-            className="mr-6"
-            onSelectionChange={state === "streaming" && activeRequestId ? setClaimSelected : undefined} /> : null}
+        {factCheckClaims?.length && !completedFactCheck ? (
+            <FactCheckClaims
+                key={activeRequestId}
+                claims={factCheckClaims}
+                className="mr-6"
+                onSelectionChange={state === "streaming" && activeRequestId ? setClaimSelected : undefined} />
+        ) : null}
     </>;
 }
 
@@ -229,7 +237,9 @@ function StreamedTimelineMessage({ message, openView, onRetry, generalSettings, 
     if (message?.blocks.length)
         return <article className="p-0">
             <p className="text-xs font-semibold text-muted">{intl.formatMessage({ id: "assistant.heading" })}</p>
-            {message.blocks.map((block, index) => <AssistantMarkdown key={`${message.id}-${index}`} content={block} />)}
+            {message.blocks.map((block, index) => (
+                <AssistantMarkdown key={`${message.id}-${index}`} content={block} />
+            ))}
         </article>;
 
     return null;
@@ -241,19 +251,25 @@ function AssistantTimelineStatus({ data, actions }: { data: AssistantTimelineDat
     const { openSettings } = actions;
     const intl = useIntl();
     return <>
-        {state === "streaming" && <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted" role="status">
-            <ActivityIndicator />
-            <span>{activity?.summary ?? intl.formatMessage({ id: "assistant.workingFor" }, { duration: elapsedDuration })}</span>
-        </div>}
-        {message && <Banner tone="error" className="border-danger/35 bg-surface-raised text-ink" role="alert">
-            <div>
-                <p>{message}</p>
-                {hasUnavailableAiConnection && openSettings ? <Button className="mt-2" variant="secondary" onClick={openSettings}>{intl.formatMessage({ id: "assistant.openSettings" })}</Button> : null}
-                {errorDetails && <details className="mt-1 border-t border-border pt-1 text-xs leading-5 text-muted">
-                    <summary className="flex min-h-9 cursor-pointer items-center hover:text-ink">{intl.formatMessage({ id: "assistant.errorDetails" })}</summary>
-                    <p className="mb-1 whitespace-pre-wrap break-words font-mono text-[11px] leading-4">{errorDetails}</p>
-                </details>}
+        {state === "streaming" && (
+            <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted" role="status">
+                <ActivityIndicator />
+                <span>{activity?.summary ?? intl.formatMessage({ id: "assistant.workingFor" }, { duration: elapsedDuration })}</span>
             </div>
-        </Banner>}
+        )}
+        {message && (
+            <Banner tone="error" className="border-danger/35 bg-surface-raised text-ink" role="alert">
+                <div>
+                    <p>{message}</p>
+                    {hasUnavailableAiConnection && openSettings ? <Button className="mt-2" variant="secondary" onClick={openSettings}>{intl.formatMessage({ id: "assistant.openSettings" })}</Button> : null}
+                    {errorDetails && (
+                        <details className="mt-1 border-t border-border pt-1 text-xs leading-5 text-muted">
+                            <summary className="flex min-h-9 cursor-pointer items-center hover:text-ink">{intl.formatMessage({ id: "assistant.errorDetails" })}</summary>
+                            <p className="mb-1 whitespace-pre-wrap break-words font-mono text-[11px] leading-4">{errorDetails}</p>
+                        </details>
+                    )}
+                </div>
+            </Banner>
+        )}
     </>;
 }

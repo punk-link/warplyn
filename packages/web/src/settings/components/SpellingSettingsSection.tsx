@@ -50,23 +50,31 @@ export function SpellingSettingsSection() {
                                 className="mt-2 w-full" />
                         </label>
                         <fieldset disabled={busy} className="max-h-64 divide-y divide-border overflow-y-auto border-b border-border" aria-label={intl.formatMessage({ id: "spelling.dictionaries" })}>
-                            {languages.map(({ code: language, label, downloaded }) => <div key={language} className="flex min-h-9 items-center gap-2 py-2.5 text-sm">
-                                {downloaded ? <span className="min-w-0 flex-1">{label}</span> : <label className="flex min-w-0 flex-1 items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        className="size-4 accent-brand"
-                                        disabled={snapshot?.dictionaries.states[language] === "preparing"}
-                                        checked={spelling.selected.includes(language)}
-                                        onChange={(event) => spelling.setSelected((current) => event.target.checked ? [...current, language] : current.filter((item) => item !== language))} />
-                                    <span>{label}</span>
-                                </label>}
-                                <span className="shrink-0 text-xs text-muted" role={spelling.selected.includes(language) ? "status" : undefined}>{snapshot?.dictionaries.states[language] === "preparing" && <ActivityIndicator className="mr-2 inline-block align-middle" />}{intl.formatMessage({ id: stateMessages[snapshot?.dictionaries.states[language] ?? "unverified"] })}</span>
-                                {downloaded && <Button
-                                    variant="quiet"
-                                    disabled={busy}
-                                    aria-label={intl.formatMessage({ id: "spelling.unloadLanguage" }, { language: label })}
-                                    onClick={() => void spelling.unload(language)}>{intl.formatMessage({ id: "spelling.unload" })}</Button>}
-                            </div>)}
+                            {languages.map(({ code: language, label, downloaded }) => (
+                                <div key={language} className="flex min-h-9 items-center gap-2 py-2.5 text-sm">
+                                    {downloaded ? <span className="min-w-0 flex-1">{label}</span>
+                                        : (
+                                            <label className="flex min-w-0 flex-1 items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    className="size-4 accent-brand"
+                                                    disabled={snapshot?.dictionaries.states[language] === "preparing"}
+                                                    checked={spelling.selected.includes(language)}
+                                                    onChange={(event) => spelling.setSelected((current) => event.target.checked ? [...current, language] : current.filter((item) => item !== language))} />
+                                                <span>{label}</span>
+                                            </label>
+                                        )}
+                                    <span className="shrink-0 text-xs text-muted" role={spelling.selected.includes(language) ? "status" : undefined}>{snapshot?.dictionaries.states[language] === "preparing" && <ActivityIndicator className="mr-2 inline-block align-middle" />}{intl.formatMessage({ id: stateMessages[snapshot?.dictionaries.states[language] ?? "unverified"] })}</span>
+                                    {downloaded && (
+                                        <Button
+                                            variant="quiet"
+                                            disabled={busy}
+                                            aria-label={intl.formatMessage({ id: "spelling.unloadLanguage" }, { language: label })}
+                                            onClick={() => void spelling.unload(language)}>{intl.formatMessage({ id: "spelling.unload" })}
+                                        </Button>
+                                    )}
+                                </div>
+                            ))}
                         </fieldset>
                         {snapshot && !languages.length && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "spelling.noLanguages" })}</p>}
                     </div>
@@ -93,7 +101,8 @@ export function SpellingSettingsSection() {
                             className="shrink-0"
                             variant="quiet"
                             disabled={busy || !snapshot || !spelling.input.trim()}
-                            onClick={() => void spelling.addWords()}>{intl.formatMessage({ id: "spelling.add" })}</Button>
+                            onClick={() => void spelling.addWords()}>{intl.formatMessage({ id: "spelling.add" })}
+                        </Button>
                         <p id={wordsHintId} className="min-w-0 flex-1 text-xs leading-5 text-muted">{intl.formatMessage({ id: "spelling.wordsHint" })}</p>
                     </div>
                 </section>
@@ -110,14 +119,17 @@ export function SpellingSettingsSection() {
                         className="w-full" />
                 </SettingRow>
                 <ul className="max-h-64 divide-y divide-border overflow-y-auto border-b border-border" aria-label={intl.formatMessage({ id: "spelling.savedWords" })}>
-                    {words.map((word) => <li key={word} className="flex min-h-9 items-center justify-between gap-3 py-2.5 text-sm">
-                        <span className="min-w-0 break-words">{word}</span>
-                        <Button
-                            variant="quiet"
-                            disabled={busy}
-                            aria-label={intl.formatMessage({ id: "spelling.removeWord" }, { word })}
-                            onClick={() => void spelling.removeWord(word)}>{intl.formatMessage({ id: "spelling.remove" })}</Button>
-                    </li>)}
+                    {words.map((word) => (
+                        <li key={word} className="flex min-h-9 items-center justify-between gap-3 py-2.5 text-sm">
+                            <span className="min-w-0 break-words">{word}</span>
+                            <Button
+                                variant="quiet"
+                                disabled={busy}
+                                aria-label={intl.formatMessage({ id: "spelling.removeWord" }, { word })}
+                                onClick={() => void spelling.removeWord(word)}>{intl.formatMessage({ id: "spelling.remove" })}
+                            </Button>
+                        </li>
+                    ))}
                 </ul>
                 {!words.length && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "spelling.noWords" })}</p>}
             </div>

@@ -57,12 +57,15 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
     const { view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, publishProfile, publishProfileLabel } = content;
     const { runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection } = actions;
     const { proposalWarningsDismissed, dismissProposalWarnings, openWrite, openAssistant, selectedTranslationLanguages, setSelectedTranslationLanguage } = navigation;
-    const renderPanel = (children: ReactNode) => <section
-        data-focus-area={view === "write" ? undefined : "article-editor"}
-        role="tabpanel"
-        id={`workspace-panel-${view}`}
-        aria-labelledby={`workspace-tab-${view}`}
-        className={panelClassName(view)}>{children}</section>;
+    const renderPanel = (children: ReactNode) => (
+        <section
+            data-focus-area={view === "write" ? undefined : "article-editor"}
+            role="tabpanel"
+            id={`workspace-panel-${view}`}
+            aria-labelledby={`workspace-tab-${view}`}
+            className={panelClassName(view)}>{children}
+        </section>
+    );
     const articleRevisions = revisions.revisions.length ? revisions.revisions : [article.currentRevision];
     const translationRevisions: ArticleRevisionSummary[] = articleRevisions.map((revision) => {
         if (!("content" in revision))
@@ -131,6 +134,7 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
                         findings: editorial.styleReview,
                         findingsStale: editorial.styleReviewStale,
                         articleId: article.id,
+                        language: article.language,
                         revisions: revisions.revisions,
                         generalSettings,
                         typographyStatus: {
@@ -148,6 +152,7 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
                         getArticleRules: corpus.getArticleRules,
                         setArticleRules: corpus.setArticleRules,
                         snapshotArticleRevision: corpus.snapshotArticleRevision,
+                        scopedTypography: { save: corpus.setTypographyConfiguration, getArticle: corpus.getArticleTypography },
                         typography: {
                             save: corpus.setTypographyRules,
                             check: editorial.checkTypography,

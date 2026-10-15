@@ -41,7 +41,8 @@ function SkillTag({ skill, nodeKey }: { skill: AssistantComposerSkill; nodeKey: 
             className="inline-grid size-3 min-h-0 place-items-center rounded-full p-0 text-brand/70 hover:bg-brand-soft hover:text-brand"
             aria-label={intl.formatMessage({ id: "assistant.removeSkill" }, { skill: label })}
             onMouseDown={(event) => event.preventDefault()}
-            onClick={remove}><CloseIcon className="size-2" /></button>
+            onClick={remove}><CloseIcon className="size-2" />
+        </button>
     </span>;
 }
 

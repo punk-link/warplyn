@@ -16,12 +16,12 @@ async function runReview(baseUrl: string, articleId: string, reviewMode?: string
 
 
 test("typography save, local review, recovery, and summaries work without a provider", () => withService(undefined, async (baseUrl, repositories, services) => {
-    const article = repositories.articleService.createArticle({ title: "Typography", content: "Wait...\n\n`code...`" });
+    const article = repositories.articleService.createArticle({ title: "Typography", content: "Wait...\n\n`code...`", language: "en" });
     const rules = [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }];
-    const saved = await fetch(`${baseUrl}/api/style-corpus/typography`, {
+    const saved = await fetch(`${baseUrl}/api/style-corpus/typography-configuration`, {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ rules }),
+        body: JSON.stringify({ language: "en", preferences: { rules, disabled: [] } }),
     });
     assert.equal(saved.status, 200);
     const corpus = await saved.json();
@@ -69,8 +69,10 @@ test("full review combines contextual output with local typography in one artifa
     ]);
     return withService(engine, async (baseUrl, repositories) => {
         repositories.styleCorpus.setStyleCorpusRules("Keep it clear.");
-        repositories.styleCorpus.setTypographyRules([{ id: "dots", definition: { kind: "ellipsis", form: "…" } }]);
-        const article = repositories.articleService.createArticle({ title: "Combined", content: "Words..." });
+        repositories.styleCorpus.setTypographyConfiguration({ language: "en", preferences: {
+            rules: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }], disabled: [],
+        } });
+        const article = repositories.articleService.createArticle({ title: "Combined", content: "Words...", language: "en" });
         const textClearerWordsPattern = /"text":"Clearer words…"/u;
         assert.match(await (await runReview(baseUrl, article.id)).text(), textClearerWordsPattern);
         assert.equal(engine.requests.length, 1);
@@ -84,11 +86,18 @@ test("full review combines contextual output with local typography in one artifa
 test("Assistant completion retains the captured profile when rules rebuild during generation", () => {
     const engine = new FixtureEngine([]);
     return withService(engine, async (baseUrl, repositories) => {
-        repositories.styleCorpus.setTypographyRules([{ id: "dots", definition: { kind: "ellipsis", form: "…" } }]);
-        const article = repositories.articleService.createArticle({ title: "Snapshot", content: "Wait..." });
+        repositories.styleCorpus.setTypographyConfiguration({ language: "en", preferences: {
+            rules: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }], disabled: [],
+        } });
+        const article = repositories.articleService.createArticle({ title: "Snapshot", content: "Wait...", language: "en" });
         engine.stream = async function* (request) {
             assert.equal(request.styleProfile?.version, 1);
-            repositories.styleCorpus.setTypographyRules([{ id: "dots", definition: { kind: "ellipsis", form: "..." } }]);
+            assert.equal(request.styleProfile?.rules.typographyCapture?.language, "en");
+            assert.equal(request.styleProfile?.rules.typographyConfiguration, undefined);
+            repositories.articles.updateArticle(article.id, { language: "ru" });
+            repositories.styleCorpus.setTypographyConfiguration({ language: "en", preferences: {
+                rules: [{ id: "dots", definition: { kind: "ellipsis", form: "..." } }], disabled: [],
+            } });
             yield { type: "completed", responseId: "captured-style", text: "Wait...", styleReview: { findings: [] } };
         };
         const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, {
@@ -108,14 +117,17 @@ test("Assistant completion retains the captured profile when rules rebuild durin
         const artifact = repositories.editorialArtifacts.listEditorialArtifacts(article.id)[0]!;
         assert.equal(JSON.parse(artifact.content).styleProfile.version, 1);
         assert.equal(JSON.parse(artifact.content).proposal, "Wait…");
+        assert.equal(JSON.parse(artifact.content).styleReview.typography.capture.language, "en");
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "Wait...");
     });
 });
 
 
 test("inconsistent local corrections name the rule problem and retain no generated artifact", () => withService(undefined, async (baseUrl, repositories) => {
-    const article = repositories.articleService.createArticle({ title: "Conflict", content: "Wait!!!!" });
-    repositories.styleCorpus.setTypographyRules([{ id: "repeat", definition: { kind: "literal", source: "!!", replacement: "!" } }]);
+    const article = repositories.articleService.createArticle({ title: "Conflict", content: "Wait!!!!", language: "en" });
+    repositories.styleCorpus.setTypographyConfiguration({ language: "en", preferences: {
+        rules: [{ id: "repeat", definition: { kind: "literal", source: "!!", replacement: "!" } }], disabled: [],
+    } });
     const response = await runReview(baseUrl, article.id, "typography");
     const conflictCode = /"errorCode":"typography_corrections_conflict"/u;
     assert.match(await response.text(), conflictCode);

@@ -87,7 +87,8 @@ const iconButtonVariantClasses = {
 
 export function IconButton({ label, children, className, variant = "default", round = false, ...props }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement> & { label: string; variant?: keyof typeof iconButtonVariantClasses; round?: boolean }>) {
     return <button {...props} className={joinClassNames(("inline-grid size-9 place-items-center border p-0 transition-colors active:translate-y-px focus:outline-none focus-visible:ring-2 " +
-        "focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55"), round ? "rounded-full" : "rounded-control", iconButtonVariantClasses[variant], className)} aria-label={label}>{children}</button>;
+        "focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55"), round ? "rounded-full" : "rounded-control", iconButtonVariantClasses[variant], className)} aria-label={label}>{children}
+    </button>;
 }
 
 
@@ -156,7 +157,8 @@ export function Tab({ children, selected, ...props }: PropsWithChildren<ButtonHT
         {...props}
         className={joinClassNames("relative min-h-9 shrink-0 border-b-2 border-transparent px-2 py-2 text-xs text-muted hover:text-ink", selected ? "font-semibold text-brand after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-brand" : undefined, props.className)}
         role="tab"
-        aria-selected={selected}>{children}</button>;
+        aria-selected={selected}>{children}
+    </button>;
 }
 
 
@@ -191,7 +193,8 @@ export function EmptyState({ title, children, className }: PropsWithChildren<{ t
 export function Tooltip({ children, content }: { children: ReactNode; content: string }) {
     return <span className="group relative">{children}
         <span role="tooltip" className={("pointer-events-none absolute z-10 w-max max-w-64 translate-y-1 rounded-control bg-ink p-2 text-xs text-on-brand opacity-0 " +
-            "transition-opacity group-hover:opacity-100 group-focus-within:opacity-100")}>{content}</span>
+            "transition-opacity group-hover:opacity-100 group-focus-within:opacity-100")}>{content}
+        </span>
     </span>;
 }
 

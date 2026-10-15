@@ -55,7 +55,7 @@ export class AuthorSkillChatActions {
 
 
     commit(request: PreparedAssistantRequest): CommittedAuthorSkillChange | undefined {
-        const change = request.pendingSkillChange;
+        const change = request.execution.pendingSkillChange;
         if (!change)
             return undefined;
 
@@ -66,7 +66,7 @@ export class AuthorSkillChatActions {
             skillWriteError(error);
         }
 
-        request.pendingSkillChange = undefined;
+        request.execution.pendingSkillChange = undefined;
         return committed;
     }
 
@@ -88,7 +88,7 @@ export class AuthorSkillChatActions {
             throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
         signal.throwIfAborted();
-        if (request.pendingSkillChange)
+        if (request.execution.pendingSkillChange)
             throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
         try {
@@ -97,7 +97,7 @@ export class AuthorSkillChatActions {
             skillWriteError(error);
         }
 
-        request.pendingSkillChange = change;
+        request.execution.pendingSkillChange = change;
         return { skillId: change.skillId, status: "pending" };
     }
 

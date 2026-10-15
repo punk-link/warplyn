@@ -3,6 +3,7 @@ import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE, typographyRuleLabel, type Typogr
 import type { MessageId } from "../../i18n/messages.js";
 
 export const typographyKindMessages: Record<TypographyDefinition["kind"], MessageId> = {
+    "punctuation-space": "typography.punctuationSpacing",
     quotes: "typography.quotes",
     dash: "typography.dash",
     ellipsis: "typography.ellipsis",
@@ -33,6 +34,8 @@ export function formatTypographyText(text: string, intl: IntlShape): string {
 
 export function defaultTypographyDefinition(kind: string): TypographyDefinition {
     switch (kind) {
+        case "punctuation-space":
+            return { kind, marks: ";!?", before: NARROW_NO_BREAK_SPACE };
         case "quotes":
             return { kind, outer: "curly", nested: "guillemets" };
         case "dash":

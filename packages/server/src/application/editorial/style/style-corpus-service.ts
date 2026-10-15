@@ -5,9 +5,26 @@ import type { EditorialEngineResolver } from "../engine/editorial-engine-resolve
 import type { StyleCorpusStore } from "./style-corpus-store.js";
 import type { ArticleStore } from "../../articles/article-store.js";
 import { typographyReviewResult } from "./typography-review-result.js";
+import { isTypographyConfigurationUpdate } from "@skladno/shared";
 
 
 export class StyleCorpusService {
+    setTypographyConfiguration(input: unknown): StyleCorpus {
+        if (!isTypographyConfigurationUpdate(input))
+            throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST);
+
+        return this.store.setTypographyConfiguration(input);
+    }
+
+
+    getArticleTypography(articleId: string) {
+        if (!this.articles?.getArticle(articleId))
+            throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+
+        return this.store.getArticleTypography(articleId);
+    }
+
+
     constructor(
         private readonly store: StyleCorpusStore,
         private readonly engines?: EditorialEngineResolver,

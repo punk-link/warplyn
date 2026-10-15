@@ -56,25 +56,29 @@ export function CopyStatusControl({ copyMarkdown, copyPlainText, open, onToggle,
             }}>
             <ChevronDownIcon className={`size-3 transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
-        {open && <div
-            id={menuId}
-            className="absolute bottom-6 right-0 z-10 w-40 rounded-control border border-border bg-surface-raised p-1 shadow-raised"
-            role="menu"
-            aria-label={menuLabel}
-            onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
-                onClose();
-                trigger.current?.focus();
-            })}>
-            <button
-                className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
-                type="button"
-                role="menuitem"
-                onClick={() => copy(copyMarkdown)}>{intl.formatMessage({ id: "articleHeader.copyMarkdown" })}</button>
-            <button
-                className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
-                type="button"
-                role="menuitem"
-                onClick={() => copy(copyPlainText)}>{intl.formatMessage({ id: "articleHeader.copyPlainText" })}</button>
-        </div>}
+        {open && (
+            <div
+                id={menuId}
+                className="absolute bottom-6 right-0 z-10 w-40 rounded-control border border-border bg-surface-raised p-1 shadow-raised"
+                role="menu"
+                aria-label={menuLabel}
+                onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
+                    onClose();
+                    trigger.current?.focus();
+                })}>
+                <button
+                    className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
+                    type="button"
+                    role="menuitem"
+                    onClick={() => copy(copyMarkdown)}>{intl.formatMessage({ id: "articleHeader.copyMarkdown" })}
+                </button>
+                <button
+                    className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
+                    type="button"
+                    role="menuitem"
+                    onClick={() => copy(copyPlainText)}>{intl.formatMessage({ id: "articleHeader.copyPlainText" })}
+                </button>
+            </div>
+        )}
     </div>;
 }

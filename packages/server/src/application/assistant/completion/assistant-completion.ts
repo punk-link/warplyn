@@ -16,20 +16,21 @@ import { scopeTypographyReview } from "../../editorial/style/typography-review-s
 
 
 export function getCompletedContent(request: PreparedAssistantRequest, text: string): string {
-    if (request.scope.kind !== "selection" || !request.completedCapability || request.completedCapability === EDITORIAL_CAPABILITY.FACT_CHECK)
+    const capability = request.execution.completedCapability;
+    if (request.scope.kind !== "selection" || !capability || capability === EDITORIAL_CAPABILITY.FACT_CHECK)
         return text;
 
-    return `${request.articleContent.slice(0, request.scope.startOffset)}${text}${request.articleContent.slice(request.scope.endOffset)}`;
+    return `${request.article.content.slice(0, request.scope.startOffset)}${text}${request.article.content.slice(request.scope.endOffset)}`;
 }
 
 
 export function getEditCandidate(request: PreparedAssistantRequest, event: CompletionEvent): AssistantEditCandidate | undefined {
-    if (!request.editCandidateAuthorized || request.completedCapability !== EDITORIAL_CAPABILITY.GENERATE_PROPOSAL || !event.text.trim())
+    if (!request.editCandidateAuthorized || request.execution.completedCapability !== EDITORIAL_CAPABILITY.GENERATE_PROPOSAL || !event.text.trim())
         return undefined;
 
     const source = request.scope.kind === "selection"
-        ? request.articleContent.slice(request.scope.startOffset, request.scope.endOffset)
-        : request.articleContent;
+        ? request.article.content.slice(request.scope.startOffset, request.scope.endOffset)
+        : request.article.content;
     const replacement = event.text;
     const lineEndingPattern = /(?:^|\n)\s*(?:option|version|alternative)\s*[12]\s*[:.)]/i;
     if (replacement === source || lineEndingPattern.test(replacement) || !preservesProtectedContent(source, replacement))
@@ -79,7 +80,7 @@ export class AssistantCompletion {
             if (!article || article.currentRevisionId !== request.scope.baseRevisionId)
                 throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_CONFLICT, HTTP_STATUS.CONFLICT);
 
-            const incomplete = request.completedCapability !== EDITORIAL_CAPABILITY.FACT_CHECK || Boolean(completedFindings.incomplete);
+            const incomplete = request.execution.completedCapability !== EDITORIAL_CAPABILITY.FACT_CHECK || Boolean(completedFindings.incomplete);
             const responseKind = incomplete ? "findings_partial" : "findings_prepared";
             const factCheck = { ...completedFindings, ...(incomplete ? { incomplete: true } : {}) };
             const persisted = persistFactCheckArtifact({
@@ -99,7 +100,7 @@ export class AssistantCompletion {
                 editorialArtifactId: persisted.artifactId,
             });
 
-            if (request.usesCapabilityLoop && incomplete)
+            if (request.execution.usesCapabilityLoop && incomplete)
                 this.dependencies.assistant.setExecution(request.requestId, EDITORIAL_CAPABILITY.FACT_CHECK, "failed");
 
             return { responseKind, messageId: message.id, editorialArtifactId: persisted.artifactId, result: { factCheck: persisted.factCheck } };
@@ -112,14 +113,14 @@ export class AssistantCompletion {
         if (!article || article.currentRevisionId !== request.scope.baseRevisionId)
             throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_CONFLICT, HTTP_STATUS.CONFLICT);
 
-        const styleReview = scopeTypographyReview(request.articleContent, event.text, event.styleReview, request.scope);
+        const styleReview = scopeTypographyReview(request.article.content, event.text, event.styleReview, request.scope);
         event = { ...event, ...(styleReview ? { styleReview } : {}) };
 
         const metadataChanged = this.applyPendingActions(request);
         const editCandidate = getEditCandidate(request, event);
         const directEdit = Boolean(editCandidate && request.editMode === "direct" && request.directEditAuthorized);
         const content = getCompletedContent(request, event.text);
-        const responseKind = event.factCheck?.incomplete ? "findings_partial" : getResponseKind(request.completedCapability);
+        const responseKind = event.factCheck?.incomplete ? "findings_partial" : getResponseKind(request.execution.completedCapability);
         const kind = directEdit ? "edit_applied" : responseKind;
         const artifact = directEdit ? {} : this.createCompletionArtifact(request, event, content);
 
@@ -135,7 +136,7 @@ export class AssistantCompletion {
             articleId: request.articleId,
             ...(request.resolvedSkillId ? { skillId: request.resolvedSkillId } : {}),
             responseKind: kind,
-            content: request.completedCapability ? "" : content,
+            content: request.execution.completedCapability ? "" : content,
             proposalContent: directEdit ? undefined : result?.proposal,
             editorialArtifactId: artifact.id,
             ...(editCandidate ? { editCandidate, directEdit } : {}),
@@ -150,12 +151,12 @@ export class AssistantCompletion {
 
     private applyPendingActions(request: PreparedAssistantRequest): boolean {
         let metadataChanged = false;
-        for (const action of request.pendingActions) {
+        for (const action of request.execution.pendingActions) {
             this.dependencies.capabilities!
                 .executeAction(action.capability, {
                     articleId: request.articleId,
                     baseRevisionId: request.scope.baseRevisionId,
-                    authorizedActions: request.authorizedActions
+                    authorizedActions: request.execution.authorizedActions
                 }, action.input);
 
             metadataChanged ||=
@@ -170,26 +171,26 @@ export class AssistantCompletion {
 
 
     private createCompletionArtifact(request: PreparedAssistantRequest, event: CompletionEvent, content: string): { id?: string; factCheck?: FactCheck } {
-        if (!request.completedCapability)
+        if (!request.execution.completedCapability)
             return {};
 
         const metadata = {
             requestId: request.requestId,
             ...(request.resolvedSkillId ? { resolvedSkillId: request.resolvedSkillId } : {}),
-            capability: request.completedCapability,
+            capability: request.execution.completedCapability,
             ...(request.explicitSkillId ? { skillSource: "explicit" } : {}),
             createAuthorGuidance: request.authorMessage,
             scope: request.scope,
             responseId: event.responseId,
             proposal: content,
-            ...(event.styleReview ? { styleReview: event.styleReview, baseContent: request.articleContent } : {}),
-            ...(request.completedCapability === EDITORIAL_CAPABILITY.STYLE_REVIEW
+            ...(event.styleReview ? { styleReview: event.styleReview, baseContent: request.article.content } : {}),
+            ...(request.execution.completedCapability === EDITORIAL_CAPABILITY.STYLE_REVIEW
                 ? { styleProfile: event.styleReview?.profileSnapshot, articleStyleRules: event.styleReview?.articleRules?.join("\n") }
                 : {}
             ),
             translation: event.translation
         };
-        if (request.completedCapability === EDITORIAL_CAPABILITY.FACT_CHECK && event.factCheck) {
+        if (request.execution.completedCapability === EDITORIAL_CAPABILITY.FACT_CHECK && event.factCheck) {
             const input = {
                 artifacts: this.dependencies.artifacts,
                 factChecks: this.dependencies.factChecks,
@@ -214,15 +215,16 @@ export class AssistantCompletion {
 
 
     private getCompletionResult(request: PreparedAssistantRequest, event: CompletionEvent, content: string, factCheck: FactCheck | undefined, metadataChanged: boolean): AssistantEditorialResult | undefined {
-        if (!request.completedCapability && !metadataChanged)
+        if (!request.execution.completedCapability && !metadataChanged)
             return undefined;
 
         return {
             ...(metadataChanged ? { metadataChanged: true } : {}),
-            ...(request.completedCapability === EDITORIAL_CAPABILITY.FACT_CHECK && factCheck ? { factCheck } : {}),
-            ...(request.completedCapability === EDITORIAL_CAPABILITY.STYLE_REVIEW ? this.getStyleReviewResult(event, content) : {}),
-            ...(request.completedCapability === EDITORIAL_CAPABILITY.TRANSLATE && event.translation ? { translation: { metadata: event.translation, content } } : {}),
-            ...(request.completedCapability === EDITORIAL_CAPABILITY.GENERATE_PROPOSAL ? { proposal: content } : {}),
+            ...(request.execution.completedCapability === EDITORIAL_CAPABILITY.FACT_CHECK && factCheck ? { factCheck } : {}),
+            ...(request.execution.completedCapability === EDITORIAL_CAPABILITY.STYLE_REVIEW ? this.getStyleReviewResult(event, content) : {}),
+            ...(request.execution.completedCapability === EDITORIAL_CAPABILITY.TRANSLATE && event.translation
+                ? { translation: { metadata: event.translation, content } } : {}),
+            ...(request.execution.completedCapability === EDITORIAL_CAPABILITY.GENERATE_PROPOSAL ? { proposal: content } : {}),
         };
     }
 

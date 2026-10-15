@@ -1,5 +1,6 @@
 import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE, type TypographyDefinition } from "@skladno/shared";
 import { typographyQuoteMatches } from "./typography-quote-matches.js";
+import { typographyPunctuationMatches } from "./typography-punctuation-matches.js";
 
 
 interface TypographyPatch { start: number; end: number; replacement: string; }
@@ -92,6 +93,9 @@ export function typographyRuleMatches(text: string, definition: TypographyDefini
     const ellipsis = /(?<![.\p{N}])(?:\.{3}|…)(?![.\p{N}])/gu;
     const repeatedProseSpaces = /(?<=\S) {2,}(?=\S)/gu;
     switch (definition.kind) {
+        case "punctuation-space":
+            patches = typographyPunctuationMatches(text, definition);
+            break;
         case "ellipsis":
             patches = patternMatches(text, ellipsis, () => definition.form);
             break;

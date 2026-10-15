@@ -31,7 +31,8 @@ describe("StyleProfileView", () => {
             setRules={vi.fn()}
             rebuild={vi.fn()}
             getArticleRules={vi.fn().mockResolvedValue("")}
-            setArticleRules={vi.fn()} /></IntlProvider>);
+            setArticleRules={vi.fn()} />
+        </IntlProvider>);
 
         expect(screen.queryByRole("button", { name: "Add rule" })).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
@@ -61,7 +62,8 @@ describe("StyleProfileView", () => {
             setRules={vi.fn()}
             rebuild={vi.fn()}
             getArticleRules={vi.fn().mockResolvedValue("")}
-            setArticleRules={vi.fn()} /></IntlProvider>);
+            setArticleRules={vi.fn()} />
+        </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.addWritingSample") }));
@@ -88,7 +90,8 @@ describe("StyleProfileView", () => {
             setRules={vi.fn()}
             rebuild={vi.fn()}
             getArticleRules={vi.fn().mockResolvedValue("")}
-            setArticleRules={vi.fn()} /></IntlProvider>);
+            setArticleRules={vi.fn()} />
+        </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
         await user.click(screen.getByRole("button", { name: getMessage("views.remove") }));
@@ -110,7 +113,8 @@ describe("StyleProfileView", () => {
             setRules={vi.fn()}
             rebuild={vi.fn().mockResolvedValue(undefined)}
             getArticleRules={vi.fn().mockResolvedValue("")}
-            setArticleRules={vi.fn()} /></IntlProvider>);
+            setArticleRules={vi.fn()} />
+        </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.rebuild") }));
         expect(screen.getByText("Profile rebuilt from 1 active source.")).toBeTruthy();
@@ -130,7 +134,8 @@ describe("StyleProfileView", () => {
             setRules={setRules}
             rebuild={vi.fn()}
             getArticleRules={vi.fn().mockResolvedValue("Use examples.")}
-            setArticleRules={vi.fn()} /></IntlProvider>);
+            setArticleRules={vi.fn()} />
+        </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.manualRules") }));
         expect(screen.getAllByText("Applied in style review.").length).toBeGreaterThan(0);

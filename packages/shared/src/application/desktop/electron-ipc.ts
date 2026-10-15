@@ -63,6 +63,8 @@ export const ELECTRON_APPLICATION_METHOD = {
     setStyleCorpusItemIncluded: "setStyleCorpusItemIncluded",
     setStyleCorpusRules: "setStyleCorpusRules",
     setTypographyRules: "setTypographyRules",
+    setTypographyConfiguration: "setTypographyConfiguration",
+    getArticleTypography: "getArticleTypography",
     getTypographyReview: "getTypographyReview",
     rebuildStyleCorpus: "rebuildStyleCorpus",
     getArticleStyleRules: "getArticleStyleRules",

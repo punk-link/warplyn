@@ -1,4 +1,10 @@
 export * from "./style/typography.js";
+export * from "./style/typography-configuration.js";
+export * from "./style/typography-configuration-validation.js";
+export * from "./style/typography-presets.js";
+export * from "./style/resolve-typography.js";
+export { normalizeWritingLanguage } from "./cross-cutting/writing-language.js";
+export { styleCorpusTypographyConfigurationPath, createArticleTypographyPath } from "./style/style.js";
 export * from "./style/typography-validation.js";
 export * from "./text/unicode-characters.js";
 

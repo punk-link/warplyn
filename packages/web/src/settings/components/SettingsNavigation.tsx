@@ -51,14 +51,18 @@ export function SettingsNavigation({ section, setSection, back, status }: { sect
                     data-focus-area-entry
                     className="inline-flex items-center gap-2"
                     variant="quiet"
-                    onClick={back}><ArrowLeftIcon className="size-4" />{intl.formatMessage({ id: "settings.backToWorkspace" })}</Button>
+                    onClick={back}><ArrowLeftIcon className="size-4" />{intl.formatMessage({ id: "settings.backToWorkspace" })}
+                </Button>
             </header>
             <nav className="p-2">
-                {settingsSections.map((item) => <button
-                    key={item.id}
-                    aria-current={section === item.id ? "page" : undefined}
-                    className={`min-h-10 w-full rounded-control px-3 text-left text-sm ${section === item.id ? "bg-brand-soft font-semibold text-brand" : "text-muted hover:bg-surface"}`}
-                    onClick={() => setSection(item.id)}>{intl.formatMessage({ id: item.label })}</button>)}
+                {settingsSections.map((item) => (
+                    <button
+                        key={item.id}
+                        aria-current={section === item.id ? "page" : undefined}
+                        className={`min-h-10 w-full rounded-control px-3 text-left text-sm ${section === item.id ? "bg-brand-soft font-semibold text-brand" : "text-muted hover:bg-surface"}`}
+                        onClick={() => setSection(item.id)}>{intl.formatMessage({ id: item.label })}
+                    </button>
+                ))}
             </nav>
             <footer className="mt-auto border-t border-border px-3 py-2 text-micro text-muted" role="status">
                 <span aria-hidden="true">&#9679;</span> {status}

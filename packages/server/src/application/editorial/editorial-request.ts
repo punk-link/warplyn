@@ -3,6 +3,7 @@ import type { SkillGuidance } from "../assistant/skills/skill-guidance.js";
 
 
 export interface EditorialServiceRequest {
+    styleContext?: { profile: import("@skladno/shared").StyleProfile; articleRules: string };
     requestId: string;
     articleContext: {
         articleId: string;

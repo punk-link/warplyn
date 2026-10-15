@@ -1,6 +1,8 @@
 export const styleCorpusPath = "/api/style-corpus";
 export const styleCorpusRulesPath = `${styleCorpusPath}/rules`;
 export const styleCorpusTypographyPath = `${styleCorpusPath}/typography`;
+export const styleCorpusTypographyConfigurationPath = `${styleCorpusPath}/typography-configuration`;
+export const createArticleTypographyPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/typography`;
 export const styleCorpusRebuildPath = `${styleCorpusPath}/rebuild`;
 export const createArticleStyleRulesPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/style-rules`;
 export const createArticleTypographyReviewPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/typography-review`;
@@ -15,6 +17,8 @@ export interface StyleTrait {
 
 
 export interface StyleProfileRules {
+    typographyConfiguration?: import("./typography-configuration.js").TypographyConfiguration;
+    typographyCapture?: import("./typography-configuration.js").TypographyCapture;
     manual: string;
     typography: import("./typography.js").TypographyRule[];
 }
@@ -49,6 +53,7 @@ export interface StyleCorpusItem {
 
 
 export interface StyleCorpus {
+    typographyConfiguration?: import("./typography-configuration.js").TypographyConfiguration;
     items: StyleCorpusItem[];
     profile?: StyleProfile;
     rules: string;
@@ -67,6 +72,8 @@ export interface CreateStyleCorpusItemInput {
 
 
 export interface StyleCorpusClient {
+    setTypographyConfiguration(input: import("./typography-configuration.js").TypographyConfigurationUpdate): Promise<StyleCorpus>;
+    getArticleTypography(articleId: string): Promise<import("./typography-configuration.js").ArticleTypography | undefined>;
     getStyleCorpus(): Promise<StyleCorpus>;
     addStyleCorpusItem(input: CreateStyleCorpusItemInput): Promise<StyleCorpus>;
     setStyleCorpusItemIncluded(itemId: string, included: boolean): Promise<StyleCorpus>;

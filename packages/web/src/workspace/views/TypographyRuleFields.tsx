@@ -1,38 +1,34 @@
 import { useIntl } from "react-intl";
 import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE, type TypographyDefinition } from "@skladno/shared";
 import { Field, Select, TextareaField } from "../../ui/primitives.js";
-
-const quoteForms = ["curly", "guillemets", "straight"] as const;
-const quoteExamples = { curly: "“…”", guillemets: "«…»", straight: '"…"' };
+import { TypographyQuoteFields } from "./TypographyQuoteFields.js";
 
 
 export function TypographyRuleFields({ definition, change }: { definition: TypographyDefinition; change: (next: TypographyDefinition) => void }) {
     const intl = useIntl();
     switch (definition.kind) {
         case "quotes":
-            return (
-                <div className="grid gap-2 sm:grid-cols-2">
-                    {(["outer", "nested"] as const).map((level) => (
-                        <label key={level} className="text-xs text-muted">
-                            {intl.formatMessage({ id: level === "outer" ? "typography.outer" : "typography.nested" })}
-                            <Select
-                                value={definition[level]}
-                                onChange={(event) => {
-                                    const form = quoteForms.find((value) => value === event.target.value);
-                                    if (form)
-                                        change({ ...definition, [level]: form });
-                                }}
-                            >
-                                {quoteForms.map((form) => (
-                                    <option key={form} value={form}>
-                                        {quoteExamples[form]}
-                                    </option>
-                                ))}
-                            </Select>
-                        </label>
-                    ))}
-                </div>
-            );
+            return <TypographyQuoteFields definition={definition} change={change} />;
+        case "punctuation-space":
+            return <div className="grid gap-2 sm:grid-cols-2">
+                <label className="text-xs text-muted">
+                    {intl.formatMessage({ id: "typography.punctuationMarks" })}
+                    <Field value={definition.marks} maxLength={8} onChange={(event) => change({ ...definition, marks: event.target.value })} />
+                </label>
+                <label className="text-xs text-muted">
+                    {intl.formatMessage({ id: "typography.spaceBefore" })}
+                    <Select value={definition.before} onChange={(event) => {
+                        const before = event.target.value;
+                        if (before === "" || before === " " || before === NO_BREAK_SPACE || before === NARROW_NO_BREAK_SPACE)
+                            change({ ...definition, before });
+                    }}>
+                        <option value="">{intl.formatMessage({ id: "typography.withoutSpaces" })}</option>
+                        <option value=" ">{intl.formatMessage({ id: "typography.ordinarySpace" })}</option>
+                        <option value={NO_BREAK_SPACE}>{intl.formatMessage({ id: "typography.nbsp" })}</option>
+                        <option value={NARROW_NO_BREAK_SPACE}>{intl.formatMessage({ id: "typography.narrowNbsp" })}</option>
+                    </Select>
+                </label>
+            </div>;
         case "dash":
             return (
                 <div className="grid gap-2 sm:grid-cols-2">

@@ -1,4 +1,6 @@
-import { defaultPublishLimitProfileId, isArticleLanguage, isPublishLimitProfileId, type CreateArticleInput, type EditorialWorkspaceClient } from "@skladno/shared";
+import {
+    defaultPublishLimitProfileId, normalizeWritingLanguage, isPublishLimitProfileId, type CreateArticleInput, type EditorialWorkspaceClient,
+} from "@skladno/shared";
 
 
 export async function createArticleWithDefaults(client: EditorialWorkspaceClient, create: EditorialWorkspaceClient["createArticle"], content: Pick<CreateArticleInput, "title" | "content">) {
@@ -8,7 +10,7 @@ export async function createArticleWithDefaults(client: EditorialWorkspaceClient
 
     return create({
         ...content,
-        language: isArticleLanguage(language) ? language : "en",
+        language: normalizeWritingLanguage(language) ?? "en",
         publishingProfileId: isPublishLimitProfileId(defaultProfileId) ? defaultProfileId : defaultPublishLimitProfileId,
     });
 }

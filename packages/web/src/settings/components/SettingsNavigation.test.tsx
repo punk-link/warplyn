@@ -14,7 +14,8 @@ it("reaches every desktop section and the back action with arrow keys", async ()
         section="general"
         setSection={setSection}
         back={back}
-        status="" /></IntlProvider>);
+        status="" />
+    </IntlProvider>);
     const general = screen.getByRole("button", { name: "General" });
     general.focus();
     await user.keyboard("{ArrowDown}{Enter}");

@@ -48,66 +48,74 @@ export function KeyBindingSettings({ overrides, save, general, saveGeneral }: { 
 
     return <>
         <p className="mt-3 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.keyBindingsIntro" })}</p>
-        {(["general", "editing", "workspace", "window", "assistant"] as const).map((category) => <SettingsGroup key={category} label={intl.formatMessage({ id: `settings.keyBindingCategory.${category}` })}>
-            {category === "assistant" && <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.assistantSendMode" })} hint={intl.formatMessage({ id: "settings.assistantSendModeHint" })}>
-                <Select aria-label={intl.formatMessage({ id: "settings.assistantSendMode" })} value={general.assistantSendMode} onChange={(event) => {
-                    const value = event.target.value;
-                    if (isAssistantSendMode(value))
-                        void saveGeneral({ ...general, assistantSendMode: value });
-                }}>
-                    <option value="enter">{intl.formatMessage({ id: "settings.sendWithEnter" })}</option>
-                    <option value="ctrl-enter">{intl.formatMessage({ id: "settings.sendWithCtrlEnter" })}</option>
-                </Select>
-            </SettingRow>}
-            {keyBindingCommands.filter((command) => command.category === category && command.id !== KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST).map((command) => {
-                const override = overrides[command.id];
-                const isOverridden = Object.prototype.hasOwnProperty.call(overrides, command.id) &&
+        {(["general", "editing", "workspace", "window", "assistant"] as const).map((category) => (
+            <SettingsGroup key={category} label={intl.formatMessage({ id: `settings.keyBindingCategory.${category}` })}>
+                {category === "assistant" && (
+                    <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.assistantSendMode" })} hint={intl.formatMessage({ id: "settings.assistantSendModeHint" })}>
+                        <Select aria-label={intl.formatMessage({ id: "settings.assistantSendMode" })} value={general.assistantSendMode} onChange={(event) => {
+                            const value = event.target.value;
+                            if (isAssistantSendMode(value))
+                                void saveGeneral({ ...general, assistantSendMode: value });
+                        }}>
+                            <option value="enter">{intl.formatMessage({ id: "settings.sendWithEnter" })}</option>
+                            <option value="ctrl-enter">{intl.formatMessage({ id: "settings.sendWithCtrlEnter" })}</option>
+                        </Select>
+                    </SettingRow>
+                )}
+                {keyBindingCommands.filter((command) => command.category === category && command.id !== KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST).map((command) => {
+                    const override = overrides[command.id];
+                    const isOverridden = Object.prototype.hasOwnProperty.call(overrides, command.id) &&
                     (override === null || (override !== undefined && !areKeyBindingsEqual(override, command.defaultBinding)));
-                const listening = recording === command.id;
-                return <SettingRow
-                    key={command.id}
-                    headingLevel={3}
-                    label={intl.formatMessage({ id: command.labelMessageId })}
-                    hint={intl.formatMessage({ id: command.hintMessageId })}>
-                    <div className="flex flex-wrap items-center gap-2">
-                        <Button
-                            variant={listening ? "secondary" : "quiet"}
-                            aria-label={intl.formatMessage({ id: "settings.recordKeyBinding" }, { command: intl.formatMessage({ id: command.labelMessageId }) })}
-                            aria-describedby={error?.commandId === command.id ? `key-binding-error-${command.id}` : undefined}
-                            onBlur={() => {
-                                if (recording === command.id) {
-                                    setRecording(undefined);
-                                    setError((current) => current?.commandId === command.id ? undefined : current);
-                                }
-                            }}
-                            onClick={() => {
+                    const listening = recording === command.id;
+                    return <SettingRow
+                        key={command.id}
+                        headingLevel={3}
+                        label={intl.formatMessage({ id: command.labelMessageId })}
+                        hint={intl.formatMessage({ id: command.hintMessageId })}>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <Button
+                                variant={listening ? "secondary" : "quiet"}
+                                aria-label={intl.formatMessage({ id: "settings.recordKeyBinding" }, { command: intl.formatMessage({ id: command.labelMessageId }) })}
+                                aria-describedby={error?.commandId === command.id ? `key-binding-error-${command.id}` : undefined}
+                                onBlur={() => {
+                                    if (recording === command.id) {
+                                        setRecording(undefined);
+                                        setError((current) => current?.commandId === command.id ? undefined : current);
+                                    }
+                                }}
+                                onClick={() => {
+                                    setError(undefined);
+                                    setRecording(command.id);
+                                }}
+                                onKeyDown={(event) => void record(command.id, event)}>{listening ? intl.formatMessage({ id: "settings.recordingKeyBinding" }) : formatKeyBinding(effective[command.id], platform)}
+                            </Button>
+                            <Button variant="quiet" onClick={() => {
                                 setError(undefined);
-                                setRecording(command.id);
-                            }}
-                            onKeyDown={(event) => void record(command.id, event)}>{listening ? intl.formatMessage({ id: "settings.recordingKeyBinding" }) : formatKeyBinding(effective[command.id], platform)}
-                        </Button>
-                        <Button variant="quiet" onClick={() => {
-                            setError(undefined);
-                            void save({ ...overrides, [command.id]: null });
-                        }}>{intl.formatMessage({ id: "settings.clearKeyBinding" })}
-                        </Button>
-                        {isOverridden && <Button variant="quiet" onClick={() => {
-                            const next: KeyBindingOverrides = { ...overrides };
-                            delete next[command.id];
-                            setError(undefined);
-                            void save(next);
-                        }}>{intl.formatMessage({ id: "settings.resetKeyBinding" })}
-                        </Button>}
-                    </div>
-                    {error?.commandId === command.id && <div id={`key-binding-error-${command.id}`} className="mt-3" role="alert">
-                        <Banner tone="warning" role="alert">
-                            <span>
-                                {intl.formatMessage({ id: "settings.keyBindingConflictTitle" })} <strong>{error.assignedCommand}</strong>. {intl.formatMessage({ id: "settings.keyBindingConflict" })}
-                            </span>
-                        </Banner>
-                    </div>}
-                </SettingRow>;
-            })}
-        </SettingsGroup>)}
+                                void save({ ...overrides, [command.id]: null });
+                            }}>{intl.formatMessage({ id: "settings.clearKeyBinding" })}
+                            </Button>
+                            {isOverridden && (
+                                <Button variant="quiet" onClick={() => {
+                                    const next: KeyBindingOverrides = { ...overrides };
+                                    delete next[command.id];
+                                    setError(undefined);
+                                    void save(next);
+                                }}>{intl.formatMessage({ id: "settings.resetKeyBinding" })}
+                                </Button>
+                            )}
+                        </div>
+                        {error?.commandId === command.id && (
+                            <div id={`key-binding-error-${command.id}`} className="mt-3" role="alert">
+                                <Banner tone="warning" role="alert">
+                                    <span>
+                                        {intl.formatMessage({ id: "settings.keyBindingConflictTitle" })} <strong>{error.assignedCommand}</strong>. {intl.formatMessage({ id: "settings.keyBindingConflict" })}
+                                    </span>
+                                </Banner>
+                            </div>
+                        )}
+                    </SettingRow>;
+                })}
+            </SettingsGroup>
+        ))}
     </>;
 }

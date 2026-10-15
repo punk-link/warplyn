@@ -9,25 +9,30 @@ import type { AssistantSkillPackage } from "../skills/assistant-skill-package.js
 
 export interface PreparedAssistantRequest extends ReplayedAssistantRequest {
     articleId: string;
-    articleContent: string;
-    articleTitle: string;
+    article: {
+        content: string;
+        title: string;
+        publishingCharacterLimit?: number;
+        styleContext?: { profile: import("@skladno/shared").StyleProfile; articleRules: string };
+    };
     editMode?: AssistantEditMode;
     editIntentAuthorized?: boolean;
     directEditAuthorized?: boolean;
     editCandidateAuthorized?: boolean;
     editDescription?: string;
-    publishingCharacterLimit?: number;
     resolvedSkillId?: string;
     resolvedSkill?: AssistantSkillPackage;
     loadedSkills?: AssistantSkillPackage[];
-    operation?: EditorialOperation;
-    engine: EditorialEngine;
-    usesCapabilityLoop: boolean;
-    completedCapability?: string;
-    partialFactCheck?: FactCheck;
-    skipFactCheckClaim?: (claim: string) => boolean;
-    capabilityActivities: { summary: string; status: "started" | "completed" }[];
-    pendingActions: { capability: ActionCapability; input: Readonly<Record<string, string>> }[];
-    pendingSkillChange?: AuthorSkillChange;
-    authorizedActions: readonly AssistantAuthorizedAction[];
+    execution: {
+        operation?: EditorialOperation;
+        engine: EditorialEngine;
+        usesCapabilityLoop: boolean;
+        completedCapability?: string;
+        partialFactCheck?: FactCheck;
+        skipFactCheckClaim?: (claim: string) => boolean;
+        capabilityActivities: { summary: string; status: "started" | "completed" }[];
+        pendingActions: { capability: ActionCapability; input: Readonly<Record<string, string>> }[];
+        pendingSkillChange?: AuthorSkillChange;
+        authorizedActions: readonly AssistantAuthorizedAction[];
+    };
 }

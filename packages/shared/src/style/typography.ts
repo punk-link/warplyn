@@ -1,8 +1,24 @@
 import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE } from "../text/unicode-characters.js";
 
 
+export interface TypographyQuotePair { open: string; close: string; space?: " " | typeof NO_BREAK_SPACE | typeof NARROW_NO_BREAK_SPACE }
+
+
+export type TypographyQuoteForm = "curly" | "guillemets" | "straight" | TypographyQuotePair;
+
+
+export function typographyQuotePair(form: TypographyQuoteForm): TypographyQuotePair {
+    if (typeof form !== "string")
+        return form;
+
+    const pairs = { curly: { open: "“", close: "”" }, guillemets: { open: "«", close: "»" }, straight: { open: '"', close: '"' } };
+    return pairs[form];
+}
+
+
 export type TypographyDefinition =
-    | { kind: "quotes"; outer: "curly" | "guillemets" | "straight"; nested: "curly" | "guillemets" | "straight" }
+    | { kind: "quotes"; outer: TypographyQuoteForm; nested: TypographyQuoteForm }
+    | { kind: "punctuation-space"; marks: string; before: "" | " " | typeof NO_BREAK_SPACE | typeof NARROW_NO_BREAK_SPACE }
     | { kind: "dash"; mark: "—" | "–"; spacing: "space" | "none" }
     | { kind: "ellipsis"; form: "…" | "..." }
     | { kind: "nonbreaking-space"; left: string; right: string; space: typeof NO_BREAK_SPACE | typeof NARROW_NO_BREAK_SPACE }
@@ -24,6 +40,7 @@ export interface TypographyIssue {
 
 
 export interface TypographyReview {
+    capture?: import("./typography-configuration.js").TypographyCapture;
     local: boolean;
     rules: TypographyRule[];
     changes: { changeId: string; ruleIds: string[] }[];
@@ -53,7 +70,12 @@ export function typographyRuleLabel(rule: TypographyRule): string {
     const definition = rule.definition;
     switch (definition.kind) {
         case "quotes":
-            return `${definition.outer} / ${definition.nested}`;
+            return [definition.outer, definition.nested].map((form) => {
+                const pair = typographyQuotePair(form);
+                return `${pair.open}${pair.space ?? ""}…${pair.space ?? ""}${pair.close}`;
+            }).join(" / ");
+        case "punctuation-space":
+            return `${definition.marks} / U+${definition.before.codePointAt(0)?.toString(16).toUpperCase() ?? "∅"}`;
         case "dash":
             return `${definition.mark} / ${definition.spacing}`;
         case "ellipsis":

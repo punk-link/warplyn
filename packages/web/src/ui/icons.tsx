@@ -10,7 +10,8 @@ export function Icon({ children, ...props }: SVGProps<SVGSVGElement> & { childre
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden="true"
-        {...props}>{children}</svg>;
+        {...props}>{children}
+    </svg>;
 }
 
 
@@ -19,28 +20,52 @@ export function FormatIcon({ children, ...props }: SVGProps<SVGSVGElement> & { c
         width="16"
         height="16"
         strokeWidth="2"
-        {...props}>{children}</Icon>;
+        {...props}>{children}
+    </Icon>;
 }
 
 
-export const BoldIcon = () => <FormatIcon><path d="M7 5h6a3 3 0 0 1 0 6H7zM7 11h7a3 3 0 0 1 0 6H7z" /></FormatIcon>;
-export const ItalicIcon = () => <FormatIcon><path d="M19 4h-9M14 20H5M15 4 9 20" /></FormatIcon>;
-export const StrikeIcon = () => <FormatIcon><path d="M5 12h14M16 6.5c-.7-1-2-1.5-4-1.5-2.5 0-4 1.2-4 3 0 4 8 2 8 6 0 1.8-1.7 3-4 3-2 0-3.5-.7-4.5-2" /></FormatIcon>;
-export const CodeIcon = () => <FormatIcon><path d="m8 9-3 3 3 3M16 9l3 3-3 3" /></FormatIcon>;
-export const LinkIcon = () => <FormatIcon><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1" /></FormatIcon>;
-export const ListIcon = () => <FormatIcon><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" /></FormatIcon>;
-export const NumberedListIcon = () => <FormatIcon><path d="M10 6h10M10 12h10M10 18h10M4 5h1v3M4 15h2l-2 3h2" /></FormatIcon>;
-export const SideBySideIcon = () => <FormatIcon><path d="M4 7h6M4 11h6M4 15h6M14 7h6M14 11h4" /></FormatIcon>;
-export const AlignedParagraphsIcon = () => <FormatIcon><path d="M3.5 6h7M13.5 6h7M3.5 10h5M15.5 10h5M3.5 14h7M13.5 14h7M3.5 18h5M15.5 18h5" /></FormatIcon>;
-export const StackedDiffIcon = () => <FormatIcon strokeWidth="1.8"><path d="M5 5h14M5 8h9M5 15h14M5 18h9" /></FormatIcon>;
-export const HighlightChangesIcon = () => <FormatIcon><path d="M4 6h16M4 12h5M15 12h5M4 18h16" /><rect
-    x="9"
-    y="9"
-    width="6"
-    height="6"
-    rx="1"
-    fill="currentColor"
-    stroke="none" /></FormatIcon>;
+export const BoldIcon = () => (
+    <FormatIcon><path d="M7 5h6a3 3 0 0 1 0 6H7zM7 11h7a3 3 0 0 1 0 6H7z" /></FormatIcon>
+);
+export const ItalicIcon = () => (
+    <FormatIcon><path d="M19 4h-9M14 20H5M15 4 9 20" /></FormatIcon>
+);
+export const StrikeIcon = () => (
+    <FormatIcon><path d="M5 12h14M16 6.5c-.7-1-2-1.5-4-1.5-2.5 0-4 1.2-4 3 0 4 8 2 8 6 0 1.8-1.7 3-4 3-2 0-3.5-.7-4.5-2" /></FormatIcon>
+);
+export const CodeIcon = () => (
+    <FormatIcon><path d="m8 9-3 3 3 3M16 9l3 3-3 3" /></FormatIcon>
+);
+export const LinkIcon = () => (
+    <FormatIcon><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1" /></FormatIcon>
+);
+export const ListIcon = () => (
+    <FormatIcon><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" /></FormatIcon>
+);
+export const NumberedListIcon = () => (
+    <FormatIcon><path d="M10 6h10M10 12h10M10 18h10M4 5h1v3M4 15h2l-2 3h2" /></FormatIcon>
+);
+export const SideBySideIcon = () => (
+    <FormatIcon><path d="M4 7h6M4 11h6M4 15h6M14 7h6M14 11h4" /></FormatIcon>
+);
+export const AlignedParagraphsIcon = () => (
+    <FormatIcon><path d="M3.5 6h7M13.5 6h7M3.5 10h5M15.5 10h5M3.5 14h7M13.5 14h7M3.5 18h5M15.5 18h5" /></FormatIcon>
+);
+export const StackedDiffIcon = () => (
+    <FormatIcon strokeWidth="1.8"><path d="M5 5h14M5 8h9M5 15h14M5 18h9" /></FormatIcon>
+);
+export const HighlightChangesIcon = () => (
+    <FormatIcon><path d="M4 6h16M4 12h5M15 12h5M4 18h16" /><rect
+        x="9"
+        y="9"
+        width="6"
+        height="6"
+        rx="1"
+        fill="currentColor"
+        stroke="none" />
+    </FormatIcon>
+);
 
 
 export function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
@@ -64,7 +89,8 @@ export function CopyIcon(props: SVGProps<SVGSVGElement>) {
         y="8"
         width="10"
         height="11"
-        rx="1" /><path d="M15 8V5a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" /></Icon>;
+        rx="1" /><path d="M15 8V5a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" />
+    </Icon>;
 }
 
 
@@ -79,7 +105,8 @@ export function StopIcon(props: SVGProps<SVGSVGElement>) {
         y="7"
         width="10"
         height="10"
-        rx="1" /></Icon>;
+        rx="1" />
+    </Icon>;
 }
 
 
@@ -146,7 +173,8 @@ export function FolderIcon(props: SVGProps<SVGSVGElement>) {
 
 export function AssistantIcon(props: SVGProps<SVGSVGElement>) {
     return <Icon strokeWidth="1.8" {...props}><path strokeLinecap="round" strokeLinejoin="round" d={("m12 3 .9 3.1L16 7l-3.1.9L12 11l-.9-3.1L8 7l3.1-.9L12 3Zm6 8 .6 2.4L21 14l-2.4.6L18 17l-.6-2.4L15 14l2.4-.6L18 11ZM6 13l.9 3.1L10 " +
-        "17l-3.1.9L6 21l-.9-3.1L2 17l3.1-.9L6 13Z")} /></Icon>;
+        "17l-3.1.9L6 21l-.9-3.1L2 17l3.1-.9L6 13Z")} />
+    </Icon>;
 }
 
 
@@ -170,7 +198,8 @@ export function OpenAiIcon(props: SVGProps<SVGSVGElement>) {
         "88.286-115.636 0-33.589-14.393-66.214-40.304-89.726 2.399-10.077 3.839-20.154 3.839-30.226 0-68.613-55.66-119.957-119.957-119.957-12.952 " +
         "0-25.428 1.917-37.904 6.238-21.595-21.113-51.344-34.547-83.97-34.547-58.058 0-106.517 41.262-117.557 95.963-53.739 13.916-88.286 " +
         "64.297-88.286 115.636 0 33.589 14.393 66.214 40.304 89.726-2.399 10.077-3.839 20.154-3.839 30.227 0 68.613 55.66 119.956 119.956 119.956 " +
-        "12.953 0 25.429-1.917 37.905-6.238 21.59 21.113 51.339 34.548 83.969 34.548Z")} /></svg>;
+        "12.953 0 25.429-1.917 37.905-6.238 21.59 21.113 51.339 34.548 83.969 34.548Z")} />
+    </svg>;
 }
 
 
@@ -179,7 +208,8 @@ export function AnthropicIcon(props: SVGProps<SVGSVGElement>) {
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        {...props}><path d="M17.304 3.541h-3.672l6.696 16.918H24Zm-10.608 0L0 20.459h3.744l1.37-3.553h7.005l1.37 3.553h3.744L10.536 3.541Zm-.371 10.223L8.616 7.82l2.291 5.946Z" /></svg>;
+        {...props}><path d="M17.304 3.541h-3.672l6.696 16.918H24Zm-10.608 0L0 20.459h3.744l1.37-3.553h7.005l1.37 3.553h3.744L10.536 3.541Zm-.371 10.223L8.616 7.82l2.291 5.946Z" />
+    </svg>;
 }
 
 
@@ -190,7 +220,8 @@ export function GoogleIcon(props: SVGProps<SVGSVGElement>) {
         aria-hidden="true"
         {...props}><path d={("M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 " +
         "0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12S5.867 24 12.48 24c3.573 0 6.267-1.173 " +
-        "8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053Z")} /></svg>;
+        "8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053Z")} />
+    </svg>;
 }
 
 
@@ -199,7 +230,8 @@ export function XaiIcon(props: SVGProps<SVGSVGElement>) {
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        {...props}><path d="M3 2h4.2L12 8.2 16.8 2H21l-6.9 9.1L21 22h-4.2L12 15.8 7.2 22H3l6.9-10.9Z" /></svg>;
+        {...props}><path d="M3 2h4.2L12 8.2 16.8 2H21l-6.9 9.1L21 22h-4.2L12 15.8 7.2 22H3l6.9-10.9Z" />
+    </svg>;
 }
 
 
@@ -225,7 +257,8 @@ export function DeepSeekIcon(props: SVGProps<SVGSVGElement>) {
         "2.915.348.291.626.513.892.677-.802.09-2.14.109-3.055-.615zm1.001-6.44a.306.306 0 0 1 .415-.287.3.3 0 0 1 .113.074.3.3 0 0 1 .086.214c0 " +
         ".17-.136.307-.308.307a.303.303 0 0 1-.306-.307m3.11 1.596c-.2.081-.4.151-.591.16a1.25 1.25 0 0 1-.798-.254c-.274-.23-.47-.358-.551-.758a1.7 " +
         "1.7 0 0 1 .015-.588c.07-.327-.007-.537-.238-.727-.188-.156-.426-.199-.689-.199a.6.6 0 0 1-.254-.078.253.253 0 0 1-.114-.358 1 1 0 0 1 " +
-        ".192-.21c.356-.202.767-.136 1.146.016.352.144.618.408 1.001.782.392.451.462.576.685.915.176.264.336.536.446.848.066.194-.02.353-.25.45")} /></svg>;
+        ".192-.21c.356-.202.767-.136 1.146.016.352.144.618.408 1.001.782.392.451.462.576.685.915.176.264.336.536.446.848.066.194-.02.353-.25.45")} />
+    </svg>;
 }
 
 
@@ -234,7 +267,8 @@ export function OpenCodeIcon(props: SVGProps<SVGSVGElement>) {
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        {...props}><path d="M22 24H2V0h20zM17 4.8H7v14.4h10z" /></svg>;
+        {...props}><path d="M22 24H2V0h20zM17 4.8H7v14.4h10z" />
+    </svg>;
 }
 
 
@@ -290,7 +324,8 @@ export function RevisionManualIcon(props: SVGProps<SVGSVGElement>) {
 
 export function RevisionAiIcon(props: SVGProps<SVGSVGElement>) {
     return <Icon strokeWidth="1.8" {...props}><path d={("m12 3 .9 3.1L16 7l-3.1.9L12 11l-.9-3.1L8 7l3.1-.9L12 3Zm6 8 .6 2.4L21 14l-2.4.6L18 17l-.6-2.4L15 14l2.4-.6L18 11ZM6 13l.9 3.1L10 " +
-        "17l-3.1.9L6 21l-.9-3.1L2 17l3.1-.9L6 13Z")} /></Icon>;
+        "17l-3.1.9L6 21l-.9-3.1L2 17l3.1-.9L6 13Z")} />
+    </Icon>;
 }
 
 

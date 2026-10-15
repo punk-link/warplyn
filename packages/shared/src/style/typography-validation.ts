@@ -13,7 +13,13 @@ function isText(value: unknown, limit = 100): value is string {
 
 
 function isQuoteForm(value: unknown): boolean {
-    return value === "curly" || value === "guillemets" || value === "straight";
+    if (value === "curly" || value === "guillemets" || value === "straight")
+        return true;
+
+    const mark = /^[“”„‟‘’‚‛«»‹›「」『』"']$/u;
+    return isRecord(value) && typeof value.open === "string" && typeof value.close === "string" &&
+        mark.test(value.open) && mark.test(value.close) &&
+        (value.space === undefined || value.space === " " || value.space === NO_BREAK_SPACE || value.space === NARROW_NO_BREAK_SPACE);
 }
 
 
@@ -35,6 +41,9 @@ function isDefinition(value: unknown): value is TypographyDefinition {
     switch (value.kind) {
         case "quotes":
             return isQuoteForm(value.outer) && isQuoteForm(value.nested);
+        case "punctuation-space":
+            return isPunctuationMarks(value.marks) &&
+                (value.before === "" || value.before === " " || value.before === NO_BREAK_SPACE || value.before === NARROW_NO_BREAK_SPACE);
         case "dash":
             return (value.mark === "—" || value.mark === "–") && (value.spacing === "space" || value.spacing === "none");
         case "ellipsis":
@@ -55,6 +64,12 @@ function isDefinition(value: unknown): value is TypographyDefinition {
         default:
             return false;
     }
+}
+
+
+function isPunctuationMarks(value: unknown): boolean {
+    const supportedMarks = /^[;:!?،؛؟]{1,8}$/u;
+    return typeof value === "string" && supportedMarks.test(value);
 }
 
 
@@ -85,13 +100,16 @@ function conflicts(left: TypographyDefinition, right: TypographyDefinition): boo
     if (left.kind === "nonbreaking-space" && right.kind === "nonbreaking-space")
         return left.left === right.left && left.right === right.right;
 
+    if (left.kind === "punctuation-space" && right.kind === "punctuation-space")
+        return Array.from(left.marks).some((mark) => right.marks.includes(mark));
+
     return left.kind === right.kind;
 }
 
 
 function literalConflicts(literal: Extract<TypographyDefinition, { kind: "literal" }>, other: TypographyDefinition): boolean {
     const text = literal.source + literal.replacement;
-    const quoteMarks = /["'“”‘’«»]/u;
+    const quoteMarks = /["'“”„‟‘’‚‛«»‹›「」『』]/u;
     const dashMarks = /[-–—]/u;
     const ellipsisMarks = /[.…]/u;
     const repeatedSpaces = / {2,}/u;
@@ -100,6 +118,8 @@ function literalConflicts(literal: Extract<TypographyDefinition, { kind: "litera
     switch (other.kind) {
         case "quotes":
             return quoteMarks.test(text);
+        case "punctuation-space":
+            return Array.from(other.marks).some((mark) => text.includes(mark));
         case "dash":
             return dashMarks.test(text);
         case "ellipsis":

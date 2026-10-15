@@ -5,7 +5,7 @@ import { defaultTypographyDefinition, formatTypographyRule, typographyKindMessag
 import { TypographyRuleFields } from "./TypographyRuleFields.js";
 
 
-export function TypographyRuleRow({ rule, number, editing, unsaved, pending, issue, change, toggle, remove }: {
+export function TypographyRuleRow({ rule, number, editing, unsaved, pending, issue, change, toggle, remove, source }: {
     rule: TypographyRule;
     number: number;
     editing: boolean;
@@ -15,6 +15,7 @@ export function TypographyRuleRow({ rule, number, editing, unsaved, pending, iss
     change: (definition: TypographyDefinition) => void;
     toggle: () => void;
     remove: () => void;
+    source?: "preset" | "language" | "article";
 }) {
     const intl = useIntl();
     const status = unsaved ? "typography.unsavedRule" : "typography.savedRule";
@@ -24,6 +25,7 @@ export function TypographyRuleRow({ rule, number, editing, unsaved, pending, iss
                 <legend className="sr-only">{intl.formatMessage({ id: "typography.ruleNumber" }, { number })}</legend>
                 <div className={editing ? "flex w-full flex-wrap items-center gap-3" : "contents"}>
                     <p className="min-w-0 flex-1 break-words text-ink">{formatTypographyRule(rule, intl)}</p>
+                    {source && <span className="text-xs text-muted">{intl.formatMessage({ id: `typography.source.${source}` })}</span>}
                     <Badge className="shrink-0" tone={unsaved ? "warning" : undefined}>
                         {intl.formatMessage({ id: status })}
                     </Badge>

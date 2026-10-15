@@ -98,6 +98,7 @@ function getStreamToolInput(input: StreamContext): Readonly<Record<string, strin
 function createEditorialRequest(input: StreamContext, operation: EditorialOperation) {
     return {
         requestId: input.requestId,
+        ...(input.styleContext ? { styleContext: input.styleContext } : {}),
         articleContext: {
             articleId: input.context.articleId,
             ...(input.article.targetArticleCharacterLimit ? { targetArticleCharacterLimit: input.article.targetArticleCharacterLimit } : {}),

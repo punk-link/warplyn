@@ -208,21 +208,23 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                     childCount={childCount}
                     expanded={expanded} />
             </button>
-            {menuArticleId === article.id && <ArticleLibraryRowMenu
-                article={article}
-                anchor={triggerRefs.current.get(article.id)}
-                canReorder={canReorder}
-                pinnedRoots={pinnedRoots}
-                menuRef={menuRef}
-                handleMenuKeyDown={handleMenuKeyDown}
-                movePinned={movePinned}
-                run={run}
-                setDeleteTarget={setDeleteTarget}
-                closeMenu={closeMenu}
-                setPinned={setPinned}
-                setArchived={setArchived}
-                files={files}
-                runFile={runFile} />}
+            {menuArticleId === article.id && (
+                <ArticleLibraryRowMenu
+                    article={article}
+                    anchor={triggerRefs.current.get(article.id)}
+                    canReorder={canReorder}
+                    pinnedRoots={pinnedRoots}
+                    menuRef={menuRef}
+                    handleMenuKeyDown={handleMenuKeyDown}
+                    movePinned={movePinned}
+                    run={run}
+                    setDeleteTarget={setDeleteTarget}
+                    closeMenu={closeMenu}
+                    setPinned={setPinned}
+                    setArchived={setArchived}
+                    files={files}
+                    runFile={runFile} />
+            )}
         </div>;
     };
 
@@ -261,27 +263,29 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                     archiveOnly={archiveOnly} />;
             }}
         </ArticleLibraryFrame>
-        {deleteTarget && <Dialog
-            className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
-            open
-            aria-labelledby="delete-library-article-title"
-            onCancel={(event) => {
-                event.preventDefault();
-                setDeleteTarget(undefined);
-            }}>
-            <h2 id="delete-library-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
-            <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: deleteTarget.title.trim() || intl.formatMessage({ id: "article.defaultTitle" }), count: groupCount })}</p>
-            <div className="mt-5 flex justify-end gap-2">
-                <Button variant="secondary" autoFocus onClick={() => setDeleteTarget(undefined)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
-                <Button variant="danger"
-                    onClick={() => run(async () => {
-                        await (remove?.(deleteTarget.id) ?? Promise.resolve());
-                        setDeleteTarget(undefined);
-                    })}
-                >
-                    {intl.formatMessage({ id: "articleHeader.confirmDeleteArticle" })}
-                </Button>
-            </div>
-        </Dialog>}
+        {deleteTarget && (
+            <Dialog
+                className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+                open
+                aria-labelledby="delete-library-article-title"
+                onCancel={(event) => {
+                    event.preventDefault();
+                    setDeleteTarget(undefined);
+                }}>
+                <h2 id="delete-library-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: deleteTarget.title.trim() || intl.formatMessage({ id: "article.defaultTitle" }), count: groupCount })}</p>
+                <div className="mt-5 flex justify-end gap-2">
+                    <Button variant="secondary" autoFocus onClick={() => setDeleteTarget(undefined)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
+                    <Button variant="danger"
+                        onClick={() => run(async () => {
+                            await (remove?.(deleteTarget.id) ?? Promise.resolve());
+                            setDeleteTarget(undefined);
+                        })}
+                    >
+                        {intl.formatMessage({ id: "articleHeader.confirmDeleteArticle" })}
+                    </Button>
+                </div>
+            </Dialog>
+        )}
     </>;
 }

@@ -29,7 +29,8 @@ describe("FactCheckView", () => {
             stale={false}
             runAgain={vi.fn()}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         const checkingClaimsPattern = /checking 7 claims/;
         expect(screen.getByText(checkingClaimsPattern).textContent).toContain("previous completed check");
@@ -42,7 +43,8 @@ describe("FactCheckView", () => {
             stale={false}
             runAgain={vi.fn()}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         expect(screen.getByText(getMessage("views.factCheckIncomplete"))).toBeTruthy();
         expect(screen.getAllByText("A claim that needs evidence.")).toHaveLength(2);
@@ -57,7 +59,8 @@ describe("FactCheckView", () => {
             stale={false}
             runAgain={vi.fn()}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         expect(screen.getByText("Evidence reused from Revision v1.")).toBeTruthy();
         const checkedPattern = /^Checked /;
@@ -73,7 +76,8 @@ describe("FactCheckView", () => {
             stale
             runAgain={vi.fn()}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         expect(screen.getAllByText("A claim that needs evidence.")).toHaveLength(2);
         const primarySourcePattern = /Primary source/;
@@ -96,7 +100,8 @@ describe("FactCheckView", () => {
             stale
             runAgain={vi.fn()}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         expect(screen.queryByRole("button", { name: getMessage("views.proposeFactCorrection") })).toBeNull();
         expect(screen.getAllByText("An unchanged claim.")).toHaveLength(2);
@@ -115,7 +120,8 @@ describe("FactCheckView", () => {
             stale={false}
             runAgain={runAgain}
             resolve={resolve}
-            proposeCorrections={proposeCorrections} /></IntlProvider>);
+            proposeCorrections={proposeCorrections} />
+        </IntlProvider>);
 
         expect(screen.getByText("Reviewed Revision: v3")).toBeTruthy();
         await user.click(screen.getByRole("button", { name: getMessage("views.proposeFactCorrection") }));
@@ -134,7 +140,8 @@ describe("FactCheckView", () => {
             stale={false}
             runAgain={vi.fn()}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         const claimNeedsEvidencePattern = /A claim that needs evidence/;
         screen.getAllByRole("button", { name: claimNeedsEvidencePattern })[0]!.focus();
@@ -154,7 +161,8 @@ describe("FactCheckView", () => {
             stale={false}
             runAgain={runAgain}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: getMessage("views.runFactCheck") }));
         expect(runAgain).toHaveBeenCalledOnce();
@@ -174,7 +182,8 @@ describe("FactCheckView", () => {
             runAgain={vi.fn()}
             selectRun={selectRun}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         await user.click(screen.getByRole("button", { name: "Fact Check history" }));
         expect(screen.getAllByText("v2 · Updated opening")).toHaveLength(2);
@@ -193,7 +202,8 @@ describe("FactCheckView", () => {
             runAgain={vi.fn()}
             selectRun={vi.fn()}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         const earlierFactCheckPattern = /earlier Fact Check run is read-only/;
         expect(screen.getByText(earlierFactCheckPattern)).toBeTruthy();
@@ -207,7 +217,8 @@ describe("FactCheckView", () => {
             stale={false}
             runAgain={vi.fn()}
             resolve={vi.fn()}
-            proposeCorrections={vi.fn()} /></IntlProvider>);
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
 
         const timeSensitiveClaimsPattern = /Time-sensitive claims may have changed/;
         expect(screen.getByText(timeSensitiveClaimsPattern)).toBeTruthy();

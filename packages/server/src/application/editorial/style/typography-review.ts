@@ -123,6 +123,7 @@ export function reviewTypography(
                 ...Object.fromEntries(profile.rules.typography.map((rule) => [typographyRuleId(rule), typographyRuleLabel(rule)])),
             },
             typography: {
+                ...(profile.rules.typographyCapture ? { capture: profile.rules.typographyCapture } : {}),
                 local,
                 rules: profile.rules.typography,
                 occurrences,

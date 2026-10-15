@@ -21,19 +21,27 @@ export function FactCheckClaims({ claims, className = "", embedded = false, onSe
     return <section className={`${embedded ? "" : "rounded-panel border border-border bg-surface-raised p-3"} ${className}`} aria-label={heading}>
         <p className="text-xs font-semibold text-muted">{heading}</p>
         {onSelectionChange && <p className="mt-1 text-xs leading-5 text-muted">{intl.formatMessage({ id: "assistant.claimSelectionHelp" })}</p>}
-        <ul className="mt-1 space-y-1 text-xs leading-5 text-muted">{claims.map((item) => <li className="py-0.5" key={item.claim}>
-            {onSelectionChange && (!item.checked || skipped.has(item.claim))
-                ? <SelectableClaim
-                    item={item}
-                    skipped={skipped.has(item.claim)}
-                    disabled={changing.has(item.claim) || (!skipped.has(item.claim) && selectedCount === 1)}
-                    onChange={toggleClaim} />
-                : <span className="flex gap-2">
-                    <ClaimStatusIcon checked={item.checked} checking={item.checking} />
-                    <span>{item.claim}</span>
-                    <span className="sr-only">{intl.formatMessage({ id: claimStatusId(item) })}</span>
-                </span>}
-        </li>)}</ul>
+        <ul className="mt-1 space-y-1 text-xs leading-5 text-muted">
+            {claims.map((item) => (
+                <li className="py-0.5" key={item.claim}>
+                    {onSelectionChange && (!item.checked || skipped.has(item.claim))
+                        ? (
+                            <SelectableClaim
+                                item={item}
+                                skipped={skipped.has(item.claim)}
+                                disabled={changing.has(item.claim) || (!skipped.has(item.claim) && selectedCount === 1)}
+                                onChange={toggleClaim} />
+                        )
+                        : (
+                            <span className="flex gap-2">
+                                <ClaimStatusIcon checked={item.checked} checking={item.checking} />
+                                <span>{item.claim}</span>
+                                <span className="sr-only">{intl.formatMessage({ id: claimStatusId(item) })}</span>
+                            </span>
+                        )}
+                </li>
+            ))}
+        </ul>
     </section>;
 }
 

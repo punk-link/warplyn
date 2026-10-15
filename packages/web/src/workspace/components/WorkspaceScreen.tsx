@@ -152,7 +152,8 @@ function AiConnectionWarning({ openModelSettings }: { openModelSettings: () => v
         role="status">
         <span className="min-w-0">
             <strong className="block">{intl.formatMessage({ id: "workspace.aiConnectionRequired" })}</strong>
-            {intl.formatMessage({ id: "workspace.aiConnectionCapabilities" })}</span>
+            {intl.formatMessage({ id: "workspace.aiConnectionCapabilities" })}
+        </span>
         <Button className="shrink-0 self-end lg:ml-auto lg:self-center" variant="secondary" onClick={openModelSettings}>{intl.formatMessage({ id: "workspace.addModelKey" })}</Button>
     </Banner>;
 }

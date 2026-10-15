@@ -89,6 +89,8 @@ export function createFakeClient(): EditorialWorkspaceClient {
         setStyleCorpusItemIncluded: vi.fn(),
         setStyleCorpusRules: vi.fn(),
         setTypographyRules: vi.fn(),
+        setTypographyConfiguration: vi.fn(),
+        getArticleTypography: vi.fn().mockResolvedValue(undefined),
         getTypographyReview: vi.fn().mockResolvedValue(undefined),
         rebuildStyleCorpus: vi.fn(),
         getArticleStyleRules: vi.fn().mockResolvedValue(""),

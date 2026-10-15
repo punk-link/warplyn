@@ -58,10 +58,13 @@ export async function launchPackaged(root: string): Promise<{ process: ChildProc
 export async function closePackaged(app: { process: ChildProcess; browser: Browser; page: Page }): Promise<void> {
     await app.page.close().catch(() => undefined);
     await app.browser.close().catch(() => undefined);
-    if (app.process.exitCode === null)
+    if (app.process.exitCode === null && app.process.signalCode === null)
         await Promise.race([once(app.process, "exit"), new Promise((resolveWait) => setTimeout(resolveWait, 5_000))]);
 
-    if (app.process.exitCode === null)
+    if (app.process.exitCode === null && app.process.signalCode === null) {
+        const exited = once(app.process, "exit");
         app.process.kill();
+        await exited;
+    }
 }
 

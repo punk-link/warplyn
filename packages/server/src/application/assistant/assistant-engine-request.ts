@@ -19,32 +19,35 @@ export function streamAssistantEngineEvents(request: PreparedAssistantRequest, s
     if (!request.resolvedSkillId)
         return streamAssistantConversation(request, stores.assistant, excerpt, signal);
 
-    if (!request.operation)
+    if (!request.execution.operation)
         throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
-    const corpus = request.operation === EDITORIAL_OPERATION.STYLE_REVIEW ? stores.styleCorpus.getStyleCorpus() : undefined;
-    if (corpus && (corpus.status !== "ready" || !corpus.profile))
+    const style = request.execution.operation === EDITORIAL_OPERATION.STYLE_REVIEW ? request.article.styleContext : undefined;
+    if (request.execution.operation === EDITORIAL_OPERATION.STYLE_REVIEW && !style)
         throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
 
-    const profile = corpus?.profile;
-    const articleRules = profile ? stores.styleCorpus.getArticleStyleRules(request.articleId) : "";
+    const profile = style?.profile;
+    const articleRules = style?.articleRules ?? "";
 
-    const events = request.engine.stream({
-        operation: request.operation,
+    const events = request.execution.engine.stream({
+        operation: request.execution.operation,
         article: excerpt,
-        articleTitle: request.articleTitle,
+        articleTitle: request.article.title,
         ...(request.scope.kind === "selection" ? { articleSelection: true } : {}),
         authorContext: request.authorMessage,
         skillId: request.resolvedSkillId,
         skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
-        ...(request.scope.kind === "selection" ? { surroundingArticleCharacterCount: request.articleContent.length - excerpt.length } : {}),
-        ...(request.publishingCharacterLimit ? { targetArticleCharacterLimit: request.publishingCharacterLimit } : {}),
+        ...(request.scope.kind === "selection" ? { surroundingArticleCharacterCount: request.article.content.length - excerpt.length } : {}),
+        ...(request.article.publishingCharacterLimit ? { targetArticleCharacterLimit: request.article.publishingCharacterLimit } : {}),
         ...(request.targetLanguage ? { targetLanguage: request.targetLanguage } : {}),
         ...(profile
             ? { styleProfile: profile, articleStyleRules: articleRules }
             : {}
         ),
-        ...(request.operation === EDITORIAL_OPERATION.FACT_CHECK ? { reusableFactFindings: getReusableFactFindings(stores.factChecks, request.articleId), skipFactCheckClaim: request.skipFactCheckClaim } : {})
+        ...(request.execution.operation === EDITORIAL_OPERATION.FACT_CHECK ? {
+            reusableFactFindings: getReusableFactFindings(stores.factChecks, request.articleId),
+            skipFactCheckClaim: request.execution.skipFactCheckClaim,
+        } : {})
     }, signal);
     return profile ? streamTypographyReviewedEvents(events, excerpt, profile, articleRules, signal) : events;
 }
@@ -72,13 +75,13 @@ async function* streamTypographyReviewedEvents(
 
 export function getAssistantArticleExcerpt(request: PreparedAssistantRequest): string {
     return request.scope.kind === "selection"
-        ? request.articleContent.slice(request.scope.startOffset, request.scope.endOffset)
-        : request.articleContent;
+        ? request.article.content.slice(request.scope.startOffset, request.scope.endOffset)
+        : request.article.content;
 }
 
 
 function streamAssistantConversation(request: PreparedAssistantRequest, assistant: AssistantStore, excerpt: string, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
-    return request.engine.streamConversation({
+    return request.execution.engine.streamConversation({
         message: request.authorMessage,
         article: excerpt,
         scope: request.scope.kind,

@@ -60,20 +60,24 @@ function NetworkSettings({ client, state, intl, onRequestPermission, onState }: 
                 onClick={() => state.networkAccess ? void client.setNetworkAccess(false).then(onState) : onRequestPermission()}
             />
         </SettingRow>
-        {state.networkAccess && <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.automaticUpdates" })} hint={intl.formatMessage({ id: "settings.automaticUpdatesHint" })}>
-            <UpdateSwitch
-                label={intl.formatMessage({ id: "settings.automaticUpdates" })}
-                checked={state.automaticChecks}
-                intl={intl}
-                onClick={() => void client.setAutomaticChecks(!state.automaticChecks).then(onState)} />
-        </SettingRow>}
-        {state.networkAccess && <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })} hint={intl.formatMessage({ id: "settings.includePrereleaseUpdatesHint" })}>
-            <UpdateSwitch
-                label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })}
-                checked={state.includePrereleases}
-                intl={intl}
-                onClick={() => void client.setIncludePrereleases(!state.includePrereleases).then(onState)} />
-        </SettingRow>}
+        {state.networkAccess && (
+            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.automaticUpdates" })} hint={intl.formatMessage({ id: "settings.automaticUpdatesHint" })}>
+                <UpdateSwitch
+                    label={intl.formatMessage({ id: "settings.automaticUpdates" })}
+                    checked={state.automaticChecks}
+                    intl={intl}
+                    onClick={() => void client.setAutomaticChecks(!state.automaticChecks).then(onState)} />
+            </SettingRow>
+        )}
+        {state.networkAccess && (
+            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })} hint={intl.formatMessage({ id: "settings.includePrereleaseUpdatesHint" })}>
+                <UpdateSwitch
+                    label={intl.formatMessage({ id: "settings.includePrereleaseUpdates" })}
+                    checked={state.includePrereleases}
+                    intl={intl}
+                    onClick={() => void client.setIncludePrereleases(!state.includePrereleases).then(onState)} />
+            </SettingRow>
+        )}
     </>;
 }
 
@@ -88,8 +92,11 @@ function UpdateActions({ client, state, status, details, onState, intl }: { clie
         {state.kind === "failed" && <Button variant="secondary" onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.retry" })}</Button>}
         {canCheckNow && <Button variant="secondary" state={state.kind === "checking" ? "loading" : "default"} onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.checkNow" })}</Button>}
         {details && <Button variant="quiet" onClick={() => void client.openReleaseNotes()}>{intl.formatMessage({ id: "settings.viewReleaseNotes" })}</Button>}
-        {state.recoveryAvailable && <button type="button" className={("col-span-2 inline-flex min-h-9 cursor-pointer items-center justify-self-start text-sm font-semibold text-brand underline underline-offset-2 " +
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:col-span-4")} onClick={() => void client.openRecoveryGuide()}>{intl.formatMessage({ id: "settings.updateRecovery" })}</button>}
+        {state.recoveryAvailable && (
+            <button type="button" className={("col-span-2 inline-flex min-h-9 cursor-pointer items-center justify-self-start text-sm font-semibold text-brand underline underline-offset-2 " +
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:col-span-4")} onClick={() => void client.openRecoveryGuide()}>{intl.formatMessage({ id: "settings.updateRecovery" })}
+            </button>
+        )}
     </div>;
 }
 
@@ -113,7 +120,8 @@ function NetworkPermissionDialog({ client, open, onClose, onState, intl }: { cli
             <Button onClick={() => void client.setNetworkAccess(true).then((state) => {
                 onState(state);
                 onClose();
-            })}>{intl.formatMessage({ id: "settings.allowNetworkAccess" })}</Button>
+            })}>{intl.formatMessage({ id: "settings.allowNetworkAccess" })}
+            </Button>
         </div>
     </Dialog>;
 }
@@ -125,7 +133,8 @@ function UnavailableUpdates({ intl }: { intl: IntlShape }) {
             headingLevel={3}
             label={intl.formatMessage({ id: "settings.updateStatus" })}
             hint={intl.formatMessage({ id: "settings.updateStatusUnavailableHint" })}
-            status={intl.formatMessage({ id: "settings.updatesUnavailable" })}><span /></SettingRow>
+            status={intl.formatMessage({ id: "settings.updatesUnavailable" })}><span />
+        </SettingRow>
     </SettingsGroup>;
 }
 

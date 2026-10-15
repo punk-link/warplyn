@@ -88,41 +88,51 @@ function ProposalReviewHeader({ presentation, counts, stale, accepted, displayMo
                     <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.proposalReview" })}</h2>
                     <p className="mt-1 text-xs text-muted">{stale || !presentation.reliable
                         ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length })
-                        : intl.formatMessage({ id: "views.proposalCounts" }, { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected })}</p>
+                        : intl.formatMessage({ id: "views.proposalCounts" }, { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected })}
+                    </p>
                 </div>
                 <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
-                    {presentation.changes.length > 0 && <div className="flex items-center gap-1" aria-label={intl.formatMessage({ id: "views.proposalDisplayMode" })}>
-                        <IconButton
-                            variant="quiet"
-                            label={intl.formatMessage({ id: "views.proposalSideBySide" })}
-                            title={intl.formatMessage({ id: "views.proposalSideBySide" })}
-                            aria-pressed={displayMode === "side-by-side"}
-                            onClick={() => setDisplayMode("side-by-side")}><SideBySideIcon /></IconButton>
-                        <IconButton
-                            variant="quiet"
-                            label={intl.formatMessage({ id: "views.proposalStacked" })}
-                            title={intl.formatMessage({ id: "views.proposalStacked" })}
-                            aria-pressed={displayMode === "stacked"}
-                            onClick={() => setDisplayMode("stacked")}><StackedDiffIcon /></IconButton>
-                        <IconButton
-                            variant="quiet"
-                            label={intl.formatMessage({ id: "views.proposalHighlight" })}
-                            title={intl.formatMessage({ id: "views.proposalHighlight" })}
-                            aria-pressed={highlightChanges}
-                            onClick={() => setHighlightChanges((current) => !current)}><HighlightChangesIcon /></IconButton>
-                    </div>}
-                    {presentation.changes.length > 1 && <nav className="flex gap-2" aria-label={intl.formatMessage({ id: "views.changeNavigation" })}>
-                        <IconButton
-                            variant="quiet"
-                            label={intl.formatMessage({ id: "views.previousChange" })}
-                            title={intl.formatMessage({ id: "views.previousChange" })}
-                            onClick={() => moveChange(-1)}><ChevronRightIcon className="size-4 rotate-180" /></IconButton>
-                        <IconButton
-                            variant="quiet"
-                            label={intl.formatMessage({ id: "views.nextChange" })}
-                            title={intl.formatMessage({ id: "views.nextChange" })}
-                            onClick={() => moveChange(1)}><ChevronRightIcon className="size-4" /></IconButton>
-                    </nav>}
+                    {presentation.changes.length > 0 && (
+                        <div className="flex items-center gap-1" aria-label={intl.formatMessage({ id: "views.proposalDisplayMode" })}>
+                            <IconButton
+                                variant="quiet"
+                                label={intl.formatMessage({ id: "views.proposalSideBySide" })}
+                                title={intl.formatMessage({ id: "views.proposalSideBySide" })}
+                                aria-pressed={displayMode === "side-by-side"}
+                                onClick={() => setDisplayMode("side-by-side")}><SideBySideIcon />
+                            </IconButton>
+                            <IconButton
+                                variant="quiet"
+                                label={intl.formatMessage({ id: "views.proposalStacked" })}
+                                title={intl.formatMessage({ id: "views.proposalStacked" })}
+                                aria-pressed={displayMode === "stacked"}
+                                onClick={() => setDisplayMode("stacked")}><StackedDiffIcon />
+                            </IconButton>
+                            <IconButton
+                                variant="quiet"
+                                label={intl.formatMessage({ id: "views.proposalHighlight" })}
+                                title={intl.formatMessage({ id: "views.proposalHighlight" })}
+                                aria-pressed={highlightChanges}
+                                onClick={() => setHighlightChanges((current) => !current)}><HighlightChangesIcon />
+                            </IconButton>
+                        </div>
+                    )}
+                    {presentation.changes.length > 1 && (
+                        <nav className="flex gap-2" aria-label={intl.formatMessage({ id: "views.changeNavigation" })}>
+                            <IconButton
+                                variant="quiet"
+                                label={intl.formatMessage({ id: "views.previousChange" })}
+                                title={intl.formatMessage({ id: "views.previousChange" })}
+                                onClick={() => moveChange(-1)}><ChevronRightIcon className="size-4 rotate-180" />
+                            </IconButton>
+                            <IconButton
+                                variant="quiet"
+                                label={intl.formatMessage({ id: "views.nextChange" })}
+                                title={intl.formatMessage({ id: "views.nextChange" })}
+                                onClick={() => moveChange(1)}><ChevronRightIcon className="size-4" />
+                            </IconButton>
+                        </nav>
+                    )}
                     {stale ? <>
                         <Button variant="secondary" onClick={openWrite}>{intl.formatMessage({ id: "views.reviewCurrentArticle" })}</Button>
                         <Button variant="secondary" onClick={openAssistant}>{intl.formatMessage({ id: "views.regenerateInAssistant" })}</Button>
@@ -223,77 +233,83 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                     displayMode={displayMode}
                     highlight={highlightChanges} />
                 {presentation.changes.length === 0
-                    ? <EmptyState title={intl.formatMessage({ id: "views.proposalNoChanges" })}>
-                        <Button variant="secondary" onClick={dismissProposal}>{intl.formatMessage({ id: "views.dismissProposal" })}</Button>
-                    </EmptyState>
-                    : presentation.reliable && !stale && <div className="mt-3 space-y-3">{presentation.changes.map((change, index) => {
-                        const decision = decisions[change.id] ?? "pending";
-                        const decisionStyles = { accepted: "border-success bg-success-soft", rejected: "border-danger bg-danger-soft", pending: "border-border bg-surface-raised" };
-                        const decisionClasses = decisionStyles[decision];
-                        return (
-                            <article
-                                key={change.id}
-                                ref={(element) => {
-                                    cards.current[index] = element;
-                                }}
-                                tabIndex={-1}
-                                className={`rounded-panel border p-3 ${decisionClasses}`}
-                            >
-                                <div className="flex flex-wrap items-center justify-between gap-3">
-                                    <div>
-                                        <h3 className="text-sm font-semibold">
-                                            {intl.formatMessage(
-                                                { id: `views.changeType.${change.kind}` as never },
-                                                { index: index + 1, total: presentation.changes.length },
-                                            )}
-                                        </h3>
-                                        <p className="mt-1 text-xs text-muted">
-                                            {intl.formatMessage({ id: `views.decision.${decision}` as never })}
-                                        </p>
+                    ? (
+                        <EmptyState title={intl.formatMessage({ id: "views.proposalNoChanges" })}>
+                            <Button variant="secondary" onClick={dismissProposal}>{intl.formatMessage({ id: "views.dismissProposal" })}</Button>
+                        </EmptyState>
+                    )
+                    : presentation.reliable && !stale && (
+                        <div className="mt-3 space-y-3">{presentation.changes.map((change, index) => {
+                            const decision = decisions[change.id] ?? "pending";
+                            const decisionStyles = { accepted: "border-success bg-success-soft", rejected: "border-danger bg-danger-soft", pending: "border-border bg-surface-raised" };
+                            const decisionClasses = decisionStyles[decision];
+
+                            return (
+                                <article
+                                    key={change.id}
+                                    ref={(element) => {
+                                        cards.current[index] = element;
+                                    }}
+                                    tabIndex={-1}
+                                    className={`rounded-panel border p-3 ${decisionClasses}`}
+                                >
+                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <div>
+                                            <h3 className="text-sm font-semibold">
+                                                {intl.formatMessage(
+                                                    { id: `views.changeType.${change.kind}` as never },
+                                                    { index: index + 1, total: presentation.changes.length },
+                                                )}
+                                            </h3>
+                                            <p className="mt-1 text-xs text-muted">
+                                                {intl.formatMessage({ id: `views.decision.${decision}` as never })}
+                                            </p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                variant="secondary"
+                                                state={decision === "rejected" ? "error" : "default"}
+                                                disabled={accepted || stale}
+                                                onClick={() => setDecision(change.id, "rejected")}
+                                            >
+                                                {intl.formatMessage({ id: "views.rejectChange" })}
+                                            </Button>
+                                            <Button
+                                                state={decision === "accepted" ? "success" : "default"}
+                                                disabled={accepted || stale}
+                                                onClick={() => setDecision(change.id, "accepted")}
+                                            >
+                                                {intl.formatMessage({ id: "views.acceptChange" })}
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            variant="secondary"
-                                            state={decision === "rejected" ? "error" : "default"}
-                                            disabled={accepted || stale}
-                                            onClick={() => setDecision(change.id, "rejected")}
-                                        >
-                                            {intl.formatMessage({ id: "views.rejectChange" })}
-                                        </Button>
-                                        <Button
-                                            state={decision === "accepted" ? "success" : "default"}
-                                            disabled={accepted || stale}
-                                            onClick={() => setDecision(change.id, "accepted")}
-                                        >
-                                            {intl.formatMessage({ id: "views.acceptChange" })}
-                                        </Button>
+                                    <div className="mt-4 flex min-h-9 items-start gap-2 border-y border-border py-3 text-sm" aria-live="polite">
+                                        <AssistantIcon className="mt-0.5 size-4 shrink-0 text-brand" />
+                                        {data.typography?.changes.some((item) => item.changeId === change.id) ? (
+                                            <TypographyChangeSupport typography={data.typography} changeId={change.id} />
+                                        ) : (
+                                            <p>
+                                                {summaries?.[change.id] ??
+                                                    (summaryState === "loading"
+                                                        ? intl.formatMessage({ id: "views.proposalSummaryLoading" })
+                                                        : intl.formatMessage({ id: "views.proposalSummaryUnavailable" }))}
+                                            </p>
+                                        )}
                                     </div>
-                                </div>
-                                <div className="mt-4 flex min-h-9 items-start gap-2 border-y border-border py-3 text-sm" aria-live="polite">
-                                    <AssistantIcon className="mt-0.5 size-4 shrink-0 text-brand" />
-                                    {data.typography?.changes.some((item) => item.changeId === change.id) ? (
-                                        <TypographyChangeSupport typography={data.typography} changeId={change.id} />
-                                    ) : (
-                                        <p>
-                                            {summaries?.[change.id] ??
-                                                (summaryState === "loading"
-                                                    ? intl.formatMessage({ id: "views.proposalSummaryLoading" })
-                                                    : intl.formatMessage({ id: "views.proposalSummaryUnavailable" }))}
-                                        </p>
-                                    )}
-                                </div>
-                                <div className="mt-4">
-                                    <ProposalDiff
-                                        decision={decision}
-                                        original={change.baseLines.join("\n")}
-                                        proposed={change.proposalLines.join("\n")}
-                                        layout={displayMode === "side-by-side" ? "columns" : "stacked"}
-                                        highlight={highlightChanges}
-                                    />
-                                </div>
-                            </article>
-                        );
-                    })}</div>
+                                    <div className="mt-4">
+                                        <ProposalDiff
+                                            decision={decision}
+                                            original={change.baseLines.join("\n")}
+                                            proposed={change.proposalLines.join("\n")}
+                                            layout={displayMode === "side-by-side" ? "columns" : "stacked"}
+                                            highlight={highlightChanges}
+                                        />
+                                    </div>
+                                </article>
+                            );
+                        })}
+                        </div>
+                    )
                 }
             </div>
         </div>

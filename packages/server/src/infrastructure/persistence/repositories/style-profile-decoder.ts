@@ -1,5 +1,6 @@
 import { APPLICATION_ERROR, HTTP_STATUS, isTypographyRules, type StyleProfile, type StyleTrait } from "@skladno/shared";
 import { ApplicationServiceError } from "../../../application/errors/application-service-error.js";
+import { isTypographyConfiguration } from "@skladno/shared";
 
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -26,11 +27,14 @@ function isStyleProfile(value: Record<string, unknown>): value is Record<string,
         isStringList(value.phrasesToAvoid) &&
         isStringList(value.contributorIds);
     const validRules = isRecord(value.rules) && typeof value.rules.manual === "string" && isTypographyRules(value.rules.typography);
+    const validConfiguration = isRecord(value.rules) &&
+        (value.rules.typographyConfiguration === undefined || isTypographyConfiguration(value.rules.typographyConfiguration));
 
     return (
         validCounts &&
         validEvidence &&
         validRules &&
+        validConfiguration &&
         typeof value.updatedAt === "string" &&
         (value.confidence === "low" || value.confidence === "medium" || value.confidence === "high")
     );

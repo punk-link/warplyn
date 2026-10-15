@@ -104,8 +104,10 @@ test("Electron refresh acceptance uses the existing finite operation and preserv
 test("Electron IPC checks typography without a provider and validates saves", async () => {
     const adapter = createAdapter();
     try {
-        const article = adapter.persistence.articles.createArticle({ title: "Typography", content: "Wait..." });
-        const saved = await adapter.ipcMain.invoke({ method: "setTypographyRules", args: [[{ id: "dots", definition: { kind: "ellipsis", form: "…" } }]] });
+        const article = adapter.persistence.articles.createArticle({ title: "Typography", content: "Wait...", language: "en" });
+        const saved = await adapter.ipcMain.invoke({ method: "setTypographyConfiguration", args: [{ language: "en", articleId: undefined, preferences: {
+            rules: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }], disabled: [],
+        } }] });
         assert.equal(saved.ok, true);
         const result = await adapter.ipcMain.stream({
             kind: "editorial",

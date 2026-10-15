@@ -32,7 +32,8 @@ function comparison(protectedSpans = values, displayMode: "aligned" | "side-by-s
         protectedSpanWarnings={warnings}
         displayMode={displayMode}
         visibleText="source"
-        setVisibleText={vi.fn()} /></IntlProvider>;
+        setVisibleText={vi.fn()} />
+    </IntlProvider>;
 }
 
 

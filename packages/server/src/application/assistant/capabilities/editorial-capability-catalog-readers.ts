@@ -1,4 +1,5 @@
 import { APPLICATION_ERROR, HTTP_STATUS, getPublishLimitProfile, isPublishLimitProfileId, type Article, type EditorialArtifact, type FactCheck } from "@skladno/shared";
+import { resolveTypography } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import type { ArticleService } from "../../articles/article-service.js";
@@ -78,7 +79,8 @@ export function readEditorialCapability(
                 status: corpus.status,
                 itemCount: corpus.items.length,
                 rules: corpus.rules,
-                typographyRuleCount: corpus.typographyRules?.length ?? 0,
+                typographyRuleCount: resolveTypography(article.language, corpus.typographyConfiguration,
+                    dependencies.styleCorpus.getArticleTypography(article.id)).rules.length,
                 currentRevisionIncluded: corpus.items.some((item) => item.revisionId === article.currentRevisionId)
             };
         }

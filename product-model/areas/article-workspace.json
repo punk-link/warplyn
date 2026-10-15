@@ -107,7 +107,7 @@
             "owners": [
                 "packages/web/src/workspace/components/ArticleHeader.tsx"
             ],
-            "contract": "Header action buttons use 4px gaps and retain 36px click targets, with visual dividers separating Revision/file actions, archive/delete actions, and focus mode. An archived Article displays an Archived badge beside its title. Metadata changes and archive state do not create a Revision. Archive applies to a source group, and deletion requires confirmation. Deleting an original deletes its translations atomically; deleting a translation preserves its source group.",
+            "contract": "Header action buttons use 4px gaps and retain 36px click targets, with visual dividers separating Revision/file actions, archive/delete actions, and focus mode. An archived Article displays an Archived badge beside its title. Metadata changes and archive state do not create a Revision. Archive applies to a source group, and deletion requires confirmation. Deleting an original deletes its translations atomically; deleting a translation preserves its source group. Article language metadata accepts normalized language tags and known legacy names. Source language and typography choices use the existing app language options without adding regional preset duplicates. Saved custom tags display without defaulting to English. Changing language does not create a Revision; typography resolves independently from interface locale.",
             "persistence": "Article metadata PATCH, group archive and deletion routes, and local target-language guidance."
         },
         {

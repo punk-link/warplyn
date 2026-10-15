@@ -1,4 +1,5 @@
 import multilineManyJsxAttributes from "./multiline-many-jsx-attributes.mjs";
+import multilineJsxOpeningTag from "./multiline-jsx-opening-tag.mjs";
 import multilineLongStrings from "./multiline-long-strings.mjs";
 import maxDataProperties from "./max-data-properties.mjs";
 import namedUnicodeCharacters from "./named-unicode-characters.mjs";
@@ -668,6 +669,7 @@ export default {
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
         "multiline-long-strings": multilineLongStrings,
         "multiline-many-jsx-attributes": multilineManyJsxAttributes,
+        "multiline-jsx-opening-tag": multilineJsxOpeningTag,
         "named-unicode-characters": namedUnicodeCharacters,
         "sql-query-layout": sqlQueryLayout,
         "switch-case-body-newline": switchCaseBodyNewline,

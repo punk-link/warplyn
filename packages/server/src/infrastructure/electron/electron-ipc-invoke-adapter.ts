@@ -175,6 +175,10 @@ async function invokeApplicationMethod(method: ElectronApplicationMethod, args: 
             return services.styleCorpus.setRules(String(args[0]));
         case ELECTRON_APPLICATION_METHOD.setTypographyRules:
             return services.styleCorpus.setTypographyRules(readSingleArgument(args));
+        case ELECTRON_APPLICATION_METHOD.setTypographyConfiguration:
+            return services.styleCorpus.setTypographyConfiguration(readSingleArgument(args));
+        case ELECTRON_APPLICATION_METHOD.getArticleTypography:
+            return services.styleCorpus.getArticleTypography(readIdentifier(readSingleArgument(args)));
         case ELECTRON_APPLICATION_METHOD.getTypographyReview:
             return services.styleCorpus.getTypographyReview(readIdentifier(readSingleArgument(args)));
         case ELECTRON_APPLICATION_METHOD.rebuildStyleCorpus:

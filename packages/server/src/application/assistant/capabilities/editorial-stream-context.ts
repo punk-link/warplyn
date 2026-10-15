@@ -6,6 +6,7 @@ import type { EditorialCapabilityId } from "./editorial-capability-id.js";
 
 
 export interface StreamContext {
+    styleContext?: import("../../editorial/editorial-request.js").EditorialServiceRequest["styleContext"];
     capability: Extract<EditorialCapabilityId, "generate_proposal" | "generate_finding_corrections" | "fact_check" | "style_review" | "translate">;
     context: EditorialCapabilityContext;
     requestId: string;

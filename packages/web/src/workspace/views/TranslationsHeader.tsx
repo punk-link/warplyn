@@ -41,36 +41,44 @@ export function TranslationsHeader({ sourceArticle, translation, translationLang
             </div>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
-            {translatedContent && <div className="flex items-center gap-1" aria-label={intl.formatMessage({ id: "views.translationDisplayMode" })}>
-                <IconButton
-                    variant="quiet"
-                    label={intl.formatMessage({ id: "views.translationSideBySide" })}
-                    title={intl.formatMessage({ id: "views.translationSideBySide" })}
-                    aria-pressed={displayMode === "side-by-side"}
-                    onClick={() => setDisplayMode("side-by-side")}>
-                    <SideBySideIcon />
-                </IconButton>
-                <IconButton
-                    variant="quiet"
-                    label={intl.formatMessage({ id: "views.translationAligned" })}
-                    title={intl.formatMessage({ id: "views.translationAligned" })}
-                    aria-pressed={displayMode === "aligned"}
-                    onClick={() => setDisplayMode("aligned")}>
-                    <AlignedParagraphsIcon />
-                </IconButton>
-            </div>}
+            {translatedContent && (
+                <div className="flex items-center gap-1" aria-label={intl.formatMessage({ id: "views.translationDisplayMode" })}>
+                    <IconButton
+                        variant="quiet"
+                        label={intl.formatMessage({ id: "views.translationSideBySide" })}
+                        title={intl.formatMessage({ id: "views.translationSideBySide" })}
+                        aria-pressed={displayMode === "side-by-side"}
+                        onClick={() => setDisplayMode("side-by-side")}>
+                        <SideBySideIcon />
+                    </IconButton>
+                    <IconButton
+                        variant="quiet"
+                        label={intl.formatMessage({ id: "views.translationAligned" })}
+                        title={intl.formatMessage({ id: "views.translationAligned" })}
+                        aria-pressed={displayMode === "aligned"}
+                        onClick={() => setDisplayMode("aligned")}>
+                        <AlignedParagraphsIcon />
+                    </IconButton>
+                </div>
+            )}
             <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
                 {sourceArticle && edit && <Button variant="secondary" onClick={edit}>{intl.formatMessage({ id: "views.editTranslation" })}</Button>}
-                {!sourceArticle && (translation || openTranslation) && <Button
-                    variant="secondary"
-                    state={creating ? "loading" : "default"}
-                    disabled={creating || (!openTranslation && (stale || !protectedSpansValid))}
-                    onClick={openTranslation ?? startCreate}>{intl.formatMessage({ id: "views.editTranslation" })}</Button>}
+                {!sourceArticle && (translation || openTranslation) && (
+                    <Button
+                        variant="secondary"
+                        state={creating ? "loading" : "default"}
+                        disabled={creating || (!openTranslation && (stale || !protectedSpansValid))}
+                        onClick={openTranslation ?? startCreate}>{intl.formatMessage({ id: "views.editTranslation" })}
+                    </Button>
+                )}
                 {update}
-                {translation?.editorialArtifactId && reject && <Button variant="danger" disabled={creating || rejecting} onClick={() => {
-                    setRejectionLanguage(translation.metadata.targetLanguage);
-                    setRejectConfirmationOpen(true);
-                }}>{intl.formatMessage({ id: "views.rejectTranslation" })}</Button>}
+                {translation?.editorialArtifactId && reject && (
+                    <Button variant="danger" disabled={creating || rejecting} onClick={() => {
+                        setRejectionLanguage(translation.metadata.targetLanguage);
+                        setRejectConfirmationOpen(true);
+                    }}>{intl.formatMessage({ id: "views.rejectTranslation" })}
+                    </Button>
+                )}
                 <Button onClick={translate}>{intl.formatMessage({ id: "views.translate" })}</Button>
             </div>
         </div>

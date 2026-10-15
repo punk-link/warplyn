@@ -170,7 +170,8 @@ describe("Editorial Workspace article controls", () => {
             save={vi.fn()}
             remove={vi.fn()}
             focusMode={false}
-            setFocusMode={vi.fn()} /></IntlProvider>);
+            setFocusMode={vi.fn()} />
+        </IntlProvider>);
 
         expect(document.activeElement).toBe(headerScope.getByRole("textbox", { name: "Article title" }));
     });

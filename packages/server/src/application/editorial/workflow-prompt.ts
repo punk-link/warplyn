@@ -142,6 +142,8 @@ function createStyleReviewPrompt(input: EditorialPromptInput): ModelMessage[] {
                 `${createArticleTitleContext(input)}Current article:\n${input.article}\n\n` +
                 `Corpus confidence: ${input.styleProfile.confidence} (${input.styleProfile.corpusItemCount} item(s), ` +
                 `${input.styleProfile.characterCount} characters).\n\n` +
+                `Typography language: ${input.styleProfile.rules.typographyCapture?.language ?? "Unspecified"}.\n` +
+                "Use only supplied typography conventions; do not default to English for an unspecified language.\n\n" +
                 `Supplied corpus traits:\n${formatStyleTraits(input.styleProfile)}\n\nGlobal rules:\n` +
                 `${formatNumberedRules(input.styleProfile.rules.manual, "global-rule")}\n\n` +
                 `Contextual typography rules:\n${

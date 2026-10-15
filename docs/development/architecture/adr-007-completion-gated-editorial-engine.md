@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-21
-- Updated: 2026-10-13
+- Updated: 2026-10-15
 - Scope: AI generation, streaming, provider storage, and generated artifact persistence
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-005](adr-005-article-state-and-consistency.md)
 
@@ -15,6 +15,8 @@ Provider streams may fail, be cancelled, or contain invalid output. Provider mec
 Application services depend on a provider-neutral Editorial Engine. Infrastructure adapters own provider SDKs, options, tools, metadata, errors, context bounding, and configured model resolution.
 
 The explicit typography-only Style review uses a local engine before provider resolution. Mechanical rules operate on conservatively identified prose spans. Full Style review combines these corrections with validated contextual output in one Proposal. Completion retains the captured profile version and rule provenance. Local checking, recovery, and Proposal descriptions make no provider calls.
+
+Typography resolves from the persisted Article language, exact language preferences, and Article overrides, independently of the interface locale. Missing or unconfigured languages never inherit English conventions. Editorial and Assistant preparation capture the effective definitions, language, preset version, sources, and configuration fingerprint once. Bounded capability execution carries that same capture. Only applicable contextual instructions accompany compact style guidance to the provider; other language configurations remain local. Recovery preserves captured evidence, while language or preference changes prompt rerun without reinterpreting the existing Proposal. Preset mechanics and release review follow the [preset guide](../guides/typography-presets.md).
 
 Consume and validate the full stream before completion: required text, finish reason, structured output, and domain validation must succeed. Propagate cancellation and expose only safe domain events and errors. Completion has a local identity independent of provider response IDs.
 

@@ -19,7 +19,8 @@ function renderMessage(message: AssistantMessage, props: Partial<ComponentProps<
         generalSettings={{ ...defaultGeneralSettings, dateFormat: "iso", timeFormat: "24-hour", timeZone: "UTC" }}
         skillByRequest={new Map()}
         skillNames={skillNames}
-        {...props} /></IntlProvider>);
+        {...props} />
+    </IntlProvider>);
 }
 
 
@@ -42,7 +43,8 @@ describe("AssistantTimelineMessage", () => {
             message={{ ...message, appliedEdit: { revisionId: "revision" } }}
             generalSettings={defaultGeneralSettings}
             skillByRequest={new Map()}
-            applyEdit={applyEdit} /></IntlProvider>);
+            applyEdit={applyEdit} />
+        </IntlProvider>);
         expect(within(view.container).queryByRole("button", { name: "Apply to selection" })).toBeNull();
         expect(within(view.container).getByText("Applied as a new Revision")).toBeTruthy();
     });
@@ -56,7 +58,8 @@ describe("AssistantTimelineMessage", () => {
             message={{ ...message, status: "failed", editCandidate: { target: "article", replacement: "After" } }}
             generalSettings={defaultGeneralSettings}
             skillByRequest={new Map()}
-            applyEdit={applyEdit} /></IntlProvider>);
+            applyEdit={applyEdit} />
+        </IntlProvider>);
         expect(within(view.container).queryByRole("button", { name: "Replace Article" })).toBeNull();
     });
     it("replaces Markdown when a response body changes", async () => {

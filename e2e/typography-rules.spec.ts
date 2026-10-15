@@ -2,6 +2,9 @@ import { expect, test } from "@playwright/test";
 
 test("typography rules rebuild automatically and corrections retain provenance after reload", async ({ page, request }) => {
     await request.put("http://127.0.0.1:8787/api/style-corpus/typography", { data: { rules: [] } });
+    await request.put("http://127.0.0.1:8787/api/style-corpus/typography-configuration", {
+        data: { language: "en", preferences: { rules: [], disabled: [] } },
+    });
     await request.post("http://127.0.0.1:8787/api/articles", { data: { title: "Existing fixture", content: "Existing fixture." } });
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");

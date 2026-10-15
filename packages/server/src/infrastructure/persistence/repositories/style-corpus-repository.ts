@@ -12,6 +12,7 @@ import {
 } from "@skladno/shared";
 import { ApplicationServiceError } from "../../../application/errors/application-service-error.js";
 import { decodeStyleProfile, decodeTypographyRules } from "./style-profile-decoder.js";
+import { TypographySettingsRepository } from "./typography-settings-repository.js";
 
 import type { SqliteDatabase } from "../database.js";
 import { createId, getCurrentTimestamp, requireNonEmpty, type Row } from "./repository-utils.js";
@@ -123,16 +124,20 @@ export class StyleCorpusRepository {
             ORDER BY style_corpus_items.created_at, author_materials.id`)).all() as Row[];
         const rules = String((this.database.prepare("SELECT rules FROM style_corpus_settings WHERE id = 1").get() as Row | undefined)?.rules ?? "");
         const typographyRules = this.getTypographyRules();
+        const typographyConfiguration = new TypographySettingsRepository(this.database).get();
         const profileRow = this.database.prepare("SELECT profile_json FROM style_profile_versions ORDER BY version DESC LIMIT 1").get() as Row | undefined;
         const profile = profileRow ? decodeStyleProfile(String(profileRow.profile_json)) : undefined;
         const includedIds = rows.filter((row) => Number(row.included) === 1).map((row) => String(row.id));
+        const hasArticleTypography = Boolean(this.database.prepare("SELECT 1 FROM article_style_rules WHERE typography_json IS NOT NULL LIMIT 1").get());
         let status: "empty" | "ready" | "outdated" = "outdated";
-        if (includedIds.length === 0 && !rules.trim() && !typographyRules.length)
+        const hasTypography = typographyRules.length || Object.keys(typographyConfiguration.languages).length || hasArticleTypography;
+        if (includedIds.length === 0 && !rules.trim() && !hasTypography)
             status = "empty";
         else if (
             profile &&
             profile.rules.manual === rules &&
             JSON.stringify(profile.rules.typography) === JSON.stringify(typographyRules) &&
+            JSON.stringify(profile.rules.typographyConfiguration ?? { version: 1, languages: {} }) === JSON.stringify(typographyConfiguration) &&
             profile.contributorIds.length === includedIds.length &&
             profile.contributorIds.every((id) => includedIds.includes(id))
         )
@@ -153,7 +158,7 @@ export class StyleCorpusRepository {
                 ...(row.article_id ? { articleId: String(row.article_id) } : {}),
                 ...(row.revision_id ? { revisionId: String(row.revision_id) } : {})
             })),
-            ...(profile ? { profile } : {}), rules, typographyRules, status
+            ...(profile ? { profile } : {}), rules, typographyRules, typographyConfiguration, status
         };
     }
 
@@ -228,8 +233,32 @@ export class StyleCorpusRepository {
         const rules = String((this.database.prepare("SELECT rules FROM style_corpus_settings WHERE id = 1").get() as Row).rules);
         const typography = this.getTypographyRules();
         const version = Number((this.database.prepare("SELECT COALESCE(MAX(version), 0) + 1 AS version FROM style_profile_versions").get() as Row).version);
-        const profile = createStyleProfile(rows.map((row) => ({ id: String(row.id), content: String(row.content) })), { manual: rules, typography }, version);
+        const typographyConfiguration = new TypographySettingsRepository(this.database).get();
+        const profile = createStyleProfile(rows.map((row) => ({ id: String(row.id), content: String(row.content) })),
+            { manual: rules, typography, typographyConfiguration }, version);
         this.database.prepare("INSERT INTO style_profile_versions (version, profile_json, created_at) VALUES (?, ?, ?)").run(version, JSON.stringify(profile), profile.updatedAt);
+
+        return this.getStyleCorpus();
+    }
+
+
+    getArticleTypography(articleId: string) {
+        return new TypographySettingsRepository(this.database).getArticle(articleId);
+    }
+
+
+    setTypographyConfiguration(input: import("@skladno/shared").TypographyConfigurationUpdate): StyleCorpus {
+        this.database.exec("BEGIN IMMEDIATE;");
+        try {
+            const changed = new TypographySettingsRepository(this.database).save(input);
+            if ((changed && !input.articleId) || this.getStyleCorpus().status !== "ready")
+                this.rebuildStyleProfile();
+
+            this.database.exec("COMMIT;");
+        } catch (error) {
+            this.database.exec("ROLLBACK;");
+            throw error;
+        }
 
         return this.getStyleCorpus();
     }

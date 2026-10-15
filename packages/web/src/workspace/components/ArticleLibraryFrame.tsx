@@ -67,7 +67,8 @@ function PinnedArticleShortcuts({ articles, selectedArticleId, drawerOpen, onSel
                 data-focus-area-entry={selected && !drawerOpen || undefined}
                 aria-current={selected ? "page" : undefined}
                 aria-pressed={selected}
-                onClick={(event) => onSelect(article.id, event.currentTarget)}>{initials || <ArticleIcon className="size-4" />}</IconButton>;
+                onClick={(event) => onSelect(article.id, event.currentTarget)}>{initials || <ArticleIcon className="size-4" />}
+            </IconButton>;
         })}
     </div>;
 }
@@ -211,7 +212,8 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
             aria-controls={activeView ? drawerId : undefined}
             aria-expanded={activeView === next}
             aria-pressed={activeView === next}
-            onClick={(event) => openView(next, event.currentTarget)}>{icon}</IconButton>;
+            onClick={(event) => openView(next, event.currentTarget)}>{icon}
+        </IconButton>;
     }
 
 
@@ -231,7 +233,8 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
     const newArticle = <IconButton label={intl.formatMessage({ id: "navigation.newArticle" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.newArticle" }), KEY_BINDING_COMMAND.NEW_ARTICLE, shortcutOverrides)} onClick={() => {
         close();
         void createBlank();
-    }}>+</IconButton>;
+    }}>+
+    </IconButton>;
     const headings = { articles: "navigation.articles", search: "navigation.searchArticles", archive: "navigation.archive" } as const;
     const heading = intl.formatMessage({ id: activeView ? headings[activeView] : "navigation.articles" });
 
@@ -244,63 +247,78 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
         aria-label={intl.formatMessage({ id: "navigation.articleLibrary" })}>
         <header className={collapsed ? "flex min-h-18 shrink-0 items-center justify-center border-b border-transparent" : "flex min-h-18 shrink-0 items-center justify-between border-b border-border pl-4 pr-2"}>
             {collapsed
-                ? <IconButton className="text-base font-semibold text-brand" label={intl.formatMessage({ id: "navigation.expandArticleLibrary" })} onClick={() => {
-                    close();
-                    setCollapsed(false);
-                }}><WarplynIcon /></IconButton>
+                ? (
+                    <IconButton className="text-base font-semibold text-brand" label={intl.formatMessage({ id: "navigation.expandArticleLibrary" })} onClick={() => {
+                        close();
+                        setCollapsed(false);
+                    }}><WarplynIcon />
+                    </IconButton>
+                )
                 : <><span className="flex items-center gap-2 text-base font-semibold text-brand"><WarplynIcon />Warplyn</span>
-                    <div className="flex items-center gap-1">{newArticle}<IconButton label={intl.formatMessage({ id: "navigation.collapseArticleLibrary" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.collapseArticleLibrary" }), KEY_BINDING_COMMAND.TOGGLE_ARTICLE_LIBRARY, shortcutOverrides)} onClick={() => setCollapsed(true)}>‹</IconButton></div></>}
+                    <div className="flex items-center gap-1">{newArticle}<IconButton label={intl.formatMessage({ id: "navigation.collapseArticleLibrary" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.collapseArticleLibrary" }), KEY_BINDING_COMMAND.TOGGLE_ARTICLE_LIBRARY, shortcutOverrides)} onClick={() => setCollapsed(true)}>‹</IconButton></div>
+                </>}
         </header>
         {collapsed
-            ? <div className="flex shrink-0 flex-col items-center gap-1">
-                {newArticle}
-                {railButton("search", intl.formatMessage({ id: "navigation.searchArticles" }), <SearchIcon className="size-4" />)}
-                {railButton("articles", intl.formatMessage({ id: "navigation.articles" }), <ArticleIcon className="size-4" />)}
-                {railButton("archive", intl.formatMessage({ id: "navigation.archive" }), <ArchiveIcon className="size-4" />)}
-            </div>
+            ? (
+                <div className="flex shrink-0 flex-col items-center gap-1">
+                    {newArticle}
+                    {railButton("search", intl.formatMessage({ id: "navigation.searchArticles" }), <SearchIcon className="size-4" />)}
+                    {railButton("articles", intl.formatMessage({ id: "navigation.articles" }), <ArticleIcon className="size-4" />)}
+                    {railButton("archive", intl.formatMessage({ id: "navigation.archive" }), <ArchiveIcon className="size-4" />)}
+                </div>
+            )
             : <>{searchField}{children(undefined, close)}</>}
-        {collapsed && <PinnedArticleShortcuts
-            articles={pinnedArticles}
-            selectedArticleId={selectedArticleId}
-            drawerOpen={Boolean(activeView)}
-            onSelect={(articleId, trigger) => {
-                triggerRef.current = trigger;
-                close();
-                selectArticle(articleId);
-            }} />}
+        {collapsed && (
+            <PinnedArticleShortcuts
+                articles={pinnedArticles}
+                selectedArticleId={selectedArticleId}
+                drawerOpen={Boolean(activeView)}
+                onSelect={(articleId, trigger) => {
+                    triggerRef.current = trigger;
+                    close();
+                    selectArticle(articleId);
+                }} />
+        )}
         <footer className={collapsed ? "mt-auto flex shrink-0 flex-col items-center gap-1 border-t border-border px-0.5 py-2" : "shrink-0 border-t border-border px-2 py-2"}>
             {collapsed
                 ? <><IconButton label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={() => {
                     close();
                     openStyleProfile();
-                }}><UserIcon className="size-4" /></IconButton>
+                }}><UserIcon className="size-4" />
+                </IconButton>
                 <IconButton label={intl.formatMessage({ id: "navigation.settings" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={() => {
                     close();
                     openSettings();
-                }}><SettingsIcon className="size-4" /></IconButton>
-                <UpdateController /></>
+                }}><SettingsIcon className="size-4" />
+                </IconButton>
+                <UpdateController />
+                </>
                 : <><Button
                     compact
                     className="flex w-full items-center justify-start !py-1.5 text-left"
                     variant="quiet"
-                    onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span></Button>
+                    onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.styleProfile" })}</span>
+                </Button>
                 <Button
                     compact
                     className="flex w-full items-center justify-start !py-1.5 text-left"
                     variant="quiet"
                     title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)}
-                    onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span></Button>
+                    onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">{intl.formatMessage({ id: "navigation.settings" })}</span>
+                </Button>
                 <div className="flex items-center justify-between px-2 pb-1 pt-2 text-micro font-medium text-muted">
                     <span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span>
                     <UpdateController className="shrink-0" />
                 </div>
                 </>}
         </footer>
-        {activeView && <Drawer className="absolute inset-y-0 left-full z-10 flex w-52 max-w-[calc(100vw-2.5rem)] flex-col !border-l-0 !bg-surface-supporting" aria-labelledby={headingId}>
-            <div ref={drawerRef} className="flex min-h-0 flex-1 flex-col">
-                <header className="flex min-h-18 items-center justify-between border-b border-border pl-4 pr-2"><h2 id={headingId} className="text-sm font-semibold">{heading}</h2><IconButton label={intl.formatMessage({ id: "navigation.closeArticleLibrary" })} onClick={close}><CloseIcon className="size-4" /></IconButton></header>
-                <div id={drawerId} className="flex min-h-0 flex-1 flex-col">{searchField}{children(activeView, close)}</div>
-            </div>
-        </Drawer>}
+        {activeView && (
+            <Drawer className="absolute inset-y-0 left-full z-10 flex w-52 max-w-[calc(100vw-2.5rem)] flex-col !border-l-0 !bg-surface-supporting" aria-labelledby={headingId}>
+                <div ref={drawerRef} className="flex min-h-0 flex-1 flex-col">
+                    <header className="flex min-h-18 items-center justify-between border-b border-border pl-4 pr-2"><h2 id={headingId} className="text-sm font-semibold">{heading}</h2><IconButton label={intl.formatMessage({ id: "navigation.closeArticleLibrary" })} onClick={close}><CloseIcon className="size-4" /></IconButton></header>
+                    <div id={drawerId} className="flex min-h-0 flex-1 flex-col">{searchField}{children(activeView, close)}</div>
+                </div>
+            </Drawer>
+        )}
     </aside>;
 }

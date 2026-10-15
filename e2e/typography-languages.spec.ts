@@ -1,0 +1,52 @@
+import { expect, test } from "@playwright/test";
+
+test("language preferences and Article overrides stay isolated and recover after reload", async ({ page, request }) => {
+    const root = "http://127.0.0.1:8787/api";
+    const rules = [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }];
+    await request.put(`${root}/style-corpus/typography-configuration`, { data: { language: "en", preferences: { rules, disabled: [] } } });
+    await request.put(`${root}/style-corpus/typography-configuration`, { data: { language: "ru", preferences: { rules: [], disabled: [] } } });
+    const created = await request.post(`${root}/articles`, { data: { title: "Scoped typography fixture", content: "Wait...", language: "en" } });
+    const article = await created.json();
+    await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
+    await page.goto("/");
+    await expect(page.getByRole("button", { name: "Rename article: Scoped typography fixture", exact: true })).toBeVisible();
+    await page.getByRole("tab", { name: "Style Profile", exact: true }).click();
+    const language = page.getByRole("combobox", { name: "Typography language", exact: true });
+    await expect(language).toHaveValue("en");
+    await expect(language.getByRole("option")).toHaveText(["English", "Spanish", "Portuguese", "Russian", "French", "German", "Italian"]);
+    await expect(page.getByRole("button", { name: "Check typography", exact: true })).toBeEnabled();
+    await language.selectOption("ru");
+    await expect(page.getByRole("button", { name: "Check typography", exact: true })).toBeDisabled();
+    await expect(page.getByRole("group", { name: "Rule 1", exact: true })).toBeHidden();
+    await language.selectOption("en");
+    await page.getByRole("combobox", { name: "Convention preset", exact: true }).selectOption("en-US@1");
+    await expect(page.getByRole("button", { name: "Apply preset", exact: true })).toBeDisabled();
+    await page.getByRole("combobox", { name: "Apply rules to", exact: true }).selectOption("article");
+    await page.getByRole("button", { name: "Remove", exact: true }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(page.getByText("Article typography preferences saved.", { exact: true })).toBeVisible();
+    await page.reload();
+    await page.getByRole("tab", { name: "Style Profile", exact: true }).click();
+    await page.getByRole("combobox", { name: "Apply rules to", exact: true }).selectOption("article");
+    await expect(page.getByRole("button", { name: "Check typography", exact: true })).toBeDisabled();
+    await page.getByRole("button", { name: "Restore inherited rules", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Check typography", exact: true })).toBeEnabled();
+    await page.getByRole("button", { name: "Check typography", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Review Proposal", exact: true })).toBeVisible();
+    await language.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: "test-results/typography-language-desktop.png" });
+    await page.setViewportSize({ width: 760, height: 900 });
+    await page.screenshot({ path: "test-results/typography-language-narrow.png" });
+    const recovered = await (await request.get(`${root}/articles/${article.id}/typography-review`)).json();
+    expect(recovered.proposal).toBe("Wait…");
+    expect(recovered.styleReview.typography.capture.language).toBe("en");
+    const updated = await request.patch(`${root}/articles/${article.id}`, { data: { language: "ru" } });
+    expect(updated.ok()).toBeTruthy();
+    await page.reload();
+    await page.getByRole("tab", { name: "Style Profile", exact: true }).click();
+    await expect(page.getByRole("combobox", { name: "Typography language", exact: true })).toHaveValue("ru");
+    await expect(page.getByText("This review used earlier language or typography preferences. Run the check again to use the current conventions.", {
+        exact: true,
+    })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Check typography", exact: true })).toBeDisabled();
+});

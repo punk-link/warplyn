@@ -49,10 +49,12 @@ function AlignedTranslation({ targetLanguage, sourceParagraphs, translatedParagr
             <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "views.translationOriginal" })}</h3>
             <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "views.translationResult" }, { language: targetLanguage })}</h3>
         </div>
-        {Array.from({ length: paragraphCount }, (_, index) => <div className="grid gap-3 border-b border-border px-3 py-2 last:border-b-0 @[42rem]:grid-cols-2" key={index}>
-            <pre className="whitespace-pre-wrap break-anywhere font-serif text-base leading-7 text-ink">{sourceParagraphs[index] === undefined ? <span className="font-ui text-xs italic text-muted">{intl.formatMessage({ id: "views.translationMissingOriginal" })}</span> : <ProtectedTranslationText content={sourceParagraphs[index]} protectedSpans={protectedSpans} />}</pre>
-            <pre className="whitespace-pre-wrap break-anywhere font-serif text-base leading-7 text-ink">{translatedParagraphs[index] === undefined ? <span className="font-ui text-xs italic text-muted">{intl.formatMessage({ id: "views.translationMissingResult" })}</span> : <ProtectedTranslationText content={translatedParagraphs[index]} protectedSpans={protectedSpans} />}</pre>
-        </div>)}
+        {Array.from({ length: paragraphCount }, (_, index) => (
+            <div className="grid gap-3 border-b border-border px-3 py-2 last:border-b-0 @[42rem]:grid-cols-2" key={index}>
+                <pre className="whitespace-pre-wrap break-anywhere font-serif text-base leading-7 text-ink">{sourceParagraphs[index] === undefined ? <span className="font-ui text-xs italic text-muted">{intl.formatMessage({ id: "views.translationMissingOriginal" })}</span> : <ProtectedTranslationText content={sourceParagraphs[index]} protectedSpans={protectedSpans} />}</pre>
+                <pre className="whitespace-pre-wrap break-anywhere font-serif text-base leading-7 text-ink">{translatedParagraphs[index] === undefined ? <span className="font-ui text-xs italic text-muted">{intl.formatMessage({ id: "views.translationMissingResult" })}</span> : <ProtectedTranslationText content={translatedParagraphs[index]} protectedSpans={protectedSpans} />}</pre>
+            </div>
+        ))}
     </div>;
 }
 
@@ -96,19 +98,23 @@ export function TranslationBody({ source, translatedContent, targetLanguage, sou
         : <>
             <div className="@container">
                 {displayMode === "side-by-side"
-                    ? <SideBySideTranslation
-                        source={source}
-                        translatedContent={translatedContent}
-                        targetLanguage={targetLanguage}
-                        visibleText={visibleText}
-                        setVisibleText={setVisibleText}
-                        protectedSpans={protectedSpans} />
-                    : <AlignedTranslation
-                        targetLanguage={targetLanguage}
-                        sourceParagraphs={sourceParagraphs}
-                        translatedParagraphs={translatedParagraphs}
-                        paragraphCount={paragraphCount}
-                        protectedSpans={protectedSpans} />}
+                    ? (
+                        <SideBySideTranslation
+                            source={source}
+                            translatedContent={translatedContent}
+                            targetLanguage={targetLanguage}
+                            visibleText={visibleText}
+                            setVisibleText={setVisibleText}
+                            protectedSpans={protectedSpans} />
+                    )
+                    : (
+                        <AlignedTranslation
+                            targetLanguage={targetLanguage}
+                            sourceParagraphs={sourceParagraphs}
+                            translatedParagraphs={translatedParagraphs}
+                            paragraphCount={paragraphCount}
+                            protectedSpans={protectedSpans} />
+                    )}
             </div>
             <ProtectedSpanNotice protectedSpanWarnings={protectedSpanWarnings} />
         </>;
@@ -121,5 +127,6 @@ export function TranslationBody({ source, translatedContent, targetLanguage, sou
         onKeyDown={navigateProtectedValues}
         className={("mt-4 min-h-0 flex-1 overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand " +
         "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-        "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>{content}</div>;
+        "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>{content}
+    </div>;
 }

@@ -27,7 +27,7 @@ import { correctionContext, verifyCorrectionSelection } from "./fact-checking/ve
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import { TypographyLocalEngine } from "./style/typography-local-engine.js";
 import { reviewTypography } from "./style/typography-review.js";
-import { prepareStyleReviewProfile } from "./style/prepare-style-review-profile.js";
+import { prepareStyleReviewContext } from "./style/prepare-style-review-profile.js";
 
 
 interface EditorialStreamContext {
@@ -59,6 +59,7 @@ interface EditorialSessionStore {
 
 
 interface EditorialStyleCorpusStore {
+    getArticleTypography?(articleId: string): import("@skladno/shared").ArticleTypography | undefined;
     getStyleCorpus(): { profile?: StyleProfile; status: "empty" | "outdated" | "ready" };
     getArticleStyleRules(articleId: string): string;
 }
@@ -96,7 +97,7 @@ function prepareEditorialStream(articles: EditorialArticleStore, sessions: Edito
 
     const factCheck = request.editorial.operation === EDITORIAL_OPERATION.FACT_CHECK;
     const translation = request.editorial.operation === EDITORIAL_OPERATION.TRANSLATION;
-    const styleProfile = prepareStyleReviewProfile(request.editorial, styleCorpus);
+    const style = prepareStyleReviewContext(request.editorial, styleCorpus, article, request.styleContext);
 
     const engine: EditorialEngine | undefined = request.editorial.reviewMode
         ? new TypographyLocalEngine()
@@ -114,7 +115,7 @@ function prepareEditorialStream(articles: EditorialArticleStore, sessions: Edito
         engine,
         operation: { factCheck, translation },
         ...correction,
-        ...(styleProfile ? { style: { profile: styleProfile, articleRules: styleCorpus.getArticleStyleRules(request.articleContext.articleId) } } : {}),
+        ...(style ? { style } : {}),
         ...(continuationScope || previousResponseId ? {
             continuation: {
                 ...(continuationScope ? { scope: continuationScope } : {}),

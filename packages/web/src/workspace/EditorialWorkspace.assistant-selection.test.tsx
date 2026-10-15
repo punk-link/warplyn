@@ -104,7 +104,8 @@ describe("Editorial Workspace assistant", () => {
             language="Portuguese"
             assistantMessages={[]}
             selection={{ articleId: "one", fingerprint: "fingerprint", preview: "Selected Article text", startOffset: 0, endOffset: 21 }}
-            clearSelection={vi.fn()} /></IntlProvider>);
+            clearSelection={vi.fn()} />
+        </IntlProvider>);
 
         await waitFor(() => expect(panel.container.querySelector("[data-assistant-skill-chip]")).toBeTruthy());
         await user.click(within(panel.container).getByRole("button", { name: getMessage("assistant.quickActions") }));

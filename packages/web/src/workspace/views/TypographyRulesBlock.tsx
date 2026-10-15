@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useIntl } from "react-intl";
 import { typographyIssues, type TypographyDefinition, type TypographyRule } from "@skladno/shared";
 import { Banner, Button } from "../../ui/primitives.js";
@@ -8,13 +8,19 @@ import { TypographyRuleRow } from "./TypographyRuleRow.js";
 const emptyRules: TypographyRule[] = [];
 
 
-export function TypographyRulesBlock({ rules = emptyRules, save, check, busy = false }: {
+export function TypographyRulesBlock({ rules = emptyRules, save, check, busy = false, checkDisabled = false, sources, savedMessage, saveHint }: {
     rules?: TypographyRule[];
     save: (rules: TypographyRule[]) => Promise<void>;
     check: () => Promise<void>;
     busy?: boolean;
+    checkDisabled?: boolean;
+    sources?: import("@skladno/shared").TypographyCapture["sources"];
+    savedMessage?: import("../../i18n/messages.js").MessageId;
+    saveHint?: import("../../i18n/messages.js").MessageId;
 }) {
     const intl = useIntl();
+    const headingId = useId();
+    const helpId = useId();
     const [draft, setDraft] = useState(rules);
     const [editingId, setEditingId] = useState<string>();
     const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -60,16 +66,16 @@ export function TypographyRulesBlock({ rules = emptyRules, save, check, busy = f
     if (dirty)
         statusMessage = "styleProfile.rulesUnsaved";
     else if (state === "saved")
-        statusMessage = "typography.saved";
+        statusMessage = savedMessage ?? "typography.saved";
 
     return (
-        <section ref={container} className="mb-7" aria-labelledby="typography-heading">
-            <h3 id="typography-heading" className="mb-3 text-base font-semibold">
+        <section ref={container} className="mb-7" aria-labelledby={headingId}>
+            <h3 id={headingId} className="mb-3 text-base font-semibold">
                 {intl.formatMessage({ id: "typography.title" })}
             </h3>
             <div className="border-l border-border-strong pl-4">
-                <p id="typography-help" className="mb-3 text-xs text-muted">
-                    {intl.formatMessage({ id: "typography.saveHint" })}
+                <p id={helpId} className="mb-3 text-xs text-muted">
+                    {intl.formatMessage({ id: saveHint ?? "typography.saveHint" })}
                 </p>
                 {!draft.length && <p className="mb-3 text-sm text-muted">{intl.formatMessage({ id: "typography.empty" })}</p>}
                 {draft.length > 0 && (
@@ -78,6 +84,7 @@ export function TypographyRulesBlock({ rules = emptyRules, save, check, busy = f
                             <TypographyRuleRow
                                 key={rule.id}
                                 rule={rule}
+                                source={sources?.[rule.id]}
                                 number={index + 1}
                                 editing={editingId === rule.id}
                                 pending={pending}
@@ -117,14 +124,14 @@ export function TypographyRulesBlock({ rules = emptyRules, save, check, busy = f
                         variant="primary"
                         state={state === "saving" ? "loading" : "default"}
                         disabled={pending || issues.length > 0}
-                        aria-describedby="typography-help"
+                        aria-describedby={helpId}
                         onClick={() => void submit()}
                     >
                         {intl.formatMessage({ id: "typography.save" })}
                     </Button>
                     <Button
                         variant="secondary"
-                        disabled={pending || dirty || !rules.some((rule) => rule.definition.kind !== "contextual")}
+                        disabled={pending || checkDisabled || dirty || !rules.some((rule) => rule.definition.kind !== "contextual")}
                         onClick={() => void check()}
                     >
                         {intl.formatMessage({ id: "typography.check" })}
