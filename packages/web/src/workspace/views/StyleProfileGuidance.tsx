@@ -35,7 +35,7 @@ export function StyleProfileGuidance({ data, actions }: { data: StyleProfileGuid
 
     return (
         <StyleProfileDisclosure label={intl.formatMessage({ id: "styleProfile.manualRules" })} summary={intl.formatMessage({ id: status })}>
-            <label className="mb-2 block text-xs font-semibold" htmlFor="style-profile-global-rules">
+            <label className="field-label mb-2" htmlFor="style-profile-global-rules">
                 {intl.formatMessage({ id: "styleProfile.rules" })}
             </label>
             <TextareaField
@@ -59,7 +59,7 @@ export function StyleProfileGuidance({ data, actions }: { data: StyleProfileGuid
                     {intl.formatMessage({ id: getRuleStatus(rules, savedRules) })}
                 </p>
             </div>
-            <label className="mb-2 mt-5 block text-xs font-semibold" htmlFor="style-profile-article-rules">
+            <label className="field-label mb-2 mt-5" htmlFor="style-profile-article-rules">
                 {intl.formatMessage({ id: "styleProfile.thisArticle" })}
             </label>
             <TextareaField

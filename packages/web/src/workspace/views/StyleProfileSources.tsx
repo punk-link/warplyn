@@ -62,7 +62,7 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
             className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${adding ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
             <div className="min-h-0 overflow-hidden">
                 <div className="mb-3 rounded-panel border border-border bg-surface p-3">
-                    <label className="block text-xs font-semibold text-ink" htmlFor="style-profile-source-name">{intl.formatMessage({ id: "styleProfile.sourceName" })}</label>
+                    <label className="field-label mb-1" htmlFor="style-profile-source-name">{intl.formatMessage({ id: "styleProfile.sourceName" })}</label>
                     <Field
                         id="style-profile-source-name"
                         placeholder={intl.formatMessage({ id: "styleProfile.sourceName" })}

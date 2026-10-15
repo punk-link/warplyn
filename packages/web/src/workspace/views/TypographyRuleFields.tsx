@@ -11,11 +11,11 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
             return <TypographyQuoteFields definition={definition} change={change} />;
         case "punctuation-space":
             return <div className="grid gap-2 sm:grid-cols-2">
-                <label className="flex flex-col gap-2 text-xs font-semibold">
+                <label className="field-label">
                     {intl.formatMessage({ id: "typography.punctuationMarks" })}
                     <Field value={definition.marks} maxLength={8} onChange={(event) => change({ ...definition, marks: event.target.value })} />
                 </label>
-                <label className="flex flex-col gap-2 text-xs font-semibold">
+                <label className="field-label">
                     {intl.formatMessage({ id: "typography.spaceBefore" })}
                     <Select value={definition.before} onChange={(event) => {
                         const before = event.target.value;
@@ -32,7 +32,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
         case "dash":
             return (
                 <div className="grid gap-2 sm:grid-cols-2">
-                    <label className="flex flex-col gap-2 text-xs font-semibold">
+                    <label className="field-label">
                         {intl.formatMessage({ id: "typography.mark" })}
                         <Select
                             value={definition.mark}
@@ -42,7 +42,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
                             <option value="–">–</option>
                         </Select>
                     </label>
-                    <label className="flex flex-col gap-2 text-xs font-semibold">
+                    <label className="field-label">
                         {intl.formatMessage({ id: "typography.spacing" })}
                         <Select
                             value={definition.spacing}
@@ -56,7 +56,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
             );
         case "ellipsis":
             return (
-                <label className="flex flex-col gap-2 text-xs font-semibold">
+                <label className="field-label">
                     {intl.formatMessage({ id: "typography.mark" })}
                     <Select
                         value={definition.form}
@@ -70,7 +70,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
         case "nonbreaking-space":
             return (
                 <div className="grid gap-2 lg:grid-cols-3">
-                    <label className="flex flex-col gap-2 text-xs font-semibold">
+                    <label className="field-label">
                         {intl.formatMessage({ id: "typography.left" })}
                         <Field
                             value={definition.left}
@@ -78,7 +78,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
                             onChange={(event) => change({ ...definition, left: event.target.value })}
                         />
                     </label>
-                    <label className="flex flex-col gap-2 text-xs font-semibold">
+                    <label className="field-label">
                         {intl.formatMessage({ id: "typography.right" })}
                         <Field
                             value={definition.right}
@@ -86,7 +86,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
                             onChange={(event) => change({ ...definition, right: event.target.value })}
                         />
                     </label>
-                    <label className="flex flex-col gap-2 text-xs font-semibold">
+                    <label className="field-label">
                         {intl.formatMessage({ id: "typography.spacing" })}
                         <Select
                             value={definition.space}
@@ -106,7 +106,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
         case "literal":
             return (
                 <div className="grid gap-2 sm:grid-cols-2">
-                    <label className="flex flex-col gap-2 text-xs font-semibold">
+                    <label className="field-label">
                         {intl.formatMessage({ id: "typography.source" })}
                         <Field
                             value={definition.source}
@@ -114,7 +114,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
                             onChange={(event) => change({ ...definition, source: event.target.value })}
                         />
                     </label>
-                    <label className="flex flex-col gap-2 text-xs font-semibold">
+                    <label className="field-label">
                         {intl.formatMessage({ id: "typography.replacement" })}
                         <Field
                             value={definition.replacement}
@@ -126,7 +126,7 @@ export function TypographyRuleFields({ definition, change }: { definition: Typog
             );
         case "contextual":
             return (
-                <label className="flex flex-col gap-2 text-xs font-semibold">
+                <label className="field-label">
                     {intl.formatMessage({ id: "typography.instruction" })}
                     <TextareaField
                         value={definition.instruction}

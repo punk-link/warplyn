@@ -20,7 +20,7 @@ export function TypographyPresetPicker({ language, saved, disabled, apply }: {
     const description = awaitingReview ? helpId : undefined;
 
     return <div>
-        <label className="flex flex-col gap-2 text-xs font-semibold">
+        <label className="field-label">
             {intl.formatMessage({ id: "typography.preset" })}
             <Select value={selected} aria-describedby={description} onChange={(event) => setPreview(event.target.value)}>
                 <option value="">{intl.formatMessage({ id: "typography.noPreset" })}</option>
