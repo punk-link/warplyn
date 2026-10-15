@@ -27,6 +27,7 @@ import { correctionContext, verifyCorrectionSelection } from "./fact-checking/ve
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import { TypographyLocalEngine } from "./style/typography-local-engine.js";
 import { reviewTypography } from "./style/typography-review.js";
+import { prepareStyleReviewProfile } from "./style/prepare-style-review-profile.js";
 
 
 interface EditorialStreamContext {
@@ -95,13 +96,7 @@ function prepareEditorialStream(articles: EditorialArticleStore, sessions: Edito
 
     const factCheck = request.editorial.operation === EDITORIAL_OPERATION.FACT_CHECK;
     const translation = request.editorial.operation === EDITORIAL_OPERATION.TRANSLATION;
-    const styleProfile = getReadyStyleProfile(request.editorial.operation, styleCorpus);
-
-    if (request.editorial.reviewMode && request.editorial.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-    if (request.editorial.reviewMode && !styleProfile?.rules.typography.some((rule) => rule.definition.kind !== "contextual"))
-        throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+    const styleProfile = prepareStyleReviewProfile(request.editorial, styleCorpus);
 
     const engine: EditorialEngine | undefined = request.editorial.reviewMode
         ? new TypographyLocalEngine()
@@ -156,18 +151,6 @@ function getVerifiedCorrection(request: EditorialServiceRequest, article: Articl
 
     const findings = verifyCorrectionSelection(factChecks.listFactChecks(request.articleContext.articleId), article.currentRevisionId, selection.occurrenceIds);
     return { correction: { selection, context: correctionContext(findings) } };
-}
-
-
-function getReadyStyleProfile(operation: EditorialOperation, styleCorpus: EditorialStyleCorpusStore): StyleProfile | undefined {
-    if (operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
-        return undefined;
-
-    const corpus = styleCorpus.getStyleCorpus();
-    if (corpus.status !== "ready" || !corpus.profile)
-        throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
-
-    return corpus.profile;
 }
 
 

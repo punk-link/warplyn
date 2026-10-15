@@ -203,7 +203,8 @@ function translationStillCurrent(workspace: ArticleWorkspaceState, results: read
     return workspace.selectedArticle?.id === result.articleId &&
         workspace.selectedArticle.currentRevisionId === result.baseRevisionId &&
         workspace.content === workspace.selectedArticle.currentRevision.content &&
-        results.some((item) => item.articleId === result.articleId && item.value.resultId === result.value.resultId && item.value.editorialArtifactId === result.value.editorialArtifactId);
+        results.some((item) => item.articleId === result.articleId &&
+            item.value.resultId === result.value.resultId && item.value.editorialArtifactId === result.value.editorialArtifactId);
 }
 
 

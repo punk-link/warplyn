@@ -107,5 +107,6 @@ function isSnapshot(value: unknown): value is DesktopSpellingSnapshot {
 
 function isStates(value: unknown): value is Record<string, DictionaryState> {
     return value !== null && typeof value === "object" && !Array.isArray(value) &&
-        Object.values(value).every((state: unknown) => state === "unverified" || state === "preparing" || state === "ready" || state === "failed" || state === "unloaded");
+        Object.values(value).every((state: unknown) => state === "unverified" || state === "preparing" ||
+            state === "ready" || state === "failed" || state === "unloaded");
 }

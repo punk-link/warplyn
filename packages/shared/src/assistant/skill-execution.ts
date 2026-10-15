@@ -17,10 +17,12 @@ export function isSkillExecution(value: unknown): value is SkillExecution {
 
     if (value.capability !== "generate_proposal")
         return Object.keys(value).length === 1 &&
-            (value.capability === "fact_check" || value.capability === "style_review" || value.capability === "translate" || value.capability === "manage_skills");
+            (value.capability === "fact_check" || value.capability === "style_review" ||
+                value.capability === "translate" || value.capability === "manage_skills");
 
     return Object.keys(value).length === 4 &&
         "operation" in value && (value.operation === "flow_revision" || value.operation === "thesis_to_narrative") &&
         "source" in value && (value.source === "article" || value.source === "author_or_article") &&
-        "resultPolicy" in value && (value.resultPolicy === "review" || value.resultPolicy === "verified_edit" || value.resultPolicy === "shorter_preserving_content");
+        "resultPolicy" in value && (value.resultPolicy === "review" || value.resultPolicy === "verified_edit" ||
+            value.resultPolicy === "shorter_preserving_content");
 }

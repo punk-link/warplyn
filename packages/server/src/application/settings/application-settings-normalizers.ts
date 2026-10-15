@@ -14,7 +14,8 @@ function hasInvalidGeneralPreferences(candidate: Partial<GeneralSettings>): bool
         (candidate.timeFormat !== undefined && !isTimeFormatPreference(candidate.timeFormat)) ||
         (candidate.timeZone !== undefined && !isTimeZonePreference(candidate.timeZone)) ||
         (candidate.assistantSendMode !== undefined && !isAssistantSendMode(candidate.assistantSendMode)) ||
-        (candidate.defaultAssistantEditMode !== undefined && candidate.defaultAssistantEditMode !== "review" && candidate.defaultAssistantEditMode !== "direct") ||
+        (candidate.defaultAssistantEditMode !== undefined &&
+            candidate.defaultAssistantEditMode !== "review" && candidate.defaultAssistantEditMode !== "direct") ||
         (candidate.assistantRequestTimeoutMinutes !== undefined && !isAssistantRequestTimeout(candidate.assistantRequestTimeoutMinutes));
 }
 
