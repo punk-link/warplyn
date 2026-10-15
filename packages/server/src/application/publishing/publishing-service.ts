@@ -19,14 +19,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 
 function isCustomPublishProfile(value: unknown): value is CustomPublishLimitProfile {
-    return isRecord(value)
-        && typeof value.id === "string"
-        && value.id.startsWith("custom-")
-        && typeof value.name === "string"
-        && Boolean(value.name.trim())
-        && typeof value.characterLimit === "number"
-        && Number.isInteger(value.characterLimit)
-        && value.characterLimit >= 0;
+    return isRecord(value) &&
+        typeof value.id === "string" &&
+        value.id.startsWith("custom-") &&
+        typeof value.name === "string" &&
+        Boolean(value.name.trim()) &&
+        typeof value.characterLimit === "number" &&
+        Number.isInteger(value.characterLimit) &&
+        value.characterLimit >= 0;
 }
 
 

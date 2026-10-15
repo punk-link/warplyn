@@ -61,8 +61,8 @@ export function KeyBindingSettings({ overrides, save, general, saveGeneral }: { 
             </SettingRow>}
             {keyBindingCommands.filter((command) => command.category === category && command.id !== KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST).map((command) => {
                 const override = overrides[command.id];
-                const isOverridden = Object.prototype.hasOwnProperty.call(overrides, command.id)
-                    && (override === null || (override !== undefined && !areKeyBindingsEqual(override, command.defaultBinding)));
+                const isOverridden = Object.prototype.hasOwnProperty.call(overrides, command.id) &&
+                    (override === null || (override !== undefined && !areKeyBindingsEqual(override, command.defaultBinding)));
                 const listening = recording === command.id;
                 return <SettingRow
                     key={command.id}

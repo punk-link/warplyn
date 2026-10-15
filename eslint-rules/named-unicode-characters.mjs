@@ -22,11 +22,11 @@ function isNamedCharacterConstant(node, source) {
 
     const declarator = node.parent;
     const declaration = declarator?.parent;
-    return declarator?.type === "VariableDeclarator"
-        && declarator.init === node
-        && declarator.id.type === "Identifier"
-        && declaration?.type === "VariableDeclaration"
-        && declaration.kind === "const";
+    return declarator?.type === "VariableDeclarator" &&
+        declarator.init === node &&
+        declarator.id.type === "Identifier" &&
+        declaration?.type === "VariableDeclaration" &&
+        declaration.kind === "const";
 }
 
 

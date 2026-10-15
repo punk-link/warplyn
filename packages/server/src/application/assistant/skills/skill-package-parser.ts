@@ -69,10 +69,10 @@ function readMetadata(frontmatter: string): Record<string, unknown> | undefined 
 
 
 function isSafeReferencePath(value: string): boolean {
-    return value.startsWith("references/")
-        && value.endsWith(".md")
-        && !value.includes("\\")
-        && !value.split("/").some((part) => part === "" || part === "." || part === "..");
+    return value.startsWith("references/") &&
+        value.endsWith(".md") &&
+        !value.includes("\\") &&
+        !value.split("/").some((part) => part === "" || part === "." || part === "..");
 }
 
 
@@ -143,8 +143,8 @@ function validateSkillIdentity(input: { reservedIds?: readonly string[]; reserve
     const { id, name, description, version } = metadata;
     const versionText = typeof version === "string" || typeof version === "number" ? String(version) : undefined;
     const numberPattern = /^\d+(?:\.\d+){0,2}$/;
-    if (typeof id !== "string" || !skillId.test(id) || typeof name !== "string" || !name.trim() || name.length > 80
-        || typeof description !== "string" || !description.trim() || description.length > 280 || !versionText || !numberPattern.test(versionText))
+    if (typeof id !== "string" || !skillId.test(id) || typeof name !== "string" || !name.trim() || name.length > 80 ||
+        typeof description !== "string" || !description.trim() || description.length > 280 || !versionText || !numberPattern.test(versionText))
         return issue("invalid_metadata");
 
     if ((input.reservedIds ?? []).includes(id) || (input.reservedNames ?? []).some((candidate) => normalizeSkillName(candidate) === normalizeSkillName(name)))
@@ -155,8 +155,8 @@ function validateSkillIdentity(input: { reservedIds?: readonly string[]; reserve
 
 
 function validateSkillReferences(references: unknown): references is string[] {
-    return Array.isArray(references) && references.length <= maximumReferenceCount
-        && references.every((reference) => typeof reference === "string" && isSafeReferencePath(reference));
+    return Array.isArray(references) && references.length <= maximumReferenceCount &&
+        references.every((reference) => typeof reference === "string" && isSafeReferencePath(reference));
 }
 
 

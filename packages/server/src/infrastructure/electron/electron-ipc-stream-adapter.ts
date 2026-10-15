@@ -28,10 +28,10 @@ function isValidAssistantScope(value: unknown): boolean {
 
 
 function hasValidOptionalAssistantFields(value: Record<string, unknown>): boolean {
-    return (value.explicitSkillId === undefined || typeof value.explicitSkillId === "string" && Boolean(value.explicitSkillId))
-        && (value.skillOffset === undefined || typeof value.skillOffset === "number")
-        && (value.targetLanguage === undefined || typeof value.targetLanguage === "string")
-        && (value.retryOfRequestId === undefined || typeof value.retryOfRequestId === "string");
+    return (value.explicitSkillId === undefined || typeof value.explicitSkillId === "string" && Boolean(value.explicitSkillId)) &&
+        (value.skillOffset === undefined || typeof value.skillOffset === "number") &&
+        (value.targetLanguage === undefined || typeof value.targetLanguage === "string") &&
+        (value.retryOfRequestId === undefined || typeof value.retryOfRequestId === "string");
 }
 
 
@@ -50,17 +50,17 @@ function isValidAssistantRequest(value: unknown): value is Extract<ElectronStrea
 
 
 function isValidEditorialRequest(value: unknown): value is Extract<ElectronStreamRequest, { kind: "editorial" }>["input"] {
-    return isRecord(value)
-        && typeof value.requestId === "string"
-        && typeof value.operation === "string"
-        && isEditorialOperation(value.operation)
-        && (value.reviewMode === undefined || value.reviewMode === "typography" && value.operation === EDITORIAL_OPERATION.STYLE_REVIEW)
-        && (value.authorContext === undefined || typeof value.authorContext === "string")
-        && (value.targetLanguage === undefined || typeof value.targetLanguage === "string")
-        && (value.correctionSelection === undefined || isRecord(value.correctionSelection)
-            && typeof value.correctionSelection.expectedRevisionId === "string"
-            && Array.isArray(value.correctionSelection.occurrenceIds)
-            && value.correctionSelection.occurrenceIds.every((id: unknown) => typeof id === "string"));
+    return isRecord(value) &&
+        typeof value.requestId === "string" &&
+        typeof value.operation === "string" &&
+        isEditorialOperation(value.operation) &&
+        (value.reviewMode === undefined || value.reviewMode === "typography" && value.operation === EDITORIAL_OPERATION.STYLE_REVIEW) &&
+        (value.authorContext === undefined || typeof value.authorContext === "string") &&
+        (value.targetLanguage === undefined || typeof value.targetLanguage === "string") &&
+        (value.correctionSelection === undefined || isRecord(value.correctionSelection) &&
+            typeof value.correctionSelection.expectedRevisionId === "string" &&
+            Array.isArray(value.correctionSelection.occurrenceIds) &&
+            value.correctionSelection.occurrenceIds.every((id: unknown) => typeof id === "string"));
 }
 
 

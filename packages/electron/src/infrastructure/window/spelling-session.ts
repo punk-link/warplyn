@@ -182,9 +182,9 @@ export class SpellingSession {
     private matchLanguage(language: string, preferred: string[]): string[] {
         const matches = this.supported.filter((candidate) => candidate.split("-")[0] === language.split("-")[0]);
         const defaults: Record<string, string> = { en: "en-US", es: "es-ES", pt: "pt-BR" };
-        const selected = matches.find((candidate) => candidate === language)
-            ?? matches.find((candidate) => preferred.includes(candidate))
-            ?? matches.find((candidate) => candidate === defaults[language]) ?? matches.sort()[0];
+        const selected = matches.find((candidate) => candidate === language) ??
+            matches.find((candidate) => preferred.includes(candidate)) ??
+            matches.find((candidate) => candidate === defaults[language]) ?? matches.sort()[0];
 
         return selected ? [selected] : [];
     }

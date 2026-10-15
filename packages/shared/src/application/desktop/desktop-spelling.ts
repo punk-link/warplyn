@@ -41,8 +41,8 @@ export function isSpellingLanguage(value: unknown): value is string {
 
 export function isPersonalSpellingWord(value: unknown): value is string {
     const punctuationPattern = /[\p{Cc}\p{Zl}\p{Zp}]/u;
-    return typeof value === "string" && value.length > 0 && value === value.trim()
-        && Array.from(value).length <= 128 && !punctuationPattern.test(value);
+    return typeof value === "string" && value.length > 0 && value === value.trim() &&
+        Array.from(value).length <= 128 && !punctuationPattern.test(value);
 }
 
 
@@ -58,9 +58,9 @@ export function isDesktopSpellingRequest(value: unknown): value is DesktopSpelli
         case "unload":
             return "language" in value && isSpellingLanguage(value.language);
         case "addWords":
-            return "words" in value && Array.isArray(value.words) && value.words.length <= 500
-                && value.words.every((word: unknown) => typeof word === "string" && word.length <= 256)
-                && new TextEncoder().encode(value.words.join("\n")).length <= 65_536;
+            return "words" in value && Array.isArray(value.words) && value.words.length <= 500 &&
+                value.words.every((word: unknown) => typeof word === "string" && word.length <= 256) &&
+                new TextEncoder().encode(value.words.join("\n")).length <= 65_536;
         case "removeWord":
             return "word" in value && isPersonalSpellingWord(value.word);
         default:
@@ -96,16 +96,16 @@ function isSnapshot(value: unknown): value is DesktopSpellingSnapshot {
     if (!dictionaries || typeof dictionaries !== "object" || !personal || typeof personal !== "object")
         return false;
 
-    return "supported" in dictionaries && isStringList(dictionaries.supported)
-        && "requested" in dictionaries && isStringList(dictionaries.requested)
-        && "states" in dictionaries && isStates(dictionaries.states)
-        && "words" in personal && isStringList(personal.words)
-        && "failed" in personal && isStringList(personal.failed)
-        && "affectsSystem" in personal && typeof personal.affectsSystem === "boolean";
+    return "supported" in dictionaries && isStringList(dictionaries.supported) &&
+        "requested" in dictionaries && isStringList(dictionaries.requested) &&
+        "states" in dictionaries && isStates(dictionaries.states) &&
+        "words" in personal && isStringList(personal.words) &&
+        "failed" in personal && isStringList(personal.failed) &&
+        "affectsSystem" in personal && typeof personal.affectsSystem === "boolean";
 }
 
 
 function isStates(value: unknown): value is Record<string, DictionaryState> {
-    return value !== null && typeof value === "object" && !Array.isArray(value)
-        && Object.values(value).every((state: unknown) => state === "unverified" || state === "preparing" || state === "ready" || state === "failed" || state === "unloaded");
+    return value !== null && typeof value === "object" && !Array.isArray(value) &&
+        Object.values(value).every((state: unknown) => state === "unverified" || state === "preparing" || state === "ready" || state === "failed" || state === "unloaded");
 }

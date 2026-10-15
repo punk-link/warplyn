@@ -46,12 +46,12 @@ function supportedRelease(value: unknown): value is Release {
         return false;
 
     const release = value as Record<string, unknown>;
-    return typeof release.tag_name === "string"
-        && typeof release.html_url === "string"
-        && typeof release.prerelease === "boolean"
-        && typeof release.draft === "boolean"
-        && Array.isArray(release.assets)
-        && release.assets.every((asset) => asset && typeof asset === "object" && typeof (asset as Record<string, unknown>).name === "string");
+    return typeof release.tag_name === "string" &&
+        typeof release.html_url === "string" &&
+        typeof release.prerelease === "boolean" &&
+        typeof release.draft === "boolean" &&
+        Array.isArray(release.assets) &&
+        release.assets.every((asset) => asset && typeof asset === "object" && typeof (asset as Record<string, unknown>).name === "string");
 }
 
 
@@ -77,10 +77,10 @@ export function getNewestCompatibleRelease(payload: unknown, currentVersion: str
     const warplynAmdDebPattern = /^warplyn_.+_amd64\.deb$/i;
     const comWarplynDesktopPattern = /^com\.warplyn\.desktop-.+-full\.nupkg$/i;
     const candidates = payload.filter(supportedRelease)
-        .filter((item) => !item.draft
-            && hasSupportedVersion(item)
-            && (!item.prerelease || updatePreferences(settings, currentVersion).includePrereleases)
-            && (platform === "linux"
+        .filter((item) => !item.draft &&
+            hasSupportedVersion(item) &&
+            (!item.prerelease || updatePreferences(settings, currentVersion).includePrereleases) &&
+            (platform === "linux"
                 ? item.assets.some((asset) => warplynAmdDebPattern.test(asset.name))
                 : item.assets.some((asset) => asset.name === "RELEASES") && item.assets.some((asset) => comWarplynDesktopPattern.test(asset.name)))
         );

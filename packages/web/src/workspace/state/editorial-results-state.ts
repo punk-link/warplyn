@@ -200,10 +200,10 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
 
 
 function translationStillCurrent(workspace: ArticleWorkspaceState, results: readonly TranslationResult[], result: TranslationResult): boolean {
-    return workspace.selectedArticle?.id === result.articleId
-        && workspace.selectedArticle.currentRevisionId === result.baseRevisionId
-        && workspace.content === workspace.selectedArticle.currentRevision.content
-        && results.some((item) => item.articleId === result.articleId && item.value.resultId === result.value.resultId && item.value.editorialArtifactId === result.value.editorialArtifactId);
+    return workspace.selectedArticle?.id === result.articleId &&
+        workspace.selectedArticle.currentRevisionId === result.baseRevisionId &&
+        workspace.content === workspace.selectedArticle.currentRevision.content &&
+        results.some((item) => item.articleId === result.articleId && item.value.resultId === result.value.resultId && item.value.editorialArtifactId === result.value.editorialArtifactId);
 }
 
 

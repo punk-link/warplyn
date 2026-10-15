@@ -24,8 +24,8 @@ function isSafeBundlePath(path: string): boolean {
         return true;
 
     const parts = path.split("/");
-    return parts.length >= 2 && skillDirectories.some((directory) => directory === parts[0])
-        && parts.every((part) => part !== "." && part !== ".." && safePart.test(part));
+    return parts.length >= 2 && skillDirectories.some((directory) => directory === parts[0]) &&
+        parts.every((part) => part !== "." && part !== ".." && safePart.test(part));
 }
 
 
@@ -85,8 +85,8 @@ export async function validateBackupBundle(directory: string, manifest: BackupBu
         throw new Error("backup_bundle_invalid_manifest");
 
     const paths = manifest.files.map((file) => file.path);
-    if (paths[0] !== "database.sqlite" || new Set(paths).size !== paths.length
-        || paths.some((path) => !isSafeBundlePath(path)))
+    if (paths[0] !== "database.sqlite" || new Set(paths).size !== paths.length ||
+        paths.some((path) => !isSafeBundlePath(path)))
         throw new Error("backup_bundle_invalid_manifest");
 
     const actual = [await fileRecord(directory, "database.sqlite"), ...await inventory(directory)];
@@ -221,22 +221,22 @@ export class BackupBundleTransfers {
 
 
 function isBackupBundleManifest(value: unknown): value is BackupBundleManifest {
-    if (!value || typeof value !== "object" || !("format" in value) || value.format !== 1
-        || !("files" in value) || !Array.isArray(value.files) || value.files.length === 0 || value.files.length > 10_000)
+    if (!value || typeof value !== "object" || !("format" in value) || value.format !== 1 ||
+        !("files" in value) || !Array.isArray(value.files) || value.files.length === 0 || value.files.length > 10_000)
         return false;
 
     const files = value.files;
     let total = 0;
     for (const file of files) {
         const punctuationPattern = /^[a-f0-9]{64}$/;
-        if (!file || typeof file !== "object" || typeof file.path !== "string" || !isSafeBundlePath(file.path)
-            || !Number.isInteger(file.size) || file.size < 0 || file.size > 100_000_000
-            || typeof file.sha256 !== "string" || !punctuationPattern.test(file.sha256))
+        if (!file || typeof file !== "object" || typeof file.path !== "string" || !isSafeBundlePath(file.path) ||
+            !Number.isInteger(file.size) || file.size < 0 || file.size > 100_000_000 ||
+            typeof file.sha256 !== "string" || !punctuationPattern.test(file.sha256))
             return false;
 
         total += file.size;
     }
 
-    return total <= 500_000_000 && files[0]?.path === "database.sqlite"
-        && new Set(files.map((file) => file.path)).size === files.length;
+    return total <= 500_000_000 && files[0]?.path === "database.sqlite" &&
+        new Set(files.map((file) => file.path)).size === files.length;
 }

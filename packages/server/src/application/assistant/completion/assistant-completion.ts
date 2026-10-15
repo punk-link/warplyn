@@ -158,11 +158,11 @@ export class AssistantCompletion {
                     authorizedActions: request.authorizedActions
                 }, action.input);
 
-            metadataChanged
-                ||= action.capability === EDITORIAL_CAPABILITY.RENAME_ARTICLE
-                || action.capability === EDITORIAL_CAPABILITY.CHANGE_ARTICLE_LANGUAGE
-                || action.capability === EDITORIAL_CAPABILITY.ASSIGN_PUBLISHING_PROFILE
-                || action.capability === EDITORIAL_CAPABILITY.SET_ARTICLE_STYLE_RULES;
+            metadataChanged ||=
+                action.capability === EDITORIAL_CAPABILITY.RENAME_ARTICLE ||
+                action.capability === EDITORIAL_CAPABILITY.CHANGE_ARTICLE_LANGUAGE ||
+                action.capability === EDITORIAL_CAPABILITY.ASSIGN_PUBLISHING_PROFILE ||
+                action.capability === EDITORIAL_CAPABILITY.SET_ARTICLE_STYLE_RULES;
         }
 
         return metadataChanged;

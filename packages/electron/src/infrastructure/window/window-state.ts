@@ -25,10 +25,10 @@ function parseBounds(value: unknown): Electron.Rectangle | undefined {
 
 
 function areRectanglesIntersecting(first: Electron.Rectangle, second: Electron.Rectangle): boolean {
-    return first.x < second.x + second.width
-        && first.x + first.width > second.x
-        && first.y < second.y + second.height
-        && first.y + first.height > second.y;
+    return first.x < second.x + second.width &&
+        first.x + first.width > second.x &&
+        first.y < second.y + second.height &&
+        first.y + first.height > second.y;
 }
 
 

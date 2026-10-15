@@ -231,9 +231,9 @@ function useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save }: {
 
         function toggleFocusMode() {
             const activeElement = document.activeElement;
-            const focusWillBeLost = !(activeElement instanceof HTMLElement)
-                || activeElement === document.body
-                || Boolean(activeElement.closest("[data-workspace-panel]"));
+            const focusWillBeLost = !(activeElement instanceof HTMLElement) ||
+                activeElement === document.body ||
+                Boolean(activeElement.closest("[data-workspace-panel]"));
 
             if (focusWillBeLost)
                 document.querySelector<HTMLElement>("[data-article-workspace]")?.focus({ preventScroll: true });

@@ -117,8 +117,8 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
 
     const revisionIndex = revisions.revisions.findIndex((revision) => revision.id === article.currentRevisionId);
     const revisionNumber = revisionIndex < 0 ? 1 : revisionIndex + 1;
-    const publishProfileLabel = publishing.settings.customProfiles.find((profile) => profile.id === publishing.profile.id)?.name
-        ?? (publishing.profile.id === PUBLISH_LIMIT_PROFILE.NO_RESTRICTIONS
+    const publishProfileLabel = publishing.settings.customProfiles.find((profile) => profile.id === publishing.profile.id)?.name ??
+        (publishing.profile.id === PUBLISH_LIMIT_PROFILE.NO_RESTRICTIONS
             ? intl.formatMessage({ id: "publishing.noRestrictions" })
             : intl.formatMessage({ id: publishingProfileMessageId(publishing.profile.id) }));
     const badges = createWorkspaceBadges(editorial, intl);

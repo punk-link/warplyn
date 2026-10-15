@@ -61,10 +61,10 @@ const conditionalBraces = {
 
 
         function canOmitBraces(branch) {
-            return branch.type !== "BlockStatement"
-                || (
-                    branch.body.length === 1
-                    && !unsafeWithoutBlock.has(branch.body[0].type)
+            return branch.type !== "BlockStatement" ||
+                (
+                    branch.body.length === 1 &&
+                    !unsafeWithoutBlock.has(branch.body[0].type)
                 );
         }
 

@@ -9,9 +9,9 @@ function isTelemetryConsent(value: unknown): value is TelemetryConsent {
         return false;
 
     const candidate = value as Record<string, unknown>;
-    return typeof candidate.enabled === "boolean"
-        && typeof candidate.supported === "boolean"
-        && (candidate.installationId === undefined || typeof candidate.installationId === "string");
+    return typeof candidate.enabled === "boolean" &&
+        typeof candidate.supported === "boolean" &&
+        (candidate.installationId === undefined || typeof candidate.installationId === "string");
 }
 
 
@@ -35,10 +35,10 @@ function request(value: unknown): { method: "getConsent" } | { method: "setConse
 
 function captureRequest(candidate: Record<string, unknown>): { method: "capture"; event: TelemetryEvent; generation?: number } | undefined {
     const generation = candidate.generation;
-    if (candidate.method === "capture"
-        && isTelemetryEvent(candidate.event)
-        && (generation === undefined || typeof generation === "number" && Number.isSafeInteger(generation) && generation >= 0)
-        && Object.keys(candidate).every((key) => key === "method" || key === "event" || key === "generation")
+    if (candidate.method === "capture" &&
+        isTelemetryEvent(candidate.event) &&
+        (generation === undefined || typeof generation === "number" && Number.isSafeInteger(generation) && generation >= 0) &&
+        Object.keys(candidate).every((key) => key === "method" || key === "event" || key === "generation")
     )
         return { method: "capture", event: candidate.event, ...(generation === undefined ? {} : { generation }) };
 

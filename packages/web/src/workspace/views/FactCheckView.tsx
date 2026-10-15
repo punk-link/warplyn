@@ -63,10 +63,10 @@ export function FactCheckView({ data, actions }: { data: FactCheckData; actions:
         </div>;
 
     const isStale = (finding: FactCheckFinding) => stale || historical || finding.stale === true;
-    const eligible = factCheck.findings.filter((finding) => !isStale(finding)
-        && !finding.resolution
-        && (finding.status === FACT_CHECK_STATUS.DISPUTED || finding.status === FACT_CHECK_STATUS.UNVERIFIABLE)
-        && finding.occurrenceId
+    const eligible = factCheck.findings.filter((finding) => !isStale(finding) &&
+        !finding.resolution &&
+        (finding.status === FACT_CHECK_STATUS.DISPUTED || finding.status === FACT_CHECK_STATUS.UNVERIFIABLE) &&
+        finding.occurrenceId
     );
     const toggle = (id: string) => setSelected((current) => {
         const next = new Set(current);
@@ -161,10 +161,10 @@ export function FactCheckView({ data, actions }: { data: FactCheckData; actions:
                             {finding.importance && <span className="ml-2">{intl.formatMessage({ id: "views.factImportance" }, { importance: finding.importance })}</span>}
                             {finding.resolution && <span className="ml-2">{getResolutionMessage(finding.resolution)}</span>}
                         </Status>
-                        {!finding.resolution
-                            && !isStale(finding)
-                            && finding.occurrenceId && <div className="flex flex-wrap gap-2">{(finding.status === FACT_CHECK_STATUS.DISPUTED || finding.status === FACT_CHECK_STATUS.UNVERIFIABLE)
-                                && <Button onClick={() => proposeCorrections([finding])}>{intl.formatMessage({ id: "views.proposeFactCorrection" })}</Button>}
+                        {!finding.resolution &&
+                            !isStale(finding) &&
+                            finding.occurrenceId && <div className="flex flex-wrap gap-2">{(finding.status === FACT_CHECK_STATUS.DISPUTED || finding.status === FACT_CHECK_STATUS.UNVERIFIABLE) &&
+                                <Button onClick={() => proposeCorrections([finding])}>{intl.formatMessage({ id: "views.proposeFactCorrection" })}</Button>}
                         <Button variant="secondary" onClick={() => void resolve(finding.occurrenceId!, "accepted_as_written")}>{intl.formatMessage({ id: "views.acceptFactAsWritten" })}</Button>
                         <Button variant="secondary" onClick={() => void resolve(finding.occurrenceId!, "evidence_accepted")}>{intl.formatMessage({ id: "views.acceptFactEvidence" })}</Button>
                         </div>

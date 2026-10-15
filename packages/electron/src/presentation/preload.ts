@@ -21,12 +21,12 @@ function isPrepareCloseRequest(value: unknown): value is ElectronPrepareCloseReq
 
 
 function isCheckpointResult(value: unknown, requestId: string): value is ElectronCheckpointResult {
-    return value !== null
-        && typeof value === "object"
-        && "requestId" in value
-        && value.requestId === requestId
-        && "ok" in value
-        && typeof value.ok === "boolean";
+    return value !== null &&
+        typeof value === "object" &&
+        "requestId" in value &&
+        value.requestId === requestId &&
+        "ok" in value &&
+        typeof value.ok === "boolean";
 }
 
 

@@ -53,9 +53,9 @@ function scoreFunction(node, sourceFile) {
             return;
 
         const isElseIf = ts.isIfStatement(current) && ts.isIfStatement(current.parent) && current.parent.elseStatement === current;
-        const structural = ts.isForStatement(current) || ts.isForInStatement(current)
-            || ts.isForOfStatement(current) || ts.isWhileStatement(current) || ts.isDoStatement(current)
-            || ts.isCatchClause(current) || ts.isConditionalExpression(current) || ts.isSwitchStatement(current);
+        const structural = ts.isForStatement(current) || ts.isForInStatement(current) ||
+            ts.isForOfStatement(current) || ts.isWhileStatement(current) || ts.isDoStatement(current) ||
+            ts.isCatchClause(current) || ts.isConditionalExpression(current) || ts.isSwitchStatement(current);
         const nextNesting = structural || ts.isIfStatement(current) ? nesting + 1 : nesting;
 
         if (structural)
@@ -67,9 +67,9 @@ function scoreFunction(node, sourceFile) {
                 score += 1;
         }
 
-        if (ts.isBinaryExpression(current) && (current.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken
-            || current.operatorToken.kind === ts.SyntaxKind.BarBarToken
-            || current.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken)) {
+        if (ts.isBinaryExpression(current) && (current.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken ||
+            current.operatorToken.kind === ts.SyntaxKind.BarBarToken ||
+            current.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken)) {
             const parent = current.parent;
             if (!ts.isBinaryExpression(parent) || parent.operatorToken.kind !== current.operatorToken.kind)
                 score += 1;

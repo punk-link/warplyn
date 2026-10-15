@@ -52,10 +52,10 @@ export type ArticleFilesResult =
 
 
 export function isArticleMarkdownFile(value: unknown): value is ArticleMarkdownFile {
-    return value !== null && typeof value === "object"
-        && Object.keys(value).length === 2
-        && "fileName" in value && typeof value.fileName === "string"
-        && "content" in value && typeof value.content === "string";
+    return value !== null && typeof value === "object" &&
+        Object.keys(value).length === 2 &&
+        "fileName" in value && typeof value.fileName === "string" &&
+        "content" in value && typeof value.content === "string";
 }
 
 
@@ -72,9 +72,9 @@ export function isArticleFilesRequest(value: unknown): value is ArticleFilesRequ
     if (value.method === "releaseSaveTarget")
         return Object.keys(value).length === 2 && "ticket" in value && isSaveTicket(value.ticket);
 
-    return value.method === "saveFile" && Object.keys(value).length === 3
-        && "target" in value && isArticleSaveTarget(value.target)
-        && "bytes" in value && isArticleFileBytesArray(value.bytes);
+    return value.method === "saveFile" && Object.keys(value).length === 3 &&
+        "target" in value && isArticleSaveTarget(value.target) &&
+        "bytes" in value && isArticleFileBytesArray(value.bytes);
 }
 
 
@@ -84,9 +84,9 @@ function isSaveTicket(value: unknown): value is string {
 
 
 export function isArticleSaveTarget(value: unknown): value is ArticleSaveTarget {
-    return value !== null && typeof value === "object" && Object.keys(value).length === 2
-        && "ticket" in value && isSaveTicket(value.ticket)
-        && "format" in value && isArticleFileFormat(value.format);
+    return value !== null && typeof value === "object" && Object.keys(value).length === 2 &&
+        "ticket" in value && isSaveTicket(value.ticket) &&
+        "format" in value && isArticleFileFormat(value.format);
 }
 
 
@@ -96,17 +96,17 @@ export function isArticleFileFormat(value: unknown): value is ArticleFileFormat 
 
 
 export function isArticleFileBytesArray(value: unknown): value is Uint8Array<ArrayBuffer> {
-    return ArrayBuffer.isView(value) && Object.prototype.toString.call(value) === "[object Uint8Array]"
-        && Object.prototype.toString.call(value.buffer) === "[object ArrayBuffer]" && value.byteLength <= articleMarkdownByteLimit;
+    return ArrayBuffer.isView(value) && Object.prototype.toString.call(value) === "[object Uint8Array]" &&
+        Object.prototype.toString.call(value.buffer) === "[object ArrayBuffer]" && value.byteLength <= articleMarkdownByteLimit;
 }
 
 
 export function isArticleFileBytes(value: unknown): value is ArticleFileBytes {
     const pathSeparatorPattern = /[\\/]/;
-    return value !== null && typeof value === "object" && Object.keys(value).length === 2
-        && "fileName" in value && typeof value.fileName === "string" && value.fileName.length <= 1024
-        && !pathSeparatorPattern.test(value.fileName) && !value.fileName.includes(NULL_CHARACTER)
-        && "bytes" in value && isArticleFileBytesArray(value.bytes);
+    return value !== null && typeof value === "object" && Object.keys(value).length === 2 &&
+        "fileName" in value && typeof value.fileName === "string" && value.fileName.length <= 1024 &&
+        !pathSeparatorPattern.test(value.fileName) && !value.fileName.includes(NULL_CHARACTER) &&
+        "bytes" in value && isArticleFileBytesArray(value.bytes);
 }
 
 

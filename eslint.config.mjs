@@ -57,6 +57,13 @@ export default defineConfig(
             }],
             "@stylistic/no-trailing-spaces": "error",
             "@stylistic/nonblock-statement-body-position": ["error", "below"],
+            "@stylistic/operator-linebreak": ["error", "after", {
+                overrides: {
+                    "|": "before",
+                    "?": "before",
+                    ":": "before",
+                },
+            }],
             "@stylistic/padding-line-between-statements": [
                 "error",
                 {
