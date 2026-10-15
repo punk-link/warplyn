@@ -38,12 +38,25 @@ test("profile changes retain captured samples and reject invalid configuration",
     const saved = repositories.styleCorpus.setTypographyRules([{ id: "spacing", definition: { kind: "horizontal-space" } }]);
     assert.equal(saved.profile?.corpusItemCount, 1);
     assert.equal(saved.profile?.rules.manual, "Keep my voice.");
-    assert.throws(() => repositories.styleCorpus.setTypographyRules([{ id: "blank", definition: { kind: "contextual", instruction: " " } }]), { code: "typography_rules_invalid" });
+    assert.throws(
+        () => repositories.styleCorpus.setTypographyRules([{ id: "blank", definition: { kind: "contextual", instruction: " " } }]),
+        { code: "typography_rules_invalid" },
+    );
     assert.deepEqual(repositories.styleCorpus.getStyleCorpus(), saved);
 }));
 
 test("legacy profile rules decode without rewriting the stored snapshot", () => {
-    const json = JSON.stringify({ version: 1, corpusItemCount: 0, characterCount: 0, confidence: "low", traits: [], phrasesToAvoid: [], contributorIds: [], updatedAt: "2026-10-13T00:00:00Z", rules: "Legacy guidance" });
+    const json = JSON.stringify({
+        version: 1,
+        corpusItemCount: 0,
+        characterCount: 0,
+        confidence: "low",
+        traits: [],
+        phrasesToAvoid: [],
+        contributorIds: [],
+        updatedAt: "2026-10-13T00:00:00Z",
+        rules: "Legacy guidance",
+    });
     assert.deepEqual(decodeStyleProfile(json).rules, { manual: "Legacy guidance", typography: [] });
     assert.equal(JSON.parse(json).rules, "Legacy guidance");
     assert.throws(() => decodeStyleProfile(JSON.stringify({ rules: { manual: "", typography: [{ id: "bad" }] } })), { code: "typography_rules_invalid" });

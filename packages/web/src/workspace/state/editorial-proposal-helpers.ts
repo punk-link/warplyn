@@ -24,20 +24,39 @@ export function isProposalOperation(operation: EditorialOperation) {
 }
 
 
-export function useProposalSummaries(client: EditorialWorkspaceClient, intl: IntlShape, { state, stale, review, selectedArticleId, editorialArtifactId, skipModelSummaries }: {
-    state: ProposalState;
-    stale: boolean;
-    review: TextProposal | undefined;
-    selectedArticleId: string | undefined;
-    editorialArtifactId: string | undefined;
-    skipModelSummaries?: boolean;
-}) {
+export function useProposalSummaries(
+    client: EditorialWorkspaceClient,
+    intl: IntlShape,
+    {
+        state,
+        stale,
+        review,
+        selectedArticleId,
+        editorialArtifactId,
+        skipModelSummaries,
+    }: {
+        state: ProposalState;
+        stale: boolean;
+        review: TextProposal | undefined;
+        selectedArticleId: string | undefined;
+        editorialArtifactId: string | undefined;
+        skipModelSummaries?: boolean;
+    },
+) {
     const [proposalSummaries, setProposalSummaries] = useState<Record<string, string>>({});
     const [proposalSummaryState, setProposalSummaryState] = useState<"idle" | "loading" | "unavailable">("idle");
     const [proposalSummaryLocale, setProposalSummaryLocale] = useState<string>();
 
     useEffect(() => {
-        if (skipModelSummaries || state !== "idle" || stale || !review || !selectedArticleId || !editorialArtifactId || review.changes.length === 0) {
+        if (
+            skipModelSummaries ||
+            state !== "idle" ||
+            stale ||
+            !review ||
+            !selectedArticleId ||
+            !editorialArtifactId ||
+            review.changes.length === 0
+        ) {
             setProposalSummaries({});
             setProposalSummaryState("idle");
             return;
@@ -48,7 +67,8 @@ export function useProposalSummaries(client: EditorialWorkspaceClient, intl: Int
 
         const controller = new AbortController();
         setProposalSummaryState("loading");
-        void client.summarizeProposal(selectedArticleId, { editorialArtifactId, interfaceLocale: intl.locale, changes: review.changes })
+        void client
+            .summarizeProposal(selectedArticleId, { editorialArtifactId, interfaceLocale: intl.locale, changes: review.changes })
             .then((summaries: ProposalChangeSummary[]) => {
                 if (controller.signal.aborted)
                     return;
@@ -119,7 +139,14 @@ function handleEditorialCompletion(event: Extract<EditorialEvent, { type: "compl
         context.setProposal(event.text);
 
         if (event.editorialArtifactId)
-            context.setBase({ articleId: context.articleId, content: context.content, revisionId: context.revisionId, editorialArtifactId: event.editorialArtifactId, typography: event.styleReview?.typography, ...(context.correctedFindingIds?.length ? { correctedFindingIds: context.correctedFindingIds } : {}) });
+            context.setBase({
+                articleId: context.articleId,
+                content: context.content,
+                revisionId: context.revisionId,
+                editorialArtifactId: event.editorialArtifactId,
+                typography: event.styleReview?.typography,
+                ...(context.correctedFindingIds?.length ? { correctedFindingIds: context.correctedFindingIds } : {}),
+            });
     }
 
     if (event.factCheck) {

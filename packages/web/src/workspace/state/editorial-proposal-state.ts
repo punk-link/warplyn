@@ -52,7 +52,14 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
             restoredArticleIds.current.add(articleId);
             recoveredDates.current.set(articleId, result.createdAt);
 
-            setBase({ articleId, content: result.baseContent, revisionId: result.baseRevisionId, editorialArtifactId: result.editorialArtifactId, typography: result.styleReview.typography, recoveredAt: result.createdAt });
+            setBase({
+                articleId,
+                content: result.baseContent,
+                revisionId: result.baseRevisionId,
+                editorialArtifactId: result.editorialArtifactId,
+                typography: result.styleReview.typography,
+                recoveredAt: result.createdAt,
+            });
             setProposal(result.proposal);
             setStyleReview(articleId, result.baseRevisionId, result.styleReview);
         }).catch(() => {
@@ -70,7 +77,14 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
     const review = useMemo(() => base && base.articleId === workspace.selectedArticle?.id ? createTextProposal(base.content, proposal) : undefined, [base, proposal, workspace.selectedArticle?.id]);
     const accepted = base?.accepted === true;
     const stale = Boolean(workspace.selectedArticle && base?.articleId === workspace.selectedArticle.id && base.revisionId !== workspace.selectedArticle.currentRevisionId && !accepted);
-    const summaries = useProposalSummaries(client, intl, { state, stale, review, selectedArticleId: workspace.selectedArticle?.id, editorialArtifactId: base?.editorialArtifactId, skipModelSummaries: recoveringTypography || base?.typography?.local });
+    const summaries = useProposalSummaries(client, intl, {
+        state,
+        stale,
+        review,
+        selectedArticleId: workspace.selectedArticle?.id,
+        editorialArtifactId: base?.editorialArtifactId,
+        skipModelSummaries: recoveringTypography || base?.typography?.local,
+    });
     const actions = useProposalActions({
         client,
         workspace,

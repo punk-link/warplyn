@@ -40,7 +40,12 @@ function isDefinition(value: unknown): value is TypographyDefinition {
         case "ellipsis":
             return value.form === "…" || value.form === "...";
         case "nonbreaking-space":
-            return isText(value.left, 40) && isText(value.right, 40) && !whitespacePattern.test(value.left + value.right) && (value.space === NO_BREAK_SPACE || value.space === NARROW_NO_BREAK_SPACE);
+            return (
+                isText(value.left, 40) &&
+                isText(value.right, 40) &&
+                !whitespacePattern.test(value.left + value.right) &&
+                (value.space === NO_BREAK_SPACE || value.space === NARROW_NO_BREAK_SPACE)
+            );
         case "horizontal-space":
             return true;
         case "literal":
@@ -64,7 +69,12 @@ function conflicts(left: TypographyDefinition, right: TypographyDefinition): boo
         return false;
 
     if (left.kind === "literal" && right.kind === "literal")
-        return left.source.includes(right.source) || right.source.includes(left.source) || left.replacement.includes(right.source) || right.replacement.includes(left.source);
+        return (
+            left.source.includes(right.source) ||
+            right.source.includes(left.source) ||
+            left.replacement.includes(right.source) ||
+            right.replacement.includes(left.source)
+        );
 
     if (left.kind === "literal")
         return literalConflicts(left, right);

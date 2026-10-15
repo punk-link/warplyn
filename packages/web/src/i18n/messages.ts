@@ -87,12 +87,15 @@ export const messages = {
     "styleProfile.outdated": "Outdated",
     "styleProfile.include": "Include",
     "styleProfile.rules": "Global style rules",
-    "typography.invalid": ("Typography rules could not be saved or loaded. Check incomplete, duplicate, or conflicting rules, then try again. If saved rules cannot load, restore a " +
+    "typography.invalid": ("Typography rules could not be saved or loaded. Check incomplete, duplicate, or conflicting rules, then try again. " +
+        "If saved rules cannot load, restore a " +
         "backup in Settings."),
-    "typography.correctionsConflict": "Typography corrections could not be made consistently. Adjust overlapping or repeating typography rules, then check again. Your Article was not changed.",
+    "typography.correctionsConflict": "Typography corrections could not be made consistently. " +
+        "Adjust overlapping or repeating typography rules, then check again. Your Article was not changed.",
     "typography.required": "Typography could not be checked. Add and save a mechanical typography rule first.",
     "typography.title": "Typography rules",
-    "typography.saveHint": ("Saving rebuilds the profile locally from the current included samples and saved rules, including pending sample changes. Unsaved changes in other forms are " +
+    "typography.saveHint": ("Saving rebuilds the profile locally from the current included samples and saved rules, including pending sample changes. " +
+        "Unsaved changes in other forms are " +
         "excluded."),
     "typography.empty": "No typography rules. Add a convention to check punctuation or spacing.",
     "typography.add": "Add rule",
@@ -138,8 +141,10 @@ export const messages = {
     "typography.ruleDescription": "{kind}: {value}",
     "typography.support": "Typography rules: {rules}",
     "typography.noViolations": "No mechanical typography violations found.",
-    "typography.skipped": "{count, plural, one {# ambiguous quotation case was left unchanged.} other {# ambiguous quotation cases were left unchanged.}} Review these in context.",
-    "typography.contextualSkipped": "{count, plural, one {# contextual rule requires full Style review.} other {# contextual rules require full Style review.}}",
+    "typography.skipped": "{count, plural, one {# ambiguous quotation case was left unchanged.} " +
+        "other {# ambiguous quotation cases were left unchanged.}} Review these in context.",
+    "typography.contextualSkipped": "{count, plural, one {# contextual rule requires full Style review.} " +
+        "other {# contextual rules require full Style review.}}",
     "typography.olderProfile": "This review used Style Profile version {version}. Rules have changed. Run the check again to use the current profile.",
     "typography.rulesOnly": "No writing samples are included. Add samples to derive voice characteristics, or use explicit typography rules for local checks.",
     "typography.checkFailed": "Typography could not be checked. Save valid rules and try again.",
@@ -908,7 +913,8 @@ export const messages = {
     "workspace.serviceUnavailable": "Your local service is unavailable. Start it, then retry.",
     "workspace.aiConnectionRequired": "Warplyn can’t run AI-assisted actions until you add a usable model key.",
     "workspace.addModelKey": "Add model key",
-    "workspace.aiConnectionCapabilities": ("You can still write, save, organize, and copy Articles, and check typography locally. Assistant requests, translations, Fact Checks, and full Style reviews " +
+    "workspace.aiConnectionCapabilities": ("You can still write, save, organize, and copy Articles, and check typography locally. " +
+        "Assistant requests, translations, Fact Checks, and full Style reviews " +
         "need a key."),
     "workspace.saveFailed": "Couldn't save this Draft. Your latest changes are still in the editor. Try saving again.",
     "workspace.revisionHistoryFailed": "Couldn't load Revision history. Your Article was not changed. Refresh and try again.",

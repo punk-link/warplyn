@@ -95,7 +95,13 @@ function getAssistantErrorCode(error: unknown) {
 
 function createEditorialFailure(error: unknown): { category: Extract<EditorialEvent, { type: "error" }>["code"]; errorCode: ApplicationErrorCode } {
     if (error instanceof ApplicationServiceError)
-        return { category: error.code === APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING ? EDITORIAL_ERROR_CATEGORY.CONFIGURATION : EDITORIAL_ERROR_CATEGORY.INVALID_OUTPUT, errorCode: error.code };
+        return {
+            category:
+                error.code === APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING
+                    ? EDITORIAL_ERROR_CATEGORY.CONFIGURATION
+                    : EDITORIAL_ERROR_CATEGORY.INVALID_OUTPUT,
+            errorCode: error.code,
+        };
 
     return {
         category: editorialFailureCategory(error),

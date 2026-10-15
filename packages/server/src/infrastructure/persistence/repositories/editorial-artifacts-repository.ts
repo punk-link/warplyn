@@ -73,7 +73,14 @@ export class EditorialArtifactsRepository {
         if (!row)
             return undefined;
 
-        return { id: String(row.id), articleId: String(row.article_id), revisionId: String(row.revision_id), kind: String(row.kind), content: String(row.content), createdAt: String(row.created_at) };
+        return {
+            id: String(row.id),
+            articleId: String(row.article_id),
+            revisionId: String(row.revision_id),
+            kind: String(row.kind),
+            content: String(row.content),
+            createdAt: String(row.created_at),
+        };
     }
 
 

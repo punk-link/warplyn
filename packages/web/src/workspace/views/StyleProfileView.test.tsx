@@ -149,20 +149,70 @@ describe("StyleProfileView", () => {
     it("confirms an immutable Article Revision snapshot and explains style findings", async () => {
         const user = userEvent.setup();
         const snapshotArticleRevision = vi.fn().mockResolvedValue(undefined);
-        render(<IntlProvider locale="en" messages={messages}><StyleProfileView
-            articleId="article-1"
-            revisions={[{ id: "revision-1", articleId: "article-1", content: "Older", createdAt: "2026-08-14T00:00:00.000Z", provenance: { kind: "author-draft" } }, { id: "revision-2", articleId: "article-1", content: "Newer", createdAt: "2026-08-15T00:00:00.000Z", provenance: { kind: "author-draft" } }]}
-            corpus={{ items: [{ id: "sample-1", name: "Snapshot", characterCount: 4, wordCount: 1, excerpt: "Text", createdAt: "2026-08-15T00:00:00.000Z", updatedAt: "2026-08-15T00:00:00.000Z", included: true, origin: "manual" }], rules: "", status: "ready", profile: { version: 2, corpusItemCount: 1, characterCount: 4, confidence: "low", traits: [], phrasesToAvoid: [], contributorIds: ["sample-1"], rules: { manual: "", typography: [] }, updatedAt: "2026-08-15T00:00:00.000Z" } }}
-            findings={{ findings: [{ divergence: "Long opening", suggestion: "Shorten it", traitIds: ["transitions"] }], traitLabels: { transitions: "uses explicit transitions" } }}
-            findingsStale={false}
-            add={vi.fn()}
-            remove={vi.fn()}
-            setIncluded={vi.fn()}
-            setRules={vi.fn()}
-            rebuild={vi.fn()}
-            getArticleRules={vi.fn().mockResolvedValue("")}
-            setArticleRules={vi.fn()}
-            snapshotArticleRevision={snapshotArticleRevision} /></IntlProvider>);
+        render(
+            <IntlProvider locale="en" messages={messages}>
+                <StyleProfileView
+                    articleId="article-1"
+                    revisions={[
+                        {
+                            id: "revision-1",
+                            articleId: "article-1",
+                            content: "Older",
+                            createdAt: "2026-08-14T00:00:00.000Z",
+                            provenance: { kind: "author-draft" },
+                        },
+                        {
+                            id: "revision-2",
+                            articleId: "article-1",
+                            content: "Newer",
+                            createdAt: "2026-08-15T00:00:00.000Z",
+                            provenance: { kind: "author-draft" },
+                        },
+                    ]}
+                    corpus={{
+                        items: [
+                            {
+                                id: "sample-1",
+                                name: "Snapshot",
+                                characterCount: 4,
+                                wordCount: 1,
+                                excerpt: "Text",
+                                createdAt: "2026-08-15T00:00:00.000Z",
+                                updatedAt: "2026-08-15T00:00:00.000Z",
+                                included: true,
+                                origin: "manual",
+                            },
+                        ],
+                        rules: "",
+                        status: "ready",
+                        profile: {
+                            version: 2,
+                            corpusItemCount: 1,
+                            characterCount: 4,
+                            confidence: "low",
+                            traits: [],
+                            phrasesToAvoid: [],
+                            contributorIds: ["sample-1"],
+                            rules: { manual: "", typography: [] },
+                            updatedAt: "2026-08-15T00:00:00.000Z",
+                        },
+                    }}
+                    findings={{
+                        findings: [{ divergence: "Long opening", suggestion: "Shorten it", traitIds: ["transitions"] }],
+                        traitLabels: { transitions: "uses explicit transitions" },
+                    }}
+                    findingsStale={false}
+                    add={vi.fn()}
+                    remove={vi.fn()}
+                    setIncluded={vi.fn()}
+                    setRules={vi.fn()}
+                    rebuild={vi.fn()}
+                    getArticleRules={vi.fn().mockResolvedValue("")}
+                    setArticleRules={vi.fn()}
+                    snapshotArticleRevision={snapshotArticleRevision}
+                />
+            </IntlProvider>,
+        );
 
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.writingSamples") }));
         await user.click(screen.getByRole("button", { name: getMessage("styleProfile.addRevision") }));

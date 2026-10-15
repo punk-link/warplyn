@@ -20,10 +20,20 @@ function isStringList(value: unknown): value is string[] {
 function isStyleProfile(value: Record<string, unknown>): value is Record<string, unknown> & StyleProfile {
     const counts = [value.version, value.corpusItemCount, value.characterCount];
     const validCounts = counts.every((count) => typeof count === "number" && Number.isSafeInteger(count) && count >= 0);
-    const validEvidence = Array.isArray(value.traits) && value.traits.every(isTrait) && isStringList(value.phrasesToAvoid) && isStringList(value.contributorIds);
+    const validEvidence =
+        Array.isArray(value.traits) &&
+        value.traits.every(isTrait) &&
+        isStringList(value.phrasesToAvoid) &&
+        isStringList(value.contributorIds);
     const validRules = isRecord(value.rules) && typeof value.rules.manual === "string" && isTypographyRules(value.rules.typography);
-    
-    return validCounts && validEvidence && validRules && typeof value.updatedAt === "string" && (value.confidence === "low" || value.confidence === "medium" || value.confidence === "high");
+
+    return (
+        validCounts &&
+        validEvidence &&
+        validRules &&
+        typeof value.updatedAt === "string" &&
+        (value.confidence === "low" || value.confidence === "medium" || value.confidence === "high")
+    );
 }
 
 

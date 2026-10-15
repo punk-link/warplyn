@@ -24,7 +24,11 @@ function escapePattern(text: string): string {
 
 
 function nonbreakingMatches(text: string, definition: Extract<TypographyDefinition, { kind: "nonbreaking-space" }>): TypographyPatch[] {
-    const pattern = new RegExp(`(?<![\\p{L}\\p{N}_])${escapePattern(definition.left)}[ ${NO_BREAK_SPACE}${NARROW_NO_BREAK_SPACE}]+${escapePattern(definition.right)}(?![\\p{L}\\p{N}_])`, "gu");
+    const pattern = new RegExp(
+        `(?<![\\p{L}\\p{N}_])${escapePattern(definition.left)}[ ${NO_BREAK_SPACE}${NARROW_NO_BREAK_SPACE}]+` +
+            `${escapePattern(definition.right)}(?![\\p{L}\\p{N}_])`,
+        "gu",
+    );
     return patternMatches(text, pattern, () => `${definition.left}${definition.space}${definition.right}`);
 }
 

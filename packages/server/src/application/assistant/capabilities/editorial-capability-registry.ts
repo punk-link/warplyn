@@ -11,8 +11,14 @@ type EditorialCapabilityClassificationId = EditorialCapabilityDefinition["id"];
 
 /** Author-facing Workspace inventory. It documents authority; it is not a transport API. */
 export const editorialOperationClassifications: readonly EditorialOperationClassification[] = [
-    handoff("typography.manage", "style-profile", "Configure typography rules and rebuild their profile snapshot.", "Typography rule editing belongs to the Style Profile View.", ["typography rules", "quotation marks", "spacing conventions"]),
-    handoff("typography.check", "style-profile", "Check mechanical typography locally without AI.", "Use Check typography in the Style Profile View for the local-only operation.", ["check typography", "local typography"]),
+    handoff(
+        "typography.manage", "style-profile", "Configure typography rules and rebuild their profile snapshot.",
+        "Typography rule editing belongs to the Style Profile View.", ["typography rules", "quotation marks", "spacing conventions"],
+    ),
+    handoff(
+        "typography.check", "style-profile", "Check mechanical typography locally without AI.",
+        "Use Check typography in the Style Profile View for the local-only operation.", ["check typography", "local typography"],
+    ),
     callable("article.inspect", "callable-read", EDITORIAL_CAPABILITY.INSPECT_ARTICLE, "Inspect current Article metadata and saved Revision.", ["article", "metadata", "current revision"]),
     callable("article.linked.inspect", "callable-read", EDITORIAL_CAPABILITY.INSPECT_LINKED_ARTICLES, "Inspect source and linked translation Articles.", ["linked", "source", "translation article"]),
     callable("article.rename", "callable-action", EDITORIAL_CAPABILITY.RENAME_ARTICLE, "Rename the current Article without a Revision.", ["rename", "title"]),

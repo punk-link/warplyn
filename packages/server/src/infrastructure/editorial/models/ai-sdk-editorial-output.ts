@@ -37,9 +37,17 @@ export function mapStyleReview(value: z.infer<typeof styleReviewSchema>, profile
         confidence: profile.confidence,
         traitLabels: Object.fromEntries([
             ...profile.traits.map((trait) => [trait.id, trait.label]),
-            ...profile.rules.typography.filter((rule) => rule.definition.kind === "contextual").map((rule) => [typographyRuleId(rule), typographyRuleLabel(rule)]),
-            ...profile.rules.manual.split("\n").filter(Boolean).map((rule, index) => [`global-rule-${index + 1}`, rule]),
-            ...articleRules.split("\n").filter(Boolean).map((rule, index) => [`article-rule-${index + 1}`, rule])
+            ...profile.rules.typography
+                .filter((rule) => rule.definition.kind === "contextual")
+                .map((rule) => [typographyRuleId(rule), typographyRuleLabel(rule)]),
+            ...profile.rules.manual
+                .split("\n")
+                .filter(Boolean)
+                .map((rule, index) => [`global-rule-${index + 1}`, rule]),
+            ...articleRules
+                .split("\n")
+                .filter(Boolean)
+                .map((rule, index) => [`article-rule-${index + 1}`, rule]),
         ]),
         globalRules: profile.rules.manual.split("\n").filter(Boolean),
         articleRules: articleRules.split("\n").filter(Boolean),

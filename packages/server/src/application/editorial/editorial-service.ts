@@ -106,7 +106,9 @@ function prepareEditorialStream(articles: EditorialArticleStore, sessions: Edito
         throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
 
     const continuationScope = engine.continuationScope;
-    const previousResponseId = request.reviewMode ? undefined : prepareContinuation(sessions, request.articleId, !factCheck && !translation, sessionContinuationEnabled, continuationScope);
+    const previousResponseId = request.reviewMode ? undefined : prepareContinuation(
+        sessions, request.articleId, !factCheck && !translation, sessionContinuationEnabled, continuationScope,
+    );
 
     return {
         article,
@@ -262,7 +264,9 @@ async function* streamEditorialOperation(request: EditorialServiceRequest, conte
                 return;
 
             const source = request.articleContent ?? context.article.currentRevision.content;
-            const result = context.styleProfile ? { ...event, ...reviewTypography(source, event.text, context.styleProfile, event.styleReview, Boolean(request.reviewMode)) } : event;
+            const result = context.styleProfile
+                ? { ...event, ...reviewTypography(source, event.text, context.styleProfile, event.styleReview, Boolean(request.reviewMode)) }
+                : event;
             validateProposalResult(source, result.text, request.skill?.execution);
             completed = true;
             const editorialArtifactId = onCompleted(result);
@@ -302,7 +306,10 @@ export class EditorialService {
                     if (this.stores.articles.getArticle(request.articleId)?.currentRevisionId !== context.article.currentRevisionId)
                         throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_CONFLICT, HTTP_STATUS.CONFLICT);
 
-                    return persistCompletedEditorialOutput(this.stores.sessions, this.stores.artifacts, this.stores.factChecks, request, context, this.runtime.sessionContinuationEnabled, event);
+                    return persistCompletedEditorialOutput(
+                        this.stores.sessions, this.stores.artifacts, this.stores.factChecks,
+                        request, context, this.runtime.sessionContinuationEnabled, event,
+                    );
                 },
             );
 

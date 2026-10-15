@@ -83,7 +83,30 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
                 language={article.language} />);
 
         case "proposal":
-            return renderPanel(<ProposalReviewView data={{ review: editorial.review, accepted: editorial.accepted, stale: editorial.stale, decisions: editorial.decisions, summaries: editorial.proposalSummaries, summaryState: editorial.proposalSummaryState, warningsDismissed: proposalWarningsDismissed, typography: editorial.base?.typography }} actions={{ setDecision: editorial.setDecision, acceptAll: editorial.acceptAll, applyAccepted: editorial.applyAccepted, rejectAll: editorial.rejectAll, dismissProposal: editorial.dismissProposal, dismissWarnings: dismissProposalWarnings, openWrite, openAssistant }} />);
+            return renderPanel(
+                <ProposalReviewView
+                    data={{
+                        review: editorial.review,
+                        accepted: editorial.accepted,
+                        stale: editorial.stale,
+                        decisions: editorial.decisions,
+                        summaries: editorial.proposalSummaries,
+                        summaryState: editorial.proposalSummaryState,
+                        warningsDismissed: proposalWarningsDismissed,
+                        typography: editorial.base?.typography,
+                    }}
+                    actions={{
+                        setDecision: editorial.setDecision,
+                        acceptAll: editorial.acceptAll,
+                        applyAccepted: editorial.applyAccepted,
+                        rejectAll: editorial.rejectAll,
+                        dismissProposal: editorial.dismissProposal,
+                        dismissWarnings: dismissProposalWarnings,
+                        openWrite,
+                        openAssistant,
+                    }}
+                />,
+            );
 
         case "revisions":
             return renderPanel(<RevisionHistoryView
@@ -101,7 +124,38 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
         }
 
         case "style-profile":
-            return renderPanel(<StyleProfileView data={{ corpus: corpus.corpus, findings: editorial.styleReview, findingsStale: editorial.styleReviewStale, articleId: article.id, revisions: revisions.revisions, generalSettings, typographyStatus: { busy: editorial.state === "streaming" || content.requestActive === true, message: editorial.message, hasProposal: Boolean(editorial.review?.changes.length) } }} actions={{ add: corpus.add, remove: corpus.remove, setIncluded: corpus.setIncluded, setRules: corpus.setRules, rebuild: corpus.rebuild, getArticleRules: corpus.getArticleRules, setArticleRules: corpus.setArticleRules, snapshotArticleRevision: corpus.snapshotArticleRevision, typography: { save: corpus.setTypographyRules, check: editorial.checkTypography, openProposal: navigation.openProposal } }} />);
+            return renderPanel(
+                <StyleProfileView
+                    data={{
+                        corpus: corpus.corpus,
+                        findings: editorial.styleReview,
+                        findingsStale: editorial.styleReviewStale,
+                        articleId: article.id,
+                        revisions: revisions.revisions,
+                        generalSettings,
+                        typographyStatus: {
+                            busy: editorial.state === "streaming" || content.requestActive === true,
+                            message: editorial.message,
+                            hasProposal: Boolean(editorial.review?.changes.length),
+                        },
+                    }}
+                    actions={{
+                        add: corpus.add,
+                        remove: corpus.remove,
+                        setIncluded: corpus.setIncluded,
+                        setRules: corpus.setRules,
+                        rebuild: corpus.rebuild,
+                        getArticleRules: corpus.getArticleRules,
+                        setArticleRules: corpus.setArticleRules,
+                        snapshotArticleRevision: corpus.snapshotArticleRevision,
+                        typography: {
+                            save: corpus.setTypographyRules,
+                            check: editorial.checkTypography,
+                            openProposal: navigation.openProposal,
+                        },
+                    }}
+                />,
+            );
 
         case "translations":
             return renderPanel(<TranslationsView key={article.id} data={{ article, sourceContent: workspace.content, requestActive: content.requestActive, generation: content.translationGeneration, generalSettings, revisionNumbers: Object.fromEntries(articleRevisions.map((revision, index) => [revision.id, index + 1])), revisions: translationRevisions, sourceArticle: workspace.sourceArticle, linkedTranslations: workspace.articles.filter((item) => item.sourceArticleId === article.id), translations: editorial.translations, stale: Boolean(article.sourceArticleId && workspace.articles.find((item) => item.id === article.sourceArticleId)?.currentRevisionId !== article.sourceRevisionId), translationLanguages: generalSettings.defaultTranslationLanguages.filter((language) => language !== article.language), publishProfile, publishProfileLabel, selectedTargetLanguage: selectedTranslationLanguages[article.id] }} actions={{ create: editorial.createTranslation, reject: rejectTranslation ?? editorial.rejectTranslation, edit: openWrite, openArticle: workspace.selectArticle, selectTargetLanguage: (targetLanguage) => setSelectedTranslationLanguage(article.id, targetLanguage), translate: runTranslation }} />);

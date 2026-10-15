@@ -47,7 +47,13 @@ test("packaged typography works without AI and recovers its Proposal after resta
         await page.getByRole("button", { name: "Save", exact: true }).click();
         await expect(page.getByText("Typography rules saved and Style Profile rebuilt.", { exact: true })).toBeVisible();
         await page.getByRole("button", { name: "Check typography", exact: true }).click();
-        await expect(page.getByText("Typography corrections could not be made consistently. Adjust overlapping or repeating typography rules, then check again. Your Article was not changed.", { exact: true })).toBeVisible();
+        await expect(
+            page.getByText(
+                "Typography corrections could not be made consistently. " +
+                    "Adjust overlapping or repeating typography rules, then check again. Your Article was not changed.",
+                { exact: true },
+            ),
+        ).toBeVisible();
         await page.getByRole("tab", { name: "Write", exact: true }).click();
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Wait!!!!");
     } finally {

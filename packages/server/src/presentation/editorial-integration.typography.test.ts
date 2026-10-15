@@ -7,14 +7,22 @@ import { FixtureEngine, withService } from "./editorial-integration.test-utils.j
 
 
 async function runReview(baseUrl: string, articleId: string, reviewMode?: string) {
-    return fetch(`${baseUrl}/api/articles/${articleId}/editorial`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ requestId: "typography-test", operation: "style_review", reviewMode }) });
+    return fetch(`${baseUrl}/api/articles/${articleId}/editorial`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ requestId: "typography-test", operation: "style_review", reviewMode }),
+    });
 }
 
 
 test("typography save, local review, recovery, and summaries work without a provider", () => withService(undefined, async (baseUrl, repositories, services) => {
     const article = repositories.articleService.createArticle({ title: "Typography", content: "Wait...\n\n`code...`" });
     const rules = [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }];
-    const saved = await fetch(`${baseUrl}/api/style-corpus/typography`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ rules }) });
+    const saved = await fetch(`${baseUrl}/api/style-corpus/typography`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ rules }),
+    });
     assert.equal(saved.status, 200);
     const corpus = await saved.json();
     assert.equal(corpus.status, "ready");
@@ -31,16 +39,34 @@ test("typography save, local review, recovery, and summaries work without a prov
     assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, article.currentRevision.content);
     const recovered = await fetch(`${baseUrl}/api/articles/${article.id}/typography-review`);
     assert.equal((await recovered.json()).editorialArtifactId, artifact.id);
-    assert.deepEqual(await services.proposalSummaries.summarize(article.id, { editorialArtifactId: artifact.id, interfaceLocale: "en", changes: [] }, new AbortController().signal), []);
+    assert.deepEqual(
+        await services.proposalSummaries.summarize(
+            article.id,
+            { editorialArtifactId: artifact.id, interfaceLocale: "en", changes: [] },
+            new AbortController().signal,
+        ),
+        [],
+    );
     assert.equal(repositories.editorialSessions.getEditorialSession(article.id), undefined);
-    const malformed = await fetch(`${baseUrl}/api/style-corpus/typography`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ rules: [{ id: "bad" }] }) });
+    const malformed = await fetch(`${baseUrl}/api/style-corpus/typography`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ rules: [{ id: "bad" }] }),
+    });
     assert.equal(malformed.status, 400);
     assert.equal(repositories.styleCorpus.getStyleCorpus().profile?.version, 1);
     assert.equal((await runReview(baseUrl, article.id, "unsupported")).status, 400);
 }));
 
 test("full review combines contextual output with local typography in one artifact", () => {
-    const engine = new FixtureEngine([{ type: "completed", responseId: "full-style", text: "Clearer words...", styleReview: { findings: [{ divergence: "Opening", suggestion: "Clarify", traitIds: ["global-rule-1"] }] } }]);
+    const engine = new FixtureEngine([
+        {
+            type: "completed",
+            responseId: "full-style",
+            text: "Clearer words...",
+            styleReview: { findings: [{ divergence: "Opening", suggestion: "Clarify", traitIds: ["global-rule-1"] }] },
+        },
+    ]);
     return withService(engine, async (baseUrl, repositories) => {
         repositories.styleCorpus.setStyleCorpusRules("Keep it clear.");
         repositories.styleCorpus.setTypographyRules([{ id: "dots", definition: { kind: "ellipsis", form: "…" } }]);
@@ -65,7 +91,16 @@ test("Assistant completion retains the captured profile when rules rebuild durin
             repositories.styleCorpus.setTypographyRules([{ id: "dots", definition: { kind: "ellipsis", form: "..." } }]);
             yield { type: "completed", responseId: "captured-style", text: "Wait...", styleReview: { findings: [] } };
         };
-        const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ requestId: "captured-profile", authorMessage: "Review style", explicitSkillId: "style_review", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }) });
+        const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                requestId: "captured-profile",
+                authorMessage: "Review style",
+                explicitSkillId: "style_review",
+                scope: { kind: "article", baseRevisionId: article.currentRevisionId },
+            }),
+        });
         const text = await response.text();
         const profileversionPattern = /"profileVersion":1/u;
         assert.match(text, profileversionPattern);

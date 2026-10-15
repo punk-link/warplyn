@@ -1,4 +1,15 @@
-import { APPLICATION_ERROR, HTTP_STATUS, isTypographyRules, type CreateStyleCorpusItemInput, type StyleCorpus, type StyleCorpusItem, type StyleProfile, type StyleProfileRules, type StyleTrait, type TypographyRule } from "@skladno/shared";
+import {
+    APPLICATION_ERROR,
+    HTTP_STATUS,
+    isTypographyRules,
+    type CreateStyleCorpusItemInput,
+    type StyleCorpus,
+    type StyleCorpusItem,
+    type StyleProfile,
+    type StyleProfileRules,
+    type StyleTrait,
+    type TypographyRule,
+} from "@skladno/shared";
 import { ApplicationServiceError } from "../../../application/errors/application-service-error.js";
 import { decodeStyleProfile, decodeTypographyRules } from "./style-profile-decoder.js";
 
@@ -118,7 +129,13 @@ export class StyleCorpusRepository {
         let status: "empty" | "ready" | "outdated" = "outdated";
         if (includedIds.length === 0 && !rules.trim() && !typographyRules.length)
             status = "empty";
-        else if (profile && profile.rules.manual === rules && JSON.stringify(profile.rules.typography) === JSON.stringify(typographyRules) && profile.contributorIds.length === includedIds.length && profile.contributorIds.every((id) => includedIds.includes(id)))
+        else if (
+            profile &&
+            profile.rules.manual === rules &&
+            JSON.stringify(profile.rules.typography) === JSON.stringify(typographyRules) &&
+            profile.contributorIds.length === includedIds.length &&
+            profile.contributorIds.every((id) => includedIds.includes(id))
+        )
             status = "ready";
 
         const corpusTokenPattern = /[\p{L}\p{N}]+/gu;
@@ -185,7 +202,9 @@ export class StyleCorpusRepository {
             const corpus = this.getStyleCorpus();
             const changed = JSON.stringify(corpus.typographyRules) !== JSON.stringify(rules);
             if (changed)
-                this.database.prepare("UPDATE style_corpus_settings SET typography_json = ?, updated_at = ? WHERE id = 1").run(JSON.stringify(rules), getCurrentTimestamp());
+                this.database
+                    .prepare("UPDATE style_corpus_settings SET typography_json = ?, updated_at = ? WHERE id = 1")
+                    .run(JSON.stringify(rules), getCurrentTimestamp());
 
             if (changed || corpus.status === "outdated")
                 this.rebuildStyleProfile();

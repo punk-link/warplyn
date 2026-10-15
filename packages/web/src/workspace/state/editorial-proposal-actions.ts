@@ -112,7 +112,10 @@ function restoredChangeIds(value: unknown): Set<string> | undefined {
 
 
 function restoredProposalBase(article: Article, message: AssistantMessage, accepted: boolean): ProposalBase {
-    return { articleId: article.id, content: message.baseRevisionContent!, revisionId: message.baseRevisionId!, recoveredAt: message.createdAt, ...(message.editorialArtifactId ? { editorialArtifactId: message.editorialArtifactId } : {}), ...(accepted ? { accepted: true } : {}) };
+    return {
+        articleId: article.id, content: message.baseRevisionContent!, revisionId: message.baseRevisionId!, recoveredAt: message.createdAt,
+        ...(message.editorialArtifactId ? { editorialArtifactId: message.editorialArtifactId } : {}), ...(accepted ? { accepted: true } : {}),
+    };
 }
 
 
@@ -146,7 +149,9 @@ function findLatestRestorableProposal(messages: AssistantMessage[] | undefined):
 }
 
 
-export function useProposalActions({ client, workspace, intl, proposal: { base, review, accepted, stale, decisions }, summaries: { setProposalSummaries, setProposalSummaryLocale }, results, recovery, controller, ...setters }: ProposalActionsInput) {
+export function useProposalActions({ client, workspace, intl, proposal: { base, review, accepted, stale, decisions },
+    summaries: { setProposalSummaries, setProposalSummaryLocale }, results, recovery, controller, ...setters
+}: ProposalActionsInput) {
     const { notifyError } = useNotifications();
     const { articleIds: restoredArticleIds, dates: recoveredDates } = recovery;
     const telemetry = getDesktopTelemetryClient();
@@ -177,7 +182,8 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
     }
 
 
-    async function request(operation: EditorialOperation, authorContext: string, targetLanguage?: string, correctedFindingIds?: string[], reviewMode?: "typography") {
+    async function request(operation: EditorialOperation, authorContext: string, targetLanguage?: string,
+        correctedFindingIds?: string[], reviewMode?: "typography") {
         const article = workspace.selectedArticle;
         if (!article)
             return;
@@ -201,7 +207,14 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
 
             const requestController = new AbortController();
             controller.current = requestController;
-            await client.streamEditorial(article.id, { requestId: crypto.randomUUID(), operation, authorContext, ...(reviewMode ? { reviewMode } : {}), ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}), correctionSelection: correctionSelection(revisionId, correctedFindingIds) }, (event) => handleEditorialEvent({ event, articleId: article.id, content, revisionId, operation, correctedFindingIds, setProposal, setBase, setState, setMessage, setFactCheck, loadFactChecks, setStyleReview, retainTranslation, intl }), requestController.signal);
+            await client.streamEditorial(article.id, {
+                requestId: crypto.randomUUID(), operation, authorContext, ...(reviewMode ? { reviewMode } : {}),
+                ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}),
+                correctionSelection: correctionSelection(revisionId, correctedFindingIds),
+            }, (event) => handleEditorialEvent({
+                event, articleId: article.id, content, revisionId, operation, correctedFindingIds,
+                setProposal, setBase, setState, setMessage, setFactCheck, loadFactChecks, setStyleReview, retainTranslation, intl,
+            }), requestController.signal);
         } catch (error) {
             reportRequestFailure(error);
         }
@@ -254,7 +267,10 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
         if (result.proposal) {
             restoredArticleIds.current.delete(articleId);
             recoveredDates.current.delete(articleId);
-            setBase({ articleId, content: workspace.content, revisionId: baseRevisionId, typography: result.styleReview?.typography, ...(editorialArtifactId ? { editorialArtifactId } : {}) });
+            setBase({
+                articleId, content: workspace.content, revisionId: baseRevisionId, typography: result.styleReview?.typography,
+                ...(editorialArtifactId ? { editorialArtifactId } : {}),
+            });
             setProposal(result.proposal);
             setProposalSummaries({});
             setProposalSummaryLocale(undefined);
@@ -262,7 +278,8 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
         }
 
         applyResult(articleId, baseRevisionId, result, editorialArtifactId);
-    }, [applyResult, restoredArticleIds, recoveredDates, setBase, setDecisions, setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.articles, workspace.content]);
+    }, [applyResult, restoredArticleIds, recoveredDates, setBase, setDecisions, setProposal,
+        setProposalSummaries, setProposalSummaryLocale, workspace.articles, workspace.content]);
 
     const restoreAssistantProposal = useCallback((messages: AssistantMessage[] | undefined) => {
         const article = workspace.selectedArticle;
@@ -285,7 +302,8 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
         setProposalSummaryLocale(message.proposalSummaryLocale);
         setDecisions(acceptance ?? {});
 
-    }, [replaceTranslations, restoredArticleIds, recoveredDates, recovery, base, setBase, setDecisions, setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.selectedArticle]);
+    }, [replaceTranslations, restoredArticleIds, recoveredDates, recovery, base, setBase, setDecisions,
+        setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.selectedArticle]);
 
     const setDecision = (id: string, decision: ProposalDecision) => setDecisions((current) => ({ ...current, [id]: decision }));
     const acceptAll = () => accept(new Set(review ? review.changes.map((change) => change.id) : []), true);

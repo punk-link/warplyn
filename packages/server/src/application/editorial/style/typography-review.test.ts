@@ -5,7 +5,17 @@ import { reviewTypography } from "./typography-review.js";
 
 
 function profile(rules: TypographyRule[]): StyleProfile {
-    return { version: 1, confidence: "low", characterCount: 0, corpusItemCount: 0, contributorIds: [], traits: [], phrasesToAvoid: [], rules: { manual: "", typography: rules }, updatedAt: "2026-10-13T00:00:00Z" };
+    return {
+        version: 1,
+        confidence: "low",
+        characterCount: 0,
+        corpusItemCount: 0,
+        contributorIds: [],
+        traits: [],
+        phrasesToAvoid: [],
+        rules: { manual: "", typography: rules },
+        updatedAt: "2026-10-13T00:00:00Z",
+    };
 }
 
 
@@ -28,8 +38,9 @@ test("checks prose punctuation with stable rule provenance and idempotent output
 });
 
 test("protects Markdown, URLs, technical identifiers, and ambiguous quotes", () => {
-    const protectedText = ("```js\r\n\"code...\"  unchanged\r\n```\r\n`\"inline...\"` [\"link...\"](https://example.test/a...) <i title=\"...\"> &quot; \\\" https://example.test/... " +
-        "file.name\n    \"indented...\"\n");
+    const protectedText =
+        '```js\r\n"code..."  unchanged\r\n```\r\n`"inline..."` ["link..."](https://example.test/a...) <i title="..."> &quot; \\" https://example.test/... ' +
+        'file.name\n    "indented..."\n';
     assert.equal(reviewTypography(protectedText, protectedText, profile(rules)).text, protectedText);
     const relationships = "north–south, 1–2, and negative -2 stay unchanged.";
     assert.equal(reviewTypography(relationships, relationships, profile([rules[2]!])).text, relationships);

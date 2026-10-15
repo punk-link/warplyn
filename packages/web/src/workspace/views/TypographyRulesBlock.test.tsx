@@ -33,7 +33,11 @@ it("saves a stable rule and preserves invalid or failed edits", async () => {
 it("runs saved mechanical rules locally and blocks conflicting conventions", async () => {
     const user = userEvent.setup();
     const check = vi.fn().mockResolvedValue(undefined);
-    render(<IntlProvider locale="en" messages={messages}><TypographyRulesBlock rules={[{ id: "dots", definition: { kind: "ellipsis", form: "…" } }]} save={vi.fn()} check={check} /></IntlProvider>);
+    render(
+        <IntlProvider locale="en" messages={messages}>
+            <TypographyRulesBlock rules={[{ id: "dots", definition: { kind: "ellipsis", form: "…" } }]} save={vi.fn()} check={check} />
+        </IntlProvider>,
+    );
     await user.click(screen.getByRole("button", { name: "Check typography" }));
     expect(check).toHaveBeenCalledOnce();
     await user.click(screen.getByRole("button", { name: "Add rule" }));
@@ -47,7 +51,11 @@ it("retains an unsaved typography draft when sample changes reload the saved cor
     const rules = [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }] as const;
     const save = vi.fn();
     const check = vi.fn();
-    const { rerender } = render(<IntlProvider locale="en" messages={messages}><TypographyRulesBlock rules={[...rules]} save={save} check={check} /></IntlProvider>);
+    const { rerender } = render(
+        <IntlProvider locale="en" messages={messages}>
+            <TypographyRulesBlock rules={[...rules]} save={save} check={check} />
+        </IntlProvider>,
+    );
     await user.click(screen.getByRole("button", { name: "Edit" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "Rule 1 convention" }), "contextual");
     await user.type(screen.getByRole("textbox", { name: "Instruction for full Style review" }), "Keep my punctuation.");

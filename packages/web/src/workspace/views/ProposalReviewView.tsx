@@ -230,40 +230,69 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                         const decision = decisions[change.id] ?? "pending";
                         const decisionStyles = { accepted: "border-success bg-success-soft", rejected: "border-danger bg-danger-soft", pending: "border-border bg-surface-raised" };
                         const decisionClasses = decisionStyles[decision];
-                        return <article
-                            key={change.id}
-                            ref={(element) => {
-                                cards.current[index] = element;
-                            }}
-                            tabIndex={-1}
-                            className={`rounded-panel border p-3 ${decisionClasses}`}>
-                            <div className="flex flex-wrap items-center justify-between gap-3">
-                                <div>
-                                    <h3 className="text-sm font-semibold">{intl.formatMessage({ id: `views.changeType.${change.kind}` as never }, { index: index + 1, total: presentation.changes.length })}</h3>
-                                    <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: `views.decision.${decision}` as never })}</p>
+                        return (
+                            <article
+                                key={change.id}
+                                ref={(element) => {
+                                    cards.current[index] = element;
+                                }}
+                                tabIndex={-1}
+                                className={`rounded-panel border p-3 ${decisionClasses}`}
+                            >
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <div>
+                                        <h3 className="text-sm font-semibold">
+                                            {intl.formatMessage(
+                                                { id: `views.changeType.${change.kind}` as never },
+                                                { index: index + 1, total: presentation.changes.length },
+                                            )}
+                                        </h3>
+                                        <p className="mt-1 text-xs text-muted">
+                                            {intl.formatMessage({ id: `views.decision.${decision}` as never })}
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="secondary"
+                                            state={decision === "rejected" ? "error" : "default"}
+                                            disabled={accepted || stale}
+                                            onClick={() => setDecision(change.id, "rejected")}
+                                        >
+                                            {intl.formatMessage({ id: "views.rejectChange" })}
+                                        </Button>
+                                        <Button
+                                            state={decision === "accepted" ? "success" : "default"}
+                                            disabled={accepted || stale}
+                                            onClick={() => setDecision(change.id, "accepted")}
+                                        >
+                                            {intl.formatMessage({ id: "views.acceptChange" })}
+                                        </Button>
+                                    </div>
                                 </div>
-                                <div className="flex gap-2">
-                                    <Button
-                                        variant="secondary"
-                                        state={decision === "rejected" ? "error" : "default"}
-                                        disabled={accepted || stale}
-                                        onClick={() => setDecision(change.id, "rejected")}>{intl.formatMessage({ id: "views.rejectChange" })}</Button>
-                                    <Button state={decision === "accepted" ? "success" : "default"} disabled={accepted || stale} onClick={() => setDecision(change.id, "accepted")}>{intl.formatMessage({ id: "views.acceptChange" })}</Button>
+                                <div className="mt-4 flex min-h-9 items-start gap-2 border-y border-border py-3 text-sm" aria-live="polite">
+                                    <AssistantIcon className="mt-0.5 size-4 shrink-0 text-brand" />
+                                    {data.typography?.changes.some((item) => item.changeId === change.id) ? (
+                                        <TypographyChangeSupport typography={data.typography} changeId={change.id} />
+                                    ) : (
+                                        <p>
+                                            {summaries?.[change.id] ??
+                                                (summaryState === "loading"
+                                                    ? intl.formatMessage({ id: "views.proposalSummaryLoading" })
+                                                    : intl.formatMessage({ id: "views.proposalSummaryUnavailable" }))}
+                                        </p>
+                                    )}
                                 </div>
-                            </div>
-                            <div className="mt-4 flex min-h-9 items-start gap-2 border-y border-border py-3 text-sm" aria-live="polite">
-                                <AssistantIcon className="mt-0.5 size-4 shrink-0 text-brand" />
-                                {data.typography?.changes.some((item) => item.changeId === change.id) ? <TypographyChangeSupport typography={data.typography} changeId={change.id} /> : <p>{summaries?.[change.id] ?? (summaryState === "loading" ? intl.formatMessage({ id: "views.proposalSummaryLoading" }) : intl.formatMessage({ id: "views.proposalSummaryUnavailable" }))}</p>}
-                            </div>
-                            <div className="mt-4">
-                                <ProposalDiff
-                                    decision={decision}
-                                    original={change.baseLines.join("\n")}
-                                    proposed={change.proposalLines.join("\n")}
-                                    layout={displayMode === "side-by-side" ? "columns" : "stacked"}
-                                    highlight={highlightChanges} />
-                            </div>
-                        </article>;
+                                <div className="mt-4">
+                                    <ProposalDiff
+                                        decision={decision}
+                                        original={change.baseLines.join("\n")}
+                                        proposed={change.proposalLines.join("\n")}
+                                        layout={displayMode === "side-by-side" ? "columns" : "stacked"}
+                                        highlight={highlightChanges}
+                                    />
+                                </div>
+                            </article>
+                        );
                     })}</div>
                 }
             </div>

@@ -3,8 +3,13 @@ import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE, typographyRuleLabel, type Typogr
 import type { MessageId } from "../../i18n/messages.js";
 
 export const typographyKindMessages: Record<TypographyDefinition["kind"], MessageId> = {
-    quotes: "typography.quotes", dash: "typography.dash", ellipsis: "typography.ellipsis",
-    "nonbreaking-space": "typography.nonbreaking", "horizontal-space": "typography.horizontal", literal: "typography.literal", contextual: "typography.contextual",
+    quotes: "typography.quotes",
+    dash: "typography.dash",
+    ellipsis: "typography.ellipsis",
+    "nonbreaking-space": "typography.nonbreaking",
+    "horizontal-space": "typography.horizontal",
+    literal: "typography.literal",
+    contextual: "typography.contextual",
 };
 
 

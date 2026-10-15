@@ -5,7 +5,17 @@ import { reviewTypography } from "./typography-review.js";
 import { scopeTypographyReview } from "./typography-review-scope.js";
 
 test("selection provenance follows the whole-Article Proposal without checking surrounding text", () => {
-    const profile: StyleProfile = { version: 1, confidence: "low", corpusItemCount: 0, characterCount: 0, contributorIds: [], traits: [], phrasesToAvoid: [], updatedAt: "2026-10-13", rules: { manual: "", typography: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }] } };
+    const profile: StyleProfile = {
+        version: 1,
+        confidence: "low",
+        corpusItemCount: 0,
+        characterCount: 0,
+        contributorIds: [],
+        traits: [],
+        phrasesToAvoid: [],
+        updatedAt: "2026-10-13",
+        rules: { manual: "", typography: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }] },
+    };
     const source = "Leave...\n\nWait...\n\nKeep...";
     const startOffset = source.indexOf("Wait");
     const endOffset = startOffset + "Wait...".length;

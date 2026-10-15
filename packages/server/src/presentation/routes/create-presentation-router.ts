@@ -84,7 +84,11 @@ export function createPresentationRouter(editorial: EditorialService, services: 
     router.register(HTTP_METHOD.GET, FACT_CHECKS_PATH, (_request, response, parameters) => listFactChecksRoute(response, parameters[0]!, factChecks));
     router.register(HTTP_METHOD.PUT, FACT_CHECK_RESOLUTION_PATH, (request, response, parameters) => resolveFactCheckRoute(request, response, parameters[0]!, parameters[1]!, factChecks));
     router.register(HTTP_METHOD.GET, styleCorpusPath, (_request, response) => handleStyleCorpusRoute(response, styleCorpus));
-    router.register(HTTP_METHOD.GET, createRoutePattern(createArticleTypographyReviewPath(ROUTE_PARAMETER)), (_request, response, parameters) => writeJson(response, HTTP_STATUS.OK, styleCorpus.getTypographyReview(parameters[0]!) ?? null));
+    router.register(
+        HTTP_METHOD.GET,
+        createRoutePattern(createArticleTypographyReviewPath(ROUTE_PARAMETER)),
+        (_request, response, parameters) => writeJson(response, HTTP_STATUS.OK, styleCorpus.getTypographyReview(parameters[0]!) ?? null),
+    );
     router.register(HTTP_METHOD.POST, ARTICLE_STYLE_CORPUS_SNAPSHOT_PATH, (_request, response, parameters) => addArticleRevisionStyleCorpusItemRoute(response, parameters[0]!, parameters[1]!, styleCorpus));
     router.register(HTTP_METHOD.POST, styleCorpusPath, (request, response) => createStyleCorpusItemRoute(request, response, styleCorpus));
     router.register(HTTP_METHOD.PUT, styleCorpusRulesPath, (request, response) => updateStyleCorpusRulesRoute(request, response, styleCorpus));

@@ -31,7 +31,10 @@ function quoteRole(text: string, index: number, closing?: string): "open" | "clo
 }
 
 
-export function typographyQuoteMatches(text: string, definition: Extract<TypographyDefinition, { kind: "quotes" }>): { patches: QuotePatch[]; skipped: number } {
+export function typographyQuoteMatches(
+    text: string,
+    definition: Extract<TypographyDefinition, { kind: "quotes" }>,
+): { patches: QuotePatch[]; skipped: number } {
     const stack: { index: number; closing: string; depth: number }[] = [];
     const patches: QuotePatch[] = [];
     let skipped = 0;
@@ -46,7 +49,10 @@ export function typographyQuoteMatches(text: string, definition: Extract<Typogra
         } else if (role === "close" && current) {
             stack.pop();
             const pair = quotePairs[current.depth % 2 === 0 ? definition.outer : definition.nested];
-            patches.push({ start: current.index, end: current.index + 1, replacement: pair[0] }, { start: match.index, end: match.index + 1, replacement: pair[1] });
+            patches.push(
+                { start: current.index, end: current.index + 1, replacement: pair[0] },
+                { start: match.index, end: match.index + 1, replacement: pair[1] },
+            );
         } else if (role === "skip" && !punctuationPattern.test(match[0])) {
             skipped++;
         }

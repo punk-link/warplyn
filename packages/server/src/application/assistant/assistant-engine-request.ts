@@ -50,7 +50,13 @@ export function streamAssistantEngineEvents(request: PreparedAssistantRequest, s
 }
 
 
-async function* streamTypographyReviewedEvents(events: AsyncIterable<EditorialEngineEvent>, source: string, profile: StyleProfile, articleRules: string, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+async function* streamTypographyReviewedEvents(
+    events: AsyncIterable<EditorialEngineEvent>,
+    source: string,
+    profile: StyleProfile,
+    articleRules: string,
+    signal: AbortSignal,
+): AsyncIterable<EditorialEngineEvent> {
     for await (const event of events) {
         if (event.type !== "completed") {
             yield event;

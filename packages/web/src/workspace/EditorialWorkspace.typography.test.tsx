@@ -9,9 +9,26 @@ afterEach(resetWorkspaceTestEnvironment);
 it("local typography bypasses saving and model summaries", async () => {
     const user = userEvent.setup();
     const client = createFakeClient();
-    client.getStyleCorpus = vi.fn().mockResolvedValue({ items: [], rules: "", status: "ready", typographyRules: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }] });
+    client.getStyleCorpus = vi
+        .fn()
+        .mockResolvedValue({
+            items: [],
+            rules: "",
+            status: "ready",
+            typographyRules: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }],
+        });
     client.streamEditorial = vi.fn(async (_articleId, input, emit) => {
-        emit({ type: "completed", requestId: input.requestId, responseId: "local:fixture", text: "Draft", editorialArtifactId: "fixture-artifact", styleReview: { findings: [], typography: { local: true, rules: [], changes: [], occurrences: [], skipped: 0, contextualRuleIds: [] } } });
+        emit({
+            type: "completed",
+            requestId: input.requestId,
+            responseId: "local:fixture",
+            text: "Draft",
+            editorialArtifactId: "fixture-artifact",
+            styleReview: {
+                findings: [],
+                typography: { local: true, rules: [], changes: [], occurrences: [], skipped: 0, contextualRuleIds: [] },
+            },
+        });
     });
     render(<App client={client} />);
     await screen.findByRole("heading", { name: "First Article" });
@@ -31,7 +48,14 @@ it("local checking asks to save a changed Draft without saving or invoking an en
     article.draft = { articleId: article.id, baseRevisionId: article.currentRevisionId, content: "Changed Draft", version: 1, updatedAt: article.updatedAt };
     client.listArticles = vi.fn().mockResolvedValue([article]);
     client.saveArticleDraft = vi.fn().mockResolvedValue(article.draft);
-    client.getStyleCorpus = vi.fn().mockResolvedValue({ items: [], rules: "", status: "ready", typographyRules: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }] });
+    client.getStyleCorpus = vi
+        .fn()
+        .mockResolvedValue({
+            items: [],
+            rules: "",
+            status: "ready",
+            typographyRules: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }],
+        });
     render(<App client={client} />);
     await screen.findByRole("heading", { name: "First Article" });
     await user.click(screen.getByRole("tab", { name: "Style Profile" }));

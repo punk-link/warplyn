@@ -8,7 +8,14 @@ import { typographyReviewResult } from "./typography-review-result.js";
 
 
 export class StyleCorpusService {
-    constructor(private readonly store: StyleCorpusStore, private readonly engines?: EditorialEngineResolver, private readonly articles?: ArticleStore, private readonly artifacts?: { getLatestTypographyArtifact(articleId: string): import("@skladno/shared").EditorialArtifact | undefined }) { }
+    constructor(
+        private readonly store: StyleCorpusStore,
+        private readonly engines?: EditorialEngineResolver,
+        private readonly articles?: ArticleStore,
+        private readonly artifacts?: {
+            getLatestTypographyArtifact(articleId: string): import("@skladno/shared").EditorialArtifact | undefined;
+        },
+    ) {}
 
 
     getTypographyReview(articleId: string) {
@@ -62,7 +69,9 @@ export class StyleCorpusService {
     setTypographyRules(input: unknown): StyleCorpus {
         if (!isTypographyRules(input)) {
             const issue = typographyIssues(input)[0];
-            throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST, { rule: (issue?.index ?? 0) + 1 });
+            throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST, {
+                rule: (issue?.index ?? 0) + 1,
+            });
         }
 
         return this.store.setTypographyRules(input);
@@ -89,7 +98,13 @@ export class StyleCorpusService {
             throw new ApplicationServiceError(APPLICATION_ERROR.DUPLICATE_STYLE_CORPUS_ITEM, HTTP_STATUS.BAD_REQUEST);
 
         const revisionNumber = this.articles!.listRevisions(articleId).findIndex((item) => item.id === revisionId) + 1;
-        return this.store.addStyleCorpusItem({ name: `${article.title} — Revision ${revisionNumber}`, content: revision.content, origin: "article-revision", articleId, revisionId });
+        return this.store.addStyleCorpusItem({
+            name: `${article.title} — Revision ${revisionNumber}`,
+            content: revision.content,
+            origin: "article-revision",
+            articleId,
+            revisionId,
+        });
     }
 
 

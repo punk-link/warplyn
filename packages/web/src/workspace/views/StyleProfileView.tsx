@@ -142,41 +142,123 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         }
     };
 
-    return <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-4xl flex-col">
-        <header className="mb-6 shrink-0 flex flex-wrap items-start justify-between gap-3">
-            <div>
-                <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.styleProfile" })}</h2>
-                <p className="mt-1 text-xs text-muted">{summary} · {intl.formatMessage({ id: "styleProfile.activeSources" }, { count: activeCount })}{corpus?.status === "outdated" ? ` · ${intl.formatMessage({ id: "styleProfile.outdated" })}` : ""}</p>
+    return (
+        <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-4xl flex-col">
+            <header className="mb-6 shrink-0 flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.styleProfile" })}</h2>
+                    <p className="mt-1 text-xs text-muted">
+                        {summary} · {intl.formatMessage({ id: "styleProfile.activeSources" }, { count: activeCount })}
+                        {corpus?.status === "outdated" ? ` · ${intl.formatMessage({ id: "styleProfile.outdated" })}` : ""}
+                    </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                    {rebuilt && (
+                        <span className="text-xs text-success" role="status">
+                            {intl.formatMessage({ id: "styleProfile.rebuilt" }, { count: activeCount })}
+                        </span>
+                    )}
+                    <Button
+                        variant="secondary"
+                        state={pendingAction === "rebuild" ? "loading" : "default"}
+                        disabled={corpus?.status === "empty" || Boolean(pendingAction)}
+                        onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}
+                    >
+                        {intl.formatMessage({ id: "styleProfile.rebuild" })}
+                    </Button>
+                </div>
+            </header>
+            {corpus?.profile?.confidence === "low" && (
+                <Banner className="mb-4" tone="warning">
+                    {intl.formatMessage({ id: corpus.profile.corpusItemCount ? "styleProfile.lowConfidence" : "typography.rulesOnly" })}
+                </Banner>
+            )}
+            <div
+                className={
+                    "min-h-0 min-w-0 flex-1 overflow-y-auto pl-1 pr-5 [scrollbar-color:var(--color-border-strong)_transparent] " +
+                    "[scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+                    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong"
+                }
+            >
+                <div className="w-full">
+                    <StyleProfileInsights corpus={corpus} generalSettings={generalSettings} />
+                    <StyleProfileReview findings={findings} stale={findingsStale} />
+                    {actions.typography && (
+                        <TypographyRulesBlock
+                            rules={corpus?.typographyRules}
+                            save={saveTypography}
+                            check={actions.typography.check}
+                            busy={Boolean(pendingAction) || data.typographyStatus?.busy}
+                        />
+                    )}
+                    {data.typographyStatus?.message && (
+                        <Banner tone="error" role="alert">
+                            {data.typographyStatus.message}
+                        </Banner>
+                    )}
+                    {data.typographyStatus?.hasProposal && actions.typography && (
+                        <Button variant="secondary" className="mb-4" onClick={actions.typography.openProposal}>
+                            {intl.formatMessage({ id: "typography.reviewProposal" })}
+                        </Button>
+                    )}
+                    {findings?.typography && <TypographyReviewStatus findings={findings} currentVersion={corpus?.profile?.version} />}
+                    <StyleProfileGuidance
+                        data={{ pendingAction, rules, savedRules, articleRules, savedArticleRules }}
+                        actions={{
+                            setRules: setRulesDraft,
+                            setArticleRules: setArticleRulesDraft,
+                            onSaveRules: () =>
+                                run(
+                                    "rules",
+                                    () => setRules(rules),
+                                    () => setSavedRules(rules),
+                                ),
+                            onSaveArticleRules: () =>
+                                run(
+                                    "article-rules",
+                                    () => setArticleRules(articleId, articleRules),
+                                    () => setSavedArticleRules(articleRules),
+                                ),
+                            getRuleStatus,
+                        }}
+                    />
+                    <StyleProfileSources
+                        data={{
+                            corpus,
+                            revisions: selectableRevisions,
+                            generalSettings,
+                            pendingAction,
+                            adding,
+                            name,
+                            content,
+                            validationFailed,
+                            uploadFailed,
+                        }}
+                        actions={{
+                            setAdding,
+                            setName,
+                            setContent,
+                            onImport: importFile,
+                            onSubmit: submit,
+                            onRemove: setRemovingId,
+                            onSetIncluded: (id, included) => run(`include:${id}`, () => setIncluded(id, included)),
+                            onSnapshot: setSnapshotRevisionId,
+                        }}
+                    />
+                </div>
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-3">
-                {rebuilt && <span className="text-xs text-success" role="status">{intl.formatMessage({ id: "styleProfile.rebuilt" }, { count: activeCount })}</span>}
-                <Button
-                    variant="secondary"
-                    state={pendingAction === "rebuild" ? "loading" : "default"}
-                    disabled={corpus?.status === "empty" || Boolean(pendingAction)}
-                    onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}>{intl.formatMessage({ id: "styleProfile.rebuild" })}</Button>
-            </div>
-        </header>
-        {corpus?.profile?.confidence === "low" && <Banner className="mb-4" tone="warning">{intl.formatMessage({ id: corpus.profile.corpusItemCount ? "styleProfile.lowConfidence" : "typography.rulesOnly" })}</Banner>}
-        <div className={("min-h-0 min-w-0 flex-1 overflow-y-auto pl-1 pr-5 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-                "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
-            <div className="w-full">
-                <StyleProfileInsights corpus={corpus} generalSettings={generalSettings} />
-                <StyleProfileReview findings={findings} stale={findingsStale} />
-                {actions.typography && <TypographyRulesBlock
-                    rules={corpus?.typographyRules}
-                    save={saveTypography}
-                    check={actions.typography.check}
-                    busy={Boolean(pendingAction) || data.typographyStatus?.busy} />}
-                {data.typographyStatus?.message && <Banner tone="error" role="alert">{data.typographyStatus.message}</Banner>}
-                {data.typographyStatus?.hasProposal && actions.typography && <Button variant="secondary" className="mb-4" onClick={actions.typography.openProposal}>{intl.formatMessage({ id: "typography.reviewProposal" })}</Button>}
-                {findings?.typography && <TypographyReviewStatus findings={findings} currentVersion={corpus?.profile?.version} />}
-                <StyleProfileGuidance data={{ pendingAction, rules, savedRules, articleRules, savedArticleRules }} actions={{ setRules: setRulesDraft, setArticleRules: setArticleRulesDraft, onSaveRules: () => run("rules", () => setRules(rules), () => setSavedRules(rules)), onSaveArticleRules: () => run("article-rules", () => setArticleRules(articleId, articleRules), () => setSavedArticleRules(articleRules)), getRuleStatus }} />
-                <StyleProfileSources data={{ corpus, revisions: selectableRevisions, generalSettings, pendingAction, adding, name, content, validationFailed, uploadFailed }} actions={{ setAdding, setName, setContent, onImport: importFile, onSubmit: submit, onRemove: setRemovingId, onSetIncluded: (id, included) => run(`include:${id}`, () => setIncluded(id, included)), onSnapshot: setSnapshotRevisionId }} />
-            </div>
+            <StyleProfileDialogs
+                data={{ removingId, snapshotRevisionId, revisions: selectableRevisions }}
+                actions={{
+                    onCloseRemove: () => setRemovingId(undefined),
+                    onConfirmRemove: confirmRemove,
+                    onCloseSnapshot: () => setSnapshotRevisionId(undefined),
+                    onSelectSnapshot: setSnapshotRevisionId,
+                    onConfirmSnapshot: confirmSnapshot,
+                }}
+            />
         </div>
-        <StyleProfileDialogs data={{ removingId, snapshotRevisionId, revisions: selectableRevisions }} actions={{ onCloseRemove: () => setRemovingId(undefined), onConfirmRemove: confirmRemove, onCloseSnapshot: () => setSnapshotRevisionId(undefined), onSelectSnapshot: setSnapshotRevisionId, onConfirmSnapshot: confirmSnapshot }} />
-    </div>;
+    );
 }
 
 
@@ -186,10 +268,18 @@ function TypographyReviewStatus({ findings, currentVersion }: { findings: StyleR
     if (!typography)
         return null;
 
-    return <div className="mb-4 space-y-2 text-xs text-muted" role="status">
-        {findings.profileVersion !== currentVersion && <Banner tone="warning">{intl.formatMessage({ id: "typography.olderProfile" }, { version: findings.profileVersion })}</Banner>}
-        {!typography.occurrences.length && <p>{intl.formatMessage({ id: "typography.noViolations" })}</p>}
-        {typography.skipped > 0 && <p>{intl.formatMessage({ id: "typography.skipped" }, { count: typography.skipped })}</p>}
-        {typography.local && typography.contextualRuleIds.length > 0 && <p>{intl.formatMessage({ id: "typography.contextualSkipped" }, { count: typography.contextualRuleIds.length })}</p>}
-    </div>;
+    return (
+        <div className="mb-4 space-y-2 text-xs text-muted" role="status">
+            {findings.profileVersion !== currentVersion && (
+                <Banner tone="warning">
+                    {intl.formatMessage({ id: "typography.olderProfile" }, { version: findings.profileVersion })}
+                </Banner>
+            )}
+            {!typography.occurrences.length && <p>{intl.formatMessage({ id: "typography.noViolations" })}</p>}
+            {typography.skipped > 0 && <p>{intl.formatMessage({ id: "typography.skipped" }, { count: typography.skipped })}</p>}
+            {typography.local && typography.contextualRuleIds.length > 0 && (
+                <p>{intl.formatMessage({ id: "typography.contextualSkipped" }, { count: typography.contextualRuleIds.length })}</p>
+            )}
+        </div>
+    );
 }

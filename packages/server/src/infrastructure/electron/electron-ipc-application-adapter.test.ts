@@ -101,7 +101,12 @@ test("Electron IPC checks typography without a provider and validates saves", as
         const article = adapter.persistence.articles.createArticle({ title: "Typography", content: "Wait..." });
         const saved = await adapter.ipcMain.invoke({ method: "setTypographyRules", args: [[{ id: "dots", definition: { kind: "ellipsis", form: "…" } }]] });
         assert.equal(saved.ok, true);
-        const result = await adapter.ipcMain.stream({ kind: "editorial", streamId: "typography", articleId: article.id, input: { requestId: "typography", operation: "style_review", reviewMode: "typography" } });
+        const result = await adapter.ipcMain.stream({
+            kind: "editorial",
+            streamId: "typography",
+            articleId: article.id,
+            input: { requestId: "typography", operation: "style_review", reviewMode: "typography" },
+        });
         assert.equal(result.event.type, "completed");
         if (result.event.type === "completed" && "styleReview" in result.event) {
             assert.equal(result.event.text, "Wait…");
@@ -110,7 +115,10 @@ test("Electron IPC checks typography without a provider and validates saves", as
 
         const recovered = await adapter.ipcMain.invoke({ method: "getTypographyReview", args: [article.id] });
         assert.equal(recovered.ok && recovered.value?.proposal, "Wait…");
-        const invalid = await adapter.ipcMain.invoke({ method: "setTypographyRules", args: [[{ id: "invalid", definition: { kind: "contextual", instruction: " " } }]] });
+        const invalid = await adapter.ipcMain.invoke({
+            method: "setTypographyRules",
+            args: [[{ id: "invalid", definition: { kind: "contextual", instruction: " " } }]],
+        });
         assert.equal(invalid.ok, false);
         assert.equal(adapter.persistence.styleCorpus.getStyleCorpus().profile?.version, 1);
     } finally {
