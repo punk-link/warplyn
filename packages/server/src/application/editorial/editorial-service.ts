@@ -32,15 +32,17 @@ import { reviewTypography } from "./style/typography-review.js";
 interface EditorialStreamContext {
     article: Article;
     engine: EditorialEngine;
-    factCheck: boolean;
-    translation: boolean;
-    correctionSelection?: { expectedRevisionId: string; occurrenceIds: string[] };
-    correctionContext?: string;
-    styleProfile?: StyleProfile;
-    articleStyleRules?: string;
-    previousResponseId?: string;
-    continuationScope?: { connectionId: string; provider: import("@skladno/shared").AiProvider; model: string };
+    operation: { factCheck: boolean; translation: boolean };
+    correction?: { selection: { expectedRevisionId: string; occurrenceIds: string[] }; context: string };
+    style?: { profile: StyleProfile; articleRules: string };
+    continuation?: {
+        previousResponseId?: string;
+        scope?: { connectionId: string; provider: import("@skladno/shared").AiProvider; model: string };
+    };
 }
+
+
+type EditorialContinuationScope = NonNullable<EditorialEngine["continuationScope"]>;
 
 
 interface EditorialArticleStore {
@@ -85,45 +87,56 @@ interface EditorialServiceRuntime {
 
 
 function prepareEditorialStream(articles: EditorialArticleStore, sessions: EditorialSessionStore, styleCorpus: EditorialStyleCorpusStore, factChecks: FactChecksStore, engines: EditorialEngineResolver, sessionContinuationEnabled: boolean, request: EditorialServiceRequest): EditorialStreamContext {
-    const article = articles.getArticle(request.articleId);
+    const article = articles.getArticle(request.articleContext.articleId);
     if (!article)
         throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
 
     const correction = getVerifiedCorrection(request, article, factChecks);
 
-    const factCheck = request.operation === EDITORIAL_OPERATION.FACT_CHECK;
-    const translation = request.operation === EDITORIAL_OPERATION.TRANSLATION;
-    const styleProfile = getReadyStyleProfile(request.operation, styleCorpus);
+    const factCheck = request.editorial.operation === EDITORIAL_OPERATION.FACT_CHECK;
+    const translation = request.editorial.operation === EDITORIAL_OPERATION.TRANSLATION;
+    const styleProfile = getReadyStyleProfile(request.editorial.operation, styleCorpus);
 
-    if (request.reviewMode && request.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
+    if (request.editorial.reviewMode && request.editorial.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
-    if (request.reviewMode && !styleProfile?.rules.typography.some((rule) => rule.definition.kind !== "contextual"))
+    if (request.editorial.reviewMode && !styleProfile?.rules.typography.some((rule) => rule.definition.kind !== "contextual"))
         throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_REQUIRED, HTTP_STATUS.BAD_REQUEST);
 
-    const engine: EditorialEngine | undefined = request.reviewMode ? new TypographyLocalEngine() : engines.resolve(request.operation, request.skillId);
+    const engine: EditorialEngine | undefined = request.editorial.reviewMode
+        ? new TypographyLocalEngine()
+        : engines.resolve(request.editorial.operation, request.editorial.skillId);
     if (!engine)
         throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
 
     const continuationScope = engine.continuationScope;
-    const previousResponseId = request.reviewMode ? undefined : prepareContinuation(
-        sessions, request.articleId, !factCheck && !translation, sessionContinuationEnabled, continuationScope,
+    const previousResponseId = request.editorial.reviewMode ? undefined : prepareContinuation(
+        sessions, request.articleContext.articleId, !factCheck && !translation, sessionContinuationEnabled, continuationScope,
     );
 
     return {
         article,
         engine,
-        factCheck,
-        translation,
+        operation: { factCheck, translation },
         ...correction,
-        ...(styleProfile ? { styleProfile, articleStyleRules: styleCorpus.getArticleStyleRules(request.articleId) } : {}),
-        ...(continuationScope ? { continuationScope } : {}),
-        ...(previousResponseId ? { previousResponseId } : {}),
+        ...(styleProfile ? { style: { profile: styleProfile, articleRules: styleCorpus.getArticleStyleRules(request.articleContext.articleId) } } : {}),
+        ...(continuationScope || previousResponseId ? {
+            continuation: {
+                ...(continuationScope ? { scope: continuationScope } : {}),
+                ...(previousResponseId ? { previousResponseId } : {}),
+            },
+        } : {}),
     };
 }
 
 
-function prepareContinuation(sessions: EditorialSessionStore, articleId: string, eligible: boolean, enabled: boolean, scope: EditorialStreamContext["continuationScope"]): string | undefined {
+function prepareContinuation(
+    sessions: EditorialSessionStore,
+    articleId: string,
+    eligible: boolean,
+    enabled: boolean,
+    scope: EditorialContinuationScope | undefined,
+): string | undefined {
     const session = eligible && enabled ? sessions.getEditorialSession(articleId) : undefined;
     const token = getMatchingContinuationToken(session, scope);
     if (!enabled || (session && !token))
@@ -133,16 +146,16 @@ function prepareContinuation(sessions: EditorialSessionStore, articleId: string,
 }
 
 
-function getVerifiedCorrection(request: EditorialServiceRequest, article: Article, factChecks: FactChecksStore): Pick<EditorialStreamContext, "correctionSelection" | "correctionContext"> {
-    const selection = request.correctionSelection;
+function getVerifiedCorrection(request: EditorialServiceRequest, article: Article, factChecks: FactChecksStore): Pick<EditorialStreamContext, "correction"> {
+    const selection = request.factChecking?.correctionSelection;
     if (!selection)
         return {};
 
-    if (request.operation !== EDITORIAL_OPERATION.FLOW_REVISION || article.currentRevisionId !== selection.expectedRevisionId)
+    if (request.editorial.operation !== EDITORIAL_OPERATION.FLOW_REVISION || article.currentRevisionId !== selection.expectedRevisionId)
         throw new ApplicationServiceError(APPLICATION_ERROR.FACT_CORRECTION_SELECTION_INVALID, HTTP_STATUS.CONFLICT);
 
-    const findings = verifyCorrectionSelection(factChecks.listFactChecks(request.articleId), article.currentRevisionId, selection.occurrenceIds);
-    return { correctionSelection: selection, correctionContext: correctionContext(findings) };
+    const findings = verifyCorrectionSelection(factChecks.listFactChecks(request.articleContext.articleId), article.currentRevisionId, selection.occurrenceIds);
+    return { correction: { selection, context: correctionContext(findings) } };
 }
 
 
@@ -158,7 +171,10 @@ function getReadyStyleProfile(operation: EditorialOperation, styleCorpus: Editor
 }
 
 
-function getMatchingContinuationToken(session: import("@skladno/shared").EditorialSession | undefined, scope: EditorialStreamContext["continuationScope"]): string | undefined {
+function getMatchingContinuationToken(
+    session: import("@skladno/shared").EditorialSession | undefined,
+    scope: EditorialContinuationScope | undefined,
+): string | undefined {
     if (!session?.continuationToken || !scope)
         return undefined;
 
@@ -171,26 +187,31 @@ function getMatchingContinuationToken(session: import("@skladno/shared").Editori
 
 function createEngineRequest(request: EditorialServiceRequest, context: EditorialStreamContext, factChecks: FactChecksStore) {
     return {
-        operation: request.operation,
-        article: request.articleContent ?? context.article.currentRevision.content,
+        operation: request.editorial.operation,
+        article: request.articleContext.content ?? context.article.currentRevision.content,
         articleTitle: context.article.title,
         ...selectionContext(request),
-        authorContext: context.correctionContext ?? request.authorContext,
-        ...(request.skillId ? { skillId: request.skillId } : {}),
-        ...(request.skill ? { skill: request.skill } : {}),
-        ...(request.targetArticleCharacterLimit ? { targetArticleCharacterLimit: request.targetArticleCharacterLimit } : {}),
-        ...(context.styleProfile ? { styleProfile: context.styleProfile, articleStyleRules: context.articleStyleRules } : {}),
-        ...(request.targetLanguage ? { targetLanguage: request.targetLanguage } : {}),
-        ...(context.previousResponseId ? { previousResponseId: context.previousResponseId } : {}),
-        ...(context.factCheck ? { reusableFactFindings: getReusableFactFindings(factChecks, request.articleId), skipFactCheckClaim: request.skipFactCheckClaim } : {}),
+        authorContext: context.correction?.context ?? request.editorial.authorContext,
+        ...(request.editorial.skillId ? { skillId: request.editorial.skillId } : {}),
+        ...(request.editorial.skill ? { skill: request.editorial.skill } : {}),
+        ...(request.articleContext.targetArticleCharacterLimit ? { targetArticleCharacterLimit: request.articleContext.targetArticleCharacterLimit } : {}),
+        ...(context.style ? { styleProfile: context.style.profile, articleStyleRules: context.style.articleRules } : {}),
+        ...(request.articleContext.targetLanguage ? { targetLanguage: request.articleContext.targetLanguage } : {}),
+        ...(context.continuation?.previousResponseId ? { previousResponseId: context.continuation.previousResponseId } : {}),
+        ...(context.operation.factCheck ? {
+            reusableFactFindings: getReusableFactFindings(factChecks, request.articleContext.articleId),
+            skipFactCheckClaim: request.factChecking?.skipClaim,
+        } : {}),
     };
 }
 
 
 function selectionContext(request: EditorialServiceRequest) {
     return {
-        ...(request.articleSelection ? { articleSelection: true } : {}),
-        ...(request.surroundingArticleCharacterCount !== undefined ? { surroundingArticleCharacterCount: request.surroundingArticleCharacterCount } : {}),
+        ...(request.articleContext.selection ? { articleSelection: true } : {}),
+        ...(request.articleContext.surroundingCharacterCount !== undefined
+            ? { surroundingArticleCharacterCount: request.articleContext.surroundingCharacterCount }
+            : {}),
     };
 }
 
@@ -216,39 +237,39 @@ function getEditorialArtifactKind(operation: EditorialOperation, factCheck: bool
 function createEditorialArtifactMetadata(request: EditorialServiceRequest, context: EditorialStreamContext, event: Extract<EditorialEngineEvent, { type: typeof EDITORIAL_ENGINE_EVENT.COMPLETED }>, includeFactCheck = true) {
     return {
         requestId: request.requestId,
-        operation: request.operation,
-        authorContext: request.authorContext,
-        ...(request.targetLanguage ? { targetLanguage: request.targetLanguage } : {}),
+        operation: request.editorial.operation,
+        authorContext: request.editorial.authorContext,
+        ...(request.articleContext.targetLanguage ? { targetLanguage: request.articleContext.targetLanguage } : {}),
         responseId: event.responseId,
         proposal: event.text,
-        ...(event.styleReview?.typography ? { baseContent: request.articleContent ?? context.article.currentRevision.content } : {}),
-        styleProfile: event.styleReview?.profileSnapshot ?? context.styleProfile,
-        articleStyleRules: context.articleStyleRules,
+        ...(event.styleReview?.typography ? { baseContent: request.articleContext.content ?? context.article.currentRevision.content } : {}),
+        styleProfile: event.styleReview?.profileSnapshot ?? context.style?.profile,
+        articleStyleRules: context.style?.articleRules,
         findings: event.styleReview?.findings,
         ...(event.styleReview ? { styleReview: event.styleReview } : {}),
         ...(includeFactCheck ? { factCheck: event.factCheck } : {}),
         translation: event.translation,
-        ...(context.correctionSelection ? { correctionSelection: context.correctionSelection } : {}),
+        ...(context.correction ? { correctionSelection: context.correction.selection } : {}),
     };
 }
 
 
 function persistCompletedEditorialOutput(sessions: EditorialSessionStore, artifacts: EditorialArtifactsStore, factChecks: FactChecksStore, request: EditorialServiceRequest, context: EditorialStreamContext, sessionContinuationEnabled: boolean, event: Extract<EditorialEngineEvent, { type: typeof EDITORIAL_ENGINE_EVENT.COMPLETED }>): string {
-    if (!context.factCheck && !context.translation && sessionContinuationEnabled && event.continuationToken && context.continuationScope)
-        sessions.saveEditorialSession(request.articleId, { continuationToken: event.continuationToken, ...context.continuationScope });
+    if (!context.operation.factCheck && !context.operation.translation && sessionContinuationEnabled && event.continuationToken && context.continuation?.scope)
+        sessions.saveEditorialSession(request.articleContext.articleId, { continuationToken: event.continuationToken, ...context.continuation.scope });
 
-    if (!context.factCheck)
+    if (!context.operation.factCheck)
         return artifacts.createEditorialArtifact({
-            articleId: request.articleId,
+            articleId: request.articleContext.articleId,
             revisionId: context.article.currentRevisionId,
-            kind: getEditorialArtifactKind(request.operation, context.factCheck),
+            kind: getEditorialArtifactKind(request.editorial.operation, context.operation.factCheck),
             content: JSON.stringify(createEditorialArtifactMetadata(request, context, event)),
         }).id;
 
     return persistFactCheckArtifact({
         artifacts,
         factChecks,
-        articleId: request.articleId,
+        articleId: request.articleContext.articleId,
         revisionId: context.article.currentRevisionId,
         metadata: createEditorialArtifactMetadata(request, context, event, false),
         factCheck: event.factCheck!,
@@ -263,11 +284,11 @@ async function* streamEditorialOperation(request: EditorialServiceRequest, conte
             if (signal.aborted)
                 return;
 
-            const source = request.articleContent ?? context.article.currentRevision.content;
-            const result = context.styleProfile
-                ? { ...event, ...reviewTypography(source, event.text, context.styleProfile, event.styleReview, Boolean(request.reviewMode)) }
+            const source = request.articleContext.content ?? context.article.currentRevision.content;
+            const result = context.style
+                ? { ...event, ...reviewTypography(source, event.text, context.style.profile, event.styleReview, Boolean(request.editorial.reviewMode)) }
                 : event;
-            validateProposalResult(source, result.text, request.skill?.execution);
+            validateProposalResult(source, result.text, request.editorial.skill?.execution);
             completed = true;
             const editorialArtifactId = onCompleted(result);
 
@@ -303,7 +324,7 @@ export class EditorialService {
                 this.stores.factChecks,
                 signal,
                 (event) => {
-                    if (this.stores.articles.getArticle(request.articleId)?.currentRevisionId !== context.article.currentRevisionId)
+                    if (this.stores.articles.getArticle(request.articleContext.articleId)?.currentRevisionId !== context.article.currentRevisionId)
                         throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_CONFLICT, HTTP_STATUS.CONFLICT);
 
                     return persistCompletedEditorialOutput(
@@ -318,12 +339,12 @@ export class EditorialService {
                     yield event;
             }
 
-            captureOperationOutcome(observed, request.operation, signal.aborted);
+            captureOperationOutcome(observed, request.editorial.operation, signal.aborted);
         } catch (error) {
             if (error instanceof EditorialEngineError && error.code === EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED)
-                this.stores.sessions.removeEditorialSession(request.articleId);
+                this.stores.sessions.removeEditorialSession(request.articleContext.articleId);
 
-            captureOperationOutcome(observed, request.operation, signal.aborted, true);
+            captureOperationOutcome(observed, request.editorial.operation, signal.aborted, true);
             throw error;
         }
     }
@@ -336,7 +357,7 @@ export class EditorialService {
             yield* streamEditorialOperation(request, context, this.stores.factChecks, signal, () => undefined);
         } catch (error) {
             if (error instanceof EditorialEngineError && error.code === EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED)
-                this.stores.sessions.removeEditorialSession(request.articleId);
+                this.stores.sessions.removeEditorialSession(request.articleContext.articleId);
 
             throw error;
         }

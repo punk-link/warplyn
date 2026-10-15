@@ -32,13 +32,24 @@ async function readEditorialRequest(request: IncomingMessage, articleId: string)
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
     return {
-        articleId,
         requestId: parseString(body.requestId, "requestId"),
-        operation: operation as EditorialOperation,
-        authorContext: body.authorContext === undefined ? "" : parseString(body.authorContext, "authorContext"),
-        ...(body.reviewMode === "typography" ? { reviewMode: "typography" as const } : {}),
-        ...(body.targetLanguage === undefined ? {} : { targetLanguage: parseString(body.targetLanguage, "targetLanguage") }),
-        ...(selection ? { correctionSelection: { expectedRevisionId: parseString(selection.expectedRevisionId, "expectedRevisionId"), occurrenceIds: selection.occurrenceIds as string[] } } : {}),
+        articleContext: {
+            articleId,
+            ...(body.targetLanguage === undefined ? {} : { targetLanguage: parseString(body.targetLanguage, "targetLanguage") }),
+        },
+        editorial: {
+            operation: operation as EditorialOperation,
+            authorContext: body.authorContext === undefined ? "" : parseString(body.authorContext, "authorContext"),
+            ...(body.reviewMode === "typography" ? { reviewMode: "typography" as const } : {}),
+        },
+        ...(selection ? {
+            factChecking: {
+                correctionSelection: {
+                    expectedRevisionId: parseString(selection.expectedRevisionId, "expectedRevisionId"),
+                    occurrenceIds: selection.occurrenceIds as string[],
+                },
+            },
+        } : {}),
     };
 }
 
@@ -54,7 +65,7 @@ function openEditorialStream(request: IncomingMessage, response: ServerResponse)
 
 
 function rejectUnsupportedOperation(response: ServerResponse, request: EditorialServiceRequest): boolean {
-    if (isEditorialOperation(request.operation))
+    if (isEditorialOperation(request.editorial.operation))
         return false;
 
     writeEditorialEvent(response, createEditorialErrorEvent(request.requestId, EDITORIAL_ERROR_CATEGORY.PROVIDER, APPLICATION_ERROR.EDITORIAL_OPERATION_UNSUPPORTED, false));
@@ -65,7 +76,7 @@ function rejectUnsupportedOperation(response: ServerResponse, request: Editorial
 
 
 function rejectMissingTargetLanguage(response: ServerResponse, request: EditorialServiceRequest): boolean {
-    if (request.operation !== EDITORIAL_OPERATION.TRANSLATION || request.targetLanguage?.trim())
+    if (request.editorial.operation !== EDITORIAL_OPERATION.TRANSLATION || request.articleContext.targetLanguage?.trim())
         return false;
 
     writeEditorialEvent(response, createEditorialErrorEvent(request.requestId, EDITORIAL_ERROR_CATEGORY.INVALID_OUTPUT, APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED, false));
@@ -133,7 +144,7 @@ async function writeEditorialStream(response: ServerResponse, editorial: Editori
     for await (const event of editorial.stream(request, signal)) {
         if (event.type === EDITORIAL_ENGINE_EVENT.COMPLETED)
             completed = true;
-        else if (request.operation === EDITORIAL_OPERATION.STYLE_REVIEW && event.type === EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
+        else if (request.editorial.operation === EDITORIAL_OPERATION.STYLE_REVIEW && event.type === EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
             continue;
 
         writeEditorialEvent(response, { ...event, requestId: request.requestId });

@@ -8,7 +8,7 @@ Use the smallest check that can fail for the changed behavior, then run the appl
 - `npm run verify:browser` runs Chromium author journeys, also available as `npm run test:e2e`.
 - `npm run verify:desktop` runs Electron journeys against development and packaged builds. Build prerequisites are below.
 - `npm test --workspace <workspace>` runs the selected workspace tests.
-- `npm run lint` checks changed JavaScript and TypeScript lines against a 160-character limit, import boundaries, and ESLint rules, including the ceiling of 9 parameters or data properties. Data-property checks use TypeScript project information for source interfaces, classes, and object-shaped types, including inheritance and intersections. Semantic cohesion requires review. CI compares the pull request's base and head commits; locally, lint checks staged and unstaged changes against `HEAD`.
+- `npm run lint` checks changed JavaScript and TypeScript lines against a 160-character limit, import boundaries, and ESLint rules. It also checks changed TypeScript declarations for the 9-property ceiling, counting inherited and intersected fields; unchanged legacy violations do not block unrelated changes. Nested groups must represent coherent domain concepts, not generic wrappers. CI compares the pull request's base and head commits; locally, lint checks staged and unstaged changes against `HEAD`.
 - `npm run complexity:check` fails at cognitive complexity 16 or higher and reports scores 10–15 for review.
 - `npm run typecheck` checks the TypeScript project references.
 - `npm run product:impact -- <affected paths>` returns capabilities and scenarios that the change must preserve.

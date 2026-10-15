@@ -39,7 +39,7 @@ test("each translation request binds its explicit language even when the model c
             getDefinitions: () => editorialCapabilityDefinitions.filter((definition) => definition.id === "translate"),
             discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* (context) {
-                languages.push(context.targetLanguage);
+                languages.push(context.article.targetLanguage);
                 yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "translation", text: "Übersetzung", translation: { targetLanguage: "German", protectedSpans: [] } } as const;
             },
         },

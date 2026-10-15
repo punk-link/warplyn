@@ -159,7 +159,7 @@ test("an Author Skill inspects the current Article before following its instruct
             ],
             discover: () => [], read: () => ({ content: "Article" }), executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* (input) {
-                proposalAuthorContext = input.skill?.instructions ?? "";
+                proposalAuthorContext = input.editorial.skill?.instructions ?? "";
                 yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "proposal", text: "Rephrased without em dashes." } as const;
             },
         },
@@ -182,7 +182,10 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         summaries: () => [summary],
         load: (candidate) => candidate === reference ? { ...summary, instructions: "Rephrase without em dashes." } : undefined,
     };
-    let streamInput: { articleContent?: string; articleSelection?: boolean; authorContext: string; skill?: { instructions: string } } | undefined;
+    let streamInput: {
+        article: { content?: string; selection?: boolean };
+        editorial: { authorContext: string; skill?: { instructions: string } };
+    } | undefined;
     const engine = {
         async *stream() {
             return;
@@ -220,10 +223,10 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
     for await (const event of loop.stream(request, new AbortController().signal))
         assert.equal(event.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
 
-    assert.equal(streamInput?.articleContent, "selected");
-    assert.equal(streamInput?.articleSelection, true);
-    assert.equal(streamInput?.authorContext, "");
-    assert.equal(streamInput?.skill?.instructions, "Rephrase without em dashes.");
+    assert.equal(streamInput?.article.content, "selected");
+    assert.equal(streamInput?.article.selection, true);
+    assert.equal(streamInput?.editorial.authorContext, "");
+    assert.equal(streamInput?.editorial.skill?.instructions, "Rephrase without em dashes.");
 });
 
 

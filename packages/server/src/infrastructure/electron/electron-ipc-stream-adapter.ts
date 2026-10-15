@@ -164,7 +164,19 @@ async function streamEditorial(event: ElectronIpcMainEvent, request: Extract<Ele
         return;
     }
 
-    const serviceRequest: EditorialServiceRequest = { ...input, articleId: request.articleId, operation: input.operation, authorContext: input.authorContext ?? "" };
+    const serviceRequest: EditorialServiceRequest = {
+        requestId: input.requestId,
+        articleContext: {
+            articleId: request.articleId,
+            ...(input.targetLanguage ? { targetLanguage: input.targetLanguage } : {}),
+        },
+        editorial: {
+            operation: input.operation,
+            authorContext: input.authorContext ?? "",
+            ...(input.reviewMode ? { reviewMode: input.reviewMode } : {}),
+        },
+        ...(input.correctionSelection ? { factChecking: { correctionSelection: input.correctionSelection } } : {}),
+    };
     try {
         const completed = await relayEditorialStream(event, request.streamId, serviceRequest, editorial, controller.signal);
 
@@ -188,7 +200,7 @@ async function relayEditorialStream(event: ElectronIpcMainEvent, streamId: strin
     for await (const item of editorial.stream(request, signal)) {
         if (item.type === EDITORIAL_ENGINE_EVENT.COMPLETED)
             completed = true;
-        else if (request.operation === EDITORIAL_OPERATION.STYLE_REVIEW && item.type === EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
+        else if (request.editorial.operation === EDITORIAL_OPERATION.STYLE_REVIEW && item.type === EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
             continue;
 
         send(event, { streamId, kind: "editorial", event: { ...item, requestId: request.requestId } });

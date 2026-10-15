@@ -315,15 +315,27 @@ export class AssistantCapabilityLoop {
             capability: definition.id as StreamContext["capability"],
             context: { articleId: request.articleId, baseRevisionId: request.scope.baseRevisionId },
             requestId: request.requestId,
-            skipFactCheckClaim: request.skipFactCheckClaim,
-            authorContext,
-            ...(request.resolvedSkillId ? { skillId: request.resolvedSkillId } : {}),
-            skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
-            ...(request.publishingCharacterLimit ? { targetArticleCharacterLimit: request.publishingCharacterLimit } : {}),
-            ...(input.operation ? { operation: input.operation as StreamContext["operation"] } : {}),
-            ...(input.targetLanguage ? { targetLanguage: input.targetLanguage } : {}),
-            ...(input.findingIds ? { findingIds: input.findingIds } : {}),
-            ...(request.scope.kind === "selection" ? { articleContent: excerpt, articleSelection: true, surroundingArticleCharacterCount: request.articleContent.length - excerpt.length } : {}),
+            editorial: {
+                authorContext,
+                ...(request.resolvedSkillId ? { skillId: request.resolvedSkillId } : {}),
+                skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
+                ...(input.operation ? { operation: input.operation as StreamContext["editorial"]["operation"] } : {}),
+            },
+            article: {
+                ...(request.publishingCharacterLimit ? { targetArticleCharacterLimit: request.publishingCharacterLimit } : {}),
+                ...(input.targetLanguage ? { targetLanguage: input.targetLanguage } : {}),
+                ...(request.scope.kind === "selection" ? {
+                    content: excerpt,
+                    selection: true,
+                    surroundingCharacterCount: request.articleContent.length - excerpt.length,
+                } : {}),
+            },
+            ...(request.skipFactCheckClaim || input.findingIds ? {
+                factChecking: {
+                    ...(request.skipFactCheckClaim ? { skipClaim: request.skipFactCheckClaim } : {}),
+                    ...(input.findingIds ? { findingIds: input.findingIds } : {}),
+                },
+            } : {}),
         };
     }
 

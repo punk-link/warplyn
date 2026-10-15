@@ -51,7 +51,8 @@ test("the catalog rejects a proposal without an approved operation before provid
         capability: EDITORIAL_CAPABILITY.GENERATE_PROPOSAL,
         context,
         requestId: "catalog-request",
-        authorContext: "",
+        editorial: { authorContext: "" },
+        article: {},
     }, new AbortController().signal), { name: "ApplicationServiceError" });
 }));
 

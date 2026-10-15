@@ -22,6 +22,8 @@ For product decisions, identify the Author benefit and any tradeoff against thes
 3. For broad discovery or multi-step coding, use the [agent-work guide](docs/development/guides/context-efficient-agent-work.md). For code structure, use the [refactoring skill](.codex/skills/refactoring/SKILL.md).
 4. Before pushing or handing off a change, follow the [testing guide](docs/development/guides/testing.md) to select and run core, browser, and desktop gates. UI changes require browser journeys; Electron integration changes require desktop journeys after packaging. Report each applicable gate separately, including failures and checks not run.
 
+Do not delete, disable, weaken, or bypass an existing lint rule or static check without direct user approval. When a rule blocks a change because of pre-existing violations, keep enforcement for changed code and handle the baseline without removing the rule.
+
 ## Plans and delegation
 
 Use the [plans and delegation skill](.codex/skills/plans-and-delegation/SKILL.md) when creating or implementing a durable plan, or for requested agent delegation.
