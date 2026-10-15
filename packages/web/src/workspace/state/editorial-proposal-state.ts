@@ -94,12 +94,7 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
         results,
         recovery,
         controller,
-        setProposal,
-        setBase,
-        setDecisions,
-        setState,
-        setMessage,
-    });
+    }, { setProposal, setBase, setDecisions, setState, setMessage });
 
     return {
         proposal,

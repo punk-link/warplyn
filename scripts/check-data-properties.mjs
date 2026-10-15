@@ -139,12 +139,12 @@ async function findChangedViolations() {
 const violations = await findChangedViolations();
 if (violations.length > 0) {
     const scope = allMode ? "TypeScript data shapes" : "Changed TypeScript data shapes";
-    console.error(`${scope} must have fewer than 10 properties; split coherent responsibilities.`);
+    console.error(`${scope} must have 20 or fewer data properties; split coherent responsibilities.`);
     for (const violation of violations)
         console.error(`${violation.path}:${violation.line} ${violation.message}`);
 
     process.exitCode = 1;
 } else {
     const scope = allMode ? "All" : "Changed";
-    console.log(`${scope} TypeScript data shapes meet the 9-property limit.`);
+    console.log(`${scope} TypeScript data shapes meet the 20-property limit.`);
 }

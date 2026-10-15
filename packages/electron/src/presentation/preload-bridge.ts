@@ -7,7 +7,8 @@ import {
     isAssistantEvent,
     type ElectronApplicationMethod,
     type ElectronApplicationBridge,
-    type ElectronApplicationOperationMap,
+    type ElectronApplicationArguments,
+    type ElectronApplicationResult,
     type ElectronCancelRequest,
     type ElectronIpcError,
     type ElectronInvokeRequest,
@@ -138,7 +139,9 @@ function createStream(
 
 
 export function createElectronApplicationClient(ipcRenderer: ElectronIpcRenderer, createStreamId = () => crypto.randomUUID()): EditorialWorkspaceClient {
-    async function invoke<Method extends ElectronApplicationMethod>(method: Method, ...args: ElectronApplicationOperationMap[Method]["args"]): Promise<ElectronApplicationOperationMap[Method]["result"]> {
+    async function invoke<Method extends ElectronApplicationMethod>(
+        method: Method, ...args: ElectronApplicationArguments<Method>
+    ): Promise<ElectronApplicationResult<Method>> {
         const response = await ipcRenderer.invoke(ELECTRON_IPC_CHANNEL.invoke, { method, args } as ElectronInvokeRequest) as ElectronInvokeResult<Method>;
         if (!response.ok)
             throw createClientError(response.error);

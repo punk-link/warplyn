@@ -44,7 +44,7 @@ interface ProposalSetters {
 }
 
 
-type ProposalActionsInput = ProposalSetters & {
+interface ProposalActionsInput {
     client: EditorialWorkspaceClient;
     workspace: ArticleWorkspaceState;
     intl: IntlShape;
@@ -62,7 +62,7 @@ type ProposalActionsInput = ProposalSetters & {
     results: Pick<EditorialResultsState, "applyResult" | "loadFactChecks" | "resolveFactCheck" | "createTranslation" | "rejectTranslation" | "setFactCheck" | "setStyleReview" | "retainTranslation" | "replaceTranslations">;
     recovery: { articleIds: { current: Set<string> }; dates: { current: Map<string, string> } };
     controller: { current: AbortController | undefined };
-};
+}
 
 
 function restoredAcceptance(article: Article, message: AssistantMessage, review: TextProposal): Record<string, ProposalDecision> | undefined {
@@ -150,8 +150,8 @@ function findLatestRestorableProposal(messages: AssistantMessage[] | undefined):
 
 
 export function useProposalActions({ client, workspace, intl, proposal: { base, review, accepted, stale, decisions },
-    summaries: { setProposalSummaries, setProposalSummaryLocale }, results, recovery, controller, ...setters
-}: ProposalActionsInput) {
+    summaries: { setProposalSummaries, setProposalSummaryLocale }, results, recovery, controller
+}: ProposalActionsInput, setters: ProposalSetters) {
     const { notifyError } = useNotifications();
     const { articleIds: restoredArticleIds, dates: recoveredDates } = recovery;
     const telemetry = getDesktopTelemetryClient();

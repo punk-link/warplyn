@@ -1028,7 +1028,7 @@ export const messages = {
     "skills.validation.package_too_large": "This Skill package is too large for Warplyn to load. Shorten its instructions or reference files, then try again.",
     "errors.skillPackageConflict": "This Skill changed or its ID or name is already in use. Reload the Skill list, choose an available name if needed, then try again.",
     "errors.skillRevisionNotFound": "That Skill Revision is unavailable. List the Skill's Revisions again and choose one that exists.",
-} as const;
+} as const satisfies Record<string, string>;
 
 export type MessageId = keyof typeof messages;
 

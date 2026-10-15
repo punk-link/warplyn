@@ -4,7 +4,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { APPLICATION_ERROR, HTTP_STATUS, ELECTRON_APPLICATION_METHOD, ELECTRON_IPC_CHANNEL, type ElectronStreamRequest, type ElectronStreamEvent, type ElectronApplicationMethod, type ElectronApplicationOperationMap, type ElectronIpcError, type ElectronInvokeResult } from "@skladno/shared";
+import {
+    APPLICATION_ERROR, HTTP_STATUS, ELECTRON_APPLICATION_METHOD, ELECTRON_IPC_CHANNEL,
+    type ElectronStreamRequest, type ElectronStreamEvent, type ElectronApplicationMethod,
+    type ElectronApplicationArguments, type ElectronIpcError, type ElectronInvokeResult,
+} from "@skladno/shared";
 
 import { createApplicationServices } from "../../application/create-application-services.js";
 import { EditorialService } from "../../application/editorial/editorial-service.js";
@@ -32,7 +36,9 @@ class FakeIpcMain implements ElectronIpcMain {
     }
 
 
-    invoke<Method extends ElectronApplicationMethod>(request: { method: Method; args: ElectronApplicationOperationMap[Method]["args"] }): Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method> {
+    invoke<Method extends ElectronApplicationMethod>(
+        request: { method: Method; args: ElectronApplicationArguments<Method> }
+    ): Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method> {
         return this.handlers.get(ELECTRON_IPC_CHANNEL.invoke)!({ sender: { send: () => undefined } }, request) as Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method>;
     }
 
