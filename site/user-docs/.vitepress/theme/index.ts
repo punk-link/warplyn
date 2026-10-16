@@ -1,4 +1,5 @@
 import DefaultTheme from "vitepress/theme";
+import { startGoogleAnalytics } from "../../../google-analytics.mjs";
 import "./custom.css";
 
 export default {
@@ -6,6 +7,9 @@ export default {
     enhanceApp() {
         if (typeof document === "undefined")
             return;
+
+        if (import.meta.env.PROD)
+            startGoogleAnalytics();
 
         const root = document.documentElement;
         const syncColorScheme = () => {

@@ -81,6 +81,8 @@ test("beta telemetry starts enabled, reports trusted OS version, and clears iden
         await tasks.run();
         const payload = JSON.parse(bodies[0]!) as { batch: { properties: Record<string, unknown> }[] };
         assert.equal(payload.batch[0]?.properties.osVersion, "trusted-os-version");
+        assert.equal(payload.batch[0]?.properties.analyticsSource, "desktop");
+        assert.equal(payload.batch[0]?.properties.source, "startup");
         assert.equal("title" in payload.batch[0]!.properties, false);
         assert.deepEqual(owner.setConsent(false), { enabled: false, supported: true });
         assert.deepEqual(JSON.parse(readFileSync(runtimePath, "utf8")).telemetry, { consent: "denied" });

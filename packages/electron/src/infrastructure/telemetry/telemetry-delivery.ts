@@ -24,6 +24,7 @@ interface OutboundEvent {
     event: TelemetryEvent["kind"];
     distinct_id: string;
     properties: TelemetryEvent & {
+        analyticsSource: "desktop";
         schemaVersion: number;
         appVersion: string;
         platform: string;
@@ -120,6 +121,7 @@ function createOutboundTelemetryEvent(event: TelemetryEvent, installationId: str
         distinct_id: installationId,
         properties: {
             ...event,
+            analyticsSource: "desktop",
             schemaVersion: telemetrySchemaVersion,
             appVersion,
             platform: process.platform,

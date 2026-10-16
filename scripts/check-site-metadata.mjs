@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { readSiteModuleGraph } from "./site-module-graph.mjs";
 
 
 const siteRoot = new URL("../site/", import.meta.url);
@@ -27,8 +28,14 @@ for (const path of pagePaths) {
     assert.ok(head.includes(`href="https://warplyn.com/${path}"`), `Incorrect canonical in ${path}`);
     assert.ok(head.includes('content="max-image-preview:large"'), `Missing preview permission in ${path}`);
     assert.ok(head.includes('name="msvalidate.01"'), `Missing Bing verification in ${path}`);
-    const srcWwwGoogletagmanagerPattern = /src="https:\/\/www.googletagmanager.com\/gtag\/js\?id=G-QWD5DZEQZG"/g;
-    assert.equal([...head.matchAll(srcWwwGoogletagmanagerPattern)].length, 1);
+    const moduleScriptPattern = /<script\b[^>]*\btype="module"[^>]*\bsrc="([^"]+)"[^>]*>/g;
+    const moduleScripts = [...head.matchAll(moduleScriptPattern)];
+    assert.equal(moduleScripts.length, 1, `Expected one analytics-capable module entry in ${path}`);
+    const entry = new URL(`dist${moduleScripts[0][1]}`, siteRoot);
+    const moduleSource = readSiteModuleGraph(entry);
+    assert.ok(moduleSource.includes("G-QWD5DZEQZG"), `Missing Google Analytics measurement ID in ${path}'s module graph`);
+    assert.ok(moduleSource.includes("www.googletagmanager.com/gtag/js"), `Missing Google Analytics loader in ${path}'s module graph`);
+    assert.ok(!head.includes("googletagmanager.com"), `Duplicate inline Google Analytics loader in ${path}`);
     assert.ok(head.includes('name="twitter:card" content="summary_large_image"'), `Missing social card in ${path}`);
 
     const propertyImageContentPattern = /property="og:image" content="https:\/\/warplyn.com\/([^"]+)"/;

@@ -13,6 +13,7 @@ permissions:
 jobs:
     build:
         runs-on: ubuntu-latest
+        environment: Production
         steps:
             - name: Check out repository
               uses: actions/checkout@v4
@@ -27,4 +28,6 @@ jobs:
               run: npm ci
 
             - name: Build landing and documentation
+              env:
+                  VITE_POSTHOG_PROJECT_KEY: ${{ vars.WARPLYN_POSTHOG_PROJECT_KEY }}
               run: npm run build:site

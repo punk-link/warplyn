@@ -89,7 +89,7 @@ export default defineConfig(
         },
     },
     {
-        files: ["packages/web/src/**/*.{ts,tsx}"],
+        files: ["packages/web/src/**/*.{ts,tsx}", "site/**/*.mjs"],
         languageOptions: {
             globals: globals.browser,
         },

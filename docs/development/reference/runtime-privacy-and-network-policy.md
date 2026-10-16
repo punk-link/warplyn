@@ -41,6 +41,18 @@ Only packaged Electron exposes finite telemetry consent and event operations thr
 
 The release workflow packages the approved public capture key and fixes delivery to `https://us.i.posthog.com/batch`; it never packages an admin token. A telemetry-enabled release requires configured delivery even though runtime absence remains safe. Use the [release guide](../guides/mvp-release-and-recovery.md) for authorized account, retention, IP-handling, payload, opt-out, and offline checks.
 
+## Public website analytics
+
+The landing and plans pages send PostHog pageviews and explicit `download_clicked` events to the existing US project. `analyticsSource` distinguishes `website` from `desktop` without replacing failure events' existing `source` field. Website PostHog tracking uses cookieless server hashing, no person profiles, no session replay, and no general autocapture. It never links website visitors to desktop installation IDs.
+
+The landing pages and VitePress user guide share one Google Analytics initializer for the existing measurement property. Both Google and PostHog honor Do Not Track and Global Privacy Control, initialize only in production, and retain independent identities and storage behavior. Google may use cookies; PostHog's cookieless guarantee does not apply to Google. Documentation does not initialize PostHog. The Yandex verification file remains a site-ownership proof and does not load a Metrica counter.
+
+Build the site with `VITE_POSTHOG_PROJECT_KEY` set to the same public capture key used by desktop releases. The Site workflow reads `WARPLYN_POSTHOG_PROJECT_KEY` from the `Production` environment. Other hosting build environments must set `VITE_POSTHOG_PROJECT_KEY` too. Missing keys disable website PostHog tracking; Vite development mode never starts it.
+
+Before enabling delivery, enable **Cookieless server hash mode** under PostHog **Project Settings > Web analytics**. See [PostHog's cookieless tracking setup](https://posthog.com/tutorials/cookieless-tracking). Verify production events and storage with a disposable browser profile. Website PostHog tracking does not extend to the user guide.
+
+Create a website dashboard filtered by `analyticsSource = website`: `$pageview` unique visitors, `download_clicked` unique visitors, and a pageview-to-download funnel broken down by referring domain or UTM campaign. Break down download clicks by `buttonLocation` to compare placement. Create a desktop dashboard filtered by `analyticsSource = desktop`, using unique installations performing `app_session_started` for launch activity. Older desktop events lack this property; use explicit event names to include historical launches. A download click only opens GitHub releases and does not establish a completed download or installation.
+
 ## Verification
 
 Test safe diagnostic metadata and writer-failure isolation, selected-provider routing and credential isolation, transport validation, and packaged telemetry sender/schema/consent checks. Canonical privacy and telemetry behavior remains in [cross-cutting](../../../product-model/areas/cross-cutting.json) and [Settings](../../../product-model/areas/settings.json) records. Do not collect private content or raw provider errors as evidence.

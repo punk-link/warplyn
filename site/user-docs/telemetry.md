@@ -24,7 +24,7 @@ Events cover:
 Events do not include *Article* text, prompts, AI responses, or API keys.
 
 ::: details Other event fields
-Each event includes a schema version, application version, platform, architecture, operating system version, and timestamp. Event-specific fields are limited to known categories, non-negative counters, or bounded durations.
+Each event includes a desktop analytics source, schema version, application version, platform, architecture, operating system version, and timestamp. Event-specific fields are limited to known categories, non-negative counters, or bounded durations.
 
 Events do not include *Article* or *Revision* IDs or titles, environment variable values, file paths, URLs, raw errors, process exit details, or request and response bodies.
 :::
@@ -36,3 +36,11 @@ Events do not include *Article* or *Revision* IDs or titles, environment variabl
 3. Turn off **Share diagnostic and usage data**.
 
 Copy the ID before turning sharing off. Turning it off clears the ID from your device. The project owner deletes the matching pseudonymous record and confirms by email.
+
+## Website analytics
+
+The landing and plans pages use PostHog to measure visits, referral and campaign information, and clicks on download links. Download clicks include the button's location on the page; they do not confirm an installation.
+
+Website PostHog tracking uses no cookies or browser storage, creates no person profiles, and records no session replays or general click activity. PostHog estimates visitors using a server-generated hash. Website events remain separate from desktop Telemetry IDs, and the desktop sharing switch does not control website tracking.
+
+The landing pages and user guide also use Google Analytics, which may use cookies to measure visits and traffic sources. Both Google Analytics and PostHog tracking are skipped when your browser sends Do Not Track or Global Privacy Control. The cookieless behavior described above applies to PostHog.
