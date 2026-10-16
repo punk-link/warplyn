@@ -17,6 +17,32 @@ function Wrapper({ children }: PropsWithChildren) {
 describe("Article body loading", () => {
     afterEach(cleanup);
 
+    // Product scenarios: workspace.library.create-and-select, workspace.draft.flush-before-context-change
+    it("keeps the newest Article first when leaving an unchanged older Draft", async () => {
+        const client = createFakeClient();
+        const newest = createArticleFixture("newest", "Newest");
+        newest.updatedAt = "2026-01-03T00:00:00.000Z";
+        const older = createArticleFixture("older", "Older");
+        older.updatedAt = "2026-01-01T00:00:00.000Z";
+        older.draft = { articleId: older.id, baseRevisionId: older.currentRevisionId, content: "Recovered Draft", version: 1,
+            updatedAt: "2026-01-02T00:00:00.000Z" };
+        client.listArticleSummaries = vi.fn().mockResolvedValue([newest, older].map(summarizeArticle));
+        client.getArticle = vi.fn(async (id: string) => id === newest.id ? newest : older);
+        client.saveArticleDraft = vi.fn().mockResolvedValue({ ...older.draft, version: 2, updatedAt: "2026-01-04T00:00:00.000Z" });
+        const { result } = renderHook(() => useArticleWorkspace(client, newest.id, vi.fn(), "en"), { wrapper: Wrapper });
+        await waitFor(() => expect(result.current.state).toBe("ready"));
+
+        act(() => result.current.selectArticle(older.id));
+        await waitFor(() => expect(result.current.content).toBe("Recovered Draft"));
+        await act(async () => {
+            await result.current.flushSelected();
+            result.current.selectArticle(newest.id);
+        });
+        expect(result.current.articles.map((article) => article.id)).toEqual([newest.id, older.id]);
+        expect(client.saveArticleDraft).not.toHaveBeenCalled();
+        expect(client.discardArticleDraft).not.toHaveBeenCalled();
+    });
+
     it("loads only the selected body, restores Drafts, and retains edits when switching", async () => {
         const client = createFakeClient();
         const first = createArticleFixture("first", "First");

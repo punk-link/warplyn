@@ -151,20 +151,6 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
     }
 
 
-    async function persistCheckpoint<T>(operation: () => Promise<T>): Promise<T> {
-        const generation = await checkpointTelemetry.current.begin();
-        const startedAt = performance.now();
-        try {
-            const result = await operation();
-            checkpointTelemetry.current.record(generation, true, performance.now() - startedAt);
-            return result;
-        } catch (error) {
-            checkpointTelemetry.current.record(generation, false, performance.now() - startedAt);
-            throw error;
-        }
-    }
-
-
     function checkpoint(articleId: string, content = draftLifecycle.sessionsRef.current[articleId]?.content ?? ""): Promise<void> {
         clearTimeout(timers.current.get(articleId));
         const session = draftLifecycle.sessionsRef.current[articleId];
@@ -183,7 +169,7 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
             const expectedDraftVersion = latest.draftVersion;
             if (content === current.currentRevision.content) {
                 if (expectedDraftVersion !== undefined) {
-                    await persistCheckpoint(() => client.discardArticleDraft(articleId, expectedDraftVersion));
+                    await checkpointTelemetry.current.persist(() => client.discardArticleDraft(articleId, expectedDraftVersion));
                     replaceArticles((items) => items.map((article) => article.id === articleId ? withoutDraft(article) : article));
                 }
 
@@ -191,7 +177,16 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
                 return;
             }
 
-            const savedDraft = await persistCheckpoint(() => client.saveArticleDraft(articleId, { content, baseRevisionId: latest.baseRevisionId, ...(expectedDraftVersion === undefined ? {} : { expectedDraftVersion }) }));
+            if (current.draft && current.draft.content === content && current.draft.baseRevisionId === latest.baseRevisionId) {
+                draftLifecycle.send({ articleId, event: { type: "checkpointed", generation, draftVersion: current.draft.version } });
+                return;
+            }
+
+            const savedDraft = await checkpointTelemetry.current.persist(() => client.saveArticleDraft(articleId, {
+                content,
+                baseRevisionId: latest.baseRevisionId,
+                ...(expectedDraftVersion === undefined ? {} : { expectedDraftVersion }),
+            }));
             replaceArticles((items) => items.map((article) => article.id === articleId ? { ...article, draft: savedDraft } : article));
             draftLifecycle.send({ articleId, event: { type: "checkpointed", generation, draftVersion: savedDraft.version } });
         }).catch((error: unknown) => {

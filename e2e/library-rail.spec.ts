@@ -14,6 +14,44 @@ async function createAndNameArticle(page: Page, title: string) {
 }
 
 
+test("opening an unchanged older Draft preserves Recent order and its checkpoint", async ({ page }) => {
+    const service = "http://127.0.0.1:8787/api/articles";
+    const created = await page.request.post(service, { data: { title: "Unchanged older Draft", content: "Saved Revision", language: "en" } });
+    expect(created.ok()).toBe(true);
+    const older: { id: string; currentRevisionId: string } = await created.json();
+    const saved = await page.request.put(`${service}/${older.id}/draft`, {
+        data: { content: "Retained Draft text", baseRevisionId: older.currentRevisionId },
+    });
+    expect(saved.ok()).toBe(true);
+    const checkpoint: { version: number; updatedAt: string } = await saved.json();
+    const newestResponse = await page.request.post(service, { data: { title: "Newest Recent Article", content: "Newest text", language: "en" } });
+    expect(newestResponse.ok()).toBe(true);
+    const newest: { id: string } = await newestResponse.json();
+    await page.addInitScript((selectedArticleId) => {
+        localStorage.setItem("skladno.quick-start.v1", "complete");
+        localStorage.setItem("skladno-workspace-layout", JSON.stringify({ version: 4, selectedArticleId, libraryCollapsed: false }));
+    }, newest.id);
+    await page.goto("/");
+    const library = page.locator('[data-workspace-panel="article-library"]');
+    const fixtureTitles = /Unchanged older Draft|Newest Recent Article/;
+    const olderTitle = /Unchanged older Draft/;
+    const newestTitle = /Newest Recent Article/;
+    const rows = library.getByRole("button", { name: fixtureTitles });
+    await expect(rows.first()).toContainText("Newest Recent Article");
+    await library.getByRole("button", { name: olderTitle }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retained Draft text");
+    await library.getByRole("button", { name: newestTitle }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Newest text");
+    await expect(rows.first()).toContainText("Newest Recent Article");
+    await page.reload();
+    await expect(rows.first()).toContainText("Newest Recent Article");
+    const persisted = await page.request.get(`${service}/${older.id}`);
+    const article: { draft: { version: number; updatedAt: string } } = await persisted.json();
+    expect(article.draft.version).toBe(checkpoint.version);
+    expect(article.draft.updatedAt).toBe(checkpoint.updatedAt);
+});
+
+
 test("many pinned shortcuts scroll while Rail actions and Settings remain visible", async ({ page }) => {
     const service = "http://127.0.0.1:8787";
     for (let index = 0; index < 16; index++) {

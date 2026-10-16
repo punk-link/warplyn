@@ -9,6 +9,7 @@ import { createArticleFixture, createFakeClient, resetWorkspaceTestEnvironment }
 // Product scenarios: history-and-publishing.article-files-import, history-and-publishing.article-files-export
 
 beforeEach(() => {
+    Object.defineProperty(Range.prototype, "getBoundingClientRect", { configurable: true, value: () => new DOMRect() });
     Object.defineProperty(HTMLDialogElement.prototype, "showModal", { configurable: true, value() {
         this.setAttribute("open", "");
     } });
@@ -19,6 +20,7 @@ beforeEach(() => {
 
 afterEach(() => {
     resetWorkspaceTestEnvironment();
+    Reflect.deleteProperty(Range.prototype, "getBoundingClientRect");
     delete window.skladnoArticleFiles;
 });
 
@@ -222,11 +224,15 @@ describe("Article file actions", () => {
         client.saveArticleDraft = vi.fn().mockRejectedValue(new Error("private raw error"));
         window.skladnoArticleFiles = createFiles({ loadFile: vi.fn().mockResolvedValue(source("import.md", "Imported")) });
         render(<App client={client} />);
-        await screen.findByRole("textbox", { name: "Article draft" });
+        const editor = await screen.findByRole("textbox", { name: "Article draft" });
+        const user = userEvent.setup();
+        await user.click(editor);
+        await user.keyboard("{Control>}a{/Control}Updated text");
+        await waitFor(() => expect(editor.textContent).toBe("Updated text"));
         await runFileAction("Load from file");
         await waitFor(() => expect(client.saveArticleDraft).toHaveBeenCalled());
         expect(client.createArticle).not.toHaveBeenCalled();
-        expect(screen.getByRole("textbox", { name: "Article draft" }).textContent).toBe("Retained text");
+        expect(screen.getByRole("textbox", { name: "Article draft" }).textContent).toBe("Updated text");
         expect(screen.queryByText("private raw error")).toBeNull();
     });
 });

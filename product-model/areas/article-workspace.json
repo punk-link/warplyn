@@ -343,7 +343,8 @@
                 "Recent ordering uses Article or Draft-checkpoint activity"
             ],
             "forbidden": [
-                "Creating a Revision merely by selecting an Article"
+                "Creating a Revision merely by selecting an Article",
+                "Refreshing an unchanged Draft checkpoint or reordering Recent merely by selecting an Article"
             ],
             "evidence": {
                 "kind": "automated",

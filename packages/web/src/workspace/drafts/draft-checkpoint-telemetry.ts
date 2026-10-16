@@ -51,7 +51,22 @@ export function createDraftCheckpointTelemetry(client: DesktopTelemetryClient | 
     }
 
 
+    async function persist<T>(operation: () => Promise<T>): Promise<T> {
+        const generation = await beginBestEffortTelemetryCapture(client);
+        const startedAt = performance.now();
+        try {
+            const result = await operation();
+            record(generation, true, performance.now() - startedAt);
+            return result;
+        } catch (error) {
+            record(generation, false, performance.now() - startedAt);
+            throw error;
+        }
+    }
+
+
     return {
+        persist,
         begin: () => beginBestEffortTelemetryCapture(client),
         record,
         dispose: () => {
