@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useIntl } from "react-intl";
 import { createTextProposal } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
@@ -6,6 +6,7 @@ import type { ArticleWorkspaceState } from "./article-workspace-state.js";
 import { useProposalActions, type ProposalDecision } from "./editorial-proposal-actions.js";
 import { useProposalSummaries, type ProposalBase, type ProposalState } from "./editorial-proposal-helpers.js";
 import { useEditorialResults } from "./editorial-results-state.js";
+import { canRecoverProposal } from "./proposal-recovery.js";
 
 export { withFindingFreshness } from "./editorial-results-state.js";
 
@@ -17,13 +18,73 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
     const [decisions, setDecisions] = useState<Record<string, ProposalDecision>>({});
     const [state, setState] = useState<ProposalState>("idle");
     const [message, setMessage] = useState("");
+    const [recoveringTypography, setRecoveringTypography] = useState(false);
     const controller = useRef<AbortController>();
     const restoredArticleIds = useRef(new Set<string>());
+    const recoveredDates = useRef(new Map<string, string>());
+    const recovery = useMemo(() => ({ articleIds: restoredArticleIds, dates: recoveredDates }), []);
     const results = useEditorialResults(client, workspace);
+    const articleId = workspace.selectedArticle?.id;
+    const { setStyleReview } = results;
+    const activeBase = useRef(base);
+    activeBase.current = base;
+    useEffect(() => {
+        let active = true;
+        if (!articleId || !client.getTypographyReview)
+            return;
+
+        setRecoveringTypography(true);
+
+        void client.getTypographyReview(articleId).then((result) => {
+            if (!active || !result)
+                return;
+
+            const current = activeBase.current;
+            if (current?.editorialArtifactId === result.editorialArtifactId) {
+                setBase({ ...current, typography: result.styleReview.typography });
+                setStyleReview(articleId, result.baseRevisionId, result.styleReview);
+                return;
+            }
+
+            if (!canRecoverProposal(articleId, result.createdAt, current, recovery))
+                return;
+
+            restoredArticleIds.current.add(articleId);
+            recoveredDates.current.set(articleId, result.createdAt);
+
+            setBase({
+                articleId,
+                content: result.baseContent,
+                revisionId: result.baseRevisionId,
+                editorialArtifactId: result.editorialArtifactId,
+                typography: result.styleReview.typography,
+                recoveredAt: result.createdAt,
+            });
+            setProposal(result.proposal);
+            setStyleReview(articleId, result.baseRevisionId, result.styleReview);
+        }).catch(() => {
+            if (active)
+                setMessage(intl.formatMessage({ id: "typography.checkFailed" }));
+        }).finally(() => {
+            if (active)
+                setRecoveringTypography(false);
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [articleId, client, setStyleReview, intl, recovery]);
     const review = useMemo(() => base && base.articleId === workspace.selectedArticle?.id ? createTextProposal(base.content, proposal) : undefined, [base, proposal, workspace.selectedArticle?.id]);
     const accepted = base?.accepted === true;
     const stale = Boolean(workspace.selectedArticle && base?.articleId === workspace.selectedArticle.id && base.revisionId !== workspace.selectedArticle.currentRevisionId && !accepted);
-    const summaries = useProposalSummaries(client, intl, { state, stale, review, selectedArticleId: workspace.selectedArticle?.id, editorialArtifactId: base?.editorialArtifactId });
+    const summaries = useProposalSummaries(client, intl, {
+        state,
+        stale,
+        review,
+        selectedArticleId: workspace.selectedArticle?.id,
+        editorialArtifactId: base?.editorialArtifactId,
+        skipModelSummaries: recoveringTypography || base?.typography?.local,
+    });
     const actions = useProposalActions({
         client,
         workspace,
@@ -31,21 +92,15 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
         proposal: { base, review, accepted, stale, decisions },
         summaries: { setProposalSummaries: summaries.setProposalSummaries, setProposalSummaryLocale: summaries.setProposalSummaryLocale },
         results,
-        restoredArticleIds,
+        recovery,
         controller,
-        setProposal,
-        setBase,
-        setDecisions,
-        setState,
-        setMessage,
-    });
+    }, { setProposal, setBase, setDecisions, setState, setMessage });
 
     return {
         proposal,
         review,
         base,
         accepted,
-        stale,
         proposalStale: stale,
         decisions,
         state,

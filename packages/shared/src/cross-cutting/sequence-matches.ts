@@ -78,8 +78,8 @@ function collectSequenceMatches(base: readonly string[], proposal: readonly stri
 export function findSequenceMatches(base: readonly string[], proposal: readonly string[], ignoreBlankLines = false): SequenceMatch[] {
     const prefix: SequenceMatch[] = [];
     let start = 0;
-    while (start < base.length && start < proposal.length && base[start] === proposal[start]
-        && (!ignoreBlankLines || base[start].trim() !== "")) {
+    while (start < base.length && start < proposal.length && base[start] === proposal[start] &&
+        (!ignoreBlankLines || base[start].trim() !== "")) {
         prefix.push({ baseIndex: start, proposalIndex: start });
         start += 1;
     }

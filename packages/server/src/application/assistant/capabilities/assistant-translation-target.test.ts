@@ -29,9 +29,9 @@ test("each translation request binds its explicit language even when the model c
     };
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "", targetLanguage: "German",
-        scope: { kind: "article", baseRevisionId: "revision" }, articleContent: "Source", articleTitle: "Title",
-        resolvedSkillId: BUILT_IN_SKILL.TRANSLATION, engine, usesCapabilityLoop: true,
-        capabilityActivities: [], pendingActions: [], authorizedActions: [],
+        scope: { kind: "article", baseRevisionId: "revision" }, article: { content: "Source", title: "Title" },
+        resolvedSkillId: BUILT_IN_SKILL.TRANSLATION,
+        execution: { engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };
     const loop = new AssistantCapabilityLoop({
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
@@ -39,7 +39,7 @@ test("each translation request binds its explicit language even when the model c
             getDefinitions: () => editorialCapabilityDefinitions.filter((definition) => definition.id === "translate"),
             discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* (context) {
-                languages.push(context.targetLanguage);
+                languages.push(context.article.targetLanguage);
                 yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "translation", text: "Übersetzung", translation: { targetLanguage: "German", protectedSpans: [] } } as const;
             },
         },

@@ -243,8 +243,8 @@ export class FileAssistantSkillSource {
         if (!right)
             return false;
 
-        return Object.keys(left).length === Object.keys(right).length
-            && Object.entries(left).every(([path, content]) => right[path] === content);
+        return Object.keys(left).length === Object.keys(right).length &&
+            Object.entries(left).every(([path, content]) => right[path] === content);
     }
 
 
@@ -256,8 +256,8 @@ export class FileAssistantSkillSource {
 
 
     private isAvailable(skillPackage: AssistantSkillPackage, replacedId?: string): boolean {
-        return !Array.from(this.packages.values()).some((candidate) => candidate.reference.id !== replacedId
-            && (candidate.reference.id === skillPackage.reference.id || normalizeSkillName(candidate.name) === normalizeSkillName(skillPackage.name)));
+        return !Array.from(this.packages.values()).some((candidate) => candidate.reference.id !== replacedId &&
+            (candidate.reference.id === skillPackage.reference.id || normalizeSkillName(candidate.name) === normalizeSkillName(skillPackage.name)));
     }
 
 

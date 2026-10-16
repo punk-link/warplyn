@@ -18,8 +18,8 @@ export function verifyCorrectionSelection(checks: FactCheck[], revisionId: strin
 
 
 export function correctionContext(findings: FactCheck["findings"]): string {
-    const instructions = "Prepare a correction Proposal only for these explicitly selected advisory Findings. "
-        + "Preserve unrelated claims, numbers, URLs, code, technical terms, and author voice. Findings:\n";
+    const instructions = "Prepare a correction Proposal only for these explicitly selected advisory Findings. " +
+        "Preserve unrelated claims, numbers, URLs, code, technical terms, and author voice. Findings:\n";
 
     return `${instructions}${findings.map((finding) => `- ${finding.claim}: ${finding.rationale} Sources: ${finding.sources.map((source) => source.url).join(", ")}`).join("\n")}`;
 }

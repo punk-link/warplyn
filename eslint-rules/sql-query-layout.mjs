@@ -167,21 +167,21 @@ function toTemplateLiteral(sql, indentation) {
 
 
 function isDatabaseQuery(node) {
-    return node.type === "CallExpression"
-        && node.callee.type === "MemberExpression"
-        && !node.callee.computed
-        && node.callee.property.type === "Identifier"
-        && (node.callee.property.name === "prepare" || node.callee.property.name === "exec");
+    return node.type === "CallExpression" &&
+        node.callee.type === "MemberExpression" &&
+        !node.callee.computed &&
+        node.callee.property.type === "Identifier" &&
+        (node.callee.property.name === "prepare" || node.callee.property.name === "exec");
 }
 
 
 function isMigrationSql(node, filename) {
     const infrastructurePersistenceMigrationsPattern = /[\\/]infrastructure[\\/]persistence[\\/]migrations\.ts$/u;
-    return infrastructurePersistenceMigrationsPattern.test(filename)
-        && node.type === "Property"
-        && !node.computed
-        && node.key.type === "Identifier"
-        && node.key.name === "sql";
+    return infrastructurePersistenceMigrationsPattern.test(filename) &&
+        node.type === "Property" &&
+        !node.computed &&
+        node.key.type === "Identifier" &&
+        node.key.name === "sql";
 }
 
 

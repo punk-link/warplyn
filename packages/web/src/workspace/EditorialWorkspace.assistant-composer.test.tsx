@@ -18,15 +18,17 @@ describe("Editorial Assistant composer", () => {
     it("restores an unsent message only for its Article and clears it after sending", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);
-        const panel = (articleId: string) => <EditorialAssistantPanel
-            articleId={articleId}
-            state="idle"
-            message=""
-            onRequest={onRequest}
-            onCancel={vi.fn()}
-            collapsed={false}
-            setCollapsed={vi.fn()}
-            assistantMessages={[]} />;
+        const panel = (articleId: string) => (
+            <EditorialAssistantPanel
+                articleId={articleId}
+                state="idle"
+                message=""
+                onRequest={onRequest}
+                onCancel={vi.fn()}
+                collapsed={false}
+                setCollapsed={vi.fn()}
+                assistantMessages={[]} />
+        );
         const first = renderLocalized(panel("one"));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));

@@ -65,7 +65,7 @@ export function createApplicationServices({ stores, settings, integration = {}, 
     const articleService = new ArticleService(stores.articles, stores.assistant, integration.telemetry, () => stores.engines.resolveRevisionDescriptionGenerator?.(), () => stores.engines.resolveArticleTitleGenerator?.());
     const publishing = new PublishingService(settings.settings);
     const factCheckService = new FactCheckService(factChecks);
-    const styleCorpusService = new StyleCorpusService(stores.styleCorpus, stores.engines, stores.articles);
+    const styleCorpusService = new StyleCorpusService(stores.styleCorpus, stores.engines, stores.articles, stores.artifacts);
     const capabilities = integration.editorial
         ? new EditorialCapabilityCatalog(articleService, stores.artifacts, publishing, integration.editorial, styleCorpusService, factChecks, stores.assistant)
         : undefined;

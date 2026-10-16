@@ -49,7 +49,7 @@ function storedPreferences(value: unknown): WorkspaceLayoutPreferences | undefin
     if (value.version === 1)
         return { version: 4, libraryWidth, assistantWidth, libraryCollapsed, assistantCollapsed, proposalWarningsDismissed: false, selectedTranslationLanguages: {}, view: "write" };
 
-    const view = value.view === "publish" ? "write" : value.view;
+    const view = value.view === "publish" || value.view === "style-profile" ? "write" : value.view;
     if ((value.version !== 2 && value.version !== 3 && value.version !== 4) || !isWorkspaceView(view))
         return undefined;
 

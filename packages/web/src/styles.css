@@ -10,6 +10,10 @@
     -webkit-line-clamp: 2;
 }
 
+@utility field-label {
+    @apply flex flex-col gap-2 text-xs font-semibold text-ink;
+}
+
 @theme inline {
     --color-canvas: var(--color-canvas);
     --color-surface: var(--color-surface);

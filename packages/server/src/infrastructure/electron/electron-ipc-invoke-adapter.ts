@@ -14,6 +14,14 @@ function readIdentifier(value: unknown): string {
 }
 
 
+function readSingleArgument(args: readonly unknown[]): unknown {
+    if (args.length !== 1)
+        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
+    return args[0];
+}
+
+
 function isFactCheckResolution(value: unknown): value is NonNullable<import("@skladno/shared").FactCheckFinding["resolution"]> {
     return value === "accepted_as_written" || value === "evidence_accepted";
 }
@@ -165,6 +173,14 @@ async function invokeApplicationMethod(method: ElectronApplicationMethod, args: 
             return services.styleCorpus.setIncluded(String(args[0]), Boolean(args[1]));
         case ELECTRON_APPLICATION_METHOD.setStyleCorpusRules:
             return services.styleCorpus.setRules(String(args[0]));
+        case ELECTRON_APPLICATION_METHOD.setTypographyRules:
+            return services.styleCorpus.setTypographyRules(readSingleArgument(args));
+        case ELECTRON_APPLICATION_METHOD.setTypographyConfiguration:
+            return services.styleCorpus.setTypographyConfiguration(readSingleArgument(args));
+        case ELECTRON_APPLICATION_METHOD.getArticleTypography:
+            return services.styleCorpus.getArticleTypography(readIdentifier(readSingleArgument(args)));
+        case ELECTRON_APPLICATION_METHOD.getTypographyReview:
+            return services.styleCorpus.getTypographyReview(readIdentifier(readSingleArgument(args)));
         case ELECTRON_APPLICATION_METHOD.rebuildStyleCorpus:
             return services.styleCorpus.rebuild();
         case ELECTRON_APPLICATION_METHOD.getArticleStyleRules:

@@ -132,33 +132,38 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
         <div className="flex min-h-12 items-center gap-2 overflow-x-auto px-4 py-1.5">
             <h1 className="min-w-0 flex-1 text-xl font-semibold tracking-tight">
                 {editingTitle
-                    ? <Field
-                        autoFocus
-                        aria-label={intl.formatMessage({ id: "articleHeader.title" })}
-                        className="h-10 min-h-10 w-full px-2 text-xl font-semibold tracking-tight"
-                        value={title}
-                        onBlur={finishTitleEditing}
-                        onChange={(event) => {
-                            setTitle(event.target.value);
-                            clearTimeout(renameTimer.current);
-                            renameTimer.current = setTimeout(() => persistTitle(event.target.value), 500);
-                        }}
-                        onKeyDown={(event) => {
-                            if (event.key === "Enter")
-                                event.currentTarget.blur();
-
-                            if (event.key === "Escape") {
+                    ? (
+                        <Field
+                            autoFocus
+                            aria-label={intl.formatMessage({ id: "articleHeader.title" })}
+                            className="h-10 min-h-10 w-full px-2 text-xl font-semibold tracking-tight"
+                            value={title}
+                            onBlur={finishTitleEditing}
+                            onChange={(event) => {
+                                setTitle(event.target.value);
                                 clearTimeout(renameTimer.current);
-                                setTitle(article.title);
-                                setEditingTitle(false);
-                            }
-                        }} />
-                    : <button
-                        data-focus-area-entry
-                        className="w-full truncate text-left hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-                        type="button"
-                        aria-label={intl.formatMessage({ id: "articleHeader.rename" }, { articleTitle: displayTitle })}
-                        onClick={() => setEditingTitle(true)}>{displayTitle}</button>}
+                                renameTimer.current = setTimeout(() => persistTitle(event.target.value), 500);
+                            }}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter")
+                                    event.currentTarget.blur();
+
+                                if (event.key === "Escape") {
+                                    clearTimeout(renameTimer.current);
+                                    setTitle(article.title);
+                                    setEditingTitle(false);
+                                }
+                            }} />
+                    )
+                    : (
+                        <button
+                            data-focus-area-entry
+                            className="w-full truncate text-left hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                            type="button"
+                            aria-label={intl.formatMessage({ id: "articleHeader.rename" }, { articleTitle: displayTitle })}
+                            onClick={() => setEditingTitle(true)}>{displayTitle}
+                        </button>
+                    )}
             </h1>
             {article.archived && <Badge className="shrink-0" tone="info">{intl.formatMessage({ id: "articleHeader.archived" })}</Badge>}
             <div className="flex shrink-0 items-center gap-1 text-xs" aria-label={intl.formatMessage({ id: "articleHeader.metadata" })}>
@@ -222,20 +227,26 @@ function LocalizedArticleHeader({ article, updateArticle, save, files, remove, s
 
             </div>
         </div>
-        {deleteConfirmationOpen && <Dialog
-            className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
-            open
-            aria-labelledby="delete-article-title"
-            onCancel={(event) => {
-                event.preventDefault();
-                setDeleteConfirmationOpen(false);
-            }}>
-            <h2 id="delete-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
-            <p className="mt-2 text-sm leading-6 text-muted">{intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: displayTitle, count: groupCount })}</p>
-            <div className="mt-5 flex justify-end gap-2">
-                <Button variant="secondary" autoFocus onClick={() => setDeleteConfirmationOpen(false)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
-                <Button variant="danger" onClick={() => void confirmDelete()}>{intl.formatMessage({ id: "articleHeader.confirmDeleteArticle" })}</Button>
-            </div>
-        </Dialog>}
+        {deleteConfirmationOpen && (
+            <Dialog
+                className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl"
+                open
+                aria-labelledby="delete-article-title"
+                onCancel={(event) => {
+                    event.preventDefault();
+                    setDeleteConfirmationOpen(false);
+                }}>
+                <h2 id="delete-article-title" className="text-lg font-semibold">{intl.formatMessage({ id: "articleHeader.deleteConfirmationTitle" })}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                    {intl.formatMessage({ id: "articleHeader.deleteGroupConfirmationDescription" }, { articleTitle: displayTitle, count: groupCount })}
+                </p>
+                <div className="mt-5 flex justify-end gap-2">
+                    <Button variant="secondary" autoFocus onClick={() => setDeleteConfirmationOpen(false)}>
+                        {intl.formatMessage({ id: "editor.cancel" })}
+                    </Button>
+                    <Button variant="danger" onClick={() => void confirmDelete()}>{intl.formatMessage({ id: "articleHeader.confirmDeleteArticle" })}</Button>
+                </div>
+            </Dialog>
+        )}
     </header>;
 }

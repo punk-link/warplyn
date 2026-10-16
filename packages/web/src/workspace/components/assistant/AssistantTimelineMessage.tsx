@@ -129,10 +129,14 @@ function AuthorMessageContent({ visible, content, selectionText, skillOffset, sk
         return null;
 
     return <p className="whitespace-pre-wrap text-sm leading-6 text-ink">
-        {selectionText && <span className={("mx-1 inline-flex h-5 max-w-[calc(100%-0.5rem)] items-center align-middle rounded-full border border-border bg-surface-raised px-1.5 text-xs " +
+        {selectionText && (
+            <span
+                className={(("mx-1 inline-flex h-5 max-w-[calc(100%-0.5rem)] items-center align-middle rounded-full border " +
+                "border-border bg-surface-raised px-1.5 text-xs ") +
             "font-semibold text-muted")} aria-label={intl.formatMessage({ id: "assistant.articleSelection" })} title={selectionText}>
-            <span className="relative -top-px max-w-48 truncate">{getSelectionPreview(selectionText)}</span>
-        </span>}
+                <span className="relative -top-px max-w-48 truncate">{getSelectionPreview(selectionText)}</span>
+            </span>
+        )}
         {skillOffset === undefined ? content : <>{content.slice(0, skillOffset)}
             <span className="mx-1 inline-flex h-5 items-center align-middle rounded-full border border-brand/45 bg-surface-raised px-1.5 text-xs font-semibold text-brand">{skillId && getSkillLabel(skillId, skillNames)}</span>
             {skillId === BUILT_IN_SKILL.TRANSLATION && targetLanguage && <>{intl.formatMessage({ id: "assistant.translationTarget" }, { language: targetLanguage })}{content.slice(skillOffset) && " "}</>}
@@ -184,24 +188,33 @@ function AssistantMessageActions({ message, skillId, view, openView, openSkillFo
         return null;
 
     return <div className="flex shrink-0 gap-1">
-        {available.review && view && <IconButton
-            className="!size-6"
-            variant="secondary"
-            label={getViewLabel(view, intl)}
-            title={getViewLabel(view, intl)}
-            onClick={() => openView?.(view)}><ArticleIcon className="size-3" /></IconButton>}
-        {available.folder && message.requestId && <IconButton
-            className="!size-6"
-            variant="secondary"
-            label={intl.formatMessage({ id: "assistant.openSkillFolder" })}
-            title={intl.formatMessage({ id: "assistant.openSkillFolder" })}
-            onClick={() => openSkillFolder?.(message.requestId!)}><FolderIcon className="size-3" /></IconButton>}
-        {available.retry && message.requestId && <IconButton
-            className="!size-6"
-            variant="secondary"
-            label={intl.formatMessage({ id: "assistant.retry" })}
-            title={intl.formatMessage({ id: "assistant.retry" })}
-            onClick={() => onRetry?.(message.requestId!)}><UpdateIcon className="size-3" /></IconButton>}
+        {available.review && view && (
+            <IconButton
+                className="!size-6"
+                variant="secondary"
+                label={getViewLabel(view, intl)}
+                title={getViewLabel(view, intl)}
+                onClick={() => openView?.(view)}><ArticleIcon className="size-3" />
+            </IconButton>
+        )}
+        {available.folder && message.requestId && (
+            <IconButton
+                className="!size-6"
+                variant="secondary"
+                label={intl.formatMessage({ id: "assistant.openSkillFolder" })}
+                title={intl.formatMessage({ id: "assistant.openSkillFolder" })}
+                onClick={() => openSkillFolder?.(message.requestId!)}><FolderIcon className="size-3" />
+            </IconButton>
+        )}
+        {available.retry && message.requestId && (
+            <IconButton
+                className="!size-6"
+                variant="secondary"
+                label={intl.formatMessage({ id: "assistant.retry" })}
+                title={intl.formatMessage({ id: "assistant.retry" })}
+                onClick={() => onRetry?.(message.requestId!)}><UpdateIcon className="size-3" />
+            </IconButton>
+        )}
         {available.apply && applyEdit && <AssistantApplyButton message={message} applyEdit={applyEdit} intl={intl} />}
         {message.appliedEdit && <span className="text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.appliedEdit" })}</span>}
     </div>;
@@ -213,14 +226,16 @@ function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl
         return <div className={("pointer-events-none mt-2 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:pointer-events-auto " +
             "group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100")}>
             <time className="text-xs text-muted">{dateTime}</time>
-            {message.requestId && <IconButton
-                className="!size-6"
-                variant="secondary"
-                label={intl.formatMessage({ id: "assistant.checkpoint.accessible" }, { time: dateTime })}
-                title={intl.formatMessage({ id: "assistant.checkpoint.action" })}
-                onClick={() => onCheckpoint?.(message.id)}>
-                <UndoIcon className="size-3" />
-            </IconButton>}
+            {message.requestId && (
+                <IconButton
+                    className="!size-6"
+                    variant="secondary"
+                    label={intl.formatMessage({ id: "assistant.checkpoint.accessible" }, { time: dateTime })}
+                    title={intl.formatMessage({ id: "assistant.checkpoint.action" })}
+                    onClick={() => onCheckpoint?.(message.id)}>
+                    <UndoIcon className="size-3" />
+                </IconButton>
+            )}
         </div>;
 
     const statusLabel = getStatusLabel(message.status, intl);
@@ -231,8 +246,8 @@ function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl
         <p className="flex min-w-0 flex-wrap items-center gap-1 text-xs text-muted">
             <StatusIcon className="size-3" tone={getStatusTone(message.status)} />
             <span>{statusLabel}</span>
-            {skillUsedLabel && <span className="before:mr-1 before:content-['\00b7']" title={skillTitle}>{skillUsedLabel}</span>}
-            <span aria-hidden="true" className="before:content-['\00b7']" />
+            {skillUsedLabel && <span className="before:mr-1 before:content-['·']" title={skillTitle}>{skillUsedLabel}</span>}
+            <span aria-hidden="true" className="before:content-['·']" />
             <time>{dateTime}</time>
         </p>
         {actions}

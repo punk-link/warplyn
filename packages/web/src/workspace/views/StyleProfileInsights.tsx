@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { GeneralSettings, StyleCorpus, StyleReview } from "@skladno/shared";
-import { Banner, Button, TextareaField } from "../../ui/primitives.js";
+import type { GeneralSettings, StyleCorpus } from "@skladno/shared";
+import { Button } from "../../ui/primitives.js";
 import { ChevronRightIcon } from "../../ui/icons.js";
 import { formatDateTime } from "../../i18n/formatting.js";
 import type { MessageId } from "../../i18n/messages.js";
@@ -21,96 +21,81 @@ const traitDescriptions: Record<string, MessageId> = {
     "uses explicit transitions": "styleProfile.trait.usesExplicitTransitions",
     "uses few explicit transitions": "styleProfile.trait.usesFewExplicitTransitions",
 };
-const quietScrollbar = ("[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
 
 
-interface StyleProfileInsightsData {
-    corpus: StyleCorpus | undefined;
-    findings: StyleReview | undefined;
-    findingsStale: boolean;
-    generalSettings: GeneralSettings;
-    pendingAction: string | undefined;
-    rules: string;
-    savedRules: string;
-    articleRules: string;
-    savedArticleRules: string;
-}
-
-
-interface StyleProfileInsightsActions {
-    setRules: (value: string) => void;
-    setArticleRules: (value: string) => void;
-    onSaveRules: () => void;
-    onSaveArticleRules: () => void;
-    getRuleStatus: (draft: string, saved: string) => MessageId;
-}
-
-
-export function StyleProfileInsights({ data, actions }: { data: StyleProfileInsightsData; actions: StyleProfileInsightsActions }) {
-    const { corpus, findings, findingsStale, generalSettings, pendingAction, rules, savedRules, articleRules, savedArticleRules } = data;
-    const { setRules, setArticleRules, onSaveRules, onSaveArticleRules, getRuleStatus } = actions;
+export function StyleProfileInsights({ corpus, generalSettings }: { corpus: StyleCorpus | undefined; generalSettings: GeneralSettings }) {
     const intl = useIntl();
     const [sourcesExpanded, setSourcesExpanded] = useState(false);
     const contributors = corpus?.profile?.contributorIds.map((id) => corpus.items.find((item) => item.id === id)?.name).filter((name): name is string => Boolean(name)) ?? [];
-    const findingSupport = (finding: StyleReview["findings"][number]) => finding.traitIds.map((id) => findings?.traitLabels?.[id] ?? id).join(", ");
-
-    return <section className={`min-h-0 min-w-0 overflow-y-auto px-1 ${quietScrollbar}`}>
-        <h3 className="mb-4 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.detectedCharacteristics" })}</h3>
-        <p className="-mt-2 mb-4 text-xs text-muted">{intl.formatMessage({ id: corpus?.profile ? "styleProfile.detectedHint" : "styleProfile.detectedEmpty" })}</p>
-        {corpus?.profile && <div className="mb-5 text-xs text-muted">
-            <dl className="flex flex-wrap gap-x-8 gap-y-2"><div>
-                <dt>{intl.formatMessage({ id: "styleProfile.profileContributors" })}</dt>
-                <dd>{intl.formatMessage({ id: "styleProfile.profileSourceCount" }, { count: contributors.length })}</dd>
+    return (
+        <section className="mb-7">
+            <h3 className="mb-3 text-base font-semibold">{intl.formatMessage({ id: "styleProfile.detectedCharacteristics" })}</h3>
+            <div className="border-l border-border-strong pl-4">
+                <p className="mb-4 text-xs text-muted">
+                    {intl.formatMessage({ id: corpus?.profile ? "styleProfile.detectedHint" : "styleProfile.detectedEmpty" })}
+                </p>
+                {corpus?.profile && (
+                    <div className="mb-5 text-xs text-muted">
+                        <dl className="flex flex-wrap gap-x-8 gap-y-2">
+                            <div>
+                                <dt>{intl.formatMessage({ id: "styleProfile.profileContributors" })}</dt>
+                                <dd>{intl.formatMessage({ id: "styleProfile.profileSourceCount" }, { count: contributors.length })}</dd>
+                            </div>
+                            <div>
+                                <dt>{intl.formatMessage({ id: "styleProfile.profileLastRebuilt" })}</dt>
+                                <dd>
+                                    {formatDateTime(
+                                        corpus.profile.updatedAt,
+                                        intl.locale,
+                                        generalSettings.dateFormat,
+                                        generalSettings.timeFormat,
+                                        generalSettings.timeZone,
+                                    )}
+                                </dd>
+                            </div>
+                        </dl>
+                        <ProfileSourceDisclosure
+                            expanded={sourcesExpanded}
+                            toggle={() => setSourcesExpanded((value) => !value)}
+                            contributors={contributors}
+                        />
+                    </div>
+                )}
+                <div className="space-y-4">
+                    {corpus?.profile?.traits.map((trait) => (
+                        <div key={trait.id}>
+                            <h4 className="text-sm font-medium">
+                                {traitTitles[trait.id] ? intl.formatMessage({ id: traitTitles[trait.id] }) : trait.id}
+                            </h4>
+                            <p className="mt-1 text-sm text-muted">
+                                {intl.formatMessage(
+                                    { id: traitDescriptions[trait.label] ?? "styleProfile.trait.unknown" },
+                                    { label: trait.label, evidence: trait.evidence },
+                                )}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+                {corpus?.profile?.phrasesToAvoid.length ? (
+                    <>
+                        <h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">
+                            {intl.formatMessage({ id: "styleProfile.phrasesToAvoid" })}
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                            {corpus.profile.phrasesToAvoid.map((phrase) => (
+                                <span
+                                    className="rounded-control border border-danger/30 bg-danger-soft px-2 py-1 text-sm text-danger"
+                                    key={phrase}
+                                >
+                                    {phrase}
+                                </span>
+                            ))}
+                        </div>
+                    </>
+                ) : null}
             </div>
-            <div>
-                <dt>{intl.formatMessage({ id: "styleProfile.profileLastRebuilt" })}</dt>
-                <dd>{formatDateTime(corpus.profile.updatedAt, intl.locale, generalSettings.dateFormat, generalSettings.timeFormat, generalSettings.timeZone)}</dd>
-            </div>
-            </dl>
-            <ProfileSourceDisclosure expanded={sourcesExpanded} toggle={() => setSourcesExpanded((value) => !value)} contributors={contributors} />
-        </div>}
-        <div className="space-y-4">{corpus?.profile?.traits.map((trait) => <div key={trait.id}>
-            <h4 className="text-sm font-medium">{traitTitles[trait.id] ? intl.formatMessage({ id: traitTitles[trait.id] }) : trait.id}</h4>
-            <p className="mt-1 text-sm text-muted">{intl.formatMessage({ id: traitDescriptions[trait.label] ?? "styleProfile.trait.unknown" }, { label: trait.label, evidence: trait.evidence })}</p>
-        </div>)}</div>
-        {corpus?.profile?.phrasesToAvoid.length ? <><h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.phrasesToAvoid" })}</h3><div className="flex flex-wrap gap-2">{corpus.profile.phrasesToAvoid.map((phrase) => <span className="rounded-control border border-danger/30 bg-danger-soft px-2 py-1 text-sm text-danger" key={phrase}>{phrase}</span>)}</div></> : null}
-        <h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.manualRules" })}</h3>
-        <TextareaField
-            id="style-profile-global-rules"
-            aria-label={intl.formatMessage({ id: "styleProfile.rules" })}
-            className="min-h-36"
-            placeholder={intl.formatMessage({ id: "styleProfile.rules" })}
-            value={rules}
-            onChange={(event) => setRules(event.target.value)} />
-        <div className="mt-3 flex items-center gap-3">
-            <Button
-                variant="secondary"
-                state={pendingAction === "rules" ? "loading" : "default"}
-                disabled={Boolean(pendingAction)}
-                onClick={onSaveRules}>{intl.formatMessage({ id: "styleProfile.saveRules" })}</Button>
-            <p className="text-xs text-muted" role="status">{intl.formatMessage({ id: getRuleStatus(rules, savedRules) })}</p>
-        </div>
-        <h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.thisArticle" })}</h3>
-        <TextareaField
-            id="style-profile-article-rules"
-            aria-label={intl.formatMessage({ id: "styleProfile.articleRules" })}
-            className="min-h-28"
-            placeholder={intl.formatMessage({ id: "styleProfile.articleRules" })}
-            value={articleRules}
-            onChange={(event) => setArticleRules(event.target.value)} />
-        <div className="mt-3 flex items-center gap-3">
-            <Button
-                variant="secondary"
-                state={pendingAction === "article-rules" ? "loading" : "default"}
-                disabled={Boolean(pendingAction)}
-                onClick={onSaveArticleRules}>{intl.formatMessage({ id: "styleProfile.saveRules" })}</Button>
-            <p className="text-xs text-muted" role="status">{intl.formatMessage({ id: getRuleStatus(articleRules, savedArticleRules) })}</p>
-        </div>
-        {findings && <h3 className="mb-3 mt-7 text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.review" })}</h3>}
-        {findingsStale && <Banner className="mb-3" tone="warning" role="alert">{intl.formatMessage({ id: "styleProfile.staleReview" })}</Banner>}
-        {findings?.findings.map((finding) => <div key={finding.divergence} className="mt-3 text-sm"><p>{finding.divergence}: {finding.suggestion}</p><p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.reviewEvidence" }, { sources: findingSupport(finding) })}</p></div>)}
-    </section>;
+        </section>
+    );
 }
 
 

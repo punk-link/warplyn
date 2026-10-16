@@ -40,16 +40,19 @@
         {
             "id": "application.workspace-and-settings-screens",
             "area": "Application shell",
-            "title": "Separate Editorial Workspace and Application Settings screens",
+            "title": "Separate Editorial Workspace, Style Profile, and Application Settings screens",
             "status": "implemented",
             "owners": [
                 "packages/web/src/App.tsx",
                 "packages/web/src/workspace/EditorialWorkspace.tsx",
                 "packages/web/src/workspace/state/useWorkspaceGeneralSettings.ts",
+                "packages/web/src/workspace/components/StyleProfileScreen.tsx",
+                "packages/web/src/workspace/components/StyleProfileNavigation.tsx",
+                "packages/web/src/workspace/style-profile-sections.ts",
                 "packages/web/src/settings/ApplicationSettings.tsx",
                 "packages/web/src/settings/components/SettingsNavigation.tsx"
             ],
-            "contract": "Application Settings is a workspace-level screen and never belongs to Article Revision history.",
+            "contract": "Application Settings and Style Profile are standalone application screens with a labeled back action. Style Profile opens from the Library, its shortcut, and Assistant result links, preserves the selected Article and Workspace View, and remains usable without an Article. Its sidebar selects Detected characteristics, Typography rules, Manual rules, and Writing samples; narrow screens use a section selector. Switching sections preserves unfinished forms and resets the single content pane's scroll position. Neither screen belongs to Article Revision history.",
             "persistence": "Screen selection is renderer state; Application Settings persist through their dedicated service contracts."
         },
         {

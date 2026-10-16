@@ -24,8 +24,7 @@ import { ApplicationServiceError } from "../errors/application-service-error.js"
 import { AssistantEditError } from "./assistant-store.js";
 import { getAssistantArticleExcerpt, streamAssistantEngineEvents } from "./assistant-engine-request.js";
 import { AssistantClaimSelection } from "./requests/assistant-claim-selection.js";
-import { getAssistantInitialEvents } from "./requests/assistant-initial-events.js";
-import { getActivityForEditorialOperation } from "./capabilities/editorial-capability-catalog.js";
+import { createEditorialActivityEvent, getAssistantInitialEvents } from "./requests/assistant-initial-events.js";
 import { AssistantEditService } from "./assistant-edit-service.js";
 import { completePromotedEditTitle } from "./completion/complete-promoted-edit-title.js";
 
@@ -144,7 +143,7 @@ export class AssistantService {
         this.startedAt.delete(request.requestId);
         let initialized = false;
         try {
-            request.skipFactCheckClaim = this.claimSelection.start(request.articleId, request.requestId);
+            request.execution.skipFactCheckClaim = this.claimSelection.start(request.articleId, request.requestId);
             this.initializeRequest(request);
             initialized = true;
             yield* getAssistantInitialEvents(request);
@@ -157,7 +156,7 @@ export class AssistantService {
         } catch (error) {
             let partial: ReturnType<AssistantCompletion["persistPartialFactCheck"]> | undefined;
             try {
-                request.partialFactCheck = selectFactCheckFindings(request.partialFactCheck, request.skipFactCheckClaim);
+                request.execution.partialFactCheck = selectFactCheckFindings(request.execution.partialFactCheck, request.execution.skipFactCheckClaim);
 
                 if (initialized)
                     partial = persistInterruptedFactCheck(error, request, signal, this.completion);
@@ -201,7 +200,7 @@ export class AssistantService {
             if (event.type === EDITORIAL_ENGINE_EVENT.COMPLETED)
                 completedEvent = event;
             else if (event.type === EDITORIAL_ENGINE_EVENT.FACT_CHECK_PROGRESS)
-                request.partialFactCheck = event.factCheck;
+                request.execution.partialFactCheck = event.factCheck;
             else
                 yield* this.streamAssistantEvents(request, event, signal);
         }
@@ -246,7 +245,7 @@ export class AssistantService {
 
 
     private streamEditorialEvents(request: PreparedAssistantRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
-        return request.usesCapabilityLoop ? this.capabilityLoop.stream(request, signal) : this.streamEngineEvents(request, signal);
+        return request.execution.usesCapabilityLoop ? this.capabilityLoop.stream(request, signal) : this.streamEngineEvents(request, signal);
     }
 
 
@@ -276,15 +275,15 @@ export class AssistantService {
         await this.authorizeCompletedEdit(request, event, signal);
         signal.throwIfAborted();
 
-        const kind = request.directEditAuthorized && getEditCandidate(request, event) ? "edit_applied" : getResponseKind(request.completedCapability);
-        for (const activity of request.capabilityActivities)
+        const kind = request.directEditAuthorized && getEditCandidate(request, event) ? "edit_applied" : getResponseKind(request.execution.completedCapability);
+        for (const activity of request.execution.capabilityActivities)
             yield { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.requestId, activity };
 
         this.claimSelection.finish(request.requestId);
-        const selectedEvent = selectCompletedFactCheck(event, request.skipFactCheckClaim);
+        const selectedEvent = selectCompletedFactCheck(event, request.execution.skipFactCheckClaim);
 
-        if (!request.usesCapabilityLoop && request.operation)
-            yield { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.requestId, activity: { summary: getActivityForEditorialOperation(request.operation), status: "completed" } };
+        if (!request.execution.usesCapabilityLoop && request.execution.operation)
+            yield createEditorialActivityEvent(request.requestId, request.execution.operation, "completed");
 
         yield { type: ASSISTANT_EVENT.STAGED_COMPLETION, requestId: request.requestId, completion: { responseKind: kind } };
         signal.throwIfAborted();
@@ -300,7 +299,7 @@ export class AssistantService {
 
     private async authorizeCompletedEdit(request: PreparedAssistantRequest, event: Extract<EditorialEngineEvent, { type: "completed" }>, signal: AbortSignal): Promise<void> {
         validateProposalResult(getAssistantArticleExcerpt(request), event.text, request.resolvedSkill?.execution);
-        if (request.completedCapability !== "generate_proposal" || requiresProposalReview(request.resolvedSkill?.execution))
+        if (request.execution.completedCapability !== "generate_proposal" || requiresProposalReview(request.resolvedSkill?.execution))
             return;
 
         request.editCandidateAuthorized = await this.capabilityLoop.qualifiesReplacement(request, event.text, signal);
@@ -315,7 +314,7 @@ export class AssistantService {
         if (request.directEditAuthorized) {
             const content = getCompletedContent(request, event.text);
             const locale = request.interfaceLocale ?? normalizeGeneralSettings(this.stores.settings.getSetting("application-general")?.value).interfaceLocale;
-            request.editDescription = await this.articles.describeContentChange(request.articleContent, content, locale, signal);
+            request.editDescription = await this.articles.describeContentChange(request.article.content, content, locale, signal);
         }
     }
 

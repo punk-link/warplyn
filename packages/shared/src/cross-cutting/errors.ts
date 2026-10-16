@@ -33,6 +33,9 @@ export const APPLICATION_ERROR_BY_AREA = {
     EDITORIAL: {
         DUPLICATE_STYLE_CORPUS_ITEM: "duplicate_style_corpus_item",
         STYLE_CORPUS_REQUIRED: "style_corpus_required",
+        TYPOGRAPHY_RULES_INVALID: "typography_rules_invalid",
+        TYPOGRAPHY_RULES_REQUIRED: "typography_rules_required",
+        TYPOGRAPHY_CORRECTIONS_CONFLICT: "typography_corrections_conflict",
         TARGET_LANGUAGE_REQUIRED: "target_language_required",
         EDITORIAL_OPERATION_UNSUPPORTED: "editorial_operation_unsupported",
         EDITORIAL_CONFIGURATION_MISSING: "editorial_configuration_missing",

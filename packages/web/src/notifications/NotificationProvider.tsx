@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useIntl, type IntlShape } from "react-intl";
-import { ApplicationClientError } from "@skladno/shared";
+import { ApplicationClientError, NULL_CHARACTER } from "@skladno/shared";
 import { getErrorMessageId } from "../i18n/errors.js";
 import { NotificationViewport } from "./NotificationViewport.js";
 import { MAX_VISIBLE_NOTIFICATIONS } from "./notification-limit.js";
@@ -107,10 +107,10 @@ function useNotificationState(intl: IntlShape) {
             const existingActionId = actionIds.current.get(options.action.onAction);
             const resolvedActionId = existingActionId ?? nextActionId.current++;
             actionIds.current.set(options.action.onAction, resolvedActionId);
-            actionId = `${options.action.label}\u0000${resolvedActionId}`;
+            actionId = `${options.action.label}${NULL_CHARACTER}${resolvedActionId}`;
         }
 
-        const key = `${title}\u0000${message}\u0000${actionId}`;
+        const key = `${title}${NULL_CHARACTER}${message}${NULL_CHARACTER}${actionId}`;
         const existingId = errorNotificationIds.current.get(key);
 
         if (existingId)
@@ -184,12 +184,14 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
     return <NotificationsContext.Provider value={value}>
         {children}
-        {visibleNotifications.map((notification) => <NotificationTimer
-            key={notification.id}
-            notification={notification}
-            paused={(pauseReasons[notification.id]?.length ?? 0) > 0}
-            dismiss={dismiss}
-            start={startTimer} />)}
+        {visibleNotifications.map((notification) => (
+            <NotificationTimer
+                key={notification.id}
+                notification={notification}
+                paused={(pauseReasons[notification.id]?.length ?? 0) > 0}
+                dismiss={dismiss}
+                start={startTimer} />
+        ))}
         <NotificationViewport
             notifications={[...visibleNotifications].reverse()}
             label={intl.formatMessage({ id: "notifications.viewport" })}

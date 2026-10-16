@@ -86,27 +86,59 @@ const iconButtonVariantClasses = {
 
 
 export function IconButton({ label, children, className, variant = "default", round = false, ...props }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement> & { label: string; variant?: keyof typeof iconButtonVariantClasses; round?: boolean }>) {
-    return <button {...props} className={joinClassNames(("inline-grid size-9 place-items-center border p-0 transition-colors active:translate-y-px focus:outline-none focus-visible:ring-2 " +
-        "focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55"), round ? "rounded-full" : "rounded-control", iconButtonVariantClasses[variant], className)} aria-label={label}>{children}</button>;
+    return <button
+        {...props}
+        className={joinClassNames(
+            "inline-grid size-9 place-items-center border p-0 transition-colors active:translate-y-px focus:outline-none " +
+                "focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55",
+            round ? "rounded-full" : "rounded-control",
+            iconButtonVariantClasses[variant],
+            className,
+        )}
+        aria-label={label}>
+        {children}
+    </button>;
 }
 
 
 export const Field = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { state?: ControlState }>(function Field({ className, state = "default", ...props }, ref) {
-    return <input ref={ref} {...props} className={joinClassNames("min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm leading-5 text-ink placeholder:text-ink/45", controlStateClasses[state], className)} />;
+    return <input
+        ref={ref}
+        {...props}
+        className={joinClassNames(
+            "min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm font-normal " +
+                "leading-5 text-ink placeholder:text-ink/45",
+            controlStateClasses[state],
+            className,
+        )} />;
 });
 
 
 export function TextareaField({ className, state = "default", ...props }: TextareaHTMLAttributes<HTMLTextAreaElement> & { state?: ControlState }) {
-    return <textarea {...props} className={joinClassNames("min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm leading-5 text-ink placeholder:text-ink/45", controlStateClasses[state], className)} />;
+    return <textarea
+        {...props}
+        className={joinClassNames(
+            "min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm font-normal " +
+                "leading-5 text-ink placeholder:text-ink/45",
+            controlStateClasses[state],
+            className,
+        )} />;
 }
 
 
 export function Select({ className, disabled, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
     return <span className={joinClassNames("relative block w-full", className)}>
-        <select {...props} disabled={disabled} className={joinClassNames(("min-h-10 w-full appearance-none rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink " +
-            "transition-colors hover:border-brand/45 hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-55 " +
-            "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-            "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong"), className)} />
+        <select
+            {...props}
+            disabled={disabled}
+            className={joinClassNames(
+                "min-h-10 w-full appearance-none rounded-control border border-border bg-surface-raised px-3 py-2 " +
+                    "pr-10 text-sm font-normal leading-5 text-ink " +
+                    "transition-colors hover:border-brand/45 hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-55 " +
+                    "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+                    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong",
+                className,
+            )} />
         <ChevronDownIcon className={joinClassNames("pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted", disabled ? "opacity-55" : undefined)} />
     </span>;
 }
@@ -156,7 +188,8 @@ export function Tab({ children, selected, ...props }: PropsWithChildren<ButtonHT
         {...props}
         className={joinClassNames("relative min-h-9 shrink-0 border-b-2 border-transparent px-2 py-2 text-xs text-muted hover:text-ink", selected ? "font-semibold text-brand after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-brand" : undefined, props.className)}
         role="tab"
-        aria-selected={selected}>{children}</button>;
+        aria-selected={selected}>{children}
+    </button>;
 }
 
 
@@ -191,7 +224,8 @@ export function EmptyState({ title, children, className }: PropsWithChildren<{ t
 export function Tooltip({ children, content }: { children: ReactNode; content: string }) {
     return <span className="group relative">{children}
         <span role="tooltip" className={("pointer-events-none absolute z-10 w-max max-w-64 translate-y-1 rounded-control bg-ink p-2 text-xs text-on-brand opacity-0 " +
-            "transition-opacity group-hover:opacity-100 group-focus-within:opacity-100")}>{content}</span>
+            "transition-opacity group-hover:opacity-100 group-focus-within:opacity-100")}>{content}
+        </span>
     </span>;
 }
 

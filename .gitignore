@@ -10,8 +10,20 @@
 /playwright-report
 /test-results
 /.e2e-data
+/.accessibility-e2e-data/
+/.doc-screenshots-data-*/
+/.electron-debug-data/
+/.icon-preview-data/
+/packages/server/.doc-screenshots-data-*/
 /.tmp-pr*-*.log
 /.tmp-pr*-evidence/
+/.codex/outputs/
+/.codex/typography-ui-dictionary-trace/
+/.codex/*.log
+/.codex/*.png
+/.codex/*.jpg
+/.codex/*.jpeg
+/.codex/*.webp
 
 # next.js
 /.next/

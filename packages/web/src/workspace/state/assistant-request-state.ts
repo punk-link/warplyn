@@ -68,9 +68,9 @@ export function useAssistantRequestStore(): AssistantRequestStore {
 
 
 function isAiConnectionUnavailable(error: unknown): boolean {
-    return error instanceof ApplicationClientError && (error.code === APPLICATION_ERROR.ACTIVE_CONNECTION_REQUIRED
-        || error.code === APPLICATION_ERROR.AI_CONNECTION_NOT_FOUND
-        || error.code === APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING);
+    return error instanceof ApplicationClientError && (error.code === APPLICATION_ERROR.ACTIVE_CONNECTION_REQUIRED ||
+        error.code === APPLICATION_ERROR.AI_CONNECTION_NOT_FOUND ||
+        error.code === APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING);
 }
 
 

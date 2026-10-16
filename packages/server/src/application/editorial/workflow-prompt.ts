@@ -1,5 +1,14 @@
 import type { ModelMessage } from "ai";
-import { APPLICATION_ERROR, EDITORIAL_OPERATION, editorialOperationSkillMap, HTTP_STATUS, type EditorialOperation, type StyleProfile } from "@skladno/shared";
+import {
+    APPLICATION_ERROR,
+    EDITORIAL_OPERATION,
+    editorialOperationSkillMap,
+    HTTP_STATUS,
+    typographyRuleId,
+    typographyRuleLabel,
+    type EditorialOperation,
+    type StyleProfile,
+} from "@skladno/shared";
 
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 import { loadBuiltInSkillPackages } from "../assistant/skills/built-in-skill-packages.js";
@@ -125,11 +134,28 @@ function createStyleReviewPrompt(input: EditorialPromptInput): ModelMessage[] {
     return [
         {
             role: "system",
-            content: getSkillInstructions(input)
+            content: getSkillInstructions(input),
         },
         {
             role: "user",
-            content: `${createArticleTitleContext(input)}Current article:\n${input.article}\n\nCorpus confidence: ${input.styleProfile.confidence} (${input.styleProfile.corpusItemCount} item(s), ${input.styleProfile.characterCount} characters).\n\nSupplied corpus traits:\n${formatStyleTraits(input.styleProfile)}\n\nGlobal rules:\n${formatNumberedRules(input.styleProfile.rules, "global-rule")}\n\nThis Article rules:\n${formatNumberedRules(input.articleStyleRules ?? "", "article-rule")}\n\nAuthor guidance:\n${createAuthorGuidance(input.authorContext)}`
+            content:
+                `${createArticleTitleContext(input)}Current article:\n${input.article}\n\n` +
+                `Corpus confidence: ${input.styleProfile.confidence} (${input.styleProfile.corpusItemCount} item(s), ` +
+                `${input.styleProfile.characterCount} characters).\n\n` +
+                `Typography language: ${input.styleProfile.rules.typographyCapture?.language ?? "Unspecified"}.\n` +
+                "Use only supplied typography conventions; do not default to English for an unspecified language.\n\n" +
+                `Supplied corpus traits:\n${formatStyleTraits(input.styleProfile)}\n\nGlobal rules:\n` +
+                `${formatNumberedRules(input.styleProfile.rules.manual, "global-rule")}\n\n` +
+                `Contextual typography rules:\n${
+                    input.styleProfile.rules.typography
+                        .filter((rule) => rule.definition.kind === "contextual")
+                        .map((rule) => `${typographyRuleId(rule)}: ${typographyRuleLabel(rule)}`)
+                        .join("\n") || "None"
+                }\n` +
+                "Mechanical typography is checked locally after your Proposal. Preserve numbers, code, URLs, and quoted words. " +
+                "If guidance conflicts, leave disputed text unchanged and explain which supplied rules need clarification in a Finding.\n\n" +
+                `This Article rules:\n${formatNumberedRules(input.articleStyleRules ?? "", "article-rule")}\n\n` +
+                `Author guidance:\n${createAuthorGuidance(input.authorContext)}`,
         },
     ];
 }

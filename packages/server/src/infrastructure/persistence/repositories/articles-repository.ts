@@ -1,4 +1,8 @@
-import { REVISION_PROVENANCE_KIND, isArticleLanguage, isPublishLimitProfileId, type AcceptedChange, type AcceptProposalInput, type CreateArticleInput, type UpdateArticleInput, type Article, type ArticleDraft, type ArticleRevision, type SaveArticleDraftInput, type SaveArticleRevisionInput } from "@skladno/shared";
+import {
+    REVISION_PROVENANCE_KIND, normalizeWritingLanguage, isPublishLimitProfileId, type AcceptedChange, type AcceptProposalInput,
+    type CreateArticleInput, type UpdateArticleInput, type Article, type ArticleDraft, type ArticleRevision,
+    type SaveArticleDraftInput, type SaveArticleRevisionInput,
+} from "@skladno/shared";
 
 import type { SqliteDatabase } from "../database.js";
 import { ArticleDraftConflictError } from "../../../application/articles/article-draft-conflict-error.js";
@@ -20,8 +24,8 @@ export class ArticlesRepository {
 
 
     createArticle(input: CreateArticleInput): Article {
-        const language = input.language;
-        if (language !== undefined && !isArticleLanguage(language))
+        const language = normalizeWritingLanguage(input.language);
+        if (input.language !== undefined && !language)
             throwInvalidArticleRequest();
 
         if (input.publishingProfileId !== undefined && !isPublishLimitProfileId(input.publishingProfileId))
@@ -109,8 +113,8 @@ export class ArticlesRepository {
         if (!this.getArticle(articleId))
             throwArticleNotFound();
 
-        const language = input.language;
-        if (language !== undefined && !isArticleLanguage(language))
+        const language = normalizeWritingLanguage(input.language);
+        if (input.language !== undefined && !language)
             throwInvalidArticleRequest();
 
         if (input.publishingProfileId !== undefined && !isPublishLimitProfileId(input.publishingProfileId))

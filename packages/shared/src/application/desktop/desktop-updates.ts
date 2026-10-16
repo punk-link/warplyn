@@ -36,23 +36,23 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 
 function hasCommonState(value: Record<string, unknown>): boolean {
-    return typeof value.currentVersion === "string"
-        && typeof value.automaticChecks === "boolean"
-        && typeof value.includePrereleases === "boolean"
-        && typeof value.networkAccess === "boolean"
-        && (value.recoveryAvailable === undefined || typeof value.recoveryAvailable === "boolean")
-        && (value.lastCheckedAt === undefined || typeof value.lastCheckedAt === "string");
+    return typeof value.currentVersion === "string" &&
+        typeof value.automaticChecks === "boolean" &&
+        typeof value.includePrereleases === "boolean" &&
+        typeof value.networkAccess === "boolean" &&
+        (value.recoveryAvailable === undefined || typeof value.recoveryAvailable === "boolean") &&
+        (value.lastCheckedAt === undefined || typeof value.lastCheckedAt === "string");
 }
 
 
 function isReleaseState(value: Record<string, unknown>): boolean {
-    return (value.kind === "available" || value.kind === "downloading" || value.kind === "ready")
-        && typeof value.version === "string"
-        && typeof value.title === "string"
-        && typeof value.summary === "string"
-        && typeof value.releaseNotesUrl === "string"
-        && typeof value.security === "boolean"
-        && (value.kind !== "available" || typeof value.downloadable === "boolean");
+    return (value.kind === "available" || value.kind === "downloading" || value.kind === "ready") &&
+        typeof value.version === "string" &&
+        typeof value.title === "string" &&
+        typeof value.summary === "string" &&
+        typeof value.releaseNotesUrl === "string" &&
+        typeof value.security === "boolean" &&
+        (value.kind !== "available" || typeof value.downloadable === "boolean");
 }
 
 

@@ -97,12 +97,14 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
                 openArticle(linkedTranslation.id);
                 edit?.();
             } : undefined}
-            update={translation?.editorialArtifactId && !sourceArticle && <TranslationRefreshControl
-                key={translationResultId(translation)}
-                translation={translation}
-                linkedTranslations={linkedTranslations}
-                stale={selectedStale || !protectedSpansValid}
-                create={create} />}
+            update={translation?.editorialArtifactId && !sourceArticle && (
+                <TranslationRefreshControl
+                    key={translationResultId(translation)}
+                    translation={translation}
+                    linkedTranslations={linkedTranslations}
+                    stale={selectedStale || !protectedSpansValid}
+                    create={create} />
+            )}
             setDisplayMode={setDisplayMode}
             setRejectionLanguage={setRejectionLanguage}
             setRejectConfirmationOpen={(open) => {
@@ -124,15 +126,17 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
             generalSettings={data.generalSettings}
             revisions={data.revisions}
         />
-        {generationOpen && <NewTranslationDialog
-            article={article}
-            content={sourceContent}
-            defaults={translationLanguages}
-            viewedLanguage={language}
-            revisionNumber={data.revisionNumbers?.[article.currentRevisionId]}
-            active={requestActive}
-            close={() => setGenerationOpen(false)}
-            generate={translate} />}
+        {generationOpen && (
+            <NewTranslationDialog
+                article={article}
+                content={sourceContent}
+                defaults={translationLanguages}
+                viewedLanguage={language}
+                revisionNumber={data.revisionNumbers?.[article.currentRevisionId]}
+                active={requestActive}
+                close={() => setGenerationOpen(false)}
+                generate={translate} />
+        )}
         <TranslationBody
             source={source}
             translatedContent={translatedContent}

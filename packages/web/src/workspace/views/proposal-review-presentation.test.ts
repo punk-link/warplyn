@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import { describe, expect, it } from "vitest";
 import { createTextProposal } from "@skladno/shared";
 import { presentProposalReview } from "./proposal-review-presentation.js";

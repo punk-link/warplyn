@@ -74,14 +74,16 @@ export function NewTranslationDialog({ article, content, defaults, viewedLanguag
         <fieldset className="mt-4">
             <legend className="text-sm font-semibold">{intl.formatMessage({ id: "views.translationGenerateTargets" })}</legend>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {supported.map((language) => <label key={language} className="flex min-h-9 items-center gap-2 text-sm text-ink">
-                    <input
-                        type="checkbox"
-                        className="size-4 accent-brand"
-                        checked={selected.includes(language)}
-                        onChange={(event) => setLanguages(event.target.checked ? [...selected, language] : selected.filter((item) => item !== language))} />
-                    {intl.formatMessage({ id: languageMessageIds[language] })}
-                </label>)}
+                {supported.map((language) => (
+                    <label key={language} className="flex min-h-9 items-center gap-2 text-sm text-ink">
+                        <input
+                            type="checkbox"
+                            className="size-4 accent-brand"
+                            checked={selected.includes(language)}
+                            onChange={(event) => setLanguages(event.target.checked ? [...selected, language] : selected.filter((item) => item !== language))} />
+                        {intl.formatMessage({ id: languageMessageIds[language] })}
+                    </label>
+                ))}
             </div>
         </fieldset>
         <div className="mt-5 flex flex-wrap justify-end gap-2">

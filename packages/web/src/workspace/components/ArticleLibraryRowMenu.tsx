@@ -49,26 +49,40 @@ export function ArticleLibraryRowMenu({ article, anchor, canReorder, pinnedRoots
                 type="button"
                 role="menuitem"
                 disabled={files.pending}
-                onClick={() => runFile(() => files.saveArticle(article))}><SaveFileIcon className="size-3 shrink-0" />{intl.formatMessage({ id: "articleFiles.menuSave" })}</button>
+                onClick={() => runFile(() => files.saveArticle(article))}><SaveFileIcon
+                    className="size-3 shrink-0" />{intl.formatMessage({ id: "articleFiles.menuSave" })}
+            </button>
             <button
                 className={("flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs hover:bg-brand-soft " +
                 "focus-visible:bg-brand-soft focus-visible:outline focus-visible:outline-brand disabled:opacity-50")}
                 type="button"
                 role="menuitem"
                 disabled={files.pending}
-                onClick={() => runFile(files.loadArticle, true)}><LoadFileIcon className="size-3 shrink-0" />{intl.formatMessage({ id: "articleFiles.menuLoad" })}</button>
+                onClick={() => runFile(files.loadArticle, true)}><LoadFileIcon
+                    className="size-3 shrink-0" />{intl.formatMessage({ id: "articleFiles.menuLoad" })}
+            </button>
             <div role="separator" className="my-0.5 border-t border-border" />
         </>}
-        {!article.sourceArticleId && !article.archived && <button
-            className="flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs hover:bg-brand-soft focus:outline-none"
-            type="button"
-            role="menuitem"
-            onClick={() => run(() => setPinned?.(article.id, article.pinOrder === undefined) ?? Promise.resolve())}><PinIcon className="size-3 shrink-0" />{intl.formatMessage({ id: article.pinOrder === undefined ? "navigation.pin" : "navigation.unpin" })}</button>}
-        {!article.sourceArticleId && <button
-            className="flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs hover:bg-brand-soft focus:outline-none"
-            type="button"
-            role="menuitem"
-            onClick={() => run(() => setArchived?.(article.id, !article.archived) ?? Promise.resolve())}><ArchiveIcon className="size-3 shrink-0" />{intl.formatMessage({ id: article.archived ? "navigation.unarchive" : "navigation.archive" })}</button>}
+        {!article.sourceArticleId && !article.archived && (
+            <button
+                className={("flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left " +
+                    "text-xs hover:bg-brand-soft focus:outline-none")}
+                type="button"
+                role="menuitem"
+                onClick={() => run(() => setPinned?.(article.id, article.pinOrder === undefined) ?? Promise.resolve())}><PinIcon
+                    className="size-3 shrink-0" />{intl.formatMessage({ id: article.pinOrder === undefined ? "navigation.pin" : "navigation.unpin" })}
+            </button>
+        )}
+        {!article.sourceArticleId && (
+            <button
+                className={("flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left " +
+                    "text-xs hover:bg-brand-soft focus:outline-none")}
+                type="button"
+                role="menuitem"
+                onClick={() => run(() => setArchived?.(article.id, !article.archived) ?? Promise.resolve())}><ArchiveIcon
+                    className="size-3 shrink-0" />{intl.formatMessage({ id: article.archived ? "navigation.unarchive" : "navigation.archive" })}
+            </button>
+        )}
         {canReorder && <>
             <button
                 className={("flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs hover:bg-brand-soft " +
@@ -76,14 +90,18 @@ export function ArticleLibraryRowMenu({ article, anchor, canReorder, pinnedRoots
                 type="button"
                 role="menuitem"
                 disabled={pinnedRoots[0]?.id === article.id}
-                onClick={() => movePinned(article, -1)}><ArrowLeftIcon className="size-3 shrink-0 rotate-90" />{intl.formatMessage({ id: "navigation.movePinnedUp" })}</button>
+                onClick={() => movePinned(article, -1)}><ArrowLeftIcon
+                    className="size-3 shrink-0 rotate-90" />{intl.formatMessage({ id: "navigation.movePinnedUp" })}
+            </button>
             <button
                 className={("flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs hover:bg-brand-soft " +
                 "focus:outline-none disabled:opacity-50")}
                 type="button"
                 role="menuitem"
                 disabled={pinnedRoots.at(-1)?.id === article.id}
-                onClick={() => movePinned(article, 1)}><ArrowLeftIcon className="size-3 shrink-0 -rotate-90" />{intl.formatMessage({ id: "navigation.movePinnedDown" })}</button>
+                onClick={() => movePinned(article, 1)}><ArrowLeftIcon
+                    className="size-3 shrink-0 -rotate-90" />{intl.formatMessage({ id: "navigation.movePinnedDown" })}
+            </button>
         </>}
         <button
             className="flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs text-danger hover:bg-danger-soft focus:outline-none"

@@ -36,11 +36,11 @@ export type AssistantRequestTimeout = number | "unlimited";
 
 
 export function isDateFormatPreference(value: unknown): value is DateFormatPreference {
-    return value === "system"
-        || value === "day-first"
-        || value === "day-first-dots"
-        || value === "month-first"
-        || value === "iso";
+    return value === "system" ||
+        value === "day-first" ||
+        value === "day-first-dots" ||
+        value === "month-first" ||
+        value === "iso";
 }
 
 

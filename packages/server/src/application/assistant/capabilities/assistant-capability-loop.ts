@@ -55,8 +55,8 @@ export class AssistantCapabilityLoop {
         const verifier = this.dependencies.engines.resolveAssistantActionIntentVerifier?.();
         try {
             const source = request.scope.kind === "selection"
-                ? request.articleContent.slice(request.scope.startOffset, request.scope.endOffset)
-                : request.articleContent;
+                ? request.article.content.slice(request.scope.startOffset, request.scope.endOffset)
+                : request.article.content;
             if (replacement === getExactCharacterReplacement(request, source))
                 return true;
 
@@ -86,7 +86,7 @@ export class AssistantCapabilityLoop {
 
 
     async *stream(request: PreparedAssistantRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
-        if (!request.engine.streamAssistant || !this.dependencies.capabilities)
+        if (!request.execution.engine.streamAssistant || !this.dependencies.capabilities)
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
         const excerpt = getAssistantArticleExcerpt(request);
@@ -124,7 +124,7 @@ export class AssistantCapabilityLoop {
             ...(initialActiveCapabilities ? { initialActiveCapabilities } : {}),
         };
 
-        yield* progress.stream(request.engine.streamAssistant(editorialRequest, signal), (event) => this.resolveStreamEvent(request, event, primary));
+        yield* progress.stream(request.execution.engine.streamAssistant(editorialRequest, signal), (event) => this.resolveStreamEvent(request, event, primary));
     }
 
 
@@ -147,7 +147,7 @@ export class AssistantCapabilityLoop {
         if (primary)
             return primary;
 
-        if (request.operation || (request.resolvedSkill && (request.resolvedSkill.execution ?? defaultSkillExecution).capability !== "manage_skills"))
+        if (request.execution.operation || (request.resolvedSkill && (request.resolvedSkill.execution ?? defaultSkillExecution).capability !== "manage_skills"))
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
         return event;
@@ -214,7 +214,7 @@ export class AssistantCapabilityLoop {
         if (!isValidatedEditorialCapabilityCall(definition.id, input))
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
-        request.capabilityActivities.push({ summary: definition.activity, status: "started" });
+        request.execution.capabilityActivities.push({ summary: definition.activity, status: "started" });
         this.dependencies.assistant.setExecution(request.requestId, definition.id);
 
         if (definition.execution === "read")
@@ -256,8 +256,8 @@ export class AssistantCapabilityLoop {
             throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
         signal.throwIfAborted();
-        request.authorizedActions = [...request.authorizedActions, action];
-        request.pendingActions.push({ capability: action, input });
+        request.execution.authorizedActions = [...request.execution.authorizedActions, action];
+        request.execution.pendingActions.push({ capability: action, input });
         this.completeCapability(request, definition);
 
         return { status: "staged" };
@@ -271,7 +271,7 @@ export class AssistantCapabilityLoop {
 
         const exactReplacement = definition.id === EDITORIAL_CAPABILITY.GENERATE_PROPOSAL ? getExactCharacterReplacement(request, excerpt) : undefined;
         if (exactReplacement) {
-            request.completedCapability = definition.id;
+            request.execution.completedCapability = definition.id;
             setPrimary({ type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: randomUUID(), text: exactReplacement });
             this.completeCapability(request, definition);
 
@@ -304,9 +304,9 @@ export class AssistantCapabilityLoop {
 
     private recordCompletedArtifact(request: PreparedAssistantRequest, definition: EditorialCapabilityDefinition, event: CompletionEvent): void {
         if (definition.id === EDITORIAL_CAPABILITY.FACT_CHECK && event.factCheck)
-            request.partialFactCheck = event.factCheck;
+            request.execution.partialFactCheck = event.factCheck;
 
-        request.completedCapability = definition.id;
+        request.execution.completedCapability = definition.id;
     }
 
 
@@ -315,21 +315,34 @@ export class AssistantCapabilityLoop {
             capability: definition.id as StreamContext["capability"],
             context: { articleId: request.articleId, baseRevisionId: request.scope.baseRevisionId },
             requestId: request.requestId,
-            skipFactCheckClaim: request.skipFactCheckClaim,
-            authorContext,
-            ...(request.resolvedSkillId ? { skillId: request.resolvedSkillId } : {}),
-            skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
-            ...(request.publishingCharacterLimit ? { targetArticleCharacterLimit: request.publishingCharacterLimit } : {}),
-            ...(input.operation ? { operation: input.operation as StreamContext["operation"] } : {}),
-            ...(input.targetLanguage ? { targetLanguage: input.targetLanguage } : {}),
-            ...(input.findingIds ? { findingIds: input.findingIds } : {}),
-            ...(request.scope.kind === "selection" ? { articleContent: excerpt, articleSelection: true, surroundingArticleCharacterCount: request.articleContent.length - excerpt.length } : {}),
+            ...(request.article.styleContext ? { styleContext: request.article.styleContext } : {}),
+            editorial: {
+                authorContext,
+                ...(request.resolvedSkillId ? { skillId: request.resolvedSkillId } : {}),
+                skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
+                ...(input.operation ? { operation: input.operation as StreamContext["editorial"]["operation"] } : {}),
+            },
+            article: {
+                ...(request.article.publishingCharacterLimit ? { targetArticleCharacterLimit: request.article.publishingCharacterLimit } : {}),
+                ...(input.targetLanguage ? { targetLanguage: input.targetLanguage } : {}),
+                ...(request.scope.kind === "selection" ? {
+                    content: excerpt,
+                    selection: true,
+                    surroundingCharacterCount: request.article.content.length - excerpt.length,
+                } : {}),
+            },
+            ...(request.execution.skipFactCheckClaim || input.findingIds ? {
+                factChecking: {
+                    ...(request.execution.skipFactCheckClaim ? { skipClaim: request.execution.skipFactCheckClaim } : {}),
+                    ...(input.findingIds ? { findingIds: input.findingIds } : {}),
+                },
+            } : {}),
         };
     }
 
 
     private completeCapability(request: PreparedAssistantRequest, definition: EditorialCapabilityDefinition): void {
-        request.capabilityActivities.push({ summary: definition.activity, status: "completed" });
+        request.execution.capabilityActivities.push({ summary: definition.activity, status: "completed" });
         this.dependencies.assistant.setExecution(request.requestId, definition.id, "completed");
     }
 }

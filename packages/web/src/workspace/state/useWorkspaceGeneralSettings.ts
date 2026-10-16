@@ -3,7 +3,7 @@ import { defaultGeneralSettings, type GeneralSettings } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
 
 
-export function useWorkspaceGeneralSettings(client: EditorialWorkspaceClient, screen: "editorial-workspace" | "application-settings") {
+export function useWorkspaceGeneralSettings(client: EditorialWorkspaceClient, screen: "editorial-workspace" | "application-settings" | "style-profile") {
     const [generalSettings, setGeneralSettings] = useState<GeneralSettings>(defaultGeneralSettings);
 
     useEffect(() => {

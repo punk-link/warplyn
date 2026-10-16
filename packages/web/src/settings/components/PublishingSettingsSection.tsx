@@ -1,7 +1,7 @@
 import { articleLanguages, isPublishLimitProfileId, PUBLISH_LIMIT_PROFILE, publishLimitProfiles, type CustomPublishLimitProfile, type GeneralSettings, type PublishingSettings } from "@skladno/shared";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { Button, Field, Select } from "../../ui/primitives.js";
+import { Badge, Button, Field, Select } from "../../ui/primitives.js";
 import { CustomProfileRemovalDialog } from "./CustomProfileRemovalDialog.js";
 import { Control, SettingRow, SettingsGroup } from "./SettingRow.js";
 
@@ -59,13 +59,22 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
                     <h3 className="text-sm font-semibold">{intl.formatMessage({ id: "settings.customProfiles" })}</h3>
                     <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.customProfilesHint" })}</p>
                 </div>
-                {publishing.customProfiles.length > 0 && <ul className="mt-4 divide-y divide-border border-y border-border">
-                    {publishing.customProfiles.map((profile) => <li key={profile.id} className="flex items-center gap-3 py-2.5 text-sm">
-                        <span className="min-w-0 flex-1 truncate text-ink">{profile.name}</span>
-                        <span className="shrink-0 rounded-control bg-surface-raised px-2 py-1 text-xs text-muted">{intl.formatNumber(profile.characterLimit)}</span>
-                        <Button variant="quiet" onClick={() => setPendingRemoval(profile)} aria-label={intl.formatMessage({ id: "settings.removeCustomProfile" }, { name: profile.name })}>{intl.formatMessage({ id: "settings.remove" })}</Button>
-                    </li>)}
-                </ul>}
+                {publishing.customProfiles.length > 0 && (
+                    <ul className="mt-4 divide-y divide-border border-y border-border">
+                        {publishing.customProfiles.map((profile) => (
+                            <li key={profile.id} className="flex items-center gap-3 py-2.5 text-sm">
+                                <span className="min-w-0 flex-1 truncate text-ink">{profile.name}</span>
+                                <Badge className="shrink-0">{intl.formatNumber(profile.characterLimit)}</Badge>
+                                <Button
+                                    variant="quiet"
+                                    onClick={() => setPendingRemoval(profile)}
+                                    aria-label={intl.formatMessage({ id: "settings.removeCustomProfile" }, { name: profile.name })}>
+                                    {intl.formatMessage({ id: "settings.remove" })}
+                                </Button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
             <div className="pb-8">
                 <div className="border-l border-border-strong pl-4">
@@ -100,21 +109,32 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
             </SettingRow>
             <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.defaultTranslationLanguages" })} hint={intl.formatMessage({ id: "settings.defaultTranslationLanguagesHint" })}>
                 <div role="group" aria-label={intl.formatMessage({ id: "settings.defaultTranslationLanguages" })} className="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3">
-                    {articleLanguages.filter((language) => language !== general.defaultArticleLanguage).map((language) => <label key={language} className="flex min-h-8 items-center gap-2 text-sm text-ink">
-                        <input
-                            className="size-4 accent-brand"
-                            type="checkbox"
-                            checked={general.defaultTranslationLanguages.includes(language)}
-                            onChange={(event) => void saveGeneral({ ...general, defaultTranslationLanguages: event.target.checked ? [...general.defaultTranslationLanguages, language] : general.defaultTranslationLanguages.filter((item) => item !== language) })} />
-                        {intl.formatMessage({ id: languageMessageIds[language] })}
-                    </label>)}
+                    {articleLanguages.filter((language) => language !== general.defaultArticleLanguage).map((language) => (
+                        <label key={language} className="flex min-h-8 items-center gap-2 text-sm text-ink">
+                            <input
+                                className="size-4 accent-brand"
+                                type="checkbox"
+                                checked={general.defaultTranslationLanguages.includes(language)}
+                                onChange={(event) => void saveGeneral(
+                                    {
+                                        ...general,
+                                        defaultTranslationLanguages: event.target.checked
+                                            ? [...general.defaultTranslationLanguages, language]
+                                            : general.defaultTranslationLanguages.filter((item) => item !== language)
+                                    }
+                                )} />
+                            {intl.formatMessage({ id: languageMessageIds[language] })}
+                        </label>
+                    ))}
                 </div>
             </SettingRow>
         </SettingsGroup>
-        {pendingRemoval && <CustomProfileRemovalDialog
-            profile={pendingRemoval}
-            isDefault={publishing.defaultProfileId === pendingRemoval.id}
-            close={() => setPendingRemoval(undefined)}
-            remove={confirmRemoval} />}
+        {pendingRemoval && (
+            <CustomProfileRemovalDialog
+                profile={pendingRemoval}
+                isDefault={publishing.defaultProfileId === pendingRemoval.id}
+                close={() => setPendingRemoval(undefined)}
+                remove={confirmRemoval} />
+        )}
     </>;
 }

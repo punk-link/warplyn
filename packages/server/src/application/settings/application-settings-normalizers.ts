@@ -9,13 +9,14 @@ function isAssistantRequestTimeout(value: unknown): value is GeneralSettings["as
 
 
 function hasInvalidGeneralPreferences(candidate: Partial<GeneralSettings>): boolean {
-    return (candidate.theme !== undefined && !isThemePreference(candidate.theme))
-        || (candidate.dateFormat !== undefined && !isDateFormatPreference(candidate.dateFormat))
-        || (candidate.timeFormat !== undefined && !isTimeFormatPreference(candidate.timeFormat))
-        || (candidate.timeZone !== undefined && !isTimeZonePreference(candidate.timeZone))
-        || (candidate.assistantSendMode !== undefined && !isAssistantSendMode(candidate.assistantSendMode))
-        || (candidate.defaultAssistantEditMode !== undefined && candidate.defaultAssistantEditMode !== "review" && candidate.defaultAssistantEditMode !== "direct")
-        || (candidate.assistantRequestTimeoutMinutes !== undefined && !isAssistantRequestTimeout(candidate.assistantRequestTimeoutMinutes));
+    return (candidate.theme !== undefined && !isThemePreference(candidate.theme)) ||
+        (candidate.dateFormat !== undefined && !isDateFormatPreference(candidate.dateFormat)) ||
+        (candidate.timeFormat !== undefined && !isTimeFormatPreference(candidate.timeFormat)) ||
+        (candidate.timeZone !== undefined && !isTimeZonePreference(candidate.timeZone)) ||
+        (candidate.assistantSendMode !== undefined && !isAssistantSendMode(candidate.assistantSendMode)) ||
+        (candidate.defaultAssistantEditMode !== undefined &&
+            candidate.defaultAssistantEditMode !== "review" && candidate.defaultAssistantEditMode !== "direct") ||
+        (candidate.assistantRequestTimeoutMinutes !== undefined && !isAssistantRequestTimeout(candidate.assistantRequestTimeoutMinutes));
 }
 
 
@@ -110,8 +111,8 @@ export function normalizeAiConnections(value: unknown): { connections: AiConnect
         const normalized = normalizeAiConnection(connection);
         return normalized ? [normalized] : [];
     }) : [];
-    const activeConnectionId = typeof candidate.activeConnectionId === "string"
-        && connections.some((connection) => connection.id === candidate.activeConnectionId) ? candidate.activeConnectionId : connections[0]?.id;
+    const activeConnectionId = typeof candidate.activeConnectionId === "string" &&
+        connections.some((connection) => connection.id === candidate.activeConnectionId) ? candidate.activeConnectionId : connections[0]?.id;
 
     return { connections, ...(activeConnectionId ? { activeConnectionId } : {}) };
 }

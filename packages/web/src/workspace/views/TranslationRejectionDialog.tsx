@@ -37,7 +37,8 @@ export function TranslationRejectionDialog({ rejectionLanguage, rejectionComplet
                         variant="secondary"
                         disabled={rejecting}
                         autoFocus
-                        onClick={() => setRejectConfirmationOpen(false)}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
+                        onClick={() => setRejectConfirmationOpen(false)}>{intl.formatMessage({ id: "editor.cancel" })}
+                    </Button>
                     <Button variant="danger" state={rejecting ? "loading" : "default"} onClick={confirmRejection}>{intl.formatMessage({ id: "views.confirmRejectTranslation" })}</Button>
                 </div>
             </>}

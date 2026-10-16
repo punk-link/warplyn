@@ -15,13 +15,13 @@ function parseProposalChanges(value: unknown): ProposalChange[] {
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
     const result = value.filter((change: unknown): change is ProposalChange => {
-        if (!change || typeof change !== "object" || !("id" in change) || typeof change.id !== "string"
-            || !("baseLines" in change) || !Array.isArray(change.baseLines)
-            || !("proposalLines" in change) || !Array.isArray(change.proposalLines))
+        if (!change || typeof change !== "object" || !("id" in change) || typeof change.id !== "string" ||
+            !("baseLines" in change) || !Array.isArray(change.baseLines) ||
+            !("proposalLines" in change) || !Array.isArray(change.proposalLines))
             return false;
 
-        return change.baseLines.every((line: unknown) => typeof line === "string")
-            && change.proposalLines.every((line: unknown) => typeof line === "string");
+        return change.baseLines.every((line: unknown) => typeof line === "string") &&
+            change.proposalLines.every((line: unknown) => typeof line === "string");
     });
 
     if (result.length !== value.length)
@@ -49,6 +49,9 @@ export class ProposalSummaryService {
             throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
         const content = JSON.parse(artifact.content) as { proposalSummaries?: ProposalChangeSummary[]; proposalSummaryLocale?: string; [key: string]: unknown };
+        if (isLocalTypography(content.styleReview))
+            return [];
+
         if (content.proposalSummaryLocale === input.interfaceLocale && Array.isArray(content.proposalSummaries))
             return content.proposalSummaries;
 
@@ -65,4 +68,13 @@ export class ProposalSummaryService {
 
         return summaries;
     }
+}
+
+
+function isLocalTypography(value: unknown): boolean {
+    if (!value || typeof value !== "object" || !("typography" in value))
+        return false;
+
+    const typography = value.typography;
+    return Boolean(typography && typeof typography === "object" && "local" in typography && typography.local === true);
 }

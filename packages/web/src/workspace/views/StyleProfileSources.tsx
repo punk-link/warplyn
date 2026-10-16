@@ -6,10 +6,6 @@ import { formatDate } from "../../i18n/formatting.js";
 import { useIntl } from "react-intl";
 
 
-const quietScrollbar = ("[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong");
-
-
 interface StyleProfileSourcesData {
     corpus: StyleCorpus | undefined;
     revisions: readonly { revision: Omit<ArticleRevision, "content">; number: number }[];
@@ -41,10 +37,13 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
     const intl = useIntl();
     const upload = useRef<HTMLInputElement>(null);
 
-    return <section className={`min-h-0 min-w-0 overflow-y-auto px-1 ${quietScrollbar}`}>
+    return <section className="mb-7">
+        <h2 className="mb-3 text-base font-semibold">{intl.formatMessage({ id: "styleProfile.writingSamples" })}</h2>
+        <p className="mb-3 text-xs text-muted">
+            {intl.formatMessage({ id: "styleProfile.activeSources" }, { count: corpus?.items.filter((item) => item.included).length ?? 0 })}
+        </p>
         <div className="mb-3 flex flex-col items-start gap-3">
             <div className="min-w-0">
-                <h3 className="text-micro font-semibold uppercase tracking-overline text-muted">{intl.formatMessage({ id: "styleProfile.writingSamples" })}</h3>
                 <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.corpusHint" })}</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -53,7 +52,8 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
                     variant="quiet"
                     aria-expanded={adding}
                     aria-controls="style-profile-add-sample"
-                    onClick={() => setAdding((value) => !value)}>{intl.formatMessage({ id: "styleProfile.addWritingSample" })}</Button>
+                    onClick={() => setAdding((value) => !value)}>{intl.formatMessage({ id: "styleProfile.addWritingSample" })}
+                </Button>
             </div>
         </div>
         <div
@@ -63,7 +63,7 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
             className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${adding ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
             <div className="min-h-0 overflow-hidden">
                 <div className="mb-3 rounded-panel border border-border bg-surface p-3">
-                    <label className="block text-xs font-semibold text-ink" htmlFor="style-profile-source-name">{intl.formatMessage({ id: "styleProfile.sourceName" })}</label>
+                    <label className="field-label mb-1" htmlFor="style-profile-source-name">{intl.formatMessage({ id: "styleProfile.sourceName" })}</label>
                     <Field
                         id="style-profile-source-name"
                         placeholder={intl.formatMessage({ id: "styleProfile.sourceName" })}
@@ -95,36 +95,46 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
                             className="flex-1"
                             variant="secondary"
                             disabled={Boolean(pendingAction)}
-                            onClick={() => upload.current?.click()}>{intl.formatMessage({ id: "styleProfile.upload" })}</Button>
+                            onClick={() => upload.current?.click()}>{intl.formatMessage({ id: "styleProfile.upload" })}
+                        </Button>
                         <Button
                             state={pendingAction === "add" ? "loading" : "default"}
                             loadingLabel={intl.formatMessage({ id: "styleProfile.generatingSourceName" })}
                             disabled={Boolean(pendingAction)}
-                            onClick={() => onSubmit()}>{intl.formatMessage({ id: "styleProfile.add" })}</Button>
+                            onClick={() => onSubmit()}>{intl.formatMessage({ id: "styleProfile.add" })}
+                        </Button>
                     </div>
                 </div>
             </div>
         </div>
         <div className="space-y-3">
-            {corpus?.items.map((item) => <article className={`rounded-panel border p-3 ${item.included ? "border-border bg-surface-raised" : "border-border bg-surface"}`} key={item.id}>
-                <div className="grid grid-cols-[1rem_minmax(0,1fr)_2.25rem] items-center gap-2">
-                    <input
-                        className="size-4 accent-brand"
-                        type="checkbox"
-                        checked={item.included}
-                        disabled={Boolean(pendingAction)}
-                        aria-label={intl.formatMessage({ id: "styleProfile.include" })}
-                        onChange={(event) => onSetIncluded(item.id, event.target.checked)} />
-                    <p className="min-w-0 text-sm font-semibold">{item.name}</p>
-                    <IconButton
-                        variant="danger-quiet"
-                        label={intl.formatMessage({ id: "views.remove" })}
-                        disabled={Boolean(pendingAction)}
-                        onClick={() => onRemove(item.id)}><DeleteIcon className="size-4" /></IconButton>
-                </div>
-                <p className="mt-2 text-sm italic text-muted">{item.excerpt}</p>
-                <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.words" }, { count: item.wordCount })} · {intl.formatMessage({ id: "styleProfile.addedDate" }, { date: formatDate(item.createdAt, generalSettings.dateFormat, generalSettings.timeZone) })}</p>
-            </article>)}
+            {corpus?.items.map((item) => (
+                <article className={`rounded-panel border p-3 ${item.included ? "border-border bg-surface-raised" : "border-border bg-surface"}`} key={item.id}>
+                    <div className="grid grid-cols-[1rem_minmax(0,1fr)_2.25rem] items-center gap-2">
+                        <input
+                            className="size-4 accent-brand"
+                            type="checkbox"
+                            checked={item.included}
+                            disabled={Boolean(pendingAction)}
+                            aria-label={intl.formatMessage({ id: "styleProfile.include" })}
+                            onChange={(event) => onSetIncluded(item.id, event.target.checked)} />
+                        <p className="min-w-0 text-sm font-semibold">{item.name}</p>
+                        <IconButton
+                            variant="danger-quiet"
+                            label={intl.formatMessage({ id: "views.remove" })}
+                            disabled={Boolean(pendingAction)}
+                            onClick={() => onRemove(item.id)}><DeleteIcon className="size-4" />
+                        </IconButton>
+                    </div>
+                    <p className="mt-2 text-sm italic text-muted">{item.excerpt}</p>
+                    <p className="mt-2 text-xs text-muted">
+                        {intl.formatMessage({ id: "styleProfile.words" }, { count: item.wordCount })} · {intl.formatMessage(
+                            { id: "styleProfile.addedDate" },
+                            { date: formatDate(item.createdAt, generalSettings.dateFormat, generalSettings.timeZone) }
+                        )}
+                    </p>
+                </article>
+            ))}
         </div>
     </section>;
 }

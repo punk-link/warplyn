@@ -54,10 +54,10 @@ function LinkDialog({ editor, close }: { editor: LexicalEditor; close: () => voi
 
     return <Dialog open aria-labelledby="link-dialog-title" className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl">
         <h2 id="link-dialog-title" className="text-base font-semibold">{editing ? intl.formatMessage({ id: "editor.link" }) : intl.formatMessage({ id: "editor.link" })}</h2>
-        <label className="mt-4 block text-xs font-semibold">{intl.formatMessage({ id: "editor.linkText" })}
+        <label className="field-label mt-4">{intl.formatMessage({ id: "editor.linkText" })}
             <Field value={text} onChange={(event) => setText(event.target.value)} />
         </label>
-        <label className="mt-3 block text-xs font-semibold">{intl.formatMessage({ id: "editor.url" })}
+        <label className="field-label mt-3">{intl.formatMessage({ id: "editor.url" })}
             <Field value={url} onChange={(event) => setUrl(event.target.value)} />
         </label>
         {error && <p className="mt-2 text-xs text-danger" role="alert">{error}</p>}
@@ -65,12 +65,16 @@ function LinkDialog({ editor, close }: { editor: LexicalEditor; close: () => voi
             <Button variant="quiet" onClick={() => {
                 close();
                 editor.focus();
-            }}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
-            {editing && <Button variant="danger" onClick={() => {
-                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-                close();
-                editor.focus();
-            }}>{intl.formatMessage({ id: "editor.removeLink" })}</Button>}
+            }}>{intl.formatMessage({ id: "editor.cancel" })}
+            </Button>
+            {editing && (
+                <Button variant="danger" onClick={() => {
+                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+                    close();
+                    editor.focus();
+                }}>{intl.formatMessage({ id: "editor.removeLink" })}
+                </Button>
+            )}
             <Button onClick={apply}>{intl.formatMessage({ id: "editor.apply" })}</Button>
         </div>
     </Dialog>;

@@ -28,7 +28,8 @@ describe("IconButton", () => {
             variant="toolbar"
             label="Bold"
             aria-pressed={false}
-            onClick={onClick}>B</IconButton>);
+            onClick={onClick}>B
+        </IconButton>);
         const button = screen.getByRole("button", { name: "Bold", pressed: false });
 
         await user.tab();
@@ -40,14 +41,16 @@ describe("IconButton", () => {
             variant="quiet"
             label="Bold"
             aria-pressed
-            onClick={onClick}>B</IconButton>);
+            onClick={onClick}>B
+        </IconButton>);
         expect(screen.getByRole("button", { name: "Bold", pressed: true })).toBe(button);
 
         rerender(<IconButton
             variant="danger"
             label="Stop"
             disabled
-            onClick={onClick}>S</IconButton>);
+            onClick={onClick}>S
+        </IconButton>);
         await user.click(screen.getByRole("button", { name: "Stop" }));
         expect(onClick).toHaveBeenCalledTimes(1);
     });

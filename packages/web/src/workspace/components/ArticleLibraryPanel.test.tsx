@@ -54,18 +54,20 @@ describe("ArticleLibraryPanel", () => {
     it("uses the same brand icon in the expanded library and accessible expand button", async () => {
         const user = userEvent.setup();
         const setCollapsed = vi.fn();
-        const panel = (collapsed: boolean) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel
-                articles={[]}
-                selectedArticleId={undefined}
-                selectArticle={vi.fn()}
-                collapsed={collapsed}
-                setCollapsed={setCollapsed}
-                createBlank={vi.fn()}
-                openStyleProfile={vi.fn()}
-                openSettings={vi.fn()}
-                language="en" />
-        </IntlProvider>;
+        const panel = (collapsed: boolean) => (
+            <IntlProvider locale="en" messages={messages}>
+                <ArticleLibraryPanel
+                    articles={[]}
+                    selectedArticleId={undefined}
+                    selectArticle={vi.fn()}
+                    collapsed={collapsed}
+                    setCollapsed={setCollapsed}
+                    createBlank={vi.fn()}
+                    openStyleProfile={vi.fn()}
+                    openSettings={vi.fn()}
+                    language="en" />
+            </IntlProvider>
+        );
         const { container, rerender } = render(panel(false));
         const expandedIcon = container.querySelector("header img");
         expect(expandedIcon?.getAttribute("src")).toContain("warplyn-light.svg");
@@ -135,18 +137,20 @@ describe("ArticleLibraryPanel", () => {
         const other: Article = { ...source, id: "other", title: "Other Article" };
         const translation: Article = { ...source, id: "translation", title: "Spanish edition", sourceArticleId: source.id };
         const added: Article = { ...translation, id: "added", title: "Portuguese edition" };
-        const panel = (articles: Article[], selectedArticleId = source.id) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel
-                articles={articles}
-                selectedArticleId={selectedArticleId}
-                selectArticle={vi.fn()}
-                collapsed={false}
-                setCollapsed={vi.fn()}
-                createBlank={vi.fn()}
-                openStyleProfile={vi.fn()}
-                openSettings={vi.fn()}
-                language="en" />
-        </IntlProvider>;
+        const panel = (articles: Article[], selectedArticleId = source.id) => (
+            <IntlProvider locale="en" messages={messages}>
+                <ArticleLibraryPanel
+                    articles={articles}
+                    selectedArticleId={selectedArticleId}
+                    selectArticle={vi.fn()}
+                    collapsed={false}
+                    setCollapsed={vi.fn()}
+                    createBlank={vi.fn()}
+                    openStyleProfile={vi.fn()}
+                    openSettings={vi.fn()}
+                    language="en" />
+            </IntlProvider>
+        );
         const { rerender } = render(panel([source, translation, other]));
         const spanishEditionPattern = /Spanish edition/;
         expect(screen.getByRole("button", { name: spanishEditionPattern })).toBeTruthy();
@@ -176,18 +180,20 @@ describe("ArticleLibraryPanel", () => {
     it.each(["source", "translation"])("keeps the archive expanded for selected archived Article %s", (selectedArticleId) => {
         const archived = { ...source, archived: true };
         const translation: Article = { ...archived, id: "translation", title: "Spanish edition", sourceArticleId: source.id };
-        const panel = (selected: string | undefined) => <IntlProvider locale="en" messages={messages}>
-            <ArticleLibraryPanel
-                articles={[archived, translation]}
-                selectedArticleId={selected}
-                selectArticle={vi.fn()}
-                collapsed={false}
-                setCollapsed={vi.fn()}
-                createBlank={vi.fn()}
-                openStyleProfile={vi.fn()}
-                openSettings={vi.fn()}
-                language="en" />
-        </IntlProvider>;
+        const panel = (selected: string | undefined) => (
+            <IntlProvider locale="en" messages={messages}>
+                <ArticleLibraryPanel
+                    articles={[archived, translation]}
+                    selectedArticleId={selected}
+                    selectArticle={vi.fn()}
+                    collapsed={false}
+                    setCollapsed={vi.fn()}
+                    createBlank={vi.fn()}
+                    openStyleProfile={vi.fn()}
+                    openSettings={vi.fn()}
+                    language="en" />
+            </IntlProvider>
+        );
         const { rerender } = render(panel(selectedArticleId));
         const archive = screen.getByRole("button", { name: "Archived (1)" });
         expect(archive.getAttribute("aria-expanded")).toBe("true");

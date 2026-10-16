@@ -40,8 +40,17 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                     setFolderStatus(intl.formatMessage({ id: "settings.backupFolderSelected" }, { folderName: name }));
                     if (!desktop)
                         void listWebBackups().then(setRestoreNames, () => undefined);
-                }, (error) => setFolderStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupFolderFailed") })))}>{intl.formatMessage({ id: "settings.chooseBackupFolder" })}</Button>
-                {desktop && folderName && <Button variant="quiet" onClick={() => void desktop.revealBackupDirectory()}>{intl.formatMessage({ id: "settings.revealBackupFolder" })}</Button>}</div>
+                },
+                (error) => setFolderStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupFolderFailed") }))
+                )}>
+                    {intl.formatMessage({ id: "settings.chooseBackupFolder" })}
+                </Button>
+                {desktop && folderName && (
+                    <Button variant="quiet" onClick={() => void desktop.revealBackupDirectory()}>
+                        {intl.formatMessage({ id: "settings.revealBackupFolder" })}
+                    </Button>
+                )}
+                </div>
             </SettingRow>
             <SettingRow
                 headingLevel={3}
@@ -52,7 +61,8 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                     setCreating(true);
                     const punctuationPattern = /[\\/]/;
                     void (desktop ? desktop.createNativeBackup().then((backup) => backup.path.split(punctuationPattern).at(-1) ?? backup.path) : saveWebBackup(client, "manual", backupPolicy)).then((name) => setBackupStatus(intl.formatMessage({ id: "settings.backupCreated" }, { name })), (error) => setBackupStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.backupCreateFailed") }))).finally(() => setCreating(false));
-                }}>{intl.formatMessage({ id: "settings.createBackup" })}</Button>
+                }}>{intl.formatMessage({ id: "settings.createBackup" })}
+                </Button>
             </SettingRow>
             <SettingRow
                 headingLevel={3}
@@ -60,43 +70,65 @@ export function DataBackupsSettingsSection({ client, backupPolicy, save }: { cli
                 hint={intl.formatMessage({ id: "settings.restoreBackupHint" })}
                 status={restoreStatus}>
                 {desktop
-                    ? <Button variant="secondary" disabled={!folderName} onClick={() => void desktop.restoreNativeBackup().catch(() => setRestoreStatus(intl.formatMessage({ id: "settings.restoreBackupFailed" })))}>
-                        {intl.formatMessage({ id: "settings.restoreBackup" })}
-                    </Button>
-                    : <div>
-                        <Select
-                            aria-label={intl.formatMessage({ id: "settings.restoreBackup" })}
-                            value={restoreName ?? ""}
-                            onChange={(event) => setRestoreName(event.target.value)}
-                            disabled={restoreNames.length === 0}>
-                            <option value="">{intl.formatMessage({ id: "settings.chooseBackup" })}</option>
-                            {restoreNames.map((name) => <option key={name} value={name}>{name}</option>)}
-                        </Select>
+                    ? (
                         <Button
-                            className="mt-3 w-fit"
                             variant="secondary"
-                            disabled={!restoreName}
-                            onClick={() => {
-                                if (!restoreName || !window.confirm(intl.formatMessage({ id: "settings.restoreBackupConfirm" }, { name: restoreName })))
-                                    return;
-
-                                void restoreWebBackup(client, restoreName).then(() => window.location.reload(), (error) => setRestoreStatus(intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.restoreBackupFailed") })));
-                            }}>{intl.formatMessage({ id: "settings.restoreBackup" })}
+                            disabled={!folderName}
+                            onClick={() => void desktop.restoreNativeBackup().catch(
+                                () => setRestoreStatus(intl.formatMessage({ id: "settings.restoreBackupFailed" }))
+                            )}>
+                            {intl.formatMessage({ id: "settings.restoreBackup" })}
                         </Button>
-                    </div>
+                    )
+                    : (
+                        <div>
+                            <Select
+                                aria-label={intl.formatMessage({ id: "settings.restoreBackup" })}
+                                value={restoreName ?? ""}
+                                onChange={(event) => setRestoreName(event.target.value)}
+                                disabled={restoreNames.length === 0}>
+                                <option value="">{intl.formatMessage({ id: "settings.chooseBackup" })}</option>
+                                {restoreNames.map((name) => <option key={name} value={name}>{name}</option>)}
+                            </Select>
+                            <Button
+                                className="mt-3 w-fit"
+                                variant="secondary"
+                                disabled={!restoreName}
+                                onClick={() => {
+                                    if (!restoreName || !window.confirm(intl.formatMessage({ id: "settings.restoreBackupConfirm" }, { name: restoreName })))
+                                        return;
+
+                                    void restoreWebBackup(client, restoreName).then(
+                                        () => window.location.reload(),
+                                        (error) => setRestoreStatus(
+                                            intl.formatMessage({ id: getWebBackupErrorMessageId(error, "settings.restoreBackupFailed") })
+                                        )
+                                    );
+                                }}>{intl.formatMessage({ id: "settings.restoreBackup" })}
+                            </Button>
+                        </div>
+                    )
                 }
             </SettingRow>
         </SettingsGroup>
         <BackupAutomationSettings backupPolicy={backupPolicy} save={save} />
-        {desktop && <SettingsGroup label={intl.formatMessage({ id: "settings.deleteData" })}>
-            <SettingRow
-                headingLevel={3}
-                label={intl.formatMessage({ id: "settings.deleteLocalData" })}
-                hint={intl.formatMessage({ id: "settings.deleteLocalDataHint" })}
-                status={deleteStatus}>
-                <Button variant="danger" onClick={() => void desktop.deleteLocalData().catch(() => setDeleteStatus(intl.formatMessage({ id: "settings.deleteLocalDataFailed" })))}>{intl.formatMessage({ id: "settings.deleteLocalData" })}</Button>
-            </SettingRow>
-        </SettingsGroup>}
+        {desktop && (
+            <SettingsGroup label={intl.formatMessage({ id: "settings.deleteData" })}>
+                <SettingRow
+                    headingLevel={3}
+                    label={intl.formatMessage({ id: "settings.deleteLocalData" })}
+                    hint={intl.formatMessage({ id: "settings.deleteLocalDataHint" })}
+                    status={deleteStatus}>
+                    <Button
+                        variant="danger"
+                        onClick={() => void desktop.deleteLocalData().catch(
+                            () => setDeleteStatus(intl.formatMessage({ id: "settings.deleteLocalDataFailed" }))
+                        )}>
+                        {intl.formatMessage({ id: "settings.deleteLocalData" })}
+                    </Button>
+                </SettingRow>
+            </SettingsGroup>
+        )}
     </>;
 }
 

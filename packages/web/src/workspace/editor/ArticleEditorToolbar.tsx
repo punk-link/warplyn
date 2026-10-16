@@ -237,7 +237,8 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                     title={getToolbarHint(controlLabel, shortcut)}
                     aria-pressed={formats.has(format)}
                     onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => applyTextFormat(format)}><Icon /></IconButton>;
+                    onClick={() => applyTextFormat(format)}><Icon />
+                </IconButton>;
             })}
             <IconButton
                 variant="toolbar"
@@ -249,12 +250,17 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                 onClick={() => activate(openLink)}>
                 <LinkIcon />
             </IconButton>
-            {linkUrl && <a
-                href={linkUrl}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={intl.formatMessage({ id: "editor.openLink" }, { url: linkUrl })}
-                className="inline-flex min-h-9 max-w-32 items-center truncate rounded-control px-2 text-xs font-semibold text-brand underline underline-offset-2 hover:bg-brand-soft">{linkUrl}</a>}
+            {linkUrl && (
+                <a
+                    href={linkUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={intl.formatMessage({ id: "editor.openLink" }, { url: linkUrl })}
+                    className={("inline-flex min-h-9 max-w-32 items-center truncate rounded-control px-2 text-xs font-semibold " +
+                        "text-brand underline underline-offset-2 hover:bg-brand-soft")}>
+                    {linkUrl}
+                </a>
+            )}
             <IconButton
                 variant="toolbar"
                 type="button"

@@ -1,16 +1,8 @@
 import type { AssistantEvent, StartAssistantRequest } from "../../assistant/assistant.js";
-import type { AssistantSkillSummary } from "../../assistant/assistant.js";
-import type { Article, CreateArticleInput, UpdateArticleInput } from "../../articles/article/article.js";
-import type { ArticleDraft, SaveArticleDraftInput } from "../../articles/draft/draft.js";
-import type { AcceptProposalInput, ProposalChangeSummary, SummarizeProposalInput } from "../../articles/revision/revisions.js";
-import type { ArticleRevision, SaveArticleRevisionInput } from "../../articles/revision/revision.js";
-import type { HealthResponse } from "../health.js";
+import type { Article } from "../../articles/article/article.js";
+import type { ArticleDraft } from "../../articles/draft/draft.js";
 import type { ApplicationErrorPayload } from "../../cross-cutting/errors.js";
-import type { EditorialEvent, FactCheck, FactCheckFinding, StartEditorialRequest } from "../../editorial/editorial.js";
-import type { AiConnection, AiProvider, AppModelPreference, ApplicationSettingsSnapshot, AvailableAiModel, BackupPolicy, GeneralSettings, ModelPreferences } from "../../settings/settings.js";
-import type { KeyBindingOverrides } from "../../cross-cutting/key-bindings.js";
-import type { CreateStyleCorpusItemInput, StyleCorpus } from "../../style/style.js";
-import type { PublishingSettings } from "../../publishing/publishing.js";
+import type { EditorialEvent, StartEditorialRequest } from "../../editorial/editorial.js";
 import type { EditorialWorkspaceClient } from "../client.js";
 
 
@@ -21,66 +13,6 @@ export const ELECTRON_IPC_CHANNEL = {
     cancel: "skladno:application:cancel",
 } as const;
 
-
-export interface ElectronApplicationOperationMap {
-    listArticleSummaries: { args: []; result: import("../../articles/article/article-summary.js").ArticleSummary[] };
-    getArticle: { args: [string]; result: Article };
-    listArticleRevisionSummaries: { args: [string]; result: import("../../articles/revision/revision.js").ArticleRevisionSummary[] };
-    getArticleRevision: { args: [string, string]; result: ArticleRevision };
-    getHealth: { args: []; result: HealthResponse };
-    getApplicationSettings: { args: []; result: ApplicationSettingsSnapshot };
-    updateGeneralSettings: { args: [GeneralSettings]; result: GeneralSettings };
-    updateBackupPolicy: { args: [BackupPolicy]; result: BackupPolicy };
-    updateKeyBindingOverrides: { args: [KeyBindingOverrides]; result: KeyBindingOverrides };
-    addAiConnection: { args: [{ provider: AiProvider; label: string; environmentVariableName: string }]; result: AiConnection };
-    updateAiConnection: { args: [string, { label: string; environmentVariableName: string }]; result: AiConnection };
-    removeAiConnection: { args: [string]; result: void };
-    setAiConnectionActive: { args: [string, boolean]; result: AiConnection };
-    testAiConnection: { args: [string]; result: AiConnection };
-    refreshAiModels: { args: []; result: AvailableAiModel[] };
-    updateModelPreferences: { args: [ModelPreferences]; result: ModelPreferences };
-    updateAppModel: { args: [AppModelPreference | null]; result: AppModelPreference | null };
-    listArticles: { args: []; result: Article[] };
-    createArticle: { args: [CreateArticleInput]; result: Article };
-    updateArticle: { args: [string, UpdateArticleInput]; result: Article };
-    deleteArticle: { args: [string]; result: void };
-    setArticleArchived: { args: [string, boolean]; result: Article[] };
-    setArticlePinned: { args: [string, boolean]; result: Article };
-    reorderPinnedArticles: { args: [string[]]; result: Article[] };
-    saveArticleDraft: { args: [string, SaveArticleDraftInput]; result: ArticleDraft };
-    discardArticleDraft: { args: [string, number]; result: void };
-    saveArticleRevision: { args: [string, SaveArticleRevisionInput]; result: ArticleRevision };
-    listArticleRevisions: { args: [string]; result: ArticleRevision[] };
-    acceptProposal: { args: [string, AcceptProposalInput]; result: ArticleRevision };
-    summarizeProposal: { args: [string, SummarizeProposalInput]; result: ProposalChangeSummary[] };
-    restoreRevision: { args: [string, string]; result: ArticleRevision };
-    listAssistantSkills: { args: []; result: AssistantSkillSummary[] };
-    listAssistantMessageHistory: { args: [string]; result: import("../../assistant/assistant-message-history.js").AssistantMessageHistory };
-    listAssistantMessages: { args: [string]; result: import("../../assistant/assistant.js").AssistantMessage[] };
-    setAssistantClaimSelected: { args: [string, string, string, boolean]; result: void };
-    getAssistantEditMode: { args: [string]; result: import("../../assistant/assistant.js").AssistantEditMode };
-    setAssistantEditMode: { args: [string, import("../../assistant/assistant.js").AssistantEditMode]; result: import("../../assistant/assistant.js").AssistantEditMode };
-    applyAssistantEdit: { args: [string, string]; result: ArticleRevision };
-    rejectTranslation: { args: [string, string]; result: void };
-    previewAssistantCheckpoint: { args: [string, string]; result: import("../../assistant/assistant.js").AssistantCheckpointPreview };
-    restoreAssistantCheckpoint: { args: [string, string, import("../../assistant/assistant.js").RestoreAssistantCheckpointInput]; result: import("../../assistant/assistant.js").RestoreAssistantCheckpointResult };
-    listFactChecks: { args: [string]; result: FactCheck[] };
-    resolveFactCheckFinding: { args: [string, string, NonNullable<FactCheckFinding["resolution"]>]; result: void };
-    getStyleCorpus: { args: []; result: StyleCorpus };
-    addStyleCorpusItem: { args: [CreateStyleCorpusItemInput]; result: StyleCorpus };
-    setStyleCorpusItemIncluded: { args: [string, boolean]; result: StyleCorpus };
-    setStyleCorpusRules: { args: [string]; result: StyleCorpus };
-    rebuildStyleCorpus: { args: []; result: StyleCorpus };
-    getArticleStyleRules: { args: [string]; result: string };
-    setArticleStyleRules: { args: [string, string]; result: string };
-    addArticleRevisionStyleCorpusItem: { args: [string, string]; result: StyleCorpus };
-    removeStyleCorpusItem: { args: [string]; result: void };
-    getPublishingSettings: { args: []; result: PublishingSettings };
-    setPublishingSettings: { args: [PublishingSettings]; result: PublishingSettings };
-}
-
-
-export type ElectronApplicationMethod = keyof ElectronApplicationOperationMap;
 
 export const ELECTRON_APPLICATION_METHOD = {
     listArticleSummaries: "listArticleSummaries",
@@ -130,6 +62,10 @@ export const ELECTRON_APPLICATION_METHOD = {
     addStyleCorpusItem: "addStyleCorpusItem",
     setStyleCorpusItemIncluded: "setStyleCorpusItemIncluded",
     setStyleCorpusRules: "setStyleCorpusRules",
+    setTypographyRules: "setTypographyRules",
+    setTypographyConfiguration: "setTypographyConfiguration",
+    getArticleTypography: "getArticleTypography",
+    getTypographyReview: "getTypographyReview",
     rebuildStyleCorpus: "rebuildStyleCorpus",
     getArticleStyleRules: "getArticleStyleRules",
     setArticleStyleRules: "setArticleStyleRules",
@@ -137,18 +73,25 @@ export const ELECTRON_APPLICATION_METHOD = {
     removeStyleCorpusItem: "removeStyleCorpusItem",
     getPublishingSettings: "getPublishingSettings",
     setPublishingSettings: "setPublishingSettings",
-} as const satisfies { [Method in ElectronApplicationMethod]: Method };
+} as const satisfies Partial<{ [Method in keyof EditorialWorkspaceClient]: Method }>;
+
+
+export type ElectronApplicationMethod = keyof typeof ELECTRON_APPLICATION_METHOD;
+
+export type ElectronApplicationArguments<Method extends ElectronApplicationMethod> = [...Parameters<NonNullable<EditorialWorkspaceClient[Method]>>];
+
+export type ElectronApplicationResult<Method extends ElectronApplicationMethod> = Awaited<ReturnType<NonNullable<EditorialWorkspaceClient[Method]>>>;
 
 export type ElectronInvokeRequest = {
     [Method in ElectronApplicationMethod]: {
         method: Method;
-        args: ElectronApplicationOperationMap[Method]["args"];
+        args: ElectronApplicationArguments<Method>;
     };
 }[ElectronApplicationMethod];
 
 export type ElectronInvokeResult<Method extends ElectronApplicationMethod = ElectronApplicationMethod> = {
     [Key in Method]:
-        | { ok: true; value: ElectronApplicationOperationMap[Key]["result"] }
+        | { ok: true; value: ElectronApplicationResult<Key> }
         | { ok: false; error: ElectronIpcError };
 }[Method];
 

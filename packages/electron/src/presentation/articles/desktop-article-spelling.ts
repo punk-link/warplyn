@@ -11,8 +11,8 @@ export function registerArticleSpellingMenu(window: BrowserWindow, spelling: Spe
         popup?.closePopup(window);
         popup = undefined;
     };
-    const articleFocused = async () => !window.webContents.isDestroyed()
-        && await window.webContents.executeJavaScript("Boolean(document.activeElement?.matches('[data-article-spelling]'))") === true;
+    const articleFocused = async () => !window.webContents.isDestroyed() &&
+        await window.webContents.executeJavaScript("Boolean(document.activeElement?.matches('[data-article-spelling]'))") === true;
     const showFailure = (kind: "word" | "correction") => {
         if (!window.isDestroyed())
             window.webContents.send("warplyn:spelling-failed", kind);

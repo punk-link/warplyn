@@ -97,7 +97,8 @@ In the expanded layout, the footer at the bottom of the Library panel is the **A
 - **Article Workspace**: the Article Header, Workspace Tab Bar, selected Workspace View, and Article Status Bar.
 - **Article Header**: the title and metadata controls above the Workspace Tab Bar.
 - **Workspace Tab Bar**: the tabs used to select a Workspace View.
-- **Workspace View**: the selected Article Editor or supporting view: Proposal Review, Revision History, Fact Check, Style Profile, or Translations.
+- **Workspace View**: the selected Article Editor or supporting view: Proposal Review, Revision History, Fact Check, or Translations.
+- **Style Profile**: a separate screen for detected characteristics, style review *Findings*, typography rules, manual guidance, and writing samples.
 - **Article Editor**: the writing view. Its main editing area is the **writing surface**.
 - **Article Status Bar**: the bar beneath the selected Workspace View with Article status and metadata, language selection, publishing-profile guidance, and Copy controls.
 - **Editorial Assistant Panel**: Editorial guidance, actions, request status, and activity. Its temporary small-screen form is the **Assistant Drawer**.

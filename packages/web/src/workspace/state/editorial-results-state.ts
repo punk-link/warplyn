@@ -200,15 +200,20 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
 
 
 function translationStillCurrent(workspace: ArticleWorkspaceState, results: readonly TranslationResult[], result: TranslationResult): boolean {
-    return workspace.selectedArticle?.id === result.articleId
-        && workspace.selectedArticle.currentRevisionId === result.baseRevisionId
-        && workspace.content === workspace.selectedArticle.currentRevision.content
-        && results.some((item) => item.articleId === result.articleId && item.value.resultId === result.value.resultId && item.value.editorialArtifactId === result.value.editorialArtifactId);
+    return workspace.selectedArticle?.id === result.articleId &&
+        workspace.selectedArticle.currentRevisionId === result.baseRevisionId &&
+        workspace.content === workspace.selectedArticle.currentRevision.content &&
+        results.some((item) => item.articleId === result.articleId &&
+            item.value.resultId === result.value.resultId && item.value.editorialArtifactId === result.value.editorialArtifactId);
 }
 
 
 export function useEditorialResults(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState) {
     const [styleReviewResult, setStyleReviewResult] = useState<EditorialResult<StyleReview>>();
+    const setStyleReview = useCallback(
+        (articleId: string, baseRevisionId: string, value: StyleReview) => setStyleReviewResult({ articleId, baseRevisionId, value }),
+        [],
+    );
     const { setFactCheck, ...factChecks } = useFactCheckResults(client, workspace);
     const { retainTranslation, ...translationResults } = useTranslationResults(client, workspace);
     const selectedArticleId = workspace.selectedArticle?.id;
@@ -233,7 +238,7 @@ export function useEditorialResults(client: EditorialWorkspaceClient, workspace:
         styleReviewStale,
         applyResult,
         setFactCheck: (articleId: string, baseRevisionId: string, value: FactCheck) => setFactCheck({ articleId, baseRevisionId, value }),
-        setStyleReview: (articleId: string, baseRevisionId: string, value: StyleReview) => setStyleReviewResult({ articleId, baseRevisionId, value }),
+        setStyleReview,
         retainTranslation,
     };
 }

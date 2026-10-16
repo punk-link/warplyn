@@ -1,8 +1,9 @@
-import { useId, useRef } from "react";
+import { useId, useRef, useState } from "react";
 import { useIntl } from "react-intl";
-import { articleLanguages } from "@skladno/shared";
+import { articleLanguages, normalizeWritingLanguage } from "@skladno/shared";
 import { ChevronDownIcon } from "../../ui/icons.js";
 import { handleStatusMenuKeyDown, openStatusMenu } from "./ArticleStatusBarMenu.js";
+import { WritingLanguageDialog } from "./WritingLanguageDialog.js";
 
 
 type LanguageMessageId = "languages.english" | "languages.spanish" | "languages.portuguese" | "languages.russian" | "languages.french" | "languages.german" | "languages.italian";
@@ -13,6 +14,16 @@ export function LanguageStatusControl({ language, setLanguage, open, onToggle, o
     const intl = useIntl();
     const trigger = useRef<HTMLButtonElement>(null);
     const menuId = useId();
+    const [customOpen, setCustomOpen] = useState(false);
+    const languageNames = new Intl.DisplayNames([intl.locale], { type: "language" });
+    const formatLanguage = (tag: string) => {
+        const normalized = normalizeWritingLanguage(tag);
+        if (!normalized)
+            return tag;
+
+        const messageId = languageMessageIds[normalized];
+        return messageId ? intl.formatMessage({ id: messageId }) : languageNames.of(normalized) ?? tag;
+    };
 
 
     async function selectLanguage(nextLanguage: string) {
@@ -40,25 +51,47 @@ export function LanguageStatusControl({ language, setLanguage, open, onToggle, o
 
                 openStatusMenu(event, onOpen, menuId);
             }}>
-            <span>{intl.formatMessage({ id: languageMessageIds[language] ?? "languages.english" })}</span>
+            <span>{formatLanguage(language)}</span>
             <ChevronDownIcon className={`size-3 transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
-        {open && <div
-            id={menuId}
-            className="absolute bottom-6 left-0 z-10 w-40 rounded-control border border-border bg-surface-raised p-1 shadow-raised"
-            role="menu"
-            aria-label={intl.formatMessage({ id: "articleHeader.sourceLanguage" })}
-            onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
-                onClose();
+        {open && (
+            <div
+                id={menuId}
+                className="absolute bottom-6 left-0 z-10 w-40 rounded-control border border-border bg-surface-raised p-1 shadow-raised"
+                role="menu"
+                aria-label={intl.formatMessage({ id: "articleHeader.sourceLanguage" })}
+                onKeyDown={(event) => handleStatusMenuKeyDown(event, () => {
+                    onClose();
+                    trigger.current?.focus();
+                })}>
+                {articleLanguages.map((option) => (
+                    <button
+                        key={option}
+                        className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={option === language}
+                        onClick={() => void selectLanguage(option)}>
+                        {formatLanguage(option)}
+                    </button>
+                ))}
+                <button
+                    type="button"
+                    role="menuitem"
+                    className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
+                    onClick={() => {
+                        onClose();
+                        setCustomOpen(true);
+                    }}>
+                    {intl.formatMessage({ id: "typography.otherLanguage" })}
+                </button>
+            </div>
+        )}
+        {customOpen && (
+            <WritingLanguageDialog save={setLanguage} close={() => {
+                setCustomOpen(false);
                 trigger.current?.focus();
-            })}>
-            {articleLanguages.map((option) => <button
-                key={option}
-                className="flex min-h-9 w-full items-center rounded-control px-2 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none"
-                type="button"
-                role="menuitemradio"
-                aria-checked={option === language}
-                onClick={() => void selectLanguage(option)}>{intl.formatMessage({ id: languageMessageIds[option] ?? "languages.english" })}</button>)}
-        </div>}
+            }} />
+        )}
     </div>;
 }

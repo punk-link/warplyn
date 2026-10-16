@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import { describe, expect, it } from "vitest";
 import type { FactCheck } from "@skladno/shared";
 import { withFindingFreshness } from "./editorial-proposal-state.js";

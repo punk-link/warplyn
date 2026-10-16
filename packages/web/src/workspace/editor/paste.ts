@@ -2,8 +2,8 @@ import { isSupportedArticleLink, PASTE_SEMANTICS, WORD_PASTE } from "./paste-con
 
 
 function hasWordListMetadata(node: HTMLElement): boolean {
-    return WORD_PASTE.listMetadataPattern.test(node.getAttribute("style") ?? "")
-        || WORD_PASTE.listMetadataPattern.test(node.className);
+    return WORD_PASTE.listMetadataPattern.test(node.getAttribute("style") ?? "") ||
+        WORD_PASTE.listMetadataPattern.test(node.className);
 }
 
 
@@ -96,11 +96,11 @@ function retainSupportedElementSemantics(element: HTMLElement) {
     const tag = element.tagName.toLowerCase();
     const href = tag === PASTE_SEMANTICS.anchorTagName ? element.getAttribute("href")?.trim() : undefined;
     const weight = element.style.fontWeight;
-    const bold = weight === PASTE_SEMANTICS.boldKeyword
-        || Number(weight) >= PASTE_SEMANTICS.boldMinimumWeight;
+    const bold = weight === PASTE_SEMANTICS.boldKeyword ||
+        Number(weight) >= PASTE_SEMANTICS.boldMinimumWeight;
     const italic = element.style.fontStyle === PASTE_SEMANTICS.italicStyle;
-    const strikethrough = element.style.textDecorationLine.includes(PASTE_SEMANTICS.lineThroughStyle)
-        || element.style.textDecoration.includes(PASTE_SEMANTICS.lineThroughStyle);
+    const strikethrough = element.style.textDecorationLine.includes(PASTE_SEMANTICS.lineThroughStyle) ||
+        element.style.textDecoration.includes(PASTE_SEMANTICS.lineThroughStyle);
 
     for (const attribute of [...element.attributes])
         element.removeAttribute(attribute.name);

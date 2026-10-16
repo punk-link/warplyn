@@ -35,7 +35,9 @@ describe("fresh translation review", () => {
     it("selects new completion, preserves older selection on unchanged results, and falls back on rejection", async () => {
         const user = userEvent.setup();
         const actions = { create: vi.fn(), translate: vi.fn() };
-        const view = (translations: typeof first[]) => <IntlProvider locale="en" messages={messages}><TranslationsView data={{ article, translations, stale: false }} actions={actions} /></IntlProvider>;
+        const view = (translations: typeof first[]) => (
+            <IntlProvider locale="en" messages={messages}><TranslationsView data={{ article, translations, stale: false }} actions={actions} /></IntlProvider>
+        );
         const { rerender } = render(view([first]));
         rerender(view([first, second]));
         expect(screen.getByText("Second Spanish")).toBeTruthy();
@@ -59,7 +61,13 @@ describe("fresh translation review", () => {
     it("cancels without generation and requires review after a source change before confirming", async () => {
         const user = userEvent.setup();
         const translate = vi.fn();
-        const view = (content: string, active = false) => <IntlProvider locale="en" messages={messages}><TranslationsView data={{ article, sourceContent: content, translations: [first], stale: false, requestActive: active }} actions={{ create: vi.fn(), translate }} /></IntlProvider>;
+        const view = (content: string, active = false) => (
+            <IntlProvider locale="en" messages={messages}>
+                <TranslationsView
+                    data={{ article, sourceContent: content, translations: [first], stale: false, requestActive: active }}
+                    actions={{ create: vi.fn(), translate }} />
+            </IntlProvider>
+        );
         const { rerender } = render(view(article.currentRevision.content));
         await user.click(screen.getByRole("button", { name: "New translation…" }));
         await user.click(screen.getByRole("button", { name: "Cancel" }));

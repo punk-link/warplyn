@@ -41,15 +41,17 @@ export function ArticleFileDialogs({ state }: { state: ReturnType<typeof useArti
             close();
         }}>
         <h2 id="article-file-dialog-heading" className="font-semibold">{intl.formatMessage({ id: reviewing ? "articleFiles.review" : "articleFiles.menuSave" })}</h2>
-        {dialog.kind === "format" && <label className="mt-4 block text-sm">
-            <span>{intl.formatMessage({ id: "articleFiles.format" })}</span>
-            <Select autoFocus value={format} onChange={(event) => {
-                if (isArticleFileFormat(event.target.value))
-                    setFormat(event.target.value);
-            }}>
-                {Object.entries(formatMessages).map(([value, message]) => <option key={value} value={value}>{intl.formatMessage({ id: message })}</option>)}
-            </Select>
-        </label>}
+        {dialog.kind === "format" && (
+            <label className="mt-4 block text-sm">
+                <span>{intl.formatMessage({ id: "articleFiles.format" })}</span>
+                <Select autoFocus value={format} onChange={(event) => {
+                    if (isArticleFileFormat(event.target.value))
+                        setFormat(event.target.value);
+                }}>
+                    {Object.entries(formatMessages).map(([value, message]) => <option key={value} value={value}>{intl.formatMessage({ id: message })}</option>)}
+                </Select>
+            </label>
+        )}
         {dialog.kind === "review" && <>
             <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "articleFiles.layoutWarning" })}</p>
             <div className="mt-3 max-h-96 overflow-auto rounded-control border border-border p-3">

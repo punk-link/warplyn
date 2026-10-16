@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import type { StyleCorpus } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
@@ -9,6 +9,7 @@ export function useStyleCorpus(client: EditorialWorkspaceClient, onRebuilt?: (ac
     const intl = useIntl();
     const { notifyError } = useNotifications();
     const [corpus, setCorpus] = useState<StyleCorpus>();
+    const getArticleTypography = useCallback((articleId: string) => client.getArticleTypography(articleId), [client]);
 
     useEffect(() => {
         client.getStyleCorpus().then(setCorpus).catch((error) => notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.styleCorpusLoadFailed" }) }));
@@ -16,6 +17,28 @@ export function useStyleCorpus(client: EditorialWorkspaceClient, onRebuilt?: (ac
 
     return {
         corpus,
+        getArticleTypography,
+        setTypographyConfiguration: async (input: import("@skladno/shared").TypographyConfigurationUpdate) => {
+            try {
+                const next = await client.setTypographyConfiguration(input);
+                setCorpus(next);
+                if (!input.articleId)
+                    onRebuilt?.(next.items.filter((item) => item.included).length);
+            } catch (error) {
+                notifyError(error, { fallbackMessage: intl.formatMessage({ id: "typography.saveFailed" }) });
+                throw error;
+            }
+        },
+        setTypographyRules: async (rules: import("@skladno/shared").TypographyRule[]) => {
+            try {
+                const next = await client.setTypographyRules(rules);
+                setCorpus(next);
+                onRebuilt?.(next.items.filter((item) => item.included).length);
+            } catch (error) {
+                notifyError(error, { fallbackMessage: intl.formatMessage({ id: "typography.invalid" }) });
+                throw error;
+            }
+        },
         add: async (name: string | undefined, content: string, origin?: "import") => {
             try {
                 setCorpus(await client.addStyleCorpusItem({ name, content, origin }));

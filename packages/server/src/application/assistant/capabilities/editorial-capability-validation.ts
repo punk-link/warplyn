@@ -1,4 +1,4 @@
-import { EDITORIAL_OPERATION, isArticleLanguage, isPublishLimitProfileId } from "@skladno/shared";
+import { EDITORIAL_OPERATION, normalizeWritingLanguage, isPublishLimitProfileId } from "@skladno/shared";
 import { EDITORIAL_CAPABILITY } from "./editorial-capability-id.js";
 import { EDITORIAL_CAPABILITY_INPUT } from "./editorial-capability-input.js";
 import type { EditorialCapabilityId } from "./editorial-capability-id.js";
@@ -26,7 +26,7 @@ export function isValidatedEditorialCapabilityCall(capability: string, input: Re
         case EDITORIAL_CAPABILITY_INPUT.TITLE:
             return hasExactKeys(input, "title");
         case EDITORIAL_CAPABILITY_INPUT.LANGUAGE:
-            return hasExactKeys(input, "language") && isArticleLanguage(input.language);
+            return hasExactKeys(input, "language") && normalizeWritingLanguage(input.language) !== undefined;
         case EDITORIAL_CAPABILITY_INPUT.PUBLISHING_PROFILE:
             return hasExactKeys(input, "profileId") && isPublishLimitProfileId(input.profileId);
         case EDITORIAL_CAPABILITY_INPUT.STYLE_RULES:

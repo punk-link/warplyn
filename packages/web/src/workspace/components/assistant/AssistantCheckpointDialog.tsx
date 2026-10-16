@@ -41,23 +41,30 @@ export function AssistantCheckpointDialog({ preview, replacingComposer, close, r
             close();
         }}>
         <h2 id="assistant-checkpoint-title" className="font-semibold">{intl.formatMessage({ id: "assistant.checkpoint.heading" })}</h2>
-        {rejectedDescriptions.length > 0 && <div className="mt-2 text-sm">
-            <p>{intl.formatMessage({ id: "assistant.checkpoint.work" })}</p>
-            <ul className="mt-1 list-disc pl-5">{rejectedDescriptions.map((item) => <li key={item}>
-                {item}
-            </li>)}
-            </ul>
-        </div>}
+        {rejectedDescriptions.length > 0 && (
+            <div className="mt-2 text-sm">
+                <p>{intl.formatMessage({ id: "assistant.checkpoint.work" })}</p>
+                <ul className="mt-1 list-disc pl-5">{rejectedDescriptions.map((item) => (
+                    <li key={item}>
+                        {item}
+                    </li>
+                ))}
+                </ul>
+            </div>
+        )}
         {preview.revision && <p className="mt-2 text-sm">{revisionDescription}</p>}
         {replacingComposer && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "assistant.checkpoint.replaceComposer" })}</p>}
         {preview.draftDecisionRequired && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "assistant.checkpoint.draft" })}</p>}
         <div className="mt-4 flex justify-end gap-2">
             <Button variant="secondary" disabled={Boolean(pending)} onClick={close}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
-            {preview.draftDecisionRequired && <Button
-                variant="danger"
-                disabled={Boolean(pending)}
-                state={pending === "discard" ? "loading" : "default"}
-                onClick={() => start("discard")}>{intl.formatMessage({ id: "assistant.checkpoint.discard" })}</Button>}
+            {preview.draftDecisionRequired && (
+                <Button
+                    variant="danger"
+                    disabled={Boolean(pending)}
+                    state={pending === "discard" ? "loading" : "default"}
+                    onClick={() => start("discard")}>{intl.formatMessage({ id: "assistant.checkpoint.discard" })}
+                </Button>
+            )}
             <Button
                 variant="primary"
                 disabled={Boolean(pending)}

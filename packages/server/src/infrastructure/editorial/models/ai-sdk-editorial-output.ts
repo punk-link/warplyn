@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type StyleProfile, type StyleReview } from "@skladno/shared";
+import { typographyRuleId, typographyRuleLabel, type StyleProfile, type StyleReview } from "@skladno/shared";
 
 import { EDITORIAL_ENGINE_ERROR } from "../../../application/editorial/engine/editorial-engine-errors.js";
 import { EditorialEngineError } from "../../../application/editorial/engine/editorial-engine-error.js";
@@ -23,7 +23,8 @@ export const translationSchema = (targetLanguage: string) => z.object({
 export function mapStyleReview(value: z.infer<typeof styleReviewSchema>, profile: StyleProfile, articleRules = ""): StyleReview {
     const availableTraits = new Set([
         ...profile.traits.map((trait) => trait.id),
-        ...profile.rules.split("\n").filter(Boolean).map((_rule, index) => `global-rule-${index + 1}`),
+        ...profile.rules.typography.filter((rule) => rule.definition.kind === "contextual").map(typographyRuleId),
+        ...profile.rules.manual.split("\n").filter(Boolean).map((_rule, index) => `global-rule-${index + 1}`),
         ...articleRules.split("\n").filter(Boolean).map((_rule, index) => `article-rule-${index + 1}`)
     ]);
 
@@ -36,10 +37,19 @@ export function mapStyleReview(value: z.infer<typeof styleReviewSchema>, profile
         confidence: profile.confidence,
         traitLabels: Object.fromEntries([
             ...profile.traits.map((trait) => [trait.id, trait.label]),
-            ...profile.rules.split("\n").filter(Boolean).map((rule, index) => [`global-rule-${index + 1}`, rule]),
-            ...articleRules.split("\n").filter(Boolean).map((rule, index) => [`article-rule-${index + 1}`, rule])
+            ...profile.rules.typography
+                .filter((rule) => rule.definition.kind === "contextual")
+                .map((rule) => [typographyRuleId(rule), typographyRuleLabel(rule)]),
+            ...profile.rules.manual
+                .split("\n")
+                .filter(Boolean)
+                .map((rule, index) => [`global-rule-${index + 1}`, rule]),
+            ...articleRules
+                .split("\n")
+                .filter(Boolean)
+                .map((rule, index) => [`article-rule-${index + 1}`, rule]),
         ]),
-        globalRules: profile.rules.split("\n").filter(Boolean),
+        globalRules: profile.rules.manual.split("\n").filter(Boolean),
         articleRules: articleRules.split("\n").filter(Boolean),
     };
 }

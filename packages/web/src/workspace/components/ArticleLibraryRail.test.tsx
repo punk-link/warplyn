@@ -26,14 +26,16 @@ function setup({ articles = [original, recent, archived, translation], collapsed
         openStyleProfile: vi.fn(), openSettings: vi.fn(), dispatcher: new KeyBindingDispatcher(),
     };
     const mutations = { setArchived: vi.fn().mockResolvedValue(undefined), setPinned: vi.fn().mockResolvedValue(undefined) };
-    const panel = (isCollapsed: boolean) => <IntlProvider locale="en" messages={messages}>
-        <ArticleLibraryPanel
-            data={{ articles, selectedArticleId: original.id, collapsed: isCollapsed, language: "en" }}
-            navigation={navigation}
-            mutations={mutations}
-            responsiveCollapsed={responsiveCollapsed} />
-        <button type="button">Outside</button>
-    </IntlProvider>;
+    const panel = (isCollapsed: boolean) => (
+        <IntlProvider locale="en" messages={messages}>
+            <ArticleLibraryPanel
+                data={{ articles, selectedArticleId: original.id, collapsed: isCollapsed, language: "en" }}
+                navigation={navigation}
+                mutations={mutations}
+                responsiveCollapsed={responsiveCollapsed} />
+            <button type="button">Outside</button>
+        </IntlProvider>
+    );
     const result = render(panel(collapsed));
     return { ...result, navigation, mutations, rerenderPanel: (isCollapsed: boolean) => result.rerender(panel(isCollapsed)) };
 }

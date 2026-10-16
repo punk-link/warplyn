@@ -42,22 +42,32 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
                 <span>{consent?.enabled ? intl.formatMessage({ id: "settings.on" }) : intl.formatMessage({ id: "settings.off" })}</span>
             </button>
         </SettingRow>
-        {consent?.installationId && <SettingRow
-            headingLevel={3}
-            label={intl.formatMessage({ id: "settings.telemetryIdentifier" })}
-            hint={intl.formatMessage({ id: "settings.telemetryIdentifierHint" })}
-            status={copied ? intl.formatMessage({ id: "settings.telemetryIdentifierCopied" }) : undefined}>
-            <div className="flex flex-wrap items-center gap-3">
-                <code className="rounded bg-surface-raised px-2 py-1 text-xs text-ink">{consent.installationId}</code>
-                <button type="button" className={("min-h-9 rounded border border-border-strong px-3 text-xs font-semibold text-ink hover:border-brand hover:text-brand focus:outline-none " +
-                    "focus-visible:ring-2 focus-visible:ring-brand")} onClick={() => void navigator.clipboard.writeText(consent.installationId!).then(() => setCopied(true)).catch(() => setCopied(false))}>{intl.formatMessage({ id: "settings.copyTelemetryIdentifier" })}</button>
-            </div>
-        </SettingRow>}
+        {consent?.installationId && (
+            <SettingRow
+                headingLevel={3}
+                label={intl.formatMessage({ id: "settings.telemetryIdentifier" })}
+                hint={intl.formatMessage({ id: "settings.telemetryIdentifierHint" })}
+                status={copied ? intl.formatMessage({ id: "settings.telemetryIdentifierCopied" }) : undefined}>
+                <div className="flex flex-wrap items-center gap-3">
+                    <code className="rounded bg-surface-raised px-2 py-1 text-xs text-ink">{consent.installationId}</code>
+                    <button
+                        type="button"
+                        className={(("min-h-9 rounded border border-border-strong px-3 text-xs font-semibold text-ink hover:border-brand " +
+                        "hover:text-brand focus:outline-none ") +
+                        "focus-visible:ring-2 focus-visible:ring-brand")}
+                        onClick={() => void navigator.clipboard.writeText(consent.installationId!).then(() => setCopied(true)).catch(() => setCopied(false))}>
+                        {intl.formatMessage({ id: "settings.copyTelemetryIdentifier" })}
+                    </button>
+                </div>
+            </SettingRow>
+        )}
         <p className="mt-4 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.telemetryDisclosure" })} <a
             className="text-brand underline"
             href="https://warplyn.com/docs/telemetry.html"
             target="_blank"
-            rel="noreferrer">{intl.formatMessage({ id: "settings.telemetryDetails" })}</a></p>
+            rel="noreferrer">{intl.formatMessage({ id: "settings.telemetryDetails" })}
+        </a>
+        </p>
     </section>;
 }
 

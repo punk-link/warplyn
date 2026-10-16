@@ -4,7 +4,9 @@ import type { EditorialEngineEvent } from "../../editorial/engine/editorial-engi
 import type { PreparedAssistantRequest } from "./prepared-assistant-request.js";
 
 
-export function selectFactCheckFindings<Check extends { findings: FactCheckFinding[] }>(factCheck: Check | undefined, skip: PreparedAssistantRequest["skipFactCheckClaim"]): Check | undefined {
+export function selectFactCheckFindings<Check extends { findings: FactCheckFinding[] }>(
+    factCheck: Check | undefined, skip: PreparedAssistantRequest["execution"]["skipFactCheckClaim"],
+): Check | undefined {
     if (!factCheck || !skip)
         return factCheck;
 
@@ -12,7 +14,9 @@ export function selectFactCheckFindings<Check extends { findings: FactCheckFindi
 }
 
 
-export function selectCompletedFactCheck(event: Extract<EditorialEngineEvent, { type: "completed" }>, skip: PreparedAssistantRequest["skipFactCheckClaim"]): typeof event {
+export function selectCompletedFactCheck(
+    event: Extract<EditorialEngineEvent, { type: "completed" }>, skip: PreparedAssistantRequest["execution"]["skipFactCheckClaim"],
+): typeof event {
     if (!event.factCheck || !skip)
         return event;
 

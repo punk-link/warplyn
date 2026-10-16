@@ -64,13 +64,27 @@ export function AiModelsSection({ data, actions }: { data: AiModelsData; actions
                 id="specific-model-overrides"
                 aria-hidden={!specificModelsOpen}
                 className={`grid transition-[grid-template-rows,opacity] duration-200 motion-reduce:transition-none ${specificModelsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-                <div className={`min-h-0 ${specificModelsOpen ? "overflow-visible" : "overflow-hidden"} pt-2`}>{editorialSkills.map((skill) => <SettingRow
-                    key={skill.id}
-                    headingLevel={3}
-                    label={skill.name}
-                    hint={skill.description}>
-                    <ModelAndReasoning model={modelProps(preferences.skillOverrides[skill.id] ?? "", skill.name, (model) => void savePreferences({ ...preferences, skillOverrides: { ...preferences.skillOverrides, [skill.id]: model } }), true)} effort={preferences.skillReasoningEfforts?.[skill.id]} onEffortChange={selectedProvider(preferences.skillOverrides[skill.id] ?? "") === AI_PROVIDER.OPENAI ? (reasoningEffort) => void savePreferences({ ...preferences, skillReasoningEfforts: { ...preferences.skillReasoningEfforts, [skill.id]: reasoningEffort } }) : undefined} />
-                </SettingRow>)}
+                <div className={`min-h-0 ${specificModelsOpen ? "overflow-visible" : "overflow-hidden"} pt-2`}>{editorialSkills.map((skill) => (
+                    <SettingRow
+                        key={skill.id}
+                        headingLevel={3}
+                        label={skill.name}
+                        hint={skill.description}>
+                        <ModelAndReasoning
+                            model={modelProps(
+                                preferences.skillOverrides[skill.id] ?? "",
+                                skill.name,
+                                (model) => void savePreferences({ ...preferences, skillOverrides: { ...preferences.skillOverrides, [skill.id]: model } }),
+                                true
+                            )}
+                            effort={preferences.skillReasoningEfforts?.[skill.id]}
+                            onEffortChange={selectedProvider(preferences.skillOverrides[skill.id] ?? "") === AI_PROVIDER.OPENAI
+                                ? (reasoningEffort) => void savePreferences(
+                                    { ...preferences, skillReasoningEfforts: { ...preferences.skillReasoningEfforts, [skill.id]: reasoningEffort } }
+                                )
+                                : undefined} />
+                    </SettingRow>
+                ))}
                 </div>
             </div>
         </div>

@@ -27,7 +27,8 @@ it("moves between status controls with Left and Right", () => {
         setProfile={vi.fn().mockResolvedValue(undefined)}
         copyMarkdown={vi.fn().mockResolvedValue(true)}
         copyPlainText={vi.fn().mockResolvedValue(true)}
-    /></IntlProvider>);
+    />
+    </IntlProvider>);
 
     const language = screen.getByRole("button", { name: "Source language" });
     expect(language.className).toContain("focus-visible:ring-brand");
@@ -53,7 +54,8 @@ it("closes an open menu when the Author clicks outside the Status Bar", async ()
         setProfile={vi.fn().mockResolvedValue(undefined)}
         copyMarkdown={vi.fn().mockResolvedValue(true)}
         copyPlainText={vi.fn().mockResolvedValue(true)}
-    /></IntlProvider>);
+    />
+    </IntlProvider>);
 
     const scope = within(statusBar.container);
     await user.click(scope.getByRole("button", { name: "Source language" }));
@@ -80,7 +82,8 @@ it("lists Revisions newest first by description and opens restore confirmation f
         setProfile={vi.fn().mockResolvedValue(undefined)}
         copyMarkdown={vi.fn().mockResolvedValue(true)}
         copyPlainText={vi.fn().mockResolvedValue(true)}
-    /></IntlProvider>);
+    />
+    </IntlProvider>);
 
     const currentRevisionPattern = /Current Revision v2/;
     await user.click(screen.getByRole("button", { name: currentRevisionPattern }));
@@ -119,7 +122,8 @@ it("labels the first saved text as the initial Revision in the status menu", asy
         setProfile={vi.fn().mockResolvedValue(undefined)}
         copyMarkdown={vi.fn().mockResolvedValue(true)}
         copyPlainText={vi.fn().mockResolvedValue(true)}
-    /></IntlProvider>);
+    />
+    </IntlProvider>);
 
     const currentRevisionPattern = /Current Revision v2/;
     await user.click(screen.getByRole("button", { name: currentRevisionPattern }));

@@ -1,5 +1,8 @@
 import multilineManyJsxAttributes from "./multiline-many-jsx-attributes.mjs";
+import multilineJsxOpeningTag from "./multiline-jsx-opening-tag.mjs";
 import multilineLongStrings from "./multiline-long-strings.mjs";
+import maxDataProperties from "./max-data-properties.mjs";
+import namedUnicodeCharacters from "./named-unicode-characters.mjs";
 import sqlQueryLayout from "./sql-query-layout.mjs";
 
 
@@ -60,10 +63,10 @@ const conditionalBraces = {
 
 
         function canOmitBraces(branch) {
-            return branch.type !== "BlockStatement"
-                || (
-                    branch.body.length === 1
-                    && !unsafeWithoutBlock.has(branch.body[0].type)
+            return branch.type !== "BlockStatement" ||
+                (
+                    branch.body.length === 1 &&
+                    !unsafeWithoutBlock.has(branch.body[0].type)
                 );
         }
 
@@ -658,6 +661,7 @@ const twoBlankLinesBetweenDeclarations = {
 
 export default {
     rules: {
+        "max-data-properties": maxDataProperties,
         "conditional-braces": conditionalBraces,
         "no-accessible-label-selector": noAccessibleLabelSelector,
         "no-production-intl-provider": noProductionIntlProvider,
@@ -665,6 +669,8 @@ export default {
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
         "multiline-long-strings": multilineLongStrings,
         "multiline-many-jsx-attributes": multilineManyJsxAttributes,
+        "multiline-jsx-opening-tag": multilineJsxOpeningTag,
+        "named-unicode-characters": namedUnicodeCharacters,
         "sql-query-layout": sqlQueryLayout,
         "switch-case-body-newline": switchCaseBodyNewline,
         "two-blank-lines-between-declarations": twoBlankLinesBetweenDeclarations,

@@ -1,3 +1,13 @@
+export * from "./style/typography.js";
+export * from "./style/typography-configuration.js";
+export * from "./style/typography-configuration-validation.js";
+export * from "./style/typography-presets.js";
+export * from "./style/resolve-typography.js";
+export { normalizeWritingLanguage } from "./cross-cutting/writing-language.js";
+export { styleCorpusTypographyConfigurationPath, createArticleTypographyPath } from "./style/style.js";
+export * from "./style/typography-validation.js";
+export * from "./text/unicode-characters.js";
+
 export {
     healthPath,
     isHealthResponse,
@@ -22,7 +32,8 @@ export {
     isElectronApplicationMethod,
     type ElectronApplicationMethod,
     type ElectronApplicationBridge,
-    type ElectronApplicationOperationMap,
+    type ElectronApplicationArguments,
+    type ElectronApplicationResult,
     type ElectronCancelRequest,
     type ElectronIpcError,
     type ElectronInvokeRequest,
@@ -149,14 +160,17 @@ export {
 export {
     styleCorpusPath,
     styleCorpusRulesPath,
+    styleCorpusTypographyPath,
     styleCorpusRebuildPath,
     createArticleStyleRulesPath,
+    createArticleTypographyReviewPath,
     createArticleStyleCorpusSnapshotPath,
     type CreateStyleCorpusItemInput,
     type StyleCorpus,
     type StyleCorpusClient,
     type StyleCorpusItem,
     type StyleProfile,
+    type StyleProfileRules,
     type StyleTrait,
     type ArticleStyleRulesClient,
     type ArticleStyleCorpusSnapshotClient,

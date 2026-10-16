@@ -41,9 +41,9 @@ test("Assistant execution loads Skills from its catalog", async () => {
     };
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "Improve this.",
-        scope: { kind: "article", baseRevisionId: "revision" }, articleContent: "Article", articleTitle: "Title",
-        resolvedSkillId: BUILT_IN_SKILL.FLOW_AND_CLARITY, operation: "flow_revision", engine, usesCapabilityLoop: true,
-        capabilityActivities: [], pendingActions: [], authorizedActions: [],
+        scope: { kind: "article", baseRevisionId: "revision" }, article: { content: "Article", title: "Title" },
+        resolvedSkillId: BUILT_IN_SKILL.FLOW_AND_CLARITY,
+        execution: { operation: "flow_revision", engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };
     const loop = new AssistantCapabilityLoop({
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
@@ -88,9 +88,9 @@ test("streams extracted Fact Check claims while the capability is still running"
     };
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "Check facts",
-        scope: { kind: "article", baseRevisionId: "revision" }, articleContent: "Article", articleTitle: "Title",
-        resolvedSkillId: BUILT_IN_SKILL.FACT_CHECKING, engine, usesCapabilityLoop: true,
-        capabilityActivities: [], pendingActions: [], authorizedActions: [],
+        scope: { kind: "article", baseRevisionId: "revision" }, article: { content: "Article", title: "Title" },
+        resolvedSkillId: BUILT_IN_SKILL.FACT_CHECKING,
+        execution: { engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };
     const loop = new AssistantCapabilityLoop({
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
@@ -146,9 +146,9 @@ test("an Author Skill inspects the current Article before following its instruct
     };
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "",
-        scope: { kind: "article", baseRevisionId: "revision" }, articleContent: "Article", articleTitle: "Title",
-        resolvedSkillId: reference.id, engine, usesCapabilityLoop: true,
-        capabilityActivities: [], pendingActions: [], authorizedActions: [],
+        scope: { kind: "article", baseRevisionId: "revision" }, article: { content: "Article", title: "Title" },
+        resolvedSkillId: reference.id,
+        execution: { engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };
     const loop = new AssistantCapabilityLoop({
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
@@ -159,7 +159,7 @@ test("an Author Skill inspects the current Article before following its instruct
             ],
             discover: () => [], read: () => ({ content: "Article" }), executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* (input) {
-                proposalAuthorContext = input.skill?.instructions ?? "";
+                proposalAuthorContext = input.editorial.skill?.instructions ?? "";
                 yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "proposal", text: "Rephrased without em dashes." } as const;
             },
         },
@@ -169,7 +169,7 @@ test("an Author Skill inspects the current Article before following its instruct
     for await (const event of loop.stream(request, new AbortController().signal))
         assert.equal(event.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
 
-    assert.equal(request.completedCapability, "generate_proposal");
+    assert.equal(request.execution.completedCapability, "generate_proposal");
     assert.equal(proposalAuthorContext, "Rephrase without em dashes.");
 });
 
@@ -182,7 +182,10 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         summaries: () => [summary],
         load: (candidate) => candidate === reference ? { ...summary, instructions: "Rephrase without em dashes." } : undefined,
     };
-    let streamInput: { articleContent?: string; articleSelection?: boolean; authorContext: string; skill?: { instructions: string } } | undefined;
+    let streamInput: {
+        article: { content?: string; selection?: boolean };
+        editorial: { authorContext: string; skill?: { instructions: string } };
+    } | undefined;
     const engine = {
         async *stream() {
             return;
@@ -200,9 +203,9 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
     };
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "",
-        scope: { kind: "selection", baseRevisionId: "revision", startOffset: 7, endOffset: 15 }, articleContent: "before selected after", articleTitle: "Title",
-        resolvedSkillId: reference.id, engine, usesCapabilityLoop: true,
-        capabilityActivities: [], pendingActions: [], authorizedActions: [],
+        scope: { kind: "selection", baseRevisionId: "revision", startOffset: 7, endOffset: 15 }, article: { content: "before selected after", title: "Title" },
+        resolvedSkillId: reference.id,
+        execution: { engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };
     const loop = new AssistantCapabilityLoop({
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
@@ -220,10 +223,10 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
     for await (const event of loop.stream(request, new AbortController().signal))
         assert.equal(event.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
 
-    assert.equal(streamInput?.articleContent, "selected");
-    assert.equal(streamInput?.articleSelection, true);
-    assert.equal(streamInput?.authorContext, "");
-    assert.equal(streamInput?.skill?.instructions, "Rephrase without em dashes.");
+    assert.equal(streamInput?.article.content, "selected");
+    assert.equal(streamInput?.article.selection, true);
+    assert.equal(streamInput?.editorial.authorContext, "");
+    assert.equal(streamInput?.editorial.skill?.instructions, "Rephrase without em dashes.");
 });
 
 
@@ -241,9 +244,9 @@ test("an Author Skill cannot complete as chat instead of a Proposal", async () =
     };
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "Prepare this.",
-        scope: { kind: "article", baseRevisionId: "revision" }, articleContent: "Article", articleTitle: "Title",
-        resolvedSkillId: "no-em-dashes", engine, usesCapabilityLoop: true,
-        capabilityActivities: [], pendingActions: [], authorizedActions: [],
+        scope: { kind: "article", baseRevisionId: "revision" }, article: { content: "Article", title: "Title" },
+        resolvedSkillId: "no-em-dashes",
+        execution: { engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };
     const loop = new AssistantCapabilityLoop({
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
@@ -295,9 +298,9 @@ test("the Assistant model can create an explicitly requested Author Skill withou
     };
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "Create a Skill without em dashes.",
-        scope: { kind: "article", baseRevisionId: "revision" }, articleContent: "Private Article body", articleTitle: "Title",
-        resolvedSkillId: BUILT_IN_SKILL.SKILL_CREATOR, engine, usesCapabilityLoop: true,
-        capabilityActivities: [], pendingActions: [], authorizedActions: [],
+        scope: { kind: "article", baseRevisionId: "revision" }, article: { content: "Private Article body", title: "Title" },
+        resolvedSkillId: BUILT_IN_SKILL.SKILL_CREATOR,
+        execution: { engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };
     const loop = new AssistantCapabilityLoop({
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined },

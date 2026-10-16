@@ -4,7 +4,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { APPLICATION_ERROR, HTTP_STATUS, ELECTRON_APPLICATION_METHOD, ELECTRON_IPC_CHANNEL, type ElectronStreamRequest, type ElectronStreamEvent, type ElectronApplicationMethod, type ElectronApplicationOperationMap, type ElectronIpcError, type ElectronInvokeResult } from "@skladno/shared";
+import {
+    APPLICATION_ERROR, HTTP_STATUS, ELECTRON_APPLICATION_METHOD, ELECTRON_IPC_CHANNEL,
+    type ElectronStreamRequest, type ElectronStreamEvent, type ElectronApplicationMethod,
+    type ElectronApplicationArguments, type ElectronIpcError, type ElectronInvokeResult,
+} from "@skladno/shared";
 
 import { createApplicationServices } from "../../application/create-application-services.js";
 import { EditorialService } from "../../application/editorial/editorial-service.js";
@@ -32,7 +36,9 @@ class FakeIpcMain implements ElectronIpcMain {
     }
 
 
-    invoke<Method extends ElectronApplicationMethod>(request: { method: Method; args: ElectronApplicationOperationMap[Method]["args"] }): Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method> {
+    invoke<Method extends ElectronApplicationMethod>(
+        request: { method: Method; args: ElectronApplicationArguments<Method> }
+    ): Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method> {
         return this.handlers.get(ELECTRON_IPC_CHANNEL.invoke)!({ sender: { send: () => undefined } }, request) as Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method>;
     }
 
@@ -89,6 +95,40 @@ test("Electron refresh acceptance uses the existing finite operation and preserv
         assert.equal(articles.getArticle(target.id)?.sourceRevisionId, revision.id);
         assert.equal(articles.listRevisions(target.id).length, 2);
         assert.equal(articles.getRevision(target.id, target.currentRevisionId)?.content, "Original español");
+    } finally {
+        adapter.close();
+    }
+});
+
+
+test("Electron IPC checks typography without a provider and validates saves", async () => {
+    const adapter = createAdapter();
+    try {
+        const article = adapter.persistence.articles.createArticle({ title: "Typography", content: "Wait...", language: "en" });
+        const saved = await adapter.ipcMain.invoke({ method: "setTypographyConfiguration", args: [{ language: "en", articleId: undefined, preferences: {
+            rules: [{ id: "dots", definition: { kind: "ellipsis", form: "…" } }], disabled: [],
+        } }] });
+        assert.equal(saved.ok, true);
+        const result = await adapter.ipcMain.stream({
+            kind: "editorial",
+            streamId: "typography",
+            articleId: article.id,
+            input: { requestId: "typography", operation: "style_review", reviewMode: "typography" },
+        });
+        assert.equal(result.event.type, "completed");
+        if (result.event.type === "completed" && "styleReview" in result.event) {
+            assert.equal(result.event.text, "Wait…");
+            assert.equal(result.event.styleReview?.typography?.local, true);
+        }
+
+        const recovered = await adapter.ipcMain.invoke({ method: "getTypographyReview", args: [article.id] });
+        assert.equal(recovered.ok && recovered.value?.proposal, "Wait…");
+        const invalid = await adapter.ipcMain.invoke({
+            method: "setTypographyRules",
+            args: [[{ id: "invalid", definition: { kind: "contextual", instruction: " " } }]],
+        });
+        assert.equal(invalid.ok, false);
+        assert.equal(adapter.persistence.styleCorpus.getStyleCorpus().profile?.version, 1);
     } finally {
         adapter.close();
     }

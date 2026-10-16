@@ -28,10 +28,10 @@ function isValidAssistantScope(value: unknown): boolean {
 
 
 function hasValidOptionalAssistantFields(value: Record<string, unknown>): boolean {
-    return (value.explicitSkillId === undefined || typeof value.explicitSkillId === "string" && Boolean(value.explicitSkillId))
-        && (value.skillOffset === undefined || typeof value.skillOffset === "number")
-        && (value.targetLanguage === undefined || typeof value.targetLanguage === "string")
-        && (value.retryOfRequestId === undefined || typeof value.retryOfRequestId === "string");
+    return (value.explicitSkillId === undefined || typeof value.explicitSkillId === "string" && Boolean(value.explicitSkillId)) &&
+        (value.skillOffset === undefined || typeof value.skillOffset === "number") &&
+        (value.targetLanguage === undefined || typeof value.targetLanguage === "string") &&
+        (value.retryOfRequestId === undefined || typeof value.retryOfRequestId === "string");
 }
 
 
@@ -50,16 +50,17 @@ function isValidAssistantRequest(value: unknown): value is Extract<ElectronStrea
 
 
 function isValidEditorialRequest(value: unknown): value is Extract<ElectronStreamRequest, { kind: "editorial" }>["input"] {
-    return isRecord(value)
-        && typeof value.requestId === "string"
-        && typeof value.operation === "string"
-        && isEditorialOperation(value.operation)
-        && (value.authorContext === undefined || typeof value.authorContext === "string")
-        && (value.targetLanguage === undefined || typeof value.targetLanguage === "string")
-        && (value.correctionSelection === undefined || isRecord(value.correctionSelection)
-            && typeof value.correctionSelection.expectedRevisionId === "string"
-            && Array.isArray(value.correctionSelection.occurrenceIds)
-            && value.correctionSelection.occurrenceIds.every((id: unknown) => typeof id === "string"));
+    return isRecord(value) &&
+        typeof value.requestId === "string" &&
+        typeof value.operation === "string" &&
+        isEditorialOperation(value.operation) &&
+        (value.reviewMode === undefined || value.reviewMode === "typography" && value.operation === EDITORIAL_OPERATION.STYLE_REVIEW) &&
+        (value.authorContext === undefined || typeof value.authorContext === "string") &&
+        (value.targetLanguage === undefined || typeof value.targetLanguage === "string") &&
+        (value.correctionSelection === undefined || isRecord(value.correctionSelection) &&
+            typeof value.correctionSelection.expectedRevisionId === "string" &&
+            Array.isArray(value.correctionSelection.occurrenceIds) &&
+            value.correctionSelection.occurrenceIds.every((id: unknown) => typeof id === "string"));
 }
 
 
@@ -93,11 +94,14 @@ function getAssistantErrorCode(error: unknown) {
 
 
 function createEditorialFailure(error: unknown): { category: Extract<EditorialEvent, { type: "error" }>["code"]; errorCode: ApplicationErrorCode } {
-    if (error instanceof ApplicationServiceError && (error.code === APPLICATION_ERROR.INVALID_REQUEST || error.code === APPLICATION_ERROR.REVISION_CONFLICT || error.code === APPLICATION_ERROR.FACT_CORRECTION_SELECTION_INVALID))
-        return { category: EDITORIAL_ERROR_CATEGORY.INVALID_OUTPUT, errorCode: error.code };
-
-    if (error instanceof ApplicationServiceError && error.code === APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING)
-        return { category: EDITORIAL_ERROR_CATEGORY.CONFIGURATION, errorCode: error.code };
+    if (error instanceof ApplicationServiceError)
+        return {
+            category:
+                error.code === APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING
+                    ? EDITORIAL_ERROR_CATEGORY.CONFIGURATION
+                    : EDITORIAL_ERROR_CATEGORY.INVALID_OUTPUT,
+            errorCode: error.code,
+        };
 
     return {
         category: editorialFailureCategory(error),
@@ -160,7 +164,19 @@ async function streamEditorial(event: ElectronIpcMainEvent, request: Extract<Ele
         return;
     }
 
-    const serviceRequest: EditorialServiceRequest = { ...input, articleId: request.articleId, operation: input.operation, authorContext: input.authorContext ?? "" };
+    const serviceRequest: EditorialServiceRequest = {
+        requestId: input.requestId,
+        articleContext: {
+            articleId: request.articleId,
+            ...(input.targetLanguage ? { targetLanguage: input.targetLanguage } : {}),
+        },
+        editorial: {
+            operation: input.operation,
+            authorContext: input.authorContext ?? "",
+            ...(input.reviewMode ? { reviewMode: input.reviewMode } : {}),
+        },
+        ...(input.correctionSelection ? { factChecking: { correctionSelection: input.correctionSelection } } : {}),
+    };
     try {
         const completed = await relayEditorialStream(event, request.streamId, serviceRequest, editorial, controller.signal);
 
@@ -184,7 +200,7 @@ async function relayEditorialStream(event: ElectronIpcMainEvent, streamId: strin
     for await (const item of editorial.stream(request, signal)) {
         if (item.type === EDITORIAL_ENGINE_EVENT.COMPLETED)
             completed = true;
-        else if (request.operation === EDITORIAL_OPERATION.STYLE_REVIEW && item.type === EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
+        else if (request.editorial.operation === EDITORIAL_OPERATION.STYLE_REVIEW && item.type === EDITORIAL_ENGINE_EVENT.TEXT_DELTA)
             continue;
 
         send(event, { streamId, kind: "editorial", event: { ...item, requestId: request.requestId } });

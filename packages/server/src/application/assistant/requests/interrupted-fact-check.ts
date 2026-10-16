@@ -9,7 +9,7 @@ export function persistInterruptedFactCheck(error: unknown, request: PreparedAss
     if (error instanceof ApplicationServiceError && error.code !== APPLICATION_ERROR.ASSISTANT_REQUEST_TIMED_OUT)
         return undefined;
 
-    const partial = request.partialFactCheck;
+    const partial = request.execution.partialFactCheck;
     if (signal.aborted || !partial?.findings.length)
         return undefined;
 

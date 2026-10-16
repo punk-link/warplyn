@@ -4,17 +4,28 @@ Use the smallest check that can fail for the changed behavior, then run the appl
 
 ## Commands
 
-- `npm run verify:core` runs the product check, complexity check, lint, typecheck, and workspace and script tests. `npm run verify` remains an alias for this core gate; neither command runs E2E.
+- `npm run verify:pr -- 83` resolves PR #83's current base through GitHub CLI and checks the prepared PR branch, including staged, unstaged, and untracked changes. It runs core verification and browser journeys. Omit the number to use the current branch's PR. Add `--desktop` when the journey table below requires Electron coverage. GitHub CLI must be authenticated; Chromium must be installed with `npx playwright install chromium`.
+- `npm run verify:core` attempts every static check, reports their results together, then runs workspace and script tests only when all static checks pass. `npm run verify` remains an alias for this core gate; neither command runs E2E.
 - `npm run verify:browser` runs Chromium author journeys, also available as `npm run test:e2e`.
 - `npm run verify:desktop` runs Electron journeys against development and packaged builds. Build prerequisites are below.
 - `npm test --workspace <workspace>` runs the selected workspace tests.
-- `npm run lint` checks import boundaries and ESLint rules, including the ceiling of 9 parameters or data properties. Data-property checks use TypeScript project information for source interfaces, classes, and object-shaped types, including inheritance and intersections. Semantic cohesion requires review.
+- `npm run lint` checks changed JavaScript and TypeScript lines against a 160-character limit, import boundaries, and ESLint rules. Functions and constructors allow at most nine parameters. Structured TypeScript declarations and object literals, including inferred return objects, allow at most 20 data properties, counting inherited, intersected, and spread keys once each. Callable members, including arrow-function properties and optional or nullable callbacks, are excluded as methods; members that can hold other non-callable data still count. Explicit lookup tables use an index signature or mapped key type through a type annotation or `satisfies` and are exempt. Property checks cover entire modified functions, including unchanged return blocks. Legacy violations outside modified functions and declarations do not block unrelated changes. Nested groups must represent coherent domain concepts, not generic wrappers. CI compares the pull request's base and head commits; locally, lint checks staged and unstaged changes against `HEAD`.
 - `npm run complexity:check` fails at cognitive complexity 16 or higher and reports scores 10–15 for review.
 - `npm run typecheck` checks the TypeScript project references.
 - `npm run product:impact -- <affected paths>` returns capabilities and scenarios that the change must preserve.
 - `npm run product:check` validates canonical records, generated inventories, and product-scenario markers in workspace tests.
 
-Use focused tests while editing. Before pushing or handing off source changes, run `verify:core` and the applicable journey gates against the final changes:
+### PR comparison and final verification
+
+Both changed-code checkers print their comparison scope. With no refs, local lint compares against `HEAD`; this does not check earlier commits on the branch. With both `BASE_SHA` and `HEAD_SHA`, they compare those commits as CI does. With only `BASE_SHA`, they compare the current working tree against its merge base with that commit, including all PR commits and local edits.
+
+Use `verify:pr` while fixing a PR so a clean local diff cannot hide failures elsewhere in the PR. It obtains the current base commit, fetches it if missing, and checks that the current branch matches the PR. It prints the candidate HEAD and distinguishes dirty working-tree verification from a clean committed candidate. After the final commit, rerun it and push that same verified commit. Rerun after any further edits, commits, rebases, or base changes.
+
+To reproduce an existing CI failure, read the failed step's log and use its exact base and head SHAs. Run independent static checks even if the first one fails; `verify:core` now does this automatically. Do not describe a HEAD-only local pass as CI-equivalent PR verification.
+
+On Windows, `verify:pr -- 83 --desktop` packages Electron before running desktop journeys. On Linux, build and install the package first as described below, then run the command with `WARPLYN_ELECTRON_EXECUTABLE` set under `xvfb-run`. Core, browser, and desktop outcomes must still be reported separately.
+
+Use focused tests while editing. Before pushing or handing off changes on a PR, run `verify:pr` against the final changes and add `--desktop` when the table below requires it. For work without a PR, run `verify:core` and the applicable journey gates:
 
 | Changed behavior | Additional gate |
 | --- | --- |
@@ -24,11 +35,15 @@ Use focused tests while editing. Before pushing or handing off source changes, r
 
 CI uses these same commands. Quality also audits production dependencies; desktop jobs also run Electron unit tests and build platform packages. Linux additionally installs and validates the Debian package. A core pass alone does not establish merge readiness. Report core, browser, and desktop results separately, including platform and any required checks not run. Run browser and desktop journeys sequentially because they use the same web port.
 
+In CI, Quality runs core and browser verification in separate jobs. The browser job builds shared contracts before starting its service. The required `verify` check passes only when both jobs succeed.
+
 For documentation-only changes, inspect the diff, check local links and referenced paths, verify command examples against package scripts, and run `git diff --check`. Lint, typecheck, and application tests are unnecessary unless executable code or configuration also changes. Product-model edits require `npm run product:docs` followed by `npm run product:check`.
 
 ### Focused tests
 
 The workspace runners differ. Appending a file to a script that already includes a test glob still selects the glob's tests.
+
+Pure renderer logic tests opt into Node with `// @vitest-environment node`. Tests that exercise the DOM or editor rendering retain the default jsdom environment.
 
 | Target | Command | Working directory |
 | --- | --- | --- |
@@ -42,6 +57,8 @@ Before shared tests, run `npm run typecheck` from the root to refresh `dist`; th
 ### Electron verification
 
 Electron E2E keeps the desktop window hidden by default, with renderer background throttling disabled so automation can run without taking desktop focus. On Windows, run `npm run package:electron` before `npm run verify:desktop`; packaging builds both the web renderer and Electron. On Linux, run `npm run make:electron:linux`, install the resulting Debian package, then run `WARPLYN_ELECTRON_EXECUTABLE=/usr/lib/warplyn/Warplyn xvfb-run --auto-servernum npm run verify:desktop`, as CI does. Run the desktop gate again after rebuilding any changed production code.
+
+Hidden desktop journeys use two workers with separate data and profile directories. The `native-dictionary` project runs its files serially because OS personal vocabulary is shared across profiles. Visible desktop runs use one worker. Use `npm run verify:desktop -- --workers=1` to compare serial timings.
 
 For visible debugging in PowerShell, set `$env:WARPLYN_ELECTRON_TEST_HIDDEN = "false"` before running the tests, then run `Remove-Item Env:WARPLYN_ELECTRON_TEST_HIDDEN` to restore the default. The real native spelling-marker test requires this visible mode and remains separate from the deterministic synthetic correction test.
 

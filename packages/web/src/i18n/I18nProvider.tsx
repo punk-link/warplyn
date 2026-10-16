@@ -20,5 +20,6 @@ export function I18nProvider({ client, children }: { client: ApplicationSettings
         locale={locale}
         defaultLocale={defaultInterfaceLocale}
         messages={catalog}
-        defaultFormats={{}}>{children}</IntlProvider>;
+        defaultFormats={{}}>{children}
+    </IntlProvider>;
 }

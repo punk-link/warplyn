@@ -55,8 +55,8 @@ function isAssistantResponseKind(value: unknown): value is AssistantResponseKind
 
 
 function isSkillResolution(value: Record<string, unknown>): boolean {
-    return (value.skillId === undefined || typeof value.skillId === "string")
-        && (value.source === undefined || value.source === "explicit" || value.source === "inferred");
+    return (value.skillId === undefined || typeof value.skillId === "string") &&
+        (value.source === undefined || value.source === "explicit" || value.source === "inferred");
 }
 
 
@@ -69,10 +69,10 @@ function isCapabilityActivity(value: unknown): boolean {
 
 
 function isClaimPreviews(value: unknown): value is FactCheckClaimPreview[] {
-    return Array.isArray(value) && value.every((claim) => isRecord(claim)
-        && typeof claim.claim === "string"
-        && typeof claim.checked === "boolean"
-        && (claim.checking === undefined || typeof claim.checking === "boolean")
+    return Array.isArray(value) && value.every((claim) => isRecord(claim) &&
+        typeof claim.claim === "string" &&
+        typeof claim.checked === "boolean" &&
+        (claim.checking === undefined || typeof claim.checking === "boolean")
     );
 }
 

@@ -120,8 +120,8 @@ function getCommonProposalEdges(removed: string[], added: string[]): { start: nu
 function proposalChangeRanges(removed: string[], added: string[]): { base: { start: number; end: number }; proposal: { start: number; end: number } }[] {
     const baseParagraphs = getParagraphRanges(removed);
     const proposalParagraphs = getParagraphRanges(added);
-    const sameParagraphStructure = baseParagraphs.length > 1
-        && baseParagraphs.length === proposalParagraphs.length;
+    const sameParagraphStructure = baseParagraphs.length > 1 &&
+        baseParagraphs.length === proposalParagraphs.length;
 
     if (sameParagraphStructure)
         return baseParagraphs.map((base, index) => ({

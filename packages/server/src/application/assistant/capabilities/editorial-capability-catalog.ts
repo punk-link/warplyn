@@ -50,8 +50,8 @@ function getCurrentArticle(articles: ArticleService, context: EditorialCapabilit
 function getEditorialOperationFor(input: StreamContext): EditorialOperation {
     switch (input.capability) {
         case EDITORIAL_CAPABILITY.GENERATE_PROPOSAL:
-            if (input.operation === EDITORIAL_OPERATION.THESIS_TO_NARRATIVE || input.operation === EDITORIAL_OPERATION.FLOW_REVISION)
-                return input.operation;
+            if (input.editorial.operation === EDITORIAL_OPERATION.THESIS_TO_NARRATIVE || input.editorial.operation === EDITORIAL_OPERATION.FLOW_REVISION)
+                return input.editorial.operation;
 
             throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
         case EDITORIAL_CAPABILITY.GENERATE_FINDING_CORRECTIONS:
@@ -61,7 +61,7 @@ function getEditorialOperationFor(input: StreamContext): EditorialOperation {
         case EDITORIAL_CAPABILITY.STYLE_REVIEW:
             return EDITORIAL_OPERATION.STYLE_REVIEW;
         case EDITORIAL_CAPABILITY.TRANSLATE:
-            if (!input.targetLanguage?.trim())
+            if (!input.article.targetLanguage?.trim())
                 throw new ApplicationServiceError(APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED, HTTP_STATUS.BAD_REQUEST);
 
             return EDITORIAL_OPERATION.TRANSLATION;
@@ -83,13 +83,13 @@ function calculateClassificationRank(query: string, entry: EditorialOperationCla
 
 function getStreamToolInput(input: StreamContext): Readonly<Record<string, string>> {
     if (input.capability === EDITORIAL_CAPABILITY.GENERATE_PROPOSAL)
-        return { operation: input.operation ?? "" };
+        return { operation: input.editorial.operation ?? "" };
 
     if (input.capability === EDITORIAL_CAPABILITY.GENERATE_FINDING_CORRECTIONS)
-        return { findingIds: input.findingIds ?? "" };
+        return { findingIds: input.factChecking?.findingIds ?? "" };
 
     if (input.capability === EDITORIAL_CAPABILITY.TRANSLATE)
-        return { targetLanguage: input.targetLanguage ?? "" };
+        return { targetLanguage: input.article.targetLanguage ?? "" };
 
     return {};
 }
@@ -97,22 +97,35 @@ function getStreamToolInput(input: StreamContext): Readonly<Record<string, strin
 
 function createEditorialRequest(input: StreamContext, operation: EditorialOperation) {
     return {
-        articleId: input.context.articleId,
         requestId: input.requestId,
-        skipFactCheckClaim: input.skipFactCheckClaim,
-        operation,
-        authorContext: input.authorContext,
+        ...(input.styleContext ? { styleContext: input.styleContext } : {}),
+        articleContext: {
+            articleId: input.context.articleId,
+            ...(input.article.targetArticleCharacterLimit ? { targetArticleCharacterLimit: input.article.targetArticleCharacterLimit } : {}),
+            ...(input.article.targetLanguage?.trim() ? { targetLanguage: input.article.targetLanguage.trim() } : {}),
+            ...(input.article.content !== undefined ? { content: input.article.content } : {}),
+            ...(input.article.selection ? { selection: true } : {}),
+            ...(input.article.surroundingCharacterCount !== undefined ? { surroundingCharacterCount: input.article.surroundingCharacterCount } : {}),
+        },
+        editorial: {
+            operation,
+            authorContext: input.editorial.authorContext,
+            ...(input.editorial.skillId ? { skillId: input.editorial.skillId } : {}),
+            ...(input.editorial.skill ? { skill: input.editorial.skill } : {}),
+        },
         ...(input.capability === EDITORIAL_CAPABILITY.GENERATE_FINDING_CORRECTIONS
-            ? { correctionSelection: { expectedRevisionId: input.context.baseRevisionId, occurrenceIds: input.findingIds!.split(",").map((id) => id.trim()) } }
+            ? { factChecking: {
+                ...(input.factChecking?.skipClaim ? { skipClaim: input.factChecking.skipClaim } : {}),
+                correctionSelection: {
+                    expectedRevisionId: input.context.baseRevisionId,
+                    occurrenceIds: input.factChecking!.findingIds!.split(",").map((id) => id.trim()),
+                },
+            } }
             : {}
         ),
-        ...(input.skillId ? { skillId: input.skillId } : {}),
-        ...(input.skill ? { skill: input.skill } : {}),
-        ...(input.targetArticleCharacterLimit ? { targetArticleCharacterLimit: input.targetArticleCharacterLimit } : {}),
-        ...(input.targetLanguage?.trim() ? { targetLanguage: input.targetLanguage.trim() } : {}),
-        ...(input.articleContent !== undefined ? { articleContent: input.articleContent } : {}),
-        ...(input.articleSelection ? { articleSelection: true } : {}),
-        ...(input.surroundingArticleCharacterCount !== undefined ? { surroundingArticleCharacterCount: input.surroundingArticleCharacterCount } : {})
+        ...(input.capability !== EDITORIAL_CAPABILITY.GENERATE_FINDING_CORRECTIONS && input.factChecking?.skipClaim
+            ? { factChecking: { skipClaim: input.factChecking.skipClaim } }
+            : {}),
     };
 }
 

@@ -227,10 +227,12 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
             status={status} />
         <SettingsContent section={section} settings={settings}>{sectionContent}</SettingsContent>
         {ai.connectionPendingRemoval && <ConnectionRemovalDialog connection={ai.connectionPendingRemoval} close={() => ai.setConnectionPendingRemoval(undefined)} remove={() => void ai.removeConnection()} />}
-        {ai.connectionPendingRename && <ManagedConnectionRenameDialog
-            label={ai.renamedConnectionLabel}
-            setLabel={ai.setRenamedConnectionLabel}
-            close={() => ai.setConnectionPendingRename(undefined)}
-            save={() => void ai.renameManagedConnection()} />}
+        {ai.connectionPendingRename && (
+            <ManagedConnectionRenameDialog
+                label={ai.renamedConnectionLabel}
+                setLabel={ai.setRenamedConnectionLabel}
+                close={() => ai.setConnectionPendingRename(undefined)}
+                save={() => void ai.renameManagedConnection()} />
+        )}
     </main>;
 }

@@ -304,6 +304,6 @@ test("native preload and personal words persist while language activation stays 
         }
 
         await app?.close();
-        await rm(root, { recursive: true, force: true });
+        await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
     }
 });

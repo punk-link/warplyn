@@ -28,7 +28,8 @@ describe("RestoreRevisionDialog", () => {
             candidate={candidate}
             hasUncommittedChanges
             close={vi.fn()}
-            restore={restore} /></IntlProvider>);
+            restore={restore} />
+        </IntlProvider>);
 
         expect(screen.getByRole("dialog").className).toContain("sm:max-w-3xl");
         const button = screen.getByRole("button", { name: getMessage("views.saveAndRestore") });

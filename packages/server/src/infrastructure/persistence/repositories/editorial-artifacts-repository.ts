@@ -63,6 +63,27 @@ export class EditorialArtifactsRepository {
     }
 
 
+    getLatestTypographyArtifact(articleId: string): EditorialArtifact | undefined {
+        const row = this.database.prepare(`SELECT *
+            FROM editorial_artifacts
+            WHERE article_id = ? AND rejected_at IS NULL AND CASE WHEN json_valid(content) THEN json_extract(content,
+                '$.styleReview.typography') END IS NOT NULL
+            ORDER BY created_at DESC, rowid DESC
+            LIMIT 1`).get(articleId) as Row | undefined;
+        if (!row)
+            return undefined;
+
+        return {
+            id: String(row.id),
+            articleId: String(row.article_id),
+            revisionId: String(row.revision_id),
+            kind: String(row.kind),
+            content: String(row.content),
+            createdAt: String(row.created_at),
+        };
+    }
+
+
     updateEditorialArtifactContent(artifactId: string, articleId: string, content: string): void {
         if (this.database.prepare("UPDATE editorial_artifacts SET content = ? WHERE id = ? AND article_id = ?").run(content, artifactId, articleId).changes === 0)
             throw new Error("Editorial artifact not found.");

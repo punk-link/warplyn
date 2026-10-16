@@ -96,10 +96,10 @@ function completedMarkdownBlocks(text: string): { blocks: string[]; tail: string
 
 
 function isReviewResponse(responseKind: AssistantResponseKind): boolean {
-    return responseKind === "proposal_prepared"
-        || responseKind === "findings_prepared"
-        || responseKind === "proposal_and_findings_prepared"
-        || responseKind === "translation_proposal_prepared";
+    return responseKind === "proposal_prepared" ||
+        responseKind === "findings_prepared" ||
+        responseKind === "proposal_and_findings_prepared" ||
+        responseKind === "translation_proposal_prepared";
 }
 
 

@@ -1,4 +1,5 @@
 import { ApplicationClientError, type ApplicationErrorCode } from "../../cross-cutting/errors.js";
+import { BYTE_ORDER_MARK, NULL_CHARACTER } from "../../text/unicode-characters.js";
 
 
 export const articleMarkdownByteLimit = 10 * 1024 * 1024;
@@ -51,10 +52,10 @@ export type ArticleFilesResult =
 
 
 export function isArticleMarkdownFile(value: unknown): value is ArticleMarkdownFile {
-    return value !== null && typeof value === "object"
-        && Object.keys(value).length === 2
-        && "fileName" in value && typeof value.fileName === "string"
-        && "content" in value && typeof value.content === "string";
+    return value !== null && typeof value === "object" &&
+        Object.keys(value).length === 2 &&
+        "fileName" in value && typeof value.fileName === "string" &&
+        "content" in value && typeof value.content === "string";
 }
 
 
@@ -71,9 +72,9 @@ export function isArticleFilesRequest(value: unknown): value is ArticleFilesRequ
     if (value.method === "releaseSaveTarget")
         return Object.keys(value).length === 2 && "ticket" in value && isSaveTicket(value.ticket);
 
-    return value.method === "saveFile" && Object.keys(value).length === 3
-        && "target" in value && isArticleSaveTarget(value.target)
-        && "bytes" in value && isArticleFileBytesArray(value.bytes);
+    return value.method === "saveFile" && Object.keys(value).length === 3 &&
+        "target" in value && isArticleSaveTarget(value.target) &&
+        "bytes" in value && isArticleFileBytesArray(value.bytes);
 }
 
 
@@ -83,9 +84,9 @@ function isSaveTicket(value: unknown): value is string {
 
 
 export function isArticleSaveTarget(value: unknown): value is ArticleSaveTarget {
-    return value !== null && typeof value === "object" && Object.keys(value).length === 2
-        && "ticket" in value && isSaveTicket(value.ticket)
-        && "format" in value && isArticleFileFormat(value.format);
+    return value !== null && typeof value === "object" && Object.keys(value).length === 2 &&
+        "ticket" in value && isSaveTicket(value.ticket) &&
+        "format" in value && isArticleFileFormat(value.format);
 }
 
 
@@ -95,17 +96,17 @@ export function isArticleFileFormat(value: unknown): value is ArticleFileFormat 
 
 
 export function isArticleFileBytesArray(value: unknown): value is Uint8Array<ArrayBuffer> {
-    return ArrayBuffer.isView(value) && Object.prototype.toString.call(value) === "[object Uint8Array]"
-        && Object.prototype.toString.call(value.buffer) === "[object ArrayBuffer]" && value.byteLength <= articleMarkdownByteLimit;
+    return ArrayBuffer.isView(value) && Object.prototype.toString.call(value) === "[object Uint8Array]" &&
+        Object.prototype.toString.call(value.buffer) === "[object ArrayBuffer]" && value.byteLength <= articleMarkdownByteLimit;
 }
 
 
 export function isArticleFileBytes(value: unknown): value is ArticleFileBytes {
-    const punctuationPattern = /[\\/\0]/;
-    return value !== null && typeof value === "object" && Object.keys(value).length === 2
-        && "fileName" in value && typeof value.fileName === "string" && value.fileName.length <= 1024
-        && !punctuationPattern.test(value.fileName)
-        && "bytes" in value && isArticleFileBytesArray(value.bytes);
+    const pathSeparatorPattern = /[\\/]/;
+    return value !== null && typeof value === "object" && Object.keys(value).length === 2 &&
+        "fileName" in value && typeof value.fileName === "string" && value.fileName.length <= 1024 &&
+        !pathSeparatorPattern.test(value.fileName) && !value.fileName.includes(NULL_CHARACTER) &&
+        "bytes" in value && isArticleFileBytesArray(value.bytes);
 }
 
 
@@ -157,7 +158,7 @@ export function validateArticleMarkdownName(fileName: string): void {
 
 export function encodeArticleMarkdown(content: string): Uint8Array<ArrayBuffer> {
     validateArticleMarkdownSize(content.length);
-    if (content.includes("\0"))
+    if (content.includes(NULL_CHARACTER))
         throw new ApplicationClientError("article_file_invalid", undefined, 400);
 
     const bytes = new TextEncoder().encode(content);
@@ -175,12 +176,12 @@ export function decodeArticleMarkdown(bytes: Uint8Array): string {
         throw new ApplicationClientError("article_file_invalid", undefined, 400);
     }
 
-    if (content.includes("\0"))
+    if (content.includes(NULL_CHARACTER))
         throw new ApplicationClientError("article_file_invalid", undefined, 400);
 
-    const ufeffPattern = /^\uFEFF/;
     const lineBreakPattern = /\r\n?/g;
-    return content.replace(ufeffPattern, "").replace(lineBreakPattern, "\n");
+    const contentWithoutBom = content.startsWith(BYTE_ORDER_MARK) ? content.slice(BYTE_ORDER_MARK.length) : content;
+    return contentWithoutBom.replace(lineBreakPattern, "\n");
 }
 
 

@@ -10,7 +10,7 @@ export function captureArtifactProgress(request: PreparedAssistantRequest, defin
         return;
 
     if (event.type === EDITORIAL_ENGINE_EVENT.FACT_CHECK_PROGRESS)
-        request.partialFactCheck = event.factCheck;
+        request.execution.partialFactCheck = event.factCheck;
     else if (event.type === EDITORIAL_ENGINE_EVENT.TOOL_STATUS && event.claims)
         onProgress(event);
 }

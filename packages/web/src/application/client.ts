@@ -9,8 +9,9 @@ import {
     type Article,
     type HealthResponse,
     type ArticleDraft,
-    createArticleStyleCorpusSnapshotPath, createArticleStyleRulesPath, styleCorpusPath, styleCorpusRebuildPath, styleCorpusRulesPath,
+    createArticleStyleCorpusSnapshotPath, createArticleStyleRulesPath, styleCorpusPath, styleCorpusRebuildPath, styleCorpusRulesPath, styleCorpusTypographyPath,
     type CreateStyleCorpusItemInput,
+    createArticleTypographyReviewPath,
     type StyleCorpus,
     publishSettingsPath,
     type PublishingSettings,
@@ -110,6 +111,28 @@ export class HttpApplicationClient extends HttpArticleClient implements Editoria
 
     async setStyleCorpusRules(rules: string): Promise<StyleCorpus> {
         return this.request<StyleCorpus>(styleCorpusRulesPath, { method: HTTP_METHOD.PUT, body: JSON.stringify({ rules }) });
+    }
+
+
+    async setTypographyRules(rules: import("@skladno/shared").TypographyRule[]): Promise<StyleCorpus> {
+        return this.request<StyleCorpus>(styleCorpusTypographyPath, { method: HTTP_METHOD.PUT, body: JSON.stringify({ rules }) });
+    }
+
+
+    async setTypographyConfiguration(input: import("@skladno/shared").TypographyConfigurationUpdate): Promise<StyleCorpus> {
+        return this.request<StyleCorpus>(`${styleCorpusPath}/typography-configuration`, { method: HTTP_METHOD.PUT, body: JSON.stringify(input) });
+    }
+
+
+    async getArticleTypography(articleId: string): Promise<import("@skladno/shared").ArticleTypography | undefined> {
+        return (await this.request<import("@skladno/shared").ArticleTypography | null>(
+            `/api/articles/${encodeURIComponent(articleId)}/typography`,
+        )) ?? undefined;
+    }
+
+
+    async getTypographyReview(articleId: string): Promise<import("@skladno/shared").TypographyReviewResult | undefined> {
+        return (await this.request<import("@skladno/shared").TypographyReviewResult | null>(createArticleTypographyReviewPath(articleId))) ?? undefined;
     }
 
 

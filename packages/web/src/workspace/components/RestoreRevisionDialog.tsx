@@ -25,16 +25,21 @@ export function RestoreRevisionDialog({ candidate, hasUncommittedChanges, close,
         {hasUncommittedChanges && <p className="mt-2 text-sm text-muted">{intl.formatMessage({ id: "views.restoreDraftDescription" })}</p>}
         <div className="mt-4 flex justify-end gap-2">
             <Button variant="secondary" disabled={Boolean(pendingMode)} onClick={close}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
-            {hasUncommittedChanges && <Button
-                variant="secondary"
-                state={pendingMode === "save" ? "loading" : "default"}
-                disabled={Boolean(pendingMode)}
-                onClick={() => startRestore("save")}>{intl.formatMessage({ id: "views.saveAndRestore" })}</Button>}
+            {hasUncommittedChanges && (
+                <Button
+                    variant="secondary"
+                    state={pendingMode === "save" ? "loading" : "default"}
+                    disabled={Boolean(pendingMode)}
+                    onClick={() => startRestore("save")}>{intl.formatMessage({ id: "views.saveAndRestore" })}
+                </Button>
+            )}
             <Button
                 variant={hasUncommittedChanges ? "danger" : "primary"}
                 state={pendingMode === (hasUncommittedChanges ? "discard" : "keep") ? "loading" : "default"}
                 disabled={Boolean(pendingMode)}
-                onClick={() => startRestore(hasUncommittedChanges ? "discard" : "keep")}>{intl.formatMessage({ id: hasUncommittedChanges ? "views.discardDraftAndRestore" : "views.restoreRevision" })}</Button>
+                onClick={() => startRestore(hasUncommittedChanges ? "discard" : "keep")}>
+                {intl.formatMessage({ id: hasUncommittedChanges ? "views.discardDraftAndRestore" : "views.restoreRevision" })}
+            </Button>
         </div>
     </Dialog>;
 }

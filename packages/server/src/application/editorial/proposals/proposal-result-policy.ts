@@ -1,4 +1,4 @@
-import type { SkillExecution } from "@skladno/shared";
+import { NULL_CHARACTER, type SkillExecution } from "@skladno/shared";
 import { protectArticleSpans } from "../translation/translation.js";
 import { EditorialEngineError } from "../engine/editorial-engine-error.js";
 import { EDITORIAL_ENGINE_ERROR } from "../engine/editorial-engine-errors.js";
@@ -15,7 +15,7 @@ export function preservesProtectedContent(source: string, replacement: string): 
     const sourceNumbers = source.match(sourceNumberPattern) ?? [];
     const replacementNumberPattern = /\b\d+(?:[.,]\d+)*\b/g;
     const replacementNumbers = replacement.match(replacementNumberPattern) ?? [];
-    if (sourceNumbers.sort().join("\u0000") !== replacementNumbers.sort().join("\u0000"))
+    if (sourceNumbers.sort().join(NULL_CHARACTER) !== replacementNumbers.sort().join(NULL_CHARACTER))
         return false;
 
     return ![...new Set(protectedSpans)].some((span) => source.split(span).length !== replacement.split(span).length);

@@ -37,8 +37,8 @@ export function recoverPendingBrowserRestore(databasePath: string): boolean {
 
     const value: unknown = JSON.parse(readFileSync(marker, "utf8"));
     const recoveryPattern = /^recovery-[a-zA-Z0-9_-]+$/;
-    if (!value || typeof value !== "object" || !("recoveryDirectory" in value)
-        || typeof value.recoveryDirectory !== "string" || !recoveryPattern.test(value.recoveryDirectory))
+    if (!value || typeof value !== "object" || !("recoveryDirectory" in value) ||
+        typeof value.recoveryDirectory !== "string" || !recoveryPattern.test(value.recoveryDirectory))
         throw new Error("invalid_restore_recovery_marker");
 
     const recoveryDirectory = join(dirname(databasePath), value.recoveryDirectory);

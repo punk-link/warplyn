@@ -5,20 +5,31 @@ import { useIntl } from "react-intl";
 import type { MessageId } from "../../i18n/messages.js";
 import { StyleProfileDialogs } from "./StyleProfileDialogs.js";
 import { StyleProfileInsights } from "./StyleProfileInsights.js";
+import { StyleProfileGuidance } from "./StyleProfileGuidance.js";
+import { StyleProfileReview } from "./StyleProfileReview.js";
 import { StyleProfileSources } from "./StyleProfileSources.js";
+import { StyleProfileTypography } from "./StyleProfileTypography.js";
+import type { StyleProfileSection } from "../style-profile-sections.js";
 
 
 interface StyleProfileViewData {
+    section: StyleProfileSection;
     corpus: StyleCorpus | undefined;
     findings: StyleReview | undefined;
     findingsStale: boolean;
-    articleId: string;
+    articleId?: string;
+    language?: string;
     revisions?: readonly (ArticleRevisionSummary | import("@skladno/shared").ArticleRevision)[];
     generalSettings?: GeneralSettings;
+    typographyStatus?: { busy: boolean; message: string; hasProposal: boolean };
 }
 
 
 interface StyleProfileViewActions {
+    scopedTypography?: {
+        save: (input: import("@skladno/shared").TypographyConfigurationUpdate) => Promise<void>;
+        getArticle: (articleId: string) => Promise<import("@skladno/shared").ArticleTypography | undefined>;
+    };
     add: (name: string | undefined, content: string, origin?: "import") => Promise<void>;
     remove: (id: string) => Promise<void>;
     setIncluded: (id: string, included: boolean) => Promise<void>;
@@ -27,6 +38,7 @@ interface StyleProfileViewActions {
     getArticleRules: (articleId: string) => Promise<string>;
     setArticleRules: (articleId: string, rules: string) => Promise<string>;
     snapshotArticleRevision?: (articleId: string, revisionId: string) => Promise<void>;
+    typography?: { save: (rules: import("@skladno/shared").TypographyRule[]) => Promise<void>; check: () => Promise<void>; openProposal: () => void };
 }
 
 
@@ -91,6 +103,9 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
     };
 
     useEffect(() => {
+        if (!articleId)
+            return;
+
         void getArticleRules(articleId).then((nextRules) => {
             setArticleRulesDraft(nextRules);
             setSavedArticleRules(nextRules);
@@ -103,7 +118,15 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         setSavedRules(nextRules);
     }, [corpus?.rules]);
 
-    const getRuleStatus = (draft: string, saved: string): MessageId => !draft.trim() ? "styleProfile.rulesNone" : draft === saved ? "styleProfile.rulesApplied" : "styleProfile.rulesUnsaved";
+    const getRuleStatus = (draft: string, saved: string): MessageId => {
+        if (!draft.trim())
+            return "styleProfile.rulesNone";
+
+        if (draft === saved)
+            return "styleProfile.rulesApplied";
+
+        return "styleProfile.rulesUnsaved";
+    };
     const confirmRemove = () => {
         if (!removingId)
             return;
@@ -113,34 +136,167 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
         run(`remove:${id}`, () => remove(id));
     };
     const confirmSnapshot = () => {
-        if (!snapshotRevisionId)
+        if (!snapshotRevisionId || !articleId)
             return;
 
         const revisionId = snapshotRevisionId;
         setSnapshotRevisionId(undefined);
         run(`snapshot:${revisionId}`, () => snapshotArticleRevision(articleId, revisionId));
     };
+    const saveTypography = async (nextRules: import("@skladno/shared").TypographyRule[]) => {
+        setPendingAction("typography");
+        try {
+            await actions.typography?.save(nextRules);
+        } finally {
+            setPendingAction(undefined);
+        }
+    };
 
-    return <div className="flex h-full min-h-0 max-w-[120rem] flex-col">
-        <header className="mb-6 shrink-0 flex flex-wrap items-start justify-between gap-3">
-            <div>
-                <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.styleProfile" })}</h2>
-                <p className="mt-1 text-xs text-muted">{summary} · {intl.formatMessage({ id: "styleProfile.activeSources" }, { count: activeCount })}{corpus?.status === "outdated" ? ` · ${intl.formatMessage({ id: "styleProfile.outdated" })}` : ""}</p>
+    return (
+        <div className="mx-auto w-full min-w-0 max-w-3xl">
+            <header className="mb-6 shrink-0 flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <h1 className="text-2xl font-semibold">{intl.formatMessage({ id: "views.styleProfile" })}</h1>
+                    <p className="mt-1 text-xs text-muted">
+                        {summary} · {intl.formatMessage({ id: "styleProfile.activeSources" }, { count: activeCount })}
+                        {corpus?.status === "outdated" ? ` · ${intl.formatMessage({ id: "styleProfile.outdated" })}` : ""}
+                    </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                    {rebuilt && (
+                        <span className="text-xs text-success" role="status">
+                            {intl.formatMessage({ id: "styleProfile.rebuilt" }, { count: activeCount })}
+                        </span>
+                    )}
+                    <Button
+                        variant="secondary"
+                        state={pendingAction === "rebuild" ? "loading" : "default"}
+                        disabled={corpus?.status === "empty" || Boolean(pendingAction)}
+                        onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}
+                    >
+                        {intl.formatMessage({ id: "styleProfile.rebuild" })}
+                    </Button>
+                </div>
+            </header>
+            {corpus?.profile?.confidence === "low" && (
+                <Banner className="mb-4" tone="warning">
+                    {intl.formatMessage({ id: corpus.profile.corpusItemCount ? "styleProfile.lowConfidence" : "typography.rulesOnly" })}
+                </Banner>
+            )}
+            <div className="min-w-0">
+                <div hidden={data.section !== "profile"}>
+                    <StyleProfileInsights corpus={corpus} generalSettings={generalSettings} />
+                    <StyleProfileReview findings={findings} stale={findingsStale} />
+                </div>
+                <div hidden={data.section !== "typography"}>
+                    <StyleProfileTypography
+                        data={{ corpus, articleId, language: data.language, findings, busy: Boolean(pendingAction) || data.typographyStatus?.busy }}
+                        actions={{ typography: actions.typography && { ...actions.typography, save: saveTypography }, scoped: actions.scopedTypography }} />
+                    {data.typographyStatus?.message && (
+                        <Banner tone="error" role="alert">
+                            {data.typographyStatus.message}
+                        </Banner>
+                    )}
+                    {data.typographyStatus?.hasProposal && actions.typography && (
+                        <Button variant="secondary" className="mb-4" onClick={actions.typography.openProposal}>
+                            {intl.formatMessage({ id: "typography.reviewProposal" })}
+                        </Button>
+                    )}
+                    {findings?.typography && <TypographyReviewStatus findings={findings} currentVersion={corpus?.profile?.version} />}
+                </div>
+                <div hidden={data.section !== "guidance"}>
+                    <StyleProfileGuidance
+                        data={{ pendingAction, rules, savedRules, articleRules, savedArticleRules, hasArticle: Boolean(articleId) }}
+                        actions={{
+                            setRules: setRulesDraft,
+                            setArticleRules: setArticleRulesDraft,
+                            onSaveRules: () =>
+                                run(
+                                    "rules",
+                                    () => setRules(rules),
+                                    () => setSavedRules(rules),
+                                ),
+                            onSaveArticleRules: () =>
+                                run(
+                                    "article-rules",
+                                    () => articleId ? setArticleRules(articleId, articleRules) : Promise.resolve(),
+                                    () => setSavedArticleRules(articleRules),
+                                ),
+                            getRuleStatus,
+                        }}
+                    />
+                </div>
+                <div hidden={data.section !== "sources"}>
+                    <StyleProfileSources
+                        data={{
+                            corpus,
+                            revisions: selectableRevisions,
+                            generalSettings,
+                            pendingAction,
+                            adding,
+                            name,
+                            content,
+                            validationFailed,
+                            uploadFailed,
+                        }}
+                        actions={{
+                            setAdding,
+                            setName,
+                            setContent,
+                            onImport: importFile,
+                            onSubmit: submit,
+                            onRemove: setRemovingId,
+                            onSetIncluded: (id, included) => run(`include:${id}`, () => setIncluded(id, included)),
+                            onSnapshot: setSnapshotRevisionId,
+                        }}
+                    />
+                </div>
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-3">
-                {rebuilt && <span className="text-xs text-success" role="status">{intl.formatMessage({ id: "styleProfile.rebuilt" }, { count: activeCount })}</span>}
-                <Button
-                    variant="secondary"
-                    state={pendingAction === "rebuild" ? "loading" : "default"}
-                    disabled={corpus?.status === "empty" || Boolean(pendingAction)}
-                    onClick={() => run("rebuild", rebuild, () => setRebuilt(true))}>{intl.formatMessage({ id: "styleProfile.rebuild" })}</Button>
-            </div>
-        </header>
-        {corpus?.profile?.confidence === "low" && <Banner className="mb-4" tone="warning">{intl.formatMessage({ id: "styleProfile.lowConfidence" })}</Banner>}
-        <div className="grid min-h-0 min-w-0 flex-1 gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] xl:grid-rows-[minmax(0,1fr)]">
-            <StyleProfileSources data={{ corpus, revisions: selectableRevisions, generalSettings, pendingAction, adding, name, content, validationFailed, uploadFailed }} actions={{ setAdding, setName, setContent, onImport: importFile, onSubmit: submit, onRemove: setRemovingId, onSetIncluded: (id, included) => run(`include:${id}`, () => setIncluded(id, included)), onSnapshot: setSnapshotRevisionId }} />
-            <StyleProfileInsights data={{ corpus, findings, findingsStale, generalSettings, pendingAction, rules, savedRules, articleRules, savedArticleRules }} actions={{ setRules: setRulesDraft, setArticleRules: setArticleRulesDraft, onSaveRules: () => run("rules", () => setRules(rules), () => setSavedRules(rules)), onSaveArticleRules: () => run("article-rules", () => setArticleRules(articleId, articleRules), () => setSavedArticleRules(articleRules)), getRuleStatus }} />
+            <StyleProfileDialogs
+                data={{ removingId, snapshotRevisionId, revisions: selectableRevisions }}
+                actions={{
+                    onCloseRemove: () => setRemovingId(undefined),
+                    onConfirmRemove: confirmRemove,
+                    onCloseSnapshot: () => setSnapshotRevisionId(undefined),
+                    onSelectSnapshot: setSnapshotRevisionId,
+                    onConfirmSnapshot: confirmSnapshot,
+                }}
+            />
         </div>
-        <StyleProfileDialogs data={{ removingId, snapshotRevisionId, revisions: selectableRevisions }} actions={{ onCloseRemove: () => setRemovingId(undefined), onConfirmRemove: confirmRemove, onCloseSnapshot: () => setSnapshotRevisionId(undefined), onSelectSnapshot: setSnapshotRevisionId, onConfirmSnapshot: confirmSnapshot }} />
-    </div>;
+    );
+}
+
+
+function TypographyReviewStatus({ findings, currentVersion }: { findings: StyleReview; currentVersion: number | undefined }) {
+    const intl = useIntl();
+    const typography = findings.typography;
+    if (!typography)
+        return null;
+
+    return (
+        <div className="mb-4 space-y-2 text-xs text-muted" role="status">
+            {typography.capture && (
+                <p>{intl.formatMessage({ id: "typography.reviewLanguage" }, {
+                    language: typography.capture.language ?? intl.formatMessage({ id: "typography.unknownLanguage" }),
+                })}
+                </p>
+            )}
+            {findings.profileVersion !== currentVersion && (
+                <Banner tone="warning">
+                    {intl.formatMessage({ id: "typography.olderProfile" }, { version: findings.profileVersion })}
+                </Banner>
+            )}
+            {!typography.occurrences.length && (
+                <p>{intl.formatMessage({
+                    id: typography.capture?.coverage === "unconfigured" || typography.capture?.coverage === "missing-language"
+                        ? "typography.noConvention" : "typography.noViolations",
+                })}
+                </p>
+            )}
+            {typography.skipped > 0 && <p>{intl.formatMessage({ id: "typography.skipped" }, { count: typography.skipped })}</p>}
+            {typography.local && typography.contextualRuleIds.length > 0 && (
+                <p>{intl.formatMessage({ id: "typography.contextualSkipped" }, { count: typography.contextualRuleIds.length })}</p>
+            )}
+        </div>
+    );
 }

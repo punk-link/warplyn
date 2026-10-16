@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import { afterEach, expect, it, vi } from "vitest";
 import { runArticleFileWorker } from "./article-file-worker-client.js";
 

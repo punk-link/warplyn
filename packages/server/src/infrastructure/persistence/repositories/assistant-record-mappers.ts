@@ -129,8 +129,8 @@ export function getProposalAcceptances(database: SqliteDatabase, articleId: stri
 
 
 function parseTranslation(proposal: unknown, translation: { targetLanguage?: unknown; protectedSpans?: unknown; title?: unknown } | undefined): AssistantMessage["translation"] | undefined {
-    if (typeof proposal !== "string" || typeof translation?.targetLanguage !== "string" || !Array.isArray(translation.protectedSpans)
-        || !translation.protectedSpans.every((span) => typeof span === "string"))
+    if (typeof proposal !== "string" || typeof translation?.targetLanguage !== "string" || !Array.isArray(translation.protectedSpans) ||
+        !translation.protectedSpans.every((span) => typeof span === "string"))
         return undefined;
 
     return {

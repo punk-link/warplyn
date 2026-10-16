@@ -27,8 +27,8 @@ function parsePending(value: unknown): PendingSkillChange {
 
 function validatePendingFiles(files: unknown): void {
     const markdownExtensionPattern = /^references\/[A-Za-z0-9_-]+\.md$/;
-    if (files !== undefined && (typeof files !== "object" || files === null || Array.isArray(files)
-        || Object.entries(files).some(([path, content]) => (path !== "SKILL.md" && !markdownExtensionPattern.test(path)) || typeof content !== "string")))
+    if (files !== undefined && (typeof files !== "object" || files === null || Array.isArray(files) ||
+        Object.entries(files).some(([path, content]) => (path !== "SKILL.md" && !markdownExtensionPattern.test(path)) || typeof content !== "string")))
         throw new Error("invalid_skill_journal");
 }
 

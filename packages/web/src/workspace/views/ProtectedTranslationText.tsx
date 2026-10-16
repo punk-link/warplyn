@@ -24,7 +24,8 @@ function ProtectedValue({ value, count }: { value: string; count: number }) {
                     event.preventDefault();
                     setExpanded(false);
                 }
-            }}>{value}</button>
+            }}>{value}
+        </button>
         <span id={id} className={expanded ? "mx-1 whitespace-normal break-anywhere rounded-control bg-brand-soft px-2 py-1 font-ui text-xs text-ink" : "sr-only"}>{explanation}</span>
     </span>;
 }

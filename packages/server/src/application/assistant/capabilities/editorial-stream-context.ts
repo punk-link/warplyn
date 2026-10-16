@@ -6,18 +6,22 @@ import type { EditorialCapabilityId } from "./editorial-capability-id.js";
 
 
 export interface StreamContext {
+    styleContext?: import("../../editorial/editorial-request.js").EditorialServiceRequest["styleContext"];
     capability: Extract<EditorialCapabilityId, "generate_proposal" | "generate_finding_corrections" | "fact_check" | "style_review" | "translate">;
     context: EditorialCapabilityContext;
     requestId: string;
-    skipFactCheckClaim?: (claim: string) => boolean;
-    authorContext: string;
-    skillId?: string;
-    skill?: SkillGuidance;
-    targetArticleCharacterLimit?: number;
-    operation?: Extract<EditorialOperation, "thesis_to_narrative" | "flow_revision">;
-    targetLanguage?: string;
-    findingIds?: string;
-    articleContent?: string;
-    articleSelection?: boolean;
-    surroundingArticleCharacterCount?: number;
+    editorial: {
+        authorContext: string;
+        skillId?: string;
+        skill?: SkillGuidance;
+        operation?: Extract<EditorialOperation, "thesis_to_narrative" | "flow_revision">;
+    };
+    article: {
+        targetArticleCharacterLimit?: number;
+        targetLanguage?: string;
+        content?: string;
+        selection?: boolean;
+        surroundingCharacterCount?: number;
+    };
+    factChecking?: { skipClaim?: (claim: string) => boolean; findingIds?: string };
 }

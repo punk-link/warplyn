@@ -31,7 +31,8 @@ function renderHistory(revisions: ArticleRevision[], currentRevisionId = revisio
         revisions={revisions}
         currentRevisionId={currentRevisionId}
         select={select}
-        generalSettings={generalSettings} /></IntlProvider>);
+        generalSettings={generalSettings} />
+    </IntlProvider>);
 
     return { ...result, select };
 }
@@ -50,7 +51,8 @@ describe("RevisionHistoryView", () => {
             loadRevision={loadRevision}
             currentRevisionId={current.id}
             select={select}
-            files={{ pending: false, saveRevision }} /></IntlProvider>);
+            files={{ pending: false, saveRevision }} />
+        </IntlProvider>);
         expect(loadRevision).not.toHaveBeenCalled();
         const user = userEvent.setup();
         await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
@@ -70,7 +72,8 @@ describe("RevisionHistoryView", () => {
             revisions={[{ ...metadata, characterCount: content.length }, current]}
             loadRevision={loadRevision}
             currentRevisionId={current.id}
-            select={vi.fn()} /></IntlProvider>);
+            select={vi.fn()} />
+        </IntlProvider>);
         const user = userEvent.setup();
         await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
         await screen.findByText(messages["workspace.revisionHistoryFailed"]);
@@ -91,7 +94,8 @@ describe("RevisionHistoryView", () => {
             revisions={[old, current]}
             currentRevisionId="current"
             select={select}
-            files={{ pending: false, saveRevision }} /></IntlProvider>);
+            files={{ pending: false, saveRevision }} />
+        </IntlProvider>);
         const user = userEvent.setup();
         await user.click(within(screen.getByRole("navigation", { name: "Revision history" })).getAllByRole("button")[1]!);
         await user.click(screen.getByRole("button", { name: "Save to file" }));

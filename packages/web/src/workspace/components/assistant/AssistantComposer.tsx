@@ -107,23 +107,29 @@ function AssistantEditModeControl({ mode, disabled, setMode }: { mode?: Assistan
             <span className="truncate">{selected}</span>
             <ChevronDownIcon className={`size-3 shrink-0 transition-transform duration-150 motion-reduce:transition-none ${open ? "rotate-180" : ""}`} />
         </Button>
-        {open && <div
-            id={menuId}
-            role="menu"
-            aria-label={label}
-            className="absolute bottom-full left-0 z-10 mb-1 w-56 rounded-control border border-border bg-surface-raised p-1 shadow-raised"
-            onKeyDown={(event) => handleStatusMenuKeyDown(event, close)}>
-            {(["review", "direct"] as const).map((option) => <button
-                key={option}
-                type="button"
-                role="menuitemradio"
-                aria-checked={mode === option}
-                className="flex min-h-9 w-full items-center rounded-control px-2 py-1 text-left text-xs text-ink hover:bg-brand-soft focus:outline-none focus-visible:bg-brand-soft"
-                onClick={() => {
-                    void setMode?.(option);
-                    close();
-                }}>{intl.formatMessage({ id: option === "review" ? "assistant.editMode.review" : "assistant.editMode.direct" })}</button>)}
-        </div>}
+        {open && (
+            <div
+                id={menuId}
+                role="menu"
+                aria-label={label}
+                className="absolute bottom-full left-0 z-10 mb-1 w-56 rounded-control border border-border bg-surface-raised p-1 shadow-raised"
+                onKeyDown={(event) => handleStatusMenuKeyDown(event, close)}>
+                {(["review", "direct"] as const).map((option) => (
+                    <button
+                        key={option}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={mode === option}
+                        className={("flex min-h-9 w-full items-center rounded-control px-2 py-1 text-left text-xs text-ink " +
+                            "hover:bg-brand-soft focus:outline-none focus-visible:bg-brand-soft")}
+                        onClick={() => {
+                            void setMode?.(option);
+                            close();
+                        }}>{intl.formatMessage({ id: option === "review" ? "assistant.editMode.review" : "assistant.editMode.direct" })}
+                    </button>
+                ))}
+            </div>
+        )}
     </div>;
 }
 
@@ -176,21 +182,33 @@ export function AssistantComposer({ state, picker, actions }: { state: Assistant
             <div data-assistant-composer-actions className="flex shrink-0 items-end justify-between gap-2">
                 <AssistantEditModeControl mode={editMode} disabled={requestState === "streaming"} setMode={setEditMode} />
                 {requestState === "streaming"
-                    ? <IconButton
-                        variant="danger"
-                        title={getShortcutHint(intl.formatMessage({ id: "assistant.stop" }), KEY_BINDING_COMMAND.STOP_EDITORIAL_REQUEST, shortcutOverrides)}
-                        label={intl.formatMessage({ id: "assistant.stop" })}
-                        onClick={onCancel}><StopIcon className="size-4" /></IconButton>
-                    : <div className="flex">
+                    ? (
                         <IconButton
-                            className="rounded-r-none"
-                            variant="quiet"
-                            title={getShortcutHint(intl.formatMessage({ id: "assistant.send" }), KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST, shortcutOverrides)}
-                            label={intl.formatMessage({ id: "assistant.send" })}
-                            disabled={!canSend}
-                            onClick={send}><SendIcon className="size-4" /></IconButton>
-                        <AssistantQuickActions context={{ state: requestState, composer }} picker={picker} />
-                    </div>}
+                            variant="danger"
+                            title={getShortcutHint(intl.formatMessage({ id: "assistant.stop" }), KEY_BINDING_COMMAND.STOP_EDITORIAL_REQUEST, shortcutOverrides)}
+                            label={intl.formatMessage({ id: "assistant.stop" })}
+                            onClick={onCancel}>
+                            <StopIcon className="size-4" />
+                        </IconButton>
+                    )
+                    : (
+                        <div className="flex">
+                            <IconButton
+                                className="rounded-r-none"
+                                variant="quiet"
+                                title={getShortcutHint(
+                                    intl.formatMessage({ id: "assistant.send" }),
+                                    KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST,
+                                    shortcutOverrides
+                                )}
+                                label={intl.formatMessage({ id: "assistant.send" })}
+                                disabled={!canSend}
+                                onClick={send}>
+                                <SendIcon className="size-4" />
+                            </IconButton>
+                            <AssistantQuickActions context={{ state: requestState, composer }} picker={picker} />
+                        </div>
+                    )}
             </div>
         </div>
     </footer>;

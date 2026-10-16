@@ -47,7 +47,7 @@ function useThemeAppearance(theme: ThemePreference): void {
 
 
 export function App({ client = defaultClient }: { client?: EditorialWorkspaceClient }) {
-    const [screen, setScreen] = useState<"editorial-workspace" | "application-settings">("editorial-workspace");
+    const [screen, setScreen] = useState<"editorial-workspace" | "application-settings" | "style-profile">("editorial-workspace");
     const [settingsSection, setSettingsSection] = useState<SettingsSection>("general");
     const [keyBindingOverrides, setKeyBindingOverrides] = useState<KeyBindingOverrides>();
     const [theme, setTheme] = useState<ThemePreference>("system");
@@ -122,15 +122,18 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
                 navigation={{ openSettings: () => {
                     setSettingsSection("general");
                     setScreen("application-settings");
-                }, openModelSettings, openQuickStart, backToWorkspace: () => setScreen("editorial-workspace") }}
+                }, openStyleProfile: () => setScreen("style-profile"), openModelSettings, openQuickStart,
+                backToWorkspace: () => setScreen("editorial-workspace") }}
                 bindings={{ dispatcher, keyBindingOverrides: keyBindingOverrides ?? {}, onKeyBindingsUpdated: setKeyBindingOverrides, onThemeApplied: setTheme }}
                 updates={{ focusUpdates, onUpdatesFocused: () => setFocusUpdates(false) }}
             />
-            {quickStartOpen && quickStartConnectionReady !== undefined && <QuickStartDialog
-                hasUsableAiConnection={quickStartConnectionReady}
-                close={closeQuickStart}
-                openModelSettings={openModelSettings}
-                startWriting={startWriting} />}
+            {quickStartOpen && quickStartConnectionReady !== undefined && (
+                <QuickStartDialog
+                    hasUsableAiConnection={quickStartConnectionReady}
+                    close={closeQuickStart}
+                    openModelSettings={openModelSettings}
+                    startWriting={startWriting} />
+            )}
         </NotificationProvider>
     </I18nProvider>;
 }

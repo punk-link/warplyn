@@ -4,7 +4,6 @@ import type { ArticleRevisionsState } from "../state/article-revisions-state.js"
 import type { ArticleWorkspaceState } from "../state/article-workspace-state.js";
 import type { EditorialProposalState } from "../state/editorial-proposal-state.js";
 import type { PublishingState } from "../state/publishing-state.js";
-import type { StyleCorpusState } from "../state/style-corpus-state.js";
 import type { WorkspaceLayoutState } from "../state/useWorkspaceLayout.js";
 import { ArticleHeader } from "./ArticleHeader.js";
 import { ArticleStatusBar } from "./ArticleStatusBar.js";
@@ -27,7 +26,6 @@ interface ArticleWorkspaceViewState {
     layout: WorkspaceLayoutState;
     editorial: EditorialProposalState;
     revisions: ArticleRevisionsState;
-    corpus: StyleCorpusState;
     publishing: PublishingState;
     articleFiles?: ArticleFilesState;
     generalSettings: GeneralSettings;
@@ -55,7 +53,6 @@ function createWorkspaceBadges(editorial: EditorialProposalState, intl: IntlShap
 
     addProposalBadge(badges, editorial, staleLabel, reviewLabel);
     addFactCheckBadge(badges, editorial, intl, staleLabel);
-    addStyleBadge(badges, editorial, intl, staleLabel);
     addTranslationBadge(badges, editorial, intl, staleLabel);
 
     return badges;
@@ -79,17 +76,6 @@ function addFactCheckBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabBad
 }
 
 
-function addStyleBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabBadgeDescriptor>>, editorial: EditorialProposalState, intl: IntlShape, staleLabel: string) {
-    if (!editorial.styleReview)
-        return;
-
-    const stale = editorial.styleReviewStale;
-    const countLabel = intl.formatMessage({ id: "workspace.badges.findings" }, { count: editorial.styleReview.findings.length });
-    const accessibleLabel = stale ? staleLabel : countLabel;
-    badges["style-profile"] = { label: stale ? staleLabel : countLabel, accessibleLabel, tone: stale ? "warning" : "default" };
-}
-
-
 function addTranslationBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabBadgeDescriptor>>, editorial: EditorialProposalState, intl: IntlShape, staleLabel: string) {
     if (!editorial.translation)
         return;
@@ -100,7 +86,7 @@ function addTranslationBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabB
 
 
 export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceViewState; actions: ArticleWorkspaceActions }) {
-    const { workspace, layout, editorial, revisions, corpus, publishing, articleFiles, generalSettings, checkingClaimCount } = state;
+    const { workspace, layout, editorial, revisions, publishing, articleFiles, generalSettings, checkingClaimCount } = state;
     const { createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides, onSelectionChange, assistantSelection } = actions;
     const intl = useIntl();
     const { notifyError } = useNotifications();
@@ -112,13 +98,14 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
                 data-focus-area="article-editor"
                 data-focus-area-entry
                 title={getShortcutHint(intl.formatMessage({ id: "articleWorkspace.create" }), KEY_BINDING_COMMAND.NEW_ARTICLE, shortcutOverrides)}
-                onClick={() => void createBlank()}>{intl.formatMessage({ id: "articleWorkspace.create" })}</Button>
+                onClick={() => void createBlank()}>{intl.formatMessage({ id: "articleWorkspace.create" })}
+            </Button>
         </EmptyState>;
 
     const revisionIndex = revisions.revisions.findIndex((revision) => revision.id === article.currentRevisionId);
     const revisionNumber = revisionIndex < 0 ? 1 : revisionIndex + 1;
-    const publishProfileLabel = publishing.settings.customProfiles.find((profile) => profile.id === publishing.profile.id)?.name
-        ?? (publishing.profile.id === PUBLISH_LIMIT_PROFILE.NO_RESTRICTIONS
+    const publishProfileLabel = publishing.settings.customProfiles.find((profile) => profile.id === publishing.profile.id)?.name ??
+        (publishing.profile.id === PUBLISH_LIMIT_PROFILE.NO_RESTRICTIONS
             ? intl.formatMessage({ id: "publishing.noRestrictions" })
             : intl.formatMessage({ id: publishingProfileMessageId(publishing.profile.id) }));
     const badges = createWorkspaceBadges(editorial, intl);
@@ -137,21 +124,31 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
             notifyError={notifyError}
             shortcutOverrides={shortcutOverrides}
         />
-        {workspace.conflict && <Banner className="m-3" tone="error" role="alert">
-            <span>{intl.formatMessage({ id: "draftConflict.banner" })}</span>
-            <Button className="ml-auto" variant="secondary" onClick={workspace.openComparison}>{intl.formatMessage({ id: "draftConflict.compare" })}</Button>
-        </Banner>}
-        {workspace.saveState === "error" && <Banner className="m-3" tone="warning" role="alert">
-            <span>{intl.formatMessage({ id: "draftSave.failure" })}</span>
-            <Button className="ml-auto" variant="secondary" onClick={() => void workspace.retry()}>{intl.formatMessage({ id: "draftSave.retry" })}</Button>
-        </Banner>}
+        {workspace.conflict && (
+            <Banner className="m-3" tone="error" role="alert">
+                <span>{intl.formatMessage({ id: "draftConflict.banner" })}</span>
+                <Button className="ml-auto" variant="secondary" onClick={workspace.openComparison}>
+                    {intl.formatMessage({ id: "draftConflict.compare" })}
+                </Button>
+            </Banner>
+        )}
+        {workspace.saveState === "error" && (
+            <Banner className="m-3" tone="warning" role="alert">
+                <span>{intl.formatMessage({ id: "draftSave.failure" })}</span>
+                <Button className="ml-auto" variant="secondary" onClick={() => void workspace.retry()}>{intl.formatMessage({ id: "draftSave.retry" })}</Button>
+            </Banner>
+        )}
         <WorkspaceTabBar
             view={layout.view}
             setView={layout.setView}
             badges={badges}
             shortcutOverrides={shortcutOverrides} />
         <WorkspaceViewRouter
-            content={{ view: layout.view, article, workspace, editorial, revisions, corpus, generalSettings, checkingClaimCount, requestActive: state.requestActive, translationGeneration: state.translationGeneration, publishProfile: publishing.profile, publishProfileLabel }}
+            content={{
+                view: layout.view, article, workspace, editorial, revisions, generalSettings, checkingClaimCount,
+                requestActive: state.requestActive, translationGeneration: state.translationGeneration,
+                publishProfile: publishing.profile, publishProfileLabel,
+            }}
             actions={{ runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection, articleFiles }}
             navigation={{
                 proposalWarningsDismissed: layout.proposalWarningsDismissed, dismissProposalWarnings: () => layout.setProposalWarningsDismissed(true), openWrite: () => layout.setView("write"), openAssistant: () => {

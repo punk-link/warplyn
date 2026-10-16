@@ -22,6 +22,7 @@ import type { ArticleWorkspaceState } from "./article-workspace-state.js";
 import { getProviderLanguageName } from "./editorial-language.js";
 import { handleEditorialEvent, isProposalOperation, type ProposalBase, type ProposalState } from "./editorial-proposal-helpers.js";
 import type { useEditorialResults } from "./editorial-results-state.js";
+import { canRecoverProposal } from "./proposal-recovery.js";
 
 type EditorialResultsState = ReturnType<typeof useEditorialResults>;
 
@@ -43,7 +44,7 @@ interface ProposalSetters {
 }
 
 
-type ProposalActionsInput = ProposalSetters & {
+interface ProposalActionsInput {
     client: EditorialWorkspaceClient;
     workspace: ArticleWorkspaceState;
     intl: IntlShape;
@@ -59,9 +60,9 @@ type ProposalActionsInput = ProposalSetters & {
         setProposalSummaryLocale: Dispatch<SetStateAction<string | undefined>>;
     };
     results: Pick<EditorialResultsState, "applyResult" | "loadFactChecks" | "resolveFactCheck" | "createTranslation" | "rejectTranslation" | "setFactCheck" | "setStyleReview" | "retainTranslation" | "replaceTranslations">;
-    restoredArticleIds: { current: Set<string> };
+    recovery: { articleIds: { current: Set<string> }; dates: { current: Map<string, string> } };
     controller: { current: AbortController | undefined };
-};
+}
 
 
 function restoredAcceptance(article: Article, message: AssistantMessage, review: TextProposal): Record<string, ProposalDecision> | undefined {
@@ -111,7 +112,10 @@ function restoredChangeIds(value: unknown): Set<string> | undefined {
 
 
 function restoredProposalBase(article: Article, message: AssistantMessage, accepted: boolean): ProposalBase {
-    return { articleId: article.id, content: message.baseRevisionContent!, revisionId: message.baseRevisionId!, ...(message.editorialArtifactId ? { editorialArtifactId: message.editorialArtifactId } : {}), ...(accepted ? { accepted: true } : {}) };
+    return {
+        articleId: article.id, content: message.baseRevisionContent!, revisionId: message.baseRevisionId!, recoveredAt: message.createdAt,
+        ...(message.editorialArtifactId ? { editorialArtifactId: message.editorialArtifactId } : {}), ...(accepted ? { accepted: true } : {}),
+    };
 }
 
 
@@ -145,8 +149,11 @@ function findLatestRestorableProposal(messages: AssistantMessage[] | undefined):
 }
 
 
-export function useProposalActions({ client, workspace, intl, proposal: { base, review, accepted, stale, decisions }, summaries: { setProposalSummaries, setProposalSummaryLocale }, results, restoredArticleIds, controller, ...setters }: ProposalActionsInput) {
+export function useProposalActions({ client, workspace, intl, proposal: { base, review, accepted, stale, decisions },
+    summaries: { setProposalSummaries, setProposalSummaryLocale }, results, recovery, controller
+}: ProposalActionsInput, setters: ProposalSetters) {
     const { notifyError } = useNotifications();
+    const { articleIds: restoredArticleIds, dates: recoveredDates } = recovery;
     const telemetry = getDesktopTelemetryClient();
     const { setProposal, setBase, setDecisions, setState, setMessage } = setters;
     const { applyResult, loadFactChecks, resolveFactCheck, createTranslation, rejectTranslation, setFactCheck, setStyleReview, retainTranslation, replaceTranslations } = results;
@@ -175,13 +182,21 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
     }
 
 
-    async function request(operation: EditorialOperation, authorContext: string, targetLanguage?: string, correctedFindingIds?: string[]) {
+    async function request(operation: EditorialOperation, authorContext: string, targetLanguage?: string,
+        correctedFindingIds?: string[], reviewMode?: "typography") {
         const article = workspace.selectedArticle;
         if (!article)
             return;
 
         try {
-            const saved = await workspace.save(article.id);
+            if (reviewMode && workspace.content !== article.currentRevision.content) {
+                setMessage(intl.formatMessage({ id: "typography.saveDraftFirst" }));
+                setState("error");
+
+                return;
+            }
+
+            const saved = reviewMode ? undefined : await workspace.save(article.id);
             const revisionId = saved?.id ?? article.currentRevisionId;
             const content = saved?.content ?? workspace.content;
 
@@ -192,7 +207,14 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
 
             const requestController = new AbortController();
             controller.current = requestController;
-            await client.streamEditorial(article.id, { requestId: crypto.randomUUID(), operation, authorContext, ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}), correctionSelection: correctionSelection(revisionId, correctedFindingIds) }, (event) => handleEditorialEvent({ event, articleId: article.id, content, revisionId, operation, correctedFindingIds, setProposal, setBase, setState, setMessage, setFactCheck, loadFactChecks, setStyleReview, retainTranslation, intl }), requestController.signal);
+            await client.streamEditorial(article.id, {
+                requestId: crypto.randomUUID(), operation, authorContext, ...(reviewMode ? { reviewMode } : {}),
+                ...(targetLanguage ? { targetLanguage: getProviderLanguageName(targetLanguage) } : {}),
+                correctionSelection: correctionSelection(revisionId, correctedFindingIds),
+            }, (event) => handleEditorialEvent({
+                event, articleId: article.id, content, revisionId, operation, correctedFindingIds,
+                setProposal, setBase, setState, setMessage, setFactCheck, loadFactChecks, setStyleReview, retainTranslation, intl,
+            }), requestController.signal);
         } catch (error) {
             reportRequestFailure(error);
         }
@@ -220,6 +242,7 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
             workspace.updateRevision(article.id, revision);
             workspace.setContent(content);
             captureBestEffortTelemetry(telemetry, { kind: "proposal_reviewed", decision: "accepted" }, telemetryGeneration);
+
             if (base.correctedFindingIds?.length)
                 await loadFactChecks();
 
@@ -243,7 +266,11 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
 
         if (result.proposal) {
             restoredArticleIds.current.delete(articleId);
-            setBase({ articleId, content: workspace.content, revisionId: baseRevisionId, ...(editorialArtifactId ? { editorialArtifactId } : {}) });
+            recoveredDates.current.delete(articleId);
+            setBase({
+                articleId, content: workspace.content, revisionId: baseRevisionId, typography: result.styleReview?.typography,
+                ...(editorialArtifactId ? { editorialArtifactId } : {}),
+            });
             setProposal(result.proposal);
             setProposalSummaries({});
             setProposalSummaryLocale(undefined);
@@ -251,7 +278,8 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
         }
 
         applyResult(articleId, baseRevisionId, result, editorialArtifactId);
-    }, [applyResult, restoredArticleIds, setBase, setDecisions, setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.articles, workspace.content]);
+    }, [applyResult, restoredArticleIds, recoveredDates, setBase, setDecisions, setProposal,
+        setProposalSummaries, setProposalSummaryLocale, workspace.articles, workspace.content]);
 
     const restoreAssistantProposal = useCallback((messages: AssistantMessage[] | undefined) => {
         const article = workspace.selectedArticle;
@@ -259,16 +287,12 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
             return;
 
         replaceTranslations(article.id, messages);
-        if (restoredArticleIds.current.has(article.id))
-            return;
-
         const message = findLatestRestorableProposal(messages);
-        if (!message && !(messages ?? []).some((item) => item.status === "completed" && item.translation && item.baseRevisionId))
+        if (!message || !canRecoverProposal(article.id, message.createdAt, base, recovery))
             return;
 
         restoredArticleIds.current.add(article.id);
-        if (!message)
-            return;
+        recoveredDates.current.set(article.id, message.createdAt);
 
         const restoredReview = createTextProposal(message.baseRevisionContent!, message.proposalContent!);
         const acceptance = restoredAcceptance(article, message, restoredReview);
@@ -278,7 +302,8 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
         setProposalSummaryLocale(message.proposalSummaryLocale);
         setDecisions(acceptance ?? {});
 
-    }, [replaceTranslations, restoredArticleIds, setBase, setDecisions, setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.selectedArticle]);
+    }, [replaceTranslations, restoredArticleIds, recoveredDates, recovery, base, setBase, setDecisions,
+        setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.selectedArticle]);
 
     const setDecision = (id: string, decision: ProposalDecision) => setDecisions((current) => ({ ...current, [id]: decision }));
     const acceptAll = () => accept(new Set(review ? review.changes.map((change) => change.id) : []), true);
@@ -290,6 +315,9 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
     const dismissProposal = () => {
         if (base)
             restoredArticleIds.current.add(base.articleId);
+
+        if (base)
+            recoveredDates.current.delete(base.articleId);
 
         setProposal("");
         setBase(undefined);
@@ -304,6 +332,7 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
     return {
         setDecision,
         request,
+        checkTypography: () => request("style_review", "", undefined, undefined, "typography"),
         acceptAll,
         applyAccepted,
         rejectAll,

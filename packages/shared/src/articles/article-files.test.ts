@@ -1,15 +1,16 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { BYTE_ORDER_MARK, NULL_CHARACTER } from "../text/unicode-characters.js";
 import { articleMarkdownByteLimit, decodeArticleMarkdown, encodeArticleMarkdown, getArticleMarkdownFileName, getImportedArticleTitle, isArticleFilesRequest, isArticleFileBytes } from "./files/article-files.js";
 
 
 test("Markdown file rules preserve Unicode and content while validating input", () => {
     const content = "# café 🙂\n\n[URL](https://example.com/a_(b))\n\n```ts\nconst value = 34;\n```";
     assert.equal(decodeArticleMarkdown(encodeArticleMarkdown(content)), content);
-    assert.equal(decodeArticleMarkdown(new TextEncoder().encode("\uFEFF# Title\r\n\rLine")), "# Title\n\nLine");
+    assert.equal(decodeArticleMarkdown(new TextEncoder().encode(`${BYTE_ORDER_MARK}# Title\r\n\rLine`)), "# Title\n\nLine");
     assert.equal(decodeArticleMarkdown(new Uint8Array()), "");
     assert.throws(() => decodeArticleMarkdown(Uint8Array.of(0xff)), { code: "article_file_invalid" });
-    assert.throws(() => encodeArticleMarkdown("\0"), { code: "article_file_invalid" });
+    assert.throws(() => encodeArticleMarkdown(NULL_CHARACTER), { code: "article_file_invalid" });
     assert.throws(() => encodeArticleMarkdown("é".repeat(articleMarkdownByteLimit / 2 + 1)), { code: "article_file_too_large" });
 });
 

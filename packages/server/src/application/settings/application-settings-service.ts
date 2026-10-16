@@ -72,9 +72,9 @@ export class ApplicationSettingsService {
 
 
     private hasLegacyModelIds(rawPreferences: unknown, legacyPreferences: unknown): boolean {
-        return Boolean(rawPreferences && typeof rawPreferences === "object" && !Array.isArray(rawPreferences)
-            && !legacyPreferences && typeof (rawPreferences as { defaultModel?: unknown }).defaultModel === "string"
-            && !parseAiModelPreferenceId((rawPreferences as { defaultModel: string }).defaultModel));
+        return Boolean(rawPreferences && typeof rawPreferences === "object" && !Array.isArray(rawPreferences) &&
+            !legacyPreferences && typeof (rawPreferences as { defaultModel?: unknown }).defaultModel === "string" &&
+            !parseAiModelPreferenceId((rawPreferences as { defaultModel: string }).defaultModel));
     }
 
 

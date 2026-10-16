@@ -38,7 +38,9 @@ export default defineConfig(
             "project-style/conditional-braces": "error",
             "project-style/multiline-long-strings": "error",
             "project-style/multiline-many-jsx-attributes": "error",
+            "project-style/multiline-jsx-opening-tag": "error",
             "project-style/named-regex": "error",
+            "project-style/named-unicode-characters": "error",
             "project-style/sql-query-layout": "error",
             "project-style/switch-case-body-newline": "error",
             "project-style/two-blank-lines-between-declarations": "error",
@@ -48,6 +50,7 @@ export default defineConfig(
             "@stylistic/eol-last": ["error", "always"],
             "@stylistic/indent": ["error", 4, {
                 SwitchCase: 1,
+                ignoredNodes: ["JSXClosingElement", "JSXClosingFragment"],
             }],
             "@stylistic/keyword-spacing": "error",
             "@stylistic/lines-between-class-members": "off",
@@ -56,6 +59,13 @@ export default defineConfig(
             }],
             "@stylistic/no-trailing-spaces": "error",
             "@stylistic/nonblock-statement-body-position": ["error", "below"],
+            "@stylistic/operator-linebreak": ["error", "after", {
+                overrides: {
+                    "|": "before",
+                    "?": "before",
+                    ":": "before",
+                },
+            }],
             "@stylistic/padding-line-between-statements": [
                 "error",
                 {
@@ -69,6 +79,7 @@ export default defineConfig(
             }],
             "@stylistic/semi": ["error", "always"],
             "@stylistic/space-before-blocks": "error",
+            "@stylistic/jsx-closing-tag-location": ["error", "line-aligned"],
         },
     },
     {

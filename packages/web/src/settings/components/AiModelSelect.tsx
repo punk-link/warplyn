@@ -131,7 +131,15 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
             aria-label={label}
             aria-describedby={describedBy}
             aria-disabled="true"
-            className="relative flex min-h-10 w-full items-center gap-2 rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink opacity-55">{selectedModel && <ProviderIcon provider={getModelProvider(selectedModel.model, selectedModel.provider)} viaProvider={selectedModel.provider} />}<span className="truncate">{selectedLabel}</span><ChevronDownIcon className="absolute right-3 size-4 text-muted" /></div>;
+            className={("relative flex min-h-10 w-full items-center gap-2 rounded-control border border-border " +
+                "bg-surface-raised px-3 py-2 pr-10 text-sm leading-5 text-ink opacity-55")}>
+            {selectedModel &&
+                (
+                    <ProviderIcon provider={getModelProvider(selectedModel.model, selectedModel.provider)} viaProvider={selectedModel.provider} />
+                )}<span className="truncate">
+                {selectedLabel}
+                </span><ChevronDownIcon className="absolute right-3 size-4 text-muted" />
+        </div>;
 
     return <details
         ref={select}
@@ -147,8 +155,8 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
             aria-label={label}
             aria-describedby={describedBy}
             className={("flex min-h-10 w-full cursor-pointer list-none items-center gap-2 rounded-control border border-border bg-surface-raised px-3 py-2 pr-10 " +
-            "text-sm leading-5 text-ink transition-colors hover:border-brand/45 hover:bg-brand-soft focus:outline-none focus-visible:ring-2 " +
-            "focus-visible:ring-brand [&::-webkit-details-marker]:hidden")}
+                "text-sm leading-5 text-ink transition-colors hover:border-brand/45 hover:bg-brand-soft focus:outline-none focus-visible:ring-2 " +
+                "focus-visible:ring-brand [&::-webkit-details-marker]:hidden")}
             onClick={(event) => {
                 event.preventDefault();
                 setOpensUpward(window.innerHeight - event.currentTarget.getBoundingClientRect().bottom < 272);
@@ -168,70 +176,98 @@ function ModelSelect({ value, models, favorites, placeholder, allowEmpty = false
                     aria-label={intl.formatMessage({ id: "settings.searchModels" })}
                     placeholder={intl.formatMessage({ id: "settings.searchModels" })}
                     className="pl-9 pr-10" />
-                {query && <button
-                    type="button"
-                    aria-label={intl.formatMessage({ id: "settings.clearModelSearch" })}
-                    className={("absolute right-0 top-1/2 inline-grid size-9 -translate-y-1/2 place-items-center rounded-control border border-transparent p-1 text-brand " +
-                    "transition-colors hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
-                    onClick={() => {
-                        setQuery(""); search.current?.focus();
-                    }}><CloseIcon className="size-4" />
-                </button>}
+                {query && (
+                    <button
+                        type="button"
+                        aria-label={intl.formatMessage({ id: "settings.clearModelSearch" })}
+                        className={(("absolute right-0 top-1/2 inline-grid size-9 -translate-y-1/2 place-items-center rounded-control " +
+                            "border border-transparent p-1 text-brand ") +
+                            "transition-colors hover:bg-brand-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
+                        onClick={() => {
+                            setQuery(""); search.current?.focus();
+                        }}><CloseIcon className="size-4" />
+                    </button>
+                )}
             </div>
             <div className="mt-1 grid h-52 grid-cols-[3rem_minmax(0,1fr)]">
                 <div
                     className={("flex min-h-0 flex-col items-center gap-1 overflow-x-hidden overflow-y-auto border-r border-border " +
-                    "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
-                    "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}
+                        "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
+                        "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}
                     role="tablist"
                     aria-label={intl.formatMessage({ id: "settings.modelVendorFilters" })}
                     aria-orientation="vertical">
-                    {tabs.map((item) => <button
-                        key={item}
-                        type="button"
-                        role="tab"
-                        title={getVendorLabel(item)}
-                        aria-label={getVendorLabel(item)}
-                        aria-selected={vendor === item}
-                        className={`flex size-9 shrink-0 items-center justify-center rounded-control focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${vendor === item ? "bg-brand-soft text-brand" : "text-muted hover:bg-brand-soft hover:text-brand"}`}
-                        onClick={() => setVendor(item)}>
-                        {item === "favorites" ? <StarIcon className="size-4" />
-                            : <ProviderMark provider={item === "other"
-                                ? AI_PROVIDER.OPENCODE : item} className={item === AI_PROVIDER.OPENAI ? "size-6" : "size-4"} />}
-                    </button>)}
+                    {tabs.map((item) => (
+                        <button
+                            key={item}
+                            type="button"
+                            role="tab"
+                            title={getVendorLabel(item)}
+                            aria-label={getVendorLabel(item)}
+                            aria-selected={vendor === item}
+                            className={"flex size-9 shrink-0 items-center justify-center rounded-control focus:outline-none " +
+                                "focus-visible:ring-2 focus-visible:ring-brand " + (vendor === item
+                                ? "bg-brand-soft text-brand"
+                                : "text-muted hover:bg-brand-soft hover:text-brand")}
+                            onClick={() => setVendor(item)}>
+                            {item === "favorites" ? <StarIcon className="size-4" />
+                                : (
+                                    <ProviderMark provider={item === "other"
+                                        ? AI_PROVIDER.OPENCODE : item} className={item === AI_PROVIDER.OPENAI ? "size-6" : "size-4"} />
+                                )}
+                        </button>
+                    ))}
                 </div>
                 <div className={("min-h-0 overflow-y-auto pl-1 [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
                     "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")} role="listbox" aria-label={label}>
-                    {allowEmpty && <button
-                        type="button"
-                        role="option"
-                        aria-selected={!value}
-                        className={("flex min-h-9 w-full items-center rounded-control px-2 text-left text-sm text-muted hover:bg-brand-soft hover:text-brand focus:outline-none " +
-                        "focus-visible:ring-2 focus-visible:ring-brand")}
-                        onClick={() => {
-                            onChange(""); close();
-                        }}>{placeholder}</button>}
-                    {visibleModels.map((model) => <div key={model.id} className="flex items-center gap-1">
+                    {allowEmpty && (
                         <button
                             type="button"
                             role="option"
-                            aria-selected={model.id === value || model.model === value}
-                            className={("flex min-h-9 min-w-0 flex-1 items-center gap-2 rounded-control px-2 text-left text-sm hover:bg-brand-soft focus:outline-none " +
-                            "focus-visible:ring-2 focus-visible:ring-brand")}
+                            aria-selected={!value}
+                            className={(("flex min-h-9 w-full items-center rounded-control px-2 text-left text-sm text-muted " +
+                                "hover:bg-brand-soft hover:text-brand focus:outline-none ") +
+                                "focus-visible:ring-2 focus-visible:ring-brand")}
                             onClick={() => {
-                                onChange(model.id); close();
-                            }}>
-                            <ProviderIcon provider={getModelProvider(model.model, model.provider)} viaProvider={model.provider} />
-                            <span className="truncate">{getModelLabel(model.model)}</span>
+                                onChange(""); close();
+                            }}>{placeholder}
                         </button>
-                        <IconButton
-                            label={intl.formatMessage({ id: (favorites.includes(model.id) || favorites.includes(model.model)) ? "settings.removeFavoriteModel" : "settings.addFavoriteModel" }, { model: getModelLabel(model.model) })}
-                            aria-pressed={favorites.includes(model.id) || favorites.includes(model.model)}
-                            className={favorites.includes(model.id) || favorites.includes(model.model) ? "text-brand" : undefined}
-                            onClick={() => onFavoritesChange((favorites.includes(model.id) || favorites.includes(model.model)) ? favorites.filter((favorite) => favorite !== model.id && favorite !== model.model) : [...favorites, model.id])}>
-                            <StarIcon className={favorites.includes(model.id) || favorites.includes(model.model) ? "size-4 fill-current" : "size-4"} />
-                        </IconButton>
-                    </div>)}
+                    )}
+                    {visibleModels.map((model) => (
+                        <div key={model.id} className="flex items-center gap-1">
+                            <button
+                                type="button"
+                                role="option"
+                                aria-selected={model.id === value || model.model === value}
+                                className={(("flex min-h-9 min-w-0 flex-1 items-center gap-2 rounded-control px-2 text-left text-sm " +
+                                    "hover:bg-brand-soft focus:outline-none ") +
+                                    "focus-visible:ring-2 focus-visible:ring-brand")}
+                                onClick={() => {
+                                    onChange(model.id); close();
+                                }}>
+                                <ProviderIcon provider={getModelProvider(model.model, model.provider)} viaProvider={model.provider} />
+                                <span className="truncate">{getModelLabel(model.model)}</span>
+                            </button>
+                            <IconButton
+                                label={intl.formatMessage(
+                                    {
+                                        id: (favorites.includes(model.id) || favorites.includes(model.model))
+                                            ? "settings.removeFavoriteModel"
+                                            : "settings.addFavoriteModel"
+                                    },
+                                    { model: getModelLabel(model.model) }
+                                )}
+                                aria-pressed={favorites.includes(model.id) || favorites.includes(model.model)}
+                                className={favorites.includes(model.id) || favorites.includes(model.model) ? "text-brand" : undefined}
+                                onClick={() => onFavoritesChange(
+                                    (favorites.includes(model.id) || favorites.includes(model.model))
+                                        ? favorites.filter((favorite) => favorite !== model.id && favorite !== model.model)
+                                        : [...favorites, model.id]
+                                )}>
+                                <StarIcon className={favorites.includes(model.id) || favorites.includes(model.model) ? "size-4 fill-current" : "size-4"} />
+                            </IconButton>
+                        </div>
+                    ))}
                     {visibleModels.length === 0 && <p className="px-2 py-3 text-sm text-muted" role="status">{intl.formatMessage({ id: "settings.noMatchingModels" })}</p>}
                 </div>
             </div>
