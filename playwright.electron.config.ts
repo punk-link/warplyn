@@ -2,13 +2,20 @@ import { defineConfig } from "@playwright/test";
 
 process.env.WARPLYN_ELECTRON_TEST_HIDDEN ??= "true";
 
+const nativeDictionaryTests = ["electron-spelling.spec.ts", "electron-personal-dictionary-backup.spec.ts"];
+
 export default defineConfig({
     testDir: "./e2e",
     testMatch: "electron-*.spec.ts",
     outputDir: "test-results/desktop",
     preserveOutput: "failures-only",
     reporter: "line",
-    workers: 1,
+    workers: process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true" ? 2 : 1,
+    projects: [
+        { name: "desktop", testIgnore: nativeDictionaryTests },
+        // Native personal vocabulary is shared by the OS, including across profiles.
+        { name: "native-dictionary", testMatch: nativeDictionaryTests, workers: 1 },
+    ],
     use: {
         trace: "retain-on-failure",
         screenshot: "only-on-failure",

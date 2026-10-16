@@ -5,6 +5,21 @@ import { DatabaseSync } from "node:sqlite";
 import { _electron, expect, test, type ElectronApplication } from "@playwright/test";
 
 
+async function waitForAutomaticBackupFailure(app: ElectronApplication): Promise<void> {
+    await app.evaluate(({ BrowserWindow }) => new Promise<void>((resolveFailure) => {
+        const contents = BrowserWindow.getAllWindows()[0].webContents;
+        const send = contents.send;
+        contents.send = (channel, ...args) => {
+            send.call(contents, channel, ...args);
+            if (channel === "warplyn:automatic-backup-failed") {
+                contents.send = send;
+                resolveFailure();
+            }
+        };
+    }));
+}
+
+
 test("native backup finishes through the production bridge before desktop shutdown", async () => {
     test.setTimeout(120_000);
     const root = await mkdtemp(join(tmpdir(), "warplyn-native-backup-"));
@@ -122,9 +137,10 @@ test("daily native backups create a complete bundle at every application startup
         app = await _electron.launch({ args: [resolve("packages/electron"), `--user-data-dir=${profile}`], env });
         const failedPage = await app.firstWindow();
         await failedPage.getByRole("button", { name: "Skip quick start" }).waitFor();
+        const failingApp = app;
         // Exercise a failure before the reloaded renderer installs its notification listener.
         await failedPage.route("**/src/settings/AutomaticBackups.tsx*", async (route) => {
-            await new Promise((resolveDelay) => setTimeout(resolveDelay, 8_000));
+            await waitForAutomaticBackupFailure(failingApp);
             await route.continue();
         });
         await failedPage.reload();

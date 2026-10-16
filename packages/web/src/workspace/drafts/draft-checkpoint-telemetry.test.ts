@@ -1,5 +1,7 @@
 // Product scenarios: workspace.draft.checkpoint-after-idle
 
+// @vitest-environment node
+
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { DesktopTelemetryClient } from "@skladno/shared";
 import { createDraftCheckpointTelemetry } from "./draft-checkpoint-telemetry.js";

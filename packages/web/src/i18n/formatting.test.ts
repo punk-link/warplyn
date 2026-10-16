@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import { describe, expect, it } from "vitest";
 import { configureSystemDateTimeFormat, formatDate, formatDateTime, formatTime, formatTimeZoneLabel, getSystemLocale, getSystemTimeZone, getTimeZoneOptions, resolveTimeZone } from "./formatting.js";
 

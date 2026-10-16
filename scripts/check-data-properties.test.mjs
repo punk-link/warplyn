@@ -11,6 +11,8 @@ const checkPath = fileURLToPath(new URL("./check-data-properties.mjs", import.me
 const properties = Array.from({ length: 21 }, (_, index) => `field${index}: ${index}`).join(", ");
 const changedShapePattern = /fixture\.ts:3 This data shape has 21 properties/u;
 const untouchedShapePattern = /fixture\.ts:6 This data shape has 21 properties/u;
+const importedShapePattern = /This data shape has 22 properties/u;
+const untrackedShapePattern = /untracked\.ts:3 This data shape has 21 properties/u;
 
 
 function source(label) {
@@ -71,6 +73,27 @@ test("CI checks return objects throughout changed functions while preserving unr
         writeFileSync(fixture, `export const unrelated = true;\n${source("after")}`);
         const unrelated = check(head, commit());
         assert.equal(unrelated.status, 0, unrelated.stdout + unrelated.stderr);
+
+        writeFileSync(join(directory, "base.ts"), `export interface BaseShape { ${properties.replaceAll(",", ";")} }\n`);
+        commit();
+        writeFileSync(fixture, 'import type { BaseShape } from "./base";\nexport interface ExtendedShape extends BaseShape { extra: number }\n');
+        const inherited = check();
+        assert.equal(inherited.status, 1, inherited.stdout + inherited.stderr);
+        assert.match(inherited.stderr, importedShapePattern);
+
+        writeFileSync(fixture, 'import type { BaseShape } from "./base";\nexport function spread(base: BaseShape) { return { ...base, extra: 1 }; }\n');
+        const importedSpread = check();
+        assert.equal(importedSpread.status, 1, importedSpread.stdout + importedSpread.stderr);
+        assert.match(importedSpread.stderr, importedShapePattern);
+
+        rmSync(fixture);
+        writeFileSync(join(root, "packages", "fixture", "outside-src.ts"), source("outside source"));
+        const deleted = check();
+        assert.equal(deleted.status, 0, deleted.stdout + deleted.stderr);
+        writeFileSync(join(directory, "untracked.ts"), source("untracked"));
+        const untracked = check();
+        assert.equal(untracked.status, 1, untracked.stdout + untracked.stderr);
+        assert.match(untracked.stderr, untrackedShapePattern);
     } finally {
         rmSync(root, { recursive: true, force: true });
     }

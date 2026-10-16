@@ -36,7 +36,10 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
     await writeFile(source, content);
     let app: ElectronApplication | undefined;
     try {
+        console.time("native files: launch");
         app = await launchArticleFiles(root);
+        console.timeEnd("native files: launch");
+        console.time("native files: Markdown and Revision export");
         let page = await app.firstWindow();
         await chooseNativePaths(app, source, target);
         await page.getByRole("button", { name: "Create" }).click();
@@ -62,7 +65,9 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
         expect(await readFile(target, "utf8")).toBe(content);
         await page.getByRole("tab", { name: "Write", exact: true }).click();
         await expect(editor).toContainText("New Draft");
+        console.timeEnd("native files: Markdown and Revision export");
         for (const format of ["html", "docx", "rtf"]) {
+            console.time(`native files: ${format} round trip`);
             const formatPath = join(root, `roundtrip.${format}`);
             await chooseNativePaths(app, source, formatPath);
             await page.getByRole("button", { name: "Load from file" }).click();
@@ -79,8 +84,10 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
             await expect(review).not.toBeVisible();
             await expect(page.getByRole("button", { name: "Load from file" })).toBeEnabled();
             await expect(editor).toContainText("const value = 34;");
+            console.timeEnd(`native files: ${format} round trip`);
         }
 
+        console.time("native files: cancellation and unreadable input");
         await editor.fill("New Draft");
         await chooseNativePaths(app, null, null);
         await page.getByRole("button", { name: "Load from file" }).click();
@@ -96,6 +103,8 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
         const chooseReadableMarkdownPattern = /Choose a readable Markdown, HTML, DOCX, or RTF file/;
         await expect(page.getByText(chooseReadableMarkdownPattern)).toBeVisible();
         await expect(editor).toContainText("New Draft");
+        console.timeEnd("native files: cancellation and unreadable input");
+        console.time("native files: restart and recovery");
         await app.close();
         app = await launchArticleFiles(root);
         page = await app.firstWindow();
@@ -103,9 +112,12 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
         await page.getByRole("tab", { name: "Revisions" }).click();
         await expect(page.getByRole("navigation", { name: "Revision history" }).getByRole("button")).toHaveCount(1);
         await expect(page.getByText("const value = 34;", { exact: true })).toBeVisible();
+        console.timeEnd("native files: restart and recovery");
     } finally {
+        console.time("native files: cleanup");
         await app?.close();
         await rm(root, { recursive: true, force: true });
+        console.timeEnd("native files: cleanup");
     }
 });
 

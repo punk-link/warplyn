@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import { describe, expect, it, vi } from "vitest";
 import { ApplicationClientError, type ElectronApplicationBridge } from "@skladno/shared";
 import { HttpApplicationClient } from "./client.js";

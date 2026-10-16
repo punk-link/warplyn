@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { ESLint } from "eslint";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { relative, resolve, sep } from "node:path";
 import tseslint from "typescript-eslint";
 
@@ -19,6 +19,7 @@ const sourcePattern = "packages/*/src/**/*.{ts,tsx}";
 const hunkPattern = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/u;
 const lineBreakPattern = /\r?\n/u;
 const typescriptPathPattern = /\.tsx?$/u;
+const sourcePathPattern = /^packages\/[^/]+\/src\/.+\.tsx?$/u;
 const nullCharacter = String.fromCharCode(0);
 const changedLines = allMode ? undefined : getChangedLines();
 
@@ -105,6 +106,11 @@ function declarationWasChanged(changed, message) {
 
 
 async function findChangedViolations() {
+    const paths = allMode ? [sourcePattern] : [...changedLines.keys()].filter((path) =>
+        sourcePathPattern.test(path.replaceAll(sep, "/")) && existsSync(resolve(root, path)));
+    if (paths.length === 0)
+        return [];
+
     const eslint = new ESLint({
         overrideConfig: [{
             files: [sourcePattern],
@@ -119,7 +125,7 @@ async function findChangedViolations() {
             rules: { "project-style/max-data-properties": "error" },
         }],
     });
-    const results = await eslint.lintFiles([sourcePattern]);
+    const results = await eslint.lintFiles(paths);
     const violations = [];
 
     for (const result of results) {

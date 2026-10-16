@@ -35,11 +35,15 @@ Use focused tests while editing. Before pushing or handing off changes on a PR, 
 
 CI uses these same commands. Quality also audits production dependencies; desktop jobs also run Electron unit tests and build platform packages. Linux additionally installs and validates the Debian package. A core pass alone does not establish merge readiness. Report core, browser, and desktop results separately, including platform and any required checks not run. Run browser and desktop journeys sequentially because they use the same web port.
 
+In CI, Quality runs core and browser verification in separate jobs. The browser job builds shared contracts before starting its service. The required `verify` check passes only when both jobs succeed.
+
 For documentation-only changes, inspect the diff, check local links and referenced paths, verify command examples against package scripts, and run `git diff --check`. Lint, typecheck, and application tests are unnecessary unless executable code or configuration also changes. Product-model edits require `npm run product:docs` followed by `npm run product:check`.
 
 ### Focused tests
 
 The workspace runners differ. Appending a file to a script that already includes a test glob still selects the glob's tests.
+
+Pure renderer logic tests opt into Node with `// @vitest-environment node`. Tests that exercise the DOM or editor rendering retain the default jsdom environment.
 
 | Target | Command | Working directory |
 | --- | --- | --- |
@@ -53,6 +57,8 @@ Before shared tests, run `npm run typecheck` from the root to refresh `dist`; th
 ### Electron verification
 
 Electron E2E keeps the desktop window hidden by default, with renderer background throttling disabled so automation can run without taking desktop focus. On Windows, run `npm run package:electron` before `npm run verify:desktop`; packaging builds both the web renderer and Electron. On Linux, run `npm run make:electron:linux`, install the resulting Debian package, then run `WARPLYN_ELECTRON_EXECUTABLE=/usr/lib/warplyn/Warplyn xvfb-run --auto-servernum npm run verify:desktop`, as CI does. Run the desktop gate again after rebuilding any changed production code.
+
+Hidden desktop journeys use two workers with separate data and profile directories. The `native-dictionary` project runs its files serially because OS personal vocabulary is shared across profiles. Visible desktop runs use one worker. Use `npm run verify:desktop -- --workers=1` to compare serial timings.
 
 For visible debugging in PowerShell, set `$env:WARPLYN_ELECTRON_TEST_HIDDEN = "false"` before running the tests, then run `Remove-Item Env:WARPLYN_ELECTRON_TEST_HIDDEN` to restore the default. The real native spelling-marker test requires this visible mode and remains separate from the deterministic synthetic correction test.
 
