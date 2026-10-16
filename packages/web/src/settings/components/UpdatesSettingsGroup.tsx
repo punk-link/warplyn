@@ -96,7 +96,7 @@ function UpdateActions({ client, state, status, details, onState, intl }: { clie
         {state.kind === "downloading" && <Button disabled aria-busy="true" className="!cursor-progress">{status}</Button>}
         {state.kind === "ready" && <Button onClick={() => void client.restartAndUpdate()}>{intl.formatMessage({ id: "settings.restartAndUpdate" })}</Button>}
         {state.kind === "failed" && <Button variant="secondary" onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.retry" })}</Button>}
-        {canCheckNow && <Button variant="secondary" state={state.kind === "checking" ? "loading" : "default"} onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.checkNow" })}</Button>}
+        {canCheckNow && <Button variant="secondary" disabled={state.kind === "checking"} onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.checkNow" })}</Button>}
         {details && <Button variant="quiet" onClick={() => void client.openReleaseNotes()}>{intl.formatMessage({ id: "settings.viewReleaseNotes" })}</Button>}
         {state.recoveryAvailable && (
             <button
