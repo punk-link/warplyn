@@ -11,7 +11,7 @@ Use this guide to prepare and verify the browser-based local-first MVP and unsig
    npm run lint
    npm run typecheck
    npm test
-   npm run test:e2e
+   npm run verify:browser
    npm run build
    npm run product:check
    ```

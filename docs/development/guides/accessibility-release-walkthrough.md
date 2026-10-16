@@ -4,7 +4,7 @@ This reusable checklist covers Application Settings and the Editorial Workspace 
 
 ## Repeatable setup
 
-1. Run `npm run test:e2e`. It starts the deterministic local service with `.e2e-data`, uses no API key, and stops its processes when complete.
+1. Run `npm run verify:browser`. It starts the deterministic local service with `.e2e-data`, uses no API key, and stops its processes when complete.
 2. Start a manual Chromium session with the same service settings from `playwright.config.ts`.
 3. In Settings, select LinkedIn Post as the default publishing profile and Spanish as a default translation language.
 4. Create `Fixture Article`, enter `Original fixture Article.`, and save a Revision.

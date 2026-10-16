@@ -233,8 +233,8 @@ For implementation in each repository, first run product impact against its actu
 Required automated checks for the completed changes:
 
 ```powershell
-npm run verify
-npm run test:e2e
+npm run verify:core
+npm run verify:browser
 npm run build
 npm run build:site
 ```
