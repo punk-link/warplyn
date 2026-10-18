@@ -18,11 +18,12 @@ async function unusedPort(): Promise<number> {
 }
 
 
-export async function launchPackaged(root: string): Promise<{ process: ChildProcess; browser: Browser; page: Page }> {
+export async function launchPackaged(root: string, extraArgs: string[] = []): Promise<{ process: ChildProcess; browser: Browser; page: Page }> {
     const port = await unusedPort();
     const executable = process.platform === "win32" ? "Warplyn.exe" : "Warplyn";
     const executablePath = process.env.WARPLYN_ELECTRON_EXECUTABLE || resolve(`packages/electron/out/Warplyn-${process.platform}-x64/${executable}`);
-    const child = spawn(executablePath, ["--remote-debugging-address=127.0.0.1", `--remote-debugging-port=${port}`, `--user-data-dir=${join(root, "profile")}`], {
+    const args = ["--remote-debugging-address=127.0.0.1", `--remote-debugging-port=${port}`, `--user-data-dir=${join(root, "profile")}`, ...extraArgs];
+    const child = spawn(executablePath, args, {
         env: { ...process.env, WARPLYN_DATA_DIR: join(root, "data"), WARPLYN_AI_API_KEY: "" },
         stdio: "ignore",
     });

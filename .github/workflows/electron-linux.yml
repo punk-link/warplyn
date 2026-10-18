@@ -134,8 +134,5 @@ jobs:
                   shopt -s nullglob
                   assets=(packages/electron/out/make/deb/x64/*.deb)
                   test "${#assets[@]}" -eq 1
-                  if [[ "$RELEASE_TAG" == *-preview.* ]]; then prerelease=--prerelease; else prerelease=; fi
-                  if ! gh release create "$RELEASE_TAG" $prerelease --title "Warplyn $RELEASE_TAG" --notes "Unsigned Warplyn preview release."; then
-                    gh release view "$RELEASE_TAG" >/dev/null
-                  fi
+                  node scripts/publish-release-notes.mjs "$RELEASE_TAG"
                   gh release upload "$RELEASE_TAG" "${assets[0]}" --clobber

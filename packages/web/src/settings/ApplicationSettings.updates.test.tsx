@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { DesktopSettingsClient, DesktopUpdateClient } from "@skladno/shared";
+import type { DesktopSettingsClient, DesktopUpdateClient, DesktopUpdateState } from "@skladno/shared";
 
 import type { EditorialWorkspaceClient } from "../application/client.js";
 import { messages } from "../i18n/messages.js";
@@ -13,7 +13,7 @@ import { UpdatesSettingsGroup } from "./components/UpdatesSettingsGroup.js";
 import { resetApplicationSettingsTestEnvironment, settingsSnapshot } from "./ApplicationSettings.test-utils.js";
 
 
-// Product scenario: settings.preview-update-controls
+// Product scenarios: settings.preview-update-controls, settings.release-summary-details
 
 describe("ApplicationSettings updates", () => {
     afterEach(resetApplicationSettingsTestEnvironment);
@@ -62,7 +62,7 @@ describe("ApplicationSettings updates", () => {
         await user.click(screen.getByRole("button", { name: getMessage("settings.checkNow") }));
         await screen.findByRole("button", { name: getMessage("settings.downloadUpdate") });
         expect(checkNow).toHaveBeenCalledOnce();
-        expect(screen.queryByText("Unsigned Windows preview")).toBeNull();
+        expect(screen.getByText("Unsigned Windows preview")).toBeTruthy();
         expect(screen.queryByText("Warplyn checks public release metadata.")).toBeNull();
         expect(screen.getByRole("button", { name: getMessage("settings.viewReleaseNotes") }).classList.contains("bg-transparent")).toBe(true);
     });
@@ -97,5 +97,38 @@ describe("ApplicationSettings updates", () => {
         await userEvent.setup().click(await screen.findByRole("button", { name: getMessage("settings.viewReleaseNotes") }));
         expect(openReleaseNotes).toHaveBeenCalledOnce();
         expect(screen.queryByRole("button", { name: getMessage("settings.updateRecovery") })).toBeNull();
+    });
+
+    it.each(["available", "downloading", "ready"] as const)("shows complete literal details while %s", async (kind) => {
+        const summary = `- ${"Recover café writing. ".repeat(80)}\n- <script>alert(1)</script> ![image](https://example.test/image) {count}`;
+        const state: DesktopUpdateState = { kind, currentVersion: "0.7.0", version: "0.8.0", title: "Release", summary,
+            releaseNotesUrl: "https://example.test/release", security: false, downloadable: true,
+            automaticChecks: true, includePrereleases: false, networkAccess: true };
+        const updates: DesktopUpdateClient = { getState: vi.fn().mockResolvedValue(state), setNetworkAccess: vi.fn(),
+            setAutomaticChecks: vi.fn(), setIncludePrereleases: vi.fn(), checkNow: vi.fn(), download: vi.fn(),
+            restartAndUpdate: vi.fn(), openReleaseNotes: vi.fn(), openRecoveryGuide: vi.fn(), rendererReady: vi.fn(),
+            subscribe: () => () => undefined };
+        const { container } = render(<IntlProvider locale="en" messages={messages}><UpdatesSettingsGroup client={updates} desktop /></IntlProvider>);
+        const heading = await screen.findByRole("heading", { name: "Changes in 0.8.0" });
+        expect(heading.nextElementSibling?.textContent).toBe(summary);
+        expect(container.querySelector("script, img, a")).toBeNull();
+        expect(screen.getByRole("button", { name: getMessage("settings.viewReleaseNotes") })).toBeTruthy();
+    });
+
+    it("localizes missing details while keeping restart usable", async () => {
+        const restartAndUpdate = vi.fn();
+        const updates: DesktopUpdateClient = { getState: vi.fn().mockResolvedValue({ kind: "ready", currentVersion: "0.7.0",
+            version: "0.8.0", title: "Release", summary: "", releaseNotesUrl: "https://example.test", security: false,
+            automaticChecks: true, includePrereleases: false, networkAccess: true }), setNetworkAccess: vi.fn(),
+        setAutomaticChecks: vi.fn(), setIncludePrereleases: vi.fn(), checkNow: vi.fn(), download: vi.fn(),
+        restartAndUpdate, openReleaseNotes: vi.fn(), openRecoveryGuide: vi.fn(), rendererReady: vi.fn(), subscribe: () => () => undefined };
+        const localized: Record<string, string> = Object.assign({}, messages);
+        localized["settings.updateChangesUnavailable"] = "[Details unavailable]";
+        render(<IntlProvider locale="en" messages={localized}>
+            <UpdatesSettingsGroup client={updates} desktop />
+        </IntlProvider>);
+        await screen.findByText("[Details unavailable]");
+        await userEvent.setup().click(screen.getByRole("button", { name: getMessage("settings.restartAndUpdate") }));
+        expect(restartAndUpdate).toHaveBeenCalledOnce();
     });
 });

@@ -193,6 +193,16 @@ export function UpdatesSettingsGroup({ client, desktop }: { client: DesktopUpdat
                 intl={intl} />}>
             <span />
         </SettingRow>
+        {isUpdateDetails(state) && (
+            <section className="min-w-0 border-b border-border py-4" aria-labelledby="settings-update-changes">
+                <h3 id="settings-update-changes" className="text-sm font-semibold">
+                    {intl.formatMessage({ id: "settings.updateChanges" }, { version: state.version })}
+                </h3>
+                <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-muted">
+                    {state.summary || intl.formatMessage({ id: "settings.updateChangesUnavailable" })}
+                </p>
+            </section>
+        )}
         <NetworkPermissionDialog
             client={client}
             open={networkPermissionOpen}
