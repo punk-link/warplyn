@@ -1,0 +1,38 @@
+{
+    "version": "0.7.1",
+    "previousTag": "v0.7.0",
+    "previousCommit": "edc5155beccd72a9d8501a5fcebec455c75b0f79",
+    "baseline": "published",
+    "sourceCommit": "540be115e51e3da4eece543f7640e321a2a74ec8",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "text": "Set typography rules for a writing language or an individual article, then check a saved Revision locally without AI. Review suggested corrections with the rules that support them before choosing what to accept.",
+            "commits": [
+                "2fa8a03ee1592ea1142606f3c06590622005b76f",
+                "cc2c6d9e869255519b4e3db7b8845da7873e8a66",
+                "db6f6a5b7183ab3f2217925cf5f79dc646ad0283"
+            ]
+        },
+        {
+            "text": "Style Profile now has its own navigable screen, with sections for your profile, typography, guidance, and writing samples. A compact layout and clearer typography labels make settings easier to scan.",
+            "commits": [
+                "637ae3396f3dbda3c99f66231652561ccba669d6",
+                "fcc665da49f1976d51b9fa0b23fcafd7b4ea2c87",
+                "6ad4a315309fd7c7986fc100efdc9f1889957731",
+                "880d385168f9e26035ae9a3b0f37dabe2717ce85"
+            ]
+        },
+        {
+            "text": "Desktop update settings show release notes for updates and disable Check Now while an update check is in progress.",
+            "commits": [
+                "540be115e51e3da4eece543f7640e321a2a74ec8",
+                "c456d5f530a49f15f32a288141cb482d3c15fb5b"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
