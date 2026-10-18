@@ -91,17 +91,24 @@ export function getNewestCompatibleRelease(payload: unknown, currentVersion: str
 
 export function getAvailableUpdateState(release: Release, currentVersion: string, settings: RuntimeSettings, downloadable: boolean): Extract<DesktopUpdateState, { kind: "available" }> {
     const match = releaseVersion.exec(release.tag_name)!;
-    const punctuationPattern = /<[^>]*>/g;
     return {
         kind: "available",
         currentVersion,
         version: match[0].slice(1),
         title: typeof release.name === "string" && release.name ? release.name : `Warplyn ${match[0]}`,
-        summary: typeof release.body === "string" ? release.body.replace(punctuationPattern, "").trim().slice(0, 1000) : "",
+        summary: readReleaseSummary(release.body),
         releaseNotesUrl: release.html_url,
         security: match[5] === ".security",
         downloadable,
         ...(settings.lastUpdateCheckAt ? { lastCheckedAt: settings.lastUpdateCheckAt } : {}),
         ...updatePreferences(settings, currentVersion),
     };
+}
+
+
+function readReleaseSummary(body: unknown): string {
+    if (typeof body !== "string" || body.length > 8000)
+        return "";
+
+    return body.replaceAll("\r\n", "\n").trim();
 }

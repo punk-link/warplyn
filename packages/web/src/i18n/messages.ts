@@ -943,6 +943,8 @@ export const messages = {
     "settings.updatesError.apply_failed": "Couldn’t prepare the update. Your current version is still open.",
     "settings.checkNow": "Check now",
     "settings.viewReleaseNotes": "View release notes",
+    "settings.updateChanges": "Changes in {version}",
+    "settings.updateChangesUnavailable": "Release details are unavailable. You can still update.",
     "settings.downloadUpdate": "Download",
     "settings.restartAndUpdate": "Restart and update",
     "settings.retry": "Retry",

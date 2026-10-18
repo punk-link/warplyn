@@ -8,7 +8,9 @@ test("chooses stable and preview versions", () => {
     assert.equal(nextReleaseVersion("1.2.3", false, "2.0.0"), "2.0.0");
     assert.equal(nextReleaseVersion("1.2.3", true), "1.2.4-preview.1");
     assert.equal(nextReleaseVersion("1.2.3-preview.4", true), "1.2.3-preview.5");
+    assert.equal(nextReleaseVersion("1.2.3-preview.4.security", true), "1.2.3-preview.5");
     assert.equal(nextReleaseVersion("1.2.2", true, "1.2.3", ["1.2.3-preview.1"]), "1.2.3-preview.2");
+    assert.equal(nextReleaseVersion("1.2.2", true, "1.2.3", ["1.2.3-preview.4.security"]), "1.2.3-preview.5");
 });
 
 

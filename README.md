@@ -79,6 +79,21 @@ On Windows, you control update checks, downloads, and restarts in **Settings > A
 - [User documentation](https://warplyn.com/docs/)
 - [Report a problem or suggest an improvement](https://github.com/punk-link/warplyn/issues)
 
+## Create a release
+
+Maintainers need an authenticated GitHub CLI and a clean checkout of `main`. Set `OPENAI_COMMIT_GENERATION_KEY` in the release terminal to enable automatic release-note generation through OpenAI. The default model is `gpt-6-luna` with medium reasoning; `OPENAI_COMMIT_GENERATION_MODEL` can override it. This key is for release tooling and is never packaged with the app or written to release records or logs.
+
+Run one of these commands:
+
+```sh
+npm run release
+npm run release:preview
+```
+
+Each command generates missing notes, shows the summary and proposed security classification for approval, runs checks, and commits the approved notes with version changes before tagging and pushing. Cancel to edit the draft, then rerun the same command to reuse it. Add `--manual` to write notes without an API call, or `--compare v0.7.0` to generate a local comparison without publishing, for example `npm run release -- --compare v0.7.0`.
+
+Generation sends bounded repository source diffs and commit evidence to OpenAI with response storage disabled. It excludes credentials, binaries, and test data. See the [release guide](docs/development/guides/mvp-release-and-recovery.md) for version selection, first-release setup, review, publication, and recovery procedures.
+
 ## Project history
 
 Warplyn is maintained by [punk-link](https://github.com/punk-link) and includes Skladno's Git history and inherited tags. Download Warplyn installers from the current [Warplyn releases](https://github.com/punk-link/warplyn/releases).

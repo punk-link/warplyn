@@ -243,9 +243,10 @@
                 "packages/web/src/settings/components/UpdatesSettingsGroup.tsx",
                 "packages/web/src/workspace/components/ArticleLibraryPanel.tsx",
                 "packages/web/src/workspace/components/ArticleLibraryFrame.tsx",
-                "packages/electron/src/presentation/updates/desktop-updates.ts"
+                "packages/electron/src/presentation/updates/desktop-updates.ts",
+                "packages/electron/src/presentation/updates/desktop-update-releases.ts"
             ],
-            "contract": "About Settings asks the author in a confirmation dialog to allow GitHub update network access before any discovery request. After consent, it exposes automatic checks and a stable-only or prerelease-inclusive channel preference. Windows exposes explicit download, guarded restart, release notes, and recovery guidance; Linux exposes the newest matching Debian release and its release notes, but no in-app download or apply action. An available release appears in the Article Library utility area and opens About Settings with Updates focused. Browser builds omit the group; Electron development builds expose the persisted preferences but no discovery or download actions.",
+            "contract": "About Settings asks the author in a confirmation dialog to allow GitHub update network access before any discovery request. After consent, it exposes automatic checks and a stable-only or prerelease-inclusive channel preference. Windows exposes explicit download, guarded restart, release notes, and recovery guidance; Linux exposes the newest matching Debian release and its release notes, but no in-app download or apply action. Available, downloading, and ready states display the selected GitHub Release body as complete escaped text up to 8,000 characters. Missing or invalid details show localized guidance without blocking update actions. An available release appears in the Article Library utility area and opens About Settings with Updates focused. Browser builds omit the group; Electron development builds expose the persisted preferences but no discovery or download actions.",
             "persistence": "The desktop runtime file stores the network-permission, automatic-check, and prerelease-channel preferences plus non-content update recovery metadata."
         },
         {
@@ -577,6 +578,20 @@
                 "kind": "automated",
                 "path": "packages/electron/src/presentation/settings/desktop-backup-scheduler.test.ts"
             }
+        },
+        {
+            "id": "settings.release-summary-details",
+            "title": "Packaged update details share the published summary safely",
+            "capabilityIds": ["settings.preview-updates"],
+            "preconditions": ["A packaged desktop release uses synthetic GitHub metadata."],
+            "event": "The Author allows update checks and opens the available version's details.",
+            "expected": [
+                "The complete release body appears as escaped text, including summaries longer than 1,000 characters and maintenance-only summaries.",
+                "Missing details leave applicable update actions usable; narrow layouts wrap the content.",
+                "No discovery occurs before consent, Windows Download remains explicit, and Linux offers notes without installation controls."
+            ],
+            "forbidden": ["Release content executes HTML, fetches images, or starts an update."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/settings/ApplicationSettings.updates.test.tsx" }
         },
         {
             "id": "settings.preview-update-controls",

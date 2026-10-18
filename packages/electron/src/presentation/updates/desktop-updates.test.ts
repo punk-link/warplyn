@@ -203,11 +203,15 @@ test("applying a downloaded update records its recovery snapshot outcome", async
     const root = mkdtempSync(join(tmpdir(), "skladno-updates-test-"));
     const runtimePath = join(root, "runtime-settings.json");
     const telemetry: unknown[] = [];
+    const summary = `- ${"Recover your latest writing after restarting. ".repeat(40)}`.trim();
+    const summaries: string[] = [];
     let downloaded: (() => void) | undefined;
     const coordinator = createDesktopUpdateCoordinator(
         { runtimePath, currentVersion: "0.1.0", supported: true, platform: "win32" },
         {
-            fetchReleases: async () => new Response(JSON.stringify([{ tag_name: "v0.1.1", html_url: "https://example.test/release", prerelease: false, draft: false, assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] }])),
+            fetchReleases: async () => new Response(JSON.stringify([{ tag_name: "v0.1.1", body: summary,
+                html_url: "https://example.test/release", prerelease: false, draft: false,
+                assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.2.0-full.nupkg" }] }])),
             openExternal: async () => undefined,
         },
         {
@@ -223,13 +227,17 @@ test("applying a downloaded update records its recovery snapshot outcome", async
             requestCheckpoint: async () => true, closeApplication: () => undefined,
             telemetry: { beginCapture: () => (event) => telemetry.push(event) },
         },
-        { notify: () => undefined },
+        { notify: (state) => {
+            if ("summary" in state)
+                summaries.push(state.summary);
+        } },
     );
 
     try {
         coordinator.setNetworkAccess(true);
         await coordinator.checkNow();
         coordinator.download();
+        assert.deepEqual(summaries, [summary, summary, summary]);
         assert.equal(await coordinator.restartAndUpdate(), true);
         assert.equal(telemetry.length, 1);
         assert.equal((telemetry[0] as { kind?: unknown }).kind, "backup_finished");

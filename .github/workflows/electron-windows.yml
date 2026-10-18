@@ -140,9 +140,6 @@ jobs:
                   $package = $assets | Where-Object Name -match '-full\.nupkg$'
                   if ($setup.Count -ne 1 -or $releases.Count -ne 1 -or $package.Count -ne 1) { throw 'Expected exactly one setup executable, RELEASES manifest, and full nupkg.' }
                   if ($setup.Name -notmatch '^Warplyn-' -or $package.Name -notmatch '^com\.warplyn\.desktop-') { throw 'Legacy assets cannot publish in the Warplyn feed.' }
-                  gh release create $env:RELEASE_TAG --prerelease=$($env:RELEASE_TAG -match '-preview\.') --title "Warplyn $env:RELEASE_TAG" --notes "Unsigned Warplyn preview release."
-                  if ($LASTEXITCODE -ne 0) {
-                    gh release view $env:RELEASE_TAG
-                    if ($LASTEXITCODE -ne 0) { throw 'Could not create or find the release.' }
-                  }
+                  node scripts/publish-release-notes.mjs $env:RELEASE_TAG
+                  if ($LASTEXITCODE -ne 0) { throw 'Release summary publication failed.' }
                   gh release upload $env:RELEASE_TAG $setup.FullName $releases.FullName $package.FullName --clobber
