@@ -18,5 +18,5 @@ it("catalog refresh does not overwrite text edited after restoring a checkpoint"
     act(() => result.current.onChange({ guidance: "My new direction", selectedSkill: result.current.selectedSkill, skillOffset: 0, caretOffset: 16 }));
     rerender({ skills: [...skillCatalogFixture] });
     expect(result.current.guidance).toBe("My new direction");
-    expect(result.current.selectedSkill?.name).toBe("Flow and clarity");
+    expect(result.current.selectedSkill?.name).toBe("Improve flow and clarity");
 });

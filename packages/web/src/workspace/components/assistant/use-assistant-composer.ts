@@ -104,6 +104,27 @@ interface AssistantComposerOptions {
 
 
 const draftKey = (articleId: string) => `skladno-assistant-composer:${articleId}`;
+const recentSkillsKey = "skladno-assistant-recent-skills";
+const recentSkillLimit = 5;
+
+
+function readRecentSkillIds(): string[] {
+    try {
+        const stored: unknown = JSON.parse(localStorage.getItem(recentSkillsKey) ?? "[]");
+        return Array.isArray(stored) ? [...new Set(stored.filter((id): id is string => typeof id === "string"))].slice(0, recentSkillLimit) : [];
+    } catch {
+        return [];
+    }
+}
+
+
+function saveRecentSkillIds(skillIds: string[]) {
+    try {
+        localStorage.setItem(recentSkillsKey, JSON.stringify(skillIds));
+    } catch {
+        // Recent history must not block an explicit request.
+    }
+}
 
 
 function savedSkill(value: unknown): AssistantComposerSkill | undefined {
@@ -141,6 +162,8 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
     const [initialDraft] = useState(() => readDraft(articleId));
     const [guidance, setGuidance] = useState(initialDraft?.guidance ?? "");
     const [quickActionsOpen, setQuickActionsOpen] = useState(false);
+    const [showAllSkills, setShowAllSkills] = useState(false);
+    const [recentSkillIds, setRecentSkillIds] = useState(readRecentSkillIds);
     const [selectedSkill, setSelectedSkill] = useState<AssistantComposerSkill | undefined>(initialDraft?.selectedSkill);
     const [skillOffset, setSkillOffset] = useState(initialDraft?.skillOffset ?? 0);
     const [slashRange, setSlashRange] = useState<{ start: number; end: number }>();
@@ -181,6 +204,12 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         .filter((skill) => !selection || (skill.scopes ?? ["article", "selection"]).includes("selection"))
         .map((skill) => getSkillPresentation(skill, intl))
         .filter((skill) => !slashQuery || skill.name.toLocaleLowerCase().includes(slashQuery.toLocaleLowerCase()));
+    const recentSkills = [
+        ...recentSkillIds.map((id) => pickerSkills.find((skill) => skill.id === id)).filter((skill) => skill !== undefined),
+        ...pickerSkills.filter((skill) => !recentSkillIds.includes(skill.id)),
+    ].slice(0, recentSkillLimit);
+    const availableSkills = slashRange || showAllSkills ? pickerSkills : recentSkills;
+    const hasMoreSkills = pickerSkills.length > recentSkillLimit;
 
     const slashPickerWasOpen = useRef(false);
     useEffect(() => {
@@ -192,10 +221,10 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
 
 
     function focusQuickAction(index: number) {
-        if (!pickerSkills.length)
+        if (!availableSkills.length)
             return;
 
-        const nextIndex = (index + pickerSkills.length) % pickerSkills.length;
+        const nextIndex = (index + availableSkills.length) % availableSkills.length;
         setActiveSkillIndex(nextIndex);
         document.querySelectorAll<HTMLButtonElement>("[data-assistant-skill]")[nextIndex]?.focus();
     }
@@ -230,12 +259,19 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         const requestSkill = selectedSkill?.id;
         const selectedSkillOffset = requestSkill ? Math.max(0, skillOffset - leadingWhitespace) : undefined;
 
+        if (requestSkill && selectedDefinition?.reference.source === "built-in") {
+            const nextRecentSkillIds = [requestSkill, ...recentSkillIds.filter((id) => id !== requestSkill)].slice(0, recentSkillLimit);
+            setRecentSkillIds(nextRecentSkillIds);
+            saveRecentSkillIds(nextRecentSkillIds);
+        }
+
         setGuidance("");
         setSelectedSkill(undefined);
         clearSelection?.();
         void onRequest(authorMessage, requestSkill, isTranslation ? restoredTargetLanguage ?? translationLanguages : undefined, selectedSkillOffset);
         setRestoredTargetLanguage(undefined);
-    }, [canSend, clearSelection, guidance, isTranslation, onRequest, restoredTargetLanguage, selectedSkill, skillOffset, translationLanguages]);
+    }, [canSend, clearSelection, guidance, isTranslation, onRequest, recentSkillIds, restoredTargetLanguage,
+        selectedDefinition, selectedSkill, skillOffset, translationLanguages]);
 
     useEffect(() => {
         const unregisterSend = dispatcher?.register(KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST, send);
@@ -266,7 +302,7 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
 
     const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => handleComposerKeyDown(event, {
         quickActionsOpen,
-        selectedPickerSkill: pickerSkills[activeSkillIndex],
+        selectedPickerSkill: availableSkills[activeSkillIndex],
         selectSkill,
         assistantSendMode,
         shortcutOverrides,
@@ -285,7 +321,11 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         selection,
         clearSelection,
         quickActionsOpen,
-        availableSkills: pickerSkills,
+        availableSkills,
+        showAllSkills,
+        setShowAllSkills,
+        hasMoreSkills,
+        searchingSkills: slashRange !== undefined,
         activeSkillIndex,
         incompatibleSelectionSkill,
         setQuickActionsOpen,

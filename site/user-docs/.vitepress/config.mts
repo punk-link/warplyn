@@ -45,8 +45,12 @@ export default defineConfig({
             {
                 text: "Guides",
                 items: [
+                    { text: "Writing and organizing Articles", link: "/writing-and-articles" },
                     { text: "Article files", link: "/article-files" },
                     { text: "Editorial Assistant", link: "/editorial-assistant" },
+                    { text: "Reviewing Articles", link: "/reviewing-articles" },
+                    { text: "Translations", link: "/translations" },
+                    { text: "Style Profile", link: "/style-profile" },
                     { text: "Skills", link: "/skills" },
                 ],
             },
@@ -55,6 +59,7 @@ export default defineConfig({
                 items: [
                     { text: "AI providers and models", link: "/providers" },
                     { text: "AI provider costs", link: "/provider-costs" },
+                    { text: "Application settings", link: "/application-settings" },
                     { text: "Backups and recovery", link: "/backups-and-recovery" },
                     { text: "Update recovery", link: "/update-recovery" },
                     { text: "Diagnostic and usage data", link: "/telemetry" },

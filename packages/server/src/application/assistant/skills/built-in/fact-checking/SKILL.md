@@ -1,6 +1,6 @@
 ---
 id: fact_checking
-name: Fact Checking
+name: Check facts
 description: Review factual claims and prepare sourced, advisory Findings.
 version: 1
 execution:
@@ -14,7 +14,7 @@ presentation:
 references:
   - references/advisory.md
 ---
-# Fact Checking
+# Check facts
 
 Check factual claims with sources. Keep uncertainty visible and never alter the Article. The current phase is supplied with the relevant Article, claim, or research evidence.
 

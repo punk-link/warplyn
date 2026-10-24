@@ -12,7 +12,7 @@ function getPromptText(input: Parameters<typeof createEditorialMessages>[0]): st
 }
 
 
-test("direct thesis composition uses the Narrative Draft prompt", async () => {
+test("direct thesis composition uses the Turn ideas into a draft prompt", async () => {
     const input = {
         operation: EDITORIAL_OPERATION.THESIS_TO_NARRATIVE,
         article: "Current draft.",
@@ -128,7 +128,7 @@ test("narrative-draft prompt follows Author direction, selection priority, and t
     assert.match(prompt, preferStraightforwardStructurePattern);
 });
 
-test("full Narrative Draft uses the existing Article title without adding it to the body", async () => {
+test("full Turn ideas into a draft uses the existing Article title without adding it to the body", async () => {
     const prompt = getPromptText({
         operation: EDITORIAL_OPERATION.THESIS_TO_NARRATIVE,
         article: "Draft body.",
@@ -217,7 +217,7 @@ test("selected editorial text does not send the surrounding Article title", () =
 
 
 // Product scenario: editorial-workflows.concise-rewrite-contract
-test("Concise rewrite specifies safe deletion, preservation, prose output, and exact no-op behavior", () => {
+test("Shorten text specifies safe deletion, preservation, prose output, and exact no-op behavior", () => {
     const fixtures = [
         { article: "It is important to note that retries can cause repeated requests, again and again.", authorContext: "Cut the introduction first." },
         { article: "Retries need limits.", authorContext: "" },
@@ -248,7 +248,7 @@ test("Concise rewrite specifies safe deletion, preservation, prose output, and e
 });
 
 
-test("Concise rewrite selection requests only an excerpt replacement without the Article title", () => {
+test("Shorten text selection requests only an excerpt replacement without the Article title", () => {
     const prompt = getPromptText({ operation: EDITORIAL_OPERATION.FLOW_REVISION, skillId: BUILT_IN_SKILL.CONCISE_REWRITE, article: "Selected excerpt.", articleTitle: "Private title", articleSelection: true, authorContext: "Keep the example." });
     const selectedPassageMarkdownPattern = /Selected-passage Markdown replacement/;
     assert.match(prompt, selectedPassageMarkdownPattern);

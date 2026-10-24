@@ -61,6 +61,7 @@ describe("Editorial Workspace assistant requests", () => {
         await screen.findByRole("heading", { name: "First Article" });
         await user.click(screen.getByRole("button", { name: getMessage("assistant.expand") }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.showAllSkills") }));
         await user.click(screen.getByRole("option", { name: "Skill Creator" }));
         await user.type(screen.getByRole("combobox", { name: getMessage("assistant.guidance") }), "Create a reusable Skill for concise editing.");
         await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
@@ -263,6 +264,7 @@ describe("Editorial Workspace assistant requests", () => {
         render(<App client={client} />);
         await screen.findByRole("textbox", { name: "Article draft" });
         await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.showAllSkills") }));
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.translation.label") }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
 

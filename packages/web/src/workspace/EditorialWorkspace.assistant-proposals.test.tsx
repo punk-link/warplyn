@@ -32,7 +32,7 @@ describe("Editorial Workspace assistant", () => {
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
         await waitFor(() => expect(emit).toBeDefined());
-        expect(await screen.findByRole("article", { name: "Talking points" })).toBeTruthy();
+        expect(await screen.findByRole("article", { name: "Develop key points" })).toBeTruthy();
 
         act(() => emit?.({ type: "text_delta", requestId: "request", delta: "Hidden" }));
         expect(screen.queryByText("Hidden")).toBeNull();

@@ -1,7 +1,7 @@
 ---
 id: concise_rewrite
-name: Concise rewrite
-description: Shorten or tighten an Article or selection by cutting repetition and filler while preserving meaning and voice. Use Flow and Clarity for readability or transitions without a shortening request.
+name: Shorten text
+description: Shorten or tighten an Article or selection by cutting repetition and filler while preserving meaning and voice. Use Improve flow and clarity for readability or transitions without a shortening request.
 version: 1
 execution:
   capability: generate_proposal
@@ -14,7 +14,7 @@ presentation:
   label: assistant.skill.conciseRewrite.label
   hint: assistant.skill.conciseRewrite.hint
 ---
-# Concise rewrite
+# Shorten text
 
 Prepare a shorter, sharper body-only Markdown Proposal for Author review. Use generate_proposal with operation flow_revision. Generated text remains separate until explicit Author acceptance. Do not claim that you saved or changed the Article.
 

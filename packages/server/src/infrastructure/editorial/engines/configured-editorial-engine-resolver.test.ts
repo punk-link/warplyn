@@ -13,7 +13,7 @@ test("app work prefers its dedicated model and otherwise falls back to the defau
 });
 
 
-test("Concise rewrite uses its own model override without changing Flow", () => {
+test("Shorten text uses its own model override without changing Flow", () => {
     const resolver = new ConfiguredEditorialEngineResolver(
         { host: "127.0.0.1", port: 8787, webOrigin: "http://localhost:5173", databasePath: "unused", aiApiKey: "test-key", aiModel: "gpt-5.6", aiSessionContinuationEnabled: false },
         {

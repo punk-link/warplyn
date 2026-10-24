@@ -61,7 +61,7 @@
                 "packages/web/src/workspace/EditorialWorkspace.tsx",
                 "packages/web/src/workspace/state/assistant-messages-state.ts"
             ],
-            "contract": "A Lexical composer stores plain author text and one structured skill tag separately; selecting a skill never sends a request, and a tag can run against the whole Article without additional guidance. Clicking unused composer space focuses the editor without overriding its action controls. Selection scope records exact Markdown offsets and a content fingerprint, then requires the same promoted Revision before sending. Deselecting Article text clears that scope and its visible indicator before the next request. The Assistant discovers only classified current-Article capabilities and validates every action against the Author's exact request. Talking Points and Narrative Draft remain available when an Article selection is active, use that selection as their primary Article source, and may use the Author message to guide or extend it. Ordinary generated text remains a Proposal until accepted; an explicitly requested, validated single replacement may use the conversation edit path.",
+            "contract": "A Lexical composer stores plain author text and one structured skill tag separately; selecting a skill never sends a request, and a tag can run against the whole Article without additional guidance. Clicking unused composer space focuses the editor without overriding its action controls. Selection scope records exact Markdown offsets and a content fingerprint, then requires the same promoted Revision before sending. Deselecting Article text clears that scope and its visible indicator before the next request. The Assistant discovers only classified current-Article capabilities and validates every action against the Author's exact request. Develop key points and Turn ideas into a draft remain available when an Article selection is active, use that selection as their primary Article source, and may use the Author message to guide or extend it. Ordinary generated text remains a Proposal until accepted; an explicitly requested, validated single replacement may use the conversation edit path.",
             "persistence": "Per-Article Assistant records, minimal capability execution history, explicit Editorial Requests, and a device-local unsent composer draft per Article. Sending or clearing the composer removes its draft."
         },
         {
@@ -412,6 +412,7 @@
             ],
             "event": "Author selects a Quick action then sends, with optional guidance.",
             "expected": [
+                "The Quick Actions menu shows the five most recently used built-in Skills by default and offers a control to show all built-in Skills",
                 "Skill options show their hint on hover and expose it to assistive technology; optional speed hint metadata adds an information icon and hover caption",
                 "The skill tag is inserted into the composer before the request",
                 "A selected skill can run against the whole Article without additional guidance"

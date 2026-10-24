@@ -41,7 +41,7 @@ describe("Editorial Assistant composer", () => {
 
         renderLocalized(panel("one"));
         const restored = screen.getByRole("combobox", { name: getMessage("assistant.guidance") });
-        await waitFor(() => expect(restored.textContent).toContain("Talking points"));
+        await waitFor(() => expect(restored.textContent).toContain("Develop key points"));
         expect(onRequest).not.toHaveBeenCalled();
         await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
         await waitFor(() => expect(localStorage.getItem("skladno-assistant-composer:one")).toBeNull());
@@ -83,20 +83,23 @@ describe("Editorial Assistant composer", () => {
 
         const hereHelpShapePattern = /here to help shape this Article/;
         expect(panelScope.getByText(hereHelpShapePattern)).toBeTruthy();
-        expect(panelScope.queryByRole("button", { name: "Talking points" })).toBeNull();
+        expect(panelScope.queryByRole("button", { name: "Develop key points" })).toBeNull();
 
         const quickActions = panelScope.getByRole("button", { name: getMessage("assistant.quickActions") });
         expect(quickActions.getAttribute("aria-haspopup")).toBe("listbox");
         expect(quickActions.querySelector("svg")?.classList.contains("transition-transform")).toBe(true);
         await user.click(quickActions);
 
-        expect(panelScope.getByRole("option", { name: "Talking points" })).toBeTruthy();
-        expect(panelScope.getByRole("option", { name: "Narrative draft" })).toBeTruthy();
-        expect(panelScope.getByRole("option", { name: "Flow and clarity" })).toBeTruthy();
-        expect(panelScope.getByRole("option", { name: "Concise rewrite" })).toBeTruthy();
-        expect(panelScope.getByRole("option", { name: "Fact checking" })).toBeTruthy();
-        expect(panelScope.getByRole("option", { name: "Style review" })).toBeTruthy();
-        expect(panelScope.getByRole("option", { name: "Translation" })).toBeTruthy();
+        await user.click(panelScope.getByRole("button", { name: getMessage("assistant.showAllSkills") }));
+        expect(panelScope.getByRole("option", { name: "Develop key points" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Turn ideas into a draft" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Improve flow and clarity" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Shorten text" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Check facts" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Check technical terms" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Review writing style" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Translate text" })).toBeTruthy();
+        expect(panelScope.getByRole("option", { name: "Skill Creator" })).toBeTruthy();
         expect(panelScope.getByRole("listbox", { name: getMessage("assistant.quickActions") }).getAttribute("aria-describedby")).toBe("assistant-skill-picker-hint");
         expect(panelScope.getByText(getMessage("assistant.customSkillsHint"))).toBeTruthy();
 
@@ -123,9 +126,9 @@ describe("Editorial Assistant composer", () => {
         const panelScope = within(panel.container);
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(panelScope.getByRole("option", { name: getMessage("assistant.skill.narrativeDraft.label") }));
-        await waitFor(() => expect(panel.container.querySelector("[data-assistant-skill-chip]")?.textContent).toContain("Narrative draft"));
+        await waitFor(() => expect(panel.container.querySelector("[data-assistant-skill-chip]")?.textContent).toContain("Turn ideas into a draft"));
         const composer = panelScope.getByRole("combobox", { name: getMessage("assistant.guidance") });
-        expect(composer.textContent).toBe("Narrative draft ");
+        expect(composer.textContent).toBe("Turn ideas into a draft ");
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.send") }));
         expect(onRequest).toHaveBeenCalledWith("", "narrative_draft", undefined, 0);
     });
@@ -144,7 +147,7 @@ describe("Editorial Assistant composer", () => {
         const panelScope = within(panel.container);
 
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
-        const builtIn = panelScope.getByRole("option", { name: "Skill Creator" });
+        const builtIn = panelScope.getByRole("option", { name: "Develop key points" });
         expect(builtIn.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
         expect(panelScope.queryByRole("option", { name: "House style" })).toBeNull();
     });
@@ -154,6 +157,10 @@ describe("Editorial Assistant composer", () => {
             quickActionsOpen: true,
             availableSkills: [{ id: "skill_creator", name: "Skill Creator", source: "built-in" }, { id: "house-style", name: "House style", source: "author" }],
             activeSkillIndex: 0,
+            showAllSkills: true,
+            setShowAllSkills: vi.fn(),
+            searchingSkills: false,
+            hasMoreSkills: false,
             setQuickActionsOpen: vi.fn(),
             setActiveSkillIndex: vi.fn(),
             selectSkill: vi.fn(),
@@ -315,6 +322,7 @@ describe("Editorial Assistant composer", () => {
             assistantMessages={[]} />);
         const panelScope = within(panel.container);
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        await user.click(panelScope.getByRole("button", { name: getMessage("assistant.showAllSkills") }));
         await user.click(panelScope.getByRole("option", { name: getMessage("assistant.skill.translation.label") }));
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.send") }));
         expect(onRequest).toHaveBeenCalledWith("", "translation", ["Spanish", "German"], 0);

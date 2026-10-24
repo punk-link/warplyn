@@ -12,12 +12,22 @@ import type { AssistantComposerSkill } from "./AssistantSkillTagNode.js";
 interface AssistantQuickActionsPicker extends AssistantSkillPickerControls {
     activeSkillIndex: number;
     setActiveSkillIndex: (value: number) => void;
+    showAllSkills: boolean;
+    setShowAllSkills: (value: boolean) => void;
+    searchingSkills: boolean;
+    hasMoreSkills: boolean;
 }
 
 
-export function AssistantQuickActions({ context, picker }: { context: { state: "idle" | "streaming" | "error"; composer: RefObject<HTMLDivElement> }; picker: AssistantQuickActionsPicker }) {
+export function AssistantQuickActions({ context, picker }: {
+    context: { state: "idle" | "streaming" | "error"; composer: RefObject<HTMLDivElement> };
+    picker: AssistantQuickActionsPicker;
+}) {
     const { state, composer } = context;
-    const { quickActionsOpen, availableSkills, activeSkillIndex, setQuickActionsOpen, setActiveSkillIndex, selectSkill, focusQuickAction } = picker;
+    const {
+        quickActionsOpen, availableSkills, activeSkillIndex, showAllSkills, searchingSkills, hasMoreSkills,
+        setQuickActionsOpen, setActiveSkillIndex, setShowAllSkills, selectSkill, focusQuickAction,
+    } = picker;
     const intl = useIntl();
     const pickerRoot = useRef<HTMLDivElement>(null);
 
@@ -34,13 +44,30 @@ export function AssistantQuickActions({ context, picker }: { context: { state: "
 
 
     return <div ref={pickerRoot} className="relative">
+        <Button
+            className="inline-grid size-8 place-items-center rounded-l-none border-l-0 !p-0"
+            variant="quiet"
+            aria-label={intl.formatMessage({ id: "assistant.quickActions" })}
+            aria-expanded={quickActionsOpen}
+            aria-controls={quickActionsOpen ? "assistant-skill-picker" : undefined}
+            aria-haspopup="listbox"
+            onClick={() => setQuickActionsOpen((open) => {
+                if (!open)
+                    setActiveSkillIndex(0);
+
+                return !open;
+            })}><ChevronDownIcon className={`size-4 transition-transform duration-150 motion-reduce:transition-none ${quickActionsOpen ? "rotate-180" : ""}`} />
+        </Button>
         {quickActionsOpen && (
             <div className="absolute bottom-full right-0 z-10 mb-2 w-56 rounded-panel border border-border bg-surface-raised p-1 shadow-raised">
                 <div
                     id="assistant-skill-picker"
                     role="listbox"
                     aria-label={intl.formatMessage({ id: "assistant.quickActions" })}
-                    aria-describedby="assistant-skill-picker-hint">
+                    aria-describedby="assistant-skill-picker-hint"
+                    className={"max-h-72 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] " +
+                    "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden " +
+                    "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong"}>
                     {availableSkills.length
                         ? availableSkills.map((skill, index) => (
                             <SkillOption
@@ -56,26 +83,24 @@ export function AssistantQuickActions({ context, picker }: { context: { state: "
                         ))
                         : <p className="px-3 py-2 text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.skillNoMatches" })}</p>}
                 </div>
+                {!searchingSkills && hasMoreSkills && (
+                    <Button
+                        className="w-full justify-start text-xs"
+                        variant="quiet"
+                        aria-pressed={showAllSkills}
+                        aria-controls="assistant-skill-picker"
+                        onClick={() => {
+                            setActiveSkillIndex(0);
+                            setShowAllSkills(!showAllSkills);
+                        }}>{intl.formatMessage({ id: showAllSkills ? "assistant.showRecentSkills" : "assistant.showAllSkills" })}
+                    </Button>
+                )}
                 <p id="assistant-skill-picker-hint" className="border-t border-border px-3 py-2 text-xs text-muted">
                     {intl.formatMessage({ id: "assistant.customSkillsHint" })}
                 </p>
             </div>
         )}
         {quickActionsOpen && <span className="sr-only" aria-live="polite">{availableSkills.length ? intl.formatMessage({ id: "assistant.skillResultCount" }, { count: availableSkills.length }) : intl.formatMessage({ id: "assistant.skillNoMatches" })}</span>}
-        <Button
-            className="inline-grid size-8 place-items-center rounded-l-none border-l-0 !p-0"
-            variant="quiet"
-            aria-label={intl.formatMessage({ id: "assistant.quickActions" })}
-            aria-expanded={quickActionsOpen}
-            aria-controls={quickActionsOpen ? "assistant-skill-picker" : undefined}
-            aria-haspopup="listbox"
-            onClick={() => setQuickActionsOpen((open) => {
-                if (!open)
-                    setActiveSkillIndex(0);
-
-                return !open;
-            })}><ChevronDownIcon className={`size-4 transition-transform duration-150 motion-reduce:transition-none ${quickActionsOpen ? "rotate-180" : ""}`} />
-        </Button>
     </div>;
 }
 
@@ -98,7 +123,7 @@ function SkillOption({ skill, index, state, activeSkillIndex, selectSkill, focus
         variant="quiet"
         onClick={() => selectSkill(skill)}
         onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === "Tab") {
+            if (event.key === "Enter") {
                 event.preventDefault();
                 selectSkill(skill);
             }

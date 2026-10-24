@@ -88,7 +88,7 @@ test("inferred Author Skill keeps its primary contract when a complementary buil
         assert.equal(engine.requests[0]?.skill?.execution.capability, "generate_proposal");
         const shortenSourcePattern = /Shorten the source/;
         assert.match(engine.requests[0]?.skill?.instructions ?? "", shortenSourcePattern);
-        const flowClarityPattern = /Flow and Clarity/;
+        const flowClarityPattern = /Improve flow and clarity/;
         assert.match(engine.requests[0]?.skill?.instructions ?? "", flowClarityPattern);
         assert.equal(persistence.assistant.listMessages(article.id).at(-1)?.editCandidate, undefined);
         assert.equal(persistence.editorialArtifacts.listEditorialArtifacts(article.id).length, 1);

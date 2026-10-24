@@ -27,8 +27,8 @@ function renderMessage(message: AssistantMessage, props: Partial<ComponentProps<
 describe("AssistantTimelineMessage", () => {
     it.each(["English", "Spanish"])("shows the translation target %s beside the Author's chip", (targetLanguage) => {
         const view = renderMessage({ id: "author", articleId: "article", role: "author", kind: "message", status: "completed", skillId: "translation", targetLanguage, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" });
-        const chip = within(view.container).getByText("Translation");
-        expect(chip.parentElement?.textContent).toBe(`Translationin ${targetLanguage}`);
+        const chip = within(view.container).getByText("Translate text");
+        expect(chip.parentElement?.textContent).toBe(`Translate textin ${targetLanguage}`);
     });
 
     it("shows one exact completed replacement and applies it on click", async () => {
@@ -112,7 +112,7 @@ describe("AssistantTimelineMessage", () => {
         expect(scope.getByText("Talking points prepared")).toBeTruthy();
         expect(scope.getByText("Completed")).toBeTruthy();
         const usedSkillPattern = /Used skill/;
-        expect(scope.getByText(usedSkillPattern).getAttribute("title")).toBe("Talking points");
+        expect(scope.getByText(usedSkillPattern).getAttribute("title")).toBe("Develop key points");
         expect(scope.queryByText("A long proposal owned by the Proposal View.")).toBeNull();
         const review = scope.getByRole("button", { name: "Review Proposal" });
         expect(review.classList.contains("!size-6")).toBe(true);

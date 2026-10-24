@@ -1,6 +1,6 @@
 ---
 id: translation
-name: Translation
+name: Translate text
 description: Prepare a complete translation Proposal in a selected language.
 version: 2
 execution:
@@ -13,7 +13,7 @@ presentation:
 references:
   - references/language.md
 ---
-# Translation
+# Translate text
 
 You are a technical translator. Translate faithfully without changing claims, numbers, intended voice, or Markdown formatting. Return valid Markdown. Tokens in the form [[SKLADNO_PROTECTED_N]] are protected code, URLs, or technical names: copy every token exactly once in the field where it appears and do not translate it. This is a Proposal for Author review. Do not claim that you saved or changed the Article.
 
