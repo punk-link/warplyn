@@ -16,6 +16,7 @@ import { EDITORIAL_ENGINE_EVENT } from "../../editorial/engine/editorial-engine-
 import { AuthorSkillService } from "../skills/author-skill-service.js";
 import { FileAssistantSkillSource } from "../skills/file-assistant-skill-source.js";
 import { SkillRevisionStore } from "../../../infrastructure/skills/skill-revision-store.js";
+import { formatSelectionContext } from "../../editorial/selection-context.js";
 
 
 test("Assistant execution loads Skills from its catalog", async () => {
@@ -183,7 +184,7 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         load: (candidate) => candidate === reference ? { ...summary, instructions: "Rephrase without em dashes." } : undefined,
     };
     let streamInput: {
-        article: { content?: string; selection?: boolean };
+        article: { content?: string; selection?: boolean; selectionContext?: { preceding: string; following: string } };
         editorial: { authorContext: string; skill?: { instructions: string } };
     } | undefined;
     const engine = {
@@ -195,6 +196,15 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         },
         async *streamAssistant(modelRequest: EditorialAssistantRequest) {
             assert.deepEqual(modelRequest.initialActiveCapabilities, ["generate_proposal"]);
+            assert.equal(modelRequest.article, "");
+            assert.equal(modelRequest.selectionContext, undefined);
+            const read = modelRequest.tools.find((tool) => tool.capability === "read_selection");
+            assert.ok(read);
+            const result = await read.execute({}, new AbortController().signal);
+            assert.deepEqual(result, {
+                selectedSource: "selected",
+                readOnlyContext: formatSelectionContext({ preceding: "before ", following: " after" }),
+            });
             const proposal = modelRequest.tools.find((tool) => tool.capability === "generate_proposal");
             assert.ok(proposal);
             await proposal.execute({ operation: "flow_revision" }, new AbortController().signal);
@@ -225,6 +235,7 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
 
     assert.equal(streamInput?.article.content, "selected");
     assert.equal(streamInput?.article.selection, true);
+    assert.deepEqual(streamInput?.article.selectionContext, { preceding: "before ", following: " after" });
     assert.equal(streamInput?.editorial.authorContext, "");
     assert.equal(streamInput?.editorial.skill?.instructions, "Rephrase without em dashes.");
 });
@@ -282,6 +293,7 @@ test("the Assistant model can create an explicitly requested Author Skill withou
         },
         async *streamAssistant(request: EditorialAssistantRequest) {
             modelRequest = request;
+            assert.equal(request.tools.some((tool) => tool.capability === "read_selection"), false);
             const creator = request.tools.find((tool) => tool.capability === "create_author_skill");
             assert.ok(creator);
             assert.equal(creator.description, "Save a validated local Author Skill Markdown package.");
@@ -298,7 +310,8 @@ test("the Assistant model can create an explicitly requested Author Skill withou
     };
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "Create a Skill without em dashes.",
-        scope: { kind: "article", baseRevisionId: "revision" }, article: { content: "Private Article body", title: "Title" },
+        scope: { kind: "selection", baseRevisionId: "revision", startOffset: 0, endOffset: 7 },
+        article: { content: "Private Article body", title: "Title" },
         resolvedSkillId: BUILT_IN_SKILL.SKILL_CREATOR,
         execution: { engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };

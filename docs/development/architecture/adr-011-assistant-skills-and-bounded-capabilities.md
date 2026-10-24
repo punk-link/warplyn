@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-30
-- Updated: 2026-10-11
+- Updated: 2026-10-22
 - Scope: Assistant skills, application capabilities, tool execution, Workspace handoffs, and generated artifact completion
 - Depends on: [ADR-002](adr-002-shared-contract-organization.md), [ADR-003](adr-003-web-feature-oriented-react-architecture.md), [ADR-005](adr-005-article-state-and-consistency.md), [ADR-007](adr-007-completion-gated-editorial-engine.md), [ADR-008](adr-008-loopback-service-trust-boundary.md)
 
@@ -18,6 +18,10 @@ Classify every Author-facing Editorial Workspace operation as callable, a Worksp
 
 Every run starts with an explicit Author request and has bounded steps and time. Revalidate scope, arguments, prerequisites, and base Revision at execution. Deterministic mutation additionally requires a separate structured check of the exact Author-requested action and arguments; it fails closed. Selection-scoped requests cannot silently expand to the whole Article, and a changed Revision stops the run.
 
+Selection requests needing Article text use the exact selected source plus separate read-only adjacent context, up to 500 UTF-16 code units on each side. Outer boundaries move inward to avoid splitting surrogate pairs; selection offsets inside a pair are invalid. Routing starts without Article text and may read only this bounded selection payload. Helper text informs interpretation, terminology, voice, and continuity, never replacement boundaries or persisted generated output. Insufficient context requires uncertainty or an Author-supplied passage. The composer discloses the benefit and additional exposure before sending; selecting and sending uses this policy without a new provider setting.
+
+The application owns selection-context policy and appends it to routing, conversational, and generation system instructions after Skill guidance. The same policy applies to built-in, Author-created, legacy, and subsequently loaded Skills without editing their packages. Neighboring text stays separately labelled request data, never system instructions. A Skill cannot override these context boundaries.
+
 Skills are declarative guidance, grant no capabilities or permissions, and execute no scripts. Load relevant instructions on demand and honor explicit Skill selection. Safety and capability validation take precedence over the Author request, followed by explicitly selected and automatically selected Skills. Ask about non-safety conflicts that would change the intended result.
 
 Built-in and Author packages use the same validated execution metadata and catalog. A package selects an existing capability, supported scope, and, for Proposals, source handling and a server-owned result policy. Package metadata cannot widen capability authority. Resolve the primary package for the run and retain its version, content hash, instructions, and contract; complementary instructions cannot replace that contract. Artifact generation receives this resolved guidance separately from Author text. Capability implementations own model execution, output formatting, context, validation, and persistence. The renderer consumes catalog metadata for skill names, scope compatibility, and model overrides; adding a writing procedure using existing behavior requires no skill-ID branch.
@@ -27,6 +31,8 @@ Author Skill mutation requires an explicit action and target, concurrency valida
 [ADR-007](adr-007-completion-gated-editorial-engine.md) owns completion, artifact execution, deadlines, and the Fact Check exception. [ADR-005](adr-005-article-state-and-consistency.md) owns all Article changes, including explicitly authorized conversational edits. Model tool calls and Skills cannot grant Article-acceptance authority.
 
 Keep progress quiet and renderer-safe. Completed artifacts provide explicit handoffs to their owning Workspace Views without changing the current View automatically. Dedicated Views remain usable independently of chat. Persist only minimal local capability activity, excluding private context and raw provider data.
+
+The supporting selection-context study and its limitations are recorded in [issue #51](https://github.com/punk-link/warplyn/issues/51).
 
 ## Consequences
 

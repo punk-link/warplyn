@@ -19,6 +19,7 @@ import { EDITORIAL_ENGINE_EVENT } from "./engine/editorial-engine-events.js";
 import { EditorialEngineError } from "./engine/editorial-engine-error.js";
 import type { EditorialEngineResolver } from "./engine/editorial-engine-resolver.js";
 import type { EditorialServiceRequest } from "./editorial-request.js";
+import { selectionContext } from "./editorial-selection-input.js";
 import { getReusableFactFindings } from "./fact-checking/reusable-fact-findings.js";
 import { persistFactCheckArtifact } from "./fact-checking/persist-fact-check-artifact.js";
 import type { FactCheckArtifactStore } from "./fact-checking/fact-check-artifact-store.js";
@@ -186,16 +187,6 @@ function createEngineRequest(request: EditorialServiceRequest, context: Editoria
             reusableFactFindings: getReusableFactFindings(factChecks, request.articleContext.articleId),
             skipFactCheckClaim: request.factChecking?.skipClaim,
         } : {}),
-    };
-}
-
-
-function selectionContext(request: EditorialServiceRequest) {
-    return {
-        ...(request.articleContext.selection ? { articleSelection: true } : {}),
-        ...(request.articleContext.surroundingCharacterCount !== undefined
-            ? { surroundingArticleCharacterCount: request.articleContext.surroundingCharacterCount }
-            : {}),
     };
 }
 

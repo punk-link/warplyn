@@ -16,6 +16,8 @@ import { getBuiltInSkillInstructions } from "../../../application/assistant/skil
 import { streamFactCheck } from "../workflows/fact-check-workflow.js";
 import type { FactCheckProvider } from "../models/fact-check-provider.js";
 import { getBoundedArticleContext } from "../models/editorial-context.js";
+import { formatSelectionContext } from "../../../application/editorial/selection-context.js";
+import { selectionContextPolicy } from "../../../application/editorial/selection-context-policy.js";
 import { createAiSdkGenerationOptions, getContinuationToken, getEditorialProviderOptions, isAcceptedFinish, createProviderError } from "../adapters/ai-sdk-provider.js";
 import { AiSdkAssistantExecutor } from "../adapters/ai-sdk-assistant-executor.js";
 import { mapStyleReview, styleReviewSchema, translationSchema } from "../models/ai-sdk-editorial-output.js";
@@ -86,6 +88,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
                 skillId: request.skillId,
                 skill: request.skill,
                 surroundingArticleCharacterCount: request.surroundingArticleCharacterCount,
+                selectionContext: request.selectionContext,
                 targetArticleCharacterLimit: request.targetArticleCharacterLimit,
             });
 
@@ -100,15 +103,20 @@ export class AiSdkEditorialEngine implements EditorialEngine {
 
 
     async *streamConversation(request: EditorialConversationRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+        const contextPolicy = request.scope === "selection" ? `\n\n${selectionContextPolicy}` : "";
         const messages: ModelMessage[] = [{
             role: "system",
-            content: `You are Warplyn's editorial assistant. Answer conversationally and help the author decide what to do next. ${authorControlInstruction} Do not turn the Article into a proposal unless the author explicitly asks for an editorial operation.`
+            content: "You are Warplyn's editorial assistant. Answer conversationally and help the author decide what to do next. " +
+                `${authorControlInstruction} Do not turn the Article into a proposal unless the author explicitly asks for an editorial operation.` +
+                contextPolicy,
         }];
 
         if (request.article)
             messages.push({
-                role: "system",
-                content: `${request.scope === "selection" ? "Selected Article context" : "Current Article context"}:\n${getBoundedArticleContext(request.article)}`
+                role: request.scope === "selection" ? "user" : "system",
+                content: `${request.scope === "selection" ? "Selected Article context" : "Current Article context"}:\n` +
+                    getBoundedArticleContext(request.article) +
+                    formatSelectionContext(request.selectionContext)
             });
 
         messages.push(...request.history.slice(-12).map((turn): ModelMessage => ({ role: turn.role === "author" ? "user" : "assistant", content: turn.content })));
@@ -198,6 +206,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
                     article: getBoundedArticleContext(request.article),
                     articleTitle: request.articleTitle,
                     articleSelection: request.articleSelection,
+                    selectionContext: request.selectionContext,
                     authorContext: request.authorContext,
                     skill: request.skill,
                     styleProfile: request.styleProfile,

@@ -2,7 +2,7 @@
 id: talking_points
 name: Develop key points
 description: Develop 3–5 grounded theses from author-provided material.
-version: 1
+version: 2
 execution:
   capability: generate_proposal
   operation: thesis_to_narrative

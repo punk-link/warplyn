@@ -12,6 +12,7 @@ import type { FactChecksStore } from "./fact-checks-store.js";
 import type { AssistantStore } from "./assistant-store.js";
 import { getConversationHistory } from "./requests/conversation-history.js";
 import type { PreparedAssistantRequest } from "./requests/prepared-assistant-request.js";
+import { getSelectionContext } from "../editorial/selection-context.js";
 
 
 export function streamAssistantEngineEvents(request: PreparedAssistantRequest, stores: { assistant: AssistantStore; styleCorpus: StyleCorpusStore; factChecks: FactChecksStore }, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
@@ -33,7 +34,10 @@ export function streamAssistantEngineEvents(request: PreparedAssistantRequest, s
         operation: request.execution.operation,
         article: excerpt,
         articleTitle: request.article.title,
-        ...(request.scope.kind === "selection" ? { articleSelection: true } : {}),
+        ...(request.scope.kind === "selection" ? {
+            articleSelection: true,
+            selectionContext: getSelectionContext(request.article.content, request.scope.startOffset, request.scope.endOffset),
+        } : {}),
         authorContext: request.authorMessage,
         skillId: request.resolvedSkillId,
         skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
@@ -85,6 +89,9 @@ function streamAssistantConversation(request: PreparedAssistantRequest, assistan
         message: request.authorMessage,
         article: excerpt,
         scope: request.scope.kind,
+        ...(request.scope.kind === "selection" ? {
+            selectionContext: getSelectionContext(request.article.content, request.scope.startOffset, request.scope.endOffset),
+        } : {}),
         history: getConversationHistory(assistant, request.articleId)
     }, signal);
 }

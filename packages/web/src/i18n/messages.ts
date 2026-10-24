@@ -395,6 +395,8 @@ export const messages = {
     "assistant.selectedSkill": "Selected skill: {skill}",
     "assistant.removeSkill": "Remove {skill}",
     "assistant.articleSelection": "Article selection",
+    "assistant.selectionContextHint": ("For local meaning and voice, selection requests that need Article text also send up to 500 characters on each side " +
+        "to your provider as read-only context. Neighboring text may be sensitive. Only the selection is replaced."),
     "assistant.clearArticleSelection": "Clear Article selection",
     "assistant.authorMessage": "Your message",
     "assistant.response.conversation": "Editorial conversation",

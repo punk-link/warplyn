@@ -21,6 +21,7 @@ export interface StreamContext {
         targetLanguage?: string;
         content?: string;
         selection?: boolean;
+        selectionContext?: import("../../editorial/selection-context.js").SelectionContext;
         surroundingCharacterCount?: number;
     };
     factChecking?: { skipClaim?: (claim: string) => boolean; findingIds?: string };

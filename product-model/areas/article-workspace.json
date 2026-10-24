@@ -3,6 +3,16 @@
     "area": "article-workspace",
     "capabilities": [
         {
+            "id": "workspace.assistant.selection-context",
+            "area": "Editorial Assistant",
+            "title": "Bounded read-only neighboring selection context",
+            "status": "implemented",
+            "owners": ["packages/server/src/application/editorial/selection-context.ts", "packages/server/src/application/editorial/selection-context-policy.ts", "packages/server/src/application/assistant/assistant-engine-request.ts", "packages/server/src/application/assistant/capabilities/assistant-capability-loop.ts", "packages/web/src/workspace/components/assistant/AssistantComposer.tsx"],
+            "contract": "The application injects shared selection-context system instructions after Skill guidance for built-in, Author-created, legacy, and subsequently loaded Skills; packages do not need their own policy text. Selection requests needing Article text keep the exact selected source and edit target separate from read-only adjacent context, at most 500 UTF-16 code units before and after. Outer edges shrink to avoid splitting surrogate pairs, and invalid or stale selection offsets fail before disclosure. Routing starts without Article text and can read only the bounded selection payload when needed. No title, unrelated passages, or whole-Article escalation accompany this helper. The composer explains local meaning and voice benefits, the additional provider disclosure, and selection-only replacement before sending. Insufficient context requires uncertainty or an Author-supplied passage.",
+            "persistence": "Helper text is transient request input, never generated output or diagnostics. Existing completion, cancellation, provider-storage, Revision binding, and explicit acceptance guarantees remain in effect.",
+            "limitations": ["Adjacent text can be sensitive. The bound counts UTF-16 code units rather than grapheme clusters.", "The original synthetic single-model pilot does not establish cross-provider quality."]
+        },
+        {
             "id": "workspace.editor.spelling",
             "area": "Article Screen",
             "title": "Local native spelling indicators and explicit suggestions",
@@ -252,6 +262,16 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "workspace.assistant.bounded-selection-context",
+            "title": "Selection helper remains bounded and distinct from replacement source",
+            "capabilityIds": ["workspace.assistant.selection-context"],
+            "preconditions": ["A request uses valid current-Revision selection offsets."],
+            "event": "The Assistant reads the selection or generates its replacement.",
+            "expected": ["Only immediately adjacent text within 500 UTF-16 code units per side is supplied as read-only helper text without splitting surrogate pairs.", "The exact selection remains the sole replacement source and target."],
+            "forbidden": ["Whole-Article escalation, invalid offsets, helper text in generated output, or sending Article text for Skill management."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/application/editorial/selection-context.test.ts" }
+        },
         {
             "id": "workspace.editor.spelling",
             "title": "Spelling language changes preserve editor content and protected regions",

@@ -2,7 +2,7 @@
 id: concise_rewrite
 name: Shorten text
 description: Shorten or tighten an Article or selection by cutting repetition and filler while preserving meaning and voice. Use Improve flow and clarity for readability or transitions without a shortening request.
-version: 1
+version: 2
 execution:
   capability: generate_proposal
   operation: flow_revision
@@ -24,4 +24,4 @@ Preserve claims, numbers, URLs, quotations, citations, code, technical terms, su
 
 Follow Author guidance about what to retain and where to cut, such as "keep the example" or "cut the introduction first", within these preservation rules. The result must contain fewer characters than the source. When safe shortening is impossible, return the source byte-for-byte unchanged.
 
-For a whole Article, return its complete body Markdown only. The title is managed separately; use a supplied title as context without adding a title or title label to the body. For selection scope, use only the selected excerpt and explicit Author guidance, return only its replacement, and do not request surrounding Article context.
+For a whole Article, return its complete body Markdown only. The title is managed separately; use a supplied title as context without adding a title or title label to the body. For selection scope, use the selected excerpt and explicit Author guidance as source and return only the selection's replacement.

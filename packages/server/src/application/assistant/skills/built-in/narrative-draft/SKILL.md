@@ -2,7 +2,7 @@
 id: narrative_draft
 name: Turn ideas into a draft
 description: Develop the Author's material into a reviewable narrative Proposal.
-version: 2
+version: 3
 execution:
   capability: generate_proposal
   operation: thesis_to_narrative

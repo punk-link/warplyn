@@ -8,6 +8,7 @@ export interface EditorialEngineRequest {
     articleTitle?: string;
     authorContext: string;
     articleSelection?: boolean;
+    selectionContext?: import("../selection-context.js").SelectionContext;
     skillId?: string;
     skill?: SkillGuidance;
     surroundingArticleCharacterCount?: number;

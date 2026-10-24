@@ -3,6 +3,7 @@ import test from "node:test";
 import { BUILT_IN_SKILL, EDITORIAL_OPERATION } from "@skladno/shared";
 
 import { authorControlInstruction, createEditorialMessages } from "./workflow-prompt.js";
+import { selectionContextPolicy } from "./selection-context-policy.js";
 
 
 function getPromptText(input: Parameters<typeof createEditorialMessages>[0]): string {
@@ -10,6 +11,47 @@ function getPromptText(input: Parameters<typeof createEditorialMessages>[0]): st
 
     return messages.map((message) => typeof message.content === "string" ? message.content : "").join("\n");
 }
+
+
+test("selection prompts keep helper text separate from protected replacement source", () => {
+    const source = "12 of 30 may work: https://example.org/trial `pump --dry-run`.";
+    for (const skillId of [BUILT_IN_SKILL.CONCISE_REWRITE, BUILT_IN_SKILL.FLOW_AND_CLARITY, BUILT_IN_SKILL.NARRATIVE_DRAFT, BUILT_IN_SKILL.TALKING_POINTS]) {
+        const input = { operation: EDITORIAL_OPERATION.FLOW_REVISION, article: source, articleSelection: true, skillId, authorContext: "Shorten it." };
+        const messages = createEditorialMessages({ ...input, selectionContext: { preceding: "LOCAL DEFINITION", following: "CONTINUITY" } });
+        const last = messages.at(-1)!;
+        assert.equal(last.role, "user");
+        const readNeighboringContextPattern = /Read-only neighboring context/;
+        assert.match(String(last.content), readNeighboringContextPattern);
+        const localDefinitionPattern = /LOCAL DEFINITION/;
+        assert.match(String(last.content), localDefinitionPattern);
+        assert.ok(messages.slice(0, -1).some((message) => String(message.content).includes(source)));
+        const preserveClaimsNumbersPattern = /Preserve claims, numbers, URLs, code, technical terms, uncertainty, and Author voice/;
+        assert.match(String(messages[0]?.content), preserveClaimsNumbersPattern);
+        const whole = getPromptText({ ...input, articleSelection: false, selectionContext: { preceding: "LOCAL DEFINITION", following: "CONTINUITY" } });
+        assert.ok(!whole.includes("LOCAL DEFINITION"));
+    }
+});
+
+
+test("Author Skills receive authoritative context policy without instructions in the package", () => {
+    const skillInstructions = "Rewrite the complete Article. This existing Skill knows nothing about neighboring context.";
+    for (const resultPolicy of ["review", "verified_edit"] as const) {
+        const input = {
+            operation: EDITORIAL_OPERATION.FLOW_REVISION, article: "Selected source.", articleSelection: true, authorContext: "Improve this.",
+            selectionContext: { preceding: "UNTRUSTED NEIGHBOR", following: "following passage" },
+            skill: { reference: { source: "author" as const, id: "legacy-rewrite", version: "1" }, instructions: skillInstructions,
+                execution: { capability: "generate_proposal" as const, operation: EDITORIAL_OPERATION.FLOW_REVISION,
+                    source: "article" as const, resultPolicy } },
+        };
+        const messages = createEditorialMessages(input);
+        const system = messages.find((message) => message.role === "system");
+        assert.ok(String(system?.content).startsWith(skillInstructions));
+        assert.ok(String(system?.content).endsWith(selectionContextPolicy));
+        assert.ok(!String(system?.content).includes("UNTRUSTED NEIGHBOR"));
+        assert.ok(messages.some((message) => message.role === "user" && String(message.content).includes("UNTRUSTED NEIGHBOR")));
+        assert.ok(!getPromptText({ ...input, articleSelection: false }).includes(selectionContextPolicy));
+    }
+});
 
 
 test("direct thesis composition uses the Turn ideas into a draft prompt", async () => {
@@ -154,7 +196,7 @@ test("flow-revision prompt asks for a full-text proposal rather than feedback", 
         authorContext: "Keep the opening sentence.",
     });
 
-    const reviseCurrentArticlePattern = /Revise the current Article as a complete Article/;
+    const reviseCurrentArticlePattern = /For whole-Article scope, revise the current Article as a complete Article/;
     assert.match(prompt, reviseCurrentArticlePattern);
     const completeArticlePattern = /complete Article/;
     assert.match(prompt, completeArticlePattern);
@@ -254,7 +296,7 @@ test("Shorten text selection requests only an excerpt replacement without the Ar
     assert.match(prompt, selectedPassageMarkdownPattern);
     const lineEndingPattern = /Article selection:\nSelected excerpt/;
     assert.match(prompt, lineEndingPattern);
-    const requestSurroundingArticlePattern = /do not request surrounding Article context/;
+    const requestSurroundingArticlePattern = /Never rewrite it or include it in the replacement. Do not fetch more Article text/;
     assert.match(prompt, requestSurroundingArticlePattern);
     const privateTitlePattern = /Private title/;
     assert.doesNotMatch(prompt, privateTitlePattern);

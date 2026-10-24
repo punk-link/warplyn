@@ -14,6 +14,8 @@ import { ApplicationServiceError } from "../errors/application-service-error.js"
 import { loadBuiltInSkillPackages } from "../assistant/skills/built-in-skill-packages.js";
 import { createSkillGuidance } from "../assistant/skills/create-skill-guidance.js";
 import type { SkillGuidance } from "../assistant/skills/skill-guidance.js";
+import { formatSelectionContext, type SelectionContext } from "./selection-context.js";
+import { selectionContextPolicy } from "./selection-context-policy.js";
 
 
 interface EditorialPromptInput {
@@ -21,6 +23,7 @@ interface EditorialPromptInput {
     article: string;
     articleTitle?: string;
     articleSelection?: boolean;
+    selectionContext?: SelectionContext;
     authorContext: string;
     skillId?: string;
     skill?: SkillGuidance;
@@ -179,6 +182,7 @@ function createTranslationPrompt(input: EditorialPromptInput): ModelMessage[] {
 
 
 function createFlowRevisionPrompt(input: EditorialPromptInput): ModelMessage[] {
+    const sourceLabel = input.articleSelection ? "Article selection" : "Current article";
     return [
         {
             role: "system",
@@ -186,7 +190,7 @@ function createFlowRevisionPrompt(input: EditorialPromptInput): ModelMessage[] {
         },
         {
             role: "user",
-            content: `${createArticleTitleContext(input)}Current article:\n${input.article}\n\nAuthor guidance:\n${createAuthorGuidance(input.authorContext)}`
+            content: `${createArticleTitleContext(input)}${sourceLabel}:\n${input.article}\n\nAuthor guidance:\n${createAuthorGuidance(input.authorContext)}`
         },
     ];
 }
@@ -203,6 +207,20 @@ function createReplacementPrompt(input: EditorialPromptInput): ModelMessage[] {
 
 
 export function createEditorialMessages(input: EditorialPromptInput): ModelMessage[] {
+    const messages = createSourceMessages(input);
+    if (input.articleSelection && input.selectionContext)
+        messages.push({ role: "user", content: formatSelectionContext(input.selectionContext) });
+
+    if (input.articleSelection)
+        return messages.map((message) => message.role === "system"
+            ? { ...message, content: `${message.content}\n\n${selectionContextPolicy}` }
+            : message);
+
+    return messages;
+}
+
+
+function createSourceMessages(input: EditorialPromptInput): ModelMessage[] {
     const skill = resolvePromptSkill(input);
     input = { ...input, skill };
     if (skill?.execution.capability === "generate_proposal") {

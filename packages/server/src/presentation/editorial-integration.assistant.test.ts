@@ -159,6 +159,7 @@ test("assistant requests persist a revision-bound proposal and splice only the s
         assert.match(body, typeCompletedResponsekindPattern);
         assert.equal(engine.requests[0]?.article, "selected");
         assert.equal(engine.requests[0]?.articleSelection, true);
+        assert.deepEqual(engine.requests[0]?.selectionContext, { preceding: "before ", following: " after" });
         assert.equal(JSON.parse(artifact.content).proposal, "before improved after");
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "before selected after");
         assert.equal(repositories.assistant.getRequest("assistant-request-1")?.status, "completed");
@@ -331,14 +332,14 @@ test("Turn ideas into a draft without guidance uses the whole Article and its se
 });
 
 
-test("conversational Assistant requests send only the selected Article context", async () => {
-    let conversation: { article: string; scope: "article" | "selection" } | undefined;
+test("conversational Assistant requests separate selected source from read-only neighbors", async () => {
+    let conversation: { article: string; scope: "article" | "selection"; selectionContext?: { preceding: string; following: string } } | undefined;
     const engine: EditorialEngine = {
         async *stream(): AsyncIterable<EditorialEngineEvent> {
             return;
         },
         async *streamConversation(request): AsyncIterable<EditorialEngineEvent> {
-            conversation = { article: request.article, scope: request.scope };
+            conversation = { article: request.article, scope: request.scope, selectionContext: request.selectionContext };
             yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "conversation-selection", text: "I received the selected text." };
         },
     };
@@ -355,7 +356,7 @@ test("conversational Assistant requests send only the selected Article context",
             }),
         });
 
-        assert.deepEqual(conversation, { article: "selected", scope: "selection" });
+        assert.deepEqual(conversation, { article: "selected", scope: "selection", selectionContext: { preceding: "before ", following: " after" } });
     });
 });
 

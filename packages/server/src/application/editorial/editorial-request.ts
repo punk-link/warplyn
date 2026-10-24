@@ -11,6 +11,7 @@ export interface EditorialServiceRequest {
         targetLanguage?: string;
         content?: string;
         selection?: boolean;
+        selectionContext?: import("./selection-context.js").SelectionContext;
         surroundingCharacterCount?: number;
     };
     editorial: {
