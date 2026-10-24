@@ -3,6 +3,15 @@
     "area": "editorial-workflows",
     "capabilities": [
         {
+            "id": "editorial-workflows.technical-terminology",
+            "area": "Editorial operations",
+            "title": "Opt-in technical terminology verification",
+            "status": "implemented",
+            "owners": ["packages/server/src/application/assistant/skills/built-in/technical-terminology/SKILL.md", "packages/shared/src/assistant/assistant-skills.ts", "packages/web/src/i18n/messages.ts"],
+            "contract": "An explicit technical terminology review uses the existing Fact Check capability on an Article or selection. Skill guidance targets contextual technical usage and inconsistent names with primary, version-specific sources, evidence-only citations, and explicit uncertainty. Unsupported evidence is unverifiable. Findings remain advisory and Revision-bound; Authors can accept usage as written or request a separate correction Proposal. Code and identifiers are preserved. Existing Fact Check provider prerequisites, safe errors, cancellation, and completion rules apply. Accuracy and false positives require Author review.",
+            "persistence": "Reuses existing Assistant requests, captured Skill guidance, Fact Check runs, and local advisory resolutions. No new storage or automatic Article changes."
+        },
+        {
             "id": "editorial-workflows.assistant-foundation",
             "area": "Assistant foundation",
             "title": "Durable local conversation and built-in skill registry",
@@ -124,6 +133,16 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "editorial-workflows.technical-terminology-review",
+            "title": "Terminology review keeps sourced findings and Author overrides separate from Article edits",
+            "capabilityIds": ["editorial-workflows.technical-terminology"],
+            "preconditions": ["The Author explicitly selects Technical terminology for an Article or selection."],
+            "event": "The review completes and the Author accepts a usage as written.",
+            "expected": ["The captured terminology guidance reaches Fact Check; selection context excludes surrounding text. Sourced Findings and advisory resolution persist against the reviewed Revision without changing Article content or creating a Revision."],
+            "forbidden": ["Automatic terminology, code, or identifier rewrites, expanded selection context, or new permissions."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/presentation/editorial-integration.technical-terminology.test.ts" }
+        },
         {
             "id": "editorial-workflows.skill-execution-contract",
             "title": "Author-created Skills reuse the same execution and result policies as built-ins",

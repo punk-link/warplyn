@@ -4,6 +4,7 @@ export const BUILT_IN_SKILL = {
     FLOW_AND_CLARITY: "flow_and_clarity",
     CONCISE_REWRITE: "concise_rewrite",
     FACT_CHECKING: "fact_checking",
+    TECHNICAL_TERMINOLOGY: "technical_terminology",
     STYLE_REVIEW: "style_review",
     TRANSLATION: "translation",
     SKILL_CREATOR: "skill_creator",

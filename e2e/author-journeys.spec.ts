@@ -74,6 +74,26 @@ test("Concise rewrite stays a Proposal until acceptance and survives reload", as
 });
 
 
+test("Technical terminology is opt-in and preserves Article text after review and reload", async ({ page }) => {
+    await page.goto("/");
+    const content = "TCP is a connectionless protocol. const TCP = 42;";
+    await createArticle(page, content);
+    await expect(page.getByText("Findings prepared")).toHaveCount(0);
+    await page.getByRole("button", { name: "Quick actions" }).click();
+    await page.getByRole("option", { name: "Technical terminology" }).click();
+    await expect(page.getByText("Findings prepared")).toHaveCount(0);
+    await page.getByRole("button", { name: "Send editorial request" }).click();
+    await expect(page.getByText("Findings prepared")).toBeVisible();
+    const factCheckPattern = /Fact Check/;
+    await page.getByRole("tab", { name: factCheckPattern }).click();
+    await expect(page.getByText("The fixture claim is supported.").first()).toBeVisible();
+    await page.getByRole("tab", { name: "Write" }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText(content);
+    await page.reload();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText(content);
+});
+
+
 test("critical local-first author journeys use deterministic provider output", async ({ page, baseURL }) => {
     await page.goto("/");
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: baseURL });

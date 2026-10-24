@@ -25,6 +25,8 @@ The Assistant shows a short activity message while it works. It does not expose 
 
 Opening a result does not change the *Article*. Review and accept a *Proposal* in its Workspace View. *Findings* remain advisory, and translations remain separate linked *Articles*.
 
+For a focused review of technical terms, choose **Technical terminology** from **Quick actions**. Its sourced *Findings* appear in **Fact Check**. See [Technical terminology](skills.md#technical-terminology) for the review steps and limits.
+
 *Skills* help shape a request but do not add permissions. The Assistant chooses relevant *Skills* for an untagged request. It does not route ordinary requests through a default editing workflow. Warplyn does not run background work, publish directly, or change an *Article* without your approval.
 
 Ask the Assistant to create a reusable [Skill](skills.md) when a procedure should be available again. It may ask a short follow-up when the purpose, steps, or references are unclear. A created *Skill* is available at once and has its own local *Skill Revision* history. Creating it does not read your *Article* body or change its *Draft*, *Proposal*, or *Revision*.

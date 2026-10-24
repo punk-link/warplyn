@@ -452,6 +452,8 @@ export const messages = {
     "assistant.skill.factChecking.label": "Fact checking",
     "assistant.skill.factChecking.hint": "Review claims and prepare advisory findings with sources and uncertainty.",
     "assistant.skill.factChecking.speedHint": "Fact checking can take a while.",
+    "assistant.skill.technicalTerminology.label": "Technical terminology",
+    "assistant.skill.technicalTerminology.hint": "Check technical terms against sources. Review findings or keep your wording.",
     "assistant.factCheckCorrectionPrompt": "Correct or remove only these fact-check findings. Preserve every other claim and the author's voice.\n\n{findings}",
     "assistant.factCheckClaims": "Claims to check",
     "assistant.claimSelectionHelp": "Use the highlighted checkboxes to include or skip claims while this check runs. Plain rows have finished.",
