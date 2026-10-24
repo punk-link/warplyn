@@ -322,6 +322,7 @@ describe("Editorial Assistant composer", () => {
             assistantMessages={[]} />);
         const panelScope = within(panel.container);
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        await user.click(panelScope.getByRole("button", { name: getMessage("assistant.showAllSkills") }));
         await user.click(panelScope.getByRole("option", { name: getMessage("assistant.skill.translation.label") }));
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.send") }));
         expect(onRequest).toHaveBeenCalledWith("", "translation", ["Spanish", "German"], 0);

@@ -270,7 +270,8 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         clearSelection?.();
         void onRequest(authorMessage, requestSkill, isTranslation ? restoredTargetLanguage ?? translationLanguages : undefined, selectedSkillOffset);
         setRestoredTargetLanguage(undefined);
-    }, [canSend, clearSelection, guidance, isTranslation, onRequest, recentSkillIds, restoredTargetLanguage, selectedDefinition, selectedSkill, skillOffset, translationLanguages]);
+    }, [canSend, clearSelection, guidance, isTranslation, onRequest, recentSkillIds, restoredTargetLanguage,
+        selectedDefinition, selectedSkill, skillOffset, translationLanguages]);
 
     useEffect(() => {
         const unregisterSend = dispatcher?.register(KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST, send);

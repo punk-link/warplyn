@@ -134,7 +134,11 @@ function AssistantEditModeControl({ mode, disabled, setMode }: { mode?: Assistan
 }
 
 
-export function AssistantComposer({ state, picker, actions }: { state: AssistantComposerState; picker: AssistantSkillPickerControls & { activeSkillIndex: number; setActiveSkillIndex: (value: number) => void; showAllSkills: boolean; setShowAllSkills: (value: boolean) => void; searchingSkills: boolean; hasMoreSkills: boolean }; actions: AssistantComposerActions }) {
+export function AssistantComposer({ state, picker, actions }: {
+    state: AssistantComposerState;
+    picker: Parameters<typeof AssistantQuickActions>[0]["picker"];
+    actions: AssistantComposerActions;
+}) {
     const { state: requestState, canSend, guidance, selectedSkill, skillOffset, caretOffset, selection, clearSelection, incompatibleSelectionSkill, editMode } = state;
     const { quickActionsOpen, availableSkills, activeSkillIndex, setQuickActionsOpen, selectSkill, focusQuickAction } = picker;
     const { send, onCancel, onChange, onKeyDown, shortcutOverrides, setEditMode } = actions;

@@ -137,7 +137,19 @@ export function EditorialAssistantPanel({ data, actions, layout }: { data: Edito
         <AssistantTimeline data={{ state, message, errorDetails, activity, factCheckClaims, activeRequestId, collapsed, assistantMessages, streamedMessage, generalSettings, elapsedDuration, hasUnavailableAiConnection, authorSkills }} actions={{ openView, openSkillFolder, onRetry, openSettings, onCheckpoint: openCheckpoint, applyEdit, setClaimSelected }} />
         <AssistantComposer
             state={{ state, canSend: composerState.canSend, guidance: composerState.guidance, selectedSkill: composerState.selectedSkill, skillOffset: composerState.skillOffset, caretOffset: composerState.caretOffset, selection, clearSelection, incompatibleSelectionSkill: composerState.incompatibleSelectionSkill, editMode }}
-            picker={{ quickActionsOpen: composerState.quickActionsOpen, availableSkills: composerState.availableSkills, activeSkillIndex: composerState.activeSkillIndex, showAllSkills: composerState.showAllSkills, setShowAllSkills: composerState.setShowAllSkills, searchingSkills: composerState.searchingSkills, hasMoreSkills: composerState.hasMoreSkills, setQuickActionsOpen: composerState.setQuickActionsOpen, setActiveSkillIndex: composerState.setActiveSkillIndex, selectSkill: composerState.selectSkill, focusQuickAction: composerState.focusQuickAction }}
+            picker={{
+                quickActionsOpen: composerState.quickActionsOpen,
+                availableSkills: composerState.availableSkills,
+                activeSkillIndex: composerState.activeSkillIndex,
+                showAllSkills: composerState.showAllSkills,
+                setShowAllSkills: composerState.setShowAllSkills,
+                searchingSkills: composerState.searchingSkills,
+                hasMoreSkills: composerState.hasMoreSkills,
+                setQuickActionsOpen: composerState.setQuickActionsOpen,
+                setActiveSkillIndex: composerState.setActiveSkillIndex,
+                selectSkill: composerState.selectSkill,
+                focusQuickAction: composerState.focusQuickAction,
+            }}
             actions={{ send: composerState.send, onCancel, onChange: composerState.onChange, onKeyDown: composerState.onKeyDown, shortcutOverrides, setEditMode }} />
         {checkpointPreview && restoreCheckpoint && closeCheckpoint && (
             <AssistantCheckpointDialog

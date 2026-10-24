@@ -80,6 +80,7 @@ test("Check technical terms is opt-in and preserves Article text after review an
     await createArticle(page, content);
     await expect(page.getByText("Findings prepared")).toHaveCount(0);
     await page.getByRole("button", { name: "Quick actions" }).click();
+    await page.getByRole("button", { name: "Show all Skills" }).click();
     await page.getByRole("option", { name: "Check technical terms" }).click();
     await expect(page.getByText("Findings prepared")).toHaveCount(0);
     await page.getByRole("button", { name: "Send editorial request" }).click();

@@ -19,9 +19,15 @@ interface AssistantQuickActionsPicker extends AssistantSkillPickerControls {
 }
 
 
-export function AssistantQuickActions({ context, picker }: { context: { state: "idle" | "streaming" | "error"; composer: RefObject<HTMLDivElement> }; picker: AssistantQuickActionsPicker }) {
+export function AssistantQuickActions({ context, picker }: {
+    context: { state: "idle" | "streaming" | "error"; composer: RefObject<HTMLDivElement> };
+    picker: AssistantQuickActionsPicker;
+}) {
     const { state, composer } = context;
-    const { quickActionsOpen, availableSkills, activeSkillIndex, showAllSkills, searchingSkills, hasMoreSkills, setQuickActionsOpen, setActiveSkillIndex, setShowAllSkills, selectSkill, focusQuickAction } = picker;
+    const {
+        quickActionsOpen, availableSkills, activeSkillIndex, showAllSkills, searchingSkills, hasMoreSkills,
+        setQuickActionsOpen, setActiveSkillIndex, setShowAllSkills, selectSkill, focusQuickAction,
+    } = picker;
     const intl = useIntl();
     const pickerRoot = useRef<HTMLDivElement>(null);
 
@@ -60,7 +66,8 @@ export function AssistantQuickActions({ context, picker }: { context: { state: "
                     aria-label={intl.formatMessage({ id: "assistant.quickActions" })}
                     aria-describedby="assistant-skill-picker-hint"
                     className={"max-h-72 overflow-y-auto [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] " +
-                    "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong"}>
+                    "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden " +
+                    "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong"}>
                     {availableSkills.length
                         ? availableSkills.map((skill, index) => (
                             <SkillOption
@@ -76,16 +83,18 @@ export function AssistantQuickActions({ context, picker }: { context: { state: "
                         ))
                         : <p className="px-3 py-2 text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.skillNoMatches" })}</p>}
                 </div>
-                {!searchingSkills && hasMoreSkills && <Button
-                    className="w-full justify-start text-xs"
-                    variant="quiet"
-                    aria-pressed={showAllSkills}
-                    aria-controls="assistant-skill-picker"
-                    onClick={() => {
-                        setActiveSkillIndex(0);
-                        setShowAllSkills(!showAllSkills);
-                    }}>{intl.formatMessage({ id: showAllSkills ? "assistant.showRecentSkills" : "assistant.showAllSkills" })}
-                </Button>}
+                {!searchingSkills && hasMoreSkills && (
+                    <Button
+                        className="w-full justify-start text-xs"
+                        variant="quiet"
+                        aria-pressed={showAllSkills}
+                        aria-controls="assistant-skill-picker"
+                        onClick={() => {
+                            setActiveSkillIndex(0);
+                            setShowAllSkills(!showAllSkills);
+                        }}>{intl.formatMessage({ id: showAllSkills ? "assistant.showRecentSkills" : "assistant.showAllSkills" })}
+                    </Button>
+                )}
                 <p id="assistant-skill-picker-hint" className="border-t border-border px-3 py-2 text-xs text-muted">
                     {intl.formatMessage({ id: "assistant.customSkillsHint" })}
                 </p>
