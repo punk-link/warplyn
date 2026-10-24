@@ -7,7 +7,9 @@ import { EDITORIAL_ENGINE_ERROR } from "../../editorial/engine/editorial-engine-
 import { EditorialEngineError } from "../../editorial/engine/editorial-engine-error.js";
 import type { EditorialEngineEvent } from "../../editorial/engine/editorial-engine-event.js";
 import type { EditorialAssistantTool } from "../../editorial/engine/editorial-assistant-tool.js";
-import { EDITORIAL_CAPABILITY, isValidatedEditorialCapabilityCall, type EditorialCapabilityCatalog, type EditorialCapabilityDefinition, type StreamContext } from "./editorial-capability-catalog.js";
+import {
+    EDITORIAL_CAPABILITY, isValidatedEditorialCapabilityCall, type EditorialCapabilityCatalog, type EditorialCapabilityDefinition,
+} from "./editorial-capability-catalog.js";
 import type { ActionCapability } from "./action-capability.js";
 import type { CompletionEvent } from "../completion/completion-event.js";
 import type { PreparedAssistantRequest } from "../requests/prepared-assistant-request.js";
@@ -25,8 +27,9 @@ import { AssistantArtifactExecution } from "./assistant-artifact-execution.js";
 import { getExactCharacterReplacement } from "./assistant-character-replacement.js";
 import { resolveRequestSkill } from "../skills/resolve-request-skill.js";
 import { getSkillCapabilities, getSkillOrchestrationInstructions } from "../skills/skill-execution.js";
-import { createSkillGuidance } from "../skills/create-skill-guidance.js";
+import { createAssistantStreamContext } from "./assistant-stream-context.js";
 import { getAssistantArticleExcerpt } from "../assistant-engine-request.js";
+import { formatSelectionContext, getSelectionContext } from "../../editorial/selection-context.js";
 
 
 function isTransientReadFailure(error: unknown): boolean {
@@ -186,6 +189,29 @@ export class AssistantCapabilityLoop {
         if (this.authorSkillActions)
             tools.push(...this.authorSkillActions.tools(request));
 
+        if (request.scope.kind === "selection" && request.resolvedSkill?.execution?.capability !== "manage_skills") {
+            const scope = request.scope;
+            tools.push({
+                capability: "read_selection",
+                description: "Read the selected source and bounded read-only neighboring context only when answering requires Article text. " +
+                    "Never use for greetings, general advice, or Skill management. No other Article text is available in selection scope.",
+                input: "none",
+                execute: async (_input, signal) => {
+                    signal.throwIfAborted();
+
+                    this.dependencies.capabilities!.read({
+                        capability: EDITORIAL_CAPABILITY.INSPECT_ARTICLE,
+                        context: { articleId: request.articleId, baseRevisionId: scope.baseRevisionId },
+                    });
+
+                    return {
+                        selectedSource: excerpt,
+                        readOnlyContext: formatSelectionContext(getSelectionContext(request.article.content, scope.startOffset, scope.endOffset)),
+                    };
+                },
+            });
+        }
+
         return tools;
     }
 
@@ -278,7 +304,8 @@ export class AssistantCapabilityLoop {
             return { status: "prepared" };
         }
 
-        const stream = this.dependencies.capabilities!.stream(this.createStreamContext(request, excerpt, authorContext, definition, input), signal, true);
+        const context = createAssistantStreamContext(request, excerpt, authorContext, definition, input);
+        const stream = this.dependencies.capabilities!.stream(context, signal, true);
         for await (const event of stream) {
             signal.throwIfAborted();
             if (event.type !== EDITORIAL_ENGINE_EVENT.COMPLETED) {
@@ -307,37 +334,6 @@ export class AssistantCapabilityLoop {
             request.execution.partialFactCheck = event.factCheck;
 
         request.execution.completedCapability = definition.id;
-    }
-
-
-    private createStreamContext(request: PreparedAssistantRequest, excerpt: string, authorContext: string, definition: EditorialCapabilityDefinition, input: Readonly<Record<string, string>>): StreamContext {
-        return {
-            capability: definition.id as StreamContext["capability"],
-            context: { articleId: request.articleId, baseRevisionId: request.scope.baseRevisionId },
-            requestId: request.requestId,
-            ...(request.article.styleContext ? { styleContext: request.article.styleContext } : {}),
-            editorial: {
-                authorContext,
-                ...(request.resolvedSkillId ? { skillId: request.resolvedSkillId } : {}),
-                skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
-                ...(input.operation ? { operation: input.operation as StreamContext["editorial"]["operation"] } : {}),
-            },
-            article: {
-                ...(request.article.publishingCharacterLimit ? { targetArticleCharacterLimit: request.article.publishingCharacterLimit } : {}),
-                ...(input.targetLanguage ? { targetLanguage: input.targetLanguage } : {}),
-                ...(request.scope.kind === "selection" ? {
-                    content: excerpt,
-                    selection: true,
-                    surroundingCharacterCount: request.article.content.length - excerpt.length,
-                } : {}),
-            },
-            ...(request.execution.skipFactCheckClaim || input.findingIds ? {
-                factChecking: {
-                    ...(request.execution.skipFactCheckClaim ? { skipClaim: request.execution.skipFactCheckClaim } : {}),
-                    ...(input.findingIds ? { findingIds: input.findingIds } : {}),
-                },
-            } : {}),
-        };
     }
 
 

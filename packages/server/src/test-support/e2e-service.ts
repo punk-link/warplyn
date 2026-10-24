@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -24,6 +25,18 @@ import { createLocalService } from "../presentation/server.js";
 
 class E2eFixtureEngine implements EditorialEngine {
     async *streamAssistant(request: EditorialAssistantRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+        if (request.message === "E2E selection question") {
+            assert.equal(request.article, "");
+            const read = request.tools.find((tool) => tool.capability === "read_selection");
+            assert.ok(read);
+            const result = await read.execute({}, signal);
+            assert.ok(JSON.stringify(result).includes("shared repair log"));
+
+            yield { type: "completed", responseId: "selection-question", text: "The ledger is the shared repair log." };
+
+            return;
+        }
+
         if (request.message === "provider error")
             throw new EditorialEngineError("provider", "Deterministic provider failure.");
 
@@ -70,6 +83,16 @@ class E2eFixtureEngine implements EditorialEngine {
 
 
     async *stream(request: EditorialEngineRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+        if (request.authorContext === "E2E edit bounded selection") {
+            assert.equal(request.article, "The record was useful.");
+            assert.equal(request.selectionContext?.preceding.trim(), "The ledger is the shared repair log.");
+            assert.equal(request.selectionContext?.following.trim(), "We kept it dry.");
+
+            yield { type: "completed", responseId: "selection-replacement", text: "The ledger helped." };
+
+            return;
+        }
+
         if (request.authorContext === "provider error")
             throw new EditorialEngineError("provider", "Deterministic provider failure.");
 
@@ -233,12 +256,14 @@ const editVerifier: AssistantActionIntentVerifier = {
 const fixtureEngine = new E2eFixtureEngine();
 const engines: EditorialEngineResolver = {
     resolve: () => fixtureEngine, resolveAssistant: () => fixtureEngine, resolveAssistantActionIntentVerifier: () => editVerifier,
-    resolveArticleTitleGenerator: () => ({ generate: async (content) => {
-        if (content.includes("Title generation unavailable"))
-            throw new Error("Fixture title generation failed");
+    resolveArticleTitleGenerator: () => ({
+        generate: async (content) => {
+            if (content.includes("Title generation unavailable"))
+                throw new Error("Fixture title generation failed");
 
-        return "Community gardens";
-    } }),
+            return "Community gardens";
+        }
+    }),
 };
 
 assistant.seedGreetings();

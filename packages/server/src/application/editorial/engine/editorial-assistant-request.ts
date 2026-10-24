@@ -5,6 +5,7 @@ export interface EditorialAssistantRequest {
     message: string;
     interfaceLocale?: string;
     article: string;
+    selectionContext?: import("../selection-context.js").SelectionContext;
     scope: "article" | "selection";
     instructions: readonly string[];
     history: readonly { role: "author" | "assistant"; content: string }[];

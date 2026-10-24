@@ -9,6 +9,7 @@ import { EDITORIAL_ENGINE_EVENT } from "../../../application/editorial/engine/ed
 import { EditorialEngineError } from "../../../application/editorial/engine/editorial-engine-error.js";
 import { createAssistantConversationPrompt, getAssistantStepOptions, createAssistantTools } from "./ai-sdk-assistant.js";
 import { createAiSdkGenerationOptions, getContinuationToken, getEditorialProviderOptions, isAcceptedFinish, createProviderError } from "./ai-sdk-provider.js";
+import { selectionContextPolicy } from "../../../application/editorial/selection-context-policy.js";
 
 
 interface AiSdkAssistantExecutorOptions {
@@ -27,7 +28,9 @@ interface AssistantExecutionState {
 }
 
 
-export function createAssistantInstructions(request: Pick<EditorialAssistantRequest, "instructions" | "skills" | "interfaceLocale">): string {
+export function createAssistantInstructions(
+    request: Pick<EditorialAssistantRequest, "instructions" | "skills" | "interfaceLocale" | "scope">,
+): string {
     return [
         "You are Warplyn's editorial assistant. Use only the supplied tools when an editorial result is needed.",
         `Write service messages, including status updates, confirmations, errors, and summaries of tool or Skill work, in the Interface locale ${request.interfaceLocale ?? "en"}. For ordinary conversational answers that do not use or affect tools or Skills, answer in the language of the Author's question.`,
@@ -35,11 +38,14 @@ export function createAssistantInstructions(request: Pick<EditorialAssistantRequ
         ("Perform necessary reads and explicitly authorized actions before producing the request's single artifact. A completed artifact ends the " +
             "run; Warplyn supplies its result card without a closing model reply."),
         "When an Author request matches an available Skill, load that Skill before choosing capabilities.",
+        "When read_selection is available, use it before answering a question about the selected writing. " +
+        "Do not read Article text for greetings, general advice, or Skill management. Never expand selection scope to the whole Article.",
         "Use Skill descriptions to choose the requested outcome. Honor an explicitly selected Skill and its result contract.",
         ("To reject a prepared translation, call inspect_translations first, use its artifactId with reject_translation, and never use " +
             "inspect_linked_articles; that tool is only for created linked Articles."),
         `Available Skills:\n${request.skills.map((skill) => `${skill.id}: ${skill.name}. ${skill.description}`).join("\n")}`,
         ...request.instructions,
+        ...(request.scope === "selection" ? [selectionContextPolicy] : []),
     ].join("\n\n");
 }
 
@@ -124,7 +130,14 @@ export class AiSdkAssistantExecutor {
 
 
     private createAgent(request: EditorialAssistantRequest, tools: ToolSet, state: AssistantExecutionState, signal: AbortSignal) {
-        const getActiveTools = () => state.activeCapabilities ? [...state.activeCapabilities, "load_skill"] : ["find_capabilities", "load_skill"];
+        const getActiveTools = () => {
+            const active = state.activeCapabilities ? [...state.activeCapabilities, "load_skill"] : ["find_capabilities", "load_skill"];
+            if (request.tools.some((tool) => tool.capability === "read_selection"))
+                active.push("read_selection");
+
+            return active;
+        };
+
         const providerOptions = getEditorialProviderOptions(this.options);
 
         return new ToolLoopAgent<never, ToolSet>({
@@ -136,7 +149,7 @@ export class AiSdkAssistantExecutor {
                 if (stepNumber === 0 && request.instructions.length === 0)
                     return { activeTools: getActiveTools() };
 
-                return getAssistantStepOptions(stepNumber, state.activeCapabilities);
+                return getAssistantStepOptions(stepNumber, state.activeCapabilities, request.tools.some((tool) => tool.capability === "read_selection"));
             },
             stopWhen: [isStepCount(6), () => Boolean(state.failure || state.completedArtifact)],
         });

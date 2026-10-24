@@ -12,7 +12,9 @@ test("built-in Skills publish compact discovery data and load versioned instruct
 
     assert.ok(Object.values(BUILT_IN_SKILL).every((id) => summaries.some((summary) => summary.reference.id === id)));
     assert.ok(summaries.every((summary) => summary.reference.source === "built-in" && summary.name && summary.description));
-    assert.deepEqual(summaries.filter((summary) => summary.reference.version === "2").map((summary) => summary.reference.id), [BUILT_IN_SKILL.NARRATIVE_DRAFT, BUILT_IN_SKILL.FLOW_AND_CLARITY, BUILT_IN_SKILL.STYLE_REVIEW, BUILT_IN_SKILL.TRANSLATION]);
+    assert.deepEqual(summaries.filter((summary) => summary.reference.version === "3").map((summary) => summary.reference.id), [
+        BUILT_IN_SKILL.NARRATIVE_DRAFT, BUILT_IN_SKILL.FLOW_AND_CLARITY, BUILT_IN_SKILL.STYLE_REVIEW,
+    ]);
     assert.equal("instructions" in summaries[0]!, false);
 
     const [factChecking] = catalog.load([summaries.find((summary) => summary.reference.id === BUILT_IN_SKILL.FACT_CHECKING)!.reference]);

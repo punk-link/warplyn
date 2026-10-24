@@ -37,6 +37,7 @@ describe("Editorial Workspace assistant", () => {
 
         expect(selectionChip.textContent).toContain("The first selected s…");
         expect(selectionChip.getAttribute("title")).toBe(selection.preview);
+        expect(screen.getByText(getMessage("assistant.selectionContextHint"))).toBeTruthy();
         expect(within(selectionChip).getByRole("button", { name: getMessage("assistant.clearArticleSelection") })).toBeTruthy();
     });
 

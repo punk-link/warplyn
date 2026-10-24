@@ -4,6 +4,7 @@ import { z } from "zod";
 import { EDITORIAL_CAPABILITY } from "../../../application/assistant/capabilities/editorial-capability-id.js";
 import type { EditorialAssistantRequest } from "../../../application/editorial/engine/editorial-assistant-request.js";
 import { getBoundedArticleContext } from "../models/editorial-context.js";
+import { formatSelectionContext } from "../../../application/editorial/selection-context.js";
 
 type AssistantToolExecutor = (capability: string, input: Readonly<Record<string, string>>) => Promise<unknown>;
 type AssistantTool = EditorialAssistantRequest["tools"][number];
@@ -135,8 +136,13 @@ export function createAssistantTools(request: EditorialAssistantRequest, execute
 }
 
 
-export function getAssistantStepOptions(stepNumber: number, activeCapabilities?: readonly string[]): { activeTools: string[]; toolChoice?: { type: "tool"; toolName: string } } {
+export function getAssistantStepOptions(
+    stepNumber: number, activeCapabilities?: readonly string[], hasSelection = false,
+): { activeTools: string[]; toolChoice?: { type: "tool"; toolName: string } } {
     const activeTools = activeCapabilities ? [...activeCapabilities, "find_capabilities", "load_skill"] : ["find_capabilities", "load_skill"];
+    if (hasSelection)
+        activeTools.push("read_selection");
+
     if (activeCapabilities?.includes("create_author_skill"))
         return { activeTools };
 
@@ -151,10 +157,16 @@ export function getAssistantStepOptions(stepNumber: number, activeCapabilities?:
 }
 
 
-export function createAssistantConversationPrompt(request: Pick<EditorialAssistantRequest, "article" | "history" | "message" | "scope">): ModelMessage[] {
-    const context = request.article
-        ? `${request.scope === "selection" ? "Selected Article context" : "Current Article context"}:\n${getBoundedArticleContext(request.article)}`
+export function createAssistantConversationPrompt(
+    request: Pick<EditorialAssistantRequest, "article" | "selectionContext" | "history" | "message" | "scope">,
+): ModelMessage[] {
+    const unreadContext = request.scope === "selection"
+        ? "An Article selection is available through read_selection. For a question about this writing, read it before answering."
         : "No Article context was provided for this request.";
+    const context = request.article
+        ? `${request.scope === "selection" ? "Selected Article context" : "Current Article context"}:\n${getBoundedArticleContext(request.article)}` +
+            formatSelectionContext(request.selectionContext)
+        : unreadContext;
 
     return [
         ...request.history.map((turn): ModelMessage => ({ role: turn.role === "author" ? "user" : "assistant", content: turn.content })),

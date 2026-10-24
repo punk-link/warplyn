@@ -14,7 +14,7 @@ Your provider sets its own rates. A request's cost can depend on:
 - how much *Article* text and instruction context the request includes
 - how much text the model returns
 
-When you select text before sending a request, Warplyn sends that selection. Without a selection, the request may include the whole *Article* and relevant context. A narrower request can cost less, depending on provider rates.
+Nearby text can improve interpretation of a short selection, at the cost of sending some unselected writing. Selection requests that need *Article* text send the selected passage plus up to 500 characters before and 500 after it as read-only context, at most 1,000 extra characters. Only the selection is an edit target. Without a selection, the request may include the whole *Article* and relevant context. A narrower request can cost less, depending on provider rates.
 
 ::: tip API billing
 A subscription to a provider's chat service may not include API use. Check the provider's current API pricing and billing terms before connecting a key.

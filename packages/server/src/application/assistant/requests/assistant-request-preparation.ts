@@ -14,6 +14,7 @@ import type { AssistantSkillCatalog } from "../skills/assistant-skill-catalog.js
 import type { AssistantSkillPackage } from "../skills/assistant-skill-package.js";
 import { resolveSkillExecution } from "../skills/skill-execution.js";
 import { captureStyleTypography } from "../../editorial/style/capture-style-typography.js";
+import { validateSelectionOffsets } from "../../editorial/selection-context.js";
 
 
 export class AssistantRequestPreparation {
@@ -107,8 +108,8 @@ export class AssistantRequestPreparation {
         if (request.explicitSkillId && !this.dependencies.skills.discover().some((skill) => skill.reference.id === request.explicitSkillId))
             throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SKILL_UNSUPPORTED, HTTP_STATUS.BAD_REQUEST);
 
-        if (request.scope.kind === "selection" && (request.scope.endOffset > articleContent.length || request.scope.startOffset >= request.scope.endOffset))
-            throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SELECTION_INVALID, HTTP_STATUS.BAD_REQUEST);
+        if (request.scope.kind === "selection")
+            validateSelectionOffsets(articleContent, request.scope.startOffset, request.scope.endOffset);
     }
 
 

@@ -105,6 +105,7 @@ function createEditorialRequest(input: StreamContext, operation: EditorialOperat
             ...(input.article.targetLanguage?.trim() ? { targetLanguage: input.article.targetLanguage.trim() } : {}),
             ...(input.article.content !== undefined ? { content: input.article.content } : {}),
             ...(input.article.selection ? { selection: true } : {}),
+            ...(input.article.selectionContext ? { selectionContext: input.article.selectionContext } : {}),
             ...(input.article.surroundingCharacterCount !== undefined ? { surroundingCharacterCount: input.article.surroundingCharacterCount } : {}),
         },
         editorial: {
