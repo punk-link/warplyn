@@ -14,14 +14,19 @@ Warplyn gives you a local-first workspace for developing and refining *Articles*
 
 ## Guides
 
+- [Writing and organizing Articles](writing-and-articles.md)
 - [Article files](article-files.md)
 - [Editorial Assistant](editorial-assistant.md)
+- [Reviewing Articles](reviewing-articles.md)
+- [Translations](translations.md)
+- [Style Profile](style-profile.md)
 - [Skills](skills.md)
 
 ## Settings
 
 - [AI providers and models](providers.md)
 - [AI provider costs](provider-costs.md)
+- [Application settings](application-settings.md)
 - [Backups and recovery](backups-and-recovery.md)
 - [Windows preview update recovery](update-recovery.md)
 - [Share diagnostic and usage data](telemetry.md)

@@ -19,6 +19,8 @@ Managed API keys require the desktop app and an available operating system crede
 
 Adding an API-key connection verifies the key with the provider. Adding an environment-variable connection only saves its settings. Warplyn contacts the provider again when you refresh models or send an AI request. These checks do not include *Article* content.
 
+Connections are listed in **Settings** → **AI assistant**. Use **Active**, **Activate**, or **Deactivate** to decide which connections Warplyn can use for new requests. Choose **Rename** to change a connection's local display name, or **Remove** and confirm to remove it from Warplyn. Removing an environment-variable connection does not delete the variable or its key.
+
 ::: tip If model refresh fails
 Check that the connection is **Active**, the saved key is valid or the environment variable is available to the application service, and the provider account can access its API.
 :::
@@ -28,6 +30,8 @@ Check that the connection is **Active**, the saved key is valid or the environme
 Warplyn supports OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, and DeepSeek. OpenCode Zen also offers models from other vendors in its catalog.
 
 In **Settings** → **AI assistant**, select **Refresh available models**, then choose a **Default model**. To use a different model for a particular *Skill*, choose it under **Models for specific tasks**. A task set to **Use default model** follows the Default model.
+
+Refresh the model list after changing connections or when you want to see a provider's current catalog. Use **Search models**, **Filter models by vendor**, and **Favorites** to narrow the list. Model choices apply to future requests. Use **Reasoning level** when it appears for a selected OpenAI model; higher settings can take longer. The optional **App model** in AI Settings is separate from the Default model and handles Warplyn helper tasks such as summaries and titles.
 
 ::: tip Model availability
 Available Editorial Operations vary by model. Some models do not support sourced fact checking, structured output, or reasoning controls. OpenCode Zen models follow their catalog's capabilities and availability.

@@ -6,6 +6,12 @@ description: "Check technical terminology with a built-in Warplyn Skill, or crea
 
 *Skills* are local Markdown instruction packages. They help the Assistant choose and sequence editorial capabilities. They do not add permissions or make changes to an *Article*.
 
+## Use a built-in Skill
+
+Open **Quick actions** to choose a built-in Skill for a common task. **Develop key points** helps organize the points an Article should make. **Turn your ideas into a draft** prepares a first draft. **Improve flow and clarity** works on structure and transitions, while **Shorten text** cuts repetition while preserving meaning and voice. **Check facts**, **Review writing style**, and **Translate text** prepare findings or results for review.
+
+Choosing a Skill only adds it to the Composer. Select **Send editorial request** when you are ready. A selected passage scopes the request to that text unless the task explicitly uses the whole Article. See [Editorial Assistant](editorial-assistant.md) for how to review results.
+
 ## Check technical terms
 
 Use the built-in **Check technical terms** *Skill* to check technical language in an IT *Article*. It looks for confused concepts, misleading acronym expansions, incorrect product or API names, and inconsistent names for the same concept. It compares usage with sources for the relevant domain and version, while allowing for local definitions and evolving terminology.

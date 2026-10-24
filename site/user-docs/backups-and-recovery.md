@@ -26,7 +26,7 @@ Older `.sqlite` backups contain only the database. Restoring one keeps your curr
 
 ## Automatic backups
 
-Set **Automatic backups** to **Daily** to create one snapshot the first time Warplyn opens each day. In a browser, this requires permission to use the chosen folder.
+Set **Automatic backups** to **Daily** to create a snapshot shortly after Warplyn starts, then every 24 hours while it stays open. In a browser, Warplyn needs permission to use the chosen folder. If an automatic backup fails, check the folder and create a manual backup; the next scheduled attempt remains enabled.
 
 **Automatic backup retention** controls how many automatic snapshots Warplyn keeps. It removes only older automatic snapshots; backups you created manually are always kept.
 

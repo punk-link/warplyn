@@ -13,6 +13,9 @@
     <loc>https://warplyn.com/docs/article-files.html</loc>
   </url>
   <url>
+    <loc>https://warplyn.com/docs/application-settings.html</loc>
+  </url>
+  <url>
     <loc>https://warplyn.com/docs/backups-and-recovery.html</loc>
   </url>
   <url>
@@ -34,12 +37,24 @@
     <loc>https://warplyn.com/docs/providers.html</loc>
   </url>
   <url>
+    <loc>https://warplyn.com/docs/reviewing-articles.html</loc>
+  </url>
+  <url>
     <loc>https://warplyn.com/docs/skills.html</loc>
+  </url>
+  <url>
+    <loc>https://warplyn.com/docs/style-profile.html</loc>
   </url>
   <url>
     <loc>https://warplyn.com/docs/telemetry.html</loc>
   </url>
   <url>
+    <loc>https://warplyn.com/docs/translations.html</loc>
+  </url>
+  <url>
     <loc>https://warplyn.com/docs/update-recovery.html</loc>
+  </url>
+  <url>
+    <loc>https://warplyn.com/docs/writing-and-articles.html</loc>
   </url>
 </urlset>

@@ -16,14 +16,14 @@ While revising a short story, select a passage and ask: “Improve the flow whil
 
 *Example request in the Composer. Connect a provider before sending it. The screenshot shows an earlier Skill name.*
 
-The Assistant shows a short activity message while it works. It does not expose prompts, private inputs, credentials, or provider errors. When work is ready, use the result card to open the result:
+The Assistant shows a short activity message while it works. Choose **Stop request** to cancel work that is taking too long. A cancelled or failed request does not change the *Article*; choose **Retry** when you want to run it again. The Assistant does not expose prompts, private inputs, credentials, or provider errors. When work is ready, use the result card to open the result:
 
 - **Proposal Review** for generated or revised text.
 - **Fact Check** for advisory *Findings*.
 - **Style Profile** for style review *Findings*.
 - **Translations** for a translation *Proposal*.
 
-Opening a result does not change the *Article*. Review and accept a *Proposal* in its Workspace View. *Findings* remain advisory, and translations remain separate linked *Articles*.
+Opening a result does not change the *Article*. Review a *Proposal* before accepting its changes. *Findings* remain advisory, and translations remain separate linked *Articles*. See [Reviewing Articles](reviewing-articles.md) for proposals, history, recovery, and Fact Check. See [Translations](translations.md) to compare and use translation results.
 
 For a focused review of technical terms, choose **Check technical terms** from **Quick actions**. Its sourced *Findings* appear in **Fact Check**. See [Check technical terms](skills.md#check-technical-terms) for the review steps and limits.
 
@@ -35,7 +35,7 @@ You can ask the Editorial Assistant to inspect **Revision History**, saved edito
 
 ## Style Profile
 
-Open **Style Profile** from the Article Library utility area. Use its side menu to select **Detected characteristics**, **Typography rules**, **Manual rules**, or **Writing samples**. Narrow screens use a section selector. Switching sections keeps unfinished input. **Detected characteristics** includes style review *Findings*. **Back to workspace** returns to your *Article* and the previous Workspace View.
+Open **Style Profile** from the Article Library utility area to manage writing samples, manual guidance, typography rules, and style review *Findings*. See [Style Profile](style-profile.md) to add samples and rebuild detected characteristics. **Back to workspace** returns to your *Article* and the previous Workspace View.
 
 ## Typography rules
 
