@@ -90,6 +90,7 @@ describe("Editorial Assistant composer", () => {
         expect(quickActions.querySelector("svg")?.classList.contains("transition-transform")).toBe(true);
         await user.click(quickActions);
 
+        await user.click(panelScope.getByRole("button", { name: getMessage("assistant.showAllSkills") }));
         expect(panelScope.getByRole("option", { name: "Develop key points" })).toBeTruthy();
         expect(panelScope.getByRole("option", { name: "Turn ideas into a draft" })).toBeTruthy();
         expect(panelScope.getByRole("option", { name: "Improve flow and clarity" })).toBeTruthy();
@@ -146,7 +147,7 @@ describe("Editorial Assistant composer", () => {
         const panelScope = within(panel.container);
 
         await user.click(panelScope.getByRole("button", { name: getMessage("assistant.quickActions") }));
-        const builtIn = panelScope.getByRole("option", { name: "Skill Creator" });
+        const builtIn = panelScope.getByRole("option", { name: "Develop key points" });
         expect(builtIn.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
         expect(panelScope.queryByRole("option", { name: "House style" })).toBeNull();
     });
@@ -156,6 +157,10 @@ describe("Editorial Assistant composer", () => {
             quickActionsOpen: true,
             availableSkills: [{ id: "skill_creator", name: "Skill Creator", source: "built-in" }, { id: "house-style", name: "House style", source: "author" }],
             activeSkillIndex: 0,
+            showAllSkills: true,
+            setShowAllSkills: vi.fn(),
+            searchingSkills: false,
+            hasMoreSkills: false,
             setQuickActionsOpen: vi.fn(),
             setActiveSkillIndex: vi.fn(),
             selectSkill: vi.fn(),

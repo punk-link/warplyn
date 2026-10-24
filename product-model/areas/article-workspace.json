@@ -412,6 +412,7 @@
             ],
             "event": "Author selects a Quick action then sends, with optional guidance.",
             "expected": [
+                "The Quick Actions menu shows the five most recently used built-in Skills by default and offers a control to show all built-in Skills",
                 "Skill options show their hint on hover and expose it to assistive technology; optional speed hint metadata adds an information icon and hover caption",
                 "The skill tag is inserted into the composer before the request",
                 "A selected skill can run against the whole Article without additional guidance"
