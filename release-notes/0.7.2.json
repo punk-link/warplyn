@@ -1,0 +1,35 @@
+{
+    "version": "0.7.2",
+    "previousTag": "v0.7.1",
+    "previousCommit": "0f4da4d1268c1c71b1bce7c13b61fd8cdde4bc76",
+    "baseline": "published",
+    "sourceCommit": "ce07017b87742afa44e2b619d062cad907d283a8",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "text": "Check technical terms in an Article or selected passage with sourced, advisory findings. Review the evidence and decide what to change; the check does not rewrite your text.",
+            "commits": [
+                "eef4f78bdd0e1b8a74dda9abe0dda4634270a570"
+            ]
+        },
+        {
+            "text": "Quick Actions now shows your five most recently used built-in Skills first, with a control to browse all Skills or return to recent ones. Skill names now describe their writing tasks more clearly.",
+            "commits": [
+                "14a5544ed7106934eb5cca7516f940ae252971ff",
+                "bd5841f156187a83cd47c9de8be35cc51c4eca65",
+                "90ededef45da31554a8ad91b764ee61b478a5768"
+            ]
+        },
+        {
+            "text": "New Author guides cover writing and organizing Articles, reviewing changes, translations, Style Profile, and application settings.",
+            "commits": [
+                "f3baced8cfab8f0d3249fd266f710e694987b988",
+                "b66c4b97df9f7705bd2cbf5b80aac9edbbd2711e"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
