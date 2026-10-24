@@ -12,9 +12,9 @@ If you have selected text, the request uses that selection. Ask again for the wh
 While revising a short story, select a passage and ask: “Improve the flow while keeping Ana’s point of view and the quiet mood. Don’t add new events.” The Assistant prepares a *Proposal* for **Proposal Review**. You could also ask it to review a chapter for shifts between past and present tense; style review *Findings* appear in **Style Profile**.
 :::
 
-[![Warplyn’s Editorial Assistant with a fiction revision request and the Flow and clarity Skill selected.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![Warplyn’s Editorial Assistant with a fiction revision request and a Skill selected.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Example request in the Composer. Connect a provider before sending it.*
+*Example request in the Composer. Connect a provider before sending it. The screenshot shows an earlier Skill name.*
 
 The Assistant shows a short activity message while it works. It does not expose prompts, private inputs, credentials, or provider errors. When work is ready, use the result card to open the result:
 
@@ -25,7 +25,7 @@ The Assistant shows a short activity message while it works. It does not expose 
 
 Opening a result does not change the *Article*. Review and accept a *Proposal* in its Workspace View. *Findings* remain advisory, and translations remain separate linked *Articles*.
 
-For a focused review of technical terms, choose **Technical terminology** from **Quick actions**. Its sourced *Findings* appear in **Fact Check**. See [Technical terminology](skills.md#technical-terminology) for the review steps and limits.
+For a focused review of technical terms, choose **Check technical terms** from **Quick actions**. Its sourced *Findings* appear in **Fact Check**. See [Check technical terms](skills.md#check-technical-terms) for the review steps and limits.
 
 *Skills* help shape a request but do not add permissions. The Assistant chooses relevant *Skills* for an untagged request. It does not route ordinary requests through a default editing workflow. Warplyn does not run background work, publish directly, or change an *Article* without your approval.
 
@@ -51,6 +51,6 @@ Article rules inherit the saved language conventions. Editing an inherited rule 
 
 Rules appear as compact summaries labeled **Saved** or **Unsaved**. Choose **Edit** to open a rule; only one rule is edited at a time. **Save** saves the selected scope. Saving language preferences also rebuilds the *Style Profile* locally from current included samples and saved guidance, including changes to sample inclusion. Article overrides are saved for that *Article*. Unsaved text in other forms stays unsaved. You can use explicit typography rules without writing samples; samples are needed to derive voice characteristics.
 
-Save the current *Draft*, then select **Check typography** to check the selected *Article* without an AI connection. The check uses the saved *Revision* and its language, shown in the status bar. Choose that same language in **Typography language** when checking. Code, URLs, technical identifiers, and ambiguous quotation cases remain unchanged. Contextual rules require a full **Style review** through the Assistant. A language without applicable mechanical rules has no local typography coverage; add and save your own rules before checking it.
+Save the current *Draft*, then select **Check typography** to check the selected *Article* without an AI connection. The check uses the saved *Revision* and its language, shown in the status bar. Choose that same language in **Typography language** when checking. Code, URLs, technical identifiers, and ambiguous quotation cases remain unchanged. Contextual rules require a full **Review writing style** through the Assistant. A language without applicable mechanical rules has no local typography coverage; add and save your own rules before checking it.
 
 Open **Review Proposal** to inspect corrections and their supporting rules. Accept all or selected changes to create a *Revision*. Saving rules or running a check does not apply corrections. A review retains the language and rule definitions it used; a notice offers rerun after changing the language or applicable preferences. Typography does not detect language boundaries within mixed-language passages. Ambiguous cases remain unchanged.

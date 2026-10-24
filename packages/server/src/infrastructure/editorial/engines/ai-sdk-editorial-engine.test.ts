@@ -96,7 +96,7 @@ test("editorial prompts route system messages through AI SDK 7 instructions", as
 });
 
 
-test("Concise rewrite sends the complete requested source even beyond the conversational context bound", async () => {
+test("Shorten text sends the complete requested source even beyond the conversational context bound", async () => {
     const article = "Opening.\n" + "Evidence must survive.\n".repeat(1_200) + "Ending.\n";
     const model = new MockLanguageModelV3({ doStream: async () => ({ stream: new ReadableStream<LanguageModelV3StreamPart>({ start(controller) {
         controller.enqueue({ type: "text-start", id: "text" });

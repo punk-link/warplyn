@@ -1,6 +1,6 @@
 ---
 id: technical_terminology
-name: Technical terminology
+name: Check technical terms
 description: Verify questionable or inconsistent technical terminology in an IT Article or selection with sourced, advisory Findings. Use for an explicit terminology review request.
 version: 1
 execution:
@@ -12,7 +12,7 @@ presentation:
   hint: assistant.skill.technicalTerminology.hint
   speedHint: assistant.skill.factChecking.speedHint
 ---
-# Technical terminology
+# Check technical terms
 
 Review whether technical terms express the intended concepts in the Article's domain and version. Keep Article text, code, identifiers, commands, URLs, and quoted source text unchanged. Findings advise the Author; they are not replacement text.
 

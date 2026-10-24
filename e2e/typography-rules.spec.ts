@@ -30,7 +30,7 @@ test("typography rules rebuild automatically and corrections retain provenance a
     await expect(page.getByRole("status", { name: "Saved", exact: true })).toBeVisible();
     const olderProposal = page.waitForResponse((response) => response.url().includes("/assistant/requests") && response.request().method() === "POST");
     await page.getByRole("button", { name: "Quick actions", exact: true }).click();
-    await page.getByRole("option", { name: "Concise rewrite", exact: true }).click();
+    await page.getByRole("option", { name: "Shorten text", exact: true }).click();
     await page.getByRole("button", { name: "Send editorial request", exact: true }).click();
     await (await olderProposal).finished();
     await page.getByRole("button", { name: "Style Profile", exact: true }).click();

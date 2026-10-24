@@ -6,19 +6,19 @@ description: "Check technical terminology with a built-in Warplyn Skill, or crea
 
 *Skills* are local Markdown instruction packages. They help the Assistant choose and sequence editorial capabilities. They do not add permissions or make changes to an *Article*.
 
-## Technical terminology
+## Check technical terms
 
-Use the built-in **Technical terminology** *Skill* to check technical language in an IT *Article*. It looks for confused concepts, misleading acronym expansions, incorrect product or API names, and inconsistent names for the same concept. It compares usage with sources for the relevant domain and version, while allowing for local definitions and evolving terminology.
+Use the built-in **Check technical terms** *Skill* to check technical language in an IT *Article*. It looks for confused concepts, misleading acronym expansions, incorrect product or API names, and inconsistent names for the same concept. It compares usage with sources for the relevant domain and version, while allowing for local definitions and evolving terminology.
 
 1. Open your *Article*. Select a passage if you want to check only that text.
-2. In the Assistant, open **Quick actions** and choose **Technical terminology**.
+2. In the Assistant, open **Quick actions** and choose **Check technical terms**.
 3. Select **Send editorial request**. Choosing the *Skill* alone does not start a check.
 4. Open the completed result in **Fact Check**. Read each *Finding*, its explanation, linked sources, and uncertainty before deciding what to change.
 
 If a questioned usage is intentional or appropriate, choose **Accept as written**. This records your decision without changing the *Article* or creating a *Revision*. Corrections require a separate *Proposal* and your acceptance. The check does not automatically rewrite prose, code, or identifiers.
 
 ::: tip Example
-An *Article* calls TCP a connectionless protocol. **Technical terminology** can compare that usage with the protocol specification and explain the distinction. A locally defined acronym with the same letters may be valid in a different context, so inspect the evidence before accepting a correction.
+An *Article* calls TCP a connectionless protocol. **Check technical terms** can compare that usage with the protocol specification and explain the distinction. A locally defined acronym with the same letters may be valid in a different context, so inspect the evidence before accepting a correction.
 :::
 
 This check needs an AI connection and a model that supports sourced fact checking. See [AI providers and models](providers.md) for setup. Your *Article* or selected passage is sent to the configured AI service, and web-research queries may include its technical terms and claim context. Provider charges may apply. If the connection or research is unavailable, follow the request's error guidance to check your settings or retry.

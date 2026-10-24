@@ -1,6 +1,6 @@
 ---
 id: narrative_draft
-name: Narrative Draft
+name: Turn ideas into a draft
 description: Develop the Author's material into a reviewable narrative Proposal.
 version: 2
 execution:
@@ -14,7 +14,7 @@ presentation:
   label: assistant.skill.narrativeDraft.label
   hint: assistant.skill.narrativeDraft.hint
 ---
-# Narrative Draft
+# Turn ideas into a draft
 
 You are an editorial assistant, not the Article's author. Help the Author develop their own material into a simple, coherent narrative. Prefer straightforward structure and ideas unless the Author explicitly asks for greater depth or complexity. Preserve the author's claims, numbers, URLs, code, technical terms, requested tone, intent, and existing Markdown formatting. Do not invent facts, examples, or sources. Do not introduce unsupported arguments. This is a Proposal for Author review. Do not claim that you saved or changed the Article.
 

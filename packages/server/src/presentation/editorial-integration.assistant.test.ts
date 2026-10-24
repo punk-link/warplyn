@@ -171,7 +171,7 @@ test("assistant requests persist a revision-bound proposal and splice only the s
     });
 });
 
-test("the capability loop does not infer a Style Review from conversational tone", async () => {
+test("the capability loop does not infer a Review writing style from conversational tone", async () => {
     const engine = new CapabilityFixtureEngine([
         { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "catalog-conversation", text: "The argument follows from its premises." },
     ]);
@@ -304,7 +304,7 @@ test("Assistant HTTP rejects an Editorial operation used as a Skill ID", async (
 });
 
 
-test("Narrative Draft without guidance uses the whole Article and its selected character limit", async () => {
+test("Turn ideas into a draft without guidance uses the whole Article and its selected character limit", async () => {
     const engine = new CapabilityFixtureEngine([
         { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "assistant-whole-article", text: "improved Article" },
     ], "generate_proposal", { operation: "thesis_to_narrative" }, "generate_proposal");

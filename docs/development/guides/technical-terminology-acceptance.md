@@ -1,8 +1,8 @@
-# Technical terminology acceptance
+# Check technical terms acceptance
 
 Issue: [#17](https://github.com/punk-link/warplyn/issues/17).
 
-The built-in Technical terminology Skill reuses Fact Check, including provider
+The built-in Check technical terms Skill reuses Fact Check, including provider
 configuration, review history, safe errors, and local advisory resolutions.
 There is no background terminology scan or separate terminology database.
 The Author benefit is a focused, sourced review without changing their writing.

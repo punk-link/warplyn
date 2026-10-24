@@ -17,7 +17,7 @@
             "title": "Durable local conversation and built-in skill registry",
             "status": "implemented",
             "owners": ["packages/web/src/workspace/components/assistant", "packages/server/src/application/assistant", "packages/server/src/application/assistant/assistant-store.ts", "packages/server/src/application/assistant/assistant-artifact-store.ts", "packages/server/src/infrastructure/editorial/engines/ai-sdk-editorial-engine.ts", "packages/server/src/infrastructure/persistence/repositories/assistant-repository.ts", "packages/shared/src/assistant/assistant.ts"],
-            "contract": "Each Article has one persisted greeting and a durable local conversation for built-in Skills. Every persisted Author message is a checkpoint for atomically rejecting that request and the later active conversation. A linked checkpoint restores Article content by appending an immutable restore Revision; displaced Revisions stay available. Draft preservation is the default and explicit discard remains available. Quick Actions show built-in Skill starters with localized hints and optional localized speed hints declared in Skill presentation metadata; slash filtering refreshes and includes matching Author Skills with their descriptions, while Send remains the sole request trigger. The live Assistant uses a six-step bounded catalog-tool loop with catalog-owned validation, Skill discovery, conversation history, stale-Revision rejection, and one primary generated artifact. It can inspect Article context, Revisions, artifacts, publishing guidance, and Style Corpus state, and reject one explicitly identified prepared translation Proposal without changing Article history. A separate structured intent check using the configured Text Generation Model accepts explicit exact action requests in the Author's language and fails closed before server validation; orchestrating model tool calls and general Article conversation cannot authorize mutation. Selection-scoped requests remain limited to their selected text and cannot call whole-Article capabilities. Revision-bound requests retain their selected or resolved Skill, completed messages, execution metadata, and review artifacts. Fact Check shows Article-ordered claims as pending, checking, or checked, including reused unchanged supported claims. Talking Points prioritizes the active selection, then Author message, then Article. Narrative Draft follows Author direction, develops only the selected source when present, and treats character limits as guidance. Every artifact capability follows the same terminal policy: necessary reads and authorized actions precede generation; identical calls share one execution, conflicting calls fail before a second generation, and the validated artifact finishes orchestration without another model reply. A failed replacement verification leaves a review Proposal available and cannot authorize an automatic edit.",
+            "contract": "Each Article has one persisted greeting and a durable local conversation for built-in Skills. Every persisted Author message is a checkpoint for atomically rejecting that request and the later active conversation. A linked checkpoint restores Article content by appending an immutable restore Revision; displaced Revisions stay available. Draft preservation is the default and explicit discard remains available. Quick Actions show built-in Skill starters with localized hints and optional localized speed hints declared in Skill presentation metadata; slash filtering refreshes and includes matching Author Skills with their descriptions, while Send remains the sole request trigger. The live Assistant uses a six-step bounded catalog-tool loop with catalog-owned validation, Skill discovery, conversation history, stale-Revision rejection, and one primary generated artifact. It can inspect Article context, Revisions, artifacts, publishing guidance, and Style Corpus state, and reject one explicitly identified prepared translation Proposal without changing Article history. A separate structured intent check using the configured Text Generation Model accepts explicit exact action requests in the Author's language and fails closed before server validation; orchestrating model tool calls and general Article conversation cannot authorize mutation. Selection-scoped requests remain limited to their selected text and cannot call whole-Article capabilities. Revision-bound requests retain their selected or resolved Skill, completed messages, execution metadata, and review artifacts. Fact Check shows Article-ordered claims as pending, checking, or checked, including reused unchanged supported claims. Develop key points prioritizes the active selection, then Author message, then Article. Turn ideas into a draft follows Author direction, develops only the selected source when present, and treats character limits as guidance. Every artifact capability follows the same terminal policy: necessary reads and authorized actions precede generation; identical calls share one execution, conflicting calls fail before a second generation, and the validated artifact finishes orchestration without another model reply. A failed replacement verification leaves a review Proposal available and cannot authorize an automatic edit.",
             "persistence": "Assistant messages, requests, completed artifacts, and minimal per-capability execution history persist locally. Checkpoint restoration rejects tail artifacts without deleting their audit records and uses an opaque token to detect conversation, Revision, or Draft races. Execution history retains only capability ID, status, request ID, base Revision, and timestamps; Workflow Stage persistence is retired and legacy values remain untouched."
         },
         {
@@ -59,10 +59,10 @@
         {
             "id": "editorial-workflows.concise-rewrite",
             "area": "Editorial operations",
-            "title": "Concise rewrite",
+            "title": "Shorten text",
             "status": "implemented",
             "owners": ["packages/shared/src/assistant/assistant-skills.ts", "packages/server/src/application/assistant", "packages/server/src/application/editorial/workflow-prompt.ts", "packages/server/src/infrastructure/editorial/adapters/ai-sdk-assistant-executor.ts", "packages/web/src/workspace/components/assistant", "packages/web/src/settings/components/AiModelSelect.tsx"],
-            "contract": "An explicitly selected or automatically loaded Concise rewrite Skill shortens an Article or selection through the existing flow-revision Proposal path. Requests to shorten, tighten, or cut repetition select Concise rewrite; readability and transitions alone retain Flow and Clarity. The prompt preserves meaning, evidence, claims, numbers, URLs, quotations, citations, code, technical terms, Markdown, author voice, and certainty without adding facts, examples, or conclusions. Output retains prose form, follows explicit retention and cutting guidance, and is shorter or exactly unchanged when safe shortening is impossible. Completion rejects longer or same-length changed output and changed protected spans. Selection generation receives only the excerpt and explicit Author guidance, and splices the replacement without changing surrounding Markdown. Concise rewrite always requires explicit Proposal acceptance, including in direct-edit mode. Semantic preservation remains subject to model quality and Author review.",
+            "contract": "An explicitly selected or automatically loaded Shorten text Skill shortens an Article or selection through the existing flow-revision Proposal path. Requests to shorten, tighten, or cut repetition select Shorten text; readability and transitions alone retain Improve flow and clarity. The prompt preserves meaning, evidence, claims, numbers, URLs, quotations, citations, code, technical terms, Markdown, author voice, and certainty without adding facts, examples, or conclusions. Output retains prose form, follows explicit retention and cutting guidance, and is shorter or exactly unchanged when safe shortening is impossible. Completion rejects longer or same-length changed output and changed protected spans. Selection generation receives only the excerpt and explicit Author guidance, and splices the replacement without changing surrounding Markdown. Shorten text always requires explicit Proposal acceptance, including in direct-edit mode. Semantic preservation remains subject to model quality and Author review.",
             "persistence": "Uses existing revision-bound Assistant requests and Proposal artifacts, model overrides, cancellation, retry, stale guards, and immutable acceptance Revisions without new storage."
         },
         {
@@ -137,7 +137,7 @@
             "id": "editorial-workflows.technical-terminology-review",
             "title": "Terminology review keeps sourced findings and Author overrides separate from Article edits",
             "capabilityIds": ["editorial-workflows.technical-terminology"],
-            "preconditions": ["The Author explicitly selects Technical terminology for an Article or selection."],
+            "preconditions": ["The Author explicitly selects Check technical terms for an Article or selection."],
             "event": "The review completes and the Author accepts a usage as written.",
             "expected": ["The captured terminology guidance reaches Fact Check; selection context excludes surrounding text. Sourced Findings and advisory resolution persist against the reviewed Revision without changing Article content or creating a Revision."],
             "forbidden": ["Automatic terminology, code, or identifier rewrites, expanded selection context, or new permissions."],
@@ -147,7 +147,7 @@
             "id": "editorial-workflows.skill-execution-contract",
             "title": "Author-created Skills reuse the same execution and result policies as built-ins",
             "capabilityIds": ["editorial-workflows.author-skill-creation", "editorial-workflows.concise-rewrite"],
-            "preconditions": ["An Author-created shortening Skill declares the same execution policy as Concise rewrite."],
+            "preconditions": ["An Author-created shortening Skill declares the same execution policy as Shorten text."],
             "event": "The Author runs it on an Article or selection, including after editing its package during the request.",
             "expected": ["The run retains its captured package guidance and contract.", "Only shorter protected-content-preserving or unchanged output becomes a review Proposal.", "Selection requests receive only selected content and preserve surrounding text.", "Direct-edit mode does not bypass the policy's review requirement."],
             "forbidden": ["Skill metadata granting new capabilities or acceptance authority.", "Invalid output persisting as an artifact or Revision."],
@@ -155,9 +155,9 @@
         },
         {
             "id": "editorial-workflows.concise-rewrite-contract",
-            "title": "Concise rewrite has a distinct safe-shortening prompt contract",
+            "title": "Shorten text has a distinct safe-shortening prompt contract",
             "capabilityIds": ["editorial-workflows.concise-rewrite"],
-            "preconditions": ["The Author selects Concise rewrite for an Article or selection."],
+            "preconditions": ["The Author selects Shorten text for an Article or selection."],
             "event": "The engine constructs the prompt with optional Author guidance.",
             "expected": ["The prompt specifies safe deletion, protected content, prose output, complete body or selection replacement, and an exact no-op when shortening is unsafe."],
             "forbidden": ["Applying Flow's specific-change-only instruction, requesting surrounding selection context, or adding facts and certainty."],
@@ -165,7 +165,7 @@
         },
         {
             "id": "editorial-workflows.concise-rewrite-proposal",
-            "title": "Concise rewrite keeps shortened text under Author approval",
+            "title": "Shorten text keeps shortened text under Author approval",
             "capabilityIds": ["editorial-workflows.concise-rewrite", "editorial-workflows.ai-safety"],
             "preconditions": ["The Author requests concise rewriting of an Article or selection, including in direct-edit mode."],
             "event": "Generation completes, returns unchanged text, fails validation, or is cancelled and retried.",
@@ -185,9 +185,9 @@
         },
         {
             "id": "editorial-workflows.narrative-draft-source",
-            "title": "Narrative Draft develops Author-controlled material",
+            "title": "Turn ideas into a draft develops Author-controlled material",
             "capabilityIds": ["editorial-workflows.assistant-foundation"],
-            "preconditions": ["The author explicitly selects Narrative Draft."],
+            "preconditions": ["The author explicitly selects Turn ideas into a draft."],
             "event": "The author requests a narrative from an Article or selection, optionally with a composer message and publishing-profile limit." ,
             "expected": ["Author direction has priority, an active selection replaces whole Article content as the Article source, and the selected character limit is advisory guidance for the resulting complete Article.", "The proposal develops supplied ideas simply unless the Author requests otherwise; the existing Article title remains separate from proposed body text."],
             "forbidden": ["Inventing unsupported arguments, using unselected Article content, or treating the character hint as an output-token limit."],
@@ -205,9 +205,9 @@
         },
         {
             "id": "editorial-workflows.talking-points-source",
-            "title": "Talking Points uses the nearest Author input",
+            "title": "Develop key points uses the nearest Author input",
             "capabilityIds": ["editorial-workflows.assistant-foundation"],
-            "preconditions": ["The author explicitly selects Talking Points."],
+            "preconditions": ["The author explicitly selects Develop key points."],
             "event": "The author requests theses with or without a composer message.",
             "expected": ["An Article selection is the primary thesis source when present and the Author message may guide or explicitly extend it; otherwise a non-empty Author message is used, then Article content.", "The default output is 3–5 theses, or focused clarifying questions when direction is ambiguous."],
             "forbidden": ["Using unselected whole Article content when an Article selection is present."],

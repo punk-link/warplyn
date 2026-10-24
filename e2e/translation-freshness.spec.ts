@@ -20,9 +20,9 @@ test("parallel translations become stale after a source edit and refresh preserv
     await page.getByRole("dialog").getByRole("button", { name: "Generate translations", exact: true }).click();
     await expect(page.getByRole("tab", { name: "Spanish", exact: true })).toBeVisible();
     await expect(page.getByRole("tab", { name: "German", exact: true })).toBeVisible();
-    const translationSpanishPattern = /Translation\s*in Spanish$/;
+    const translationSpanishPattern = /Translate text\s*in Spanish$/;
     await expect(page.getByText(translationSpanishPattern)).toBeVisible();
-    const translationGermanPattern = /Translation\s*in German$/;
+    const translationGermanPattern = /Translate text\s*in German$/;
     await expect(page.getByText(translationGermanPattern)).toBeVisible();
     for (const language of ["Spanish", "German"]) {
         await page.getByRole("tab", { name: language, exact: true }).click();

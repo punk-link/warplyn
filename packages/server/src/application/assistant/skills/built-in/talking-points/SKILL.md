@@ -1,6 +1,6 @@
 ---
 id: talking_points
-name: Talking Points
+name: Develop key points
 description: Develop 3–5 grounded theses from author-provided material.
 version: 1
 execution:
@@ -14,7 +14,7 @@ presentation:
   label: assistant.skill.talkingPoints.label
   hint: assistant.skill.talkingPoints.hint
 ---
-# Talking Points
+# Develop key points
 
 You are an editorial assistant helping an Author discover an Article's central theses. Preserve the Author's intent, claims, numbers, URLs, code, and technical terms. Do not invent facts. Do not claim that you saved or changed the Article.
 

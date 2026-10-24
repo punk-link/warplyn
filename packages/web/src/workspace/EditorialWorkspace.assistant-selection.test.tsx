@@ -78,7 +78,7 @@ describe("Editorial Workspace assistant", () => {
     });
 
 
-    it("keeps Talking points active when an Article selection becomes the priority source", async () => {
+    it("keeps Develop key points active when an Article selection becomes the priority source", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);
         const panel = renderLocalized(<EditorialAssistantPanel
@@ -228,14 +228,14 @@ describe("Editorial Workspace assistant", () => {
         const [review] = panelScope.getAllByRole("button", { name: "Review Proposal" });
         const timestamp = [...panel.container.querySelectorAll("time")].at(-1)!;
 
-        expect(panelScope.getByText("Talking points")).toBeTruthy();
+        expect(panelScope.getByText("Develop key points")).toBeTruthy();
         expect(panelScope.getByText("Talking points prepared")).toBeTruthy();
-        expect(panelScope.getAllByText("Narrative draft")).toHaveLength(1);
+        expect(panelScope.getAllByText("Turn ideas into a draft")).toHaveLength(1);
         expect(panelScope.getByText("Narrative draft prepared")).toBeTruthy();
-        const authorContent = panel.container.querySelector('article[aria-label="Talking points"] p')!;
+        const authorContent = panel.container.querySelector('article[aria-label="Develop key points"] p')!;
         expect(authorContent.childNodes[0]?.textContent).toBe("Organize ");
-        expect(authorContent.childNodes[1]?.textContent).toBe("Talking points");
-        expect(panel.container.querySelector('article[aria-label="Narrative draft"] p')?.textContent).toBe("Narrative draft");
+        expect(authorContent.childNodes[1]?.textContent).toBe("Develop key points");
+        expect(panel.container.querySelector('article[aria-label="Turn ideas into a draft"] p')?.textContent).toBe("Turn ideas into a draft");
         expect(review.compareDocumentPosition(timestamp) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
 

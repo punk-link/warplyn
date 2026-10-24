@@ -15,7 +15,7 @@ const validSkill = ("---\nid: author-review\nname: Author review\ndescription: R
 test("Author Skill packages validate, refresh after edits, and isolate invalid packages", () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-skills-"));
     try {
-        const source = new FileAssistantSkillSource("author", root, () => ({ ids: ["flow_and_clarity"], names: ["Flow and Clarity"] }));
+        const source = new FileAssistantSkillSource("author", root, () => ({ ids: ["flow_and_clarity"], names: ["Improve flow and clarity"] }));
         const installed = source.install({ directory: "author-review", files: { "SKILL.md": validSkill, "references/guidance.md": "Use concise feedback." } });
         assert.equal(source.summaries()[0]?.reference.id, "author-review");
         const concisePattern = /concise/;

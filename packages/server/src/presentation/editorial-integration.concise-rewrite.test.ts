@@ -33,9 +33,9 @@ class RoutedFixtureEngine extends FixtureEngine {
 
     async *streamAssistant(request: EditorialAssistantRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
         const instructions = createAssistantInstructions(request);
-        const conciseRewriteShortenPattern = /concise_rewrite: Concise rewrite. Shorten or tighten/;
+        const conciseRewriteShortenPattern = /concise_rewrite: Shorten text. Shorten or tighten/;
         assert.match(instructions, conciseRewriteShortenPattern);
-        const flowClarityPreparePattern = /flow_and_clarity: Flow and Clarity. Prepare a full-text Proposal that improves coherence and readability/;
+        const flowClarityPreparePattern = /flow_and_clarity: Improve flow and clarity. Prepare a full-text Proposal that improves coherence and readability/;
         assert.match(instructions, flowClarityPreparePattern);
         const model = new MockLanguageModelV3({ doStream: [
             { stream: toolCall("load_skill", { id: this.skillId }) },
@@ -49,7 +49,7 @@ class RoutedFixtureEngine extends FixtureEngine {
 
 // Product scenarios: editorial-workflows.concise-rewrite-contract, editorial-workflows.concise-rewrite-proposal
 for (const scope of ["article", "selection"] as const) {
-    test(`explicit Concise rewrite preserves protected content and stages an isolated ${scope} Proposal`, async () => {
+    test(`explicit Shorten text preserves protected content and stages an isolated ${scope} Proposal`, async () => {
         const engine = new CapabilityFixtureEngine([{ type: "completed", responseId: "concise", text: shorter }]);
         await withService(engine, async (url, persistence, services) => {
             const before = "# Private surrounding heading\n\n";

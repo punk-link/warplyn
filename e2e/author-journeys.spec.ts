@@ -56,11 +56,11 @@ async function createArticle(page: import("@playwright/test").Page, content = "O
 }
 
 
-test("Concise rewrite stays a Proposal until acceptance and survives reload", async ({ page }) => {
+test("Shorten text stays a Proposal until acceptance and survives reload", async ({ page }) => {
     await page.goto("/");
     await createArticle(page, "It is important to note that retries need limits.");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Concise rewrite" }).click();
+    await page.getByRole("option", { name: "Shorten text" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await expect(page.getByRole("tab", { name: "Proposals: Review" })).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
@@ -74,13 +74,13 @@ test("Concise rewrite stays a Proposal until acceptance and survives reload", as
 });
 
 
-test("Technical terminology is opt-in and preserves Article text after review and reload", async ({ page }) => {
+test("Check technical terms is opt-in and preserves Article text after review and reload", async ({ page }) => {
     await page.goto("/");
     const content = "TCP is a connectionless protocol. const TCP = 42;";
     await createArticle(page, content);
     await expect(page.getByText("Findings prepared")).toHaveCount(0);
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Technical terminology" }).click();
+    await page.getByRole("option", { name: "Check technical terms" }).click();
     await expect(page.getByText("Findings prepared")).toHaveCount(0);
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await expect(page.getByText("Findings prepared")).toBeVisible();
@@ -111,7 +111,7 @@ test("critical local-first author journeys use deterministic provider output", a
 
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("Improve flow");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Flow and clarity" }).click();
+    await page.getByRole("option", { name: "Improve flow and clarity" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await expect(page.getByRole("tab", { name: "Proposals: Review" })).toBeVisible();
     const proposalPattern = /Proposal/;
@@ -131,7 +131,7 @@ test("critical local-first author journeys use deterministic provider output", a
 
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("fact check");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Fact checking" }).click();
+    await page.getByRole("option", { name: "Check facts" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
     const factCheckPattern = /Fact Check/;
     await expect(page.getByRole("tab", { name: factCheckPattern })).toBeVisible();
@@ -169,7 +169,7 @@ test("a cancelled assistant stream does not change the Article", async ({ page }
 
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("wait");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Flow and clarity" }).click();
+    await page.getByRole("option", { name: "Improve flow and clarity" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await page.getByRole("button", { name: "Stop request" }).click();
     await expect(page.getByText("Original fixture Article.").first()).toBeVisible();
@@ -181,7 +181,7 @@ test("extracted claims appear during Fact Check and an Author can skip one", asy
     await createArticle(page);
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("inspect pending claims");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Fact checking" }).click();
+    await page.getByRole("option", { name: "Check facts" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
 
     const claims = page.getByRole("region", { name: "Claims to check" });
@@ -202,7 +202,7 @@ test("an Author can reselect a claim before Fact Check finishes", async ({ page 
     await createArticle(page);
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("restore pending claims");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Fact checking" }).click();
+    await page.getByRole("option", { name: "Check facts" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
 
     const claim = page.getByRole("region", { name: "Claims to check" }).getByRole("checkbox", { name: "The first fixture claim." });
@@ -287,31 +287,31 @@ test("the Assistant Lexical composer supports skill tags and slash invocation", 
     const composer = page.getByRole("combobox", { name: "Editorial guidance" });
     await composer.click();
     await expect(composer).toBeFocused();
-    await composer.fill("Keep this focused /nar");
+    await composer.fill("Keep this focused /draft");
     await expect(composer).toHaveAttribute("aria-expanded", "true");
     await expect(composer).toHaveAttribute("aria-activedescendant", "assistant-skill-option-narrative_draft");
     await expect(page.getByRole("listbox", { name: "Quick actions" })).toBeVisible();
-    await expect(page.getByRole("option", { name: "Narrative draft" })).toBeVisible();
-    await page.getByRole("option", { name: "Narrative draft" }).click();
-    await expect(page.getByLabel("Remove Narrative draft")).toBeVisible();
-    await expect(composer).not.toContainText("/nar");
+    await expect(page.getByRole("option", { name: "Turn ideas into a draft" })).toBeVisible();
+    await page.getByRole("option", { name: "Turn ideas into a draft" }).click();
+    await expect(page.getByLabel("Remove Turn ideas into a draft")).toBeVisible();
+    await expect(composer).not.toContainText("/draft");
 
-    await page.getByLabel("Remove Narrative draft").click();
-    await expect(page.getByLabel("Remove Narrative draft")).toHaveCount(0);
+    await page.getByLabel("Remove Turn ideas into a draft").click();
+    await expect(page.getByLabel("Remove Turn ideas into a draft")).toHaveCount(0);
 
-    await composer.fill("word/nar");
+    await composer.fill("word/draft");
     await expect(page.getByRole("listbox", { name: "Quick actions" })).toHaveCount(0);
-    await composer.fill("https://example.test/nar");
+    await composer.fill("https://example.test/draft");
     await expect(page.getByRole("listbox", { name: "Quick actions" })).toHaveCount(0);
-    await composer.fill("`/nar`");
+    await composer.fill("`/draft`");
     await expect(page.getByRole("listbox", { name: "Quick actions" })).toHaveCount(0);
 
     await composer.fill("/f");
     await composer.press("ArrowDown");
     await expect(composer).toHaveAttribute("aria-activedescendant", "assistant-skill-option-fact_checking");
     await composer.press("Tab");
-    await expect(page.getByLabel("Remove Fact checking")).toBeVisible();
-    await page.getByLabel("Remove Fact checking").click();
+    await expect(page.getByLabel("Remove Check facts")).toBeVisible();
+    await page.getByLabel("Remove Check facts").click();
 
     await composer.fill("/sty");
     await composer.press("Escape");
@@ -320,12 +320,12 @@ test("the Assistant Lexical composer supports skill tags and slash invocation", 
 
     await composer.fill("before ");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Flow and clarity" }).click();
-    await expect(page.getByLabel("Remove Flow and clarity")).toBeVisible();
+    await page.getByRole("option", { name: "Improve flow and clarity" }).click();
+    await expect(page.getByLabel("Remove Improve flow and clarity")).toBeVisible();
     await page.getByRole("button", { name: "Collapse Editorial Assistant Panel" }).click();
     await page.getByRole("button", { name: "Expand Editorial Assistant Panel" }).click();
-    await expect(page.getByLabel("Remove Flow and clarity")).toBeVisible();
-    await page.getByLabel("Remove Flow and clarity").click();
+    await expect(page.getByLabel("Remove Improve flow and clarity")).toBeVisible();
+    await page.getByLabel("Remove Improve flow and clarity").click();
 
     await composer.focus();
     await page.evaluate(() => navigator.clipboard.writeText("shortcut paste"));
@@ -351,7 +351,7 @@ test("a completed selection suggestion applies once from the Assistant reply", a
     await editor.press("ControlOrMeta+A");
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("E2E edit and suggest");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Flow and clarity" }).click();
+    await page.getByRole("option", { name: "Improve flow and clarity" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await expect(page.getByRole("button", { name: "Apply to selection" })).toBeVisible();
     await page.getByRole("button", { name: "Apply to selection" }).click();
@@ -376,7 +376,7 @@ test("direct Assistant mode applies an explicitly requested Article edit", async
     await expect(page.getByRole("button", { name: "Edit mode: Apply edits directly" })).toBeVisible();
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("E2E edit and apply");
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Flow and clarity" }).click();
+    await page.getByRole("option", { name: "Improve flow and clarity" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Improved fixture Article.");
     await expect(page.getByText("Applied as a new Revision")).toBeVisible();
@@ -426,13 +426,13 @@ test("Assistant skill tags delete as single Lexical tokens", async ({ page }) =>
     await createArticle(page);
 
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Flow and clarity" }).click();
-    await expect(page.getByLabel("Remove Flow and clarity")).toBeVisible();
+    await page.getByRole("option", { name: "Improve flow and clarity" }).click();
+    await expect(page.getByLabel("Remove Improve flow and clarity")).toBeVisible();
     await expect(page.locator("[data-assistant-composer] [data-lexical-text]")).toHaveText(" ");
     await page.keyboard.press("Backspace");
-    await expect(page.getByLabel("Remove Flow and clarity")).toBeVisible();
+    await expect(page.getByLabel("Remove Improve flow and clarity")).toBeVisible();
     await page.keyboard.press("Backspace");
-    await expect(page.getByLabel("Remove Flow and clarity")).toHaveCount(0);
+    await expect(page.getByLabel("Remove Improve flow and clarity")).toHaveCount(0);
 });
 
 
@@ -441,12 +441,12 @@ test("Assistant skill tags can be removed without clearing guidance", async ({ p
     await createArticle(page);
 
     await page.getByRole("button", { name: "Quick actions" }).click();
-    await page.getByRole("option", { name: "Flow and clarity" }).click();
-    await expect(page.getByLabel("Remove Flow and clarity")).toBeVisible();
+    await page.getByRole("option", { name: "Improve flow and clarity" }).click();
+    await expect(page.getByLabel("Remove Improve flow and clarity")).toBeVisible();
     await expect(page.locator("[data-assistant-composer] [data-lexical-text]")).toHaveText(" ");
     await page.keyboard.type("keep writing");
-    await page.getByLabel("Remove Flow and clarity").click();
-    await expect(page.getByLabel("Remove Flow and clarity")).toHaveCount(0);
+    await page.getByLabel("Remove Improve flow and clarity").click();
+    await expect(page.getByLabel("Remove Improve flow and clarity")).toHaveCount(0);
     await expect(page.locator("[data-assistant-composer]")).toContainText("keep writing");
 });
 
