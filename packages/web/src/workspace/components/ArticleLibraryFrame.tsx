@@ -270,7 +270,7 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                     selectArticle(articleId);
                 }} />
         )}
-        <footer className={collapsed ? "mt-auto flex shrink-0 flex-col items-center gap-1 border-t border-border px-0.5 py-2" : "shrink-0 border-t border-border px-2 py-2"}>
+        <footer className={collapsed ? "mt-auto flex shrink-0 flex-col items-center gap-1 border-t border-border px-0.5 pb-0 pt-2" : "shrink-0 border-t border-border px-2 pb-0 pt-2"}>
             {collapsed
                 ? <><IconButton label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={() => {
                     close();
@@ -282,7 +282,7 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                     openSettings();
                 }}><SettingsIcon className="size-4" />
                 </IconButton>
-                <UpdateController />
+                <div className="size-9 shrink-0"><UpdateController /></div>
                 </>
                 : <><Button
                     compact
@@ -301,9 +301,9 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                         {intl.formatMessage({ id: "navigation.settings" })}
                     </span>
                 </Button>
-                <div className="flex items-center justify-between px-2 pb-1 pt-2 text-micro font-medium text-muted">
+                <div className="flex items-center justify-between px-2 pb-0 pt-2 text-micro font-medium text-muted">
                     <span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span>
-                    <UpdateController className="shrink-0" />
+                    <div className="size-9 shrink-0"><UpdateController /></div>
                 </div>
                 </>}
         </footer>

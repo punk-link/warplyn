@@ -184,25 +184,27 @@ export function UpdatesSettingsGroup({ client, desktop }: { client: DesktopUpdat
             hint={intl.formatMessage({ id: "settings.updateStatusHint" }, { version: state.currentVersion })}
             status={<>{(state.kind === "checking" || state.kind === "downloading") && <ActivityIndicator className="mr-2 inline-block align-middle" />}{status}</>}
             fullWidthAction
-            action={<UpdateActions
-                client={client}
-                state={state}
-                status={status}
-                details={isUpdateDetails(state)}
-                onState={setState}
-                intl={intl} />}>
+            action={<>
+                {isUpdateDetails(state) && (
+                    <section className="mb-3 min-w-0 border-l border-border-strong pl-4" aria-labelledby="settings-update-changes">
+                        <h3 id="settings-update-changes" className="text-sm font-semibold">
+                            {intl.formatMessage({ id: "settings.updateChanges" }, { version: state.version })}
+                        </h3>
+                        <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-muted">
+                            {state.summary || intl.formatMessage({ id: "settings.updateChangesUnavailable" })}
+                        </p>
+                    </section>
+                )}
+                <UpdateActions
+                    client={client}
+                    state={state}
+                    status={status}
+                    details={isUpdateDetails(state)}
+                    onState={setState}
+                    intl={intl} />
+            </>}>
             <span />
         </SettingRow>
-        {isUpdateDetails(state) && (
-            <section className="min-w-0 border-b border-border py-4" aria-labelledby="settings-update-changes">
-                <h3 id="settings-update-changes" className="text-sm font-semibold">
-                    {intl.formatMessage({ id: "settings.updateChanges" }, { version: state.version })}
-                </h3>
-                <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-muted">
-                    {state.summary || intl.formatMessage({ id: "settings.updateChangesUnavailable" })}
-                </p>
-            </section>
-        )}
         <NetworkPermissionDialog
             client={client}
             open={networkPermissionOpen}
