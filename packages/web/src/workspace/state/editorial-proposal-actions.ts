@@ -1,4 +1,4 @@
-import { useCallback, useRef, type Dispatch, type SetStateAction } from "react";
+import { useCallback, type Dispatch, type SetStateAction } from "react";
 import type { IntlShape } from "react-intl";
 import {
     applyProposalChanges,
@@ -48,6 +48,7 @@ interface ProposalSetters {
 interface ProposalActionsInput {
     client: EditorialWorkspaceClient;
     workspace: ArticleWorkspaceState;
+    openWrite: () => void;
     intl: IntlShape;
     proposal: {
         base: ProposalBase | undefined;
@@ -99,7 +100,7 @@ function findLatestRestorableProposal(messages: AssistantMessage[] | undefined):
 }
 
 
-export function useProposalActions({ client, workspace, intl, proposal: { base, review, accepted, stale, decisions },
+export function useProposalActions({ client, workspace, openWrite, intl, proposal: { base, review, accepted, stale, decisions },
     summaries: { setProposalSummaries, setProposalSummaryLocale }, results, recovery, controller, edits
 }: ProposalActionsInput, setters: ProposalSetters) {
     const { notifyError } = useNotifications();
@@ -107,22 +108,6 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
     const telemetry = getDesktopTelemetryClient();
     const { setProposal, setBase, setDecisions, setState, setMessage } = setters;
     const { applyResult, loadFactChecks, resolveFactCheck, createTranslation, rejectTranslation, setFactCheck, setStyleReview, retainTranslation, replaceTranslations } = results;
-    const activeProposal = useRef({ base, articleId: workspace.selectedArticle?.id });
-    activeProposal.current = { base, articleId: workspace.selectedArticle?.id };
-
-
-    function showAcceptedProposal(content: string, ids: ReadonlySet<string>, whole: boolean, replacements: Record<string, string>) {
-        if (!base || !review || activeProposal.current.base !== base)
-            return;
-
-        if (activeProposal.current.articleId === base.articleId)
-            workspace.setContent(content);
-
-        setBase({ ...base, accepted: true, acceptedReplacements: replacements });
-        setDecisions(Object.fromEntries(review.changes.map((change) => [change.id, whole || ids.has(change.id) ? "accepted" : "rejected"])));
-    }
-
-
     function startProposal(operation: EditorialOperation, nextBase: ProposalBase): void {
         if (!isProposalOperation(operation))
             return;
@@ -210,7 +195,8 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
             });
 
             workspace.updateRevision(article.id, revision);
-            showAcceptedProposal(content, acceptedChangeIds, wholeProposal, replacements);
+            dismissProposal();
+            openWrite();
             captureBestEffortTelemetry(telemetry, { kind: "proposal_reviewed", decision: "accepted" }, telemetryGeneration);
 
             if (base.correctedFindingIds?.length)

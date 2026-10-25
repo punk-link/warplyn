@@ -13,7 +13,7 @@ import { restoredRevisionAcceptance } from "./proposal-acceptance-recovery.js";
 export { withFindingFreshness } from "./editorial-results-state.js";
 
 
-export function useEditorialProposal(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState) {
+export function useEditorialProposal(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, openWrite: () => void) {
     const intl = useIntl();
     const [proposal, setProposal] = useState("");
     const [base, setBase] = useState<ProposalBase>();
@@ -109,6 +109,7 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
     const actions = useProposalActions({
         client,
         workspace,
+        openWrite,
         intl,
         proposal: { base, review, accepted, stale, decisions },
         summaries: { setProposalSummaries: summaries.setProposalSummaries, setProposalSummaryLocale: summaries.setProposalSummaryLocale },
