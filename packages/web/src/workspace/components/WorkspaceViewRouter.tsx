@@ -89,13 +89,16 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
                         accepted: editorial.accepted,
                         stale: editorial.proposalStale,
                         decisions: editorial.decisions,
-                        summaries: editorial.proposalSummaries,
-                        summaryState: editorial.proposalSummaryState,
+                        summaries: editorial.summary.values,
+                        summaryState: editorial.summary.state,
                         warningsDismissed: proposalWarningsDismissed,
                         typography: editorial.base?.typography,
+                        edits: editorial.edits,
+                        generating: editorial.state === "streaming",
                     }}
                     actions={{
                         setDecision: editorial.setDecision,
+                        setReplacement: editorial.edits.setReplacement,
                         acceptAll: editorial.acceptAll,
                         applyAccepted: editorial.applyAccepted,
                         rejectAll: editorial.rejectAll,

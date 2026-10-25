@@ -4,6 +4,7 @@ import type { MessageId } from "./messages.js";
 
 const errorMessages: Record<ApplicationErrorCode, MessageId> = {
     invalid_request: "errors.invalidRequest",
+    proposal_edit_invalid: "errors.proposalEditInvalid",
     request_too_large: "errors.requestTooLarge",
     invalid_json: "errors.invalidJson",
     origin_not_permitted: "errors.originNotPermitted",

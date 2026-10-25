@@ -130,8 +130,8 @@ export interface AssistantRequest {
 
 
 export type ProposalAcceptance =
-    | { kind: "whole"; revisionId: string }
-    | { kind: "changes"; revisionId: string; acceptedChangeIds: string[] };
+    | { kind: "whole"; revisionId: string; replacements?: Record<string, string> }
+    | { kind: "changes"; revisionId: string; acceptedChangeIds: string[]; replacements?: Record<string, string> };
 
 
 export interface AssistantMessage {

@@ -114,12 +114,18 @@ export const Field = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputE
 });
 
 
-export function TextareaField({ className, state = "default", ...props }: TextareaHTMLAttributes<HTMLTextAreaElement> & { state?: ControlState }) {
+export function TextareaField({ className, state = "default", variant = "default", ...props }: TextareaHTMLAttributes<HTMLTextAreaElement> & {
+    state?: ControlState;
+    variant?: "default" | "inline";
+}) {
     return <textarea
         {...props}
         className={joinClassNames(
-            "min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm font-normal " +
-                "leading-5 text-ink placeholder:text-ink/45",
+            variant === "inline"
+                ? "block w-full resize-none border-0 bg-transparent p-0 [field-sizing:content] [font:inherit] text-inherit " +
+                    "focus:outline-none"
+                : "min-h-10 w-full rounded-control border border-border bg-surface-raised px-3 py-2 text-sm font-normal " +
+                    "leading-5 text-ink placeholder:text-ink/45",
             controlStateClasses[state],
             className,
         )} />;
@@ -238,14 +244,14 @@ export function Diff({ removed, added, layout = "stacked", state = "pending" }: 
     return (
         <div className={joinClassNames("grid gap-3 rounded-panel border border-border bg-canvas p-3", layout === "columns" ? "md:grid-cols-2" : undefined)} aria-label={intl.formatMessage({ id: "ui.proposedChange" })}>
             <del className={joinClassNames(("block min-w-0 whitespace-pre-wrap rounded-control border-l-4 border-danger " +
-                "bg-[repeating-linear-gradient(-45deg,var(--color-diff-removed),var(--color-diff-removed)_6px,var(--color-diff-removed-stripe)_6px,var(--colo" +
-                "r-diff-removed-stripe)_12px)] p-4 no-underline"), state === "accepted" ? "opacity-55" : undefined)}>
+                "bg-[repeating-linear-gradient(-45deg,var(--color-diff-removed)_0_6px,var(--color-diff-removed-stripe)_6px_12px)] " +
+                "p-4 no-underline"), state === "accepted" ? "opacity-55" : undefined)}>
                 <strong className="mb-3 block font-ui text-micro uppercase tracking-overline text-danger">{intl.formatMessage({ id: "ui.original" })}</strong>
                 {removedContent}
             </del>
             <ins className={joinClassNames(("block min-w-0 whitespace-pre-wrap rounded-control border-l-4 border-success " +
-                "bg-[repeating-linear-gradient(-45deg,var(--color-diff-added),var(--color-diff-added)_6px,var(--color-diff-added-stripe)_6px,var(--color-diff" +
-                "-added-stripe)_12px)] p-4 no-underline"), state === "rejected" ? "opacity-55" : undefined)}>
+                "bg-[repeating-linear-gradient(-45deg,var(--color-diff-added)_0_6px,var(--color-diff-added-stripe)_6px_12px)] " +
+                "p-4 no-underline"), state === "rejected" ? "opacity-55" : undefined)}>
                 <strong className="mb-3 block font-ui text-micro uppercase tracking-overline text-success">{intl.formatMessage({ id: "ui.proposed" })}</strong>
                 {addedContent}
             </ins>

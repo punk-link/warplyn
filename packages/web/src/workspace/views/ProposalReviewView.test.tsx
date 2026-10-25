@@ -5,12 +5,20 @@ import { messages } from "../../i18n/messages.js";
 import { getMessage } from "../../i18n/test-message.js";
 import { ProposalReviewView as RenderProposalReviewView } from "./ProposalReviewView.js";
 
-type ProposalReviewViewTestProps = Parameters<typeof RenderProposalReviewView>[0]["data"] & Parameters<typeof RenderProposalReviewView>[0]["actions"];
+type ReviewProps = Parameters<typeof RenderProposalReviewView>[0];
+type ProposalReviewViewTestProps = Omit<ReviewProps["data"], "edits"> & Omit<ReviewProps["actions"], "setReplacement"> & {
+    edits?: ReviewProps["data"]["edits"];
+    setReplacement?: ReviewProps["actions"]["setReplacement"];
+};
 
 
 function ProposalReviewView(props: ProposalReviewViewTestProps) {
     const { review, accepted, stale, decisions, summaries, summaryState, warningsDismissed, setDecision, acceptAll, applyAccepted, rejectAll, dismissProposal, dismissWarnings, openWrite, openAssistant } = props;
-    return <RenderProposalReviewView data={{ review, accepted, stale, decisions, summaries, summaryState, warningsDismissed }} actions={{ setDecision, acceptAll, applyAccepted, rejectAll, dismissProposal, dismissWarnings, openWrite, openAssistant }} />;
+    return <RenderProposalReviewView
+        data={{ review, accepted, stale, decisions, summaries, summaryState, warningsDismissed,
+            edits: props.edits ?? { replacements: {}, submitting: false } }}
+        actions={{ setDecision, acceptAll, applyAccepted, rejectAll, dismissProposal, dismissWarnings, openWrite, openAssistant,
+            setReplacement: props.setReplacement ?? vi.fn() }} />;
 }
 
 

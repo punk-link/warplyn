@@ -1,4 +1,4 @@
-import { useCallback, type Dispatch, type SetStateAction } from "react";
+import { useCallback, useRef, type Dispatch, type SetStateAction } from "react";
 import type { IntlShape } from "react-intl";
 import {
     applyProposalChanges,
@@ -7,7 +7,6 @@ import {
     REVISION_PROVENANCE_KIND,
     type AssistantEditorialResult,
     type AssistantMessage,
-    type Article,
     type EditorialOperation,
     type FactCheck,
     type TextProposal,
@@ -23,6 +22,8 @@ import { getProviderLanguageName } from "./editorial-language.js";
 import { handleEditorialEvent, isProposalOperation, type ProposalBase, type ProposalState } from "./editorial-proposal-helpers.js";
 import type { useEditorialResults } from "./editorial-results-state.js";
 import { canRecoverProposal } from "./proposal-recovery.js";
+import type { useProposalEdits } from "./proposal-edit-state.js";
+import { restoredAcceptance, restoredProposalBase } from "./proposal-acceptance-recovery.js";
 
 type EditorialResultsState = ReturnType<typeof useEditorialResults>;
 
@@ -62,75 +63,24 @@ interface ProposalActionsInput {
     results: Pick<EditorialResultsState, "applyResult" | "loadFactChecks" | "resolveFactCheck" | "createTranslation" | "rejectTranslation" | "setFactCheck" | "setStyleReview" | "retainTranslation" | "replaceTranslations">;
     recovery: { articleIds: { current: Set<string> }; dates: { current: Map<string, string> } };
     controller: { current: AbortController | undefined };
+    edits: ReturnType<typeof useProposalEdits>;
 }
 
 
-function restoredAcceptance(article: Article, message: AssistantMessage, review: TextProposal): Record<string, ProposalDecision> | undefined {
-    if (message.proposalAcceptance?.kind === "whole")
-        return Object.fromEntries(review.changes.map((change) => [change.id, "accepted"]));
-
-    if (message.proposalAcceptance?.kind === "changes") {
-        const acceptedChangeIds = new Set(message.proposalAcceptance.acceptedChangeIds);
-        return Object.fromEntries(review.changes.map((change) => [change.id, acceptedChangeIds.has(change.id) ? "accepted" : "rejected"]));
-    }
-
-    return restoredRevisionAcceptance(article, message, review);
-}
-
-
-function restoredRevisionAcceptance(article: Article, message: AssistantMessage, review: TextProposal): Record<string, ProposalDecision> | undefined {
-    const provenance = article.currentRevision.provenance;
-    if (provenance.kind !== REVISION_PROVENANCE_KIND.ACCEPTED_PROPOSAL || provenance.baseRevisionId !== message.baseRevisionId)
-        return undefined;
-
-    const wholeProposal = provenance.wholeProposal === true;
-    const acceptedChangeIds = restoredChangeIds(provenance.acceptedChangeIds);
-    const artifactMatches = matchingProposalArtifact(provenance.editorialArtifactId, message.editorialArtifactId);
-    if (wholeProposal && (artifactMatches || article.currentRevision.content === review.proposedContent))
-        return Object.fromEntries(review.changes.map((change) => [change.id, "accepted"]));
-
-    if (wholeProposal || !acceptedChangeIds)
-        return undefined;
-
-    const acceptedContent = applyProposalChanges(review, acceptedChangeIds);
-    const acceptedContentWithBlankLines = applyProposalChanges(review, acceptedChangeIds, true);
-    if (!artifactMatches && article.currentRevision.content !== acceptedContent && article.currentRevision.content !== acceptedContentWithBlankLines)
-        return undefined;
-
-    return Object.fromEntries(review.changes.map((change) => [change.id, acceptedChangeIds.has(change.id) ? "accepted" : "rejected"]));
-}
-
-
-function matchingProposalArtifact(stored: unknown, artifactId: string | undefined): boolean {
-    return typeof stored === "string" && stored === artifactId;
-}
-
-
-function restoredChangeIds(value: unknown): Set<string> | undefined {
-    return Array.isArray(value) && value.every((id) => typeof id === "string") ? new Set(value) : undefined;
-}
-
-
-function restoredProposalBase(article: Article, message: AssistantMessage, accepted: boolean): ProposalBase {
-    return {
-        articleId: article.id, content: message.baseRevisionContent!, revisionId: message.baseRevisionId!, recoveredAt: message.createdAt,
-        ...(message.editorialArtifactId ? { editorialArtifactId: message.editorialArtifactId } : {}), ...(accepted ? { accepted: true } : {}),
-    };
-}
-
-
-function acceptanceProvenance(base: ProposalBase, ids: ReadonlySet<string>, whole: boolean) {
+function acceptanceProvenance(base: ProposalBase, ids: ReadonlySet<string>, whole: boolean, replacements: Record<string, string>) {
     return {
         kind: REVISION_PROVENANCE_KIND.ACCEPTED_PROPOSAL,
         baseRevisionId: base.revisionId,
         ...(base.editorialArtifactId ? { editorialArtifactId: base.editorialArtifactId } : {}),
         ...(whole ? { wholeProposal: true } : { acceptedChangeIds: [...ids] }),
+        ...(Object.keys(replacements).length ? { proposalReplacements: replacements } : {}),
     };
 }
 
 
-function acceptedProposalContent(base: ProposalBase, review: TextProposal, ids: ReadonlySet<string>, whole: boolean, acceptWhole: boolean): string {
-    if (base.correctedFindingIds?.length) {
+function acceptedProposalContent(base: ProposalBase, review: TextProposal, ids: ReadonlySet<string>, whole: boolean,
+    acceptWhole: boolean, edited: boolean): string {
+    if (base.correctedFindingIds?.length && !edited) {
         const selected = acceptWhole ? new Set(review.changes.map((change) => change.id)) : ids;
         return applyProposalChanges(review, selected, true);
     }
@@ -150,13 +100,27 @@ function findLatestRestorableProposal(messages: AssistantMessage[] | undefined):
 
 
 export function useProposalActions({ client, workspace, intl, proposal: { base, review, accepted, stale, decisions },
-    summaries: { setProposalSummaries, setProposalSummaryLocale }, results, recovery, controller
+    summaries: { setProposalSummaries, setProposalSummaryLocale }, results, recovery, controller, edits
 }: ProposalActionsInput, setters: ProposalSetters) {
     const { notifyError } = useNotifications();
     const { articleIds: restoredArticleIds, dates: recoveredDates } = recovery;
     const telemetry = getDesktopTelemetryClient();
     const { setProposal, setBase, setDecisions, setState, setMessage } = setters;
     const { applyResult, loadFactChecks, resolveFactCheck, createTranslation, rejectTranslation, setFactCheck, setStyleReview, retainTranslation, replaceTranslations } = results;
+    const activeProposal = useRef({ base, articleId: workspace.selectedArticle?.id });
+    activeProposal.current = { base, articleId: workspace.selectedArticle?.id };
+
+
+    function showAcceptedProposal(content: string, ids: ReadonlySet<string>, whole: boolean, replacements: Record<string, string>) {
+        if (!base || !review || activeProposal.current.base !== base)
+            return;
+
+        if (activeProposal.current.articleId === base.articleId)
+            workspace.setContent(content);
+
+        setBase({ ...base, accepted: true, acceptedReplacements: replacements });
+        setDecisions(Object.fromEntries(review.changes.map((change) => [change.id, whole || ids.has(change.id) ? "accepted" : "rejected"])));
+    }
 
 
     function startProposal(operation: EditorialOperation, nextBase: ProposalBase): void {
@@ -223,31 +187,34 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
 
     async function accept(acceptedChangeIds: ReadonlySet<string>, wholeProposal = false) {
         const article = workspace.selectedArticle;
-        if (!article || !base || !review || stale || accepted)
+        if (!article || !base || !review || stale || accepted || !edits.effectiveReview || !edits.beginSubmission(wholeProposal))
             return;
 
+        const replacements = Object.fromEntries(review.changes.filter((change) => acceptedChangeIds.has(change.id) &&
+            edits.replacements[change.id] !== undefined && edits.replacements[change.id] !== change.proposalLines.join("\n"))
+            .map((change) => [change.id, edits.replacements[change.id]!]));
+        const edited = Object.keys(replacements).length > 0;
         const completeCorrection = Boolean(base.correctedFindingIds?.length && acceptedChangeIds.size === review.changes.length);
-        const acceptWhole = wholeProposal || completeCorrection;
+        const acceptWhole = (wholeProposal || completeCorrection) && !edited;
 
-        const telemetryGeneration = await beginBestEffortTelemetryCapture(telemetry);
-        const content = acceptedProposalContent(base, review, acceptedChangeIds, wholeProposal, acceptWhole);
+        const acceptedReview = edited ? edits.effectiveReview : review;
+        const content = acceptedProposalContent(base, acceptedReview, acceptedChangeIds, wholeProposal,
+            completeCorrection, edited);
         try {
+            const telemetryGeneration = await beginBestEffortTelemetryCapture(telemetry);
             const revision = await client.acceptProposal(article.id, {
                 baseRevisionId: base.revisionId,
                 content,
                 interfaceLocale: intl.locale,
-                provenance: acceptanceProvenance(base, acceptedChangeIds, acceptWhole),
+                provenance: acceptanceProvenance(base, acceptedChangeIds, acceptWhole, replacements),
             });
 
             workspace.updateRevision(article.id, revision);
-            workspace.setContent(content);
+            showAcceptedProposal(content, acceptedChangeIds, wholeProposal, replacements);
             captureBestEffortTelemetry(telemetry, { kind: "proposal_reviewed", decision: "accepted" }, telemetryGeneration);
 
             if (base.correctedFindingIds?.length)
                 await loadFactChecks();
-
-            setBase({ ...base, accepted: true });
-            setDecisions(Object.fromEntries(review.changes.map((change) => [change.id, wholeProposal || acceptedChangeIds.has(change.id) ? "accepted" : "rejected"])));
         } catch (error) {
             if (error instanceof ArticleRevisionConflictError) {
                 workspace.updateRevision(article.id, error.article.currentRevision);
@@ -255,6 +222,8 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
             }
 
             notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.acceptProposalFailed" }) });
+        } finally {
+            edits.endSubmission();
         }
     }
 
@@ -305,10 +274,17 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
     }, [replaceTranslations, restoredArticleIds, recoveredDates, recovery, base, setBase, setDecisions,
         setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.selectedArticle]);
 
-    const setDecision = (id: string, decision: ProposalDecision) => setDecisions((current) => ({ ...current, [id]: decision }));
+    const setDecision = (id: string, decision: ProposalDecision) => {
+        if (!accepted && !stale && !edits.submitting)
+            setDecisions((current) => ({ ...current, [id]: decision }));
+    };
+
     const acceptAll = () => accept(new Set(review ? review.changes.map((change) => change.id) : []), true);
     const applyAccepted = () => accept(new Set(Object.entries(decisions).filter(([, decision]) => decision === "accepted").map(([id]) => id)), false);
     const rejectAll = () => {
+        if (accepted || stale || edits.submitting)
+            return;
+
         setDecisions(Object.fromEntries((review?.changes ?? []).map((change) => [change.id, "rejected"])));
         void beginBestEffortTelemetryCapture(telemetry).then((generation) => captureBestEffortTelemetry(telemetry, { kind: "proposal_reviewed", decision: "rejected" }, generation));
     };

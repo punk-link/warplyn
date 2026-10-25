@@ -82,6 +82,30 @@ function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; persis
 }
 
 
+test("Electron acceptance enforces edited protected content and Revision conflicts", async () => {
+    const adapter = createAdapter();
+    try {
+        const { articles, editorialArtifacts } = adapter.persistence;
+        const article = articles.createArticle({ title: "Edited", content: "Original 42" });
+        const artifact = editorialArtifacts.createEditorialArtifact({ articleId: article.id, revisionId: article.currentRevisionId,
+            kind: "assistant-proposal", content: JSON.stringify({ proposal: "Generated 42" }) });
+        const provenance = { kind: "accepted-proposal", editorialArtifactId: artifact.id, wholeProposal: true };
+        const apply = (content: string) => adapter.ipcMain.invoke({ method: "acceptProposal", args: [article.id, {
+            baseRevisionId: article.currentRevisionId, content, provenance,
+        }] });
+        assert.deepEqual(await apply("Author 43"), { ok: false, error: { code: APPLICATION_ERROR.PROPOSAL_EDIT_INVALID, status: HTTP_STATUS.BAD_REQUEST } });
+        assert.equal(articles.listRevisions(article.id).length, 1);
+        assert.equal((await apply("Author 42")).ok, true);
+        const stale = await apply("Author 42");
+        assert.ok(!stale.ok);
+        assert.equal(stale.error.code, APPLICATION_ERROR.REVISION_CONFLICT);
+        assert.equal(articles.listRevisions(article.id).length, 2);
+    } finally {
+        adapter.close();
+    }
+});
+
+
 test("Electron refresh acceptance uses the existing finite operation and preserves translation history", async () => {
     const adapter = createAdapter();
     try {

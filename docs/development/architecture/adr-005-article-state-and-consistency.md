@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-21
-- Updated: 2026-10-02
+- Updated: 2026-10-22
 - Scope: Article, Draft, Revision, Proposal, Finding, and translation state
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-002](adr-002-shared-contract-organization.md)
 
@@ -15,6 +15,8 @@ Authors need recoverable work and attributable changes. Delayed AI output must n
 An Article points to its current immutable Revision. Editing creates a mutable Draft checkpoint tied to that Revision. Explicit save promotes only the matching current checkpoint into one new Revision and clears only that checkpoint.
 
 Proposals and advisory Findings record their base Revision and become stale when the current Revision changes. Stale output cannot change content. Accepting a valid Proposal creates one Revision; rejecting or resolving advisory output creates none.
+
+Proposal Review keeps Author replacements in temporary renderer state keyed to stable generated change IDs. Acceptance records only accepted replacements in immutable Revision provenance for read-only recovery; generated artifacts remain unchanged. The acceptance transaction preserves protected spans from the selected generated result, allowing intentional generated fact corrections. Edited fact-correction wording does not automatically resolve Findings; exact generated full acceptance retains its existing resolution checks.
 
 Restoration appends a new Revision with source provenance. It never rewrites history. Conflicting or retained Drafts remain recoverable until the Author explicitly chooses which text to use.
 

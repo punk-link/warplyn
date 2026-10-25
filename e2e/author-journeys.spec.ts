@@ -1,4 +1,5 @@
 import { expect, test, type Locator } from "@playwright/test";
+import { applicationSettingsPath } from "@skladno/shared";
 
 
 test.beforeEach(async ({ page }) => {
@@ -66,11 +67,49 @@ test("Shorten text stays a Proposal until acceptance and survives reload", async
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
     const proposalPattern = /Proposal/;
     await page.getByRole("tab", { name: proposalPattern }).click();
+    const proposed = page.getByRole("textbox", { name: "Proposed text for change 1" });
+    const diffBackgroundPattern = /repeating-linear-gradient/;
+    for (const panel of [page.locator("del").first(), page.locator("ins").first()])
+        await expect(panel).toHaveCSS("background-image", diffBackgroundPattern);
+
+    await expect(proposed).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(proposed).toHaveCSS("border-top-width", "0px");
+    await expect(proposed).toHaveCSS("padding-left", "0px");
+    await expect(proposed).toHaveCSS("resize", "none");
+    await proposed.click();
+    await expect(proposed).toHaveCSS("box-shadow", "none");
+    await expect(proposed).toHaveCSS("outline-style", "none");
+    await page.keyboard.press("Shift+Tab");
+    await page.keyboard.press("Tab");
+    await expect(proposed).toBeFocused();
+    await expect(proposed).toHaveCSS("box-shadow", "none");
+    await expect(proposed).toHaveCSS("outline-style", "none");
+    await expect(page.locator("ins > strong").first()).toHaveCSS("text-decoration-line", "none");
+    const originalFont = await page.locator("del").first().evaluate((element) => getComputedStyle(element).font);
+    await expect(proposed).toHaveCSS("font", originalFont);
+    await proposed.fill("A long proposed paragraph that wraps naturally across the available width. ".repeat(20));
+    expect(await proposed.evaluate((element) => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+    const plainBounds = await proposed.boundingBox();
+    await page.getByRole("button", { name: "Highlight changes", exact: true }).click();
+    const highlighted = page.locator("ins [aria-hidden=true]").first();
+    await expect(highlighted).toHaveText(await proposed.inputValue());
+    await expect(proposed).toHaveCSS("color", "rgba(0, 0, 0, 0)");
+    expect(await highlighted.boundingBox()).toEqual(await proposed.boundingBox());
+    expect(await proposed.boundingBox()).toEqual(plainBounds);
+    await proposed.fill("Retries need clear limits.");
+    await page.getByRole("button", { name: "Stacked", exact: true }).click();
+    await expect(proposed).toHaveValue("Retries need clear limits.");
+    await page.getByRole("tab", { name: "Write", exact: true }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
+    await page.getByRole("tab", { name: proposalPattern }).click();
     await page.getByRole("button", { name: "Accept all" }).click();
     await page.getByRole("tab", { name: "Write" }).click();
-    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need limits.");
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need clear limits.");
     await page.reload();
-    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need limits.");
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need clear limits.");
+    await page.getByRole("tab", { name: proposalPattern }).click();
+    await expect(page.getByRole("textbox", { name: "Proposed text for change 1" })).toHaveValue("Retries need clear limits.");
+    await expect(page.getByRole("textbox", { name: "Proposed text for change 1" })).toBeDisabled();
 });
 
 
@@ -453,14 +492,20 @@ test("Assistant skill tags can be removed without clearing guidance", async ({ p
 
 
 test("an unavailable automatic backup does not prevent editing", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("button", { name: "Settings" }).click();
-    await page.getByRole("button", { name: "Data & backups" }).click();
-    await page.getByRole("switch", { name: "Automatic backups" }).click();
-    await page.getByRole("button", { name: "Back to workspace" }).click();
-    await page.reload();
-
-    await createArticle(page);
+    const settingsUrl = `http://127.0.0.1:8787${applicationSettingsPath}`;
+    const policy = (await (await page.request.get(settingsUrl)).json()).backupPolicy;
+    try {
+        await page.goto("/");
+        await page.getByRole("button", { name: "Settings" }).click();
+        await page.getByRole("button", { name: "Data & backups" }).click();
+        await page.getByRole("switch", { name: "Automatic backups" }).click();
+        await page.getByRole("button", { name: "Back to workspace" }).click();
+        await page.reload();
+        await createArticle(page);
+    } finally {
+        const restored = await page.request.put(`${settingsUrl}/backup-policy`, { data: policy });
+        expect(restored.ok()).toBe(true);
+    }
 });
 
 

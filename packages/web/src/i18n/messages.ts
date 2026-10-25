@@ -564,6 +564,8 @@ export const messages = {
     "views.proposalWhole": "Complete proposal · {changes, plural, one {# change} other {# changes}}",
     "views.acceptAll": "Accept all",
     "views.applyAccepted": "Apply accepted changes",
+    "views.proposedChangeInput": "Proposed text for change {index}",
+    "views.proposalAuthorEdited": "You edited this wording. Review your text before applying it.",
     "views.rejectAll": "Reject all",
     "views.acceptChange": "Accept",
     "views.rejectChange": "Reject",
@@ -1018,6 +1020,9 @@ export const messages = {
     "settings.removeCustomDefaultDescription": "Remove <profile>{name}</profile>? The default publishing profile will revert to Default.",
     "errors.generic": "Couldn't finish that action. Your Article was not changed. Try again.",
     "errors.invalidRequest": "Couldn't finish that action because some information was invalid. Check it and try again.",
+    "errors.proposalEditInvalid": ("Couldn't apply your edited Proposal. Your Article was not changed. " +
+        "Keep the proposed numbers, links, code, and technical terms " +
+        "unchanged, then try again. If the Proposal is unavailable, generate a new one."),
     "errors.factCorrectionSelectionInvalid": ("Couldn't prepare corrections because the selected Findings are no longer current or need review. Run Fact Check again, then select " +
         "unresolved disputed or unverifiable Findings."),
     "errors.requestTooLarge": "Couldn't finish that action because the selected content is too large. Reduce it and try again.",
