@@ -39,7 +39,7 @@ Copy the ID before turning sharing off. Turning it off clears the ID from your d
 
 ## Website analytics
 
-The landing and plans pages use PostHog to measure visits, referral and campaign information, and clicks on download links. Download clicks include the button's location on the page; they do not confirm an installation.
+The landing and plans pages use PostHog to measure visits, referral and campaign information, and clicks on download links. PostHog download events include the button's location on the page. Google Analytics also records a `download_clicked` event when someone opens the latest release link from the landing page, plans page, or user guide. These clicks do not confirm a download or installation.
 
 Website PostHog tracking uses no cookies or browser storage, creates no person profiles, and records no session replays or general click activity. PostHog estimates visitors using a server-generated hash. Website events remain separate from desktop Telemetry IDs, and the desktop sharing switch does not control website tracking.
 

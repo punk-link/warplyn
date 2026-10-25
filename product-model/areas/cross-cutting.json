@@ -8,7 +8,7 @@
             "title": "Minimal public website visit and download-click analytics",
             "status": "implemented",
             "owners": ["site/analytics.mjs", "site/website-analytics.mjs", "site/google-analytics.mjs", "site/analytics-preferences.mjs", "site/user-docs/.vitepress/theme/index.ts", "site/index.html", "site/plans.html", ".github/workflows/site.yml"],
-            "contract": "Production landing and plans pages with a configured public capture key send PostHog pageviews and explicit download clicks with button location. Website events use analyticsSource=website and never share desktop installation identities. Cookieless server hashing requires the corresponding PostHog project setting. PostHog person profiles, replay, and general autocapture are disabled. Landing pages and the user guide share one production-only Google Analytics initializer for the existing property, without adding PostHog to the guide. Both services honor Do Not Track and Global Privacy Control. Yandex verification remains separate from analytics.",
+            "contract": "Production landing and plans pages with a configured public capture key send PostHog pageviews and explicit download clicks with button location. Website events use analyticsSource=website and never share desktop installation identities. Cookieless server hashing requires the corresponding PostHog project setting. PostHog person profiles, replay, and general autocapture are disabled. Landing pages and the user guide share one production-only Google Analytics initializer for the existing property and send a download_clicked event for links to the latest GitHub release. Both services honor Do Not Track and Global Privacy Control. Yandex verification remains separate from analytics.",
             "persistence": "Website PostHog tracking stores no cookies or local/session storage. Events are stored in the existing US PostHog project; no website-to-desktop identity link is created. Google retains its independent cookie-based measurement behavior.",
             "limitations": ["Download clicks open GitHub releases and do not establish installation. PostHog account configuration and live ingestion require manual verification."]
         },
@@ -113,7 +113,7 @@
             "capabilityIds": ["cross-cutting.website-analytics"],
             "preconditions": ["A production landing page has a public capture key and PostHog cookieless hashing is enabled."],
             "event": "A visitor opens the page and activates a download link.",
-            "expected": ["A pageview and download click carry the website source, with download button location.", "Missing keys, Do Not Track, and Global Privacy Control disable PostHog collection."],
+            "expected": ["PostHog records a pageview and download click with website source and button location; Google Analytics records download_clicked.", "Missing keys, Do Not Track, and Global Privacy Control disable PostHog collection; Do Not Track and Global Privacy Control disable Google Analytics."],
             "forbidden": ["Person profiles, session replay, general autocapture, or shared desktop installation IDs."],
             "evidence": { "kind": "human-reviewed", "path": "docs/development/reference/runtime-privacy-and-network-policy.md" }
         },

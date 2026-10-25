@@ -6,6 +6,7 @@ import { startGoogleAnalytics } from "../site/google-analytics.mjs";
 
 function browserFixture(t, preferences = {}) {
     const scripts = [];
+    const listeners = [];
     const browserWindow = {};
     const originals = new Map();
     for (const [name, value] of Object.entries({
@@ -13,6 +14,7 @@ function browserFixture(t, preferences = {}) {
         window: browserWindow,
         document: {
             getElementById: (id) => scripts.find((script) => script.id === id),
+            addEventListener: (type, listener) => listeners.push({ type, listener }),
             createElement: () => ({}),
             head: { append: (script) => scripts.push(script) },
         },
@@ -30,12 +32,12 @@ function browserFixture(t, preferences = {}) {
         }
     });
 
-    return { scripts, browserWindow };
+    return { scripts, browserWindow, listeners };
 }
 
 
 test("Google Analytics initializes the existing property exactly once", (t) => {
-    const { scripts, browserWindow } = browserFixture(t);
+    const { scripts, browserWindow, listeners } = browserFixture(t);
     startGoogleAnalytics();
     startGoogleAnalytics();
     assert.equal(scripts.length, 1);
@@ -46,6 +48,12 @@ test("Google Analytics initializes the existing property exactly once", (t) => {
     assert.equal(commands[0][0], "js");
     assert.ok(commands[0][1] instanceof Date);
     assert.deepEqual(commands[1], ["config", "G-QWD5DZEQZG"]);
+    assert.equal(listeners.length, 1);
+    assert.equal(listeners[0].type, "click");
+    listeners[0].listener({ target: { closest: () => ({ href: "https://github.com/punk-link/warplyn" }) } });
+    assert.equal(browserWindow.dataLayer.length, 2);
+    listeners[0].listener({ target: { closest: () => ({ href: "https://github.com/punk-link/warplyn/releases/latest" }) } });
+    assert.deepEqual(Array.from(browserWindow.dataLayer.at(-1)), ["event", "download_clicked"]);
 });
 
 

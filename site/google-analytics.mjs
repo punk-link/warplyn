@@ -2,6 +2,7 @@ import { isWebsiteAnalyticsAllowed } from "./analytics-preferences.mjs";
 
 
 const measurementId = "G-QWD5DZEQZG";
+const downloadUrl = "https://github.com/punk-link/warplyn/releases/latest";
 
 
 export function startGoogleAnalytics() {
@@ -14,6 +15,12 @@ export function startGoogleAnalytics() {
     };
     window.gtag("js", new Date());
     window.gtag("config", measurementId);
+
+    document.addEventListener("click", (event) => {
+        const link = event.target.closest?.("a");
+        if (link?.href === downloadUrl)
+            window.gtag("event", "download_clicked");
+    });
 
     const script = document.createElement("script");
     script.id = "google-analytics";
