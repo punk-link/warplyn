@@ -1,0 +1,53 @@
+{
+    "version": "0.7.3",
+    "previousTag": "v0.7.2",
+    "previousCommit": "60ee448338b7ff1ab6e647cf560997effb7b4b1e",
+    "baseline": "published",
+    "sourceCommit": "0b77b3f5c522814208a1a100d3a1c2cc331443a0",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "text": "Edit proposed wording in either review layout, make or reset individual and bulk decisions, then apply accepted changes as one revision. Applying an all-rejected review dismisses it without changing the Article, and accepted changes return you to Write.",
+            "commits": [
+                "137899c272b2364699dfbef36db769b098c43ed2",
+                "4f0c712706ae6dc7fd0e5bdb6b2fb751814c3855",
+                "829d121e811015e7d5beeb7b332b399cb8e634a5",
+                "38b239dc7c595710771a616c4370db5bdacf16e3"
+            ]
+        },
+        {
+            "text": "Assistant proposals no longer repeat the Article title as body text.",
+            "commits": [
+                "1c6989c70c2efd8fac11336820ff6640874e25f5"
+            ]
+        },
+        {
+            "text": "When a selection request needs Article text, the Assistant can use up to 500 code units of read-only text on each side of the selection. The composer explains that this neighboring text is sent to your provider, and only the selection can be replaced.",
+            "commits": [
+                "7d9db352859823744d1b285e322e3a09e2b67738"
+            ]
+        },
+        {
+            "text": "See your message in the Assistant conversation while a request is being prepared.",
+            "commits": [
+                "e4c1741a1c919909eb719e23abaa706475d7f97c"
+            ]
+        },
+        {
+            "text": "New guides explain the built-in Skills and how to use and review their results.",
+            "commits": [
+                "5f237a8839ab5fce175b09fd3f0a22f6ea92581a"
+            ]
+        },
+        {
+            "text": "Update details appear alongside update actions in Settings, and the Article Library update control is aligned in expanded and collapsed views.",
+            "commits": [
+                "536e14bb7cc3c532f0b899672defb0c21b7daaf0"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
