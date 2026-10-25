@@ -14,6 +14,10 @@ Use **Save to file** and **Load from file** to move whole *Articles* between War
 
 The file contains the entire current *Draft*, including unsaved edits. Highlighting text does not limit what is saved. This action does not create a *Revision*. **Save revision** remains the action for adding the current *Draft* to your history.
 
+::: tip Need a portable copy of your workspace?
+*Article* files contain writing only. To preserve history, Assistant work, *Skills*, and settings, create a [backup](backups-and-recovery.md) instead.
+:::
+
 The web app reports **Article download started** when it hands the file to the browser. Check the browser's downloads for completion or errors.
 
 ## Load from file
@@ -25,9 +29,13 @@ The web app reports **Article download started** when it hands the file to the b
 
 A leading level-one heading supplies the new title. Otherwise, Warplyn uses the filename without its extension. The heading stays in the *Article* body. Loading the same file again creates another independent *Article*.
 
+::: warning Import creates a separate Article
+Loading a file does not replace the *Article* you opened the picker from. Review the imported *Article*, then move or delete either *Article* if needed.
+:::
+
 Choose a file no larger than 10 MiB. Markdown and HTML must use UTF-8. DOCX and RTF work without Microsoft Office installed.
 
-Warplyn keeps paragraphs, headings, editable nested lists and numbering, bold, italic, strikethrough, safe links, quotes, code, and Unicode text where supported by the source format. Page layout, fonts, images, embedded objects, and complex format-specific features may be omitted or simplified. Table text becomes ordinary Article content. Check the import preview before continuing. Unsupported Markdown extensions may also lose formatting in the editor.
+Warplyn keeps paragraphs, headings, editable nested lists and numbering, bold, italic, strikethrough, safe links, quotes, code, and Unicode text where supported by the source format. Page layout, fonts, images, embedded objects, and complex format-specific features may be omitted or simplified. Table text becomes ordinary *Article* content. Check the import preview before continuing. Unsupported Markdown extensions may also lose formatting in the editor.
 
 You can cancel the file picker without importing anything. If your current *Draft* cannot be saved for recovery, fix the save error and retry loading.
 

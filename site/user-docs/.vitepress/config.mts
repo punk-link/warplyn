@@ -50,8 +50,28 @@ export default defineConfig({
                     { text: "Editorial Assistant", link: "/editorial-assistant" },
                     { text: "Reviewing Articles", link: "/reviewing-articles" },
                     { text: "Translations", link: "/translations" },
+                ],
+            },
+            {
+                text: "Style Profile",
+                items: [
                     { text: "Style Profile", link: "/style-profile" },
-                    { text: "Skills", link: "/skills" },
+                ],
+            },
+            {
+                text: "Skills",
+                items: [
+                    { text: "Built-in Skills", link: "/built-in-skills/" },
+                    { text: "Develop key points", link: "/built-in-skills/develop-key-points" },
+                    { text: "Turn your ideas into a draft", link: "/built-in-skills/turn-ideas-into-a-draft" },
+                    { text: "Improve flow and clarity", link: "/built-in-skills/improve-flow-and-clarity" },
+                    { text: "Shorten text", link: "/built-in-skills/shorten-text" },
+                    { text: "Check facts", link: "/built-in-skills/check-facts" },
+                    { text: "Check technical terms", link: "/built-in-skills/check-technical-terms" },
+                    { text: "Review writing style", link: "/built-in-skills/review-writing-style" },
+                    { text: "Translate text", link: "/built-in-skills/translate-text" },
+                    { text: "Skill Creator", link: "/built-in-skills/skill-creator" },
+                    { text: "Create and manage Skills", link: "/skills" },
                 ],
             },
             {
