@@ -104,7 +104,8 @@ describe("Editorial Workspace assistant", () => {
             provenance: { kind: "accepted-proposal", baseRevisionId: "one-revision", editorialArtifactId: "proposal-artifact", wholeProposal: true },
         }));
         await waitFor(() => expect(telemetry.captureTelemetry).toHaveBeenCalledWith({ kind: "proposal_reviewed", decision: "accepted" }, 7));
-        expect(await screen.findByText("This proposal was accepted. Its decisions are read-only.")).toBeTruthy();
+        expect((await screen.findByRole("textbox", { name: "Article draft" })).textContent).toContain("Improved Draft");
+        expect(screen.queryByRole("heading", { name: "Proposal Review" })).toBeNull();
     });
 
 

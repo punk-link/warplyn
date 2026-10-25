@@ -56,9 +56,11 @@ describe("Author edits in Proposal Review", () => {
             content: "Author first\nSecond line\n\nAnchor\n\nLast",
             provenance: expect.objectContaining({ acceptedChangeIds: ["change-1"], proposalReplacements: { "change-1": "Author first\nSecond line" } }),
         }));
-        await screen.findByText("This proposal was accepted. Its decisions are read-only.");
+        expect(await screen.findByRole("textbox", { name: "Article draft" })).toHaveTextContent("Author first");
+        expect(screen.queryByRole("heading", { name: "Proposal Review" })).toBeNull();
         mounted.unmount();
         render(<App client={client} />);
+        await user.click(await screen.findByRole("tab", { name: "Proposals" }));
         await screen.findByText("This proposal was accepted. Its decisions are read-only.");
         expect(screen.getByRole("textbox", { name: "Proposed text for change 1" })).toHaveValue("Author first\nSecond line");
         expect(screen.getByRole("textbox", { name: "Proposed text for change 1" })).toBeDisabled();
@@ -121,7 +123,8 @@ describe("Author edits in Proposal Review", () => {
         await user.click(screen.getByRole("button", { name: "Set all decisions…" }));
         await user.click(screen.getByRole("menuitem", { name: "Mark all accepted" }));
         await user.click(screen.getByRole("button", { name: "Apply" }));
-        await screen.findByText("This proposal was accepted. Its decisions are read-only.");
+        await screen.findByRole("textbox", { name: "Article draft" });
+        expect(screen.queryByRole("heading", { name: "Proposal Review" })).toBeNull();
         expect(client.acceptProposal).toHaveBeenLastCalledWith("one", expect.objectContaining({ content: "\nAnchor\n\nGenerated last" }));
     });
 
@@ -156,8 +159,6 @@ describe("Author edits in Proposal Review", () => {
         expect(screen.getByRole("textbox", { name: "Article draft" })).toHaveTextContent("Draft");
         const firstArticlePattern = /First Article/;
         await user.click(screen.getByRole("button", { name: firstArticlePattern }));
-        await user.click(screen.getByRole("tab", { name: "Proposals" }));
-        await screen.findByText("This proposal was accepted. Its decisions are read-only.");
-        expect(screen.getByRole("textbox", { name: "Proposed text for change 1" })).toHaveValue("Accepted while away");
+        expect(await screen.findByRole("textbox", { name: "Article draft" })).toHaveTextContent("Accepted while away");
     });
 });
