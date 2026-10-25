@@ -89,7 +89,10 @@ describe("Editorial Workspace assistant", () => {
 
         expect(await screen.findByText("Replacement · Change 1 of 1")).toBeTruthy();
         expect(screen.getByText("Improved Draft")).toBeTruthy();
-        await user.click(screen.getByRole("button", { name: getMessage("views.acceptAll") }));
+        await user.click(screen.getByRole("button", { name: getMessage("views.setAllDecisions") }));
+        await user.click(screen.getByRole("menuitem", { name: "Mark all accepted" }));
+        expect(client.acceptProposal).not.toHaveBeenCalled();
+        await user.click(screen.getByRole("button", { name: getMessage("views.applyProposal") }));
 
         await waitFor(() => expect(client.acceptProposal).toHaveBeenCalledWith("one", {
             baseRevisionId: "one-revision",
@@ -138,7 +141,7 @@ describe("Editorial Workspace assistant", () => {
         expect(screen.queryByText("This proposal is stale because the article has a newer revision. Generate a new proposal before accepting changes.")).toBeNull();
         expect(screen.getByText("Accepted")).toBeTruthy();
         expect(screen.getByText("Rejected")).toBeTruthy();
-        expect(screen.getByRole("button", { name: getMessage("views.acceptAll") }).hasAttribute("disabled")).toBe(true);
+        expect(screen.getByRole("button", { name: getMessage("views.setAllDecisions") }).hasAttribute("disabled")).toBe(true);
         expect(screen.getByRole("tab", { name: getMessage("workspace.tabs.proposal") })).toBeTruthy();
     });
 

@@ -99,8 +99,9 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
                     actions={{
                         setDecision: editorial.setDecision,
                         setReplacement: editorial.edits.setReplacement,
-                        acceptAll: editorial.acceptAll,
-                        applyAccepted: editorial.applyAccepted,
+                        markAllAccepted: editorial.markAllAccepted,
+                        resetAllDecisions: editorial.resetAllDecisions,
+                        applyDecisions: editorial.applyDecisions,
                         rejectAll: editorial.rejectAll,
                         dismissProposal: editorial.dismissProposal,
                         dismissWarnings: dismissProposalWarnings,

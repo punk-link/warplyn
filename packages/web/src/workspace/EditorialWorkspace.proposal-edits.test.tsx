@@ -50,7 +50,7 @@ describe("Author edits in Proposal Review", () => {
         const cards = screen.getAllByRole("article");
         await user.click(within(cards[0]!).getByRole("button", { name: "Accept" }));
         await user.click(within(cards[1]!).getByRole("button", { name: "Reject" }));
-        await user.click(screen.getByRole("button", { name: "Apply accepted changes" }));
+        await user.click(screen.getByRole("button", { name: "Apply" }));
         await waitFor(() => expect(client.acceptProposal).toHaveBeenCalledTimes(1));
         expect(client.acceptProposal).toHaveBeenCalledWith("one", expect.objectContaining({
             content: "Author first\nSecond line\n\nAnchor\n\nLast",
@@ -64,6 +64,46 @@ describe("Author edits in Proposal Review", () => {
         expect(screen.getByRole("textbox", { name: "Proposed text for change 1" })).toBeDisabled();
     });
 
+    it.each(["Mark all accepted", "Mark all rejected"])("resets %s to Pending without losing proposed edits", async (decision) => {
+        const client = proposalClient();
+        const user = userEvent.setup();
+        render(<App client={client} />);
+        const first = await screen.findByRole("textbox", { name: "Proposed text for change 1" });
+        fireEvent.change(first, { target: { value: "Retained Author edit" } });
+        await user.click(screen.getByRole("button", { name: "Set all decisions…" }));
+        await user.click(screen.getByRole("menuitem", { name: decision }));
+        await user.click(screen.getByRole("button", { name: "Set all decisions…" }));
+        await user.click(screen.getByRole("menuitem", { name: "Reset all decisions" }));
+
+        expect(screen.getAllByText("Pending")).toHaveLength(2);
+        expect(screen.getByRole("button", { name: "Apply" })).toBeDisabled();
+        expect(first).toHaveValue("Retained Author edit");
+        expect(client.acceptProposal).not.toHaveBeenCalled();
+        expect(client.saveArticleDraft).not.toHaveBeenCalled();
+    });
+
+    it.each(["bulk", "individual"])("finishes an all-rejected review through %s decisions without a Revision", async (mode) => {
+        const client = proposalClient();
+        const user = userEvent.setup();
+        render(<App client={client} />);
+        await screen.findByRole("textbox", { name: "Proposed text for change 1" });
+        expect(screen.getByRole("button", { name: "Apply" })).toBeDisabled();
+        if (mode === "bulk") {
+            await user.click(screen.getByRole("button", { name: "Set all decisions…" }));
+            await user.click(screen.getByRole("menuitem", { name: "Mark all rejected" }));
+        } else {
+            const cards = screen.getAllByRole("article");
+            await user.click(within(cards[0]!).getByRole("button", { name: "Reject" }));
+            expect(screen.getByRole("button", { name: "Apply" })).toBeDisabled();
+            await user.click(within(cards[1]!).getByRole("button", { name: "Reject" }));
+        }
+
+        await user.click(screen.getByRole("button", { name: "Apply" }));
+        expect(screen.queryByRole("heading", { name: "Proposal Review" })).toBeNull();
+        expect(client.acceptProposal).not.toHaveBeenCalled();
+        expect(client.saveArticleDraft).not.toHaveBeenCalled();
+    });
+
     it("keeps edits on failure and bulk acceptance uses the latest empty replacement", async () => {
         const client = proposalClient();
         const accept = client.acceptProposal;
@@ -72,11 +112,15 @@ describe("Author edits in Proposal Review", () => {
         render(<App client={client} />);
         const first = await screen.findByRole("textbox", { name: "Proposed text for change 1" });
         fireEvent.change(first, { target: { value: "Retry edit" } });
-        await user.click(screen.getByRole("button", { name: "Accept all" }));
-        await waitFor(() => expect(screen.getByRole("button", { name: "Accept all" })).toBeEnabled());
+        await user.click(screen.getByRole("button", { name: "Set all decisions…" }));
+        await user.click(screen.getByRole("menuitem", { name: "Mark all accepted" }));
+        await user.click(screen.getByRole("button", { name: "Apply" }));
+        await waitFor(() => expect(screen.getByRole("button", { name: "Apply" })).toBeEnabled());
         expect(first).toHaveValue("Retry edit");
         fireEvent.change(first, { target: { value: "" } });
-        await user.click(screen.getByRole("button", { name: "Accept all" }));
+        await user.click(screen.getByRole("button", { name: "Set all decisions…" }));
+        await user.click(screen.getByRole("menuitem", { name: "Mark all accepted" }));
+        await user.click(screen.getByRole("button", { name: "Apply" }));
         await screen.findByText("This proposal was accepted. Its decisions are read-only.");
         expect(client.acceptProposal).toHaveBeenLastCalledWith("one", expect.objectContaining({ content: "\nAnchor\n\nGenerated last" }));
     });
@@ -99,7 +143,9 @@ describe("Author edits in Proposal Review", () => {
         render(<App client={client} />);
         const first = await screen.findByRole("textbox", { name: "Proposed text for change 1" });
         fireEvent.change(first, { target: { value: "Accepted while away" } });
-        await user.click(screen.getByRole("button", { name: "Accept all" }));
+        await user.click(screen.getByRole("button", { name: "Set all decisions…" }));
+        await user.click(screen.getByRole("menuitem", { name: "Mark all accepted" }));
+        await user.click(screen.getByRole("button", { name: "Apply" }));
         await waitFor(() => expect(client.acceptProposal).toHaveBeenCalledOnce());
         expect(first).toBeDisabled();
         const secondArticlePattern = /Second Article/;

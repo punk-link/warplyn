@@ -57,6 +57,43 @@ async function createArticle(page: import("@playwright/test").Page, content = "O
 }
 
 
+test("Apply finishes an all-rejected Proposal without changing the Article", async ({ page }) => {
+    await page.goto("/");
+    await createArticle(page, "It is important to note that retries need limits.");
+    await page.getByRole("button", { name: "Quick actions" }).click();
+    await page.getByRole("option", { name: "Shorten text" }).click();
+    await page.getByRole("button", { name: "Send editorial request" }).click();
+    await page.getByRole("tab", { name: "Proposals: Review" }).click();
+    await page.getByRole("button", { name: "Set all decisions…" }).click();
+    await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
+    await expect(page.getByRole("button", { name: "Apply" })).toBeEnabled();
+    await page.getByRole("tab", { name: "Write", exact: true }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
+    await page.getByRole("tab", { name: "Proposals: Review" }).click();
+    await page.getByRole("button", { name: "Set all decisions…" }).click();
+    await page.getByRole("menuitem", { name: "Reset all decisions" }).click();
+    await expect(page.getByText("Pending", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Apply" })).toBeDisabled();
+    await page.getByRole("button", { name: "Set all decisions…" }).click();
+    await page.getByRole("menuitem", { name: "Mark all rejected" }).click();
+    await expect(page.getByText("Rejected", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Apply", exact: true })).toBeEnabled();
+    for (const width of [1440, 900]) {
+        await page.setViewportSize({ width, height: 900 });
+        const title = await page.getByRole("heading", { name: "Proposal Review" }).boundingBox();
+        const decisions = await page.getByRole("button", { name: "Set all decisions…" }).boundingBox();
+        expect(title).not.toBeNull();
+        expect(decisions).not.toBeNull();
+        expect(decisions!.y).toBeGreaterThan(title!.y + title!.height);
+    }
+
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Proposal Review" })).toHaveCount(0);
+    await page.getByRole("tab", { name: "Write", exact: true }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
+});
+
+
 test("Shorten text stays a Proposal until acceptance and survives reload", async ({ page }) => {
     await page.goto("/");
     await createArticle(page, "It is important to note that retries need limits.");
@@ -102,7 +139,9 @@ test("Shorten text stays a Proposal until acceptance and survives reload", async
     await page.getByRole("tab", { name: "Write", exact: true }).click();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
     await page.getByRole("tab", { name: proposalPattern }).click();
-    await page.getByRole("button", { name: "Accept all" }).click();
+    await page.getByRole("button", { name: "Set all decisions…" }).click();
+    await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
     await page.getByRole("tab", { name: "Write" }).click();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need clear limits.");
     await page.reload();
@@ -158,7 +197,9 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.getByRole("tab", { name: proposalPattern }).click();
     await expect(page.getByText("Improved fixture note.")).toBeVisible();
 
-    await page.getByRole("button", { name: "Accept all" }).click();
+    await page.getByRole("button", { name: "Set all decisions…" }).click();
+    await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
     await page.getByRole("tab", { name: "Write" }).click();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Improved fixture note.");
 

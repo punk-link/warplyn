@@ -65,7 +65,9 @@ test("packaged typography works without AI and recovers its Proposal after resta
         await proposed.fill("Wait… please.");
         await page.getByRole("button", { name: "Stacked", exact: true }).click();
         await expect(proposed).toHaveValue("Wait… please.");
-        await page.getByRole("button", { name: "Accept all", exact: true }).click();
+        await page.getByRole("button", { name: "Set all decisions…" }).click();
+        await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
+        await page.getByRole("button", { name: "Apply", exact: true }).click();
         await page.getByRole("tab", { name: "Write", exact: true }).click();
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Wait… please.");
         await closePackaged(app);

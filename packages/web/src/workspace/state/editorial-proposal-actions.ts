@@ -279,8 +279,30 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
             setDecisions((current) => ({ ...current, [id]: decision }));
     };
 
-    const acceptAll = () => accept(new Set(review ? review.changes.map((change) => change.id) : []), true);
-    const applyAccepted = () => accept(new Set(Object.entries(decisions).filter(([, decision]) => decision === "accepted").map(([id]) => id)), false);
+    const markAllAccepted = () => {
+        if (accepted || stale || edits.submitting)
+            return;
+
+        setDecisions(Object.fromEntries((review?.changes ?? []).map((change) => [change.id, "accepted"])));
+    };
+
+    const resetAllDecisions = () => {
+        if (!accepted && !stale && !edits.submitting)
+            setDecisions({});
+    };
+
+    const applyDecisions = async () => {
+        if (!review || accepted || stale || edits.submitting || review.changes.length === 0 ||
+            review.changes.some((change) => (decisions[change.id] ?? "pending") === "pending"))
+            return;
+
+        const ids = new Set(Object.entries(decisions).filter(([, decision]) => decision === "accepted").map(([id]) => id));
+        if (ids.size === 0)
+            return dismissProposal();
+
+        return accept(ids, ids.size === review.changes.length);
+    };
+
     const rejectAll = () => {
         if (accepted || stale || edits.submitting)
             return;
@@ -309,8 +331,9 @@ export function useProposalActions({ client, workspace, intl, proposal: { base, 
         setDecision,
         request,
         checkTypography: () => request("style_review", "", undefined, undefined, "typography"),
-        acceptAll,
-        applyAccepted,
+        markAllAccepted,
+        resetAllDecisions,
+        applyDecisions,
         rejectAll,
         dismissProposal,
         cancel: () => controller.current?.abort(),
