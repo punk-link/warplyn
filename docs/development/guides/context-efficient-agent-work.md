@@ -8,6 +8,8 @@ Use this guide when discovery spans features or a code change has several steps.
 4. Run a focused check for the changed behavior, then the applicable gates in the [testing guide](testing.md). Repeat a broad gate when a relevant edit or failure calls for it.
 5. Review the production path against the request. Report checks and any manual verification still needed.
 
+When adding or changing an App Model caller, follow [ADR-007](../architecture/adr-007-completion-gated-editorial-engine.md). Verify with a deliberately unresolved generation that editing, navigation, and independent persistence remain available. Cover successful completion, failure or cancellation, and a delayed result racing changed or deleted target state. Keep dependent actions gated on required validation.
+
 Use `rg` to find current owners and tests rather than relying on a fixed file map. For renderer ownership, consult [ADR-003](../architecture/adr-003-web-feature-oriented-react-architecture.md); for UI changes, consult the [design system](../ui/design-system.md). Keep command output focused on the failing diagnostic or a short success summary.
 
 ## Import-checker limitation

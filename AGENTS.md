@@ -61,6 +61,7 @@ ADRs own architecture; guides own procedures; plans describe remaining work. Ver
 - A Draft checkpoint is mutable recovery state tied to a base Revision. Revision-bound Proposals and Findings become stale when the current Revision changes.
 - Articles and translations remain independently recoverable. Fact-check Findings remain advisory, sourced, and uncertain where appropriate.
 - Send only the minimum private context required for an explicit operation. Persist generated output only after valid completion.
+- Run all App Model generations in the background. Keep editing, navigation, and independent persistence responsive; follow [ADR-007](docs/development/architecture/adr-007-completion-gated-editorial-engine.md) for completion, cancellation, and dependent-action safeguards.
 - Every Author-facing error names what failed and gives a useful next step without exposing implementation details, raw errors, or private data.
 - Preserve claims, numbers, URLs, code, technical terms, and author voice. Publishing limits remain guidance; Skladno does not publish directly.
 
