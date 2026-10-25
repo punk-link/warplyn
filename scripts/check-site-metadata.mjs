@@ -63,13 +63,13 @@ assert.equal(
 
 console.log(`Verified metadata, sitemap, and social images for ${pagePaths.length} pages in ${fileURLToPath(siteRoot)}dist.`);
 
+
 function findGuidePages(directory, prefix = "") {
     return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
         const relativePath = `${prefix}${entry.name}`;
 
-        if (entry.isDirectory()) {
+        if (entry.isDirectory())
             return findGuidePages(join(directory, entry.name), `${relativePath}/`);
-        }
 
         return entry.isFile() && relativePath.endsWith(".md") ? [relativePath] : [];
     });

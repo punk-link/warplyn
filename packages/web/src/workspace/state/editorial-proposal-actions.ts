@@ -108,6 +108,8 @@ export function useProposalActions({ client, workspace, openWrite, intl, proposa
     const telemetry = getDesktopTelemetryClient();
     const { setProposal, setBase, setDecisions, setState, setMessage } = setters;
     const { applyResult, loadFactChecks, resolveFactCheck, createTranslation, rejectTranslation, setFactCheck, setStyleReview, retainTranslation, replaceTranslations } = results;
+
+
     function startProposal(operation: EditorialOperation, nextBase: ProposalBase): void {
         if (!isProposalOperation(operation))
             return;
