@@ -163,6 +163,12 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
     skillOffset: number | undefined;
     batch?: { revision: ArticleRevision; controller: AbortController };
 }) {
+    const requestId = crypto.randomUUID();
+    appendPendingMessage({
+        store: options.store, articleId: article.id, requestId, authorMessage, explicitSkillId, skillOffset, targetLanguage,
+        selection: options.selection,
+    });
+
     const selectedSkill = explicitSkillId ? (await options.client.listAssistantSkills()).find((skill) => skill.reference.id === explicitSkillId) : undefined;
     const creatorRequest = selectedSkill?.execution?.capability === "manage_skills";
     const saved = creatorRequest || batch ? undefined : await options.workspace.save(article.id);
@@ -173,10 +179,7 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
     const controller = batch?.controller ?? options.store.controllers.current.get(article.id) ?? new AbortController();
     options.store.controllers.current.set(article.id, controller);
     const matchingSelection = await validateRequestSelection(creatorRequest, options.selection, article.id, revision.content);
-    const requestId = crypto.randomUUID();
     const streamedId = `streaming-${crypto.randomUUID()}`;
-
-    appendPendingMessage({ store: options.store, articleId: article.id, requestId, authorMessage, explicitSkillId, skillOffset, targetLanguage, selection: matchingSelection });
 
     await options.client.streamAssistantRequest(article.id, {
         kind: "new", requestId, authorMessage,

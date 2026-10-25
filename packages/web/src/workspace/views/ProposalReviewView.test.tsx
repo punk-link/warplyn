@@ -5,12 +5,23 @@ import { messages } from "../../i18n/messages.js";
 import { getMessage } from "../../i18n/test-message.js";
 import { ProposalReviewView as RenderProposalReviewView } from "./ProposalReviewView.js";
 
-type ProposalReviewViewTestProps = Parameters<typeof RenderProposalReviewView>[0]["data"] & Parameters<typeof RenderProposalReviewView>[0]["actions"];
+type ReviewProps = Parameters<typeof RenderProposalReviewView>[0];
+type ProposalReviewViewTestProps = Omit<ReviewProps["data"], "edits"> & Omit<ReviewProps["actions"], "setReplacement" | "resetAllDecisions"> & {
+    edits?: ReviewProps["data"]["edits"];
+    setReplacement?: ReviewProps["actions"]["setReplacement"];
+    resetAllDecisions?: ReviewProps["actions"]["resetAllDecisions"];
+};
 
 
 function ProposalReviewView(props: ProposalReviewViewTestProps) {
-    const { review, accepted, stale, decisions, summaries, summaryState, warningsDismissed, setDecision, acceptAll, applyAccepted, rejectAll, dismissProposal, dismissWarnings, openWrite, openAssistant } = props;
-    return <RenderProposalReviewView data={{ review, accepted, stale, decisions, summaries, summaryState, warningsDismissed }} actions={{ setDecision, acceptAll, applyAccepted, rejectAll, dismissProposal, dismissWarnings, openWrite, openAssistant }} />;
+    const { review, accepted, stale, decisions, summaries, summaryState, warningsDismissed, setDecision,
+        markAllAccepted, applyDecisions, rejectAll, dismissProposal, dismissWarnings, openWrite, openAssistant } = props;
+    return <RenderProposalReviewView
+        data={{ review, accepted, stale, decisions, summaries, summaryState, warningsDismissed,
+            edits: props.edits ?? { replacements: {}, submitting: false } }}
+        actions={{ setDecision, markAllAccepted, applyDecisions, rejectAll, dismissProposal, dismissWarnings, openWrite, openAssistant,
+            resetAllDecisions: props.resetAllDecisions ?? vi.fn(),
+            setReplacement: props.setReplacement ?? vi.fn() }} />;
 }
 
 
@@ -32,8 +43,8 @@ describe("ProposalReviewView", () => {
                 summaries={{ "change-1": "Clarifies the opening statement." }}
                 summaryState="idle"
                 setDecision={vi.fn()}
-                acceptAll={vi.fn()}
-                applyAccepted={vi.fn()}
+                markAllAccepted={vi.fn()}
+                applyDecisions={vi.fn()}
                 rejectAll={vi.fn()}
                 dismissProposal={vi.fn()}
                 warningsDismissed={false}
@@ -64,8 +75,8 @@ describe("ProposalReviewView", () => {
                 stale
                 decisions={{ "change-1": "accepted" }}
                 setDecision={vi.fn()}
-                acceptAll={vi.fn()}
-                applyAccepted={vi.fn()}
+                markAllAccepted={vi.fn()}
+                applyDecisions={vi.fn()}
                 rejectAll={vi.fn()}
                 dismissProposal={dismissProposal}
                 warningsDismissed={false}
@@ -81,8 +92,8 @@ describe("ProposalReviewView", () => {
         expect(warning.parentElement?.lastElementChild).toBe(warning);
         expect(warning.previousElementSibling?.contains(screen.getByRole("button", { name: getMessage("views.dismissProposal") }))).toBe(true);
         expect(screen.getByText("Complete proposal · 2 changes")).toBeTruthy();
-        expect(screen.queryByRole("button", { name: getMessage("views.acceptAll") })).toBeNull();
-        expect(screen.queryByRole("button", { name: getMessage("views.rejectAll") })).toBeNull();
+        expect(screen.queryByRole("button", { name: getMessage("views.setAllDecisions") })).toBeNull();
+        expect(screen.queryByRole("button", { name: getMessage("views.applyProposal") })).toBeNull();
         expect(header?.contains(screen.getByRole("button", { name: getMessage("views.reviewCurrentArticle") }))).toBe(true);
         expect(header?.contains(screen.getByRole("button", { name: getMessage("views.regenerateInAssistant") }))).toBe(true);
         fireEvent.click(screen.getByRole("button", { name: getMessage("views.dismissProposal") }));
@@ -103,8 +114,8 @@ describe("ProposalReviewView", () => {
                 stale={false}
                 decisions={{}}
                 setDecision={vi.fn()}
-                acceptAll={vi.fn()}
-                applyAccepted={vi.fn()}
+                markAllAccepted={vi.fn()}
+                applyDecisions={vi.fn()}
                 rejectAll={vi.fn()}
                 dismissProposal={vi.fn()}
                 warningsDismissed={false}
@@ -136,8 +147,8 @@ describe("ProposalReviewView", () => {
                     stale={false}
                     decisions={{}}
                     setDecision={vi.fn()}
-                    acceptAll={vi.fn()}
-                    applyAccepted={vi.fn()}
+                    markAllAccepted={vi.fn()}
+                    applyDecisions={vi.fn()}
                     rejectAll={vi.fn()}
                     dismissProposal={vi.fn()}
                     warningsDismissed={false}
@@ -173,8 +184,8 @@ describe("ProposalReviewView", () => {
                 stale={false}
                 decisions={{}}
                 setDecision={vi.fn()}
-                acceptAll={vi.fn()}
-                applyAccepted={vi.fn()}
+                markAllAccepted={vi.fn()}
+                applyDecisions={vi.fn()}
                 rejectAll={vi.fn()}
                 dismissProposal={vi.fn()}
                 warningsDismissed={false}
@@ -202,8 +213,8 @@ describe("ProposalReviewView", () => {
                 stale={false}
                 decisions={{}}
                 setDecision={vi.fn()}
-                acceptAll={vi.fn()}
-                applyAccepted={vi.fn()}
+                markAllAccepted={vi.fn()}
+                applyDecisions={vi.fn()}
                 rejectAll={vi.fn()}
                 dismissProposal={vi.fn()}
                 warningsDismissed
@@ -236,9 +247,36 @@ describe("ProposalReviewView", () => {
         expect(screen.getByText("Improved").tagName).toBe("MARK");
     });
 
-    it("selects every change as rejected without dismissing the Proposal", () => {
+    it.each([0, 1, 2])("finishes a fallback review only when all changes agree, with %s accepted", (count) => {
+        render(<IntlProvider locale="en" messages={messages}>
+            <ProposalReviewView
+                review={{ baseContent: "Original", proposedContent: "Proposed",
+                    changes: [
+                        { id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
+                        { id: "change-2", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] },
+                    ] }}
+                stale={false}
+                decisions={{ "change-1": count > 0 ? "accepted" : "rejected", "change-2": count > 1 ? "accepted" : "rejected" }}
+                setDecision={vi.fn()}
+                markAllAccepted={vi.fn()}
+                applyDecisions={vi.fn()}
+                rejectAll={vi.fn()}
+                dismissProposal={vi.fn()}
+                warningsDismissed={false}
+                dismissWarnings={vi.fn()}
+                openWrite={vi.fn()}
+                openAssistant={vi.fn()} />
+        </IntlProvider>);
+
+        const name = getMessage("views.applyProposal");
+        expect(screen.getByRole("button", { name }).hasAttribute("disabled")).toBe(count === 1);
+    });
+
+    it("keeps rejected changes reviewable and offers explicit Proposal dismissal", () => {
         const rejectAll = vi.fn();
         const dismissProposal = vi.fn();
+        const markAllAccepted = vi.fn();
+        const applyDecisions = vi.fn();
 
         render(<IntlProvider locale="en" messages={messages}>
             <ProposalReviewView
@@ -248,10 +286,10 @@ describe("ProposalReviewView", () => {
                     changes: [{ id: "change-1", baseStart: 0, baseEnd: 1, baseLines: ["Original"], proposalLines: ["Proposed"] }],
                 }}
                 stale={false}
-                decisions={{}}
+                decisions={{ "change-1": "rejected" }}
                 setDecision={vi.fn()}
-                acceptAll={vi.fn()}
-                applyAccepted={vi.fn()}
+                markAllAccepted={markAllAccepted}
+                applyDecisions={applyDecisions}
                 rejectAll={rejectAll}
                 dismissProposal={dismissProposal}
                 warningsDismissed={false}
@@ -260,10 +298,17 @@ describe("ProposalReviewView", () => {
                 openAssistant={vi.fn()} />
         </IntlProvider>);
 
-        fireEvent.click(screen.getByRole("button", { name: getMessage("views.rejectAll") }));
+        fireEvent.click(screen.getByRole("button", { name: getMessage("views.setAllDecisions") }));
+        fireEvent.click(screen.getByRole("menuitem", { name: "Mark all rejected" }));
 
         expect(rejectAll).toHaveBeenCalledOnce();
+        fireEvent.click(screen.getByRole("button", { name: getMessage("views.setAllDecisions") }));
+        fireEvent.click(screen.getByRole("menuitem", { name: "Mark all accepted" }));
+        expect(markAllAccepted).toHaveBeenCalledOnce();
+        expect(applyDecisions).not.toHaveBeenCalled();
         expect(dismissProposal).not.toHaveBeenCalled();
         expect(screen.getByRole("heading", { name: getMessage("views.proposalReview") })).toBeTruthy();
+        fireEvent.click(screen.getByRole("button", { name: getMessage("views.dismissProposal") }));
+        expect(dismissProposal).toHaveBeenCalledOnce();
     });
 });

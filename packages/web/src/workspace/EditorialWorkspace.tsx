@@ -261,7 +261,7 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
     const generalSettings = useWorkspaceGeneralSettings(client, screen);
     const hasUsableAiConnection = useUsableAiConnection(client, screen);
     const revisions = useArticleRevisions(client, workspace.selectedArticle, workspace.updateRevision, workspace.save, workspace.discardDraft);
-    const editorial = useEditorialProposal(client, workspace);
+    const editorial = useEditorialProposal(client, workspace, () => layout.setView("write"));
     const [profileRebuilt, setProfileRebuilt] = useState<{ articleId: string; count: number; token: number }>();
     const corpus = useStyleCorpus(client, (count) => {
         if (workspace.selectedArticle)

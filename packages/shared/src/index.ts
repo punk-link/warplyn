@@ -191,6 +191,7 @@ export {
     type SummarizeProposalInput,
 } from "./articles/revision/revisions.js";
 export { findSequenceMatches } from "./cross-cutting/sequence-matches.js";
+export { withProposalReplacements, parseProposalReplacements } from "./articles/revision/proposal-replacements.js";
 export { summarizeArticle, type ArticleSummary } from "./articles/article/article-summary.js";
 export type { ArticleRevisionSummary } from "./articles/revision/revision.js";
 export { articleSummariesPath, createArticlePath } from "./articles/workspace/workspace.js";

@@ -14,6 +14,7 @@ import { getArticleRevision, insertArticleRevision, listArticleRevisions } from 
 import { acceptTranslationRefresh, validateTranslationArtifact } from "./translation-refresh-acceptance.js";
 import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
 import { resolveAcceptedCorrections } from "./accepted-corrections-resolution.js";
+import { validateProposalAcceptance } from "./proposal-acceptance-validation.js";
 import { listArticleSummaries, listRevisionSummaries } from "./article-summary-queries.js";
 import { setGeneratedArticleTitle } from "./article-title-query.js";
 import { discardArticleDraft, saveArticleDraft } from "./article-draft-operations.js";
@@ -209,6 +210,7 @@ export class ArticlesRepository {
                 throw new ArticleRevisionConflictError(current);
 
             const provenance = acceptTranslationRefresh(this.database, current, input, (id) => this.getArticle(id));
+            validateProposalAcceptance(this.database, articleId, input, current.currentRevision.content);
             insertArticleRevision(this.database, {
                 revisionId,
                 articleId,

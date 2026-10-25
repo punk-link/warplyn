@@ -19,6 +19,7 @@ describe("Editorial Workspace assistant", () => {
         let finish: (() => void) | undefined;
         let completed = false;
         client.listAssistantMessages = vi.fn().mockImplementation(async () => completed ? [{
+            editCandidate: { target: "article" as const, replacement: "Replacement owned by Proposal Review" },
             id: "proposal-message", articleId: "one", requestId: "request", role: "assistant" as const, kind: "response" as const, status: "completed" as const, responseKind: "proposal_prepared" as const, content: "Full Proposal", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z",
         }] : []);
         client.streamAssistantRequest = vi.fn(async (_articleId, _input, onEvent) => new Promise<void>((resolve) => {
@@ -54,6 +55,8 @@ describe("Editorial Workspace assistant", () => {
         act(() => finish?.());
         await waitFor(() => expect(screen.getAllByRole("button", { name: "Review Proposal" })).toHaveLength(1));
         expect(screen.queryByText("Full Proposal")).toBeNull();
+        expect(screen.queryByText("Replacement owned by Proposal Review")).toBeNull();
+        expect(screen.queryByRole("button", { name: "Replace Article" })).toBeNull();
     });
 
     it("restores the latest completed Proposal Review from local Assistant records", async () => {
@@ -89,7 +92,10 @@ describe("Editorial Workspace assistant", () => {
 
         expect(await screen.findByText("Replacement · Change 1 of 1")).toBeTruthy();
         expect(screen.getByText("Improved Draft")).toBeTruthy();
-        await user.click(screen.getByRole("button", { name: getMessage("views.acceptAll") }));
+        await user.click(screen.getByRole("button", { name: getMessage("views.setAllDecisions") }));
+        await user.click(screen.getByRole("menuitem", { name: "Mark all accepted" }));
+        expect(client.acceptProposal).not.toHaveBeenCalled();
+        await user.click(screen.getByRole("button", { name: getMessage("views.applyProposal") }));
 
         await waitFor(() => expect(client.acceptProposal).toHaveBeenCalledWith("one", {
             baseRevisionId: "one-revision",
@@ -98,7 +104,8 @@ describe("Editorial Workspace assistant", () => {
             provenance: { kind: "accepted-proposal", baseRevisionId: "one-revision", editorialArtifactId: "proposal-artifact", wholeProposal: true },
         }));
         await waitFor(() => expect(telemetry.captureTelemetry).toHaveBeenCalledWith({ kind: "proposal_reviewed", decision: "accepted" }, 7));
-        expect(await screen.findByText("This proposal was accepted. Its decisions are read-only.")).toBeTruthy();
+        expect((await screen.findByRole("textbox", { name: "Article draft" })).textContent).toContain("Improved Draft");
+        expect(screen.queryByRole("heading", { name: "Proposal Review" })).toBeNull();
     });
 
 
@@ -138,7 +145,7 @@ describe("Editorial Workspace assistant", () => {
         expect(screen.queryByText("This proposal is stale because the article has a newer revision. Generate a new proposal before accepting changes.")).toBeNull();
         expect(screen.getByText("Accepted")).toBeTruthy();
         expect(screen.getByText("Rejected")).toBeTruthy();
-        expect(screen.getByRole("button", { name: getMessage("views.acceptAll") }).hasAttribute("disabled")).toBe(true);
+        expect(screen.getByRole("button", { name: getMessage("views.setAllDecisions") }).hasAttribute("disabled")).toBe(true);
         expect(screen.getByRole("tab", { name: getMessage("workspace.tabs.proposal") })).toBeTruthy();
     });
 

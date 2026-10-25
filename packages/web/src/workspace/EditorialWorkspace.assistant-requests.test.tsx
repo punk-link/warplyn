@@ -10,6 +10,30 @@ import { createArticleFixture, createFakeClient, resetWorkspaceTestEnvironment }
 describe("Editorial Workspace assistant requests", () => {
     afterEach(resetWorkspaceTestEnvironment);
 
+    it.each(["Skill loading", "Draft saving"])("shows the Author message during %s", async (preparation) => {
+        const client = createFakeClient();
+        const source = createArticleFixture("one", "First Article");
+        source.draft = { articleId: source.id, content: "Changed Draft", baseRevisionId: source.currentRevisionId, version: 1, updatedAt: source.updatedAt };
+        client.listArticles = vi.fn().mockResolvedValue([source]);
+        const user = userEvent.setup();
+        render(<App client={client} />);
+        await screen.findByRole("heading", { name: "First Article" });
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.expand") }));
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.flowAndClarity.label") }));
+        if (preparation === "Skill loading")
+            client.listAssistantSkills = vi.fn(() => new Promise<never>(() => undefined));
+        else
+            client.saveArticleRevision = vi.fn(() => new Promise<never>(() => undefined));
+
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
+
+        const workingPattern = /Working for/;
+        expect(screen.getByText(workingPattern)).toBeTruthy();
+        expect(screen.getByRole("article", { name: getMessage("assistant.skill.flowAndClarity.label") })).toBeTruthy();
+        expect(client.streamAssistantRequest).not.toHaveBeenCalled();
+    });
+
 
     it("keeps concurrent requests and cancellation isolated between Articles", async () => {
         const previousViewportWidth = window.innerWidth;

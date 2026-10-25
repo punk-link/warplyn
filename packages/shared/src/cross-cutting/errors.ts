@@ -8,6 +8,7 @@ export const APPLICATION_ERROR_BY_AREA = {
         EDITORIAL_REQUEST_FAILED: "editorial_request_failed",
     },
     ARTICLES: {
+        PROPOSAL_EDIT_INVALID: "proposal_edit_invalid",
         ARTICLE_NOT_FOUND: "article_not_found",
         ARTICLE_FILE_LOAD_FAILED: "article_file_load_failed",
         ARTICLE_FILE_SAVE_FAILED: "article_file_save_failed",

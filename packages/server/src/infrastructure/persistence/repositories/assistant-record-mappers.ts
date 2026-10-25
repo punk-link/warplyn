@@ -1,4 +1,7 @@
-import { REVISION_PROVENANCE_KIND, type AssistantMessage, type AssistantMessageKind, type AssistantMessageRole, type AssistantMessageStatus, type AssistantRequestScope, type ProposalAcceptance, type ProposalChangeSummary } from "@skladno/shared";
+import {
+    REVISION_PROVENANCE_KIND, parseProposalReplacements, type AssistantMessage, type AssistantMessageKind, type AssistantMessageRole,
+    type AssistantMessageStatus, type AssistantRequestScope, type ProposalAcceptance, type ProposalChangeSummary,
+} from "@skladno/shared";
 
 import type { SqliteDatabase } from "../database.js";
 import { parseObject, type Row } from "./repository-utils.js";
@@ -115,13 +118,18 @@ export function getProposalAcceptances(database: SqliteDatabase, articleId: stri
             continue;
 
         const revisionId = String(row.id);
+        const replacements = parseProposalReplacements(provenance.proposalReplacements);
         if (provenance.wholeProposal === true) {
-            acceptances.set(provenance.editorialArtifactId, { kind: "whole", revisionId });
+            acceptances.set(provenance.editorialArtifactId, { kind: "whole", revisionId, ...(replacements ? { replacements } : {}) });
             continue;
         }
 
         if (Array.isArray(provenance.acceptedChangeIds) && provenance.acceptedChangeIds.every((id) => typeof id === "string"))
-            acceptances.set(provenance.editorialArtifactId, { kind: "changes", revisionId, acceptedChangeIds: provenance.acceptedChangeIds });
+            acceptances.set(provenance.editorialArtifactId, {
+                kind: "changes", revisionId,
+                acceptedChangeIds: provenance.acceptedChangeIds,
+                ...(replacements ? { replacements } : {})
+            });
     }
 
     return acceptances;

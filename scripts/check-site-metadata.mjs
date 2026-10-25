@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readSiteModuleGraph } from "./site-module-graph.mjs";
 
 
 const siteRoot = new URL("../site/", import.meta.url);
-const guideNames = readdirSync(new URL("user-docs/", siteRoot))
-    .filter((name) => name.endsWith(".md"));
+const userDocsRoot = fileURLToPath(new URL("user-docs/", siteRoot));
+const guideNames = findGuidePages(userDocsRoot);
 const markdownExtensionPattern = /\.md$/;
 const pagePaths = ["", "plans.html", ...guideNames.map((name) => `docs/${name.replace(markdownExtensionPattern, ".html")}`)];
 const sitemap = readFileSync(new URL("dist/sitemap.xml", siteRoot), "utf8");
@@ -61,3 +62,15 @@ assert.equal(
 );
 
 console.log(`Verified metadata, sitemap, and social images for ${pagePaths.length} pages in ${fileURLToPath(siteRoot)}dist.`);
+
+
+function findGuidePages(directory, prefix = "") {
+    return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+        const relativePath = `${prefix}${entry.name}`;
+
+        if (entry.isDirectory())
+            return findGuidePages(join(directory, entry.name), `${relativePath}/`);
+
+        return entry.isFile() && relativePath.endsWith(".md") ? [relativePath] : [];
+    });
+}

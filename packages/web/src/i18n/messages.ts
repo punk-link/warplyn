@@ -562,9 +562,13 @@ export const messages = {
     "views.proposalCounts": ("{total, plural, =0 {No suggestions} one {# suggestion} other {# suggestions}} · {pending, plural, =0 {No pending} one {# pending} other {# " +
         "pending}} · {accepted, plural, =0 {No accepted} one {# accepted} other {# accepted}} · {rejected, plural, =0 {No rejected} one {# rejected} other {# rejected}}"),
     "views.proposalWhole": "Complete proposal · {changes, plural, one {# change} other {# changes}}",
-    "views.acceptAll": "Accept all",
-    "views.applyAccepted": "Apply accepted changes",
-    "views.rejectAll": "Reject all",
+    "views.acceptAll": "Mark all accepted",
+    "views.setAllDecisions": "Set all decisions…",
+    "views.resetAllDecisions": "Reset all decisions",
+    "views.applyProposal": "Apply",
+    "views.proposedChangeInput": "Proposed text for change {index}",
+    "views.proposalAuthorEdited": "You edited this wording. Review your text before applying it.",
+    "views.rejectAll": "Mark all rejected",
     "views.acceptChange": "Accept",
     "views.rejectChange": "Reject",
     "views.changeNavigation": "Change navigation",
@@ -1018,6 +1022,9 @@ export const messages = {
     "settings.removeCustomDefaultDescription": "Remove <profile>{name}</profile>? The default publishing profile will revert to Default.",
     "errors.generic": "Couldn't finish that action. Your Article was not changed. Try again.",
     "errors.invalidRequest": "Couldn't finish that action because some information was invalid. Check it and try again.",
+    "errors.proposalEditInvalid": ("Couldn't apply your edited Proposal. Your Article was not changed. " +
+        "Keep the proposed numbers, links, code, and technical terms " +
+        "unchanged, then try again. If the Proposal is unavailable, generate a new one."),
     "errors.factCorrectionSelectionInvalid": ("Couldn't prepare corrections because the selected Findings are no longer current or need review. Run Fact Check again, then select " +
         "unresolved disputed or unverifiable Findings."),
     "errors.requestTooLarge": "Couldn't finish that action because the selected content is too large. Reduce it and try again.",

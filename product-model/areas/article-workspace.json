@@ -200,11 +200,15 @@
             "status": "implemented",
             "owners": [
                 "packages/web/src/workspace/views/ProposalReviewView.tsx",
+                "packages/web/src/workspace/views/ProposalDecisionMenu.tsx",
                 "packages/web/src/workspace/views/proposal-review-presentation.ts",
-                "packages/web/src/workspace/state/editorial-proposal-state.ts"
+                "packages/web/src/workspace/state/editorial-proposal-state.ts",
+                "packages/web/src/workspace/state/editorial-proposal-actions.ts",
+                "packages/web/src/workspace/state/proposal-edit-state.ts",
+                "packages/web/src/workspace/views/ProposalChangeDiff.tsx"
             ],
-            "contract": "AI text stays outside the Article until explicit acceptance. Reliable changes may show non-authoritative Interface-locale summaries whose failure does not block review. Accept all and Reject all select decisions; a separate action applies accepted changes. Accepted Proposals remain visible with read-only decisions after restart. Stale or unreliable Proposals cannot be partially accepted. A stale warning and recovery actions replace decision actions in the review header; preservation warnings remain above patterned diffs in scrolling review content. Labelled change navigation remains reachable outside it and scrolls and focuses the selected change at review start; stale recovery permits dismissal without Article changes. Whole-Proposal fallback discloses its change count.",
-            "persistence": "Completed Proposal content, localized summaries, and the base Revision are recovered from local Assistant and editorial artifact records; accepted Revision provenance links the Proposal artifact and records accepted changes or whole-proposal fallback, and dismissal is a local workspace preference.",
+            "contract": "AI text stays outside the Article until explicit acceptance. Authors may edit Proposed text in columns and stacked layouts without changing Original or per-change decisions. Edited wording replaces generated summaries and typography support with an Author-edit notice. Highlighting keeps the input usable and previews the latest text. Set all decisions offers Mark all accepted, Mark all rejected, and Reset all decisions without applying content; reset returns every suggestion to Pending while retaining proposed-text edits; Dismiss proposal clears an unaccepted Proposal from review without changing the Article; Apply finishes a fully decided review: accepted wording creates one immutable Revision; an all-rejected review is dismissed without changing the Article or creating a Revision. Submission freezes edits and decisions. Stale, unreliable, and already accepted Proposals are read-only. Accepted Proposals remain visible with read-only decisions after restart. A stale warning and recovery actions replace decision actions in the review header. Quiet dismissal sits beside the title; counts sit above a wrapping control row with a styled bulk decision menu containing Mark all accepted, Mark all rejected, and Reset all decisions and one primary Apply action; preservation warnings remain above patterned diffs in scrolling review content. Labelled change navigation remains reachable outside it and scrolls and focuses the selected change at review start; stale recovery permits dismissal without Article changes. Whole-Proposal fallback discloses its change count.",
+            "persistence": "Unapplied replacement edits live only in workspace memory, survive layout and view switches, and reset for a different Article or Proposal or on reload. Failed application retains edits. Completed generated content, localized summaries, and the base Revision remain unchanged in local artifacts. Acceptance creates one immutable Revision; its provenance links the Proposal artifact and records accepted change IDs or whole acceptance plus accepted replacement text for read-only recovery. Rejected replacement drafts are not persisted. Dismissal, including all-rejected application, suppresses recovery for the current workspace session; generated artifacts remain recoverable after restart.",
             "relatedCapabilityIds": ["editorial-workflows.proposal-lifecycle", "editorial-workflows.ai-safety"]
         },
         {
@@ -271,6 +275,16 @@
             "expected": ["Only immediately adjacent text within 500 UTF-16 code units per side is supplied as read-only helper text without splitting surrogate pairs.", "The exact selection remains the sole replacement source and target."],
             "forbidden": ["Whole-Article escalation, invalid offsets, helper text in generated output, or sending Article text for Skill management."],
             "evidence": { "kind": "automated", "path": "packages/server/src/application/editorial/selection-context.test.ts" }
+        },
+        {
+            "id": "workspace.proposal.edit-before-apply",
+            "title": "Authors edit Proposed text before applying selected changes",
+            "capabilityIds": ["workspace.proposal.explicit-acceptance"],
+            "preconditions": ["A current, reliable Proposal contains independently reviewable changes."],
+            "event": "The Author edits Proposed text, switches layout, accepts one change, rejects another, applies, and reloads.",
+            "expected": ["Proposed text matches Original typography without a textbox border or background and expands to show its full content while remaining keyboard editable. Focus adds no ring or decorative chrome; the normal text caret indicates editing. Highlight changes marks the editable text in place without adding a second visible copy or changing its layout.", "Typing changes neither the Article nor its Draft and preserves decisions and change identities.", "Application uses the latest accepted edits and original rejected text; after successful application, the Proposal Review is dismissed and the Workspace returns to Write; accepted replacement text recovers read-only after restart."],
+            "forbidden": ["Persisting unapplied or rejected replacement drafts, losing accepted edits, or treating an accepted Proposal as stale."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/workspace/EditorialWorkspace.proposal-edits.test.tsx" }
         },
         {
             "id": "workspace.editor.spelling",

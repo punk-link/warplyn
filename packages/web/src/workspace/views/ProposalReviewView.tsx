@@ -1,43 +1,30 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { type TextProposal } from "@skladno/shared";
-import { Banner, Button, Diff, EmptyState, IconButton, Status } from "../../ui/primitives.js";
+import { Banner, Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import { presentProposalReview, type ProposalDecision } from "./proposal-review-presentation.js";
 import { AssistantIcon, ChevronRightIcon, CloseIcon, HighlightChangesIcon, SideBySideIcon, StackedDiffIcon } from "../../ui/icons.js";
-import { TypographyChangeSupport } from "./TypographyChangeSupport.js";
-import { renderHighlightedText } from "./proposal-highlight.js";
+import { ProposalChangeSupport } from "./ProposalChangeSupport.js";
+import { ProposalChangeDiff } from "./ProposalChangeDiff.js";
+import { ProposalDecisionMenu } from "./ProposalDecisionMenu.js";
 
 
-function HighlightedText({ parts, tone }: { parts: ReturnType<typeof renderHighlightedText>["original"]; tone: "added" | "removed" }) {
-    return parts.map((part, index) => part.changed
-        ? <mark className={tone === "added" ? "bg-success text-on-brand" : "bg-danger text-on-brand"} key={index}>{part.text}</mark>
-        : part.text);
-}
-
-
-function ProposalDiff({ original, proposed, layout, decision = "pending", highlight }: { original: string; proposed: string; layout: "columns" | "stacked"; decision?: ProposalDecision; highlight: boolean }) {
-    const highlights = useMemo(() => highlight ? renderHighlightedText(original, proposed) : undefined, [highlight, original, proposed]);
-    return <Diff
-        layout={layout}
-        state={decision}
-        removed={highlights ? <HighlightedText parts={highlights.original} tone="removed" /> : original}
-        added={highlights ? <HighlightedText parts={highlights.proposed} tone="added" /> : proposed} />;
-}
-
-
-function ProposalReviewHeader({ presentation, counts, stale, accepted, displayMode, setDisplayMode, highlightChanges, setHighlightChanges, rejectAll, acceptAll, applyAccepted, acceptanceBlocked, allResolved, moveChange, openWrite, openAssistant, dismissProposal }: {
+function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDisplayMode, highlightChanges, setHighlightChanges,
+    rejectAll, markAllAccepted, resetAllDecisions, applyDecisions, acceptanceBlocked, bulkBlocked, allResolved,
+    moveChange, openWrite, openAssistant, dismissProposal }: {
     presentation: ReturnType<typeof presentProposalReview>;
     counts: { pending: number; accepted: number; rejected: number };
     stale: boolean;
-    accepted: boolean;
     displayMode: "side-by-side" | "stacked";
     setDisplayMode: (mode: "side-by-side" | "stacked") => void;
     highlightChanges: boolean;
     setHighlightChanges: (update: (current: boolean) => boolean) => void;
     rejectAll: () => void;
-    acceptAll: () => Promise<void>;
-    applyAccepted: () => Promise<void>;
+    markAllAccepted: () => void;
+    resetAllDecisions: () => void;
+    applyDecisions: () => Promise<void>;
     acceptanceBlocked: boolean;
+    bulkBlocked: boolean;
     allResolved: boolean;
     moveChange: (direction: -1 | 1) => void;
     openWrite: () => void;
@@ -45,21 +32,26 @@ function ProposalReviewHeader({ presentation, counts, stale, accepted, displayMo
     dismissProposal: () => void;
 }) {
     const intl = useIntl();
-    const disabled = accepted || stale || presentation.changes.length === 0;
+    const disabled = bulkBlocked || presentation.changes.length === 0;
     return <header className="shrink-0 border-b border-border bg-canvas">
         <div className="mx-auto w-full max-w-6xl px-4 py-3">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                    <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.proposalReview" })}</h2>
-                    <p className="mt-1 text-xs text-muted">{stale || !presentation.reliable
-                        ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length })
-                        : intl.formatMessage(
-                            { id: "views.proposalCounts" },
-                            { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected }
-                        )}
-                    </p>
+            <div className="flex flex-col gap-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                        <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.proposalReview" })}</h2>
+                        <p className="mt-1 text-xs text-muted">{stale || !presentation.reliable
+                            ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length })
+                            : intl.formatMessage(
+                                { id: "views.proposalCounts" },
+                                { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected }
+                            )}
+                        </p>
+                    </div>
+                    <Button variant="quiet" disabled={!stale && bulkBlocked} onClick={dismissProposal}>
+                        {intl.formatMessage({ id: "views.dismissProposal" })}
+                    </Button>
                 </div>
-                <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     {presentation.changes.length > 0 && (
                         <div className="flex items-center gap-1" aria-label={intl.formatMessage({ id: "views.proposalDisplayMode" })}>
                             <IconButton
@@ -101,15 +93,21 @@ function ProposalReviewHeader({ presentation, counts, stale, accepted, displayMo
                             </IconButton>
                         </nav>
                     )}
-                    {stale ? <>
-                        <Button variant="secondary" onClick={openWrite}>{intl.formatMessage({ id: "views.reviewCurrentArticle" })}</Button>
-                        <Button variant="secondary" onClick={openAssistant}>{intl.formatMessage({ id: "views.regenerateInAssistant" })}</Button>
-                        <Button variant="secondary" onClick={dismissProposal}>{intl.formatMessage({ id: "views.dismissProposal" })}</Button>
-                    </> : <>
-                        <Button variant="secondary" disabled={disabled} onClick={rejectAll}>{intl.formatMessage({ id: "views.rejectAll" })}</Button>
-                        <Button variant="secondary" disabled={disabled} onClick={() => void acceptAll()}>{intl.formatMessage({ id: "views.acceptAll" })}</Button>
-                        <Button disabled={acceptanceBlocked || !allResolved || counts.accepted === 0} onClick={() => void applyAccepted()}>{intl.formatMessage({ id: "views.applyAccepted" })}</Button>
-                    </>}
+                    <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+                        {stale ? <>
+                            <Button variant="secondary" onClick={openWrite}>{intl.formatMessage({ id: "views.reviewCurrentArticle" })}</Button>
+                            <Button variant="secondary" onClick={openAssistant}>{intl.formatMessage({ id: "views.regenerateInAssistant" })}</Button>
+                        </> : <>
+                            <ProposalDecisionMenu
+                                disabled={disabled}
+                                markAllAccepted={markAllAccepted}
+                                rejectAll={rejectAll}
+                                resetAllDecisions={resetAllDecisions} />
+                            <Button disabled={acceptanceBlocked || !allResolved} onClick={() => void applyDecisions()}>
+                                {intl.formatMessage({ id: "views.applyProposal" })}
+                            </Button>
+                        </>}
+                    </div>
                 </div>
             </div>
             {stale && <p role="alert" className="mt-2 text-xs text-warning">{intl.formatMessage({ id: "views.proposalStale" })}</p>}
@@ -127,13 +125,17 @@ interface ProposalReviewData {
     summaryState?: "idle" | "loading" | "unavailable";
     warningsDismissed: boolean;
     typography?: import("@skladno/shared").TypographyReview;
+    edits: { replacements: Readonly<Record<string, string>>; submitting: boolean };
+    generating?: boolean;
 }
 
 
 interface ProposalReviewActions {
     setDecision: (id: string, decision: ProposalDecision) => void;
-    acceptAll: () => Promise<void>;
-    applyAccepted: () => Promise<void>;
+    setReplacement: (id: string, text: string) => void;
+    markAllAccepted: () => void;
+    resetAllDecisions: () => void;
+    applyDecisions: () => Promise<void>;
     rejectAll: () => void;
     dismissProposal: () => void;
     dismissWarnings: () => void;
@@ -144,7 +146,8 @@ interface ProposalReviewActions {
 
 export function ProposalReviewView({ data, actions }: { data: ProposalReviewData; actions: ProposalReviewActions }) {
     const { review, accepted = false, stale, decisions, summaries, summaryState, warningsDismissed } = data;
-    const { setDecision, acceptAll, applyAccepted, rejectAll, dismissProposal, dismissWarnings, openWrite, openAssistant } = actions;
+    const { setDecision, markAllAccepted, resetAllDecisions, applyDecisions, rejectAll, dismissProposal,
+        dismissWarnings, openWrite, openAssistant } = actions;
     const intl = useIntl();
     const cards = useRef<(HTMLElement | null)[]>([]);
     const [displayMode, setDisplayMode] = useState<"side-by-side" | "stacked">("side-by-side");
@@ -167,7 +170,8 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
 
     const presentation = presentProposalReview(review);
     const counts = presentation.changes.reduce((result, change) => ({ ...result, [decisions[change.id] ?? "pending"]: result[decisions[change.id] ?? "pending"] + 1 }), { pending: 0, accepted: 0, rejected: 0 });
-    const acceptanceBlocked = accepted || stale || !presentation.reliable;
+    const acceptanceBlocked = accepted || stale || data.edits.submitting || data.generating === true ||
+        (!presentation.reliable && counts.accepted > 0 && counts.accepted !== presentation.changes.length);
     const allResolved = counts.pending === 0 && presentation.changes.length > 0;
 
     return <div className="flex min-h-0 flex-1 flex-col">
@@ -175,15 +179,16 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
             presentation={presentation}
             counts={counts}
             stale={stale}
-            accepted={accepted}
             displayMode={displayMode}
             setDisplayMode={setDisplayMode}
             highlightChanges={highlightChanges}
             setHighlightChanges={setHighlightChanges}
             rejectAll={rejectAll}
-            acceptAll={acceptAll}
-            applyAccepted={applyAccepted}
+            markAllAccepted={markAllAccepted}
+            resetAllDecisions={resetAllDecisions}
+            applyDecisions={applyDecisions}
             acceptanceBlocked={acceptanceBlocked}
+            bulkBlocked={accepted || stale || data.edits.submitting || data.generating === true}
             allResolved={allResolved}
             moveChange={moveChange}
             openWrite={openWrite}
@@ -202,13 +207,13 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                     highlight={highlightChanges} />
                 {presentation.changes.length === 0
                     ? (
-                        <EmptyState title={intl.formatMessage({ id: "views.proposalNoChanges" })}>
-                            <Button variant="secondary" onClick={dismissProposal}>{intl.formatMessage({ id: "views.dismissProposal" })}</Button>
-                        </EmptyState>
+                        <EmptyState title={intl.formatMessage({ id: "views.proposalNoChanges" })} />
                     )
                     : presentation.reliable && !stale && (
                         <div className="mt-3 space-y-3">{presentation.changes.map((change, index) => {
                             const decision = decisions[change.id] ?? "pending";
+                            const proposed = data.edits.replacements[change.id] ?? change.proposalLines.join("\n");
+                            const edited = proposed !== change.proposalLines.join("\n");
                             const decisionStyles = {
                                 accepted: "border-success bg-success-soft",
                                 rejected: "border-danger bg-danger-soft",
@@ -241,14 +246,15 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                                             <Button
                                                 variant="secondary"
                                                 state={decision === "rejected" ? "error" : "default"}
-                                                disabled={accepted || stale}
+                                                disabled={acceptanceBlocked || !presentation.reliable}
                                                 onClick={() => setDecision(change.id, "rejected")}
                                             >
                                                 {intl.formatMessage({ id: "views.rejectChange" })}
                                             </Button>
                                             <Button
+                                                variant="secondary"
                                                 state={decision === "accepted" ? "success" : "default"}
-                                                disabled={accepted || stale}
+                                                disabled={acceptanceBlocked || !presentation.reliable}
                                                 onClick={() => setDecision(change.id, "accepted")}
                                             >
                                                 {intl.formatMessage({ id: "views.acceptChange" })}
@@ -257,24 +263,22 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                                     </div>
                                     <div className="mt-4 flex min-h-9 items-start gap-2 border-y border-border py-3 text-sm" aria-live="polite">
                                         <AssistantIcon className="mt-0.5 size-4 shrink-0 text-brand" />
-                                        {data.typography?.changes.some((item) => item.changeId === change.id) ? (
-                                            <TypographyChangeSupport typography={data.typography} changeId={change.id} />
-                                        ) : (
-                                            <p>
-                                                {summaries?.[change.id] ??
-                                                    (summaryState === "loading"
-                                                        ? intl.formatMessage({ id: "views.proposalSummaryLoading" })
-                                                        : intl.formatMessage({ id: "views.proposalSummaryUnavailable" }))}
-                                            </p>
-                                        )}
+                                        <ProposalChangeSupport
+                                            edited={edited}
+                                            typography={data.typography}
+                                            changeId={change.id}
+                                            summary={summaries?.[change.id]}
+                                            loading={summaryState === "loading"} />
                                     </div>
                                     <div className="mt-4">
-                                        <ProposalDiff
+                                        <ProposalChangeDiff
                                             decision={decision}
                                             original={change.baseLines.join("\n")}
-                                            proposed={change.proposalLines.join("\n")}
+                                            proposed={proposed}
                                             layout={displayMode === "side-by-side" ? "columns" : "stacked"}
                                             highlight={highlightChanges}
+                                            editing={{ index: index + 1, disabled: acceptanceBlocked,
+                                                setText: (text) => actions.setReplacement(change.id, text) }}
                                         />
                                     </div>
                                 </article>
@@ -296,7 +300,7 @@ function ProposalFallbackDiff({ review, reliable, stale, displayMode, highlight 
 
     return <div className="mt-4">
         {!reliable && <Banner className="mb-3" tone="warning">{intl.formatMessage({ id: "views.proposalFallback" })}</Banner>}
-        <ProposalDiff
+        <ProposalChangeDiff
             original={review.baseContent}
             proposed={review.proposedContent}
             layout={displayMode === "side-by-side" ? "columns" : "stacked"}

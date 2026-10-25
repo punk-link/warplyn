@@ -16,6 +16,7 @@ export interface ProposalBase {
     accepted?: true;
     typography?: import("@skladno/shared").TypographyReview;
     recoveredAt?: string;
+    acceptedReplacements?: Record<string, string>;
 }
 
 

@@ -263,7 +263,7 @@ async function* streamEditorialOperation(request: EditorialServiceRequest, conte
             const result = context.style
                 ? { ...event, ...reviewTypography(source, event.text, context.style.profile, event.styleReview, Boolean(request.editorial.reviewMode)) }
                 : event;
-            validateProposalResult(source, result.text, request.editorial.skill?.execution);
+            validateProposalResult(source, result.text, request.editorial.skill?.execution, context.article.title, request.editorial.operation);
             completed = true;
             const editorialArtifactId = onCompleted(result);
 
