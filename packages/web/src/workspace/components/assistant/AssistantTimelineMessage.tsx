@@ -166,7 +166,7 @@ function getAvailableMessageActions(message: AssistantMessage, skillId: string |
         review: Boolean(view && message.status !== "rejected"),
         folder: Boolean(message.role !== "author" && skillId === BUILT_IN_SKILL.SKILL_CREATOR && message.status === "completed" && message.requestId && openSkillFolder),
         retry: Boolean((message.status === "failed" || message.status === "cancelled") && message.requestId && onRetry),
-        apply: Boolean(message.status === "completed" && message.editCandidate && !message.appliedEdit && applyEdit),
+        apply: Boolean(!view && message.status === "completed" && message.editCandidate && !message.appliedEdit && applyEdit),
     };
 }
 
@@ -296,8 +296,20 @@ export function AssistantTimelineMessage({ message, factCheckClaims, openView, o
                 visible={!authorMessage}
                 content={messageContent}
                 handoffOwnsContent={handoffOwnsContent} />
-            {message.editCandidate?.target === "selection" && <div className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.editOriginal" })}<pre className="max-h-32 overflow-auto whitespace-pre-wrap text-sm text-ink">{message.editCandidate.original}</pre></div>}
-            {message.editCandidate && <div className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "assistant.editReplacement" })}<pre className="max-h-52 overflow-auto whitespace-pre-wrap rounded-control border border-border bg-surface-raised p-2 text-sm text-ink">{message.editCandidate.replacement}</pre></div>}
+            {!handoffOwnsContent && message.editCandidate?.target === "selection" && (
+                <div className="mt-2 text-xs text-muted">
+                    {intl.formatMessage({ id: "assistant.editOriginal" })}
+                    <pre className="max-h-32 overflow-auto whitespace-pre-wrap text-sm text-ink">{message.editCandidate.original}</pre>
+                </div>
+            )}
+            {!handoffOwnsContent && message.editCandidate && (
+                <div className="mt-2 text-xs text-muted">
+                    {intl.formatMessage({ id: "assistant.editReplacement" })}
+                    <pre className="max-h-52 overflow-auto whitespace-pre-wrap rounded-control border border-border bg-surface-raised p-2 text-sm text-ink">
+                        {message.editCandidate.replacement}
+                    </pre>
+                </div>
+            )}
             {factCheckClaims?.length ? <FactCheckClaims claims={factCheckClaims} embedded className="mt-3" /> : null}
         </div>
         <AssistantMessageMetadata

@@ -55,7 +55,12 @@ test("bounded selection questions and replacements preserve neighboring Article 
     await page.getByRole("button", { name: "Quick actions" }).click();
     await page.getByRole("option", { name: "Improve flow and clarity" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
-    await page.getByRole("button", { name: "Apply to selection" }).click();
+    await expect(page.getByRole("button", { name: "Apply to selection" })).toHaveCount(0);
+    await page.getByRole("button", { name: "Review Proposal", exact: true }).click();
+    await page.getByRole("button", { name: "Set all decisions…" }).click();
+    await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await page.getByRole("tab", { name: "Write", exact: true }).click();
     await page.reload();
     await expect(editor).toContainText("The ledger is the shared repair log.");
     await expect(editor).toContainText("The ledger helped.");

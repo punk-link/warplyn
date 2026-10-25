@@ -260,7 +260,7 @@
             "capabilityIds": ["editorial-workflows.assistant-panel-streaming"],
             "preconditions": ["An Assistant request is streaming in the Assistant timeline."],
             "event": "The provider sends partial Markdown text, then stages and completes a conversational or review response.",
-            "expected": ["Incomplete text remains hidden, completed blocks retain their rendered identity, and a review response becomes one result card without its full artifact body.", "Streaming does not pull a reader who has scrolled upward; completion exposes its outcome control unless focus is within the Assistant."],
+            "expected": ["Incomplete text remains hidden, completed blocks retain their rendered identity, and a review response becomes one result card without its full artifact body. Proposal replacements and acceptance controls belong to Proposal Review; chat exposes only the review handoff.", "Streaming does not pull a reader who has scrolled upward; completion exposes its outcome control unless focus is within the Assistant."],
             "forbidden": ["An empty completion frame or duplicate Proposal content beside its review handoff."],
             "evidence": { "kind": "automated", "path": "packages/web/src/workspace/EditorialWorkspace.assistant-proposals.test.tsx" }
         },

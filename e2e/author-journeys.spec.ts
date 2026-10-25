@@ -424,7 +424,7 @@ test("the Assistant Lexical composer supports skill tags and slash invocation", 
 });
 
 
-test("a completed selection suggestion applies once from the Assistant reply", async ({ page }) => {
+test("a completed selection suggestion is approved through Proposal Review", async ({ page }) => {
     await page.goto("/");
     await createArticle(page);
     const editor = page.getByRole("textbox", { name: "Article draft" });
@@ -434,11 +434,14 @@ test("a completed selection suggestion applies once from the Assistant reply", a
     await page.getByRole("button", { name: "Quick actions" }).click();
     await page.getByRole("option", { name: "Improve flow and clarity" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
-    await expect(page.getByRole("button", { name: "Apply to selection" })).toBeVisible();
-    await page.getByRole("button", { name: "Apply to selection" }).click();
-    await expect(editor).toContainText("Improved fixture Article.");
-    await expect(page.getByText("Applied as a new Revision")).toBeVisible();
     await expect(page.getByRole("button", { name: "Apply to selection" })).toHaveCount(0);
+    await expect(page.getByText("Suggested replacement", { exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "Review Proposal", exact: true }).click();
+    await page.getByRole("button", { name: "Set all decisions…" }).click();
+    await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await page.getByRole("tab", { name: "Write", exact: true }).click();
+    await expect(editor).toContainText("Improved fixture Article.");
 });
 
 
@@ -472,11 +475,15 @@ test("an untagged edit request uses the Article and survives reload after Author
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("Change ё to е");
     await page.getByRole("button", { name: "Send editorial request" }).click();
 
-    await expect(page.getByRole("button", { name: "Replace Article" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Review Proposal", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Replace Article" })).toHaveCount(0);
     await expect(editor).toContainText("ё first. ё second.");
-    await page.getByRole("button", { name: "Replace Article" }).click();
+    await page.getByRole("button", { name: "Review Proposal", exact: true }).click();
+    await page.getByRole("button", { name: "Set all decisions…" }).click();
+    await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await page.getByRole("tab", { name: "Write", exact: true }).click();
     await expect(editor).toContainText("е first. е second.");
-    await expect(page.getByText("Applied as a new Revision")).toBeVisible();
 
     await page.reload();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("е first. е second.");

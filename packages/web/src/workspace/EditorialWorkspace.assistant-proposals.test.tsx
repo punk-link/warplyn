@@ -19,6 +19,7 @@ describe("Editorial Workspace assistant", () => {
         let finish: (() => void) | undefined;
         let completed = false;
         client.listAssistantMessages = vi.fn().mockImplementation(async () => completed ? [{
+            editCandidate: { target: "article" as const, replacement: "Replacement owned by Proposal Review" },
             id: "proposal-message", articleId: "one", requestId: "request", role: "assistant" as const, kind: "response" as const, status: "completed" as const, responseKind: "proposal_prepared" as const, content: "Full Proposal", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z",
         }] : []);
         client.streamAssistantRequest = vi.fn(async (_articleId, _input, onEvent) => new Promise<void>((resolve) => {
@@ -54,6 +55,8 @@ describe("Editorial Workspace assistant", () => {
         act(() => finish?.());
         await waitFor(() => expect(screen.getAllByRole("button", { name: "Review Proposal" })).toHaveLength(1));
         expect(screen.queryByText("Full Proposal")).toBeNull();
+        expect(screen.queryByText("Replacement owned by Proposal Review")).toBeNull();
+        expect(screen.queryByRole("button", { name: "Replace Article" })).toBeNull();
     });
 
     it("restores the latest completed Proposal Review from local Assistant records", async () => {

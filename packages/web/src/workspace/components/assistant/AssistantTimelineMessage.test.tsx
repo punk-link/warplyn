@@ -40,7 +40,7 @@ describe("AssistantTimelineMessage", () => {
             role: "assistant",
             kind: "response",
             status: "completed",
-            responseKind: "proposal_prepared",
+            responseKind: "editorial_conversation",
             editCandidate: { target: "selection", original: "Original text", replacement: "Exact replacement" },
             createdAt: "2026-01-01T00:00:00.000Z",
             updatedAt: "2026-01-01T00:00:00.000Z",
@@ -82,6 +82,26 @@ describe("AssistantTimelineMessage", () => {
             applyEdit={applyEdit} />
         </IntlProvider>);
         expect(within(view.container).queryByRole("button", { name: "Replace Article" })).toBeNull();
+    });
+
+    it.each(["article", "selection"] as const)("hands a %s replacement to Proposal Review without showing or applying it in chat", async (target) => {
+        const openView = vi.fn();
+        const applyEdit = vi.fn();
+        const view = renderMessage({
+            id: "proposal", articleId: "article", requestId: "request", role: "assistant", kind: "response",
+            status: "completed", responseKind: "proposal_prepared", content: "Generated proposal body",
+            editCandidate: { target, original: "Original passage", replacement: "Generated replacement" },
+            createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z",
+        }, { openView, applyEdit });
+        const scope = within(view.container);
+        expect(scope.queryByText("Generated proposal body")).toBeNull();
+        expect(scope.queryByText("Original passage")).toBeNull();
+        expect(scope.queryByText("Generated replacement")).toBeNull();
+        const applyReplacementPattern = /Replace Article|Apply to selection/;
+        expect(scope.queryByRole("button", { name: applyReplacementPattern })).toBeNull();
+        await userEvent.setup().click(scope.getByRole("button", { name: "Review Proposal" }));
+        expect(openView).toHaveBeenCalledWith("proposal");
+        expect(applyEdit).not.toHaveBeenCalled();
     });
     it("replaces Markdown when a response body changes", async () => {
         const view = render(<IntlProvider locale="en" messages={messages}><AssistantMarkdown content="First response." /></IntlProvider>);
