@@ -13,7 +13,8 @@ import { productReleaseChanges } from "./release-notes-product-context.mjs";
 
 
 const ordinary = { security: false, securityReason: "", securityCommits: [] };
-const draft = { ...ordinary, maintenanceOnly: false, entries: [{ text: "Review typography without an AI connection.", commits: ["abc"] }] };
+const draft = { ...ordinary, maintenanceOnly: false,
+    entries: [{ text: "Review typography without an AI connection.", commits: ["abc"], bugFix: false }] };
 
 
 function completed(value = draft) {
@@ -42,6 +43,18 @@ test("generation uses the dedicated secret, disables storage, and validates stru
 });
 
 
+test("generated bug fixes render separately from other changes", async () => {
+    const fix = { text: "Recover Drafts after restarting.", commits: ["abc"], bugFix: true };
+    const value = { ...draft, entries: [fix, ...draft.entries] };
+    const result = await generateReleaseNotes({ apiKey: "test-secret", context: {}, commits: ["abc"],
+        fetchResponse: async () => new Response(JSON.stringify(completed(value))) });
+    assert.equal(renderReleaseNotes({ ...result, reviewed: true }, new Set(["abc"])),
+        "## Changes\n\n- Review typography without an AI connection.\n\n## Bug fixes\n\n- Recover Drafts after restarting.");
+    assert.equal(renderReleaseNotes({ ...result, reviewed: true, entries: [fix] }, new Set(["abc"])),
+        "## Bug fixes\n\n- Recover Drafts after restarting.");
+});
+
+
 test("failed, incomplete, refused, malformed, duplicated, and unsupported output is rejected", async () => {
     const variants = [
         { status: "incomplete", output: completed().output },
@@ -50,6 +63,8 @@ test("failed, incomplete, refused, malformed, duplicated, and unsupported output
         { status: "completed", output: [{ type: "message", status: "completed", content: [{ type: "refusal", refusal: "No" }] }] },
         completed({ ...draft, entries: [{ text: "Invented", commits: ["unknown"] }] }),
         completed({ ...draft, entries: [draft.entries[0], draft.entries[0]] }),
+        completed({ ...draft, entries: [{ ...draft.entries[0], bugFix: "true" }] }),
+        completed({ ...draft, entries: [{ text: "Missing classification", commits: ["abc"] }] }),
         completed({ ...draft, reviewed: true }),
         completed({ ...draft, security: "true" }),
         completed({ ...draft, security: true }),
@@ -141,7 +156,7 @@ test("preparation saves only valid completed drafts and never grants model-gener
 test("preparation preserves an evidenced security suggestion without approving it", async (t) => {
     const record = repository(t);
     const security = { maintenanceOnly: false, security: true, securityReason: "Fixes an Article import vulnerability.",
-        securityCommits: [record.sourceCommit], entries: [{ text: "Import Articles safely.", commits: [record.sourceCommit] }] };
+        securityCommits: [record.sourceCommit], entries: [{ text: "Import Articles safely.", commits: [record.sourceCommit], bugFix: true }] };
     const result = await prepareReleaseNotes({ cwd: record.cwd, version: "0.6.0-preview.1", releases: [], previousTag: record.previousTag,
         generate: (evidence) => generateReleaseNotes({ ...evidence, apiKey: "test-secret",
             fetchResponse: async () => new Response(JSON.stringify(completed(security))) }) });

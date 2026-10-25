@@ -11,6 +11,7 @@ const maintenanceMessage = "This release contains maintenance changes with no ch
 
 function validateEntry(entry, commits) {
     assert(entry && typeof entry.text === "string" && entry.text.trim(), "Each summary entry needs plain-language text.");
+    assert(entry.bugFix === undefined || typeof entry.bugFix === "boolean", "Set entry bugFix to true or false.");
     assert.equal(entry.text, entry.text.trim(), "Remove leading or trailing whitespace from summary entries.");
     assert(!unsafeTextPattern.test(entry.text), "Use plain text without HTML, URLs, Markdown formatting, or line breaks in entries.");
     assert(![...entry.text].some((character) => character.charCodeAt(0) < 32), "Remove control characters and line breaks from entries.");
@@ -42,9 +43,19 @@ export function renderReleaseDraft(record, commits) {
     }
 
     validateSecurityClassification(record, commits);
-    const body = record.maintenanceOnly ? maintenanceMessage : record.entries.map((entry) => `- ${entry.text}`).join("\n");
+    const body = record.maintenanceOnly ? maintenanceMessage : renderChangeSections(record.entries);
     assert(body.length <= 8000, "Release summary exceeds 8,000 characters. Shorten it before publication.");
     return body;
+}
+
+
+function renderChangeSections(entries) {
+    const changes = entries.filter((entry) => !entry.bugFix).map((entry) => `- ${entry.text}`).join("\n");
+    const fixes = entries.filter((entry) => entry.bugFix).map((entry) => `- ${entry.text}`).join("\n");
+    if (!fixes)
+        return changes;
+
+    return [changes && `## Changes\n\n${changes}`, `## Bug fixes\n\n${fixes}`].filter(Boolean).join("\n\n");
 }
 
 
