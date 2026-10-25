@@ -10,7 +10,7 @@ import { ArticleRevisionConflictError } from "../../../application/articles/arti
 import { deleteArticle, reorderPinnedArticles, setArticleArchived, setArticlePinned } from "./article-library-operations.js";
 import { throwArticleNotFound, throwInvalidArticleRequest, requireArticleTitle, throwRevisionNotFound, throwUnsupportedPublishingProfile } from "./article-repository-errors.js";
 import { mapArticleFromRow, articleSelect } from "./article-record-mappers.js";
-import { getArticleRevision, insertArticleRevision, listArticleRevisions } from "./article-revision-queries.js";
+import { getArticleRevision, insertArticleRevision, listArticleRevisions, setGeneratedRevisionDescription } from "./article-revision-queries.js";
 import { acceptTranslationRefresh, validateTranslationArtifact } from "./translation-refresh-acceptance.js";
 import { createId, getCurrentTimestamp, type Row } from "./repository-utils.js";
 import { resolveAcceptedCorrections } from "./accepted-corrections-resolution.js";
@@ -149,6 +149,11 @@ export class ArticlesRepository {
 
     setGeneratedTitle(articleId: string, revisionId: string, title: string): boolean {
         return setGeneratedArticleTitle(this.database, articleId, revisionId, title);
+    }
+
+
+    setGeneratedRevisionDescription(articleId: string, revisionId: string, description: string): void {
+        setGeneratedRevisionDescription(this.database, articleId, revisionId, description);
     }
 
 

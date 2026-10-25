@@ -16,6 +16,8 @@ An Article points to its current immutable Revision. Editing creates a mutable D
 
 Proposals and advisory Findings record their base Revision and become stale when the current Revision changes. Stale output cannot change content. Accepting a valid Proposal creates one Revision; rejecting or resolving advisory output creates none.
 
+Proposal acceptance commits with a deterministic local history description before generating a concise description in the background. Completed generated descriptions are stored separately by Revision ID and preferred on subsequent reads. Revision rows, content, provenance, and timestamps remain immutable. Failure, cancellation, shutdown, or deletion leaves the committed fallback recoverable; background work is not retried after restart.
+
 Proposal Review keeps Author replacements in temporary renderer state keyed to stable generated change IDs. Acceptance records only accepted replacements in immutable Revision provenance for read-only recovery; generated artifacts remain unchanged. The acceptance transaction preserves protected spans from the selected generated result, allowing intentional generated fact corrections. Edited fact-correction wording does not automatically resolve Findings; exact generated full acceptance retains its existing resolution checks.
 
 Restoration appends a new Revision with source provenance. It never rewrites history. Conflicting or retained Drafts remain recoverable until the Author explicitly chooses which text to use.

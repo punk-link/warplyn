@@ -156,7 +156,8 @@ test("new content Revisions persist a generated description or a local fallback"
         content: "after",
         provenance: { kind: "accepted-proposal" },
     }, new AbortController().signal);
-    assert.equal(described.description, "Clarified opening");
+    assert.equal(described.description, "Removed 1 characters");
+    assert.equal(repositories.articles.getRevision(article.id, described.id)?.description, "Clarified opening");
 
     const cancellation = new AbortController();
     cancellation.abort();

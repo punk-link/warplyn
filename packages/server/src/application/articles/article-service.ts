@@ -118,8 +118,24 @@ export class ArticleService {
 
 
     async acceptProposalWithDescription(articleId: string, input: AcceptProposalInput, signal: AbortSignal): Promise<ArticleRevision> {
-        const revision = this.store.acceptProposal(articleId, input, await this.describeChange(articleId, input.content, input.interfaceLocale ?? defaultInterfaceLocale, signal));
+        const previousContent = this.store.getArticle(articleId)?.currentRevision.content ?? "";
+        const revision = this.store.acceptProposal(articleId, input, fallbackDescription(previousContent, input.content));
+        void this.describeAcceptedRevision(revision, previousContent, input.interfaceLocale ?? defaultInterfaceLocale, signal);
         return this.completeRevisionPromotion(revision, signal);
+    }
+
+
+    private async describeAcceptedRevision(revision: ArticleRevision, previousContent: string, locale: string, signal: AbortSignal): Promise<void> {
+        try {
+            const boundedSignal = AbortSignal.any([signal, AbortSignal.timeout(15000)]);
+            boundedSignal.throwIfAborted();
+            const description = await this.tryGenerateRevisionDescription(previousContent, revision.content, locale, boundedSignal);
+            boundedSignal.throwIfAborted();
+            if (description)
+                this.store.setGeneratedRevisionDescription(revision.articleId, revision.id, description);
+        } catch {
+            // Acceptance is already committed; keep its fallback if generation or persistence fails.
+        }
     }
 
 
@@ -157,15 +173,7 @@ export class ArticleService {
         if (generatedDescription)
             return generatedDescription;
 
-        const previousLength = Array.from(previousContent).length;
-        const nextLength = Array.from(content).length;
-        if (nextLength > previousLength)
-            return `Added ${nextLength - previousLength} characters`;
-
-        if (nextLength < previousLength)
-            return `Removed ${previousLength - nextLength} characters`;
-
-        return "Updated Article";
+        return fallbackDescription(previousContent, content);
     }
 
 
@@ -176,4 +184,16 @@ export class ArticleService {
             return undefined;
         }
     }
+}
+
+
+function fallbackDescription(previousContent: string, content: string): string {
+    const difference = Array.from(content).length - Array.from(previousContent).length;
+    if (difference > 0)
+        return `Added ${difference} characters`;
+
+    if (difference < 0)
+        return `Removed ${-difference} characters`;
+
+    return "Updated Article";
 }

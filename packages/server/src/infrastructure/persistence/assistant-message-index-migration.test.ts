@@ -44,7 +44,13 @@ test("upgrading schema 22 indexes request messages without changing Author recor
         }
 
         const persistence = createTestPersistence(database);
-        const article = persistence.articleService.createArticle({ title: "Migration fixture", content: "Retained Article content." });
+        const article = { id: "legacy-article", currentRevisionId: "legacy-revision" };
+        database.prepare("INSERT INTO articles (id, title, created_at, updated_at) VALUES (?, ?, ?, ?)")
+            .run(article.id, "Migration fixture", "2026-10-03", "2026-10-03");
+        database.prepare("INSERT INTO article_revisions (id, article_id, content, provenance_json, created_at) VALUES (?, ?, ?, ?, ?)")
+            .run(article.currentRevisionId, article.id, "Retained Article content.", "{}", "2026-10-03");
+        database.prepare("UPDATE articles SET current_revision_id = ? WHERE id = ?").run(article.currentRevisionId, article.id);
+        persistence.assistant.ensureGreeting(article.id);
         persistence.assistant.createRequest({ id: "legacy-request", articleId: article.id, authorMessage: "Review this paragraph.", scope: { kind: "article", baseRevisionId: article.currentRevisionId } });
         persistence.assistant.completeRequest({ requestId: "legacy-request", articleId: article.id, responseKind: "proposal_prepared", content: "Retained reply." });
         const before = readAuthorRecords(database);
@@ -54,11 +60,14 @@ test("upgrading schema 22 indexes request messages without changing Author recor
         assert.deepEqual(readAuthorRecords(database), before);
         assert.equal(createTestPersistence(database).assistant.getRequest("legacy-request")?.authorMessage, "Review this paragraph.");
         assert.equal(database.prepare("SELECT COUNT(*) AS count FROM schema_migrations WHERE version = 23").get()?.count, 1);
+        assert.equal(database.prepare("SELECT COUNT(*) AS count FROM schema_migrations WHERE version = 26").get()?.count, 1);
+        createTestPersistence(database).articles.setGeneratedRevisionDescription(article.id, article.currentRevisionId, "Retained description");
         assertRequestQueriesUseIndex(database);
         database.close();
 
         database = openDatabase(path);
         assert.deepEqual(readAuthorRecords(database), before);
+        assert.equal(createTestPersistence(database).articles.getRevision(article.id, article.currentRevisionId)?.description, "Retained description");
         assertRequestQueriesUseIndex(database);
     } finally {
         database.close();

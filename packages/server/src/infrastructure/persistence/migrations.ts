@@ -308,4 +308,12 @@ export const migrations = [
             DEFAULT '{"version":1,"languages":{}}';
             ALTER TABLE article_style_rules ADD COLUMN typography_json TEXT;`,
     },
+    {
+        version: 26,
+        name: "generated_revision_descriptions",
+        sql: `CREATE TABLE generated_revision_descriptions (
+            revision_id TEXT PRIMARY KEY REFERENCES article_revisions(id) ON DELETE CASCADE,
+            description TEXT NOT NULL
+        );`,
+    },
 ] as const;

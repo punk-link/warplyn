@@ -6,14 +6,24 @@ import type { Row } from "./repository-utils.js";
 
 
 export function listArticleRevisions(database: SqliteDatabase, articleId: string): ArticleRevision[] {
-    return (database.prepare("SELECT * FROM article_revisions WHERE article_id = ? ORDER BY created_at ASC, id ASC").all(articleId) as Row[]).map(mapRevisionFromRow);
+    return (database.prepare(`${revisionSelect} WHERE r.article_id = ? ORDER BY r.created_at, r.id`).all(articleId) as Row[]).map(mapRevisionFromRow);
 }
 
 
 export function getArticleRevision(database: SqliteDatabase, articleId: string, revisionId: string): ArticleRevision | undefined {
-    const row = database.prepare("SELECT * FROM article_revisions WHERE id = ? AND article_id = ?").get(revisionId, articleId) as Row | undefined;
+    const row = database.prepare(`${revisionSelect} WHERE r.id = ? AND r.article_id = ?`).get(revisionId, articleId) as Row | undefined;
 
     return row && mapRevisionFromRow(row);
+}
+
+
+const revisionSelect = `SELECT r.*, g.description generated_description FROM article_revisions r
+    LEFT JOIN generated_revision_descriptions g ON g.revision_id = r.id`;
+
+
+export function setGeneratedRevisionDescription(database: SqliteDatabase, articleId: string, revisionId: string, description: string): void {
+    database.prepare(`INSERT OR IGNORE INTO generated_revision_descriptions (revision_id, description)
+        SELECT id, ? FROM article_revisions WHERE id = ? AND article_id = ?`).run(description, revisionId, articleId);
 }
 
 

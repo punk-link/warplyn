@@ -10,10 +10,12 @@ export function listArticleSummaries(database: SqliteDatabase): ArticleSummary[]
 
 
 export function listRevisionSummaries(database: SqliteDatabase, articleId: string): ArticleRevisionSummary[] {
-    const rows = database.prepare((`SELECT id, article_id, length(replace(content, char(0), char(1))) AS character_count, created_at, description, provenance_json, restored_from_revision_id
-        FROM article_revisions
-        WHERE article_id = ?
-        ORDER BY created_at, id`)).all(articleId) as Row[];
+    const rows = database.prepare((`SELECT r.id, r.article_id, length(replace(r.content, char(0), char(1))) AS character_count,
+        r.created_at, COALESCE(g.description, r.description) description, r.provenance_json, r.restored_from_revision_id
+        FROM article_revisions r
+        LEFT JOIN generated_revision_descriptions g ON g.revision_id = r.id
+        WHERE r.article_id = ?
+        ORDER BY r.created_at, r.id`)).all(articleId) as Row[];
     return rows.map((row) => ({
         id: String(row.id), articleId: String(row.article_id), createdAt: String(row.created_at),
         provenance: parseObject(row.provenance_json), characterCount: Number(row.character_count),
