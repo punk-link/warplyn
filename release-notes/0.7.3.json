@@ -1,0 +1,53 @@
+{
+    "version": "0.7.3",
+    "previousTag": "v0.7.2",
+    "previousCommit": "60ee448338b7ff1ab6e647cf560997effb7b4b1e",
+    "baseline": "published",
+    "sourceCommit": "ad1b567aca0be3d7df19a1ae65e4ea66ab45b7e6",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "text": "See an update’s version and release details beside its actions in Settings, with a consistently sized update control in the Article Library footer.",
+            "commits": [
+                "536e14bb7cc3c532f0b899672defb0c21b7daaf0"
+            ]
+        },
+        {
+            "text": "When you ask the Assistant to work on selected text, it can use up to 500 characters of read-only text on either side for context. Before sending, the composer explains that this additional text is shared with your provider; only the selection can be replaced.",
+            "commits": [
+                "7d9db352859823744d1b285e322e3a09e2b67738"
+            ]
+        },
+        {
+            "text": "Edit proposed wording during review while keeping the original text unchanged. Decide changes individually or mark all accepted, mark all rejected, or reset decisions. Apply accepted changes to create a Revision; applying an all-rejected review closes it without changing the Article. Applying changes returns you to Write.",
+            "commits": [
+                "137899c272b2364699dfbef36db769b098c43ed2",
+                "4f0c712706ae6dc7fd0e5bdb6b2fb751814c3855",
+                "829d121e811015e7d5beeb7b332b399cb8e634a5",
+                "38b239dc7c595710771a616c4370db5bdacf16e3"
+            ]
+        },
+        {
+            "text": "Proposal generation rejects body text that repeats the Article title as though it were part of the body.",
+            "commits": [
+                "1c6989c70c2efd8fac11336820ff6640874e25f5"
+            ]
+        },
+        {
+            "text": "See your message while the Assistant prepares your request.",
+            "commits": [
+                "e4c1741a1c919909eb719e23abaa706475d7f97c"
+            ]
+        },
+        {
+            "text": "New author guides explain built-in Skills for drafting, revising, fact checking, style review, terminology checks, and translation.",
+            "commits": [
+                "5f237a8839ab5fce175b09fd3f0a22f6ea92581a"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
