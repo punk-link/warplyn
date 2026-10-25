@@ -22,7 +22,32 @@ export function preservesProtectedContent(source: string, replacement: string): 
 }
 
 
-export function validateProposalResult(source: string, replacement: string, execution?: SkillExecution): void {
+function normalizeTitleLine(line: string): string {
+    const headingPrefix = /^#{1,6}\s+/u;
+    const closingHeading = /\s+#+$/u;
+    const emphasisWrapper = /^(\*\*|__|\*|_)(.*)\1$/u;
+    return line.trim().replace(headingPrefix, "").replace(closingHeading, "").replace(emphasisWrapper, "$2").trim().normalize("NFC");
+}
+
+
+function validateBodyTitle(source: string, replacement: string, title: string): void {
+    const normalizedTitle = normalizeTitleLine(title);
+    if (!normalizedTitle)
+        return;
+
+    const countTitleLines = (text: string) => text.split("\n").filter((line) => normalizeTitleLine(line) === normalizedTitle).length;
+    if (countTitleLines(replacement) > countTitleLines(source))
+        throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
+}
+
+
+const bodyOutputKinds = new Set(["flow_revision", "thesis_to_narrative", "style_review", "generate_proposal", "generate_finding_corrections"]);
+
+
+export function validateProposalResult(source: string, replacement: string, execution?: SkillExecution, articleTitle = "", outputKind = ""): void {
+    if (bodyOutputKinds.has(outputKind))
+        validateBodyTitle(source, replacement, articleTitle);
+
     if (execution?.capability !== "generate_proposal" || execution.resultPolicy !== "shorter_preserving_content")
         return;
 

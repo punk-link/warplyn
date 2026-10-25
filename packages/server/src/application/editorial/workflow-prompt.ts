@@ -208,6 +208,14 @@ function createReplacementPrompt(input: EditorialPromptInput): ModelMessage[] {
 
 export function createEditorialMessages(input: EditorialPromptInput): ModelMessage[] {
     const messages = createSourceMessages(input);
+    if (input.operation !== EDITORIAL_OPERATION.TRANSLATION && input.operation !== EDITORIAL_OPERATION.FACT_CHECK)
+        messages.push({
+            role: "system",
+            content: "Application output contract: return Article body Markdown only, or body Markdown in the structured proposal field. " +
+                "The Article title is managed separately and is context only. Do not add a title, title label, Proposal heading, " +
+                "response commentary, or a code fence wrapping the response. Preserve headings and code fences belonging to the source body.",
+        });
+
     if (input.articleSelection && input.selectionContext)
         messages.push({ role: "user", content: formatSelectionContext(input.selectionContext) });
 

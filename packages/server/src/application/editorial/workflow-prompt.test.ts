@@ -48,6 +48,9 @@ test("Author Skills receive authoritative context policy without instructions in
         assert.ok(String(system?.content).startsWith(skillInstructions));
         assert.ok(String(system?.content).endsWith(selectionContextPolicy));
         assert.ok(!String(system?.content).includes("UNTRUSTED NEIGHBOR"));
+        const bodyOnlyContract = messages.find((message) => String(message.content).startsWith("Application output contract:"));
+        assert.ok(String(bodyOnlyContract?.content).includes("Article body Markdown only"));
+        assert.ok(String(bodyOnlyContract?.content).includes("Do not add a title, title label, Proposal heading"));
         assert.ok(messages.some((message) => message.role === "user" && String(message.content).includes("UNTRUSTED NEIGHBOR")));
         assert.ok(!getPromptText({ ...input, articleSelection: false }).includes(selectionContextPolicy));
     }

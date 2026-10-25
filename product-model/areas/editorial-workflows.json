@@ -134,6 +134,16 @@
     ],
     "scenarios": [
         {
+            "id": "editorial-workflows.proposal-body-only",
+            "title": "Copied Article titles cannot become body Proposals",
+            "capabilityIds": ["editorial-workflows.flow-revision"],
+            "preconditions": ["An Article has a separate title and a saved body."],
+            "event": "Direct Editorial or Assistant generation returns a new standalone copy of that title in the proposed body.",
+            "expected": ["Completion rejects the invalid output before persisting a Proposal. The Article, title, and Revision history stay unchanged."],
+            "forbidden": ["Persisting the copied title as a new body change or silently removing existing Author content."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/presentation/editorial-integration.proposal-body.test.ts" }
+        },
+        {
             "id": "editorial-workflows.technical-terminology-review",
             "title": "Terminology review keeps sourced findings and Author overrides separate from Article edits",
             "capabilityIds": ["editorial-workflows.technical-terminology"],

@@ -298,7 +298,8 @@ export class AssistantService {
 
 
     private async authorizeCompletedEdit(request: PreparedAssistantRequest, event: Extract<EditorialEngineEvent, { type: "completed" }>, signal: AbortSignal): Promise<void> {
-        validateProposalResult(getAssistantArticleExcerpt(request), event.text, request.resolvedSkill?.execution);
+        validateProposalResult(getAssistantArticleExcerpt(request), event.text, request.resolvedSkill?.execution, request.article.title,
+            request.execution.completedCapability);
         if (request.execution.completedCapability !== "generate_proposal" || requiresProposalReview(request.resolvedSkill?.execution))
             return;
 
