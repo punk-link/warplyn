@@ -24,6 +24,10 @@ Use **Manual rules** to describe preferences the Assistant should follow. For ex
 
 After changing samples or guidance, choose **Rebuild profile** to refresh detected characteristics. The profile shows which samples it used and when it was rebuilt. Until then, detected characteristics may reflect the previous set of samples. Style review *Findings* are advice and remain separate from the *Article* text.
 
+[![Style Profile Manual rules screen showing a global rule about Ana’s point of view and the Rebuild profile control.](/images/style-profile-rules.png)](/images/style-profile-rules.png)
+
+*Example manual rule in Style Profile.*
+
 ::: details Example manual rule
 Add scenes that show Ana’s close point of view and quiet imagery, exclude anything you do not want used, then rebuild the profile. Add a rule such as “Keep the narration close to Ana’s point of view” when that preference should apply even if the samples do not demonstrate it clearly.
 :::

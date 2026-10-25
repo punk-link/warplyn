@@ -12,6 +12,10 @@ Choose **New article** in the Library to begin. Rename the *Article* from its ti
 
 Warplyn saves your current *Draft* automatically as you edit. A *Draft* checkpoint is recoverable working text, not a new item in Revision History. Check the save-state indicator in the Article Status Bar if you need to know whether recent edits have been checkpointed. Warplyn also saves a pending checkpoint when you switch *Articles* or open Settings.
 
+[![Writing workspace showing The River at Dusk in the editor, formatting toolbar, Library, and Saved Draft indicator.](/images/writing-workspace.png)](/images/writing-workspace.png)
+
+*Example Article saved as a Draft in the writing workspace.*
+
 Choose **Save revision** when you want to keep the current *Draft* as a named point in its history. Saving a *Revision* does not remove earlier *Revisions*. For help when local text and a saved *Draft* no longer match, see [Reviewing Articles](reviewing-articles.md#recover-a-draft).
 
 ## Find and organize Articles

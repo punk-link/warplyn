@@ -6,6 +6,10 @@ description: "Review proposed edits, browse Article history, and recover earlier
 
 The Editorial Assistant can suggest changes, but you decide what enters an *Article*. **Proposal Review** lets you inspect changes before they become a *Revision*.
 
+[![Proposal Review showing three pending changes with Original and Proposed text, individual decisions, and the Apply control.](/images/proposal-review.png)](/images/proposal-review.png)
+
+*Example Proposal Review for The River at Dusk.*
+
 ## Review a Proposal
 
 Open **Proposal Review** from the Assistant result card or the Workspace Tab Bar. Read the changes and any preservation warnings. Switch between side-by-side and stacked comparison if one is easier to read, and turn **Highlight changes** on when you want changed wording marked in both versions. Check names, numbers, claims, links, and voice in the changed text before accepting it.
