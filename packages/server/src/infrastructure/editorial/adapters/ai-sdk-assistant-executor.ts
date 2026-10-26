@@ -1,6 +1,6 @@
 import { isStepCount, ToolLoopAgent, type LanguageModel, type TextStreamPart, type ToolSet } from "ai";
 import { randomUUID } from "node:crypto";
-import type { AiProvider, ReasoningEffort } from "@skladno/shared";
+import type { AiProvider, ReasoningEffort, TelemetryCaptureSource } from "@skladno/shared";
 
 import type { EditorialAssistantRequest } from "../../../application/editorial/engine/editorial-assistant-request.js";
 import type { EditorialEngineEvent } from "../../../application/editorial/engine/editorial-engine-event.js";
@@ -13,6 +13,7 @@ import { selectionContextPolicy } from "../../../application/editorial/selection
 
 
 interface AiSdkAssistantExecutorOptions {
+    telemetry?: TelemetryCaptureSource;
     languageModel: LanguageModel;
     provider: AiProvider;
     storeResponses: boolean;
@@ -141,7 +142,9 @@ export class AiSdkAssistantExecutor {
         const providerOptions = getEditorialProviderOptions(this.options);
 
         return new ToolLoopAgent<never, ToolSet>({
-            ...createAiSdkGenerationOptions({ model: this.options.languageModel, signal, providerOptions, stage: "assistant_step" }),
+            ...createAiSdkGenerationOptions({
+                model: this.options.languageModel, signal, providerOptions, stage: "assistant_step", telemetry: this.options.telemetry,
+            }),
             instructions: createAssistantInstructions(request),
             tools,
             activeTools: getActiveTools(),

@@ -1,5 +1,5 @@
 import type { LanguageModel } from "ai";
-import { AI_PROVIDER, type AiProvider, type ReasoningEffort } from "@skladno/shared";
+import { AI_PROVIDER, type AiProvider, type ReasoningEffort, type TelemetryCaptureSource } from "@skladno/shared";
 
 import { getOpenAiResponseId, getOpenAiResponsesProviderOptions, type OpenAiResponsesProviderOptions } from "./openai-responses.js";
 import { getAiStageDiagnostics } from "./ai-stage-diagnostics.js";
@@ -16,13 +16,16 @@ export function isAcceptedFinish(reason: string): boolean {
 export type SupportingTextProviderOptions = OpenAiResponsesProviderOptions | undefined;
 
 
-export function createAiSdkGenerationOptions({ model, signal, providerOptions, stage = "editorial_generation" }: { model: LanguageModel; signal: AbortSignal; providerOptions?: SupportingTextProviderOptions; stage?: Parameters<typeof getAiStageDiagnostics>[0] }) {
+export function createAiSdkGenerationOptions({ model, signal, providerOptions, stage = "editorial_generation", telemetry }: {
+    model: LanguageModel; signal: AbortSignal; providerOptions?: SupportingTextProviderOptions;
+    stage?: Parameters<typeof getAiStageDiagnostics>[0]; telemetry?: TelemetryCaptureSource;
+}) {
     return {
         model,
         abortSignal: signal,
         telemetry: { isEnabled: false },
         providerOptions,
-        ...getAiStageDiagnostics(stage),
+        ...getAiStageDiagnostics(stage, telemetry, signal),
     };
 }
 

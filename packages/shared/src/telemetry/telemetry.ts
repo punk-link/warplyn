@@ -1,12 +1,14 @@
-export const telemetrySchemaVersion = 1;
+export const telemetrySchemaVersion = 2;
 
 export type TelemetryFailureCategory = "configuration" | "network" | "persistence" | "cancelled" | "unknown";
 export type TelemetryOperation = "assistant" | "thesis_to_narrative" | "flow_revision" | "fact_check" | "style_review" | "translation";
 export type TelemetryTermination = "crashed" | "killed" | "oom" | "launch_failed" | "integrity_failure" | "abnormal_exit";
+export type TelemetryAiStage = "assistant_step" | "editorial_generation" | "action_intent_verification" | "replacement_verification";
 
 export type TelemetryEvent =
     | { kind: "app_session_started" }
     | { kind: "ai_operation_finished"; operation: TelemetryOperation; outcome: "completed" | "failed" | "cancelled"; elapsedMs: number; failure?: TelemetryFailureCategory }
+    | { kind: "ai_stage_finished"; stage: TelemetryAiStage; outcome: "completed" | "failed" | "cancelled"; elapsedMs: number }
     | { kind: "proposal_reviewed"; decision: "accepted" | "rejected" }
     | { kind: "draft_checkpoint_finished"; attempts: number; successes: number; failures: number; elapsedMs: number; failure?: TelemetryFailureCategory }
     | { kind: "backup_finished"; outcome: "completed" | "failed"; elapsedMs: number; failure?: TelemetryFailureCategory }
@@ -156,6 +158,12 @@ export function isTelemetryEvent(value: unknown): value is TelemetryEvent {
             return isAppFailure(candidate);
         case "ai_operation_finished":
             return isAiOperationFinished(candidate);
+        case "ai_stage_finished":
+            return hasOnly(candidate, ["kind", "stage", "outcome", "elapsedMs"]) &&
+                typeof candidate.stage === "string" &&
+                ["assistant_step", "editorial_generation", "action_intent_verification", "replacement_verification"].includes(candidate.stage) &&
+                (candidate.outcome === "completed" || candidate.outcome === "failed" || candidate.outcome === "cancelled") &&
+                isDuration(candidate.elapsedMs);
         case "draft_checkpoint_finished":
             return isDraftCheckpointFinished(candidate);
         case "backup_finished":

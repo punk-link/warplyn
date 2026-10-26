@@ -58,6 +58,45 @@ function createOwner(runtimePath: string, { osVersion, environment = {} }: { osV
 
 
 // Product scenarios: settings.telemetry-consent
+test("AI stage timings reach PostHog only while their captured consent remains valid", async () => {
+    const root = mkdtempSync(join(tmpdir(), "warplyn-stage-telemetry-"));
+    const tasks = scheduler();
+    const bodies: string[] = [];
+    const owner = createOwner(join(root, "runtime-settings.json"), { environment: {
+        fetch: async (_input, init) => {
+            bodies.push(String(init?.body));
+            return new Response(null, { status: 200 });
+        },
+        scheduleTimeout: tasks.schedule,
+        clearScheduledTimeout: tasks.clear,
+    } });
+    const event = { kind: "ai_stage_finished", stage: "editorial_generation", outcome: "completed", elapsedMs: 1500 } as const;
+    try {
+        const capture = owner.beginCapture();
+        capture(event);
+        await tasks.run();
+        const payload = JSON.parse(bodies[0]!);
+        assert.equal(payload.batch[0].event, "ai_stage_finished");
+        assert.equal(payload.batch[0].properties.elapsedMs, 1500);
+        assert.equal(payload.batch[0].properties.stage, "editorial_generation");
+        assert.equal(payload.batch[0].properties.appVersion, "0.1.0");
+        assert.equal(payload.batch[0].properties.schemaVersion, 2);
+        owner.setConsent(false);
+        const disabledCapture = owner.beginCapture();
+        owner.setConsent(true);
+        capture(event);
+        disabledCapture(event);
+        await tasks.run();
+        assert.equal(bodies.length, 2);
+        assert.ok(JSON.parse(bodies[1]!).batch.every((item: { event: string }) => item.event !== "ai_stage_finished"));
+    } finally {
+        owner.dispose();
+        rmSync(root, { recursive: true, force: true });
+    }
+});
+
+
+// Product scenarios: settings.telemetry-consent
 test("beta telemetry starts enabled, reports trusted OS version, and clears identity on opt-out", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-telemetry-test-"));
     const runtimePath = join(root, "runtime-settings.json");

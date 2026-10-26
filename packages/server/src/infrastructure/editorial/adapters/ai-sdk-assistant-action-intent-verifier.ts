@@ -1,6 +1,6 @@
 import { generateText, Output, type LanguageModel } from "ai";
 import { z } from "zod";
-import type { AssistantAuthorizedAction } from "@skladno/shared";
+import type { AssistantAuthorizedAction, TelemetryCaptureSource } from "@skladno/shared";
 
 import type { AssistantActionIntentVerifier } from "../../../application/editorial/assistant-action-intent-verifier.js";
 import { createAiSdkGenerationOptions, createProviderError, isAcceptedFinish } from "./ai-sdk-provider.js";
@@ -11,7 +11,11 @@ const resultSchema = z.object({ authorized: z.boolean() });
 
 
 export class AiSdkAssistantActionIntentVerifier implements AssistantActionIntentVerifier {
-    constructor(private readonly model: LanguageModel, private readonly providerOptions: SupportingTextProviderOptions = undefined) { }
+    constructor(
+        private readonly model: LanguageModel,
+        private readonly providerOptions: SupportingTextProviderOptions = undefined,
+        private readonly telemetry?: TelemetryCaptureSource,
+    ) { }
 
 
     async verify(message: string, capability: AssistantAuthorizedAction, input: Readonly<Record<string, string>>, signal: AbortSignal): Promise<boolean> {
@@ -39,7 +43,7 @@ export class AiSdkAssistantActionIntentVerifier implements AssistantActionIntent
 
 
     private async generateAuthorization({ stage, signal, system, prompt }: { stage: "action_intent_verification" | "replacement_verification"; signal: AbortSignal; system: string; prompt: string }): Promise<boolean> {
-        const options = createAiSdkGenerationOptions({ model: this.model, signal, providerOptions: this.providerOptions, stage });
+        const options = createAiSdkGenerationOptions({ model: this.model, signal, providerOptions: this.providerOptions, stage, telemetry: this.telemetry });
         try {
             const result = await generateText({ ...options, system, prompt, output: Output.object({ schema: resultSchema }) });
             return isAcceptedFinish(result.finishReason) && result.output?.authorized === true;

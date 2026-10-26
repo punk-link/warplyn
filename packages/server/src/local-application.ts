@@ -46,7 +46,7 @@ export function createLocalApplication(config: ServerConfig = loadServerConfig()
     const assistant = new AssistantRepository(database);
     const credentialStore = createCredentialStore();
     const modelDiscovery = new AiConnectionModelDiscoveryService();
-    const engines = new ConfiguredEditorialEngineResolver(config, settings, credentialStore);
+    const engines = new ConfiguredEditorialEngineResolver(config, settings, credentialStore, telemetry);
 
     assistant.seedGreetings();
 

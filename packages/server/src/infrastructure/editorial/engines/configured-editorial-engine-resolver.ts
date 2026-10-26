@@ -13,6 +13,7 @@ import type { CredentialStore } from "../../../application/settings/credential-s
 import { createProviderModel } from "../adapters/provider-model.js";
 import { EditorialModelCapabilityPolicy } from "../policies/editorial-model-capability-policy.js";
 import { getSupportingTextProviderOptions } from "../adapters/ai-sdk-provider.js";
+import type { TelemetryCaptureSource } from "@skladno/shared";
 
 
 interface ResolvedConnection {
@@ -39,6 +40,7 @@ export class ConfiguredEditorialEngineResolver implements EditorialEngineResolve
         private readonly config: ServerConfig,
         private readonly settings: SettingsStore,
         private readonly credentialStore?: CredentialStore,
+        private readonly telemetry?: TelemetryCaptureSource,
     ) { }
 
 
@@ -57,6 +59,7 @@ export class ConfiguredEditorialEngineResolver implements EditorialEngineResolve
         const matchConfiguration = operation === EDITORIAL_OPERATION.FACT_CHECK ? this.resolveAppModelConnection() : undefined;
         return createEditorialEngine({
             ...connection,
+            telemetry: this.telemetry,
             model,
             storeResponses: this.config.aiSessionContinuationEnabled,
             sourcedResearch: this.modelCapabilities.getCapabilities(connection.provider, model).sourcedResearch,
@@ -74,6 +77,7 @@ export class ConfiguredEditorialEngineResolver implements EditorialEngineResolve
         const capabilities = this.modelCapabilities.getCapabilities(configuration.provider, configuration.model);
         return createEditorialEngine({
             ...configuration,
+            telemetry: this.telemetry,
             storeResponses: this.config.aiSessionContinuationEnabled,
             sourcedResearch: capabilities.sourcedResearch,
             matchModel: createProviderModel(configuration),
@@ -111,7 +115,8 @@ export class ConfiguredEditorialEngineResolver implements EditorialEngineResolve
     resolveAssistantActionIntentVerifier() {
         const configuration = this.resolveAppModelConnection();
         return configuration
-            ? new AiSdkAssistantActionIntentVerifier(createProviderModel(configuration), getSupportingTextProviderOptions(configuration.provider, configuration.reasoningEffort))
+            ? new AiSdkAssistantActionIntentVerifier(createProviderModel(configuration),
+                getSupportingTextProviderOptions(configuration.provider, configuration.reasoningEffort), this.telemetry)
             : undefined;
     }
 

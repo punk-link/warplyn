@@ -25,3 +25,19 @@ test("telemetry captures retain their start time and safely no-op without an obs
     assert.deepEqual(events, [event]);
     assert.ok(timed.elapsedMs() >= 0);
 });
+
+
+test("AI stage timings reject private fields and unbounded values", () => {
+    const event = { kind: "ai_stage_finished", stage: "replacement_verification", outcome: "completed", elapsedMs: 1200 };
+    assert.equal(isTelemetryEvent(event), true);
+    for (const extra of [{ prompt: "private" }, { model: "private" }, { requestId: "private" }, { tokenUsage: 12 }])
+        assert.equal(isTelemetryEvent({ ...event, ...extra }), false);
+
+    for (const stage of ["private stage", {}, null])
+        assert.equal(isTelemetryEvent({ ...event, stage }), false);
+
+    for (const elapsedMs of [-1, NaN, Infinity, 86_400_001])
+        assert.equal(isTelemetryEvent({ ...event, elapsedMs }), false);
+
+    assert.equal(isTelemetryEvent({ ...event, outcome: "private" }), false);
+});

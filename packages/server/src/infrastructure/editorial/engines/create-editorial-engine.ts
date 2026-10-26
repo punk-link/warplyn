@@ -1,4 +1,4 @@
-import { AI_PROVIDER, type AiProvider } from "@skladno/shared";
+import { AI_PROVIDER, type AiProvider, type TelemetryCaptureSource } from "@skladno/shared";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogle } from "@ai-sdk/google";
@@ -81,11 +81,15 @@ async function researchClaims(claims: { claim: string }[], research: (claim: str
 }
 
 
-export function createEditorialEngine(options: { apiKey: string; provider: AiProvider; model: string; storeResponses: boolean; sourcedResearch: boolean; connectionId?: string; reasoningEffort?: "low" | "medium" | "high"; matchModel?: LanguageModel }): EditorialEngine {
+export function createEditorialEngine(options: {
+    apiKey: string; provider: AiProvider; model: string; storeResponses: boolean; sourcedResearch: boolean; connectionId?: string;
+    reasoningEffort?: "low" | "medium" | "high"; matchModel?: LanguageModel; telemetry?: TelemetryCaptureSource;
+}): EditorialEngine {
     const factCheckProvider = createFactCheckProvider(options);
 
     return new AiSdkEditorialEngine({
         provider: options.provider,
+        telemetry: options.telemetry,
         languageModel: createProviderModel(options),
         factCheckProvider,
         storeResponses: options.storeResponses,

@@ -1,6 +1,6 @@
 import { generateText, Output, streamText, type LanguageModel, type ModelMessage, type SystemModelMessage } from "ai";
 import { randomUUID } from "node:crypto";
-import { BUILT_IN_SKILL, EDITORIAL_OPERATION, type AiProvider } from "@skladno/shared";
+import { BUILT_IN_SKILL, EDITORIAL_OPERATION, type AiProvider, type TelemetryCaptureSource } from "@skladno/shared";
 
 import type { EditorialConversationRequest } from "../../../application/editorial/engine/editorial-conversation-request.js";
 import type { EditorialAssistantRequest } from "../../../application/editorial/engine/editorial-assistant-request.js";
@@ -26,6 +26,7 @@ export { createAssistantConversationPrompt, getAssistantStepOptions } from "../a
 
 
 interface AiSdkEditorialEngineOptions {
+    telemetry?: TelemetryCaptureSource;
     provider: AiProvider;
     languageModel: LanguageModel;
     factCheckProvider?: FactCheckProvider;
@@ -152,6 +153,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
         return {
             ...createAiSdkGenerationOptions({
                 model: this.options.languageModel,
+                telemetry: this.options.telemetry,
                 signal,
                 providerOptions: getEditorialProviderOptions({
                     provider: this.options.provider,

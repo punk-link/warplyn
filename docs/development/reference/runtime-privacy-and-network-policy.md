@@ -37,6 +37,8 @@ Provider-stage records allow only fixed stage names, elapsed milliseconds, allow
 
 Remote telemetry is separate from local diagnostics and uses only a versioned allowlisted contract. It never forwards diagnostic context or stdout/stderr. Public-beta consent is installation-local and default-on; Authors can revoke it at any time, and saved opt-out preferences are respected.
 
+Schema version 2 adds `ai_stage_finished` for fixed stages `assistant_step`, `editorial_generation`, `action_intent_verification`, and `replacement_verification`. Its only operation data is stage, elapsed milliseconds, and a completed, failed, or cancelled outcome. It uses the existing consent owner and bounded PostHog queue. It sends no prompts, output, Article or request identifiers, provider metadata, model names, or token usage. AI SDK telemetry remains disabled; these events are constructed independently of SDK tracing payloads.
+
 Only packaged Electron exposes finite telemetry consent and event operations through a separate context-isolated desktop client. Main validates the sender, request shape, and event schema and rechecks consent. Browser and development runtimes do not fall back to remote telemetry. Missing delivery configuration is a runtime no-op.
 
 The release workflow packages the approved public capture key and fixes delivery to `https://us.i.posthog.com/batch`; it never packages an admin token. A telemetry-enabled release requires configured delivery even though runtime absence remains safe. Use the [release guide](../guides/mvp-release-and-recovery.md) for authorized account, retention, IP-handling, payload, opt-out, and offline checks.

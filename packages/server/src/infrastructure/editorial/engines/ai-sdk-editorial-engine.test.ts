@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { LanguageModelV3StreamPart } from "@ai-sdk/provider";
-import { AI_PROVIDER, BUILT_IN_SKILL, EDITORIAL_OPERATION } from "@skladno/shared";
+import { AI_PROVIDER, BUILT_IN_SKILL, EDITORIAL_OPERATION, type TelemetryEvent } from "@skladno/shared";
 import { MockLanguageModelV3 } from "ai/test";
 
 import { EDITORIAL_ENGINE_EVENT } from "../../../application/editorial/engine/editorial-engine-events.js";
@@ -62,6 +62,7 @@ test("a resolved skill must call its artifact tool before it can answer", () => 
 
 
 test("editorial prompts route system messages through AI SDK 7 instructions", async () => {
+    const telemetry: TelemetryEvent[] = [];
     const model = new MockLanguageModelV3({
         doStream: {
             stream: new ReadableStream<LanguageModelV3StreamPart>({
@@ -82,7 +83,8 @@ test("editorial prompts route system messages through AI SDK 7 instructions", as
             }),
         },
     });
-    const engine = new AiSdkEditorialEngine({ provider: AI_PROVIDER.OPENAI, languageModel: model, storeResponses: false });
+    const engine = new AiSdkEditorialEngine({ provider: AI_PROVIDER.OPENAI, languageModel: model, storeResponses: false,
+        telemetry: { beginCapture: () => (event) => telemetry.push(event) } });
     const events = [];
 
     for await (const event of engine.stream({
@@ -93,6 +95,10 @@ test("editorial prompts route system messages through AI SDK 7 instructions", as
         events.push(event.type);
 
     assert.deepEqual(events, [EDITORIAL_ENGINE_EVENT.TEXT_DELTA, EDITORIAL_ENGINE_EVENT.COMPLETED]);
+    assert.equal(telemetry.length, 1);
+    assert.ok(telemetry[0]?.kind === "ai_stage_finished");
+    assert.equal(telemetry[0].stage, "editorial_generation");
+    assert.equal(telemetry[0].outcome, "completed");
 });
 
 
