@@ -98,7 +98,7 @@ function prepareEditorialStream(articles: EditorialArticleStore, sessions: Edito
 
     const factCheck = request.editorial.operation === EDITORIAL_OPERATION.FACT_CHECK;
     const translation = request.editorial.operation === EDITORIAL_OPERATION.TRANSLATION;
-    const style = prepareStyleReviewContext(request.editorial, styleCorpus, article, request.styleContext);
+    const style = prepareStyleReviewContext(request.editorial, styleCorpus, article, request.styleContext, request.articleContext.targetLanguage);
 
     const engine: EditorialEngine | undefined = request.editorial.reviewMode
         ? new TypographyLocalEngine()

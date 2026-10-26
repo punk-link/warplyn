@@ -149,11 +149,10 @@ function createStyleReviewPrompt(input: EditorialPromptInput): ModelMessage[] {
                 "Use only supplied typography conventions; do not default to English for an unspecified language.\n\n" +
                 `Supplied corpus traits:\n${formatStyleTraits(input.styleProfile)}\n\nGlobal rules:\n` +
                 `${formatNumberedRules(input.styleProfile.rules.manual, "global-rule")}\n\n` +
-                `Contextual typography rules:\n${
-                    input.styleProfile.rules.typography
-                        .filter((rule) => rule.definition.kind === "contextual")
-                        .map((rule) => `${typographyRuleId(rule)}: ${typographyRuleLabel(rule)}`)
-                        .join("\n") || "None"
+                `Contextual typography rules:\n${input.styleProfile.rules.typography
+                    .filter((rule) => rule.definition.kind === "contextual")
+                    .map((rule) => `${typographyRuleId(rule)}: ${typographyRuleLabel(rule)}`)
+                    .join("\n") || "None"
                 }\n` +
                 "Mechanical typography is checked locally after your Proposal. Preserve numbers, code, URLs, and quoted words. " +
                 "If guidance conflicts, leave disputed text unchanged and explain which supplied rules need clarification in a Finding.\n\n" +
@@ -168,10 +167,14 @@ function createTranslationPrompt(input: EditorialPromptInput): ModelMessage[] {
     if (!input.targetLanguage?.trim())
         throw new ApplicationServiceError(APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED, HTTP_STATUS.BAD_REQUEST);
 
+    const typography = input.styleProfile?.rules.typography
+        .filter((rule) => rule.definition.kind === "contextual")
+        .map((rule) => `${typographyRuleId(rule)}: ${typographyRuleLabel(rule)}`).join("\n");
+
     return [
         {
             role: "system",
-            content: getSkillInstructions(input)
+            content: getSkillInstructions(input) + (typography ? `\n\nTarget language typography rules:\n${typography}` : "")
         },
         {
             role: "user",

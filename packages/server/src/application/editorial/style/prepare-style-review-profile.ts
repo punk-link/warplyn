@@ -1,4 +1,4 @@
-import { APPLICATION_ERROR, EDITORIAL_OPERATION, HTTP_STATUS, type StyleCorpus, type StyleProfile } from "@skladno/shared";
+import { APPLICATION_ERROR, EDITORIAL_OPERATION, HTTP_STATUS, normalizeWritingLanguage, type StyleCorpus, type StyleProfile } from "@skladno/shared";
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import type { EditorialServiceRequest } from "../editorial-request.js";
@@ -45,7 +45,16 @@ export function prepareStyleReviewContext(
     store: Parameters<typeof prepareStyleReviewProfile>[1] & { getArticleStyleRules(id: string): string },
     article: { id: string; language?: string },
     captured?: EditorialServiceRequest["styleContext"],
+    targetLanguage?: string,
 ): EditorialServiceRequest["styleContext"] {
+    if (editorial.operation === EDITORIAL_OPERATION.TRANSLATION) {
+        const profile = store.getStyleCorpus().profile;
+        if (!profile)
+            return undefined;
+
+        return { profile: captureStyleTypography(profile, normalizeWritingLanguage(targetLanguage)), articleRules: "" };
+    }
+
     if (editorial.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
         return undefined;
 

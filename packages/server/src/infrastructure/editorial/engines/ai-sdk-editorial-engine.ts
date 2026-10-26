@@ -244,6 +244,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
             article: protectedArticle.protectedText,
             articleTitle: protectedTitle.protectedText,
             authorContext: request.authorContext,
+            styleProfile: request.styleProfile,
             skill: request.skill,
             targetLanguage
         });

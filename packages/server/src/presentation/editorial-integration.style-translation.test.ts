@@ -5,6 +5,34 @@ import { EDITORIAL_ENGINE_EVENT } from "../application/editorial/engine/editoria
 import { FixtureEngine, withService } from "./editorial-integration.test-utils.js";
 
 // Product scenarios: editorial-workflows.translation-preserves-source
+test("translation applies target typography without source Article overrides", async () => {
+    const engine = new FixtureEngine([{
+        type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "dash-translation", text: "An email—of course. `a—b`",
+        translation: { targetLanguage: "English", protectedSpans: ["`a—b`"], title: "Email" },
+    }]);
+    await withService(engine, async (baseUrl, repositories) => {
+        repositories.styleCorpus.setTypographyConfiguration({ language: "en", preferences: {
+            rules: [{ id: "dash", definition: { kind: "dash", mark: "—", spacing: "space" } }], disabled: [],
+        } });
+        const source = repositories.articleService.createArticle({ title: "Source", content: "Source text", language: "ru" });
+        repositories.styleCorpus.setTypographyConfiguration({ articleId: source.id, language: "ru", preferences: {
+            rules: [{ id: "dash", definition: { kind: "dash", mark: "—", spacing: "none" } }], disabled: [],
+        } });
+        for (const targetLanguage of ["English", "German"]) {
+            const response = await fetch(`${baseUrl}/api/articles/${source.id}/editorial`, {
+                method: HTTP_METHOD.POST, headers: { "content-type": "application/json" },
+                body: JSON.stringify({ requestId: crypto.randomUUID(), operation: "translation", targetLanguage }),
+            });
+            const body = await response.text();
+            assert.ok(body.includes(targetLanguage === "English" ? "An email — of course. `a—b`" : "An email—of course. `a—b`"), body);
+        }
+
+        assert.equal(repositories.articles.getArticle(source.id)?.currentRevision.content, "Source text");
+        const proposals = repositories.editorialArtifacts.listEditorialArtifacts(source.id).map((artifact) => JSON.parse(artifact.content).proposal);
+        assert.ok(proposals.includes("An email — of course. `a—b`"));
+    });
+});
+
 test("style review uses a compact local profile and saves cited findings as a proposal", async () => {
     const engine = new FixtureEngine([
         {

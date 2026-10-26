@@ -310,7 +310,7 @@
             "capabilityIds": ["editorial-workflows.translation-request"],
             "preconditions": ["The author explicitly requests a translation target language."],
             "event": "The translation operation completes and the author creates its linked Article." ,
-            "expected": ["The linked translation retains source metadata and protected spans."],
+            "expected": ["The linked translation retains source metadata and protected spans. Completed translation bodies apply configured target-language typography locally, without inheriting source Article overrides or conventions from other languages."],
             "forbidden": ["Overwriting the source Article."],
             "evidence": { "kind": "automated", "path": "packages/server/src/presentation/editorial-integration.style-translation.test.ts" }
         },
