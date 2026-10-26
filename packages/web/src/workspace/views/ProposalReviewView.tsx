@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useViewPreference } from "../state/useViewPreference.js";
 import { type TextProposal } from "@skladno/shared";
 import { Banner, Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
@@ -150,8 +151,8 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
         dismissWarnings, openWrite, openAssistant } = actions;
     const intl = useIntl();
     const cards = useRef<(HTMLElement | null)[]>([]);
-    const [displayMode, setDisplayMode] = useState<"side-by-side" | "stacked">("side-by-side");
-    const [highlightChanges, setHighlightChanges] = useState(false);
+    const [displayMode, setDisplayMode] = useViewPreference<"side-by-side" | "stacked">("proposal.layout", "side-by-side", ["side-by-side", "stacked"]);
+    const [highlightChanges, setHighlightChanges] = useViewPreference("proposal.highlight-changes", false, [false, true]);
     const [currentChange, setCurrentChange] = useState<number>();
 
 

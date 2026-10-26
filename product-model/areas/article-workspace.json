@@ -133,7 +133,7 @@
                 "scripts/web-import-boundaries.mjs"
             ],
             "contract": "Each View has stable tab and panel identifiers, labels, and Arrow, Home, and End navigation; actionable and stale Workspace Tab badges use visible text rather than dots, accepted Proposals show no Review badge, and every scrollable supporting View uses the shared quiet scrollbar.",
-            "persistence": "Active View is a local workspace preference; results retain their Article and base Revision."
+            "persistence": "Active View is a local workspace preference; results retain their Article and base Revision. Proposal layout and change highlighting, plus Translation layout and source/translation text visibility, are independent local display preferences shared across Articles and restored after navigation and restart. Invalid saved display preferences fall back to defaults."
         },
         {
             "id": "workspace.editor.markdown-surface",
@@ -248,7 +248,7 @@
                 "packages/web/src/workspace/state/article-workspace-state.ts"
             ],
             "contract": "New translation… confirms supported target languages, preselecting the viewed language or configured defaults. The dialog identifies the source Article and Revision, explains Draft promotion and preservation of earlier results, and requires renewed review if the source snapshot changes. Generation uses the whole Article. All completed unrejected proposals remain available, with one tab per language and a result selector identifying generation time and source Revision. Initial load selects the latest result for the preferred language; a new completion selects the new result, while failure or cancellation preserves selection. Freshness and protected-span validity belong to the selected result. Creation, refresh, and confirmed rejection target exact result identity. Rejection preserves sibling proposals and accepted history and falls back to another available result. A stale source blocks creation of an independent linked Article. The selected language provides context for grouped Edit, Update, and Reject actions. Edit opens its existing linked Article, including when the proposal is stale, or creates an Article only when no linked translation exists. No repeated linked-Article list or target dropdown appears in the workspace. An Author may explicitly accept a reviewed proposal into a named existing translation as a new immutable Revision, preserving its title and history; source or target Revision changes, rejected or invalid output, mismatched language, and retained target Drafts block acceptance. Update names the target in confirmation; previously created duplicates can be selected there.",
-            "persistence": "Independent Article with source Article and Revision linkage; completed results recover from Assistant messages and artifacts. Selected language is a local workspace preference per Article; older result selection is session-local.",
+            "persistence": "Independent Article with source Article and Revision linkage; completed results recover from Assistant messages and artifacts. Selected language is a local workspace preference per Article; older result selection is session-local. Translation layout and source/translation text visibility are local display preferences shared across Articles and restored after navigation and restart.",
             "relatedCapabilityIds": ["history-and-publishing.translations", "editorial-workflows.translation-request"]
         },
         {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useViewPreference } from "../state/useViewPreference.js";
 import { getPublishingLength } from "@skladno/shared";
 import { TranslationsHeader } from "./TranslationsHeader.js";
 import { TranslationsNavigation } from "./TranslationsNavigation.js";
@@ -33,8 +34,8 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
     const [rejectionLanguage, setRejectionLanguage] = useState<string>();
     const [rejectionId, setRejectionId] = useState<string>();
     const [generationOpen, setGenerationOpen] = useState(false);
-    const [displayMode, setDisplayMode] = useState<"side-by-side" | "aligned">("side-by-side");
-    const [visibleText, setVisibleText] = useState<"source" | "translation">("source");
+    const [displayMode, setDisplayMode] = useViewPreference<"side-by-side" | "aligned">("translations.layout", "side-by-side", ["side-by-side", "aligned"]);
+    const [visibleText, setVisibleText] = useViewPreference<"source" | "translation">("translations.visible-text", "source", ["source", "translation"]);
     const languages = [...new Set([...translations.map((result) => result.metadata.targetLanguage), ...linkedTranslations.map((linked) => getProviderLanguageName(linked.language ?? ""))])];
     const { translation, language, results, selectResult } = useTranslationResultSelection(translations, selectedTargetLanguage, selectTargetLanguage, languages);
     const linkedTranslation = linkedTranslations.find((linked) => getProviderLanguageName(linked.language ?? "") === language);

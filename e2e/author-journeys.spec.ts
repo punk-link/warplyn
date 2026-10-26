@@ -149,6 +149,8 @@ test("Shorten text stays a Proposal until acceptance and survives reload", async
     await page.getByRole("tab", { name: proposalPattern }).click();
     await expect(page.getByRole("textbox", { name: "Proposed text for change 1" })).toHaveValue("Retries need clear limits.");
     await expect(page.getByRole("textbox", { name: "Proposed text for change 1" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Stacked", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("button", { name: "Highlight changes", exact: true })).toHaveAttribute("aria-pressed", "true");
 });
 
 
