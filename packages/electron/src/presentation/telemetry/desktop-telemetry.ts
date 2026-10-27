@@ -37,6 +37,7 @@ function captureRequest(candidate: Record<string, unknown>): { method: "capture"
     const generation = candidate.generation;
     if (candidate.method === "capture" &&
         isTelemetryEvent(candidate.event) &&
+        !("operationId" in candidate.event) &&
         (generation === undefined || typeof generation === "number" && Number.isSafeInteger(generation) && generation >= 0) &&
         Object.keys(candidate).every((key) => key === "method" || key === "event" || key === "generation")
     )

@@ -19,6 +19,12 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
     let state: OwnerState = { generation: 0, sessionStartedGeneration: -1, disposed: false };
 
     initializeSupportedInstallationTelemetryDefault(runtimePath, delivery.supported);
+    const initial = getTelemetryConsent();
+
+    if (initial.enabled && initial.installationId)
+        delivery.start(initial.installationId);
+    else
+        delivery.stop();
 
 
     function getTelemetryConsent(): TelemetryConsent {
@@ -95,6 +101,10 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
 
             updateRuntimeSettings(runtimePath, (runtime) => ({ ...runtime, telemetry: { consent: "granted", installationId: randomUUID() } }));
             state = { ...state, generation: state.generation + 1 };
+            const consent = getTelemetryConsent();
+            if (consent.installationId)
+                delivery.start(consent.installationId);
+
             capture({ kind: "app_session_started" });
 
             return getTelemetryConsent();
@@ -102,7 +112,8 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
         capture,
         dispose: () => {
             state = { ...state, disposed: true };
-            stop();
+            state = { ...state, generation: state.generation + 1 };
+            delivery.suspend();
         },
     };
 }

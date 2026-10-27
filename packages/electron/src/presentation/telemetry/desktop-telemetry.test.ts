@@ -24,6 +24,10 @@ test("telemetry IPC rejects unauthorized senders and unknown properties", async 
     try {
         assert.deepEqual(await handler?.({ sender: "other" }, { method: "getConsent" }), { ok: false, error: "invalid_request" });
         assert.deepEqual(await handler?.({ sender: "trusted" }, { method: "capture", event: { kind: "proposal_reviewed", decision: "accepted", articleId: "private" } }), { ok: false, error: "invalid_request" });
+        assert.deepEqual(await handler?.({ sender: "trusted" }, { method: "capture", event: {
+            kind: "ai_stage_finished", stage: "assistant_step", outcome: "failed", elapsedMs: 1,
+            operationId: "6f5592a1-831d-4d66-aad0-21f31f104732",
+        } }), { ok: false, error: "invalid_request" });
         assert.equal(typeof (await handler?.({ sender: "trusted" }, { method: "beginCapture" }) as { value: unknown }).value, "number");
         const result = await handler?.({ sender: "trusted" }, { method: "setConsent", enabled: true }) as { ok: boolean; value: { enabled: boolean; supported: boolean; installationId?: string } };
         assert.equal(result.ok, true);

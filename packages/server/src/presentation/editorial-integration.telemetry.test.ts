@@ -53,8 +53,52 @@ test("a failed direct Editorial operation records one safe failure", async () =>
     assert.equal(events.length, 1);
     const [event] = events;
     assert.ok(event?.kind === "ai_operation_finished");
-    assert.deepEqual({ kind: event.kind, operation: event.operation, outcome: event.outcome, failure: event.failure }, { kind: "ai_operation_finished", operation: "flow_revision", outcome: "failed", failure: "unknown" });
+    assert.deepEqual({ kind: event.kind, operation: event.operation, outcome: event.outcome, failure: event.failure },
+        { kind: "ai_operation_finished", operation: "flow_revision", outcome: "failed", failure: "incomplete_stream" });
     assert.equal(typeof event.elapsedMs, "number");
+});
+
+
+test("Editorial preparation failure correlates its stage and terminal event", async () => {
+    const events: TelemetryEvent[] = [];
+    const telemetry = { beginCapture: () => (event: TelemetryEvent) => events.push(event) };
+    await withService(undefined, async (baseUrl, repositories) => {
+        const article = repositories.articleService.createArticle({ title: "Draft", content: "Private Article content" });
+        await fetch(`${baseUrl}/api/articles/${article.id}/editorial`, {
+            method: HTTP_METHOD.POST,
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ requestId: "private-request", operation: EDITORIAL_OPERATION.FLOW_REVISION }),
+        });
+    }, true, undefined, telemetry);
+    const stage = events.find((event) => event.kind === "ai_stage_finished");
+    const terminal = events.find((event) => event.kind === "ai_operation_finished");
+    assert.ok(stage?.kind === "ai_stage_finished" && terminal?.kind === "ai_operation_finished");
+    assert.equal(stage.stage, "request_preparation");
+    assert.ok(stage.operationId);
+    assert.equal(stage.operationId, terminal.operationId);
+});
+
+
+test("an Assistant failure records its safe category", async () => {
+    const events: TelemetryEvent[] = [];
+    const telemetry = { beginCapture: () => (event: TelemetryEvent) => events.push(event) };
+    await withService(new FixtureEngine([]), async (baseUrl, repositories) => {
+        const article = repositories.articleService.createArticle({ title: "Draft", content: "Private content" });
+        await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, {
+            method: HTTP_METHOD.POST,
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ requestId: "failed-request", authorMessage: "Private prompt", explicitSkillId: "flow_and_clarity",
+                scope: { kind: "article", baseRevisionId: article.currentRevisionId } }),
+        });
+    }, true, undefined, telemetry);
+    assert.equal(events.length, 1);
+    const [event] = events;
+    assert.ok(event?.kind === "ai_operation_finished");
+    assert.equal(event.operation, "assistant");
+    assert.equal(event.outcome, "failed");
+    assert.equal(event.failure, "incomplete_stream");
+    const privateFailedRequestPattern = /Private|failed-request/;
+    assert.doesNotMatch(JSON.stringify(event), privateFailedRequestPattern);
 });
 
 

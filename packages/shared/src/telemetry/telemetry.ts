@@ -1,14 +1,18 @@
-export const telemetrySchemaVersion = 2;
+export const telemetrySchemaVersion = 3;
 
 export type TelemetryFailureCategory = "configuration" | "network" | "persistence" | "cancelled" | "unknown";
 export type TelemetryOperation = "assistant" | "thesis_to_narrative" | "flow_revision" | "fact_check" | "style_review" | "translation";
 export type TelemetryTermination = "crashed" | "killed" | "oom" | "launch_failed" | "integrity_failure" | "abnormal_exit";
-export type TelemetryAiStage = "assistant_step" | "editorial_generation" | "action_intent_verification" | "replacement_verification";
+export type TelemetryAiStage = "assistant_step" | "editorial_generation" | "action_intent_verification" | "replacement_verification"
+    | "request_preparation" | "assistant_orchestration" | "tool_execution" | "output_validation" | "completion";
+export type TelemetryAiFailure = "provider" | "network" | "invalid_output" | "incomplete_stream" | "session_expired" | "unknown";
 
 export type TelemetryEvent =
     | { kind: "app_session_started" }
-    | { kind: "ai_operation_finished"; operation: TelemetryOperation; outcome: "completed" | "failed" | "cancelled"; elapsedMs: number; failure?: TelemetryFailureCategory }
-    | { kind: "ai_stage_finished"; stage: TelemetryAiStage; outcome: "completed" | "failed" | "cancelled"; elapsedMs: number }
+    | { kind: "ai_operation_finished"; operation: TelemetryOperation; outcome: "completed" | "failed" | "cancelled";
+        elapsedMs: number; failure?: TelemetryFailureCategory | TelemetryAiFailure; operationId?: string }
+    | { kind: "ai_stage_finished"; stage: TelemetryAiStage; outcome: "completed" | "failed" | "cancelled";
+        elapsedMs: number; failure?: TelemetryAiFailure; httpStatus?: number; operationId?: string }
     | { kind: "proposal_reviewed"; decision: "accepted" | "rejected" }
     | { kind: "draft_checkpoint_finished"; attempts: number; successes: number; failures: number; elapsedMs: number; failure?: TelemetryFailureCategory }
     | { kind: "backup_finished"; outcome: "completed" | "failed"; elapsedMs: number; failure?: TelemetryFailureCategory }
@@ -113,11 +117,22 @@ function isAppFailure(candidate: Record<string, unknown>): boolean {
 
 function isAiOperationFinished(candidate: Record<string, unknown>): boolean {
     const operation = ["assistant", "thesis_to_narrative", "flow_revision", "fact_check", "style_review", "translation"];
-    return hasOnly(candidate, ["kind", "operation", "outcome", "elapsedMs", "failure"]) &&
+    return hasOnly(candidate, ["kind", "operation", "outcome", "elapsedMs", "failure", "operationId"]) &&
         operation.includes(String(candidate.operation)) &&
         (candidate.outcome === "completed" || candidate.outcome === "failed" || candidate.outcome === "cancelled") &&
-        isDuration(candidate.elapsedMs) &&
-        (candidate.failure === undefined || isTelemetryFailureCategory(candidate.failure));
+        isDuration(candidate.elapsedMs) && isOperationId(candidate.operationId) &&
+        (candidate.failure === undefined || isTelemetryFailureCategory(candidate.failure) || isTelemetryAiFailure(candidate.failure));
+}
+
+
+function isOperationId(value: unknown): boolean {
+    const punctuationPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+    return value === undefined || typeof value === "string" && punctuationPattern.test(value);
+}
+
+
+function isTelemetryAiFailure(value: unknown): value is TelemetryAiFailure {
+    return typeof value === "string" && ["provider", "network", "invalid_output", "incomplete_stream", "session_expired", "unknown"].includes(value);
 }
 
 
@@ -159,11 +174,16 @@ export function isTelemetryEvent(value: unknown): value is TelemetryEvent {
         case "ai_operation_finished":
             return isAiOperationFinished(candidate);
         case "ai_stage_finished":
-            return hasOnly(candidate, ["kind", "stage", "outcome", "elapsedMs"]) &&
+            return hasOnly(candidate, ["kind", "stage", "outcome", "elapsedMs", "failure", "httpStatus", "operationId"]) &&
                 typeof candidate.stage === "string" &&
-                ["assistant_step", "editorial_generation", "action_intent_verification", "replacement_verification"].includes(candidate.stage) &&
+                ["assistant_step", "editorial_generation", "action_intent_verification", "replacement_verification",
+                    "request_preparation", "assistant_orchestration", "tool_execution", "output_validation", "completion"].includes(candidate.stage) &&
                 (candidate.outcome === "completed" || candidate.outcome === "failed" || candidate.outcome === "cancelled") &&
-                isDuration(candidate.elapsedMs);
+                isDuration(candidate.elapsedMs) && isOperationId(candidate.operationId) &&
+                (candidate.failure === undefined || isTelemetryAiFailure(candidate.failure)) &&
+                (candidate.httpStatus === undefined || typeof candidate.httpStatus === "number" && Number.isInteger(candidate.httpStatus) &&
+                    candidate.httpStatus >= 400 && candidate.httpStatus <= 599) &&
+                (candidate.outcome === "failed" || candidate.failure === undefined && candidate.httpStatus === undefined);
         case "draft_checkpoint_finished":
             return isDraftCheckpointFinished(candidate);
         case "backup_finished":

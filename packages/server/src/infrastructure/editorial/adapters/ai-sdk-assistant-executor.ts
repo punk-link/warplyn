@@ -10,6 +10,7 @@ import { EditorialEngineError } from "../../../application/editorial/engine/edit
 import { createAssistantConversationPrompt, getAssistantStepOptions, createAssistantTools } from "./ai-sdk-assistant.js";
 import { createAiSdkGenerationOptions, getContinuationToken, getEditorialProviderOptions, isAcceptedFinish, createProviderError } from "./ai-sdk-provider.js";
 import { selectionContextPolicy } from "../../../application/editorial/selection-context-policy.js";
+import { beginAiStageFailureCapture } from "../../../application/telemetry/ai-failure-category.js";
 
 
 interface AiSdkAssistantExecutorOptions {
@@ -56,6 +57,7 @@ export class AiSdkAssistantExecutor {
 
 
     async *stream(request: EditorialAssistantRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+        const captureValidationFailure = beginAiStageFailureCapture(this.options.telemetry, "output_validation");
         const state: AssistantExecutionState = { skillCapabilities: request.initialActiveCapabilities ?? [], activeCapabilities: request.initialActiveCapabilities };
         const execute = (capability: string, input: Readonly<Record<string, string>>) => this.executeCapability(request, signal, state, capability, input);
         const loadSkill = (capabilities: readonly string[]) => {
@@ -69,11 +71,12 @@ export class AiSdkAssistantExecutor {
         const steps = await result.steps;
         const finalStep = await result.finalStep;
         const exhausted = !state.completedArtifact && steps.length >= 6 && finalStep.finishReason === "tool-calls";
-        if (exhausted || !isAcceptedFinish(finalStep.finishReason))
-            throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
+        if (exhausted || !isAcceptedFinish(finalStep.finishReason) || !text.trim() && !state.completedArtifact) {
+            const error = new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
+            captureValidationFailure(error);
 
-        if (!text.trim() && !state.completedArtifact)
-            throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
+            throw error;
+        }
 
         const token = getContinuationToken({ provider: this.options.provider, storeResponses: this.options.storeResponses, metadata: finalStep.providerMetadata });
         yield { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: randomUUID(), ...(token ? { continuationToken: token } : {}), text };
@@ -103,6 +106,7 @@ export class AiSdkAssistantExecutor {
 
 
     private async executeCapability(request: EditorialAssistantRequest, signal: AbortSignal, state: AssistantExecutionState, capability: string, input: Readonly<Record<string, string>>): Promise<unknown> {
+        const captureFailure = beginAiStageFailureCapture(this.options.telemetry, "tool_execution");
         if (state.failure)
             throw state.failure.error;
 
@@ -114,6 +118,9 @@ export class AiSdkAssistantExecutor {
         try {
             result = await candidate.execute(input, signal);
         } catch (error) {
+            if (!signal.aborted)
+                captureFailure(error);
+
             state.failure ??= { error };
             throw error;
         }

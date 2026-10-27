@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { MockLanguageModelV3 } from "ai/test";
 import type { LanguageModelV3StreamPart } from "@ai-sdk/provider";
-import { AI_PROVIDER } from "@skladno/shared";
+import { AI_PROVIDER, type TelemetryEvent } from "@skladno/shared";
 
 import { EDITORIAL_ENGINE_ERROR } from "../../../application/editorial/engine/editorial-engine-errors.js";
 import { EDITORIAL_ENGINE_EVENT } from "../../../application/editorial/engine/editorial-engine-events.js";
@@ -22,6 +22,7 @@ test("Assistant distinguishes prepared translations from linked translation Arti
 
 test("Assistant completes only after a successful final finish reason", async () => {
     for (const reason of ["length", "content-filter", "error", "other", "stop"] as const) {
+        const telemetry: TelemetryEvent[] = [];
         const model = new MockLanguageModelV3({
             doStream: {
                 stream: new ReadableStream<LanguageModelV3StreamPart>({
@@ -42,7 +43,8 @@ test("Assistant completes only after a successful final finish reason", async ()
                 }),
             },
         });
-        const executor = new AiSdkAssistantExecutor({ languageModel: model, provider: AI_PROVIDER.OPENAI, storeResponses: false });
+        const executor = new AiSdkAssistantExecutor({ languageModel: model, provider: AI_PROVIDER.OPENAI, storeResponses: false,
+            telemetry: { beginCapture: () => (event) => telemetry.push(event) } });
         const events: string[] = [];
         const consume = async () => {
             for await (const event of executor.stream({
@@ -58,12 +60,15 @@ test("Assistant completes only after a successful final finish reason", async ()
         } else {
             await assert.rejects(consume(), { code: EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM }, reason);
             assert.deepEqual(events, [EDITORIAL_ENGINE_EVENT.TEXT_DELTA], reason);
+            assert.ok(telemetry.some((event) => event.kind === "ai_stage_finished" &&
+                event.stage === "output_validation" && event.failure === "incomplete_stream"));
         }
     }
 });
 
 
 test("Assistant fails when an artifact tool fails instead of completing with the model's explanation", async () => {
+    const telemetry: TelemetryEvent[] = [];
     const usage = {
         inputTokens: { total: 1, noCache: 1, cacheRead: 0, cacheWrite: 0 },
         outputTokens: { total: 1, text: 1, reasoning: 0 },
@@ -92,7 +97,8 @@ test("Assistant fails when an artifact tool fails instead of completing with the
             },
         ],
     });
-    const executor = new AiSdkAssistantExecutor({ languageModel: model, provider: AI_PROVIDER.OPENAI, storeResponses: false });
+    const executor = new AiSdkAssistantExecutor({ languageModel: model, provider: AI_PROVIDER.OPENAI, storeResponses: false,
+        telemetry: { beginCapture: () => (event) => telemetry.push(event) } });
     const events: string[] = [];
     const consume = async () => {
         for await (const event of executor.stream({
@@ -110,6 +116,8 @@ test("Assistant fails when an artifact tool fails instead of completing with the
     await assert.rejects(consume(), translationFailedPattern);
     assert.deepEqual(events, []);
     assert.equal(model.doStreamCalls.length, 1, "A terminal tool failure must stop the model loop");
+    assert.ok(telemetry.some((event) => event.kind === "ai_stage_finished" && event.stage === "tool_execution" && event.failure === "unknown"));
+    assert.doesNotMatch(JSON.stringify(telemetry), translationFailedPattern);
 });
 
 

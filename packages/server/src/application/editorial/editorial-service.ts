@@ -26,6 +26,8 @@ import type { FactCheckArtifactStore } from "./fact-checking/fact-check-artifact
 import type { FactCheckRunStore } from "./fact-checking/fact-check-run-store.js";
 import { correctionContext, verifyCorrectionSelection } from "./fact-checking/verified-correction-selection.js";
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
+import { captureOperationOutcome, runAiFailureStage } from "../telemetry/ai-failure-category.js";
+import { beginAiOperation, withAiOperation } from "../telemetry/ai-operation-context.js";
 import { TypographyLocalEngine } from "./style/typography-local-engine.js";
 import { reviewTypography } from "./style/typography-review.js";
 import { prepareStyleReviewContext } from "./style/prepare-style-review-profile.js";
@@ -191,16 +193,6 @@ function createEngineRequest(request: EditorialServiceRequest, context: Editoria
 }
 
 
-function captureOperationOutcome(observed: ReturnType<typeof beginTimedTelemetryCapture>, operation: EditorialOperation, aborted: boolean, failed = false): void {
-    if (aborted) {
-        observed.capture({ kind: "ai_operation_finished", operation, outcome: "cancelled", elapsedMs: observed.elapsedMs(), failure: "cancelled" });
-        return;
-    }
-
-    observed.capture({ kind: "ai_operation_finished", operation, outcome: failed ? "failed" : "completed", elapsedMs: observed.elapsedMs(), ...(failed ? { failure: "unknown" as const } : {}) });
-}
-
-
 function getEditorialArtifactKind(operation: EditorialOperation, factCheck: boolean): "fact-check" | "style-review" | "editorial-proposal" {
     if (factCheck)
         return "fact-check";
@@ -289,10 +281,19 @@ export class EditorialService {
 
 
     async *stream(request: EditorialServiceRequest, signal: AbortSignal): AsyncIterable<Exclude<EditorialEngineEvent, { type: typeof EDITORIAL_ENGINE_EVENT.FACT_CHECK_PROGRESS }>> {
-        const observed = beginTimedTelemetryCapture(this.telemetry);
+        const observed = beginAiOperation(this.telemetry);
+        yield* withAiOperation(observed.operationId, this.streamObserved(request, signal, observed));
+    }
+
+
+    private async *streamObserved(request: EditorialServiceRequest, signal: AbortSignal,
+        observed: ReturnType<typeof beginTimedTelemetryCapture>,
+    ): AsyncIterable<Exclude<EditorialEngineEvent, { type: typeof EDITORIAL_ENGINE_EVENT.FACT_CHECK_PROGRESS }>> {
 
         try {
-            const context = prepareEditorialStream(this.stores.articles, this.stores.sessions, this.stores.styleCorpus, this.stores.factChecks, this.runtime.engines, this.runtime.sessionContinuationEnabled, request);
+            const context = runAiFailureStage(this.telemetry, "request_preparation", () =>
+                prepareEditorialStream(this.stores.articles, this.stores.sessions, this.stores.styleCorpus, this.stores.factChecks,
+                    this.runtime.engines, this.runtime.sessionContinuationEnabled, request));
             const events = streamEditorialOperation(
                 request,
                 context,
@@ -319,7 +320,7 @@ export class EditorialService {
             if (error instanceof EditorialEngineError && error.code === EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED)
                 this.stores.sessions.removeEditorialSession(request.articleContext.articleId);
 
-            captureOperationOutcome(observed, request.editorial.operation, signal.aborted, true);
+            captureOperationOutcome(observed, request.editorial.operation, signal.aborted, true, error);
             throw error;
         }
     }

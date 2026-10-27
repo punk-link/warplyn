@@ -209,6 +209,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
             packaged: app.isPackaged,
             appVersion: app.getVersion(),
             delivery: app.isPackaged ? readTelemetryDelivery(join(process.resourcesPath, "telemetry.json")) : undefined,
+            queuePath: join(app.getPath("userData"), "telemetry-queue.json"),
         });
         telemetry = createTelemetryOwner({ runtimePath, delivery: telemetryDelivery });
         const pendingRestore = applyPendingRestore({ runtimePath, databasePath: config.databasePath, telemetry, personalDictionary: session.defaultSession });

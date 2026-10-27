@@ -43,6 +43,8 @@ test("provider stream errors use safe diagnostics instead of SDK raw-error loggi
     assert.ok(telemetry[0]?.kind === "ai_stage_finished");
     assert.equal(telemetry[0].stage, "assistant_step");
     assert.equal(telemetry[0].outcome, "failed");
+    assert.equal(telemetry[0].failure, "provider");
+    assert.equal(telemetry[0].httpStatus, 503);
     assert.doesNotMatch(JSON.stringify(telemetry), privateArticleSecretPattern);
 });
 
