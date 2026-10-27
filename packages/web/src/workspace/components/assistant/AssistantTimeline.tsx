@@ -51,6 +51,9 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
     const greeting = assistantMessages?.find((item) => item.template === "greeting" || item.kind === "greeting");
     const lastMessage = assistantMessages?.at(-1);
     const skillByRequest = new Map(assistantMessages?.flatMap((item) => item.requestId && item.skillId ? [[item.requestId, item.skillId] as const] : []));
+    if (streamedMessage?.requestId && streamedMessage.skillId)
+        skillByRequest.set(streamedMessage.requestId, streamedMessage.skillId);
+
     const skillNames = new Map(authorSkills.map((skill) => [skill.reference.id, getSkillPresentation(skill, intl).name] as const));
     const completedFactCheck = state === "idle" ? findLatestCompletedFactCheck(assistantMessages) : undefined;
 

@@ -36,6 +36,29 @@ function AssistantTimeline({ state, message, errorDetails, activity, factCheckCl
 
 
 describe("AssistantTimeline", () => {
+    it("shows the resolved Skill on the Author message while the request is running", () => {
+        const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
+            state="streaming"
+            message=""
+            collapsed={false}
+            assistantMessages={[{
+                id: "author", requestId: "request", articleId: "article", role: "author", kind: "message", status: "completed",
+                content: "Check for clarity", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z",
+            }]}
+            streamedMessage={{
+                id: "stream", articleId: "article", requestId: "request", skillId: "flow", blocks: [],
+                createdAt: "2026-01-01T00:00:00.000Z", status: "pending",
+            }}
+            authorSkills={[{ reference: { source: "author", id: "flow", version: "1" }, name: "Improve flow", description: "Improve flow." }]}
+            generalSettings={defaultGeneralSettings}
+            elapsedDuration="1 second" />
+        </IntlProvider>);
+
+        expect(screen.getByText("Improve flow")).toBeTruthy();
+        expect(screen.getByRole("status").textContent).toContain("Working");
+        view.unmount();
+    });
+
     it("shows the custom Skill name in used-skill metadata", () => {
         render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
             state="idle"

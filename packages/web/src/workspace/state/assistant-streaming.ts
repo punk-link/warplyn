@@ -4,6 +4,8 @@ import { ASSISTANT_EVENT, type AssistantEvent, type AssistantResponseKind } from
 export interface StreamedAssistantMessage {
     id: string;
     articleId: string;
+    requestId?: string;
+    skillId?: string;
     blocks: readonly string[];
     createdAt: string;
     responseKind?: AssistantResponseKind;
@@ -149,6 +151,15 @@ export function updateStreamedMessage({ event, articleId, streamedId, buffers, u
     buffers: Record<string, StreamBuffer>;
     update: (message: StreamedAssistantMessage) => void;
 }): boolean {
+    if (event.type === ASSISTANT_EVENT.SKILL_RESOLVED) {
+        update({
+            id: streamedId, articleId, requestId: event.requestId, skillId: event.skillId,
+            blocks: [], createdAt: new Date().toISOString(), status: "pending",
+        });
+
+        return true;
+    }
+
     if (event.type === ASSISTANT_EVENT.TEXT_DELTA)
         return updateTextDelta(articleId, streamedId, buffers, update, event);
 

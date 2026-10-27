@@ -72,7 +72,9 @@ export function useAssistantStreamEvents({ articleId, workspace, store, onResult
 
         updateStreamedMessage({
             event, articleId: id, streamedId, buffers: streamBuffers.current,
-            update: (next) => setStreamedMessagesByArticle((current) => ({ ...current, [id]: { ...next, createdAt: current[id]?.createdAt ?? next.createdAt } })),
+            update: (next) => setStreamedMessagesByArticle((current) => ({
+                ...current, [id]: { ...current[id], ...next, createdAt: current[id]?.createdAt ?? next.createdAt },
+            })),
         });
     }, [intl, notify, onResult, setActivityByArticle, setFactCheckClaimsByArticle, setActiveRequestIdByArticle, setStreamedMessagesByArticle, streamBuffers, workspace]);
 
