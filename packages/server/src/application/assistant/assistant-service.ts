@@ -1,4 +1,4 @@
-import { APPLICATION_ERROR, ASSISTANT_EVENT, beginTimedTelemetryCapture, HTTP_STATUS, type AssistantEvent, type AssistantMessage, type TimedTelemetryCapture } from "@skladno/shared";
+import { APPLICATION_ERROR, ASSISTANT_EVENT, HTTP_STATUS, type AssistantEvent, type AssistantMessage, type TimedTelemetryCapture } from "@skladno/shared";
 
 import { AssistantCapabilityLoop } from "./capabilities/assistant-capability-loop.js";
 import { AssistantCompletion, getCompletedContent, getEditCandidate, getResponseKind } from "./completion/assistant-completion.js";
@@ -14,6 +14,8 @@ import { EditorialEngineError } from "../editorial/engine/editorial-engine-error
 import type { EditorialEngineEvent } from "../editorial/engine/editorial-engine-event.js";
 import type { StyleCorpusStore } from "../editorial/style/style-corpus-store.js";
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
+import { captureAssistantOutcome, getAiFailureCategory, withAiFailureStage } from "../telemetry/ai-failure-category.js";
+import { beginAiOperation, withAiOperation } from "../telemetry/ai-operation-context.js";
 import { getAssistantRequestTimeoutMs, streamWithAssistantDeadline } from "./requests/assistant-request-deadline.js";
 import { persistInterruptedFactCheck } from "./requests/interrupted-fact-check.js";
 import { selectCompletedFactCheck, selectFactCheckFindings } from "./requests/assistant-selected-fact-check.js";
@@ -42,7 +44,7 @@ interface AssistantServiceStores {
 
 
 export class AssistantService {
-    private readonly startedAt = new Map<string, TimedTelemetryCapture>();
+    private readonly startedAt = new Map<string, ReturnType<typeof beginAiOperation>>();
 
 
     private readonly claimSelection = new AssistantClaimSelection();
@@ -118,19 +120,21 @@ export class AssistantService {
 
 
     prepare(request: AssistantServiceRequest): PreparedAssistantRequest {
-        const observed = beginTimedTelemetryCapture(this.telemetry);
+        const observed = beginAiOperation(this.telemetry);
         try {
             const prepared = this.preparation.prepare(request);
             prepared.editMode = this.getEditMode(prepared.articleId);
             this.startedAt.set(prepared.requestId, observed);
             return prepared;
         } catch (error) {
+            observed.capture({ kind: "ai_stage_finished", stage: "request_preparation", outcome: "failed",
+                elapsedMs: observed.elapsedMs(), failure: getAiFailureCategory(error), operationId: observed.operationId });
             observed.capture({
                 kind: "ai_operation_finished",
                 operation: "assistant",
                 outcome: "failed",
                 elapsedMs: observed.elapsedMs(),
-                failure: "unknown"
+                failure: getAiFailureCategory(error)
             });
 
             throw error;
@@ -139,8 +143,13 @@ export class AssistantService {
 
 
     async *stream(request: PreparedAssistantRequest, signal: AbortSignal): AsyncIterable<AssistantEvent> {
-        const observed = this.startedAt.get(request.requestId) ?? beginTimedTelemetryCapture(this.telemetry);
+        const observed = this.startedAt.get(request.requestId) ?? beginAiOperation(this.telemetry);
         this.startedAt.delete(request.requestId);
+        yield* withAiOperation(observed.operationId, this.streamObserved(request, signal, observed));
+    }
+
+
+    private async *streamObserved(request: PreparedAssistantRequest, signal: AbortSignal, observed: TimedTelemetryCapture): AsyncIterable<AssistantEvent> {
         let initialized = false;
         try {
             request.execution.skipFactCheckClaim = this.claimSelection.start(request.articleId, request.requestId);
@@ -152,7 +161,7 @@ export class AssistantService {
                 yield await completePromotedEditTitle(event, request.articleId, signal, this.articles);
             }
 
-            this.captureStreamOutcome(observed, "completed");
+            captureAssistantOutcome(observed, "completed");
         } catch (error) {
             let partial: ReturnType<AssistantCompletion["persistPartialFactCheck"]> | undefined;
             try {
@@ -166,7 +175,7 @@ export class AssistantService {
             }
 
             if (partial) {
-                this.captureStreamOutcome(observed, "completed");
+                captureAssistantOutcome(observed, "completed");
                 yield { type: ASSISTANT_EVENT.COMPLETED, requestId: request.requestId, ...partial };
                 return;
             }
@@ -190,7 +199,7 @@ export class AssistantService {
         if (!completedEvent)
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM, EDITORIAL_ENGINE_ERROR.INCOMPLETE_STREAM);
 
-        yield* this.streamAssistantEvents(request, completedEvent, signal);
+        yield* withAiFailureStage(this.telemetry, "completion", signal, this.streamAssistantEvents(request, completedEvent, signal));
     }
 
 
@@ -209,23 +218,12 @@ export class AssistantService {
     }
 
 
-    private captureStreamOutcome(observed: TimedTelemetryCapture, outcome: "completed" | "cancelled" | "failed", failure?: "cancelled" | "unknown"): void {
-        observed.capture({
-            kind: "ai_operation_finished",
-            operation: "assistant",
-            outcome,
-            elapsedMs: observed.elapsedMs(),
-            ...(failure ? { failure } : {}),
-        });
-    }
-
-
     private handleStreamFailure(request: PreparedAssistantRequest, signal: AbortSignal, observed: TimedTelemetryCapture, initialized: boolean, error: unknown): void {
         const cancelled = signal.aborted;
         if (initialized)
             this.stores.assistant.failRequest(request.requestId, cancelled ? "cancelled" : "failed", cancelled ? "request_cancelled" : getAssistantRequestErrorCode(error));
 
-        this.captureStreamOutcome(observed, cancelled ? "cancelled" : "failed", cancelled ? "cancelled" : "unknown");
+        captureAssistantOutcome(observed, cancelled ? "cancelled" : "failed", cancelled ? "cancelled" : getAiFailureCategory(error));
     }
 
 
@@ -245,7 +243,9 @@ export class AssistantService {
 
 
     private streamEditorialEvents(request: PreparedAssistantRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
-        return request.execution.usesCapabilityLoop ? this.capabilityLoop.stream(request, signal) : this.streamEngineEvents(request, signal);
+        return request.execution.usesCapabilityLoop
+            ? withAiFailureStage(this.telemetry, "assistant_orchestration", signal, this.capabilityLoop.stream(request, signal))
+            : this.streamEngineEvents(request, signal);
     }
 
 

@@ -40,4 +40,10 @@ test("AI stage timings reject private fields and unbounded values", () => {
         assert.equal(isTelemetryEvent({ ...event, elapsedMs }), false);
 
     assert.equal(isTelemetryEvent({ ...event, outcome: "private" }), false);
+    assert.equal(isTelemetryEvent({ ...event, outcome: "failed", failure: "network", httpStatus: 503 }), true);
+    assert.equal(isTelemetryEvent({ ...event, outcome: "failed", failure: "private error" }), false);
+    assert.equal(isTelemetryEvent({ ...event, outcome: "failed", httpStatus: 200 }), false);
+    assert.equal(isTelemetryEvent({ ...event, failure: "provider" }), false);
+    assert.equal(isTelemetryEvent({ ...event, operationId: "6f5592a1-831d-4d66-aad0-21f31f104732" }), true);
+    assert.equal(isTelemetryEvent({ ...event, operationId: "private-request-id" }), false);
 });

@@ -70,7 +70,8 @@ test("AI stage timings reach PostHog only while their captured consent remains v
         scheduleTimeout: tasks.schedule,
         clearScheduledTimeout: tasks.clear,
     } });
-    const event = { kind: "ai_stage_finished", stage: "editorial_generation", outcome: "completed", elapsedMs: 1500 } as const;
+    const event = { kind: "ai_stage_finished", stage: "editorial_generation", outcome: "failed", elapsedMs: 1500,
+        failure: "provider", httpStatus: 503 } as const;
     try {
         const capture = owner.beginCapture();
         capture(event);
@@ -79,8 +80,10 @@ test("AI stage timings reach PostHog only while their captured consent remains v
         assert.equal(payload.batch[0].event, "ai_stage_finished");
         assert.equal(payload.batch[0].properties.elapsedMs, 1500);
         assert.equal(payload.batch[0].properties.stage, "editorial_generation");
+        assert.equal(payload.batch[0].properties.failure, "provider");
+        assert.equal(payload.batch[0].properties.httpStatus, 503);
         assert.equal(payload.batch[0].properties.appVersion, "0.1.0");
-        assert.equal(payload.batch[0].properties.schemaVersion, 2);
+        assert.equal(payload.batch[0].properties.schemaVersion, 3);
         owner.setConsent(false);
         const disabledCapture = owner.beginCapture();
         owner.setConsent(true);

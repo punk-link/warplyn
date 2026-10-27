@@ -8,6 +8,8 @@ Warplyn's packaged Windows and Linux apps send pseudonymous reliability and usag
 
 Turning sharing off stops future collection and clears queued events and the local Telemetry ID. Turning it on later creates a new ID. It cannot recall events already sent.
 
+Pending events are kept in the app's local profile so Warplyn can retry when the connection returns. Events older than 24 hours are discarded when the app next checks the queue. Turning sharing off removes the queue.
+
 [![Privacy and diagnostics settings showing the sharing toggle and Telemetry ID controls with the ID obscured.](/images/diagnostic-and-usage-data.png)](/images/diagnostic-and-usage-data.png)
 
 *Privacy & diagnostics settings in the desktop app.*
@@ -17,7 +19,7 @@ Turning sharing off stops future collection and clears queued events and the loc
 Events cover:
 
 - app starts and safe startup, renderer, or child-process failure categories
-- completed, failed, or cancelled AI operations
+- completed, failed, or cancelled AI operations and stages, including a failure category and HTTP status when available
 - explicit *Proposal* reviews and aggregated *Draft* checkpoints
 - backup and recovery outcomes
 
@@ -25,6 +27,8 @@ Events do not include *Article* text, prompts, AI responses, or API keys.
 
 ::: details Other event fields
 Each event includes a desktop analytics source, schema version, application version, platform, architecture, operating system version, and timestamp. Event-specific fields are limited to known categories, non-negative counters, or bounded durations.
+
+AI operation and stage events can include a random ID that links events from the same operation. It is separate from Article and request IDs.
 
 Events do not include *Article* or *Revision* IDs or titles, environment variable values, file paths, URLs, raw errors, process exit details, or request and response bodies.
 :::

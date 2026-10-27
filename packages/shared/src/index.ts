@@ -65,6 +65,7 @@ export {
     type TelemetryFailureCategory,
     type TelemetryOperation,
     type TelemetryAiStage,
+    type TelemetryAiFailure,
     type TelemetryTermination,
     type TimedTelemetryCapture,
 } from "./telemetry/telemetry.js";

@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { release } from "node:os";
 import { isTelemetryEvent, telemetrySchemaVersion, type TelemetryEvent } from "@skladno/shared";
+import { createTelemetryQueueStore } from "./telemetry-queue-store.js";
 
 const allowedIngestionHosts = new Set(["us.i.posthog.com"]);
 const queueLimit = 100;
@@ -36,6 +37,7 @@ interface OutboundEvent {
 
 
 interface QueuedEvent {
+    readonly event: TelemetryEvent;
     readonly outbound: OutboundEvent;
     readonly queuedAt: number;
     readonly retries: number;
@@ -45,7 +47,7 @@ interface QueuedEvent {
 interface ActiveRequest {
     readonly controller: AbortController;
     readonly generation: number;
-    readonly batchSize: number;
+    readonly batch: readonly QueuedEvent[];
 }
 
 
@@ -63,6 +65,8 @@ interface DeliveryState {
 export interface TelemetryDelivery {
     readonly supported: boolean;
     capture(event: TelemetryEvent, installationId: string): boolean;
+    start(installationId: string): void;
+    suspend(): void;
     stop(): void;
 }
 
@@ -142,16 +146,21 @@ function retryAfter(response: Response): number {
 }
 
 
-export function createTelemetryDelivery({ packaged, appVersion, delivery, osVersion = release(), environment = {} }: {
+export function createTelemetryDelivery({ packaged, appVersion, delivery, osVersion = release(), environment = {}, queuePath }: {
     packaged: boolean;
     appVersion: string;
     delivery?: { endpoint?: string; projectKey?: string };
     osVersion?: string;
     environment?: TelemetryDeliveryEnvironment;
+    queuePath?: string;
 }): TelemetryDelivery {
     const { fetch: fetchImplementation = fetch, scheduleTimeout = setTimeout, clearScheduledTimeout = clearTimeout, now = Date.now, requestTimeout = requestTimeoutMs } = environment;
     const deliveryConfiguration = packaged ? parseTelemetryDeliveryConfiguration(delivery ?? {}) : undefined;
     const supported = Boolean(deliveryConfiguration);
+    const store = packaged && queuePath ? createTelemetryQueueStore(queuePath) : undefined;
+    const expiryMs = store ? 24 * 60 * 60_000 : eventExpiryMs;
+    let installationId: string | undefined;
+    let loading = false;
     let state: DeliveryState = {
         generation: 0,
         queue: [],
@@ -163,7 +172,7 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
     };
 
 
-    function stop(): void {
+    function suspend(): void {
         const { activeRequest, timer } = state;
         state = {
             ...state,
@@ -178,6 +187,52 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
     }
 
 
+    function stop(): void {
+        installationId = undefined;
+        loading = false;
+        suspend();
+        store?.clear();
+    }
+
+
+    function persist(): void {
+        if (!store || !installationId || loading)
+            return;
+
+        const entries = [...(state.activeRequest?.batch ?? []), ...state.queue]
+            .map(({ event, queuedAt, outbound }) => ({ event, queuedAt, appVersion: outbound.properties.appVersion }));
+        store.save(installationId, entries);
+    }
+
+
+    function start(id: string): void {
+        installationId = id;
+        if (!store)
+            return;
+
+        loading = true;
+        const currentGeneration = state.generation;
+        void store.load(id, now(), expiryMs).then((entries) => {
+            if (currentGeneration !== state.generation || installationId !== id)
+                return;
+
+            const restored = entries.flatMap(({ event, queuedAt, appVersion: originalVersion }) => {
+                const outbound = createOutboundTelemetryEvent(event, id, originalVersion ?? appVersion, osVersion);
+                if (!outbound)
+                    return [];
+
+                outbound.properties.timestamp = new Date(queuedAt).toISOString();
+                return [{ event, outbound, queuedAt, retries: 0 }];
+            });
+
+            state = { ...state, queue: [...restored.slice(0, queueLimit - state.queue.length), ...state.queue] };
+            loading = false;
+            persist();
+            schedule(currentGeneration);
+        });
+    }
+
+
     function schedule(currentGeneration: number, delay = flushDelayMs): void {
         if (state.disposed || currentGeneration !== state.generation || !state.queue.length || state.timer !== undefined)
             return;
@@ -187,7 +242,7 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
 
 
     function retainedCount(): number {
-        return state.queue.length + (state.activeRequest?.generation === state.generation ? state.activeRequest.batchSize : 0);
+        return state.queue.length + (state.activeRequest?.generation === state.generation ? state.activeRequest.batch.length : 0);
     }
 
 
@@ -207,19 +262,22 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
 
     async function flush(currentGeneration = state.generation): Promise<void> {
         state = { ...state, timer: undefined };
-        if (state.disposed || currentGeneration !== state.generation || !deliveryConfiguration || !state.queue.length || state.activeRequest)
+        if (state.disposed || currentGeneration !== state.generation || !deliveryConfiguration || !state.queue.length || state.activeRequest || loading)
             return;
 
         const startedAt = now();
-        const batch = state.queue.filter((entry) => startedAt - entry.queuedAt <= eventExpiryMs);
+        const batch = state.queue.filter((entry) => startedAt - entry.queuedAt <= expiryMs);
         state = { ...state, queue: [] };
         if (!batch.length) {
+            persist();
             schedule(currentGeneration);
+
             return;
         }
 
         const controller = new AbortController();
-        state = { ...state, activeRequest: { controller, generation: currentGeneration, batchSize: batch.length } };
+        state = { ...state, activeRequest: { controller, generation: currentGeneration, batch } };
+        persist();
         const timeout = setTimeout(() => controller.abort(), requestTimeout);
         const { retry, delay } = await (async () => {
             try {
@@ -240,17 +298,22 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
         })();
 
         clearTimeout(timeout);
+        if (currentGeneration !== state.generation)
+            return;
+
         if (state.activeRequest?.controller === controller)
             state = { ...state, activeRequest: undefined };
 
         if (!state.disposed && currentGeneration === state.generation && retry) {
             const retried = batch
-                .filter((entry) => entry.retries < maxRetries && now() - entry.queuedAt <= eventExpiryMs)
+                .filter((entry) => (store || entry.retries < maxRetries) && now() - entry.queuedAt <= expiryMs)
                 .map((entry) => ({ ...entry, retries: entry.retries + 1 }));
             state = { ...state, queue: [...retried, ...state.queue] };
         }
 
-        schedule(currentGeneration, retry ? delay : flushDelayMs);
+        persist();
+        const retryInterval = store ? maxRetryDelayMs : delay;
+        schedule(currentGeneration, retry ? retryInterval : flushDelayMs);
     }
 
 
@@ -262,11 +325,13 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
         if (!outbound || !withinRateLimit())
             return false;
 
-        state = { ...state, queue: [...state.queue, { outbound, queuedAt: now(), retries: 0 }] };
+        state = { ...state, queue: [...state.queue, { event: { ...event }, outbound, queuedAt: now(), retries: 0 }] };
+        persist();
         schedule(state.generation);
+
         return true;
     }
 
 
-    return { supported, capture, stop };
+    return { supported, capture, start, suspend, stop };
 }
