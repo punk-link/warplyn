@@ -3,14 +3,14 @@ import type { EditorialEngineEvent } from "../../editorial/engine/editorial-engi
 
 export class AssistantToolProgress {
     // ponytail: Foreground events queue in memory; add backpressure if long model streams make this measurable.
-    private readonly events: EditorialEngineEvent[] = [];
+    private readonly queuedEvents: EditorialEngineEvent[] = [];
 
 
     private notify: () => void = () => undefined;
 
 
     push(event: EditorialEngineEvent): void {
-        this.events.push(event);
+        this.queuedEvents.push(event);
         this.notify();
     }
 
@@ -33,9 +33,9 @@ export class AssistantToolProgress {
             }
         })();
 
-        while (!done || this.events.length) {
-            if (this.events.length) {
-                yield this.events.shift()!;
+        while (!done || this.queuedEvents.length) {
+            if (this.queuedEvents.length) {
+                yield this.queuedEvents.shift()!;
                 continue;
             }
 

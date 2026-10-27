@@ -45,14 +45,13 @@ export function resolveTypography(language: string | undefined, configuration?: 
 
         return a.id < b.id ? -1 : 1;
     });
-    const capture = { language: normalized, preset: selection, rules: effective, sources };
-    // The bounded canonical representation is also the comparison token; no lossy hash is needed.
-    const fingerprint = JSON.stringify(capture);
+    const canonicalCapture = { language: normalized, preset: selection, rules: effective, sources };
+    const fingerprint = JSON.stringify(canonicalCapture);
     let coverage: TypographyCapture["coverage"] = "configured";
     if (!normalized)
         coverage = "missing-language";
     else if (!effective.length)
         coverage = "unconfigured";
 
-    return { ...capture, fingerprint, coverage };
+    return { ...canonicalCapture, fingerprint, coverage };
 }

@@ -79,6 +79,6 @@ function runNotificationActionIgnoringErrors(action: (() => void) | undefined): 
     try {
         action?.();
     } catch {
-        // A failed action must still allow the notification to be dismissed.
+        return;
     }
 }

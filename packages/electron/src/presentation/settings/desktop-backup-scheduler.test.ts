@@ -40,7 +40,6 @@ test("native automatic backups run at startup and every 24 hours, retain only au
             if (fail)
                 throw new Error("Synthetic failure");
 
-            // Backup duration must not shift the next interval's start.
             t.mock.timers.tick(60_000);
             await backup(database, path);
         },

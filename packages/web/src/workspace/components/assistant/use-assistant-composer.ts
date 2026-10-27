@@ -122,7 +122,7 @@ function saveRecentSkillIds(skillIds: string[]) {
     try {
         localStorage.setItem(recentSkillsKey, JSON.stringify(skillIds));
     } catch {
-        // Recent history must not block an explicit request.
+        return;
     }
 }
 

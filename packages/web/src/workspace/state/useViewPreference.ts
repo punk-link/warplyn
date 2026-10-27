@@ -17,7 +17,7 @@ export function useViewPreference<T extends string | boolean>(key: string, fallb
         try {
             localStorage.setItem(storageKey, JSON.stringify(value));
         } catch {
-            // Keep controls usable when local preference storage is unavailable.
+            return;
         }
     }, [storageKey, value]);
 

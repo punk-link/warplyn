@@ -41,6 +41,7 @@ export default defineConfig(
             "project-style/multiline-jsx-opening-tag": "error",
             "project-style/named-regex": "error",
             "project-style/named-unicode-characters": "error",
+            "project-style/no-behavior-comments": "error",
             "project-style/sql-query-layout": "error",
             "project-style/switch-case-body-newline": "error",
             "project-style/two-blank-lines-between-declarations": "error",

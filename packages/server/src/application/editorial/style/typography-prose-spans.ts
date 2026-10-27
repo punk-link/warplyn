@@ -62,7 +62,6 @@ export function typographyProseSpans(content: string): ProseSpan[] {
     const protectedCharacters = new Uint8Array(content.length);
     protectCodeLines(content, protectedCharacters);
     protectInlineCode(content, protectedCharacters);
-    // Ambiguous Markdown/HTML constructs are excluded as a whole, including their labels.
     const markupSyntax = /!?\[[^\]\n]*\](?:\([^\n]*?\)|\[[^\]\n]*\])|\[\^[^\]\n]*\]|<[^>\n]*>|&(?:#\w+|\w+);|\\[^\n]/gu;
     const technicalTokens = /(?:https?:\/\/|www\.)[^\s<>]+|\b[\w.+-]+@[\w.-]+\.[\p{L}]+|\b[\p{L}\p{N}_]+(?:[._/-][\p{L}\p{N}_]+)+/gu;
     protectPattern(content, protectedCharacters, markupSyntax);

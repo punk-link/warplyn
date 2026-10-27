@@ -55,7 +55,7 @@ export function TranslationRefreshControl({ translation, linkedTranslations, sta
             await create(translationResultId(translation), target);
             setTarget(undefined);
         } catch {
-            // Keep the confirmation open so the Author can retry the failed refresh.
+            return;
         } finally {
             setApplying(false);
         }

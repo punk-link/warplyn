@@ -3,7 +3,6 @@ import { NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE, type TypographyDefinition } from
 
 export function typographyPunctuationMatches(text: string, rule: Extract<TypographyDefinition, { kind: "punctuation-space" }>) {
     const patches: { start: number; end: number; replacement: string }[] = [];
-    // Restrict to a letter or closing quote before punctuation; numeric and leading dialogue cases stay untouched.
     const punctuation = new RegExp(`([\\p{L}”»」』])[ ${NO_BREAK_SPACE}${NARROW_NO_BREAK_SPACE}]*([;:!?،؛؟]+)(?=$|[\\s\\p{L}“«「『])`, "gu");
     for (const match of text.matchAll(punctuation)) {
         const marks = match[2]!;

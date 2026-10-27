@@ -81,18 +81,22 @@ function migratedPreferences(): WorkspaceLayoutPreferences {
 }
 
 
+function readStoredPreferences(stored: string): WorkspaceLayoutPreferences | undefined {
+    try {
+        return storedPreferences(JSON.parse(stored));
+    } catch {
+        return undefined;
+    }
+}
+
+
 export function useWorkspaceLayout() {
     const [preferences, setPreferences] = useState(() => {
         const stored = localStorage.getItem("skladno-workspace-layout");
 
-        if (stored)
-            try {
-                const parsed = storedPreferences(JSON.parse(stored));
-                if (parsed)
-                    return parsed;
-            } catch {
-                // Fall back to migrated preferences when saved preferences cannot be parsed.
-            }
+        const parsed = stored ? readStoredPreferences(stored) : undefined;
+        if (parsed)
+            return parsed;
 
 
         const migrated = migratedPreferences();

@@ -24,16 +24,16 @@ export function validateSelectionOffsets(content: string, start: number, end: nu
 
 export function getSelectionContext(content: string, start: number, end: number): SelectionContext {
     validateSelectionOffsets(content, start, end);
-    // Selection offsets and the 500-character budget both count UTF-16 code units.
-    let before = Math.max(0, start - 500);
-    let after = Math.min(content.length, end + 500);
-    if (splitsSurrogatePair(content, before))
-        before++;
+    const contextCharacterLimit = 500;
+    let contextStart = Math.max(0, start - contextCharacterLimit);
+    let contextEnd = Math.min(content.length, end + contextCharacterLimit);
+    if (splitsSurrogatePair(content, contextStart))
+        contextStart++;
 
-    if (splitsSurrogatePair(content, after))
-        after--;
+    if (splitsSurrogatePair(content, contextEnd))
+        contextEnd--;
 
-    return { preceding: content.slice(before, start), following: content.slice(end, after) };
+    return { preceding: content.slice(contextStart, start), following: content.slice(end, contextEnd) };
 }
 
 

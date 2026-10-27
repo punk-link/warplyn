@@ -238,9 +238,8 @@ function waitForFixtureSelection(request: EditorialEngineRequest, signal: AbortS
 }
 
 
-// The fixture owns a fresh temporary directory, never an Author's configured data.
-const dataDirectory = mkdtempSync(join(tmpdir(), "warplyn-e2e-service-"));
-const config = loadServerConfig({ ...process.env, WARPLYN_DATA_DIR: dataDirectory });
+const isolatedE2eDataDirectory = mkdtempSync(join(tmpdir(), "warplyn-e2e-service-"));
+const config = loadServerConfig({ ...process.env, WARPLYN_DATA_DIR: isolatedE2eDataDirectory });
 const database = openDatabase(config.databasePath);
 const articles = new ArticlesRepository(database);
 const artifacts = new EditorialArtifactsRepository(database);

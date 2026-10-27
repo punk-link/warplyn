@@ -74,7 +74,6 @@ export class SpellingSession {
 
         const remaining = this.preparation.activeLanguagesExcept(language);
         this.session.setSpellCheckerLanguages(remaining);
-        // An empty language list otherwise falls back to en-US in Electron.
         this.session.setSpellCheckerEnabled(remaining.length > 0);
         this.preparation.unload(language);
     }

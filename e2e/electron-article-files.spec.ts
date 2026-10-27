@@ -55,7 +55,6 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
         await editor.fill("New Draft");
         await page.locator("[data-workspace-panel=article-library] [aria-current=page]").click({ button: "right" });
         await page.getByRole("menuitem", { name: "Save to file…" }).click();
-        // Wait for native save completion before opening the destination on Windows.
         await expect(page.getByRole("button", { name: "Load from file", exact: true })).toBeEnabled();
         expect(await readFile(target, "utf8")).toBe("# New Draft");
         await page.getByRole("tab", { name: "Revisions" }).click();

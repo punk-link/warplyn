@@ -126,6 +126,7 @@ export async function chooseBackupFolder(): Promise<string> {
         await saveFolder(folder);
     } catch {
         // ponytail: session-only selection when handle persistence is unavailable; add alternate storage only if supported browsers need it.
+        return folder.name;
     }
 
     return folder.name;

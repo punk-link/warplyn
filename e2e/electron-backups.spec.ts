@@ -138,7 +138,6 @@ test("daily native backups create a complete bundle at every application startup
         const failedPage = await app.firstWindow();
         await failedPage.getByRole("button", { name: "Skip quick start" }).waitFor();
         const failingApp = app;
-        // Exercise a failure before the reloaded renderer installs its notification listener.
         await failedPage.route("**/src/settings/AutomaticBackups.tsx*", async (route) => {
             await waitForAutomaticBackupFailure(failingApp);
             await route.continue();

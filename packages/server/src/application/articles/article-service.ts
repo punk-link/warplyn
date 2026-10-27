@@ -134,7 +134,7 @@ export class ArticleService {
             if (description)
                 this.store.setGeneratedRevisionDescription(revision.articleId, revision.id, description);
         } catch {
-            // Acceptance is already committed; keep its fallback if generation or persistence fails.
+            return;
         }
     }
 

@@ -35,12 +35,8 @@ test("spelling menu correction follows Lexical Draft recovery and immutable save
         await page.getByRole("button", { name: spellingPattern }).click();
         const editor = page.getByRole("textbox", { name: "Article draft" });
         await expect(editor).toHaveAttribute("spellcheck", "true");
-        // Reproduce hidden Chromium's missing markers deterministically.
         await editor.evaluate((root) => root.setAttribute("spellcheck", "false"));
-        // Synthetic suggestions do not require a downloaded dictionary.
         await expect.poll(() => app?.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.webContents.session.getSpellCheckerLanguages())).toEqual(["en"]);
-        // replaceMisspelling requires a native marker, which synthetic menu data cannot create.
-        // Substitute native text insertion here; the visible test below covers real markers.
         await app.evaluate(({ Menu, BrowserWindow }) => {
             const contents = BrowserWindow.getAllWindows()[0]?.webContents;
             if (!contents)
@@ -50,7 +46,6 @@ test("spelling menu correction follows Lexical Draft recovery and immutable save
             contents.prependListener("context-menu", (_event, params) => {
                 params.misspelledWord = "helllo";
                 params.dictionarySuggestions = ["hello"];
-                // Matches Electron 43's native result: suggestions exist despite this flag.
                 params.spellcheckEnabled = false;
             });
             const original = Menu.buildFromTemplate;
@@ -89,7 +84,6 @@ test("spelling menu correction follows Lexical Draft recovery and immutable save
         await expect(editor).toContainText("helllo");
         await page.evaluate(() => window.warplynSpelling?.setArticleLanguage("en"));
         await expect.poll(() => app?.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.webContents.session.getSpellCheckerLanguages())).toEqual(["en"]);
-        // Clear before requesting the menu: the context-menu event itself can arrive later.
         await app.evaluate(({ Menu }) => Menu.setApplicationMenu(null));
         await page.mouse.click(point.x, point.y, { button: "right" });
         await expect.poll(() => app?.evaluate(({ Menu }) => Menu.getApplicationMenu()?.items.map((item) => item.label) ?? [])).toContain("hello");
@@ -230,7 +224,6 @@ test("native preload and personal words persist while language activation stays 
     try {
         app = await launchSpelling(root);
         let page = await app.firstWindow();
-        // Keep the initial UI snapshot deterministic when the fallback dictionary loads early.
         await page.evaluate(() => window.warplynSpelling?.request({ method: "unload", language: "en-US" }));
         await page.getByRole("button", { name: "Settings", exact: true }).click();
         await page.getByRole("button", { name: "Spelling", exact: true }).click();

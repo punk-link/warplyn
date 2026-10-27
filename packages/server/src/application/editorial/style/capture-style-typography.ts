@@ -7,7 +7,6 @@ export function captureStyleTypography(profile: StyleProfile, language: string |
     if (!isTypographyRules(capture.rules))
         throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST);
 
-    // Keep scoped preferences local; only the resolved rules belong in model context and review evidence.
     return {
         ...profile,
         rules: { manual: profile.rules.manual, typography: capture.rules, typographyCapture: capture },

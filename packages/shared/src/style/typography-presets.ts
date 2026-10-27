@@ -3,7 +3,7 @@ import { ruRuTypographyV1 } from "./presets/ru-ru-v1.js";
 import { frFrTypographyV1 } from "./presets/fr-fr-v1.js";
 import type { TypographyPreset } from "./typography-configuration.js";
 
-// Keep versioned modules when adding a newer preset; saved selections must remain reproducible.
+/** Keeps saved selections reproducible by retaining each versioned preset. */
 export const typographyPresets: readonly TypographyPreset[] = [enUsTypographyV1, ruRuTypographyV1, frFrTypographyV1];
 
 

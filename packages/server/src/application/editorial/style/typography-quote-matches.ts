@@ -76,7 +76,8 @@ export function typographyQuoteMatches(
         }
     }
 
-    // An unmatched outer quote makes its whole group ambiguous.
-    const unmatched = stack[0]?.index;
-    return { patches: patches.filter((patch) => unmatched === undefined || patch.start < unmatched), skipped: skipped + stack.length };
+    const firstUnmatchedQuoteIndex = stack[0]?.index;
+    const safePatches = patches.filter((patch) => firstUnmatchedQuoteIndex === undefined || patch.start < firstUnmatchedQuoteIndex);
+
+    return { patches: safePatches, skipped: skipped + stack.length };
 }

@@ -23,7 +23,7 @@ export function beginAiStageFailureCapture(source: TelemetryCaptureSource | unde
                 failure: getAiFailureCategory(error), ...(operationId ? { operationId } : {})
             });
         } catch {
-            // Telemetry must not interrupt the operation.
+            return;
         }
     };
 }

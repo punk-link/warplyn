@@ -6,14 +6,13 @@ import { resolve } from "node:path";
 
 
 export async function createUpdateNetwork() {
-    // Public test-only certificate and key. Trust only this key in the disposable Chromium process.
-    const cert = await readFile(resolve("e2e/fixtures/update-network.crt"));
-    const key = await readFile(resolve("e2e/fixtures/update-network.key"));
-    const publicKey = new X509Certificate(cert).publicKey.export({ type: "spki", format: "der" });
+    const testCertificate = await readFile(resolve("e2e/fixtures/update-network.crt"));
+    const testPrivateKey = await readFile(resolve("e2e/fixtures/update-network.key"));
+    const publicKey = new X509Certificate(testCertificate).publicKey.export({ type: "spki", format: "der" });
     const fingerprint = createHash("sha256").update(publicKey).digest("base64");
     let body = "";
     let requests = 0;
-    const server = createServer({ cert, key }, (request, response) => {
+    const server = createServer({ cert: testCertificate, key: testPrivateKey }, (request, response) => {
         if (request.url !== "/repos/punk-link/warplyn/releases") {
             response.writeHead(404).end();
             return;

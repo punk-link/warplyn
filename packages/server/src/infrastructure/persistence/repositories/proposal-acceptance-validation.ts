@@ -71,7 +71,6 @@ function validateReplacementContent(review: TextProposal, input: AcceptProposalI
             invalidProposalEdit();
     }
 
-    // Generated corrections may intentionally change facts; Author edits must preserve the reviewed result's protected spans.
     if (!matchesContent(review, ids, input.content) && !preservesProtectedContent(applyProposalChanges(review, ids), input.content))
         invalidProposalEdit();
 }

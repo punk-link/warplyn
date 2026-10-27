@@ -13,7 +13,6 @@ export default defineConfig({
     workers: process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true" ? 2 : 1,
     projects: [
         { name: "desktop", testIgnore: nativeDictionaryTests },
-        // Native personal vocabulary is shared by the OS, including across profiles.
         { name: "native-dictionary", testMatch: nativeDictionaryTests, workers: 1 },
     ],
     use: {

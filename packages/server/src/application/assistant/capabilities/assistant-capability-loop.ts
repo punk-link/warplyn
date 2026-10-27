@@ -230,7 +230,7 @@ export class AssistantCapabilityLoop {
         try {
             this.dependencies.authorSkills?.finishChange(requestId);
         } catch {
-            // Best-effort cleanup must not replace the Assistant operation's result.
+            return;
         }
     }
 

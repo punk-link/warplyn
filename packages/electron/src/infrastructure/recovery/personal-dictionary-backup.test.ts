@@ -97,7 +97,6 @@ test("native word failures and interrupted dictionary restore roll back only new
         await assert.rejects(restore.complete(), personalDictionaryRestorePattern);
         assert.ok(native.words.has("added"));
         assert.ok(readRuntimeSettings(runtimePath).pendingRestore);
-        // Simulate another startup after the native mutation was interrupted.
         const resumed = applyPendingRestore({ runtimePath, databasePath, personalDictionary: native });
         assert.ok(resumed);
         await resumed.rollback();

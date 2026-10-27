@@ -39,7 +39,6 @@ for (const scope of ["article", "selection"] as const) {
                 const installed = services.authorSkills!.readCurrent("custom-tighten");
                 assert.ok(captured?.contentHash);
                 assert.deepEqual(captured.execution, loadBuiltInSkillPackages().find((skill) => skill.reference.id === "concise_rewrite")?.execution);
-                // A package edit after preparation must not change this run's contract or instructions.
                 services.authorSkills!.update({ skillId: "custom-tighten", expectedHash: installed!.contentHash, files: { "SKILL.md": markdown.replace("shorter_preserving_content", "verified_edit") } });
                 const consume = async () => {
                     for await (const event of services.assistant.stream(request, new AbortController().signal))

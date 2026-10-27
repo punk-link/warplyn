@@ -32,7 +32,6 @@ test("same-Revision translation artifacts recover independently and exact accept
     assert.equal(recovered.find((message) => message.editorialArtifactId === first.id)?.status, "completed");
     assert.equal(recovered.find((message) => message.editorialArtifactId === second.id)?.status, "rejected");
     assert.equal(repositories.editorialArtifacts.getEditorialArtifact(second.id, source.id), undefined);
-    // Older rejections only marked the message; acceptance must still refuse them.
     database.prepare("UPDATE editorial_artifacts SET rejected_at = NULL WHERE id = ?").run(second.id);
     assert.throws(() => repositories.articles.acceptProposal(target.id, { baseRevisionId: accepted.id, content: "Second Spanish", provenance: {}, translationRefresh: { editorialArtifactId: second.id } }), { message: APPLICATION_ERROR.INVALID_REQUEST });
     assert.throws(() => repositories.articles.createArticle({ title: "Rejected edition", content: "Second Spanish", language: "es", sourceArticleId: source.id, sourceRevisionId: source.currentRevisionId, provenance: { kind: "accepted-translation", editorialArtifactId: second.id } }), { message: APPLICATION_ERROR.INVALID_REQUEST });

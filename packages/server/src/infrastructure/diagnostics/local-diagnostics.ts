@@ -55,7 +55,7 @@ function writeDiagnosticBestEffort(writer: DiagnosticWriter, event: DiagnosticEv
     try {
         writer(`${JSON.stringify(redact({ timestamp: new Date().toISOString(), event, ...context }, environmentValues))}\n`);
     } catch {
-        // Diagnostic writer failures must not interrupt the application operation.
+        return;
     }
 }
 

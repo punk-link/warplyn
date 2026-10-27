@@ -25,7 +25,7 @@ export function getAiStageDiagnostics(stage: TelemetryAiStage, telemetry?: Telem
                 ...(failure ? { failure } : {}), ...(httpStatus ? { httpStatus } : {}), ...(operationId ? { operationId } : {})
             });
         } catch {
-            // Optional telemetry must not interrupt generation.
+            return;
         }
     };
     return {

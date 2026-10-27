@@ -129,7 +129,6 @@ export function ComposerBridge({ value, onChange }: { value: AssistantComposerVa
     const latestValue = useRef(value);
     latestValue.current = value;
 
-    // Synchronize restored text before focus can report the editor's previous value.
     useLayoutEffect(() => {
         let insertedTag = false;
         editor.update(() => {

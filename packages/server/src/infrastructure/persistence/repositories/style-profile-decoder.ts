@@ -42,11 +42,15 @@ function isStyleProfile(value: Record<string, unknown>): value is Record<string,
 
 
 export function decodeTypographyRules(json: string) {
+    let value: unknown;
     try {
-        const value: unknown = JSON.parse(json);
-        if (isTypographyRules(value))
-            return value;
-    } catch { /* Invalid stored rules must not silently disappear. */ }
+        value = JSON.parse(json);
+    } catch {
+        value = undefined;
+    }
+
+    if (isTypographyRules(value))
+        return value;
 
     throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST);
 }

@@ -3,6 +3,7 @@ import multilineJsxOpeningTag from "./multiline-jsx-opening-tag.mjs";
 import multilineLongStrings from "./multiline-long-strings.mjs";
 import maxDataProperties from "./max-data-properties.mjs";
 import namedUnicodeCharacters from "./named-unicode-characters.mjs";
+import noBehaviorComments from "./no-behavior-comments.mjs";
 import sqlQueryLayout from "./sql-query-layout.mjs";
 
 
@@ -664,6 +665,7 @@ export default {
         "max-data-properties": maxDataProperties,
         "conditional-braces": conditionalBraces,
         "no-accessible-label-selector": noAccessibleLabelSelector,
+        "no-behavior-comments": noBehaviorComments,
         "no-production-intl-provider": noProductionIntlProvider,
         "named-regex": namedRegex,
         "no-untranslated-ui-copy": noUntranslatedUiCopy,
