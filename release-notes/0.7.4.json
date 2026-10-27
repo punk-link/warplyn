@@ -1,0 +1,42 @@
+{
+    "version": "0.7.4",
+    "previousTag": "v0.7.3",
+    "previousCommit": "ea194010a5c38eb8effcbd0c00f32ff4a35ae1f3",
+    "baseline": "published",
+    "sourceCommit": "fb1e027ecc075e626bd09f5a50213c06756162c2",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Proposal acceptance now saves immediately with a fallback revision description, while a generated summary appears in history when ready.",
+            "commits": [
+                "30cd5976abf254c464bd423508a8a8024f2d7c1b"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Proposal layout and change highlighting preferences, plus translation layout and visible-text preferences, are remembered across Articles and restarts.",
+            "commits": [
+                "e6e81510ef04fd14eac1f0bc2a5735847de2540f"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "While an Assistant response is streaming, its Author message now shows the resolved Skill.",
+            "commits": [
+                "70e44f154ff25c8bb300081e1c6151c088871227"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "Translations did not apply saved typography rules for the target language; they now follow those rules.",
+            "commits": [
+                "bac3773085fba521a4af77a674210b4e6a6156cc"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
