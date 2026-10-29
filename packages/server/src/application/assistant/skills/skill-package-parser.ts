@@ -1,3 +1,4 @@
+import { failure } from "@skladno/shared";
 import { lstatSync, readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { dirname, relative, resolve, sep } from "node:path";
 import { parseDocument } from "yaml";
@@ -37,7 +38,7 @@ interface ParsedSkillMetadata {
 
 
 function issue(code: SkillPackageIssue["code"]): SkillPackageParseResult {
-    return { ok: false, issues: [{ code, messageId: messageIds[code] }] };
+    return failure({ issues: [{ code, messageId: messageIds[code] }] });
 }
 
 

@@ -1,3 +1,4 @@
+import { success, failure, type Result } from "@skladno/shared";
 import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import type { BackupPolicy, TelemetryCaptureSource } from "@skladno/shared";
@@ -36,26 +37,33 @@ export function createDesktopBackupScheduler(options: {
     let disposed = false;
 
 
-    async function createAutomaticBackup(): Promise<void> {
+    async function createAutomaticBackup(): Promise<Result<void, { code: "backup_folder_required" }>> {
         const policy = await options.readPolicy();
         if (disposed || policy.schedule !== "daily")
-            return;
+            return success(undefined);
 
         const { backupDirectory } = readRuntimeSettings(options.runtimePath);
         if (!backupDirectory)
-            throw new Error("Backup folder is not configured.");
+            return failure({ code: "backup_folder_required" });
 
         await createNativeBackup(options.createSnapshot, options.dataDirectory, backupDirectory, options.telemetry, "automatic", options.readPersonalWords);
         await retainAutomaticBackups(backupDirectory, policy);
+
+        return success(undefined);
     }
 
 
     async function run(): Promise<void> {
         const startedAt = Date.now();
         try {
-            await runBackup(createAutomaticBackup);
-        } catch {
-            if (!disposed)
+            let failed: boolean;
+            try {
+                failed = !(await runBackup(createAutomaticBackup)).ok;
+            } catch {
+                failed = true;
+            }
+
+            if (failed && !disposed)
                 options.notifyFailure();
         } finally {
             if (!disposed)

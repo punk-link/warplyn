@@ -1,7 +1,7 @@
-import { APPLICATION_ERROR, HTTP_STATUS, getPublishLimitProfile, isPublishLimitProfileId, type Article, type EditorialArtifact, type FactCheck } from "@skladno/shared";
+import { APPLICATION_ERROR, getPublishLimitProfile, isPublishLimitProfileId, type Article, type EditorialArtifact, type FactCheck } from "@skladno/shared";
 import { resolveTypography } from "@skladno/shared";
 
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../../errors/application-result.js";
 import type { ArticleService } from "../../articles/article-service.js";
 import type { PublishingService } from "../../publishing/publishing-service.js";
 import type { StyleCorpusService } from "../../editorial/style/style-corpus-service.js";
@@ -26,9 +26,8 @@ export interface EditorialCapabilityReadDependencies {
 
 export function readEditorialCapability(
     dependencies: EditorialCapabilityReadDependencies,
-    capability: ReadCapability,
+    capability: Exclude<ReadCapability, "inspect_proposal_summary">,
     article: Article,
-    input: Readonly<Record<string, string>>,
 ): unknown {
     switch (capability) {
         case EDITORIAL_CAPABILITY.INSPECT_ARTICLE:
@@ -60,8 +59,6 @@ export function readEditorialCapability(
                 : { state: "none" };
         case EDITORIAL_CAPABILITY.INSPECT_ARTIFACTS:
             return dependencies.artifacts.listEditorialArtifacts(article.id).map(({ id, revisionId, kind, createdAt }) => ({ id, revisionId, kind, createdAt }));
-        case EDITORIAL_CAPABILITY.INSPECT_PROPOSAL_SUMMARY:
-            return readProposalSummary(dependencies.artifacts, article.id, input.artifactId!);
         case EDITORIAL_CAPABILITY.INSPECT_FACT_CHECKS:
             return dependencies.factChecks.listFactChecks(article.id).map((check) => ({
                 reviewedRevisionId: check.reviewedRevisionId,
@@ -92,15 +89,15 @@ export function readEditorialCapability(
 }
 
 
-function readProposalSummary(artifacts: ArtifactStore, articleId: string, artifactId: string): unknown {
+export function readProposalSummary(artifacts: ArtifactStore, articleId: string, artifactId: string): ApplicationResult<unknown> {
     const artifact = artifacts.getEditorialArtifact(artifactId, articleId);
     if (!artifact)
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
     const content: unknown = JSON.parse(artifact.content);
-    return content && typeof content === "object" && !Array.isArray(content)
+    return success(content && typeof content === "object" && !Array.isArray(content)
         ? { artifactId: artifact.id, summaries: (content as { proposalSummaries?: unknown }).proposalSummaries ?? [] }
-        : { artifactId: artifact.id, summaries: [] };
+        : { artifactId: artifact.id, summaries: [] });
 }
 
 

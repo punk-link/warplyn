@@ -288,7 +288,7 @@ void listenForLocalService(service, config.port, config.host);
 function shutdown(): void {
     service.close(() => {
         database.close();
-        rmSync(dataDirectory, { recursive: true, force: true });
+        rmSync(isolatedE2eDataDirectory, { recursive: true, force: true });
     });
 }
 

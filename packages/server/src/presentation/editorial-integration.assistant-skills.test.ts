@@ -8,6 +8,29 @@ import type { AssistantActionIntentVerifier } from "../application/editorial/ass
 import { EDITORIAL_ENGINE_EVENT } from "../application/editorial/engine/editorial-engine-events.js";
 import { CapabilityFixtureEngine, createEmptyConversationStream, withService } from "./editorial-integration.test-utils.js";
 
+
+test("a Skill validation boundary conflict retains its safe application error and installs nothing", async () => {
+    const engine = new CapabilityFixtureEngine([
+        { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "conflict", text: "Created." },
+    ], "create_author_skill", { skillId: "author-review", skillMarkdown: "# Review" });
+    await withService(engine, async (baseUrl, persistence, services) => {
+        assert.ok(services.authorSkills);
+        services.authorSkills.validateChangeResult = () => {
+            throw new Error("skill_package_conflict");
+        };
+        const article = persistence.articleService.createArticle({ title: "Draft", content: "Original" });
+        const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, {
+            method: HTTP_METHOD.POST, headers: { "content-type": "application/json" },
+            body: JSON.stringify({ requestId: "skill-conflict", authorMessage: "Create an Author Skill",
+                scope: { kind: "article", baseRevisionId: article.currentRevisionId } }),
+        });
+        const conflictCodePattern = /skill_package_conflict/;
+        assert.match(await response.text(), conflictCodePattern);
+        assert.equal(services.authorSkills.listRevisions("author-review").length, 0);
+        assert.equal(persistence.articles.getArticle(article.id)?.currentRevision.content, "Original");
+    }, true, { verify: async () => true });
+});
+
 test("the Assistant model creates an Author-requested Skill without changing the Article", async () => {
     const engine = new CapabilityFixtureEngine([
         { type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "created-author-skill", text: "Created the reusable Skill." },

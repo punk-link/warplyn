@@ -1,6 +1,13 @@
-import { APPLICATION_ERROR, getAiModelPreferenceId, defaultGeneralSettings, defaultInterfaceLocale, findKeyBindingConflict, HTTP_STATUS, INTERFACE_LOCALE, isAiProvider, isAssistantSendMode, isDateFormatPreference, isKeyBindingCommandId, isThemePreference, isTimeFormatPreference, isTimeZonePreference, KEY_BINDING_COMMAND, normalizeKeyBinding, parseAiModelPreferenceId, resolveKeyBindings, type AiConnection, type AppModelPreference, type BackupPolicy, type GeneralSettings, type KeyBindingOverrides, type ModelPreferences } from "@skladno/shared";
+import {
+    APPLICATION_ERROR, getAiModelPreferenceId, defaultGeneralSettings, defaultInterfaceLocale, findKeyBindingConflict,
+    INTERFACE_LOCALE, isAiProvider, isAssistantSendMode, isDateFormatPreference, isKeyBindingCommandId, isThemePreference,
+    isTimeFormatPreference, isTimeZonePreference, KEY_BINDING_COMMAND, normalizeKeyBinding, parseAiModelPreferenceId,
+    resolveKeyBindings, type AiConnection, type AppModelPreference, type BackupPolicy, type GeneralSettings,
+    type KeyBindingOverrides, type ModelPreferences,
+} from "@skladno/shared";
 
-import { ApplicationServiceError } from "../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../errors/application-result.js";
+import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
 
 
 function isAssistantRequestTimeout(value: unknown): value is GeneralSettings["assistantRequestTimeoutMinutes"] {
@@ -43,16 +50,21 @@ function normalizeGeneralPreferences(candidate: Partial<GeneralSettings>): Pick<
 
 
 export function normalizeGeneralSettings(value: unknown, rejectInvalidPreferences = false): GeneralSettings {
+    return unwrapApplicationResult(prepareGeneralSettings(value, rejectInvalidPreferences));
+}
+
+
+export function prepareGeneralSettings(value: unknown, rejectInvalidPreferences = true): ApplicationResult<GeneralSettings> {
     const candidate = value && typeof value === "object" ? value as Partial<GeneralSettings> : {};
     if (rejectInvalidPreferences && hasInvalidGeneralPreferences(candidate))
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
-    return {
+    return success({
         ...defaultGeneralSettings,
         ...candidate,
         ...normalizeGeneralPreferences(candidate),
         defaultTranslationLanguages: normalizeTranslationLanguages(candidate),
-    };
+    });
 }
 
 
@@ -119,11 +131,16 @@ export function normalizeAiConnections(value: unknown): { connections: AiConnect
 
 
 export function getEnvironmentVariableName(value: unknown): string {
+    return unwrapApplicationResult(prepareEnvironmentVariableName(value));
+}
+
+
+export function prepareEnvironmentVariableName(value: unknown): ApplicationResult<string> {
     const punctuationPattern = /^[A-Z_][A-Z0-9_]*$/;
     if (typeof value !== "string" || !punctuationPattern.test(value))
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_ENVIRONMENT_VARIABLE_NAME, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.INVALID_ENVIRONMENT_VARIABLE_NAME);
 
-    return value;
+    return success(value);
 }
 
 
@@ -204,66 +221,72 @@ export function normalizeModelPreferences(value: unknown, legacyConnectionId?: s
 }
 
 
-function invalidKeyBinding(rejectInvalid: boolean): KeyBindingOverrides {
+function invalidKeyBinding(rejectInvalid: boolean): ApplicationResult<KeyBindingOverrides> {
     if (rejectInvalid)
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_KEY_BINDING, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.INVALID_KEY_BINDING);
 
-    return {};
+    return success({});
 }
 
 
-function normalizeBindingEntry(overrides: KeyBindingOverrides, commandId: string, binding: unknown, rejectInvalid: boolean): void {
+function normalizeBindingEntry(overrides: KeyBindingOverrides, commandId: string, binding: unknown, rejectInvalid: boolean): ApplicationResult<void> {
     if (commandId === KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST)
-        return;
+        return success(undefined);
 
     if (!isKeyBindingCommandId(commandId)) {
-        invalidKeyBinding(rejectInvalid);
-        return;
+        const result = invalidKeyBinding(rejectInvalid);
+        return result.ok ? success(undefined) : result;
     }
 
     if (binding === null) {
         overrides[commandId] = null;
-        return;
+        return success(undefined);
     }
 
     const normalized = normalizeKeyBinding(binding);
     if (!normalized) {
-        invalidKeyBinding(rejectInvalid);
-        return;
+        const result = invalidKeyBinding(rejectInvalid);
+        return result.ok ? success(undefined) : result;
     }
 
     overrides[commandId] = normalized;
+    return success(undefined);
 }
 
 
-function validateKeyBindingConflicts(overrides: KeyBindingOverrides, rejectInvalid: boolean): void {
+function validateKeyBindingConflicts(overrides: KeyBindingOverrides, rejectInvalid: boolean): ApplicationResult<void> {
     if (!rejectInvalid)
-        return;
+        return success(undefined);
 
     const conflict = findKeyBindingConflict(resolveKeyBindings(overrides));
     if (conflict)
-        throw new ApplicationServiceError(APPLICATION_ERROR.KEY_BINDING_CONFLICT, HTTP_STATUS.BAD_REQUEST, { firstCommandId: conflict[0], secondCommandId: conflict[1] });
+        return failure(APPLICATION_ERROR.KEY_BINDING_CONFLICT, "invalid", { firstCommandId: conflict[0], secondCommandId: conflict[1] });
+
+    return success(undefined);
 }
 
 
-function normalizeKeyBindingOverrides(value: unknown, rejectInvalid: boolean): KeyBindingOverrides {
+export function prepareKeyBindingOverrides(value: unknown, rejectInvalid = true): ApplicationResult<KeyBindingOverrides> {
     if (!value || typeof value !== "object" || Array.isArray(value))
         return invalidKeyBinding(rejectInvalid);
 
     const overrides: KeyBindingOverrides = {};
-    for (const [commandId, binding] of Object.entries(value))
-        normalizeBindingEntry(overrides, commandId, binding, rejectInvalid);
+    for (const [commandId, binding] of Object.entries(value)) {
+        const entry = normalizeBindingEntry(overrides, commandId, binding, rejectInvalid);
+        if (!entry.ok)
+            return entry;
+    }
 
-    validateKeyBindingConflicts(overrides, rejectInvalid);
-    return overrides;
+    const conflicts = validateKeyBindingConflicts(overrides, rejectInvalid);
+    return conflicts.ok ? success(overrides) : conflicts;
 }
 
 
 export function normalizeStoredKeyBindingOverrides(value: unknown): KeyBindingOverrides {
-    return normalizeKeyBindingOverrides(value, false);
+    return unwrapApplicationResult(prepareKeyBindingOverrides(value, false));
 }
 
 
 export function normalizeRequestedKeyBindingOverrides(value: unknown): KeyBindingOverrides {
-    return normalizeKeyBindingOverrides(value, true);
+    return unwrapApplicationResult(prepareKeyBindingOverrides(value));
 }

@@ -14,6 +14,37 @@ import { readPersonalDictionaryFile } from "../../infrastructure/recovery/person
 
 
 // Product scenario: settings.backup-policy-human-reviewed
+test("a missing backup folder reports failure and retries without snapshot writes", async (context) => {
+    const root = mkdtempSync(join(tmpdir(), "warplyn-backup-missing-folder-"));
+    let failures = 0;
+    let snapshots = 0;
+    context.mock.timers.enable({ apis: ["setTimeout", "Date"], now: 0 });
+    const scheduler = createDesktopBackupScheduler({
+        runtimePath: join(root, "runtime.json"), dataDirectory: join(root, "data"),
+        readPolicy: async () => ({ schedule: "daily", retention: { mode: "unlimited" } }),
+        createSnapshot: async () => {
+            snapshots++;
+        },
+        notifyFailure: () => failures++,
+    });
+    try {
+        scheduler.start();
+        for (const delay of [5_000, 86_400_000]) {
+            context.mock.timers.tick(delay);
+            await waitForBackups();
+            await new Promise<void>((resolve) => setImmediate(resolve));
+        }
+
+        assert.equal(failures, 2);
+        assert.equal(snapshots, 0);
+    } finally {
+        scheduler.dispose();
+        await waitForBackups();
+        rmSync(root, { recursive: true, force: true });
+    }
+});
+
+
 test("native automatic backups run at startup and every 24 hours, retain only automatic bundles, and retry after failure", async (t) => {
     const root = mkdtempSync(join(tmpdir(), "warplyn-backup-schedule-"));
     const dataDirectory = join(root, "data");

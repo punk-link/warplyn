@@ -1,5 +1,6 @@
-import { APPLICATION_ERROR, HTTP_STATUS, EDITORIAL_OPERATION, type StyleProfile } from "@skladno/shared";
-import { ApplicationServiceError } from "../errors/application-service-error.js";
+import { APPLICATION_ERROR, EDITORIAL_OPERATION, type StyleProfile } from "@skladno/shared";
+import { failure, success, type ApplicationResult } from "../errors/application-result.js";
+import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
 import { reviewTypography } from "../editorial/style/typography-review.js";
 import { createSkillGuidance } from "./skills/create-skill-guidance.js";
 
@@ -16,16 +17,23 @@ import { getSelectionContext } from "../editorial/selection-context.js";
 
 
 export function streamAssistantEngineEvents(request: PreparedAssistantRequest, stores: { assistant: AssistantStore; styleCorpus: StyleCorpusStore; factChecks: FactChecksStore }, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+    return unwrapApplicationResult(prepareAssistantEngineStream(request, stores, signal));
+}
+
+
+function prepareAssistantEngineStream(
+    request: PreparedAssistantRequest, stores: Parameters<typeof streamAssistantEngineEvents>[1], signal: AbortSignal,
+): ApplicationResult<AsyncIterable<EditorialEngineEvent>> {
     const excerpt = getAssistantArticleExcerpt(request);
     if (!request.resolvedSkillId)
-        return streamAssistantConversation(request, stores.assistant, excerpt, signal);
+        return success(streamAssistantConversation(request, stores.assistant, excerpt, signal));
 
     if (!request.execution.operation)
         throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
     const style = request.execution.operation === EDITORIAL_OPERATION.STYLE_REVIEW ? request.article.styleContext : undefined;
     if (request.execution.operation === EDITORIAL_OPERATION.STYLE_REVIEW && !style)
-        throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED);
 
     const profile = style?.profile;
     const articleRules = style?.articleRules ?? "";
@@ -53,7 +61,8 @@ export function streamAssistantEngineEvents(request: PreparedAssistantRequest, s
             skipFactCheckClaim: request.execution.skipFactCheckClaim,
         } : {})
     }, signal);
-    return profile ? streamTypographyReviewedEvents(events, excerpt, profile, articleRules, signal) : events;
+
+    return success(profile ? streamTypographyReviewedEvents(events, excerpt, profile, articleRules, signal) : events);
 }
 
 

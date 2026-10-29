@@ -1,19 +1,25 @@
-import { APPLICATION_ERROR, FACT_CHECK_STATUS, HTTP_STATUS, type FactCheck } from "@skladno/shared";
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { APPLICATION_ERROR, FACT_CHECK_STATUS, type FactCheck } from "@skladno/shared";
+import { failure, success, type ApplicationResult } from "../../errors/application-result.js";
+import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 
 
 export function verifyCorrectionSelection(checks: FactCheck[], revisionId: string, findingIds: string[]): FactCheck["findings"] {
+    return unwrapApplicationResult(prepareCorrectionSelection(checks, revisionId, findingIds));
+}
+
+
+export function prepareCorrectionSelection(checks: FactCheck[], revisionId: string, findingIds: string[]): ApplicationResult<FactCheck["findings"]> {
     const selected = new Set(findingIds);
     if (selected.size === 0 || selected.size !== findingIds.length || findingIds.some((id) => !id.trim()))
-        throw new ApplicationServiceError(APPLICATION_ERROR.FACT_CORRECTION_SELECTION_INVALID, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.FACT_CORRECTION_SELECTION_INVALID);
 
     const findings = (checks.find((check) => check.reviewedRevisionId === revisionId)?.findings ?? [])
         .filter((finding) => finding.occurrenceId && selected.has(finding.occurrenceId));
 
     if (findings.length !== selected.size || findings.some((finding) => finding.resolution || (finding.status !== FACT_CHECK_STATUS.DISPUTED && finding.status !== FACT_CHECK_STATUS.UNVERIFIABLE)))
-        throw new ApplicationServiceError(APPLICATION_ERROR.FACT_CORRECTION_SELECTION_INVALID, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.FACT_CORRECTION_SELECTION_INVALID);
 
-    return findings;
+    return success(findings);
 }
 
 

@@ -1,6 +1,7 @@
-import { APPLICATION_ERROR, HTTP_STATUS, isTypographyRules, typographyIssues, type CreateStyleCorpusItemInput, type StyleCorpus } from "@skladno/shared";
+import { APPLICATION_ERROR, isTypographyRules, typographyIssues, type CreateStyleCorpusItemInput, type StyleCorpus } from "@skladno/shared";
 
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../../errors/application-result.js";
+import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 import type { EditorialEngineResolver } from "../engine/editorial-engine-resolver.js";
 import type { StyleCorpusStore } from "./style-corpus-store.js";
 import type { ArticleStore } from "../../articles/article-store.js";
@@ -10,18 +11,28 @@ import { isTypographyConfigurationUpdate } from "@skladno/shared";
 
 export class StyleCorpusService {
     setTypographyConfiguration(input: unknown): StyleCorpus {
-        if (!isTypographyConfigurationUpdate(input))
-            throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST);
+        return unwrapApplicationResult(this.updateTypographyConfiguration(input));
+    }
 
-        return this.store.setTypographyConfiguration(input);
+
+    private updateTypographyConfiguration(input: unknown): ApplicationResult<StyleCorpus> {
+        if (!isTypographyConfigurationUpdate(input))
+            return failure(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID);
+
+        return success(this.store.setTypographyConfiguration(input));
     }
 
 
     getArticleTypography(articleId: string) {
-        if (!this.articles?.getArticle(articleId))
-            throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+        return unwrapApplicationResult(this.readArticleTypography(articleId));
+    }
 
-        return this.store.getArticleTypography(articleId);
+
+    private readArticleTypography(articleId: string): ApplicationResult<import("@skladno/shared").ArticleTypography | undefined> {
+        if (!this.articles?.getArticle(articleId))
+            return failure(APPLICATION_ERROR.ARTICLE_NOT_FOUND, "not-found");
+
+        return success(this.store.getArticleTypography(articleId));
     }
 
 
@@ -46,25 +57,30 @@ export class StyleCorpusService {
 
 
     async add(input: CreateStyleCorpusItemInput, signal: AbortSignal): Promise<StyleCorpus> {
+        return unwrapApplicationResult(await this.addCorpusItem(input, signal));
+    }
+
+
+    private async addCorpusItem(input: CreateStyleCorpusItemInput, signal: AbortSignal): Promise<ApplicationResult<StyleCorpus>> {
         if (!input.content.trim())
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
         if (this.store.hasStyleCorpusContent(input.content))
-            throw new ApplicationServiceError(APPLICATION_ERROR.DUPLICATE_STYLE_CORPUS_ITEM, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.DUPLICATE_STYLE_CORPUS_ITEM);
 
         const name = input.name?.trim();
         if (name)
-            return this.store.addStyleCorpusItem({ ...input, name });
+            return success(this.store.addStyleCorpusItem({ ...input, name }));
 
         const generator = this.engines?.resolveArticleTitleGenerator?.();
         if (!generator)
-            throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING);
 
         const generatedName = (await generator.generate(input.content, signal)).trim();
         if (!generatedName)
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
-        return this.store.addStyleCorpusItem({ ...input, name: generatedName });
+        return success(this.store.addStyleCorpusItem({ ...input, name: generatedName }));
     }
 
 
@@ -84,14 +100,19 @@ export class StyleCorpusService {
 
 
     setTypographyRules(input: unknown): StyleCorpus {
+        return unwrapApplicationResult(this.updateTypographyRules(input));
+    }
+
+
+    private updateTypographyRules(input: unknown): ApplicationResult<StyleCorpus> {
         if (!isTypographyRules(input)) {
             const issue = typographyIssues(input)[0];
-            throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST, {
+            return failure(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, "invalid", {
                 rule: (issue?.index ?? 0) + 1,
             });
         }
 
-        return this.store.setTypographyRules(input);
+        return success(this.store.setTypographyRules(input));
     }
 
 
@@ -106,22 +127,27 @@ export class StyleCorpusService {
 
 
     addArticleRevision(articleId: string, revisionId: string): StyleCorpus {
+        return unwrapApplicationResult(this.includeArticleRevision(articleId, revisionId));
+    }
+
+
+    includeArticleRevision(articleId: string, revisionId: string): ApplicationResult<StyleCorpus> {
         const article = this.articles?.getArticle(articleId);
         const revision = this.articles?.getRevision(articleId, revisionId);
         if (!article || !revision)
-            throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+            return failure(APPLICATION_ERROR.REVISION_NOT_FOUND, "not-found");
 
         if (this.store.hasStyleCorpusContent(revision.content))
-            throw new ApplicationServiceError(APPLICATION_ERROR.DUPLICATE_STYLE_CORPUS_ITEM, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.DUPLICATE_STYLE_CORPUS_ITEM);
 
         const revisionNumber = this.articles!.listRevisions(articleId).findIndex((item) => item.id === revisionId) + 1;
-        return this.store.addStyleCorpusItem({
+        return success(this.store.addStyleCorpusItem({
             name: `${article.title} — Revision ${revisionNumber}`,
             content: revision.content,
             origin: "article-revision",
             articleId,
             revisionId,
-        });
+        }));
     }
 
 

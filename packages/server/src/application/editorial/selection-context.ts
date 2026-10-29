@@ -1,5 +1,6 @@
-import { APPLICATION_ERROR, HTTP_STATUS } from "@skladno/shared";
-import { ApplicationServiceError } from "../errors/application-service-error.js";
+import { APPLICATION_ERROR } from "@skladno/shared";
+import { failure, success, type ApplicationResult } from "../errors/application-result.js";
+import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
 
 
 export interface SelectionContext {
@@ -16,9 +17,16 @@ function splitsSurrogatePair(content: string, offset: number): boolean {
 
 
 export function validateSelectionOffsets(content: string, start: number, end: number): void {
+    unwrapApplicationResult(checkSelectionOffsets(content, start, end));
+}
+
+
+export function checkSelectionOffsets(content: string, start: number, end: number): ApplicationResult<void> {
     if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > content.length || start >= end ||
         splitsSurrogatePair(content, start) || splitsSurrogatePair(content, end))
-        throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SELECTION_INVALID, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.ASSISTANT_SELECTION_INVALID);
+
+    return success(undefined);
 }
 
 

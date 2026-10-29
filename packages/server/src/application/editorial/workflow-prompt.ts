@@ -3,14 +3,14 @@ import {
     APPLICATION_ERROR,
     EDITORIAL_OPERATION,
     editorialOperationSkillMap,
-    HTTP_STATUS,
     typographyRuleId,
     typographyRuleLabel,
     type EditorialOperation,
     type StyleProfile,
 } from "@skladno/shared";
 
-import { ApplicationServiceError } from "../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../errors/application-result.js";
+import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
 import { loadBuiltInSkillPackages } from "../assistant/skills/built-in-skill-packages.js";
 import { createSkillGuidance } from "../assistant/skills/create-skill-guidance.js";
 import type { SkillGuidance } from "../assistant/skills/skill-guidance.js";
@@ -130,11 +130,11 @@ function createNarrativeDraftPrompt(input: EditorialPromptInput): ModelMessage[]
 }
 
 
-function createStyleReviewPrompt(input: EditorialPromptInput): ModelMessage[] {
+function createStyleReviewPrompt(input: EditorialPromptInput): ApplicationResult<ModelMessage[]> {
     if (!input.styleProfile)
-        throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED);
 
-    return [
+    return success([
         {
             role: "system",
             content: getSkillInstructions(input),
@@ -159,19 +159,19 @@ function createStyleReviewPrompt(input: EditorialPromptInput): ModelMessage[] {
                 `This Article rules:\n${formatNumberedRules(input.articleStyleRules ?? "", "article-rule")}\n\n` +
                 `Author guidance:\n${createAuthorGuidance(input.authorContext)}`,
         },
-    ];
+    ]);
 }
 
 
-function createTranslationPrompt(input: EditorialPromptInput): ModelMessage[] {
+function createTranslationPrompt(input: EditorialPromptInput): ApplicationResult<ModelMessage[]> {
     if (!input.targetLanguage?.trim())
-        throw new ApplicationServiceError(APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED);
 
     const typography = input.styleProfile?.rules.typography
         .filter((rule) => rule.definition.kind === "contextual")
         .map((rule) => `${typographyRuleId(rule)}: ${typographyRuleLabel(rule)}`).join("\n");
 
-    return [
+    return success([
         {
             role: "system",
             content: getSkillInstructions(input) + (typography ? `\n\nTarget language typography rules:\n${typography}` : "")
@@ -180,7 +180,7 @@ function createTranslationPrompt(input: EditorialPromptInput): ModelMessage[] {
             role: "user",
             content: `Target language:\n${input.targetLanguage.trim()}\n\nCurrent Article title:\n${input.articleTitle ?? ""}\n\nCurrent article:\n${input.article}\n\nAuthor guidance:\n${createAuthorGuidance(input.authorContext)}`
         },
-    ];
+    ]);
 }
 
 
@@ -210,7 +210,7 @@ function createReplacementPrompt(input: EditorialPromptInput): ModelMessage[] {
 
 
 export function createEditorialMessages(input: EditorialPromptInput): ModelMessage[] {
-    const messages = createSourceMessages(input);
+    const messages = unwrapApplicationResult(createSourceMessages(input));
     if (input.operation !== EDITORIAL_OPERATION.TRANSLATION && input.operation !== EDITORIAL_OPERATION.FACT_CHECK)
         messages.push({
             role: "system",
@@ -231,21 +231,21 @@ export function createEditorialMessages(input: EditorialPromptInput): ModelMessa
 }
 
 
-function createSourceMessages(input: EditorialPromptInput): ModelMessage[] {
+function createSourceMessages(input: EditorialPromptInput): ApplicationResult<ModelMessage[]> {
     const skill = resolvePromptSkill(input);
     input = { ...input, skill };
     if (skill?.execution.capability === "generate_proposal") {
         if (skill.execution.source === "author_or_article")
-            return createTalkingPointsPrompt(input);
+            return success(createTalkingPointsPrompt(input));
 
         if (skill.execution.operation === "thesis_to_narrative")
-            return createNarrativeDraftPrompt(input);
+            return success(createNarrativeDraftPrompt(input));
 
-        return skill.execution.resultPolicy === "verified_edit" ? createFlowRevisionPrompt(input) : createReplacementPrompt(input);
+        return success(skill.execution.resultPolicy === "verified_edit" ? createFlowRevisionPrompt(input) : createReplacementPrompt(input));
     }
 
     if (input.operation === EDITORIAL_OPERATION.THESIS_TO_NARRATIVE)
-        return createNarrativeDraftPrompt(input);
+        return success(createNarrativeDraftPrompt(input));
 
     if (input.operation === EDITORIAL_OPERATION.STYLE_REVIEW)
         return createStyleReviewPrompt(input);
@@ -253,5 +253,5 @@ function createSourceMessages(input: EditorialPromptInput): ModelMessage[] {
     if (input.operation === EDITORIAL_OPERATION.TRANSLATION)
         return createTranslationPrompt(input);
 
-    return createFlowRevisionPrompt(input);
+    return success(createFlowRevisionPrompt(input));
 }

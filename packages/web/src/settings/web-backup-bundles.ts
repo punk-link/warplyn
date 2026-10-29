@@ -1,23 +1,12 @@
+import { success, failure } from "@skladno/shared";
 import type { BackupBundleManifest } from "@skladno/shared";
 import { BackupBundleClient } from "./backup-bundle-client";
 import { BackupDirectoryHandle } from "./backup-directory-handle";
 
 
-export const WEB_BACKUP_ERROR = {
-    FOLDER_REQUIRED: "web_backup_folder_required",
-    FOLDER_PERMISSION: "web_backup_folder_permission",
-    FOLDER_PICKER_UNSUPPORTED: "web_backup_folder_picker_unsupported",
-    BACKUP_UNAVAILABLE: "web_backup_unavailable",
-    RESTORE_UNAVAILABLE: "web_backup_restore_unavailable",
-} as const;
-type WebBackupErrorCode = typeof WEB_BACKUP_ERROR[keyof typeof WEB_BACKUP_ERROR];
-
-
-export class WebBackupError extends Error {
-    constructor(readonly code: WebBackupErrorCode) {
-        super(code);
-    }
-}
+import { WEB_BACKUP_ERROR } from "./web-backup-error.js";
+import type { WebBackupResult } from "./web-backup-result.js";
+import { unwrapWebBackup } from "./unwrap-web-backup.js";
 
 
 function isSafeBundlePath(path: string): boolean {
@@ -41,11 +30,11 @@ function isBackupBundleManifest(value: unknown): value is BackupBundleManifest {
 }
 
 
-async function writeBundleFile(directory: BackupDirectoryHandle, path: string, file: Blob): Promise<void> {
+async function writeBundleFile(directory: BackupDirectoryHandle, path: string, file: Blob): Promise<WebBackupResult<void>> {
     const parts = path.split("/");
     const name = parts.pop();
     if (!name || !isSafeBundlePath(path))
-        throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
+        return failure({ code: WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE });
 
     let target = directory;
     for (const part of parts)
@@ -58,40 +47,48 @@ async function writeBundleFile(directory: BackupDirectoryHandle, path: string, f
     } finally {
         await writer.close();
     }
+
+    return success(undefined);
 }
 
 
-async function readBundleFile(directory: BackupDirectoryHandle, path: string): Promise<Blob> {
+async function readBundleFile(directory: BackupDirectoryHandle, path: string): Promise<WebBackupResult<Blob>> {
     if (!isSafeBundlePath(path))
-        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
+        return failure({ code: WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE });
 
     const parts = path.split("/");
     const name = parts.pop();
 
     if (!name)
-        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
+        return failure({ code: WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE });
 
     let target = directory;
 
     for (const part of parts)
         target = await target.getDirectoryHandle(part);
 
-    return (await target.getFileHandle(name)).getFile();
+    return success(await (await target.getFileHandle(name)).getFile());
 }
 
 
 export async function saveBackupBundle(client: BackupBundleClient, folder: BackupDirectoryHandle, name: string): Promise<void> {
+    unwrapWebBackup(await writeBackupBundle(client, folder, name));
+}
+
+
+export async function writeBackupBundle(client: BackupBundleClient, folder: BackupDirectoryHandle, name: string): Promise<WebBackupResult<void>> {
     if (!client.createBackupExport || !client.readBackupExport || !client.removeBackupExport)
-        throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
+        return failure({ code: WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE });
 
     const { id, manifest } = await client.createBackupExport();
 
     try {
         const directory = await folder.getDirectoryHandle(name, { create: true });
-        for (const [index, entry] of manifest.files.entries())
-            await writeBundleFile(directory, entry.path, await client.readBackupExport(id, index));
+        const written = await writeBundleContents({ readBackupExport: client.readBackupExport }, directory, id, manifest);
+        if (!written.ok)
+            await folder.removeEntry(name, { recursive: true }).catch(() => undefined);
 
-        await writeBundleFile(directory, "manifest.json", new Blob([JSON.stringify(manifest)], { type: "application/json" }));
+        return written;
     } catch (error) {
         await folder.removeEntry(name, { recursive: true }).catch(() => undefined);
         throw error;
@@ -101,25 +98,51 @@ export async function saveBackupBundle(client: BackupBundleClient, folder: Backu
 }
 
 
+async function writeBundleContents(
+    client: Required<Pick<BackupBundleClient, "readBackupExport">>, directory: BackupDirectoryHandle,
+    id: string, manifest: BackupBundleManifest,
+): Promise<WebBackupResult<void>> {
+    for (const [index, entry] of manifest.files.entries()) {
+        const written = await writeBundleFile(directory, entry.path, await client.readBackupExport(id, index));
+        if (!written.ok)
+            return written;
+    }
+
+    return writeBundleFile(directory, "manifest.json", new Blob([JSON.stringify(manifest)], { type: "application/json" }));
+}
+
+
 export async function restoreBackupBundle(client: BackupBundleClient, folder: BackupDirectoryHandle, name: string): Promise<void> {
+    unwrapWebBackup(await importBackupBundle(client, folder, name));
+}
+
+
+export async function importBackupBundle(client: BackupBundleClient, folder: BackupDirectoryHandle, name: string): Promise<WebBackupResult<void>> {
     if (!client.beginBackupImport || !client.writeBackupImport || !client.restoreBackupImport || !client.removeBackupImport)
-        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
+        return failure({ code: WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE });
 
     const directory = await folder.getDirectoryHandle(name);
     const raw = await (await directory.getFileHandle("manifest.json")).getFile();
     const manifest: unknown = JSON.parse(await raw.text());
 
     if (!isBackupBundleManifest(manifest))
-        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
+        return failure({ code: WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE });
 
     const { id } = await client.beginBackupImport(manifest);
 
     try {
-        for (const [index, entry] of manifest.files.entries())
-            await client.writeBackupImport(id, index, await readBundleFile(directory, entry.path));
+        for (const [index, entry] of manifest.files.entries()) {
+            const file = await readBundleFile(directory, entry.path);
+            if (!file.ok)
+                return file;
+
+            await client.writeBackupImport(id, index, file.value);
+        }
 
         await client.restoreBackupImport(id);
     } finally {
         await client.removeBackupImport(id);
     }
+
+    return success(undefined);
 }

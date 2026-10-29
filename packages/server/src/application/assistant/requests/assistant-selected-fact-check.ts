@@ -1,5 +1,6 @@
-import { APPLICATION_ERROR, HTTP_STATUS, type FactCheckFinding } from "@skladno/shared";
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { APPLICATION_ERROR, type FactCheckFinding } from "@skladno/shared";
+import { failure, success, type ApplicationResult } from "../../errors/application-result.js";
+import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 import type { EditorialEngineEvent } from "../../editorial/engine/editorial-engine-event.js";
 import type { PreparedAssistantRequest } from "./prepared-assistant-request.js";
 
@@ -17,12 +18,19 @@ export function selectFactCheckFindings<Check extends { findings: FactCheckFindi
 export function selectCompletedFactCheck(
     event: Extract<EditorialEngineEvent, { type: "completed" }>, skip: PreparedAssistantRequest["execution"]["skipFactCheckClaim"],
 ): typeof event {
+    return unwrapApplicationResult(filterCompletedFactCheck(event, skip));
+}
+
+
+export function filterCompletedFactCheck(
+    event: Extract<EditorialEngineEvent, { type: "completed" }>, skip: PreparedAssistantRequest["execution"]["skipFactCheckClaim"],
+): ApplicationResult<typeof event> {
     if (!event.factCheck || !skip)
-        return event;
+        return success(event);
 
     const factCheck = selectFactCheckFindings(event.factCheck, skip)!;
     if (event.factCheck.findings.length && !factCheck.findings.length)
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
-    return { ...event, factCheck };
+    return success({ ...event, factCheck });
 }

@@ -1,6 +1,5 @@
 import {
     APPLICATION_ERROR,
-    HTTP_STATUS,
     createTextProposal,
     typographyRuleId,
     typographyRuleLabel,
@@ -8,7 +7,8 @@ import {
     type StyleReview,
     type TypographyReview,
 } from "@skladno/shared";
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../../errors/application-result.js";
+import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 import { typographyProseSpans } from "./typography-prose-spans.js";
 import { typographyRuleMatches } from "./typography-rule-matches.js";
 
@@ -97,10 +97,17 @@ export function reviewTypography(
     previous?: StyleReview,
     local = false,
 ): { text: string; styleReview: StyleReview } {
+    return unwrapApplicationResult(applyTypographyReview(source, candidate, profile, previous, local));
+}
+
+
+export function applyTypographyReview(
+    source: string, candidate: string, profile: StyleProfile, previous?: StyleReview, local = false,
+): ApplicationResult<{ text: string; styleReview: StyleReview }> {
     const { occurrences, skipped } = collectTypographyPatches(candidate, profile);
     const text = applyTypographyPatches(candidate, occurrences);
     if (collectTypographyPatches(text, profile).occurrences.length)
-        throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_CORRECTIONS_CONFLICT, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.TYPOGRAPHY_CORRECTIONS_CONFLICT);
 
     const rulesById = new Map(profile.rules.typography.map((rule) => [rule.id, rule]));
     const findings = occurrences.map((occurrence) => ({
@@ -110,7 +117,7 @@ export function reviewTypography(
         typographyOccurrence: occurrence,
     }));
 
-    return {
+    return success({
         text,
         styleReview: {
             ...previous,
@@ -132,5 +139,5 @@ export function reviewTypography(
                 changes: changeSupport(source, text, occurrences),
             },
         },
-    };
+    });
 }

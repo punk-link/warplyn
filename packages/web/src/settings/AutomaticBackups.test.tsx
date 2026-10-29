@@ -38,17 +38,19 @@ it("runs browser backups at startup and daily, reports failures, and stops on un
 });
 
 
-it("leaves Electron backups to the main process", async () => {
+it("leaves Electron backups to the main process and localizes failure notifications", async () => {
     vi.useFakeTimers();
     getDesktopSettingsClient.mockReturnValue({});
     const getApplicationSettings = vi.fn();
     const client = { getApplicationSettings } as unknown as EditorialWorkspaceClient;
-    const view = render(<IntlProvider locale="en" messages={messages}><AutomaticBackups client={client} /></IntlProvider>);
+    const localizedTitle = "[localized automatic backup failure]";
+    const translated: Record<keyof typeof messages, string> = { ...messages, "settings.automaticBackupFailed": localizedTitle };
+    const view = render(<IntlProvider locale="en" messages={translated}><AutomaticBackups client={client} /></IntlProvider>);
     await vi.advanceTimersByTimeAsync(86_400_000);
     expect(getApplicationSettings).not.toHaveBeenCalled();
     expect(saveScheduledWebBackup).not.toHaveBeenCalled();
     window.dispatchEvent(new Event("warplyn:automatic-backup-failed"));
-    expect(notify).toHaveBeenCalledWith({ tone: "error", title: messages["settings.automaticBackupFailed"] });
+    expect(notify).toHaveBeenCalledWith({ tone: "error", title: localizedTitle });
     view.unmount();
     window.dispatchEvent(new Event("warplyn:automatic-backup-failed"));
     expect(notify).toHaveBeenCalledOnce();
