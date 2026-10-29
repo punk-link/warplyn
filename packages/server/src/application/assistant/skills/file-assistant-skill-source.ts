@@ -8,6 +8,8 @@ import type { AssistantSkillPackage } from "./assistant-skill-package.js";
 import type { AuthorSkillPackageStatus } from "./author-skill-package-status.js";
 import { normalizeSkillName } from "./normalize-skill-name.js";
 import { parseSkillPackage } from "./skill-package-parser.js";
+import { success } from "../../errors/application-result.js";
+import { skillWriteFailure, unwrapSkillWrite, type SkillWriteResult } from "./skill-write-result.js";
 
 
 export class FileAssistantSkillSource {
@@ -114,9 +116,14 @@ export class FileAssistantSkillSource {
 
 
     install(input: { directory: string; files: Readonly<Record<string, string>> }): AssistantSkillPackage {
+        return unwrapSkillWrite(this.installResult(input));
+    }
+
+
+    installResult(input: { directory: string; files: Readonly<Record<string, string>> }): SkillWriteResult<AssistantSkillPackage> {
         const root = this.packageRoot(input.directory);
         if (existsSync(root))
-            throw new Error("skill_package_conflict");
+            return skillWriteFailure("skill_package_conflict");
 
         this.refresh();
         const staged = `${root}.staged`;
@@ -124,31 +131,36 @@ export class FileAssistantSkillSource {
         const parsed = parseSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
         if (!parsed.ok) {
             rmSync(staged, { recursive: true, force: true });
-            throw new Error(parsed.issues[0]!.code);
+            return skillWriteFailure(parsed.issues[0]!.code);
         }
 
         if (parsed.skillPackage.reference.id !== input.directory) {
             rmSync(staged, { recursive: true, force: true });
-            throw new Error("invalid_metadata");
+            return skillWriteFailure("invalid_metadata");
         }
 
         if (!this.isAvailable(parsed.skillPackage)) {
             rmSync(staged, { recursive: true, force: true });
-            throw new Error("skill_package_conflict");
+            return skillWriteFailure("skill_package_conflict");
         }
 
         mkdirSync(dirname(root), { recursive: true });
         renameSync(staged, root);
         this.refresh();
 
-        return parsed.skillPackage;
+        return success(parsed.skillPackage);
     }
 
 
     validateInstall(input: { directory: string; files: Readonly<Record<string, string>> }): void {
+        unwrapSkillWrite(this.validateInstallResult(input));
+    }
+
+
+    validateInstallResult(input: { directory: string; files: Readonly<Record<string, string>> }): SkillWriteResult<void> {
         const root = this.packageRoot(input.directory);
         if (existsSync(root))
-            throw new Error("skill_package_conflict");
+            return skillWriteFailure("skill_package_conflict");
 
         this.refresh();
         const staged = `${root}.${randomUUID()}.staged`;
@@ -156,13 +168,15 @@ export class FileAssistantSkillSource {
             this.writeStaged(staged, input.files);
             const parsed = parseSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
             if (!parsed.ok)
-                throw new Error(parsed.issues[0]!.code);
+                return skillWriteFailure(parsed.issues[0]!.code);
 
             if (parsed.skillPackage.reference.id !== input.directory)
-                throw new Error("invalid_metadata");
+                return skillWriteFailure("invalid_metadata");
 
             if (!this.isAvailable(parsed.skillPackage))
-                throw new Error("skill_package_conflict");
+                return skillWriteFailure("skill_package_conflict");
+
+            return success(undefined);
         } finally {
             rmSync(staged, { recursive: true, force: true });
         }
@@ -170,17 +184,24 @@ export class FileAssistantSkillSource {
 
 
     validateReplace(input: { directory: string; files: Readonly<Record<string, string>>; expectedHash: string }): void {
+        unwrapSkillWrite(this.validateReplaceResult(input));
+    }
+
+
+    validateReplaceResult(input: { directory: string; files: Readonly<Record<string, string>>; expectedHash: string }): SkillWriteResult<void> {
         this.refresh();
         const current = this.loadByDirectory(input.directory);
         if (!current || current.contentHash !== input.expectedHash)
-            throw new Error("skill_package_conflict");
+            return skillWriteFailure("skill_package_conflict");
 
         const staged = `${this.packageRoot(input.directory)}.${randomUUID()}.staged`;
         try {
             this.writeStaged(staged, input.files);
             const parsed = parseSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
             if (!parsed.ok || parsed.skillPackage.reference.id !== current.reference.id || !this.isAvailable(parsed.skillPackage, current.reference.id))
-                throw new Error(parsed.ok ? "invalid_metadata" : parsed.issues[0]!.code);
+                return skillWriteFailure(parsed.ok ? "invalid_metadata" : parsed.issues[0]!.code);
+
+            return success(undefined);
         } finally {
             rmSync(staged, { recursive: true, force: true });
         }
@@ -188,18 +209,23 @@ export class FileAssistantSkillSource {
 
 
     replace(input: { directory: string; files: Readonly<Record<string, string>>; expectedHash: string }): AssistantSkillPackage {
+        return unwrapSkillWrite(this.replaceResult(input));
+    }
+
+
+    replaceResult(input: { directory: string; files: Readonly<Record<string, string>>; expectedHash: string }): SkillWriteResult<AssistantSkillPackage> {
         const root = this.packageRoot(input.directory);
         this.refresh();
         const current = this.loadByDirectory(input.directory);
         if (!current || current.contentHash !== input.expectedHash)
-            throw new Error("skill_package_conflict");
+            return skillWriteFailure("skill_package_conflict");
 
         const staged = `${root}.staged`;
         this.writeStaged(staged, input.files);
         const parsed = parseSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
         if (!parsed.ok || parsed.skillPackage.reference.id !== current.reference.id || !this.isAvailable(parsed.skillPackage, current.reference.id)) {
             rmSync(staged, { recursive: true, force: true });
-            throw new Error(parsed.ok ? "invalid_metadata" : parsed.issues[0]!.code);
+            return skillWriteFailure(parsed.ok ? "invalid_metadata" : parsed.issues[0]!.code);
         }
 
         renameSync(root, `${root}.previous`);
@@ -207,17 +233,23 @@ export class FileAssistantSkillSource {
         rmSync(`${root}.previous`, { recursive: true, force: true });
         this.refresh();
 
-        return parsed.skillPackage;
+        return success(parsed.skillPackage);
     }
 
 
     delete(input: { directory: string; expectedHash: string }): void {
+        unwrapSkillWrite(this.deleteResult(input));
+    }
+
+
+    deleteResult(input: { directory: string; expectedHash: string }): SkillWriteResult<void> {
         const current = this.loadByDirectory(input.directory);
         if (!current || current.contentHash !== input.expectedHash)
-            throw new Error("skill_package_conflict");
+            return skillWriteFailure("skill_package_conflict");
 
         rmSync(this.packageRoot(input.directory), { recursive: true, force: false });
         this.refresh();
+        return success(undefined);
     }
 
 

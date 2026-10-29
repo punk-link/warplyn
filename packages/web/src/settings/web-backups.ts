@@ -1,5 +1,9 @@
+import { success, failure } from "@skladno/shared";
 import type { BackupPolicy } from "@skladno/shared";
-import { restoreBackupBundle, saveBackupBundle, WEB_BACKUP_ERROR, WebBackupError } from "./web-backup-bundles.js";
+import { importBackupBundle, writeBackupBundle } from "./web-backup-bundles.js";
+import { WEB_BACKUP_ERROR, WebBackupError } from "./web-backup-error.js";
+import { unwrapWebBackup } from "./unwrap-web-backup.js";
+import type { WebBackupResult } from "./web-backup-result.js";
 import { type BackupDirectoryHandle as BackupBundleDirectoryHandle } from "./backup-directory-handle.js";
 import { type BackupBundleClient } from "./backup-bundle-client.js";
 
@@ -87,16 +91,16 @@ async function saveFolder(folder: BackupDirectoryHandle): Promise<void> {
 }
 
 
-async function getWritableFolder(requestPermission: boolean): Promise<BackupDirectoryHandle> {
+async function getWritableFolder(requestPermission: boolean): Promise<WebBackupResult<BackupDirectoryHandle>> {
     const folder = await readFolder();
     if (!folder)
-        throw new WebBackupError(WEB_BACKUP_ERROR.FOLDER_REQUIRED);
+        return failure({ code: WEB_BACKUP_ERROR.FOLDER_REQUIRED });
 
     const permission = requestPermission ? await folder.requestPermission({ mode: "readwrite" }) : await folder.queryPermission({ mode: "readwrite" });
     if (permission !== "granted")
-        throw new WebBackupError(WEB_BACKUP_ERROR.FOLDER_PERMISSION);
+        return failure({ code: WEB_BACKUP_ERROR.FOLDER_PERMISSION });
 
-    return folder;
+    return success(folder);
 }
 
 
@@ -116,9 +120,14 @@ async function retainAutomaticBackups(folder: BackupDirectoryHandle, policy: Bac
 
 
 export async function chooseBackupFolder(): Promise<string> {
+    return unwrapWebBackup(await selectBackupFolder());
+}
+
+
+async function selectBackupFolder(): Promise<WebBackupResult<string>> {
     const choose = getBackupFolderPicker();
     if (!choose)
-        throw new WebBackupError(WEB_BACKUP_ERROR.FOLDER_PICKER_UNSUPPORTED);
+        return failure({ code: WEB_BACKUP_ERROR.FOLDER_PICKER_UNSUPPORTED });
 
     const folder = await choose();
     selectedFolder = folder;
@@ -126,10 +135,10 @@ export async function chooseBackupFolder(): Promise<string> {
         await saveFolder(folder);
     } catch {
         // ponytail: session-only selection when handle persistence is unavailable; add alternate storage only if supported browsers need it.
-        return folder.name;
+        return success(folder.name);
     }
 
-    return folder.name;
+    return success(folder.name);
 }
 
 
@@ -139,7 +148,7 @@ export async function getSelectedBackupFolderName(): Promise<string | undefined>
 
 
 export async function listWebBackups(): Promise<string[]> {
-    const folder = await getWritableFolder(false);
+    const folder = unwrapWebBackup(await getWritableFolder(false));
     const names: string[] = [];
     for await (const entry of folder.values()) {
         if (entry.kind === "file" && entry.name.endsWith(".sqlite"))
@@ -162,37 +171,59 @@ async function isCompleteBackupBundle(folder: BackupDirectoryHandle, entry: { ki
 
 
 export async function restoreWebBackup(client: BackupClient, name: string): Promise<void> {
-    if (name.includes("/") || name.includes("\\") || (!name.endsWith(".sqlite") && !name.endsWith(".skladno")))
-        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
+    unwrapWebBackup(await importWebBackup(client, name));
+}
 
-    const folder = await getWritableFolder(false);
-    if (name.endsWith(".skladno")) {
-        await restoreBackupBundle(client, folder, name);
-        return;
-    }
+
+async function importWebBackup(client: BackupClient, name: string): Promise<WebBackupResult<void>> {
+    if (name.includes("/") || name.includes("\\") || (!name.endsWith(".sqlite") && !name.endsWith(".skladno")))
+        return failure({ code: WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE });
+
+    const writable = await getWritableFolder(false);
+    if (!writable.ok)
+        return writable;
+
+    const folder = writable.value;
+    if (name.endsWith(".skladno"))
+        return importBackupBundle(client, folder, name);
 
     if (!client.restoreBackup)
-        throw new WebBackupError(WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE);
+        return failure({ code: WEB_BACKUP_ERROR.RESTORE_UNAVAILABLE });
 
     const backup = await (await folder.getFileHandle(name)).getFile();
     await client.restoreBackup(backup);
+    return success(undefined);
 }
 
 
 export async function saveWebBackup(client: BackupClient, kind: BackupKind, policy: BackupPolicy, requestPermission = true): Promise<string> {
-    if (!client.createBackupExport && !client.createBackup)
-        throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
+    return unwrapWebBackup(await writeWebBackup(client, kind, policy, requestPermission));
+}
 
-    const folder = await getWritableFolder(requestPermission);
+
+async function writeWebBackup(
+    client: BackupClient, kind: BackupKind, policy: BackupPolicy, requestPermission: boolean,
+): Promise<WebBackupResult<string>> {
+    if (!client.createBackupExport && !client.createBackup)
+        return failure({ code: WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE });
+
+    const writable = await getWritableFolder(requestPermission);
+    if (!writable.ok)
+        return writable;
+
+    const folder = writable.value;
     const name = createBackupFilename(kind);
     if (client.createBackupExport) {
-        await saveBackupBundle(client, folder, name);
+        const saved = await writeBackupBundle(client, folder, name);
+        if (!saved.ok)
+            return saved;
+
         await retainAutomaticBackups(folder, policy);
-        return name;
+        return success(name);
     }
 
     if (!client.createBackup)
-        throw new WebBackupError(WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE);
+        return failure({ code: WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE });
 
     const skladnoPattern = /\.skladno$/;
     const legacyName = name.replace(skladnoPattern, ".sqlite");
@@ -205,7 +236,7 @@ export async function saveWebBackup(client: BackupClient, kind: BackupKind, poli
     }
 
     await retainAutomaticBackups(folder, policy);
-    return legacyName;
+    return success(legacyName);
 }
 
 

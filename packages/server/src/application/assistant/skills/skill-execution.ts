@@ -1,5 +1,6 @@
-import { APPLICATION_ERROR, defaultSkillExecution, HTTP_STATUS, type EditorialOperation, type SkillExecution } from "@skladno/shared";
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { APPLICATION_ERROR, defaultSkillExecution, type EditorialOperation, type SkillExecution } from "@skladno/shared";
+import { failure, success } from "../../errors/application-result.js";
+import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 import type { AssistantSkillPackage } from "./assistant-skill-package.js";
 
 
@@ -20,10 +21,16 @@ export function getSkillOperation(execution: SkillExecution): EditorialOperation
 
 
 export function resolveSkillExecution(skill: AssistantSkillPackage, scope: "article" | "selection") {
-    if (!(skill.scopes ?? ["article", "selection"]).includes(scope))
-        throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SKILL_SCOPE_INCOMPATIBLE, HTTP_STATUS.BAD_REQUEST);
+    return unwrapApplicationResult(prepareSkillExecution(skill, scope));
+}
 
-    return { resolvedSkill: skill, resolvedSkillId: skill.reference.id, operation: getSkillOperation(skill.execution ?? defaultSkillExecution), loadedSkills: [skill] };
+
+export function prepareSkillExecution(skill: AssistantSkillPackage, scope: "article" | "selection") {
+    if (!(skill.scopes ?? ["article", "selection"]).includes(scope))
+        return failure(APPLICATION_ERROR.ASSISTANT_SKILL_SCOPE_INCOMPATIBLE);
+
+    return success({ resolvedSkill: skill, resolvedSkillId: skill.reference.id,
+        operation: getSkillOperation(skill.execution ?? defaultSkillExecution), loadedSkills: [skill] });
 }
 
 

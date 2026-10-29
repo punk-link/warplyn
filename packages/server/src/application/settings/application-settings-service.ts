@@ -1,15 +1,27 @@
-import { APPLICATION_ERROR, getAiModelPreferenceId, AI_PROVIDER, HTTP_STATUS, isAiProvider, parseAiModelPreferenceId, type AiConnection, type AiProvider, type AppModelPreference, type ApplicationSettingsSnapshot, type AvailableAiModel, type BackupPolicy, type GeneralSettings, type KeyBindingOverrides, type ModelPreferences } from "@skladno/shared";
+import {
+    APPLICATION_ERROR, getAiModelPreferenceId, parseAiModelPreferenceId, type AiConnection,
+    type AppModelPreference, type ApplicationSettingsSnapshot, type AvailableAiModel,
+    type BackupPolicy, type GeneralSettings, type KeyBindingOverrides, type ModelPreferences,
+} from "@skladno/shared";
 
-import { ApplicationServiceError } from "../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../errors/application-result.js";
+import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
 import type { AvailableModelsProvider } from "./available-models-provider.js";
 import type { BackupSnapshotCreator } from "./backup-snapshot-creator.js";
 import type { SettingsStore } from "./settings-store.js";
 import type { SystemDateTimeFormatProvider } from "./system-date-time-format-provider.js";
+import { AiConnectionOperations } from "./ai-connection-operations.js";
 import type { CredentialStore } from "./credential-store.js";
-import { getEnvironmentVariableName, normalizeAiConnections, normalizeAppModel, normalizeBackupPolicy, normalizeGeneralSettings, normalizeModelPreferences, normalizeRequestedKeyBindingOverrides, normalizeStoredKeyBindingOverrides } from "./application-settings-normalizers.js";
+import {
+    prepareGeneralSettings, prepareKeyBindingOverrides, normalizeAiConnections,
+    normalizeAppModel, normalizeBackupPolicy, normalizeGeneralSettings, normalizeModelPreferences, normalizeStoredKeyBindingOverrides,
+} from "./application-settings-normalizers.js";
 
 
 export class ApplicationSettingsService {
+    private readonly connections: AiConnectionOperations;
+
+
     private readonly pendingBackups = new Set<ReturnType<BackupSnapshotCreator["createTemporary"]>>();
 
 
@@ -17,10 +29,12 @@ export class ApplicationSettingsService {
         private readonly settings: SettingsStore,
         private readonly dateTimeFormat: SystemDateTimeFormatProvider,
         private readonly models: AvailableModelsProvider,
-        private readonly createConnectionId: () => string,
+        createConnectionId: () => string,
         private readonly backups?: BackupSnapshotCreator,
-        private readonly credentialStore?: CredentialStore,
-    ) { }
+        credentialStore?: CredentialStore,
+    ) {
+        this.connections = new AiConnectionOperations(settings, models, createConnectionId, credentialStore);
+    }
 
 
     async getSnapshot(): Promise<ApplicationSettingsSnapshot> {
@@ -79,7 +93,7 @@ export class ApplicationSettingsService {
 
 
     updateGeneral(value: unknown): GeneralSettings {
-        const normalized = normalizeGeneralSettings(value, true);
+        const normalized = unwrapApplicationResult(prepareGeneralSettings(value));
         this.settings.saveSetting("application-general", normalized);
 
         return normalized;
@@ -95,13 +109,18 @@ export class ApplicationSettingsService {
 
 
     async createBackup(): ReturnType<BackupSnapshotCreator["createTemporary"]> {
+        return unwrapApplicationResult(await this.createTrackedBackup());
+    }
+
+
+    private async createTrackedBackup(): Promise<ApplicationResult<Awaited<ReturnType<BackupSnapshotCreator["createTemporary"]>>>> {
         if (!this.backups)
-            throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_REQUEST_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+            return failure(APPLICATION_ERROR.EDITORIAL_REQUEST_FAILED, "unavailable");
 
         const pending = this.backups.createTemporary();
         this.pendingBackups.add(pending);
         try {
-            return await pending;
+            return success(await pending);
         } finally {
             this.pendingBackups.delete(pending);
         }
@@ -115,7 +134,7 @@ export class ApplicationSettingsService {
 
 
     updateKeyBindingOverrides(value: unknown): KeyBindingOverrides {
-        const normalized = normalizeRequestedKeyBindingOverrides(value);
+        const normalized = unwrapApplicationResult(prepareKeyBindingOverrides(value));
         this.settings.saveSetting("application-key-bindings", normalized);
 
         return normalized;
@@ -139,122 +158,37 @@ export class ApplicationSettingsService {
 
 
     createAiConnection(value: { provider?: unknown; label?: unknown; environmentVariableName?: unknown }): AiConnection {
-        const saved = normalizeAiConnections(this.settings.getSetting("application-ai-connections")?.value);
-        const requestedName = getEnvironmentVariableName(value.environmentVariableName);
-
-        const connection: AiConnection = {
-            id: this.createConnectionId(),
-            provider: this.getProvider(value.provider),
-            label: typeof value.label === "string" && value.label.trim() ? value.label.trim() : this.getProviderLabel(this.getProvider(value.provider)),
-            credentialSource: { kind: "environment-variable", environmentVariableName: requestedName }, active: true, status: "unchecked"
-        };
-        saved.connections.push(connection);
-        this.settings.saveSetting("application-ai-connections", { connections: saved.connections });
-
-        return connection;
+        return unwrapApplicationResult(this.connections.create(value));
     }
 
 
     async createManagedAiConnection(value: { provider?: unknown; label?: unknown; apiKey?: unknown }): Promise<AiConnection> {
-        if (!this.credentialStore?.available() || typeof value.apiKey !== "string" || !value.apiKey.trim())
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-        const provider = this.getProvider(value.provider);
-        const connection: AiConnection = {
-            id: this.createConnectionId(),
-            provider,
-            label: typeof value.label === "string" && value.label.trim() ? value.label.trim() : this.getProviderLabel(provider),
-            credentialSource: { kind: "managed" },
-            active: true,
-            status: "unchecked"
-        };
-
-        try {
-            await this.models.list(connection, value.apiKey);
-        } catch {
-            throw new ApplicationServiceError(APPLICATION_ERROR.AI_CONNECTION_VERIFICATION_FAILED, HTTP_STATUS.BAD_REQUEST);
-        }
-
-        this.credentialStore.set(connection.id, value.apiKey);
-        try {
-            const saved = normalizeAiConnections(this.settings.getSetting("application-ai-connections")?.value);
-            saved.connections.push({ ...connection, status: "connected", lastCheckedAt: new Date().toISOString() });
-            this.settings.saveSetting("application-ai-connections", { connections: saved.connections });
-
-            return saved.connections.at(-1)!;
-        } catch (error) {
-            this.credentialStore.delete(connection.id);
-            throw error;
-        }
+        return unwrapApplicationResult(await this.connections.createManaged(value));
     }
 
 
     setAiConnectionActive(connectionId: string, active: boolean): AiConnection {
-        const { saved, index, connection } = this.connectionState(connectionId);
-        const updated = { ...connection, active };
-        saved.connections[index] = updated;
-        this.settings.saveSetting("application-ai-connections", { connections: saved.connections });
-
-        return updated;
+        return unwrapApplicationResult(this.connections.setActive(connectionId, active));
     }
 
 
     async testAiConnection(connectionId: string): Promise<AiConnection> {
-        const { saved, index, connection } = this.connectionState(connectionId);
-        try {
-            await this.models.list(connection);
-            saved.connections[index] = { ...connection, status: "connected", lastCheckedAt: new Date().toISOString(), diagnostic: undefined };
-        } catch (error) {
-            saved.connections[index] = {
-                ...connection, status: "unavailable",
-                lastCheckedAt: new Date().toISOString(),
-                diagnostic: error instanceof Error ? error.message : APPLICATION_ERROR.AI_CONNECTION_VERIFICATION_FAILED
-            };
-        }
-
-        this.settings.saveSetting("application-ai-connections", saved);
-
-        return saved.connections[index]!;
+        return unwrapApplicationResult(await this.connections.test(connectionId));
     }
 
 
     updateAiConnection(connectionId: string, value: { label?: unknown; environmentVariableName?: unknown }): AiConnection {
-        const { saved, index, connection } = this.connectionState(connectionId);
-        const updated = {
-            ...connection,
-            label: typeof value.label === "string" && value.label.trim() ? value.label.trim() : connection.label,
-            credentialSource: { kind: "environment-variable" as const, environmentVariableName: getEnvironmentVariableName(value.environmentVariableName) },
-            status: "unchecked" as const,
-            diagnostic: undefined,
-            lastCheckedAt: undefined
-        };
-        saved.connections[index] = updated;
-        this.settings.saveSetting("application-ai-connections", saved);
-
-        return updated;
+        return unwrapApplicationResult(this.connections.update(connectionId, value));
     }
 
 
     renameManagedAiConnection(connectionId: string, label: unknown): AiConnection {
-        const { saved, index, connection } = this.connectionState(connectionId);
-        if (connection.credentialSource.kind !== "managed")
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-        const updated = { ...connection, label: typeof label === "string" && label.trim() ? label.trim() : connection.label };
-        saved.connections[index] = updated;
-        this.settings.saveSetting("application-ai-connections", saved);
-
-        return updated;
+        return unwrapApplicationResult(this.connections.renameManaged(connectionId, label));
     }
 
 
     deleteAiConnection(connectionId: string): void {
-        const { saved, index, connection } = this.connectionState(connectionId);
-        if (connection.credentialSource.kind === "managed")
-            this.credentialStore?.delete(connection.id);
-
-        saved.connections.splice(index, 1);
-        this.settings.saveSetting("application-ai-connections", { connections: saved.connections });
+        unwrapApplicationResult(this.connections.delete(connectionId));
     }
 
 
@@ -268,35 +202,4 @@ export class ApplicationSettingsService {
     }
 
 
-    private connectionState(connectionId: string): { saved: { connections: AiConnection[]; activeConnectionId?: string }; index: number; connection: AiConnection } {
-        const saved = normalizeAiConnections(this.settings.getSetting("application-ai-connections")?.value);
-        const index = saved.connections.findIndex((connection) => connection.id === connectionId);
-        if (index < 0)
-            throw new ApplicationServiceError(APPLICATION_ERROR.AI_CONNECTION_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
-
-        return { saved, index, connection: saved.connections[index]! };
-    }
-
-
-    private getProvider(value: unknown): AiProvider {
-        if (value === undefined)
-            return AI_PROVIDER.OPENAI;
-
-        if (!isAiProvider(value))
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-        return value;
-    }
-
-
-    private getProviderLabel(provider: AiProvider): string {
-        return {
-            [AI_PROVIDER.OPENAI]: "OpenAI",
-            [AI_PROVIDER.OPENCODE]: "OpenCode Zen",
-            [AI_PROVIDER.ANTHROPIC]: "Anthropic",
-            [AI_PROVIDER.GOOGLE]: "Google Gemini",
-            [AI_PROVIDER.XAI]: "xAI Grok",
-            [AI_PROVIDER.DEEPSEEK]: "DeepSeek",
-        }[provider];
-    }
 }

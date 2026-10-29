@@ -1,6 +1,6 @@
-import { APPLICATION_ERROR, getPublishLimitProfile, HTTP_STATUS, isPublishLimitProfileId, type AssistantMessage, type EditorialOperation } from "@skladno/shared";
+import { success, failure } from "@skladno/shared";
+import { APPLICATION_ERROR, getPublishLimitProfile, isPublishLimitProfileId, type AssistantMessage, type EditorialOperation } from "@skladno/shared";
 
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import type { ArticleStore } from "../../articles/article-store.js";
 import type { AssistantStore } from "../assistant-store.js";
 import type { EditorialEngine } from "../../editorial/engine/editorial-engine.js";
@@ -12,9 +12,12 @@ import type { ReplayedAssistantRequest } from "./replayed-assistant-request.js";
 import type { AssistantServiceRequest } from "./assistant-service-request.js";
 import type { AssistantSkillCatalog } from "../skills/assistant-skill-catalog.js";
 import type { AssistantSkillPackage } from "../skills/assistant-skill-package.js";
-import { resolveSkillExecution } from "../skills/skill-execution.js";
-import { captureStyleTypography } from "../../editorial/style/capture-style-typography.js";
-import { validateSelectionOffsets } from "../../editorial/selection-context.js";
+import { prepareSkillExecution } from "../skills/skill-execution.js";
+import { prepareStyleTypography } from "../../editorial/style/capture-style-typography.js";
+import { checkSelectionOffsets } from "../../editorial/selection-context.js";
+import type { AssistantPreparationResult } from "./assistant-preparation-result.js";
+import { failure as applicationFailure, type ApplicationResult } from "../../errors/application-result.js";
+import { applicationFailureError, unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 
 
 export class AssistantRequestPreparation {
@@ -29,64 +32,88 @@ export class AssistantRequestPreparation {
 
 
     listMessages(articleId: string): AssistantMessage[] {
-        if (!this.dependencies.articles.getArticle(articleId))
-            throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
-
-        return this.dependencies.assistant.listMessages(articleId);
+        return unwrapApplicationResult(this.readArticleMessages(articleId, () => this.dependencies.assistant.listMessages(articleId)));
     }
 
 
     listMessageHistory(articleId: string): import("@skladno/shared").AssistantMessageHistory {
-        if (!this.dependencies.articles.getArticle(articleId))
-            throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
-
-        return this.dependencies.assistant.listMessageHistory(articleId);
+        return unwrapApplicationResult(this.readArticleMessages(articleId, () => this.dependencies.assistant.listMessageHistory(articleId)));
     }
 
 
-    prepare(request: AssistantServiceRequest): PreparedAssistantRequest {
+    private readArticleMessages<T>(articleId: string, read: () => T): ApplicationResult<T> {
+        if (!this.dependencies.articles.getArticle(articleId))
+            return applicationFailure(APPLICATION_ERROR.ARTICLE_NOT_FOUND, "not-found");
+
+        return success(read());
+    }
+
+
+    prepare(request: AssistantServiceRequest): AssistantPreparationResult {
         const article = this.dependencies.articles.getArticle(request.articleId);
         if (!article)
-            throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+            return failure({ code: APPLICATION_ERROR.ARTICLE_NOT_FOUND });
 
         const replay = this.getReplayInput(request);
-        const articleContent = article.currentRevision.content;
-        this.validatePreparation(replay, article.currentRevisionId, articleContent);
+        if (!replay.ok)
+            return replay;
 
-        const routing = this.resolveRequestRouting(replay);
-        this.validateResolvedRequest(replay, routing.operation, routing.usesCapabilityLoop);
-        const { engine, usesCapabilityLoop, operation, ...skillRouting } = routing;
-        return {
-            ...replay,
-            article: { content: articleContent, title: article.title, ...this.captureStyle(article), ...this.publishingLimit(article.publishingProfileId) },
+        const articleContent = article.currentRevision.content;
+        const validation = this.validatePreparation(replay.value, article.currentRevisionId, articleContent);
+        if (!validation.ok)
+            return validation;
+
+        const routing = this.resolveRequestRouting(replay.value);
+        if (!routing.ok)
+            return routing;
+
+        const resolvedValidation = this.validateResolvedRequest(replay.value, routing.value.operation, routing.value.usesCapabilityLoop);
+        if (!resolvedValidation.ok)
+            return resolvedValidation;
+
+        const style = this.captureStyle(article);
+        if (!style.ok)
+            return style;
+
+        const { engine, usesCapabilityLoop, operation, ...skillRouting } = routing.value;
+        return success({
+            ...replay.value,
+            article: { content: articleContent, title: article.title, ...style.value, ...this.publishingLimit(article.publishingProfileId) },
             ...skillRouting,
             execution: { engine, usesCapabilityLoop, operation, capabilityActivities: [], pendingActions: [], authorizedActions: [],
                 ...(!usesCapabilityLoop && operation ? { completedCapability: getCapabilityForEditorialOperation(operation) } : {}) },
-        };
+        });
     }
 
 
-    private captureStyle(article: { id: string; language?: string }) {
+    private captureStyle(article: { id: string; language?: string }): AssistantPreparationResult<Pick<PreparedAssistantRequest["article"], "styleContext">> {
         const corpus = this.dependencies.styleCorpus.getStyleCorpus();
         if (corpus.status !== "ready" || !corpus.profile)
-            return {};
+            return success({});
 
-        return { styleContext: {
-            profile: captureStyleTypography(corpus.profile, article.language, this.dependencies.styleCorpus.getArticleTypography(article.id)),
+        const capturedProfile = corpus.profile;
+        const typography = this.dependencies.styleCorpus.getArticleTypography(article.id);
+        const profile = preparationStep(prepareStyleTypography(
+            capturedProfile, article.language, typography), APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID);
+        if (!profile.ok)
+            return profile;
+
+        return success({ styleContext: {
+            profile: profile.value,
             articleRules: this.dependencies.styleCorpus.getArticleStyleRules(article.id),
-        } };
+        } });
     }
 
 
-    private getReplayInput(request: AssistantServiceRequest): ReplayedAssistantRequest {
+    private getReplayInput(request: AssistantServiceRequest): AssistantPreparationResult<ReplayedAssistantRequest> {
         if (request.kind === "new")
-            return request;
+            return success(request);
 
         const original = this.dependencies.assistant.getRequest(request.retryOfRequestId);
         if (!original || original.articleId !== request.articleId || (original.status !== "failed" && original.status !== "cancelled"))
-            throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_RETRY_INVALID, HTTP_STATUS.BAD_REQUEST);
+            return failure({ code: APPLICATION_ERROR.ASSISTANT_RETRY_INVALID });
 
-        return {
+        return success({
             kind: "new",
             requestId: request.requestId,
             authorMessage: original.authorMessage,
@@ -97,66 +124,71 @@ export class AssistantRequestPreparation {
             ...(original.targetLanguage ? { targetLanguage: original.targetLanguage } : {}),
             retryOfRequestId: original.id,
             articleId: request.articleId,
-        };
+        });
     }
 
 
-    private validatePreparation(request: ReplayedAssistantRequest, currentRevisionId: string, articleContent: string): void {
+    private validatePreparation(request: ReplayedAssistantRequest, currentRevisionId: string, articleContent: string): AssistantPreparationResult<void> {
         if (currentRevisionId !== request.scope.baseRevisionId)
-            throw new ApplicationServiceError(APPLICATION_ERROR.REVISION_CONFLICT, HTTP_STATUS.CONFLICT);
+            return failure({ code: APPLICATION_ERROR.REVISION_CONFLICT });
 
         if (request.explicitSkillId && !this.dependencies.skills.discover().some((skill) => skill.reference.id === request.explicitSkillId))
-            throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SKILL_UNSUPPORTED, HTTP_STATUS.BAD_REQUEST);
+            return failure({ code: APPLICATION_ERROR.ASSISTANT_SKILL_UNSUPPORTED });
 
-        if (request.scope.kind === "selection")
-            validateSelectionOffsets(articleContent, request.scope.startOffset, request.scope.endOffset);
+        const scope = request.scope;
+        if (scope.kind === "selection")
+            return preparationStep(checkSelectionOffsets(articleContent, scope.startOffset, scope.endOffset),
+                APPLICATION_ERROR.ASSISTANT_SELECTION_INVALID);
+
+        return success(undefined);
     }
 
 
-    private resolveRequestRouting(request: ReplayedAssistantRequest): { resolvedSkillId?: string; resolvedSkill?: AssistantSkillPackage; loadedSkills?: AssistantSkillPackage[]; operation?: EditorialOperation; engine: EditorialEngine; usesCapabilityLoop: boolean } {
+    private resolveRequestRouting(request: ReplayedAssistantRequest): AssistantPreparationResult<{
+        resolvedSkillId?: string; resolvedSkill?: AssistantSkillPackage; loadedSkills?: AssistantSkillPackage[];
+        operation?: EditorialOperation; engine: EditorialEngine; usesCapabilityLoop: boolean;
+    }> {
         const resolvedSkillId = request.explicitSkillId;
         if (!resolvedSkillId) {
-            const engine = this.resolveAssistantEngine();
-            return { engine, usesCapabilityLoop: Boolean(engine.streamAssistant && this.dependencies.capabilities) };
+            const engine = this.dependencies.engines.resolveAssistant?.();
+            if (!engine)
+                return failure({ code: APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING });
+
+            return success({ engine, usesCapabilityLoop: Boolean(engine.streamAssistant && this.dependencies.capabilities) });
         }
 
         const summary = this.dependencies.skills.discover().find((skill) => skill.reference.id === resolvedSkillId);
         const resolvedSkill = summary && this.dependencies.skills.load([summary.reference])[0];
         if (!resolvedSkill)
-            throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_SKILL_UNSUPPORTED, HTTP_STATUS.BAD_REQUEST);
+            return failure({ code: APPLICATION_ERROR.ASSISTANT_SKILL_UNSUPPORTED });
 
-        const resolved = resolveSkillExecution(resolvedSkill, request.scope.kind);
-        const engine = resolved.operation ? this.resolveEngine(resolved.operation, resolvedSkillId) : this.resolveAssistantEngine();
+        const resolved = preparationStep(prepareSkillExecution(resolvedSkill, request.scope.kind),
+            APPLICATION_ERROR.ASSISTANT_SKILL_SCOPE_INCOMPATIBLE);
+        if (!resolved.ok)
+            return resolved;
+
+        const engine = resolved.value.operation
+            ? this.dependencies.engines.resolve(resolved.value.operation, resolvedSkillId)
+            : this.dependencies.engines.resolveAssistant?.();
+        if (!engine)
+            return failure({ code: APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING });
+
         const usesCapabilityLoop = Boolean(engine.streamAssistant && this.dependencies.capabilities);
 
-        return { ...resolved, engine, usesCapabilityLoop };
+        return success({ ...resolved.value, engine, usesCapabilityLoop });
     }
 
 
-    private resolveEngine(operation: EditorialOperation, skillId?: string): EditorialEngine {
-        const engine = this.dependencies.engines.resolve(operation, skillId);
-        if (!engine)
-            throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
-
-        return engine;
-    }
-
-
-    private resolveAssistantEngine(): EditorialEngine {
-        const engine = this.dependencies.engines.resolveAssistant?.();
-        if (!engine)
-            throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
-
-        return engine;
-    }
-
-
-    private validateResolvedRequest(request: ReplayedAssistantRequest, operation: EditorialOperation | undefined, usesCapabilityLoop: boolean): void {
+    private validateResolvedRequest(
+        request: ReplayedAssistantRequest, operation: EditorialOperation | undefined, usesCapabilityLoop: boolean,
+    ): AssistantPreparationResult<void> {
         if (!usesCapabilityLoop && operation === "translation" && !request.targetLanguage?.trim())
-            throw new ApplicationServiceError(APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+            return failure({ code: APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED });
 
         if (!usesCapabilityLoop && operation === "style_review" && this.dependencies.styleCorpus.getStyleCorpus().status !== "ready")
-            throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+            return failure({ code: APPLICATION_ERROR.STYLE_CORPUS_REQUIRED });
+
+        return success(undefined);
     }
 
 
@@ -165,4 +197,15 @@ export class AssistantRequestPreparation {
             ? { publishingCharacterLimit: getPublishLimitProfile(publishingProfileId).characterLimit }
             : {};
     }
+}
+
+
+function preparationStep<T>(result: ApplicationResult<T>, code: Extract<AssistantPreparationResult, { ok: false }>["code"]): AssistantPreparationResult<T> {
+    if (result.ok)
+        return result;
+
+    if (result.code !== code)
+        throw applicationFailureError(result);
+
+    return failure({ code, ...(result.parameters ? { parameters: result.parameters } : {}) });
 }

@@ -1,3 +1,4 @@
+import { success } from "@skladno/shared";
 import { beginTelemetryCapture, defaultInterfaceLocale, type AcceptedChange, type AcceptProposalInput, Article, ArticleDraft, ArticleRevision, CreateArticleInput, SaveArticleDraftInput, SaveArticleRevisionInput, UpdateArticleInput } from "@skladno/shared";
 
 import type { ArticleStore } from "./article-store.js";
@@ -6,6 +7,7 @@ import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import type { RevisionDescriptionGenerator } from "../editorial/revision-description-generator.js";
 import type { ArticleTitleGenerator } from "../editorial/article-title-generator.js";
 import { ArticleTitleService } from "./article-title-service.js";
+import { runArticleOperation, unwrapArticleOperation, type ArticleOperationResult } from "./article-operation-result.js";
 
 
 export class ArticleService {
@@ -97,8 +99,19 @@ export class ArticleService {
 
 
     async saveRevisionWithDescription(articleId: string, input: SaveArticleRevisionInput, signal: AbortSignal): Promise<ArticleRevision> {
-        const revision = this.store.saveRevision(articleId, input, await this.describeChange(articleId, input.content, input.interfaceLocale ?? defaultInterfaceLocale, signal));
-        return this.completeRevisionPromotion(revision, signal);
+        return unwrapArticleOperation(await this.promoteSavedRevision(articleId, input, signal));
+    }
+
+
+    private async promoteSavedRevision(
+        articleId: string, input: SaveArticleRevisionInput, signal: AbortSignal,
+    ): Promise<ArticleOperationResult<ArticleRevision>> {
+        const description = await this.describeChange(articleId, input.content, input.interfaceLocale ?? defaultInterfaceLocale, signal);
+        const revision = runArticleOperation(() => this.store.saveRevision(articleId, input, description));
+        if (!revision.ok)
+            return revision;
+
+        return success(await this.completeRevisionPromotion(revision.value, signal));
     }
 
 
@@ -118,10 +131,21 @@ export class ArticleService {
 
 
     async acceptProposalWithDescription(articleId: string, input: AcceptProposalInput, signal: AbortSignal): Promise<ArticleRevision> {
+        return unwrapArticleOperation(await this.promoteAcceptedProposal(articleId, input, signal));
+    }
+
+
+    private async promoteAcceptedProposal(
+        articleId: string, input: AcceptProposalInput, signal: AbortSignal,
+    ): Promise<ArticleOperationResult<ArticleRevision>> {
         const previousContent = this.store.getArticle(articleId)?.currentRevision.content ?? "";
-        const revision = this.store.acceptProposal(articleId, input, fallbackDescription(previousContent, input.content));
-        void this.describeAcceptedRevision(revision, previousContent, input.interfaceLocale ?? defaultInterfaceLocale, signal);
-        return this.completeRevisionPromotion(revision, signal);
+        const revision = runArticleOperation(() => this.store.acceptProposal(articleId, input, fallbackDescription(previousContent, input.content)));
+        if (!revision.ok)
+            return revision;
+
+        void this.describeAcceptedRevision(revision.value, previousContent, input.interfaceLocale ?? defaultInterfaceLocale, signal);
+
+        return success(await this.completeRevisionPromotion(revision.value, signal));
     }
 
 

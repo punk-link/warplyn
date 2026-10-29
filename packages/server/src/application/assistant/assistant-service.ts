@@ -1,9 +1,12 @@
 import { APPLICATION_ERROR, ASSISTANT_EVENT, HTTP_STATUS, type AssistantEvent, type AssistantMessage, type TimedTelemetryCapture } from "@skladno/shared";
 
 import { AssistantCapabilityLoop } from "./capabilities/assistant-capability-loop.js";
-import { AssistantCompletion, getCompletedContent, getEditCandidate, getResponseKind } from "./completion/assistant-completion.js";
-import { requiresProposalReview, validateProposalResult } from "../editorial/proposals/proposal-result-policy.js";
+import { AssistantCompletion, getEditCandidate, getResponseKind } from "./completion/assistant-completion.js";
+import { authorizeCompletedEdit } from "./completion/authorize-completed-edit.js";
+import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
 import { AssistantRequestPreparation } from "./requests/assistant-request-preparation.js";
+import { assistantPreparationError } from "./requests/assistant-preparation-error.js";
+import { capturePreparationFailure } from "./requests/capture-preparation-failure.js";
 import type { FactChecksStore } from "./fact-checks-store.js";
 import type { PreparedAssistantRequest } from "./requests/prepared-assistant-request.js";
 import type { AssistantServiceRequest } from "./requests/assistant-service-request.js";
@@ -20,11 +23,10 @@ import { getAssistantRequestTimeoutMs, streamWithAssistantDeadline } from "./req
 import { persistInterruptedFactCheck } from "./requests/interrupted-fact-check.js";
 import { selectCompletedFactCheck, selectFactCheckFindings } from "./requests/assistant-selected-fact-check.js";
 import { getAssistantRequestErrorCode } from "./requests/assistant-request-error-code.js";
-import { normalizeGeneralSettings } from "../settings/application-settings-normalizers.js";
 import type { SettingsStore } from "../settings/settings-store.js";
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 import { AssistantEditError } from "./assistant-store.js";
-import { getAssistantArticleExcerpt, streamAssistantEngineEvents } from "./assistant-engine-request.js";
+import { streamAssistantEngineEvents } from "./assistant-engine-request.js";
 import { AssistantClaimSelection } from "./requests/assistant-claim-selection.js";
 import { createEditorialActivityEvent, getAssistantInitialEvents } from "./requests/assistant-initial-events.js";
 import { AssistantEditService } from "./assistant-edit-service.js";
@@ -122,20 +124,16 @@ export class AssistantService {
     prepare(request: AssistantServiceRequest): PreparedAssistantRequest {
         const observed = beginAiOperation(this.telemetry);
         try {
-            const prepared = this.preparation.prepare(request);
+            const result = this.preparation.prepare(request);
+            if (!result.ok)
+                throw assistantPreparationError(result);
+
+            const prepared = result.value;
             prepared.editMode = this.getEditMode(prepared.articleId);
             this.startedAt.set(prepared.requestId, observed);
             return prepared;
         } catch (error) {
-            observed.capture({ kind: "ai_stage_finished", stage: "request_preparation", outcome: "failed",
-                elapsedMs: observed.elapsedMs(), failure: getAiFailureCategory(error), operationId: observed.operationId });
-            observed.capture({
-                kind: "ai_operation_finished",
-                operation: "assistant",
-                outcome: "failed",
-                elapsedMs: observed.elapsedMs(),
-                failure: getAiFailureCategory(error)
-            });
+            capturePreparationFailure(observed, error);
 
             throw error;
         }
@@ -272,7 +270,7 @@ export class AssistantService {
     private async *completeAssistantEvents(request: PreparedAssistantRequest, event: Extract<EditorialEngineEvent, { type: "completed" }>, signal: AbortSignal): AsyncIterable<AssistantEvent> {
         signal.throwIfAborted();
 
-        await this.authorizeCompletedEdit(request, event, signal);
+        unwrapApplicationResult(await authorizeCompletedEdit(request, event, signal, this.capabilityLoop, this.articles, this.stores.settings));
         signal.throwIfAborted();
 
         const kind = request.directEditAuthorized && getEditCandidate(request, event) ? "edit_applied" : getResponseKind(request.execution.completedCapability);
@@ -294,29 +292,6 @@ export class AssistantService {
             this.capabilityLoop.finishPendingSkillBestEffort(request.requestId);
 
         yield { type: ASSISTANT_EVENT.COMPLETED, requestId: request.requestId, ...completion };
-    }
-
-
-    private async authorizeCompletedEdit(request: PreparedAssistantRequest, event: Extract<EditorialEngineEvent, { type: "completed" }>, signal: AbortSignal): Promise<void> {
-        validateProposalResult(getAssistantArticleExcerpt(request), event.text, request.resolvedSkill?.execution, request.article.title,
-            request.execution.completedCapability);
-        if (request.execution.completedCapability !== "generate_proposal" || requiresProposalReview(request.resolvedSkill?.execution))
-            return;
-
-        request.editCandidateAuthorized = await this.capabilityLoop.qualifiesReplacement(request, event.text, signal);
-        if (request.editMode !== "direct")
-            return;
-
-        request.editIntentAuthorized ||= await this.capabilityLoop.authorizesArticleEditIntent(request, signal);
-        if (request.editIntentAuthorized && !getEditCandidate(request, event))
-            throw new ApplicationServiceError(APPLICATION_ERROR.ASSISTANT_EDIT_INVALID, HTTP_STATUS.BAD_REQUEST);
-
-        request.directEditAuthorized = request.editIntentAuthorized;
-        if (request.directEditAuthorized) {
-            const content = getCompletedContent(request, event.text);
-            const locale = request.interfaceLocale ?? normalizeGeneralSettings(this.stores.settings.getSetting("application-general")?.value).interfaceLocale;
-            request.editDescription = await this.articles.describeContentChange(request.article.content, content, locale, signal);
-        }
     }
 
 

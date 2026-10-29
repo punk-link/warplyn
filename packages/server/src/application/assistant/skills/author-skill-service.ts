@@ -5,6 +5,8 @@ import type { AuthorSkillChange } from "./author-skill-change.js";
 import type { CommittedAuthorSkillChange } from "./committed-author-skill-change.js";
 import type { AuthorSkillChangeJournal, PendingSkillChange } from "./author-skill-change-journal.js";
 import { FileAssistantSkillSource } from "./file-assistant-skill-source.js";
+import { success } from "../../errors/application-result.js";
+import { skillWriteFailure, unwrapSkillWrite, type SkillWriteResult } from "./skill-write-result.js";
 
 
 export class AuthorSkillService {
@@ -16,7 +18,7 @@ export class AuthorSkillService {
 
 
     validateCreate(input: { skillId: string; files: Readonly<Record<string, string>> }): void {
-        this.source.validateInstall({ directory: input.skillId, files: input.files });
+        unwrapSkillWrite(this.source.validateInstallResult({ directory: input.skillId, files: input.files }));
     }
 
 
@@ -33,45 +35,50 @@ export class AuthorSkillService {
 
 
     validateChange(change: AuthorSkillChange): void {
-        if (change.kind === "create") {
-            this.validateCreate({ skillId: change.skillId, files: { "SKILL.md": change.skillMarkdown } });
-            return;
-        }
-
-        const current = this.readCurrent(change.skillId);
-        if (current ? current.contentHash !== change.expectedHash : change.kind !== "restore" || change.expectedHash !== "")
-            throw new Error("skill_package_conflict");
-
-        if (change.kind === "delete")
-            return;
-
-        if (change.kind === "update") {
-            if (!current)
-                throw new Error("skill_package_conflict");
-
-            this.source.validateReplace({ directory: change.skillId, expectedHash: change.expectedHash, files: this.withNextVersion(change.skillId, { ...current.files, "SKILL.md": change.skillMarkdown }) });
-            return;
-        }
-
-        this.validateRestore(change, current);
+        unwrapSkillWrite(this.validateChangeResult(change));
     }
 
 
-    private validateRestore(change: Extract<AuthorSkillChange, { kind: "restore" }>, current: ReturnType<AuthorSkillService["readCurrent"]>): void {
+    validateChangeResult(change: AuthorSkillChange): SkillWriteResult<void> {
+        if (change.kind === "create")
+            return this.source.validateInstallResult({ directory: change.skillId, files: { "SKILL.md": change.skillMarkdown } });
+
+        const current = this.readCurrent(change.skillId);
+        if (current ? current.contentHash !== change.expectedHash : change.kind !== "restore" || change.expectedHash !== "")
+            return skillWriteFailure("skill_package_conflict");
+
+        if (change.kind === "delete")
+            return success(undefined);
+
+        if (change.kind === "update") {
+            if (!current)
+                return skillWriteFailure("skill_package_conflict");
+
+            return this.source.validateReplaceResult({ directory: change.skillId, expectedHash: change.expectedHash,
+                files: this.withNextVersion(change.skillId, { ...current.files, "SKILL.md": change.skillMarkdown }) });
+        }
+
+        return this.validateRestore(change, current);
+    }
+
+
+    private validateRestore(
+        change: Extract<AuthorSkillChange, { kind: "restore" }>, current: ReturnType<AuthorSkillService["readCurrent"]>,
+    ): SkillWriteResult<void> {
         const files = this.readRevision(change.skillId, change.revisionId);
         if (!files)
-            throw new Error("skill_revision_not_found");
+            return skillWriteFailure("skill_revision_not_found");
 
         const replacement = current ? this.withNextVersion(change.skillId, files) : this.withVersionAfterHistory(change.skillId, files);
         if (current)
-            this.source.validateReplace({ directory: change.skillId, expectedHash: change.expectedHash, files: replacement });
+            return this.source.validateReplaceResult({ directory: change.skillId, expectedHash: change.expectedHash, files: replacement });
         else
-            this.source.validateInstall({ directory: change.skillId, files: replacement });
+            return this.source.validateInstallResult({ directory: change.skillId, files: replacement });
     }
 
 
     commitChange(change: AuthorSkillChange, requestId: string): CommittedAuthorSkillChange {
-        this.validateChange(change);
+        unwrapSkillWrite(this.validateChangeResult(change));
         const previousFiles = this.readCurrent(change.skillId)?.files;
         const nextFiles = this.filesForChange(change, previousFiles);
         const pending = { requestId, skillId: change.skillId, ...(previousFiles ? { previousFiles } : {}), ...(nextFiles ? { nextFiles } : {}) };

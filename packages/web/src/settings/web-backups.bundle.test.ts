@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 
 import { chooseBackupFolder, listWebBackups, restoreWebBackup, saveScheduledWebBackup, saveWebBackup } from "./web-backups.js";
+import { writeBackupBundle } from "./web-backup-bundles.js";
+import { WEB_BACKUP_ERROR } from "./web-backup-error.js";
 
 
 // Product scenarios: settings.backup-policy-human-reviewed, settings.browser-skill-backup-restore
@@ -74,6 +76,20 @@ class MemoryFolder {
 
 
 describe("browser Skill backup bundle", () => {
+    it("returns an unsafe-path failure and removes the incomplete bundle and export", async () => {
+        const folder = new MemoryFolder();
+        const removeBackupExport = vi.fn().mockResolvedValue(undefined);
+        const result = await writeBackupBundle({
+            createBackupExport: async () => ({ id: "export", manifest: { format: 1, files: [{
+                path: "../private", size: 1, sha256: "a".repeat(64),
+            }] } }),
+            readBackupExport: async () => new Blob(["content"]), removeBackupExport,
+        }, folder, "invalid.skladno");
+        expect(result).toEqual({ ok: false, code: WEB_BACKUP_ERROR.BACKUP_UNAVAILABLE });
+        expect(folder.directories.size).toBe(0);
+        expect(removeBackupExport).toHaveBeenCalledExactlyOnceWith("export");
+    });
+
     it("allows a fresh automatic backup on each startup even on the same day", async () => {
         const folder = new MemoryFolder();
         vi.stubGlobal("showDirectoryPicker", async () => folder);

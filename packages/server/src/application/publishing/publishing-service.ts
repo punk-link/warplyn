@@ -1,12 +1,12 @@
 import {
     APPLICATION_ERROR,
     defaultPublishingSettings,
-    HTTP_STATUS,
     isPublishLimitProfileId,
     type CustomPublishLimitProfile,
     type PublishingSettings
 } from "@skladno/shared";
-import { ApplicationServiceError } from "../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../errors/application-result.js";
+import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
 import type { SettingsStore } from "../settings/settings-store.js";
 
 
@@ -52,11 +52,16 @@ export class PublishingService {
 
 
     setSettings(value: unknown): PublishingSettings {
+        return unwrapApplicationResult(this.updatePublishingSettings(value));
+    }
+
+
+    private updatePublishingSettings(value: unknown): ApplicationResult<PublishingSettings> {
         const settings = normalizePublishingSettings(value);
         if (!settings)
-            throw new ApplicationServiceError(APPLICATION_ERROR.UNSUPPORTED_PUBLISHING_PROFILE, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.UNSUPPORTED_PUBLISHING_PROFILE);
 
         this.store.saveSetting(publishLimitProfileSettingKey, settings);
-        return settings;
+        return success(settings);
     }
 }

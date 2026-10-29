@@ -1,6 +1,7 @@
-import { APPLICATION_ERROR, HTTP_STATUS, type FactCheckClaimPreview } from "@skladno/shared";
+import { APPLICATION_ERROR, type FactCheckClaimPreview } from "@skladno/shared";
 
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../../errors/application-result.js";
+import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 
 
 export class AssistantClaimSelection {
@@ -22,14 +23,21 @@ export class AssistantClaimSelection {
 
 
     setSelected(articleId: string, requestId: string, claim: string, selected: boolean): void {
+        unwrapApplicationResult(this.updateSelectedClaim(articleId, requestId, claim, selected));
+    }
+
+
+    private updateSelectedClaim(articleId: string, requestId: string, claim: string, selected: boolean): ApplicationResult<void> {
         const selection = this.active.get(requestId);
         if (!selection || selection.articleId !== articleId || !selection.pending.has(claim) || !claim.trim() || claim.length > 2000)
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
         if (selected)
             selection.skipped.delete(claim);
         else
             selection.skipped.add(claim);
+
+        return success(undefined);
     }
 
 

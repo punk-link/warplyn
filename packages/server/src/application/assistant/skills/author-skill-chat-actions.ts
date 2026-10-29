@@ -1,15 +1,22 @@
-import { APPLICATION_ERROR, HTTP_STATUS, type AssistantAuthorizedAction } from "@skladno/shared";
+import { APPLICATION_ERROR, type AssistantAuthorizedAction } from "@skladno/shared";
 
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../../errors/application-result.js";
+import { applicationFailureError, unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 import type { EditorialAssistantTool } from "../../editorial/engine/editorial-assistant-tool.js";
 import type { EditorialEngineResolver } from "../../editorial/engine/editorial-engine-resolver.js";
 import type { PreparedAssistantRequest } from "../requests/prepared-assistant-request.js";
 import type { AuthorSkillChange } from "./author-skill-change.js";
 import type { CommittedAuthorSkillChange } from "./committed-author-skill-change.js";
 import type { AuthorSkillService } from "./author-skill-service.js";
+import type { SkillWriteResult } from "./skill-write-result.js";
 
 
 function skillWriteError(error: unknown): never {
+    throw applicationFailureError(mapSkillWriteFailure(error));
+}
+
+
+function mapSkillWriteFailure(error: unknown): Extract<ApplicationResult<never>, { ok: false }> {
     if (!(error instanceof Error))
         throw error;
 
@@ -29,8 +36,7 @@ function skillWriteError(error: unknown): never {
     if (!code)
         throw error;
 
-    const status = code === APPLICATION_ERROR.SKILL_PACKAGE_CONFLICT ? HTTP_STATUS.CONFLICT : HTTP_STATUS.BAD_REQUEST;
-    throw new ApplicationServiceError(code, status);
+    return failure(code, code === APPLICATION_ERROR.SKILL_PACKAGE_CONFLICT ? "conflict" : "invalid");
 }
 
 
@@ -77,6 +83,13 @@ export class AuthorSkillChatActions {
 
 
     private async stage(request: PreparedAssistantRequest, change: AuthorSkillChange, signal: AbortSignal): Promise<{ skillId: string; status: "pending" }> {
+        return unwrapApplicationResult(await this.stageSkillChange(request, change, signal));
+    }
+
+
+    private async stageSkillChange(
+        request: PreparedAssistantRequest, change: AuthorSkillChange, signal: AbortSignal,
+    ): Promise<ApplicationResult<{ skillId: string; status: "pending" }>> {
         const verifier = this.engines.resolveAssistantActionIntentVerifier?.();
         let input: Readonly<Record<string, string>> = {};
         if (change.kind === "restore")
@@ -85,20 +98,24 @@ export class AuthorSkillChatActions {
             input = { skillId: change.skillId };
 
         if (!verifier || !await verifier.verify(request.authorMessage, this.actionFor(change), input, signal))
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
         signal.throwIfAborted();
         if (request.execution.pendingSkillChange)
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+            return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
+        let validation: SkillWriteResult<void>;
         try {
-            this.skills.validateChange(change);
+            validation = this.skills.validateChangeResult(change);
         } catch (error) {
-            skillWriteError(error);
+            return mapSkillWriteFailure(error);
         }
 
+        if (!validation.ok)
+            return mapSkillWriteFailure(new Error(validation.issue));
+
         request.execution.pendingSkillChange = change;
-        return { skillId: change.skillId, status: "pending" };
+        return success({ skillId: change.skillId, status: "pending" });
     }
 
 

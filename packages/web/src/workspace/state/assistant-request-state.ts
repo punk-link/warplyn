@@ -1,3 +1,4 @@
+import { success, failure, type Result } from "@skladno/shared";
 import { useCallback, useRef, useState, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
 import type { IntlShape } from "react-intl";
 import { APPLICATION_ERROR, ASSISTANT_EVENT, ApplicationClientError, type ArticleRevision, type AssistantCapabilityActivity, type AssistantEvent, type AssistantMessage, type FactCheckClaimPreview } from "@skladno/shared";
@@ -178,7 +179,11 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
     options.store.setFactCheckClaimsByArticle((claims) => ({ ...claims, [article.id]: [] }));
     const controller = batch?.controller ?? options.store.controllers.current.get(article.id) ?? new AbortController();
     options.store.controllers.current.set(article.id, controller);
-    const matchingSelection = await validateRequestSelection(creatorRequest, options.selection, article.id, revision.content);
+    const validatedSelection = await validateRequestSelection(creatorRequest, options.selection, article.id, revision.content);
+    if (!validatedSelection.ok)
+        throw new ApplicationClientError("assistant_selection_invalid", undefined, 400);
+
+    const matchingSelection = validatedSelection.value;
     const streamedId = `streaming-${crypto.randomUUID()}`;
 
     await options.client.streamAssistantRequest(article.id, {
@@ -198,14 +203,16 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
 }
 
 
-async function validateRequestSelection(creatorRequest: boolean, selection: AssistantRequestActionsOptions["selection"], articleId: string, content: string) {
+async function validateRequestSelection(
+    creatorRequest: boolean, selection: AssistantRequestActionsOptions["selection"], articleId: string, content: string,
+): Promise<Result<AssistantRequestActionsOptions["selection"], { code: "assistant_selection_invalid" }>> {
     if (creatorRequest || !selection)
-        return undefined;
+        return success(undefined);
 
     if (selection.articleId !== articleId || selection.fingerprint !== await fingerprintArticleContent(content))
-        throw new ApplicationClientError("assistant_selection_invalid", undefined, 400);
+        return failure({ code: "assistant_selection_invalid" });
 
-    return selection;
+    return success(selection);
 }
 
 

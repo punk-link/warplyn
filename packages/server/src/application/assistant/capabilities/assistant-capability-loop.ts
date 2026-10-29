@@ -1,7 +1,9 @@
-import { APPLICATION_ERROR, defaultSkillExecution, HTTP_STATUS } from "@skladno/shared";
+import { APPLICATION_ERROR, defaultSkillExecution } from "@skladno/shared";
 import { randomUUID } from "node:crypto";
 
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
+import { authorizeAssistantAction, validateArtifactCapability } from "./assistant-action-authorization.js";
 import { EDITORIAL_ENGINE_EVENT } from "../../editorial/engine/editorial-engine-events.js";
 import { EDITORIAL_ENGINE_ERROR } from "../../editorial/engine/editorial-engine-errors.js";
 import { EditorialEngineError } from "../../editorial/engine/editorial-engine-error.js";
@@ -277,11 +279,7 @@ export class AssistantCapabilityLoop {
 
     private async stageAction(request: PreparedAssistantRequest, definition: EditorialCapabilityDefinition, input: Readonly<Record<string, string>>, signal: AbortSignal): Promise<{ status: "staged" }> {
         const action = definition.id as ActionCapability;
-        const verifier = this.dependencies.engines.resolveAssistantActionIntentVerifier?.();
-        if (!verifier || !await verifier.verify(request.authorMessage, action, input, signal))
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
-
-        signal.throwIfAborted();
+        unwrapApplicationResult(await authorizeAssistantAction(this.dependencies.engines, request, action, input, signal));
         request.execution.authorizedActions = [...request.execution.authorizedActions, action];
         request.execution.pendingActions.push({ capability: action, input });
         this.completeCapability(request, definition);
@@ -291,9 +289,7 @@ export class AssistantCapabilityLoop {
 
 
     private async streamArtifactCapability(request: PreparedAssistantRequest, excerpt: string, authorContext: string, definition: EditorialCapabilityDefinition, input: Readonly<Record<string, string>>, signal: AbortSignal, primary: () => CompletionEvent | undefined, setPrimary: (event: CompletionEvent) => void, onProgress: (event: EditorialEngineEvent) => void): Promise<{ status: "prepared" }> {
-        const execution = request.resolvedSkill?.execution ?? defaultSkillExecution;
-        if (request.resolvedSkill && (execution.capability !== definition.id || (execution.capability === "generate_proposal" && execution.operation !== input.operation)))
-            throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+        unwrapApplicationResult(validateArtifactCapability(request, definition, input));
 
         const exactReplacement = definition.id === EDITORIAL_CAPABILITY.GENERATE_PROPOSAL ? getExactCharacterReplacement(request, excerpt) : undefined;
         if (exactReplacement) {

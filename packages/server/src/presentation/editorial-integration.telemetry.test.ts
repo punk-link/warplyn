@@ -79,6 +79,37 @@ test("Editorial preparation failure correlates its stage and terminal event", as
 });
 
 
+test("Assistant preparation failure preserves HTTP errors and emits one correlated private-content-free failure", async () => {
+    const events: TelemetryEvent[] = [];
+    const telemetry = { beginCapture: () => (event: TelemetryEvent) => events.push(event) };
+    await withService(undefined, async (baseUrl, persistence) => {
+        const article = persistence.articleService.createArticle({ title: "Private title", content: "Private Article content" });
+        const before = persistence.articles.getArticle(article.id);
+        const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, {
+            method: HTTP_METHOD.POST,
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ requestId: "private-request", authorMessage: "Private prompt",
+                scope: { kind: "article", baseRevisionId: "stale" } }),
+        });
+        assert.equal(response.status, 409);
+        const revisionConflictPattern = /revision_conflict/;
+        assert.match(await response.text(), revisionConflictPattern);
+        assert.equal(persistence.assistant.getRequest("private-request"), undefined);
+        assert.deepEqual(persistence.articles.getArticle(article.id), before);
+    }, true, undefined, telemetry);
+    assert.equal(events.length, 2);
+    const [stage, terminal] = events;
+    assert.ok(stage.kind === "ai_stage_finished" && terminal.kind === "ai_operation_finished");
+    assert.equal(stage.stage, "request_preparation");
+    assert.equal(stage.outcome, "failed");
+    assert.equal(terminal.operation, "assistant");
+    assert.equal(terminal.outcome, "failed");
+    assert.equal(stage.operationId, terminal.operationId);
+    const privatePreparationContextPattern = /Private|private-request|stale/;
+    assert.doesNotMatch(JSON.stringify(events), privatePreparationContextPattern);
+});
+
+
 test("an Assistant failure records its safe category", async () => {
     const events: TelemetryEvent[] = [];
     const telemetry = { beginCapture: () => (event: TelemetryEvent) => events.push(event) };

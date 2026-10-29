@@ -1,8 +1,9 @@
-import { APPLICATION_ERROR, EDITORIAL_OPERATION, HTTP_STATUS, normalizeWritingLanguage, type StyleCorpus, type StyleProfile } from "@skladno/shared";
+import { APPLICATION_ERROR, EDITORIAL_OPERATION, normalizeWritingLanguage, type StyleCorpus, type StyleProfile } from "@skladno/shared";
 
-import { ApplicationServiceError } from "../../errors/application-service-error.js";
+import { failure, success, type ApplicationResult } from "../../errors/application-result.js";
+import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 import type { EditorialServiceRequest } from "../editorial-request.js";
-import { captureStyleTypography } from "./capture-style-typography.js";
+import { prepareStyleTypography } from "./capture-style-typography.js";
 
 
 export function prepareStyleReviewProfile(
@@ -13,30 +14,47 @@ export function prepareStyleReviewProfile(
     },
     article?: { id: string; language?: string },
 ): StyleProfile | undefined {
+    return unwrapApplicationResult(prepareStyleProfile(editorial, styleCorpus, article));
+}
+
+
+function prepareStyleProfile(
+    editorial: EditorialServiceRequest["editorial"],
+    styleCorpus: Parameters<typeof prepareStyleReviewProfile>[1],
+    article?: { id: string; language?: string },
+): ApplicationResult<StyleProfile | undefined> {
     const ready = getReadyStyleProfile(editorial.operation, styleCorpus);
-    const profile = ready && article ? captureStyleTypography(ready, article.language, styleCorpus.getArticleTypography?.(article.id)) : ready;
+    if (!ready.ok)
+        return ready;
+
+    const captured = ready.value && article
+        ? prepareStyleTypography(ready.value, article.language, styleCorpus.getArticleTypography?.(article.id)) : ready;
+    if (!captured.ok)
+        return captured;
+
+    const profile = captured.value;
     if (editorial.reviewMode && editorial.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
-        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
     if (editorial.reviewMode && !profile?.rules.typography.some((rule) => rule.definition.kind !== "contextual"))
-        throw new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.TYPOGRAPHY_RULES_REQUIRED);
 
-    return profile;
+    return success(profile);
 }
 
 
 function getReadyStyleProfile(
     operation: EditorialServiceRequest["editorial"]["operation"],
     styleCorpus: { getStyleCorpus(): Pick<StyleCorpus, "profile" | "status"> },
-): StyleProfile | undefined {
+): ApplicationResult<StyleProfile | undefined> {
     if (operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
-        return undefined;
+        return success(undefined);
 
     const corpus = styleCorpus.getStyleCorpus();
     if (corpus.status !== "ready" || !corpus.profile)
-        throw new ApplicationServiceError(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED, HTTP_STATUS.BAD_REQUEST);
+        return failure(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED);
 
-    return corpus.profile;
+    return success(corpus.profile);
 }
 
 
@@ -47,20 +65,35 @@ export function prepareStyleReviewContext(
     captured?: EditorialServiceRequest["styleContext"],
     targetLanguage?: string,
 ): EditorialServiceRequest["styleContext"] {
+    return unwrapApplicationResult(prepareStyleContext(editorial, store, article, captured, targetLanguage));
+}
+
+
+export function prepareStyleContext(
+    editorial: EditorialServiceRequest["editorial"],
+    store: Parameters<typeof prepareStyleReviewContext>[1],
+    article: { id: string; language?: string },
+    captured?: EditorialServiceRequest["styleContext"],
+    targetLanguage?: string,
+): ApplicationResult<EditorialServiceRequest["styleContext"]> {
     if (editorial.operation === EDITORIAL_OPERATION.TRANSLATION) {
         const profile = store.getStyleCorpus().profile;
         if (!profile)
-            return undefined;
+            return success(undefined);
 
-        return { profile: captureStyleTypography(profile, normalizeWritingLanguage(targetLanguage)), articleRules: "" };
+        const typography = prepareStyleTypography(profile, normalizeWritingLanguage(targetLanguage));
+        return typography.ok ? success({ profile: typography.value, articleRules: "" }) : typography;
     }
 
     if (editorial.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
-        return undefined;
+        return success(undefined);
 
     if (captured)
-        return captured;
+        return success(captured);
 
-    const profile = prepareStyleReviewProfile(editorial, store, article);
-    return profile ? { profile, articleRules: store.getArticleStyleRules(article.id) } : undefined;
+    const profile = prepareStyleProfile(editorial, store, article);
+    if (!profile.ok)
+        return profile;
+
+    return success(profile.value ? { profile: profile.value, articleRules: store.getArticleStyleRules(article.id) } : undefined);
 }

@@ -12,7 +12,8 @@ import {
 } from "@skladno/shared";
 import { validateProposalResult } from "./proposals/proposal-result-policy.js";
 import { ApplicationServiceError } from "../errors/application-service-error.js";
-import type { EditorialEngine } from "./engine/editorial-engine.js";
+import { prepareEditorialStream, type EditorialStreamContext } from "./prepare-editorial-stream.js";
+import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
 import type { EditorialEngineEvent } from "./engine/editorial-engine-event.js";
 import { EDITORIAL_ENGINE_ERROR } from "./engine/editorial-engine-errors.js";
 import { EDITORIAL_ENGINE_EVENT } from "./engine/editorial-engine-events.js";
@@ -24,29 +25,10 @@ import { getReusableFactFindings } from "./fact-checking/reusable-fact-findings.
 import { persistFactCheckArtifact } from "./fact-checking/persist-fact-check-artifact.js";
 import type { FactCheckArtifactStore } from "./fact-checking/fact-check-artifact-store.js";
 import type { FactCheckRunStore } from "./fact-checking/fact-check-run-store.js";
-import { correctionContext, verifyCorrectionSelection } from "./fact-checking/verified-correction-selection.js";
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import { captureOperationOutcome, runAiFailureStage } from "../telemetry/ai-failure-category.js";
 import { beginAiOperation, withAiOperation } from "../telemetry/ai-operation-context.js";
-import { TypographyLocalEngine } from "./style/typography-local-engine.js";
 import { reviewTypography } from "./style/typography-review.js";
-import { prepareStyleReviewContext } from "./style/prepare-style-review-profile.js";
-
-
-interface EditorialStreamContext {
-    article: Article;
-    engine: EditorialEngine;
-    operation: { factCheck: boolean; translation: boolean };
-    correction?: { selection: { expectedRevisionId: string; occurrenceIds: string[] }; context: string };
-    style?: { profile: StyleProfile; articleRules: string };
-    continuation?: {
-        previousResponseId?: string;
-        scope?: { connectionId: string; provider: import("@skladno/shared").AiProvider; model: string };
-    };
-}
-
-
-type EditorialContinuationScope = NonNullable<EditorialEngine["continuationScope"]>;
 
 
 interface EditorialArticleStore {
@@ -88,87 +70,6 @@ interface EditorialServiceStores {
 interface EditorialServiceRuntime {
     engines: EditorialEngineResolver;
     sessionContinuationEnabled: boolean;
-}
-
-
-function prepareEditorialStream(articles: EditorialArticleStore, sessions: EditorialSessionStore, styleCorpus: EditorialStyleCorpusStore, factChecks: FactChecksStore, engines: EditorialEngineResolver, sessionContinuationEnabled: boolean, request: EditorialServiceRequest): EditorialStreamContext {
-    const article = articles.getArticle(request.articleContext.articleId);
-    if (!article)
-        throw new ApplicationServiceError(APPLICATION_ERROR.ARTICLE_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
-
-    const correction = getVerifiedCorrection(request, article, factChecks);
-
-    const factCheck = request.editorial.operation === EDITORIAL_OPERATION.FACT_CHECK;
-    const translation = request.editorial.operation === EDITORIAL_OPERATION.TRANSLATION;
-    const style = prepareStyleReviewContext(request.editorial, styleCorpus, article, request.styleContext, request.articleContext.targetLanguage);
-
-    const engine: EditorialEngine | undefined = request.editorial.reviewMode
-        ? new TypographyLocalEngine()
-        : engines.resolve(request.editorial.operation, request.editorial.skillId);
-    if (!engine)
-        throw new ApplicationServiceError(APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING, HTTP_STATUS.BAD_REQUEST);
-
-    const continuationScope = engine.continuationScope;
-    const previousResponseId = request.editorial.reviewMode ? undefined : prepareContinuation(
-        sessions, request.articleContext.articleId, !factCheck && !translation, sessionContinuationEnabled, continuationScope,
-    );
-
-    return {
-        article,
-        engine,
-        operation: { factCheck, translation },
-        ...correction,
-        ...(style ? { style } : {}),
-        ...(continuationScope || previousResponseId ? {
-            continuation: {
-                ...(continuationScope ? { scope: continuationScope } : {}),
-                ...(previousResponseId ? { previousResponseId } : {}),
-            },
-        } : {}),
-    };
-}
-
-
-function prepareContinuation(
-    sessions: EditorialSessionStore,
-    articleId: string,
-    eligible: boolean,
-    enabled: boolean,
-    scope: EditorialContinuationScope | undefined,
-): string | undefined {
-    const session = eligible && enabled ? sessions.getEditorialSession(articleId) : undefined;
-    const token = getMatchingContinuationToken(session, scope);
-    if (!enabled || (session && !token))
-        sessions.removeEditorialSession(articleId);
-
-    return token;
-}
-
-
-function getVerifiedCorrection(request: EditorialServiceRequest, article: Article, factChecks: FactChecksStore): Pick<EditorialStreamContext, "correction"> {
-    const selection = request.factChecking?.correctionSelection;
-    if (!selection)
-        return {};
-
-    if (request.editorial.operation !== EDITORIAL_OPERATION.FLOW_REVISION || article.currentRevisionId !== selection.expectedRevisionId)
-        throw new ApplicationServiceError(APPLICATION_ERROR.FACT_CORRECTION_SELECTION_INVALID, HTTP_STATUS.CONFLICT);
-
-    const findings = verifyCorrectionSelection(factChecks.listFactChecks(request.articleContext.articleId), article.currentRevisionId, selection.occurrenceIds);
-    return { correction: { selection, context: correctionContext(findings) } };
-}
-
-
-function getMatchingContinuationToken(
-    session: import("@skladno/shared").EditorialSession | undefined,
-    scope: EditorialContinuationScope | undefined,
-): string | undefined {
-    if (!session?.continuationToken || !scope)
-        return undefined;
-
-    if (session.connectionId !== scope.connectionId || session.provider !== scope.provider || session.model !== scope.model)
-        return undefined;
-
-    return session.continuationToken;
 }
 
 
@@ -292,8 +193,8 @@ export class EditorialService {
 
         try {
             const context = runAiFailureStage(this.telemetry, "request_preparation", () =>
-                prepareEditorialStream(this.stores.articles, this.stores.sessions, this.stores.styleCorpus, this.stores.factChecks,
-                    this.runtime.engines, this.runtime.sessionContinuationEnabled, request));
+                unwrapApplicationResult(prepareEditorialStream(this.stores.articles, this.stores.sessions, this.stores.styleCorpus, this.stores.factChecks,
+                    this.runtime.engines, this.runtime.sessionContinuationEnabled, request)));
             const events = streamEditorialOperation(
                 request,
                 context,
@@ -327,7 +228,10 @@ export class EditorialService {
 
 
     async *streamStaged(request: EditorialServiceRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
-        const context = prepareEditorialStream(this.stores.articles, this.stores.sessions, this.stores.styleCorpus, this.stores.factChecks, this.runtime.engines, this.runtime.sessionContinuationEnabled, request);
+        const context = unwrapApplicationResult(prepareEditorialStream(
+            this.stores.articles, this.stores.sessions, this.stores.styleCorpus, this.stores.factChecks,
+            this.runtime.engines, this.runtime.sessionContinuationEnabled, request,
+        ));
 
         try {
             yield* streamEditorialOperation(request, context, this.stores.factChecks, signal, () => undefined);

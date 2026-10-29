@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-08
-- Updated: 2026-10-02
+- Updated: 2026-10-28
 - Scope: `packages/server`, shared application contracts, and Electron integration
 
 ## Context
@@ -21,6 +21,8 @@ Separate the local service into presentation, application, and infrastructure.
 Both runtimes reuse the same application behavior and SQLite persistence. Shared contracts are transport-neutral and renderer-safe under [ADR-002](adr-002-shared-contract-organization.md). Electron exposes a finite, context-isolated bridge under [ADR-008](adr-008-loopback-service-trust-boundary.md).
 
 Keep services focused, group dependencies by responsibility, and name operations for their domain effect consistently across ports and callers. Additional abstractions require a demonstrated need.
+
+Application decisions use typed results for expected validation, configuration, missing-resource, and conflict outcomes. Operation implementations compose these before dependent generation or persistence. Existing public service, client, and stream boundaries preserve safe error/status contracts and conflict recovery payloads. Unexpected faults remain exceptions. Transactions, streaming, cancellation, completion, rollback, and background work retain explicit orchestration. The [application result guide](../guides/application-results.md) records production owners, compatibility mappings, and the reviewed exceptions at trust, integrity, and lifecycle boundaries.
 
 ## Consequences
 

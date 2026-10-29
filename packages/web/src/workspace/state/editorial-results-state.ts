@@ -1,3 +1,4 @@
+import { success, failure, type Result } from "@skladno/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useIntl, type IntlShape } from "react-intl";
 import {
@@ -27,16 +28,22 @@ interface EditorialResult<T> {
 type TranslationResult = EditorialResult<{ metadata: TranslationMetadata; content: string; editorialArtifactId?: string; resultId?: string; createdAt?: string }>;
 
 
-async function refreshLinkedTranslation(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, target: ArticleSummary, result: TranslationResult, intl: IntlShape): Promise<void> {
+type TranslationRefreshResult = Result<void, {
+    messageId: "views.translationRefreshFailed" | "views.translationRefreshDraft" | "views.translationRefreshUnavailable" }>;
+
+
+async function refreshLinkedTranslation(
+    client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, target: ArticleSummary, result: TranslationResult, intl: IntlShape,
+): Promise<TranslationRefreshResult> {
     const persisted = await client.getArticle(target.id);
     if (persisted.currentRevisionId !== target.currentRevisionId)
-        throw new Error(intl.formatMessage({ id: "views.translationRefreshFailed" }));
+        return failure({ messageId: "views.translationRefreshFailed" });
 
     if (await workspace.getArticleContent(target) !== persisted.currentRevision.content || persisted.draft)
-        throw new Error(intl.formatMessage({ id: "views.translationRefreshDraft" }));
+        return failure({ messageId: "views.translationRefreshDraft" });
 
     if (!result.value.editorialArtifactId)
-        throw new Error(intl.formatMessage({ id: "views.translationRefreshUnavailable" }));
+        return failure({ messageId: "views.translationRefreshUnavailable" });
 
     await client.acceptProposal(target.id, {
         baseRevisionId: persisted.currentRevisionId,
@@ -48,6 +55,8 @@ async function refreshLinkedTranslation(client: EditorialWorkspaceClient, worksp
 
     await workspace.refreshArticle(target.id, true);
     workspace.selectArticle(target.id);
+
+    return success(undefined);
 }
 
 
@@ -148,7 +157,10 @@ function useTranslationResults(client: EditorialWorkspaceClient, workspace: Arti
 
         try {
             if (target) {
-                await refreshLinkedTranslation(client, workspace, target, translationResult, intl);
+                const refreshed = await refreshLinkedTranslation(client, workspace, target, translationResult, intl);
+                if (!refreshed.ok)
+                    throw new Error(intl.formatMessage({ id: refreshed.messageId }));
+
                 return;
             }
 
