@@ -7,6 +7,7 @@ import { prepareReleaseNotes } from "./release-notes.mjs";
 import { classifiedReleaseVersion, validateReleaseRecord } from "./release-notes-record.mjs";
 import { git, resolveCommit } from "./release-notes-range.mjs";
 import { github } from "./publish-release-notes.mjs";
+import { reviewReleaseTestChanges } from "./explain-test-changes.mjs";
 
 
 const nullSeparator = "\0";
@@ -14,7 +15,7 @@ const nullSeparator = "\0";
 
 export function assertReleaseWorktree(version, cwd = process.cwd()) {
     const paths = [git(["diff", "--name-only", "-z", "HEAD"], cwd), git(["diff", "--cached", "--name-only", "-z"], cwd),
-        git(["ls-files", "--others", "--exclude-standard", "-z"], cwd)].flatMap((value) => value.split(nullSeparator).filter(Boolean));
+    git(["ls-files", "--others", "--exclude-standard", "-z"], cwd)].flatMap((value) => value.split(nullSeparator).filter(Boolean));
     assert(paths.every((path) => path === `release-notes/${version}.json`),
         "Commit or stash changes before releasing. Only this release's notes may be uncommitted.");
 }
@@ -40,7 +41,8 @@ async function approveRelease(question) {
 
 
 export async function reviewReleaseNotes({ version, previousTag, manual = false, cwd = process.cwd() },
-    { releases = publishedReleases, generate, approve = approveRelease, print = console.log } = {}) {
+    { releases = publishedReleases, generate, approve = approveRelease, print = console.log,
+        reviewTests = reviewReleaseTestChanges } = {}) {
     assertReleaseWorktree(version, cwd);
     const path = join(cwd, "release-notes", `${version}.json`);
     if (!existsSync(path)) {
@@ -54,6 +56,7 @@ export async function reviewReleaseNotes({ version, previousTag, manual = false,
     assert.equal(record.version, version, "Release notes version does not match the intended release.");
     const candidate = { ...record, reviewed: true };
     const releaseVersion = classifiedReleaseVersion(candidate);
+    await reviewTests(record, { cwd, manual, print });
     const body = validateReleaseRecord(candidate, releaseVersion, "HEAD", cwd);
     print(`\nRelease v${releaseVersion}\n\n${body}\n\nSecurity: ${record.security ? record.securityReason : "ordinary release"}\n`);
     if (record.reviewed === true)
@@ -66,5 +69,6 @@ export async function reviewReleaseNotes({ version, previousTag, manual = false,
     assert.equal(resolveCommit("HEAD", cwd), head, "The source changed during review. Rerun the release command.");
     assertReleaseWorktree(version, cwd);
     writeFileSync(path, `${JSON.stringify(candidate, null, 4)}\n`, "utf8");
+
     return candidate;
 }

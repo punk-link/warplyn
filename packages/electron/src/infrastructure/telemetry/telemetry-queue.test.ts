@@ -77,6 +77,13 @@ test("pending events survive restart and opt-out deletes the bounded queue", asy
             await until(() => bodies.length === 2);
             assert.equal(JSON.parse(bodies[1]!).batch[0].properties.failure, "provider");
             assert.equal(JSON.parse(bodies[1]!).batch[0].properties.appVersion, "0.1.0");
+            const original = JSON.parse(bodies[0]!).batch;
+            const restored = JSON.parse(bodies[1]!).batch;
+            const eventUuidPattern = /^[0-9a-f-]{36}$/;
+            assert.match(original[0].uuid, eventUuidPattern);
+            assert.notEqual(original[0].uuid, original[1].uuid);
+            assert.equal(restored[0].uuid, original[0].uuid);
+            assert.equal(restored[0].properties.timestamp, original[0].properties.timestamp);
             second.capture({ kind: "app_session_started" });
             await until(() => existsSync(queuePath) && readFileSync(queuePath, "utf8").includes("app_session_started"));
             second.setConsent(false);

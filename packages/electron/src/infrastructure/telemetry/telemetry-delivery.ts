@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
 import { release } from "node:os";
 import { isTelemetryEvent, telemetrySchemaVersion, type TelemetryEvent } from "@skladno/shared";
 import { createTelemetryQueueStore } from "./telemetry-queue-store.js";
@@ -22,6 +23,7 @@ interface DeliveryConfiguration {
 
 
 interface OutboundEvent {
+    uuid: string;
     event: TelemetryEvent["kind"];
     distinct_id: string;
     properties: TelemetryEvent & {
@@ -121,6 +123,7 @@ function createOutboundTelemetryEvent(event: TelemetryEvent, installationId: str
         return undefined;
 
     return {
+        uuid: randomUUID(),
         event: event.kind,
         distinct_id: installationId,
         properties: {
@@ -200,7 +203,7 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
             return;
 
         const entries = [...(state.activeRequest?.batch ?? []), ...state.queue]
-            .map(({ event, queuedAt, outbound }) => ({ event, queuedAt, appVersion: outbound.properties.appVersion }));
+            .map(({ event, queuedAt, outbound }) => ({ event, queuedAt, appVersion: outbound.properties.appVersion, uuid: outbound.uuid }));
         store.save(installationId, entries);
     }
 
@@ -216,12 +219,15 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
             if (currentGeneration !== state.generation || installationId !== id)
                 return;
 
-            const restored = entries.flatMap(({ event, queuedAt, appVersion: originalVersion }) => {
+            const restored = entries.flatMap(({ event, queuedAt, appVersion: originalVersion, uuid }) => {
                 const outbound = createOutboundTelemetryEvent(event, id, originalVersion ?? appVersion, osVersion);
                 if (!outbound)
                     return [];
 
                 outbound.properties.timestamp = new Date(queuedAt).toISOString();
+                if (uuid)
+                    outbound.uuid = uuid;
+
                 return [{ event, outbound, queuedAt, retries: 0 }];
             });
 
@@ -325,7 +331,9 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
         if (!outbound || !withinRateLimit())
             return false;
 
-        state = { ...state, queue: [...state.queue, { event: { ...event }, outbound, queuedAt: now(), retries: 0 }] };
+        const queuedAt = now();
+        outbound.properties.timestamp = new Date(queuedAt).toISOString();
+        state = { ...state, queue: [...state.queue, { event: { ...event }, outbound, queuedAt, retries: 0 }] };
         persist();
         schedule(state.generation);
 

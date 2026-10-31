@@ -72,6 +72,7 @@ test("both release commands generate, review, verify, and commit notes before ta
         const expected = security ? "0.5.6-preview.1.security" : "0.5.6";
         await release([mode, "--previous-tag", "v0.5.5"], { cwd, ...releaseProcesses(cwd, events),
             reviewNotes: (options) => reviewReleaseNotes(options, { releases: () => [], print: () => undefined,
+                reviewTests: async () => events.push("review tests"),
                 generate: async () => {
                     events.push("generate");
                     return generation(cwd, security);
@@ -80,7 +81,7 @@ test("both release commands generate, review, verify, and commit notes before ta
                     events.push("approve");
                     return true;
                 } }) });
-        assert.deepEqual(events.slice(1, 5), ["generate", "approve", "run verify:core", "run verify:browser"]);
+        assert.deepEqual(events.slice(1, 6), ["generate", "review tests", "approve", "run verify:core", "run verify:browser"]);
         assert.equal(events.at(-1), `push --atomic origin HEAD v${expected}`);
         const record = readTaggedNotes(expected, `v${expected}`, cwd);
         assert.equal(record.reviewed, true);

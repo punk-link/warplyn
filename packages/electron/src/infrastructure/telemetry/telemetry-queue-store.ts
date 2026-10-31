@@ -7,6 +7,7 @@ export interface StoredTelemetryEvent {
     event: TelemetryEvent;
     queuedAt: number;
     appVersion?: string;
+    uuid?: string;
 }
 
 
@@ -51,11 +52,13 @@ export function createTelemetryQueueStore(path: string) {
                 return [];
 
             const versionPattern = /^[0-9A-Za-z.+-]{1,64}$/;
+            const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
             return value.entries.filter((entry: unknown): entry is StoredTelemetryEvent =>
                 Boolean(entry && typeof entry === "object" && "event" in entry && isTelemetryEvent(entry.event) &&
                     "queuedAt" in entry && typeof entry.queuedAt === "number" && Number.isFinite(entry.queuedAt) &&
                     entry.queuedAt <= now && now - entry.queuedAt <= expiryMs &&
-                    (!("appVersion" in entry) || typeof entry.appVersion === "string" && versionPattern.test(entry.appVersion))));
+                    (!("appVersion" in entry) || typeof entry.appVersion === "string" && versionPattern.test(entry.appVersion)) &&
+                    (!("uuid" in entry) || typeof entry.uuid === "string" && uuidPattern.test(entry.uuid))));
         } catch {
             return [];
         }

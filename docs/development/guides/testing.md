@@ -1,5 +1,24 @@
 # Testing
 
+## Test-change explanations
+
+The local release command explains changes to tests, fixtures, snapshots, and Playwright/Vitest
+configuration before the release approval prompt. It prints the explanation and saves
+`release-test-changes.md` under the Git metadata directory, outside committed release notes.
+It describes changed expectations and potentially lost protections; it does not execute tests
+or approve the change. Existing verification gates still run before publication.
+
+The report uses local `OPENAI_COMMIT_GENERATION_KEY` and `gpt-6-luna`, matching release-note generation.
+It sends changed test patches and changed `packages/` implementation patches to OpenAI with
+`store: false`. It compares the release record's previous commit with its exact source commit and includes source links.
+Inputs above the size limit produce an explicit unavailable report rather than a partial explanation.
+Nonstandard test filenames and unchanged helpers can leave gaps; explanations must acknowledge uncertainty.
+
+No CI key or workflow is needed. Generation failures stop release preparation before approval or
+publication. Retry, or use the existing `--manual` release mode and inspect the test diff yourself.
+Manual mode records explicitly that no AI explanation was generated. Already-reviewed release
+notes still receive a fresh test explanation on rerun.
+
 Use the smallest check that can fail for the changed behavior, then run the applicable gates below. Run commands from the repository root unless a working directory is specified.
 
 ## Commands
