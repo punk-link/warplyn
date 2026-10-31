@@ -39,12 +39,14 @@ async function dismissNotifications(page: Page): Promise<void> {
 
 
 async function saveArticleToFile(page: Page): Promise<void> {
+    await expect(page.getByRole("button", { name: "Load from file", exact: true })).toBeEnabled();
     await dismissNotifications(page);
     await page.locator("[data-focus-area=article-header]").getByRole("button", { name: "Save to file" }).click();
 }
 
 
 async function loadArticleFromFile(page: Page): Promise<void> {
+    await expect(page.getByRole("button", { name: "Load from file", exact: true })).toBeEnabled();
     await dismissNotifications(page);
     await page.getByRole("button", { name: "Load from file" }).click();
 }
