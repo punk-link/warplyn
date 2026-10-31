@@ -26,12 +26,14 @@ const englishElectronMessages = {
     "electron.deleteData.cancel": "Cancel",
     "electron.restoreBackup.title": "Restore this backup?",
     "electron.restoreBackup.message": "This replaces your active local Warplyn data with the selected backup.",
-    "electron.restoreBackup.detail": "Warplyn will save the latest Draft checkpoints, keep a recovery copy of the active data, then restart. This cannot be undone from Settings.",
+    "electron.restoreBackup.detail": ("Warplyn will save the latest Draft checkpoints, keep a recovery copy of the active data, then restart. " +
+        "Existing AI connections stay local. Environment-variable references can be restored; API keys and variable values are never imported. " +
+        "This cannot be undone from Settings."),
     "electron.restoreBackup.restore": "Restore and restart",
     "electron.restoreBackup.cancel": "Cancel",
     "electron.restoreFailed.title": "Couldn’t restore the backup",
     "electron.restoreFailed.message": "Close any other Warplyn windows or local development servers using this data, then try again. Your active data is unchanged.",
-} as const;
+} as const satisfies Record<string, string>;
 
 
 export type ElectronMessages = Record<keyof typeof englishElectronMessages, string>;

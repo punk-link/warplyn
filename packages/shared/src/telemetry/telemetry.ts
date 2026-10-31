@@ -1,4 +1,4 @@
-export const telemetrySchemaVersion = 3;
+export const telemetrySchemaVersion = 4;
 
 export type TelemetryFailureCategory = "configuration" | "network" | "persistence" | "cancelled" | "unknown";
 export type TelemetryOperation = "assistant" | "thesis_to_narrative" | "flow_revision" | "fact_check" | "style_review" | "translation";
@@ -9,6 +9,7 @@ export type TelemetryAiFailure = "provider" | "network" | "invalid_output" | "in
 
 export type TelemetryEvent =
     | { kind: "app_session_started" }
+    | { kind: "connection_verification_finished"; outcome: "completed" | "failed" }
     | { kind: "ai_operation_finished"; operation: TelemetryOperation; outcome: "completed" | "failed" | "cancelled";
         elapsedMs: number; failure?: TelemetryFailureCategory | TelemetryAiFailure; operationId?: string }
     | { kind: "ai_stage_finished"; stage: TelemetryAiStage; outcome: "completed" | "failed" | "cancelled";
@@ -165,6 +166,8 @@ export function isTelemetryEvent(value: unknown): value is TelemetryEvent {
         return false;
 
     switch (candidate.kind) {
+        case "connection_verification_finished":
+            return hasOnly(candidate, ["kind", "outcome"]) && (candidate.outcome === "completed" || candidate.outcome === "failed");
         case "app_session_started":
             return hasOnly(candidate, ["kind"]);
         case "proposal_reviewed":

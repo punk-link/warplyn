@@ -1,4 +1,5 @@
-import { APPLICATION_ERROR, AI_PROVIDER, isAiProvider, type AiConnection, type AiProvider } from "@skladno/shared";
+import { APPLICATION_ERROR, AI_PROVIDER, beginTelemetryCapture, isAiProvider, type AiConnection, type AiProvider,
+    type TelemetryCaptureSource } from "@skladno/shared";
 import { failure, success, type ApplicationResult } from "../errors/application-result.js";
 import type { SettingsStore } from "./settings-store.js";
 import type { AvailableModelsProvider } from "./available-models-provider.js";
@@ -12,6 +13,7 @@ export class AiConnectionOperations {
         private readonly models: AvailableModelsProvider,
         private readonly createConnectionId: () => string,
         private readonly credentialStore?: CredentialStore,
+        private readonly telemetry?: TelemetryCaptureSource,
     ) { }
 
 
@@ -57,9 +59,11 @@ export class AiConnectionOperations {
             status: "unchecked"
         };
 
+        const capture = beginTelemetryCapture(this.telemetry);
         try {
             await this.models.list(connection, value.apiKey);
         } catch {
+            capture({ kind: "connection_verification_finished", outcome: "failed" });
             return failure(APPLICATION_ERROR.AI_CONNECTION_VERIFICATION_FAILED);
         }
 
@@ -68,6 +72,8 @@ export class AiConnectionOperations {
             const saved = normalizeAiConnections(this.settings.getSetting("application-ai-connections")?.value);
             saved.connections.push({ ...connection, status: "connected", lastCheckedAt: new Date().toISOString() });
             this.settings.saveSetting("application-ai-connections", { connections: saved.connections });
+
+            capture({ kind: "connection_verification_finished", outcome: "completed" });
 
             return success(saved.connections.at(-1)!);
         } catch (error) {
@@ -97,6 +103,7 @@ export class AiConnectionOperations {
             return state;
 
         const { saved, index, connection } = state.value;
+        const capture = beginTelemetryCapture(this.telemetry);
         try {
             await this.models.list(connection);
             saved.connections[index] = { ...connection, status: "connected", lastCheckedAt: new Date().toISOString(), diagnostic: undefined };
@@ -109,6 +116,8 @@ export class AiConnectionOperations {
         }
 
         this.settings.saveSetting("application-ai-connections", saved);
+
+        capture({ kind: "connection_verification_finished", outcome: saved.connections[index]!.status === "connected" ? "completed" : "failed" });
 
         return success(saved.connections[index]!);
     }

@@ -41,7 +41,7 @@ Restoring a `.skladno` backup or a desktop snapshot with its companion folder re
 Restoring a desktop backup also adds its saved personal spelling words to your dictionary. Existing words stay in place. Older backups without personal words leave your dictionary unchanged. Downloaded language dictionaries and spelling preload choices are not included.
 
 ::: warning AI settings after restore
-Restoring clears saved AI connections and model selections, including environment-variable references. Add connections and choose models again in **Settings** → **AI assistant**. Other settings are restored. If a restore fails and Warplyn rolls back, your previous connections and model selections return.
+Restoring keeps this installation's existing AI connections, credentials, and model selections. If no connections are configured, Warplyn restores environment-variable names and references from the backup, but never API keys or environment-variable values. Set any missing variables on this computer, then choose models in **Settings** → **AI assistant**. Connections backed by saved API keys are not imported into a fresh installation; add them in Settings. Other settings are restored. A failed restore and rollback preserve your previous AI setup.
 :::
 
 ## Recover a database-only backup manually

@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { getElectronMessagesFor, type TelemetryEvent } from "@skladno/shared";
+import { openDatabase } from "@skladno/server/electron";
 import { registerDesktopSettingsAdapter } from "./desktop-settings.js";
 
 
@@ -41,7 +42,8 @@ export function setup(response: number, backupChecked = false, backupFails = fal
             if (backupFails)
                 throw new Error("backup failed");
 
-            writeFileSync(path, "backup");
+            const snapshot = openDatabase(path);
+            snapshot.close();
         },
         telemetry: { beginCapture: () => (event) => telemetry.push(event) },
         services: {} as never,

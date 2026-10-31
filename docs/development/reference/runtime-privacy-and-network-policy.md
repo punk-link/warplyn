@@ -35,6 +35,8 @@ Provider-stage records allow only fixed stage names, elapsed milliseconds, allow
 
 ## Packaged beta telemetry
 
+Schema version 4 adds `connection_verification_finished`, containing only a completed or failed outcome. Explicit connection tests and managed connection creation capture consent before verification. Success is recorded only after the verified connection is saved. Events contain no provider, connection identifier, credential source, or error text. Existing installations without a new verification will not enter this onboarding step until they explicitly verify a connection again.
+
 Remote telemetry is separate from local diagnostics and uses only a versioned allowlisted contract. It never forwards diagnostic context or stdout/stderr. Public-beta consent is installation-local and default-on; Authors can revoke it at any time, and saved opt-out preferences are respected.
 
 Schema version 2 adds `ai_stage_finished` for fixed stages `assistant_step`, `editorial_generation`, `action_intent_verification`, and `replacement_verification`. Its only operation data is stage, elapsed milliseconds, and a completed, failed, or cancelled outcome. It uses the existing consent owner and bounded PostHog queue. It sends no prompts, output, Article or request identifiers, provider metadata, model names, or token usage. AI SDK telemetry remains disabled; these events are constructed independently of SDK tracing payloads.
@@ -68,5 +70,11 @@ The [desktop activity dashboard](https://us.posthog.com/project/602062/dashboard
 The activation funnel measures launch, completed AI operation, and Proposal review in order within 14 days. It includes returning installations and does not establish first-time onboarding or connection verification. Steps need not refer to the same Article or operation. Draft-checkpoint retention measures persistence activity, including save/discard attempts. Proposal rejection is a valid Author decision, not an AI quality verdict. Unique identities represent consenting installations; opt-out and re-enablement reset identity. Historical counts may include duplicates.
 
 ## Verification
+
+### Release analytics review
+
+After each release, review the desktop dashboard once the new version has seven complete UTC days of activity. Compare it with the preceding version over the same dates and platform. Check operation counts and affected installations before interpreting failure rates or p95 latency. Inspect completed-operation latency, recovery failures, activation, and weekly checkpoint retention. Record the versions, dates, sample sizes, observed changes, and any follow-up. Do not infer a regression from an immature cohort or a few operations.
+
+The AI failure-rate alert runs daily with its existing threshold above 20%. Its denominator is present only for daily buckets with at least 20 AI operations. Smaller samples do not qualify for the rate alert; use the adjacent counts to distinguish insufficient data from a healthy rate. The onboarding funnel adds a successful connection-verification step and requires a release emitting schema version 4. It measures an observed sequence, not proof of first-ever setup.
 
 Test safe diagnostic metadata and writer-failure isolation, selected-provider routing and credential isolation, transport validation, and packaged telemetry sender/schema/consent checks. Canonical privacy and telemetry behavior remains in [cross-cutting](../../../product-model/areas/cross-cutting.json) and [Settings](../../../product-model/areas/settings.json) records. Do not collect private content or raw provider errors as evidence.

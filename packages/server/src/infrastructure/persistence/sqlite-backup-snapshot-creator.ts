@@ -5,6 +5,7 @@ import { join } from "node:path";
 
 import type { BackupSnapshotCreator } from "../../application/settings/backup-snapshot-creator.js";
 import type { SqliteDatabase } from "./database.js";
+import { sanitizeBackupConnectionSettings } from "./backup-connection-settings.js";
 
 
 const backupTimestampPattern = /[:.]/g;
@@ -32,6 +33,7 @@ export class SqliteBackupSnapshotCreator implements BackupSnapshotCreator {
         const path = join(destination, createBackupFilename(created));
         try {
             await backup(this.database, path);
+            sanitizeBackupConnectionSettings(path);
             if (process.platform !== "win32")
                 await chmod(path, 0o600);
 

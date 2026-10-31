@@ -102,7 +102,8 @@ test("legacy backup pairs and database-only snapshots restore without changing t
                 assert.equal(restored.prepare("SELECT content FROM article_revisions").get()?.content, "Immutable Revision");
                 assert.equal(restored.prepare("SELECT content FROM article_drafts").get()?.content, "Latest Draft");
                 assert.equal(restored.prepare("SELECT content FROM assistant_messages").get()?.content, "Legacy conversation");
-                assert.deepEqual(restored.prepare("SELECT key FROM app_settings ORDER BY key").all().map((row) => row.key), ["publish-limit-profile"]);
+                assert.deepEqual(restored.prepare("SELECT key FROM app_settings ORDER BY key").all().map((row) => row.key),
+                    ["application-ai-connections", "publish-limit-profile"]);
             } finally {
                 restored.close();
             }
@@ -112,7 +113,9 @@ test("legacy backup pairs and database-only snapshots restore without changing t
             try {
                 assert.equal(application.services.publishing.getSettings().customProfiles[0]?.name, "Legacy publication");
                 const settings = await application.services.settings.getSnapshot();
-                assert.deepEqual(settings.connections, []);
+                assert.equal(settings.connections.length, 1);
+                assert.deepEqual(settings.connections[0]?.credentialSource,
+                    { kind: "environment-variable", environmentVariableName: "LEGACY_MODEL_KEY" });
             } finally {
                 application.database.close();
             }
