@@ -73,10 +73,12 @@ describe("Editorial Workspace settings", () => {
         const client = createFakeClient();
         const user = userEvent.setup();
         render(<App client={client} />);
-        expect(await screen.findByText(getMessage("workspace.aiConnectionRequired"))).toBeTruthy();
-        expect(screen.getByText(getMessage("workspace.aiConnectionCapabilities"))).toBeTruthy();
+        await user.click(await screen.findByRole("button", { name: getMessage("assistant.expand") }));
+        expect(await screen.findByText(getMessage("assistant.setupRequired"))).toBeTruthy();
+        expect(screen.queryByText(getMessage("workspace.aiConnectionRequired"))).toBeNull();
         await user.click(screen.getAllByRole("button", { name: "Add model key" }).at(-1)!);
         expect(await screen.findByRole("heading", { name: "Connections" })).toBeTruthy();
+        expect(screen.queryByRole("heading", { name: getMessage("settings.general") })).toBeNull();
     });
 
     it.each([
@@ -87,10 +89,11 @@ describe("Editorial Workspace settings", () => {
         client.getApplicationSettings = vi.fn().mockResolvedValue({ general: defaultGeneralSettings, connections: [{ id: "connection", provider: "openai", label: "Personal AI", credentialSource: { kind: "environment-variable", environmentVariableName: "AI_API_KEY" }, ...connection }], modelPreferences: { defaultModel: "", skillOverrides: {} }, backupPolicy: { schedule: "off", retention: { mode: "count", count: 7 } }, keyBindingOverrides: {} });
         render(<App client={client} />);
         await screen.findByRole("heading", { name: "First Article" });
+        await userEvent.click(screen.getByRole("button", { name: getMessage("assistant.expand") }));
         if (connection.status === "unavailable")
-            expect(await screen.findByText(getMessage("workspace.aiConnectionRequired"))).toBeTruthy();
+            expect(await screen.findByText(getMessage("assistant.setupRequired"))).toBeTruthy();
         else
-            await waitFor(() => expect(screen.queryByText(getMessage("workspace.aiConnectionRequired"))).toBeNull());
+            await waitFor(() => expect(screen.queryByText(getMessage("assistant.setupRequired"))).toBeNull());
     });
 
     it("surfaces Application Settings save failures through the notification center", async () => {

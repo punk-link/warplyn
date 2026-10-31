@@ -16,6 +16,15 @@ function connection(provider: AiProvider): AiConnection {
 }
 
 
+test("offers GPT 6.1 family models returned by OpenAI discovery", async () => {
+    const models = ["gpt-6", "gpt-6.1", "gpt-6.1-sol", "gpt-6.1-terra", "gpt-image-1"];
+    const result = await new AiConnectionModelDiscoveryService().list(connection(AI_PROVIDER.OPENAI), "secret",
+        async () => Response.json({ data: models.map((id) => ({ id })) }));
+
+    assert.deepEqual(result, ["gpt-6", "gpt-6.1", "gpt-6.1-sol", "gpt-6.1-terra"]);
+});
+
+
 test("uses each provider's documented model endpoint and authentication", async () => {
     const service = new AiConnectionModelDiscoveryService();
     const requests: { url: string; headers: Headers }[] = [];

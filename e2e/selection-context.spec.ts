@@ -28,13 +28,17 @@ async function selectPassage(editor: Locator) {
 test("bounded selection questions and replacements preserve neighboring Article text after reload", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");
+    const created = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");
     const create = page.getByRole("button", { name: "Create", exact: true });
     if (await create.isVisible())
         await create.click();
     else
         await page.getByRole("button", { name: "New article", exact: true }).click();
 
+    await created;
+
     const editor = page.getByRole("textbox", { name: "Article draft" });
+    await expect(editor).toHaveText("");
     await editor.pressSequentially("The ledger is the shared repair log.");
     await editor.press("Enter");
     await editor.pressSequentially("The record was useful.");

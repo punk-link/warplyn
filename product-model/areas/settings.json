@@ -157,7 +157,7 @@
                 "packages/server/src/infrastructure/editorial/services/ai-connection-model-discovery-service.ts",
                 "packages/server/src/presentation/routes/settings-route.ts"
             ],
-            "contract": "Opening AI Settings loads the current model lists for every active OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek connection; authors can refresh them again to retry or retrieve provider changes. Each returned model retains the connection that supplied it. The OpenAI catalog admits only the gpt-5.5 and gpt-5.6 model families; Zen retains its complete returned catalog. A refreshed list is not proof that every Editorial Operation is supported.",
+            "contract": "Opening AI Settings loads the current model lists for every active OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek connection; authors can refresh them again to retry or retrieve provider changes. Each returned model retains the connection that supplied it. The OpenAI catalog admits only the gpt-5.5, gpt-5.6, gpt-6, and gpt-6.1 model families; Zen retains its complete returned catalog. A refreshed list is not proof that every Editorial Operation is supported.",
             "persistence": "Server-side provider refresh only; the resulting list is not persisted."
         },
         {
@@ -171,7 +171,7 @@
                 "packages/server/src/application/publishing",
                 "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"
             ],
-            "contract": "Custom profiles use horizontal row dividers. Default, No restrictions, LinkedIn Post, LinkedIn Article, and named custom non-negative limits provide guidance; the selected default applies to new Articles while Articles retain independent selection. Custom profiles have stable IDs, appear before add controls, and require confirmed removal; removing the selected default resets to Default. Settings persists one default Article language and deduplicated translation languages excluding it. New translation… offers configured defaults when no viewed language is available; Authors confirm selected supported targets before generation.",
+            "contract": "Custom profiles use horizontal row dividers. Default, No restrictions, LinkedIn Post, LinkedIn Article, and named custom non-negative limits provide guidance; the selected default applies to new Articles while Articles retain independent selection. Custom profiles have stable IDs, appear before add controls, and require confirmed removal; removing the selected default resets to Default. Settings persists one default Article language and deduplicated translation languages excluding it. New translationâ€¦ offers configured defaults when no viewed language is available; Authors confirm selected supported targets before generation.",
             "persistence": "app_settings.publish-limit-profile"
         },
         {

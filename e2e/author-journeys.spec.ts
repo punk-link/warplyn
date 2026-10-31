@@ -3,6 +3,11 @@ import { applicationSettingsPath } from "@skladno/shared";
 
 
 test.beforeEach(async ({ page }) => {
+    const httpRequests = /^https?:/;
+    await page.context().route(httpRequests, (route) => {
+        const host = new URL(route.request().url()).hostname;
+        return ["127.0.0.1", "localhost", "[::1]"].includes(host) ? route.continue() : route.abort("internetdisconnected");
+    });
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
 });
 

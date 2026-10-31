@@ -12,7 +12,7 @@ const modelsEndpoints: Record<AiProvider, string> = {
     [AI_PROVIDER.DEEPSEEK]: "https://api.deepseek.com/models",
 };
 
-const editorialModelFamilies = ["gpt-5.5", "gpt-5.6", "gpt-6"];
+const editorialModelFamilies = ["gpt-5.5", "gpt-5.6", "gpt-6", "gpt-6.1"];
 
 
 function createModelDiscoveryRequestOptions(provider: AiProvider, apiKey: string): RequestInit {
