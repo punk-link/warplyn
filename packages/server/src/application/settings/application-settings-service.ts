@@ -1,7 +1,7 @@
 import {
     APPLICATION_ERROR, getAiModelPreferenceId, parseAiModelPreferenceId, type AiConnection,
     type AppModelPreference, type ApplicationSettingsSnapshot, type AvailableAiModel,
-    type BackupPolicy, type GeneralSettings, type KeyBindingOverrides, type ModelPreferences,
+    type BackupPolicy, type GeneralSettings, type KeyBindingOverrides, type ModelPreferences, type TelemetryCaptureSource,
 } from "@skladno/shared";
 
 import { failure, success, type ApplicationResult } from "../errors/application-result.js";
@@ -32,8 +32,9 @@ export class ApplicationSettingsService {
         createConnectionId: () => string,
         private readonly backups?: BackupSnapshotCreator,
         credentialStore?: CredentialStore,
+        telemetry?: TelemetryCaptureSource,
     ) {
-        this.connections = new AiConnectionOperations(settings, models, createConnectionId, credentialStore);
+        this.connections = new AiConnectionOperations(settings, models, createConnectionId, credentialStore, telemetry);
     }
 
 

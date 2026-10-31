@@ -83,7 +83,7 @@ test("AI stage timings reach PostHog only while their captured consent remains v
         assert.equal(payload.batch[0].properties.failure, "provider");
         assert.equal(payload.batch[0].properties.httpStatus, 503);
         assert.equal(payload.batch[0].properties.appVersion, "0.1.0");
-        assert.equal(payload.batch[0].properties.schemaVersion, 3);
+        assert.equal(payload.batch[0].properties.schemaVersion, 4);
         owner.setConsent(false);
         const disabledCapture = owner.beginCapture();
         owner.setConsent(true);

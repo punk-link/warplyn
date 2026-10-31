@@ -3,6 +3,10 @@ import test from "node:test";
 import { beginTelemetryCapture, beginTimedTelemetryCapture, isTelemetryEvent, type TelemetryEvent } from "./telemetry.js";
 
 test("telemetry accepts only finite allowlisted event shapes", () => {
+    assert.equal(isTelemetryEvent({ kind: "connection_verification_finished", outcome: "completed" }), true);
+    assert.equal(isTelemetryEvent({ kind: "connection_verification_finished", outcome: "failed" }), true);
+    assert.equal(isTelemetryEvent({ kind: "connection_verification_finished", outcome: "unchecked" }), false);
+    assert.equal(isTelemetryEvent({ kind: "connection_verification_finished", outcome: "completed", connectionId: "private" }), false);
     assert.equal(isTelemetryEvent({ kind: "proposal_reviewed", decision: "accepted" }), true);
     assert.equal(isTelemetryEvent({ kind: "app_failure", source: "renderer", failure: "unknown", termination: "crashed" }), true);
     assert.equal(isTelemetryEvent({ kind: "ai_operation_finished", operation: "flow_revision", outcome: "completed", elapsedMs: 12 }), true);

@@ -18,6 +18,7 @@ Pending events are kept in the app's local profile so Warplyn can retry when the
 
 Events cover:
 
+- completed or failed connection verification, without connection names or provider details
 - app starts and safe startup, renderer, or child-process failure categories
 - completed, failed, or cancelled AI operations and stages, including a failure category and HTTP status when available
 - explicit *Proposal* reviews and aggregated *Draft* checkpoints

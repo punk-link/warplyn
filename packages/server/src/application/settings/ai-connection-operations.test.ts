@@ -1,12 +1,21 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { APPLICATION_ERROR } from "@skladno/shared";
+import { APPLICATION_ERROR, type TelemetryEvent } from "@skladno/shared";
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 import { ApplicationSettingsService } from "./application-settings-service.js";
 import { AiConnectionOperations } from "./ai-connection-operations.js";
 
 
 function fixture() {
+    const events: TelemetryEvent[] = [];
+    let enabled = true;
+    const telemetry = { beginCapture: () => {
+        const consent = enabled;
+        return (event: TelemetryEvent) => {
+            if (consent && enabled)
+                events.push(event);
+        };
+    } };
     const records = new Map<string, unknown>();
     const calls = { saves: 0, ids: 0, models: 0, credentialWrites: 0, credentialDeletes: 0 };
     const settings = {
@@ -33,10 +42,33 @@ function fixture() {
             calls.credentialDeletes++;
         },
     };
-    return { records, calls, settings,
-        operations: new AiConnectionOperations(settings, models, createId, credentials),
-        service: new ApplicationSettingsService(settings, { read: async () => ({}) }, models, createId, undefined, credentials) };
+    return { records, calls, settings, events, models, disableTelemetry: () => {
+        enabled = false;
+    },
+    operations: new AiConnectionOperations(settings, models, createId, credentials, telemetry),
+    service: new ApplicationSettingsService(settings, { read: async () => ({}) }, models, createId, undefined, credentials) };
 }
+
+
+test("connection verification records only persisted outcomes and respects captured consent", async () => {
+    const { operations, events, models, disableTelemetry } = fixture();
+    operations.create({ environmentVariableName: "VALID_KEY" });
+    await operations.test("connection");
+    models.list = async () => {
+        throw new Error("private provider response");
+    };
+    await operations.test("connection");
+    assert.deepEqual(events, [
+        { kind: "connection_verification_finished", outcome: "completed" },
+        { kind: "connection_verification_finished", outcome: "failed" },
+    ]);
+    models.list = async () => {
+        disableTelemetry();
+        return [];
+    };
+    await operations.test("connection");
+    assert.equal(events.length, 2);
+});
 
 
 test("connection result prerequisites preserve precedence and stop dependent effects", async () => {
@@ -51,6 +83,24 @@ test("connection result prerequisites preserve precedence and stop dependent eff
         assert.deepEqual(result, { ok: false, code: APPLICATION_ERROR.AI_CONNECTION_NOT_FOUND, kind: "not-found" });
 
     assert.deepEqual(calls, { saves: 0, ids: 0, models: 0, credentialWrites: 0, credentialDeletes: 0 });
+});
+
+
+test("managed verification records success after persistence and failures without private context", async () => {
+    const { operations, events, models, settings } = fixture();
+    await operations.createManaged({ apiKey: "synthetic-key" });
+    assert.deepEqual(events, [{ kind: "connection_verification_finished", outcome: "completed" }]);
+    models.list = async () => {
+        throw new Error("private provider response");
+    };
+    await operations.createManaged({ apiKey: "synthetic-key" });
+    assert.deepEqual(events.at(-1), { kind: "connection_verification_finished", outcome: "failed" });
+    models.list = async () => [];
+    settings.saveSetting = () => {
+        throw new Error("persistence fault");
+    };
+    await assert.rejects(operations.createManaged({ apiKey: "synthetic-key" }));
+    assert.equal(events.length, 2);
 });
 
 
