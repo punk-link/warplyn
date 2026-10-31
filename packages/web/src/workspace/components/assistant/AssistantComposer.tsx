@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type KeyboardEventHandler } from "react";
+import { useEffect, useRef, useState, type KeyboardEventHandler } from "react";
 import { useIntl } from "react-intl";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
@@ -8,13 +8,12 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import type { AssistantEditMode, KeyBindingOverrides } from "@skladno/shared";
 import { KEY_BINDING_COMMAND } from "@skladno/shared";
 import { Button, IconButton } from "../../../ui/primitives.js";
-import { ChevronDownIcon, SendIcon, StopIcon } from "../../../ui/icons.js";
+import { SendIcon, StopIcon } from "../../../ui/icons.js";
 import { getShortcutHint } from "../../../key-bindings/shortcut-hint.js";
 import type { AssistantSelectionScope } from "../../state/assistant-messages-state.js";
 import { AssistantQuickActions, SelectionChip } from "./AssistantComposerActions.js";
 import { AssistantSkillTagNode, type AssistantComposerSkill } from "./AssistantSkillTagNode.js";
 import { ComposerBridge, PickerKeyboard, PlainTextPaste, type AssistantComposerValue, type AssistantSkillPickerControls } from "./assistant-composer-plugins.js";
-import { handleStatusMenuKeyDown, openStatusMenu } from "../ArticleStatusBarMenu.js";
 
 export type { AssistantComposerValue } from "./assistant-composer-plugins.js";
 
@@ -65,72 +64,17 @@ interface AssistantComposerActions {
 
 function AssistantEditModeControl({ mode, disabled, setMode }: { mode?: AssistantEditMode; disabled: boolean; setMode?: (mode: AssistantEditMode) => Promise<void> }) {
     const intl = useIntl();
-    const [open, setOpen] = useState(false);
-    const container = useRef<HTMLDivElement>(null);
-    const trigger = useRef<HTMLButtonElement>(null);
-    const menuId = useId();
-    const label = intl.formatMessage({ id: "assistant.editMode.label" });
-    const selected = intl.formatMessage({ id: mode === "direct" ? "assistant.editMode.direct" : "assistant.editMode.review" });
-
-    useEffect(() => {
-        function closeOutside(event: MouseEvent) {
-            if (event.target instanceof Node && !container.current?.contains(event.target))
-                setOpen(false);
-        }
-
-
-        document.addEventListener("mousedown", closeOutside);
-        return () => document.removeEventListener("mousedown", closeOutside);
-    }, []);
-
-
-    function close() {
-        setOpen(false);
-        trigger.current?.focus();
-    }
-
-
-    return <div ref={container} className="relative min-w-0">
-        <Button
-            ref={trigger}
-            type="button"
-            variant="secondary"
-            compact
-            disabled={!mode || disabled || !setMode}
-            className="inline-flex max-w-full items-center gap-2 !text-muted text-xs"
-            aria-label={`${label}: ${selected}`}
-            aria-haspopup="menu"
-            aria-expanded={open}
-            aria-controls={open ? menuId : undefined}
-            onClick={() => setOpen((current) => !current)}
-            onKeyDown={(event) => openStatusMenu(event, () => setOpen(true), menuId)}>
-            <span className="truncate">{selected}</span>
-            <ChevronDownIcon className={`size-3 shrink-0 transition-transform duration-150 motion-reduce:transition-none ${open ? "rotate-180" : ""}`} />
-        </Button>
-        {open && (
-            <div
-                id={menuId}
-                role="menu"
-                aria-label={label}
-                className="absolute bottom-full left-0 z-10 mb-1 w-56 rounded-control border border-border bg-surface-raised p-1 shadow-raised"
-                onKeyDown={(event) => handleStatusMenuKeyDown(event, close)}>
-                {(["review", "direct"] as const).map((option) => (
-                    <button
-                        key={option}
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={mode === option}
-                        className={("flex min-h-9 w-full items-center rounded-control px-2 py-1 text-left text-xs text-ink " +
-                            "hover:bg-brand-soft focus:outline-none focus-visible:bg-brand-soft")}
-                        onClick={() => {
-                            void setMode?.(option);
-                            close();
-                        }}>{intl.formatMessage({ id: option === "review" ? "assistant.editMode.review" : "assistant.editMode.direct" })}
-                    </button>
-                ))}
-            </div>
-        )}
-    </div>;
+    const label = intl.formatMessage({ id: "assistant.editMode.direct" });
+    const checked = mode === "direct";
+    return <button type="button" role="switch" aria-checked={checked} aria-label={label} disabled={!mode || disabled || !setMode}
+        onClick={() => void setMode?.(checked ? "review" : "direct")}
+        className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold " +
+        `${checked ? "text-brand" : "text-muted"} hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55`)}>
+        <span aria-hidden="true" className={`relative inline-flex h-5 w-9 items-center rounded-full border p-0.5 transition-colors group-hover:border-brand ${checked ? "border-brand bg-brand" : "border-border-strong bg-surface-raised"}`}>
+            <span className={`size-4 rounded-full border border-border-strong bg-surface transition-transform ${checked ? "translate-x-4" : "translate-x-0"}`} />
+        </span>
+        <span>{label}</span>
+    </button>;
 }
 
 

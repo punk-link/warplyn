@@ -73,6 +73,9 @@ test("AI stage timings reach PostHog only while their captured consent remains v
     const event = { kind: "ai_stage_finished", stage: "editorial_generation", outcome: "failed", elapsedMs: 1500,
         failure: "provider", httpStatus: 503 } as const;
     try {
+        owner.setConsent(true);
+        await tasks.run();
+        bodies.length = 0;
         const capture = owner.beginCapture();
         capture(event);
         await tasks.run();
@@ -100,7 +103,7 @@ test("AI stage timings reach PostHog only while their captured consent remains v
 
 
 // Product scenarios: settings.telemetry-consent
-test("beta telemetry starts enabled, reports trusted OS version, and clears identity on opt-out", async () => {
+test("telemetry starts disabled, reports trusted OS version after opt-in, and clears identity on opt-out", async () => {
     const root = mkdtempSync(join(tmpdir(), "skladno-telemetry-test-"));
     const runtimePath = join(root, "runtime-settings.json");
     const tasks = scheduler();
@@ -117,7 +120,13 @@ test("beta telemetry starts enabled, reports trusted OS version, and clears iden
         },
     });
     try {
-        const firstIdentity = JSON.parse(readFileSync(runtimePath, "utf8")).telemetry.installationId;
+        assert.deepEqual(owner.getConsent(), { enabled: false, supported: true });
+        owner.capture(createTelemetryEvent());
+        assert.equal(tasks.size, 0);
+        assert.equal(bodies.length, 0);
+        const firstIdentity = owner.setConsent(true).installationId;
+        await tasks.run();
+        bodies.length = 0;
         assert.deepEqual(owner.getConsent(), { enabled: true, supported: true, installationId: firstIdentity });
         owner.capture(createTelemetryEvent());
         await tasks.run();
@@ -134,6 +143,9 @@ test("beta telemetry starts enabled, reports trusted OS version, and clears iden
         const enabled = owner.setConsent(true);
         assert.equal(enabled.enabled, true);
         assert.notEqual(enabled.installationId, firstIdentity);
+        const optedInRestart = createOwner(runtimePath);
+        assert.deepEqual(optedInRestart.getConsent(), enabled);
+        optedInRestart.dispose();
     } finally {
         owner.dispose();
         rmSync(root, { recursive: true, force: true });
