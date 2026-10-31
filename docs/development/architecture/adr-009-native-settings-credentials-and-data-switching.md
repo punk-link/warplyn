@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-23
-- Updated: 2026-10-02
+- Updated: 2026-10-31
 - Scope: Electron Settings, managed credentials, native backups, restore, and data relocation
 - Depends on: [ADR-001](adr-001-three-layer-server-and-electron.md), [ADR-006](adr-006-sqlite-lifecycle-and-recovery.md), [ADR-008](adr-008-loopback-service-trust-boundary.md)
 
@@ -12,7 +12,7 @@ Native credentials, backup picking, and restore need OS access without granting 
 
 ## Decision
 
-Represent credentials as environment references or OS-managed secrets through platform-neutral application ports. Persist only sanitized connection metadata. Never fall back to secret files or insecure storage if the OS credential service is unavailable. No client receives credential values.
+Represent credentials as environment references or OS-managed secrets through platform-neutral application ports. Persist only sanitized connection metadata. Backups and recovery snapshots may contain environment-variable names and references, but never credential values, API keys, tokens, or environment-variable values. Rebuild connection records from allowed metadata fields and erase discarded bytes before retaining a snapshot. Never fall back to secret files or insecure storage if the OS credential service is unavailable. No client receives credential values.
 
 Browser clients may select, test, and use managed connections; only Electron may create, rename, or remove them. Electron main owns native dialogs, retained picker selections, reveal actions, credential mutation, and restart coordination through a separate finite bridge. Renderers cannot submit arbitrary privileged paths.
 
@@ -26,7 +26,7 @@ Live data belongs on a local filesystem; backups may use network destinations. B
 
 Runtime-selected relocation is not implemented. Any future relocation must retain the old directory and meet the same restart, validation, rollback, and recovery guarantees before exposure.
 
-Warplyn is an independent installation. Legacy migration uses explicit backup replacement, preserves source backups and OS credentials, and requires fresh connection setup. [Local data compatibility and recovery](../reference/local-data-compatibility-and-recovery.md) owns installation identities and restore sanitization.
+Native and browser restore preserve existing destination connections and model selections without changing OS credentials. A destination without connections imports only environment-variable references, marks them unchecked, and requires model selection. Managed connection records from a backup cannot attach to destination credentials. Legacy backups follow the same rule. Warplyn is an independent installation. [Local data compatibility and recovery](../reference/local-data-compatibility-and-recovery.md) owns installation identities and restore sanitization.
 
 ## Consequences
 

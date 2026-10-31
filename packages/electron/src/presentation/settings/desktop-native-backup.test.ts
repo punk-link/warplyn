@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { backup, DatabaseSync } from "node:sqlite";
@@ -16,6 +16,11 @@ test("a large native backup yields to the event loop and remains restorable", as
     const destination = join(root, "backups");
     mkdirSync(data);
     const database = openDatabase(join(data, "database.sqlite"));
+    const secret = "native-synthetic-key-never-back-up";
+    database.prepare("INSERT INTO app_settings VALUES (?, ?, ?)").run("application-ai-connections", JSON.stringify({
+        connections: [{ id: "fixture", provider: "openai", label: "Fixture", apiKey: secret,
+            credentialSource: { kind: "environment-variable", environmentVariableName: "NATIVE_FIXTURE_KEY", value: secret } }]
+    }), "2026-10-31");
     database.exec("CREATE TABLE backup_fixture (body BLOB); INSERT INTO backup_fixture VALUES (zeroblob(16777216));");
     mkdirSync(join(data, "skills", "fixture"), { recursive: true });
     writeFileSync(join(data, "skills", "fixture", "SKILL.md"), "fixture\n".repeat(100_000));
@@ -29,6 +34,8 @@ test("a large native backup yields to the event loop and remains restorable", as
         clearInterval(heartbeat);
         assert.ok(ticks > 0, "Main-thread callbacks must run during backup creation");
         validateDatabaseSnapshot(snapshot.path);
+        assert.equal(readFileSync(snapshot.path).includes(Buffer.from(secret)), false);
+        assert.equal(readFileSync(snapshot.path).includes(Buffer.from("NATIVE_FIXTURE_KEY")), true);
         validateAuthorSkillBackup(snapshot.path);
         const restored = new DatabaseSync(snapshot.path, { readOnly: true });
         try {

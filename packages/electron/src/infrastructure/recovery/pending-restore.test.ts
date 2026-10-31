@@ -32,7 +32,7 @@ function readSetting(path: string): string {
 }
 
 
-test("restore discards connection metadata and model selections while rollback preserves them", async () => {
+test("restore and rollback preserve destination connection metadata and model selections", async () => {
     const root = mkdtempSync(join(tmpdir(), "warplyn-restore-connections-"));
     const databasePath = join(root, "warplyn.sqlite");
     const stagedSnapshotPath = join(root, "selected.sqlite");
@@ -41,7 +41,7 @@ test("restore discards connection metadata and model selections while rollback p
     const keys = ["application-ai-connections", "application-model-preferences", "application-app-model"];
     writeSetting(databasePath, "active");
     const database = openDatabase(databasePath);
-    const connections = { connections: [
+    const connections = { activeConnectionId: "managed", connections: [
         { id: "managed", label: "OpenAI", provider: "openai", credentialSource: { kind: "managed" }, active: true, status: "connected" },
         { id: "environment", label: "Anthropic", provider: "anthropic", credentialSource: { kind: "environment-variable", environmentVariableName: "RESTORE_TEST_KEY" }, active: true, status: "connected" },
     ] };
@@ -53,6 +53,12 @@ test("restore discards connection metadata and model selections while rollback p
     database.close();
     copyFileSync(databasePath, recoverySnapshotPath);
     copyFileSync(databasePath, stagedSnapshotPath);
+    const imported = openDatabase(stagedSnapshotPath);
+    imported.prepare("UPDATE app_settings SET value_json = ? WHERE key = ?")
+        .run(JSON.stringify({ connections: [] }), keys[0]!);
+    imported.prepare("UPDATE app_settings SET value_json = ? WHERE key = ?")
+        .run(JSON.stringify({ model: "foreign-model" }), keys[2]!);
+    imported.close();
     const sourceSnapshot = readFileSync(stagedSnapshotPath);
     writeRuntimeSettings(runtimePath, { pendingRestore: { stagedSnapshotPath, recoverySnapshotPath, phase: "ready" } });
 
@@ -61,8 +67,10 @@ test("restore discards connection metadata and model selections while rollback p
         assert.ok(restore);
         const restored = openDatabase(databasePath);
         try {
-            for (const key of keys)
-                assert.equal(restored.prepare("SELECT value_json FROM app_settings WHERE key = ?").get(key), undefined);
+            for (const [index, key] of keys.entries()) {
+                const row = restored.prepare("SELECT value_json FROM app_settings WHERE key = ?").get(key);
+                assert.deepEqual(JSON.parse(String(row?.value_json)), settings[index]);
+            }
         } finally {
             restored.close();
         }

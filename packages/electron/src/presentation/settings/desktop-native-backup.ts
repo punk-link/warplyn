@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { sanitizeBackupConnectionSettings } from "@skladno/server/electron";
 import { mkdir, rename, rm, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { beginTimedTelemetryCapture, type TelemetryCaptureSource } from "@skladno/shared";
@@ -31,6 +32,7 @@ async function writeNativeBackup(createSnapshot: (path: string) => Promise<unkno
         const personalWords = await readPersonalWords?.();
 
         await createSnapshot(temporary);
+        sanitizeBackupConnectionSettings(temporary);
         await rename(temporary, path);
         snapshotCreated = true;
 

@@ -901,7 +901,9 @@ export const messages = {
     "settings.backupCreateUnavailable": "Backups are unavailable in this browser session.",
     "settings.restoreBackup": "Restore a backup",
     "settings.restoreBackupHint": ("Choose a backup from the selected folder. Warplyn checks its files, keeps a recovery copy, then restores its Articles, Revisions, settings, " +
-        "and saved Skills. Older database-only backups keep your current Skills."),
+        "and saved Skills. Existing AI connections stay local. Environment-variable references can be restored; " +
+        "API keys and variable values are never imported. " +
+        "Older database-only backups keep your current Skills."),
     "settings.restoreBackupFailed": "Couldn’t restore that backup. Check its files and browser size limits or choose another backup. Your active data is unchanged.",
     "settings.restoreBackupUnavailable": "That backup cannot be restored.",
     "settings.chooseBackup": "Choose a backup",

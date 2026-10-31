@@ -28,7 +28,7 @@ Warplyn uses service/application ID `com.warplyn.desktop`, Electron profile `War
 
 Migration uses explicit backup replacement and restart. Copy compatible database records and backed-up Skills without merging, reading legacy secrets, or copying environment files. Runtime backup destinations, update preferences, telemetry consent and identity, and recovery records remain outside backups.
 
-Native and browser restore clear connection metadata, including environment references, and connection-bound model preferences on a private restore copy. Authors add connections and select models again. Source backups and OS credentials stay unchanged; recovery snapshots retain previous connection settings for rollback.
+Native and browser restore preserve the destination's existing connections and model selections. A destination without connections imports only environment-variable names and references, marks the connections unchecked, and clears model selections. Resolve references using the destination environment; never import values or attach imported managed records to local keys. Source backups and OS credentials stay unchanged. New backups and recovery snapshots rebuild allowed connection metadata and erase discarded credential fields and bytes; they contain no API keys or environment-variable values.
 
 During public beta, supported installations receive a fresh installation identity and default-enabled telemetry; saved opt-out choices remain respected. The [runtime privacy policy](runtime-privacy-and-network-policy.md) owns that separate consent contract.
 
