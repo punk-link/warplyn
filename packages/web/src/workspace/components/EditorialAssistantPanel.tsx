@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useIntl, type IntlShape } from "react-intl";
 import { KEY_BINDING_COMMAND, defaultGeneralSettings, type AssistantCapabilityActivity, type AssistantCheckpointComposer, type AssistantCheckpointDraftMode, type AssistantCheckpointPreview, type AssistantEditMode, type AssistantMessage, type AssistantSkillSummary, type FactCheckClaimPreview, type GeneralSettings, type KeyBindingOverrides } from "@skladno/shared";
 import { Button } from "../../ui/primitives.js";
-import { AssistantIcon, ChevronRightIcon } from "../../ui/icons.js";
+import { AssistantIcon, ChevronRightIcon, WarningIcon } from "../../ui/icons.js";
 import type { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
 import { getShortcutHint } from "../../key-bindings/shortcut-hint.js";
 import { AssistantComposer } from "./assistant/AssistantComposer.js";
@@ -54,6 +54,7 @@ interface EditorialAssistantData {
     generalSettings?: GeneralSettings;
     editMode?: AssistantEditMode;
     hasUnavailableAiConnection?: boolean;
+    hasUsableAiConnection?: boolean;
     checkpointPreview?: AssistantCheckpointPreview;
     restoredComposer?: AssistantCheckpointComposer;
     authorSkills?: readonly AssistantSkillSummary[];
@@ -135,6 +136,21 @@ export function EditorialAssistantPanel({ data, actions, layout }: { data: Edito
             <h2 className="text-base font-semibold text-brand">{intl.formatMessage({ id: "assistant.heading" })}</h2>
         </header>
         <AssistantTimeline data={{ state, message, errorDetails, activity, factCheckClaims, activeRequestId, collapsed, assistantMessages, streamedMessage, generalSettings, elapsedDuration, hasUnavailableAiConnection, authorSkills }} actions={{ openView, openSkillFolder, onRetry, openSettings, onCheckpoint: openCheckpoint, applyEdit, setClaimSelected }} />
+        {data.hasUsableAiConnection === false && (
+            <div role="status" className="mx-3 my-2 flex shrink-0 items-start gap-2 text-xs text-warning">
+                <span className="inline-flex h-[1lh] shrink-0 items-center" aria-hidden="true">
+                    <WarningIcon className="size-3" />
+                </span>
+                <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
+                    <p>{intl.formatMessage({ id: "assistant.setupRequired" })}</p>
+                    {openSettings && (
+                        <Button variant="quiet" className="self-end text-xs" onClick={openSettings}>
+                            {intl.formatMessage({ id: "workspace.addModelKey" })}
+                        </Button>
+                    )}
+                </div>
+            </div>
+        )}
         <AssistantComposer
             state={{ state, canSend: composerState.canSend, guidance: composerState.guidance, selectedSkill: composerState.selectedSkill, skillOffset: composerState.skillOffset, caretOffset: composerState.caretOffset, selection, clearSelection, incompatibleSelectionSkill: composerState.incompatibleSelectionSkill, editMode }}
             picker={{

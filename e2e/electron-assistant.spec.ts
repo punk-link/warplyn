@@ -15,7 +15,7 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
     let app: Awaited<ReturnType<typeof launchPackaged>> | undefined;
 
     try {
-        app = await launchPackaged(root);
+        app = await launchPackaged(root, ["--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost"]);
         let page = app.page;
         page.setDefaultTimeout(5_000);
         await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
@@ -59,7 +59,7 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
 
         await closePackaged(app);
         app = undefined;
-        app = await launchPackaged(root);
+        app = await launchPackaged(root, ["--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost"]);
         page = app.page;
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Electron fixture Article.");
         await page.getByRole("tab", { name: "Revisions" }).click();

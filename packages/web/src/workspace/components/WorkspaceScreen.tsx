@@ -1,6 +1,5 @@
 import type { AssistantSkillSummary, GeneralSettings, KeyBindingOverrides } from "@skladno/shared";
 import type { ReactNode } from "react";
-import { useIntl } from "react-intl";
 
 import type { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
 import type { AssistantSelectionSnapshot } from "../editor/ArticleEditorPlugins.js";
@@ -15,7 +14,6 @@ import { ArticleLibraryPanel } from "./ArticleLibraryPanel.js";
 import { ArticleWorkspace } from "./ArticleWorkspace.js";
 import { EditorialAssistantPanel } from "./EditorialAssistantPanel.js";
 import { WorkspaceShell } from "./WorkspaceShell.js";
-import { Banner, Button } from "../../ui/primitives.js";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { getDesktopSettingsClient } from "../../application/desktop-client.js";
 
@@ -100,6 +98,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                     message: assistant.message,
                     errorDetails: assistant.errorDetails,
                     hasUnavailableAiConnection: assistant.hasUnavailableAiConnection,
+                    hasUsableAiConnection,
                     streamedMessage: assistant.streamedMessage,
                     activity: assistant.activity,
                     factCheckClaims: assistant.factCheckClaims ?? editorial.factCheck?.findings.map(({ claim }) => ({ claim, checked: true })),
@@ -130,7 +129,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                             layout.setView(view);
                     },
                     openSkillFolder: desktop?.revealCreatedSkillDirectory ? (requestId) => void desktop.revealCreatedSkillDirectory?.(requestId) : undefined,
-                    openSettings,
+                    openSettings: openModelSettings,
                     clearSelection: clearAssistantSelection,
                     previewCheckpoint: assistant.previewCheckpoint,
                     restoreCheckpoint: assistant.restoreCheckpoint,
@@ -138,7 +137,6 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                 }}
                 layout={{ collapsed: layout.assistantCollapsed, setCollapsed: layout.setAssistantCollapsed }} />,
             children: <>
-                {hasUsableAiConnection === false && <AiConnectionWarning openModelSettings={openModelSettings} />}
                 <ArticleWorkspace state={{
                     workspace, layout, editorial, revisions, publishing, articleFiles, generalSettings,
                     requestActive: assistant.state === "streaming",
@@ -152,21 +150,4 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
             </>,
         }}
     />;
-}
-
-
-function AiConnectionWarning({ openModelSettings }: { openModelSettings: () => void }) {
-    const intl = useIntl();
-
-    return <Banner
-        data-focus-area="workspace-views"
-        className="m-3 shrink-0 flex-col lg:flex-row"
-        tone="warning"
-        role="status">
-        <span className="min-w-0">
-            <strong className="block">{intl.formatMessage({ id: "workspace.aiConnectionRequired" })}</strong>
-            {intl.formatMessage({ id: "workspace.aiConnectionCapabilities" })}
-        </span>
-        <Button className="shrink-0 self-end lg:ml-auto lg:self-center" variant="secondary" onClick={openModelSettings}>{intl.formatMessage({ id: "workspace.addModelKey" })}</Button>
-    </Banner>;
 }

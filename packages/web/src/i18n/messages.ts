@@ -966,11 +966,12 @@ export const messages = {
     "status.updateFailed": "Update check failed",
     "workspace.loadingArticles": "Loading your local articles…",
     "workspace.serviceUnavailable": "Your local service is unavailable. Start it, then retry.",
-    "workspace.aiConnectionRequired": "Warplyn can’t run AI-assisted actions until you add a usable model key.",
+    "assistant.setupRequired": "Set up a model connection to use the Assistant. Local writing remains available.",
+    "workspace.aiConnectionRequired": "Local writing is available. Set up a model to use the Assistant.",
     "workspace.addModelKey": "Add model key",
     "workspace.aiConnectionCapabilities": ("You can still write, save, organize, and copy Articles, and check typography locally. " +
         "Assistant requests, translations, Fact Checks, and full Style reviews " +
-        "need a key."),
+        "need a configured model connection, including a supported local model."),
     "workspace.saveFailed": "Couldn't save this Draft. Your latest changes are still in the editor. Try saving again.",
     "workspace.revisionHistoryFailed": "Couldn't load Revision history. Your Article was not changed. Refresh and try again.",
     "workspace.createArticleFailed": "Couldn't create this Article. Try again.",

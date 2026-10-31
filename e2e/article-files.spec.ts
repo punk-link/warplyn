@@ -1,6 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+test.beforeEach(async ({ context }) => {
+    const httpRequests = /^https?:/;
+    await context.route(httpRequests, (route) => {
+        const host = new URL(route.request().url()).hostname;
+        return ["127.0.0.1", "localhost", "[::1]"].includes(host) ? route.continue() : route.abort("internetdisconnected");
+    });
+});
+
 
 async function createBlankArticle(page: Page): Promise<void> {
     const editor = page.getByRole("textbox", { name: "Article draft" });
@@ -85,6 +93,7 @@ test("Markdown files round trip whole Articles and saved Revisions in the browse
     await expect(page.getByText("Choose a valid .md, .html, .docx, or .rtf file. Markdown and HTML files must use UTF-8.")).toBeVisible();
     await expect(editor).toContainText("New Draft, not the saved Revision.");
     expect(originalTitle).not.toBe("Rename article: Imported café 🙂");
+    await page.getByRole("alert").getByRole("button").click();
     await page.setViewportSize({ width: 900, height: 700 });
     await expect(page.getByRole("button", { name: "Expand Editorial Assistant Panel" })).toBeVisible();
     await expect(page.locator("[data-focus-area=article-header]").getByRole("button", { name: "Save to file" })).toBeInViewport();

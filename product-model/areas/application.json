@@ -432,7 +432,7 @@
             "capabilityIds": ["application.desktop-responsive-shell", "application.workspace-and-settings-screens"],
             "preconditions": ["No active connected AI connection is available."],
             "event": "The author opens the Editorial Workspace or selects Add model key.",
-            "expected": ["A non-blocking warning explains that AI-assisted actions need a usable model key.", "Add model key opens the AI Settings section.", "The warning is absent when an active connected connection is available."],
+            "expected": ["A non-blocking Assistant warning explains that local writing remains available and AI-assisted actions need a configured model connection, including supported local models.", "Add model key opens the AI Settings section.", "The warning is absent while configuration loads or when an active connected connection is available."],
             "forbidden": ["Preventing Article editing or showing the warning for a usable active connection."],
             "evidence": {
                 "kind": "automated",
