@@ -1,7 +1,7 @@
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { _electron, expect, test, type ElectronApplication } from "@playwright/test";
+import { _electron, expect, test, type ElectronApplication, type Page } from "@playwright/test";
 
 
 async function launchArticleFiles(root: string): Promise<ElectronApplication> {
@@ -27,6 +27,16 @@ async function chooseNativePaths(app: ElectronApplication, source: string | null
 }
 
 
+async function saveArticleToFile(page: Page): Promise<void> {
+    const dismissNotificationPattern = /^Dismiss notification:/;
+    const notifications = page.getByRole("button", { name: dismissNotificationPattern });
+    while (await notifications.count())
+        await notifications.first().click();
+
+    await page.locator("[data-focus-area=article-header]").getByRole("button", { name: "Save to file" }).click();
+}
+
+
 test("native Markdown dialogs round trip whole Articles and Revisions through the production bridge", async () => {
     test.setTimeout(120_000);
     const root = await mkdtemp(join(tmpdir(), "warplyn-native-article-files-"));
@@ -46,7 +56,7 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
         const editor = page.getByRole("textbox", { name: "Article draft" });
         await editor.fill("Original whole Draft");
         await editor.press("ControlOrMeta+a");
-        await page.locator("[data-focus-area=article-header]").getByRole("button", { name: "Save to file" }).click();
+        await saveArticleToFile(page);
         await expect(page.getByText("Article saved to file")).toBeVisible();
         expect(await readFile(target, "utf8")).toBe("Original whole Draft");
         await page.locator("[data-workspace-panel=article-library] [aria-current=page]").click({ button: "right" });
@@ -72,7 +82,7 @@ test("native Markdown dialogs round trip whole Articles and Revisions through th
             await page.getByRole("button", { name: "Load from file" }).click();
             await expect(page.getByRole("button", { name: "Load from file" })).toBeEnabled();
             await expect(editor).toContainText("const value = 34;");
-            await page.locator("[data-focus-area=article-header]").getByRole("button", { name: "Save to file" }).click();
+            await saveArticleToFile(page);
             await expect.poll(async () => (await readFile(formatPath).catch(() => Buffer.alloc(0))).length).toBeGreaterThan(0);
             await expect(page.getByRole("dialog", { name: "Save to file…" })).not.toBeVisible();
             await chooseNativePaths(app, formatPath, target);
@@ -143,7 +153,7 @@ test("built file renderer imports DOCX and RTF in isolated workers", async () =>
         for (const format of ["docx", "rtf"]) {
             const path = join(root, `built.${format}`);
             await chooseNativePaths(app, null, path);
-            await page.locator("[data-focus-area=article-header]").getByRole("button", { name: "Save to file" }).click();
+            await saveArticleToFile(page);
             await expect.poll(async () => (await readFile(path).catch(() => Buffer.alloc(0))).length).toBeGreaterThan(0);
             await chooseNativePaths(app, path, null);
             await page.getByRole("button", { name: "Load from file" }).click();
