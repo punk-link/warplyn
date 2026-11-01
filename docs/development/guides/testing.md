@@ -12,6 +12,7 @@ The report uses local `OPENAI_COMMIT_GENERATION_KEY` and `gpt-6-luna`, matching 
 It sends changed test patches and changed `packages/` implementation patches to OpenAI with
 `store: false`. It compares the release record's previous commit with its exact source commit and includes source links.
 Inputs above the size limit produce an explicit unavailable report rather than a partial explanation.
+The command saves and prints this manual-review notice without calling the provider, then continues to release approval and verification.
 Nonstandard test filenames and unchanged helpers can leave gaps; explanations must acknowledge uncertainty.
 
 No CI key or workflow is needed. Generation failures stop release preparation before approval or
