@@ -1,0 +1,58 @@
+{
+    "version": "0.8.0",
+    "previousTag": "v0.7.4",
+    "previousCommit": "9e8c14c8cab55404805f1a3e8580494bc68d5af1",
+    "baseline": "published",
+    "sourceCommit": "d4d835e3f1822abed847d5bda0f838bda0263262",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "When no usable model is configured, the Assistant explains what setup is needed and offers a shortcut to model settings; local writing remains available.",
+            "commits": [
+                "a81dd94a7eeb6eda1157e8e787a92d026ad01bc7"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "OpenAI model discovery now includes GPT-6.1 models.",
+            "commits": [
+                "276544c12eafb07390ffe508eea46258700fe0af"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Choose Review or Direct edit mode with a switch in the Assistant composer instead of opening a menu.",
+            "commits": [
+                "12868a5fef7be0a35070143c4a6c8a5ba2cc389b"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Telemetry sharing is off by default. The desktop workspace invites you to enable it or dismiss the invitation, and you can change your choice in Settings.",
+            "commits": [
+                "f4b18255175d439b76c48bf5c2bb2d65f85d9669"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "Desktop backups no longer include saved API keys or environment-variable values. Restoring keeps this installation’s AI connections and model selections; if none are configured, it restores environment-variable references only.",
+            "commits": [
+                "39e28d5265c1b7880f8d213291d95d6206c550c3"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "Desktop update details now identify stable releases marked as security releases, even when the version has no security suffix.",
+            "commits": [
+                "c486b622a19b4ccd758bfc19e3111010a8eeaec8"
+            ]
+        }
+    ],
+    "security": true,
+    "securityReason": "Desktop backups could expose saved API keys or environment-variable values; backups now exclude them, and restores preserve the destination’s AI settings.",
+    "securityCommits": [
+        "39e28d5265c1b7880f8d213291d95d6206c550c3"
+    ]
+}
