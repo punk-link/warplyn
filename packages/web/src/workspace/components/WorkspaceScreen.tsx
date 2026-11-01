@@ -14,6 +14,7 @@ import { ArticleLibraryPanel } from "./ArticleLibraryPanel.js";
 import { ArticleWorkspace } from "./ArticleWorkspace.js";
 import { EditorialAssistantPanel } from "./EditorialAssistantPanel.js";
 import { WorkspaceShell } from "./WorkspaceShell.js";
+import { TelemetryInvitation } from "./TelemetryInvitation.js";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { getDesktopSettingsClient } from "../../application/desktop-client.js";
 
@@ -137,6 +138,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                 }}
                 layout={{ collapsed: layout.assistantCollapsed, setCollapsed: layout.setAssistantCollapsed }} />,
             children: <>
+                <TelemetryInvitation />
                 <ArticleWorkspace state={{
                     workspace, layout, editorial, revisions, publishing, articleFiles, generalSettings,
                     requestActive: assistant.state === "streaming",

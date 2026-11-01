@@ -37,7 +37,7 @@ Provider-stage records allow only fixed stage names, elapsed milliseconds, allow
 
 Schema version 4 adds `connection_verification_finished`, containing only a completed or failed outcome. Explicit connection tests and managed connection creation capture consent before verification. Success is recorded only after the verified connection is saved. Events contain no provider, connection identifier, credential source, or error text. Existing installations without a new verification will not enter this onboarding step until they explicitly verify a connection again.
 
-Remote telemetry is separate from local diagnostics and uses only a versioned allowlisted contract. It never forwards diagnostic context or stdout/stderr. Public-beta consent is installation-local and default-on; Authors can revoke it at any time, and saved opt-out preferences are respected.
+Remote telemetry is separate from local diagnostics and uses only a versioned allowlisted contract. It never forwards diagnostic context or stdout/stderr. Consent is installation-local and default-off; Authors can enable or revoke it at any time, and existing granted and denied preferences are preserved.
 
 Schema version 2 adds `ai_stage_finished` for fixed stages `assistant_step`, `editorial_generation`, `action_intent_verification`, and `replacement_verification`. Its only operation data is stage, elapsed milliseconds, and a completed, failed, or cancelled outcome. It uses the existing consent owner and bounded PostHog queue. It sends no prompts, output, Article or request identifiers, provider metadata, model names, or token usage. AI SDK telemetry remains disabled; these events are constructed independently of SDK tracing payloads.
 

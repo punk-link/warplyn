@@ -455,16 +455,13 @@ test("a completed selection suggestion is approved through Proposal Review", asy
 test("direct Assistant mode applies an explicitly requested Article edit", async ({ page }) => {
     await page.goto("/");
     await createArticle(page);
-    const mode = page.getByRole("button", { name: "Edit mode: Propose edits for review" });
+    const mode = page.getByRole("switch", { name: "Apply edits directly" });
     expect((await mode.boundingBox())?.width).toBeLessThan(300);
     await expect(page.getByText("You approve each suggested replacement from its reply.")).toHaveCount(0);
     await mode.focus();
-    await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("menuitemradio", { name: "Propose edits for review" })).toBeFocused();
-    await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("menuitemradio", { name: "Apply edits directly" })).toBeFocused();
-    await page.keyboard.press("Enter");
-    await expect(page.getByRole("button", { name: "Edit mode: Apply edits directly" })).toBeVisible();
+    await expect(mode).not.toBeChecked();
+    await page.keyboard.press("Space");
+    await expect(mode).toBeChecked();
     await page.getByRole("combobox", { name: "Editorial guidance" }).fill("E2E edit and apply");
     await page.getByRole("button", { name: "Quick actions" }).click();
     await page.getByRole("option", { name: "Improve flow and clarity" }).click();

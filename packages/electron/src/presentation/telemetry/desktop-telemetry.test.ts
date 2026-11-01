@@ -28,7 +28,7 @@ test("telemetry IPC rejects unauthorized senders and unknown properties", async 
             kind: "ai_stage_finished", stage: "assistant_step", outcome: "failed", elapsedMs: 1,
             operationId: "6f5592a1-831d-4d66-aad0-21f31f104732",
         } }), { ok: false, error: "invalid_request" });
-        assert.equal(typeof (await handler?.({ sender: "trusted" }, { method: "beginCapture" }) as { value: unknown }).value, "number");
+        assert.equal((await handler?.({ sender: "trusted" }, { method: "beginCapture" }) as { value: unknown }).value, undefined);
         const result = await handler?.({ sender: "trusted" }, { method: "setConsent", enabled: true }) as { ok: boolean; value: { enabled: boolean; supported: boolean; installationId?: string } };
         assert.equal(result.ok, true);
         assert.equal(result.value.enabled, true);

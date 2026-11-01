@@ -18,7 +18,6 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
 }) {
     let state: OwnerState = { generation: 0, sessionStartedGeneration: -1, disposed: false };
 
-    initializeSupportedInstallationTelemetryDefault(runtimePath, delivery.supported);
     const initial = getTelemetryConsent();
 
     if (initial.enabled && initial.installationId)
@@ -116,12 +115,4 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
             delivery.suspend();
         },
     };
-}
-
-
-function initializeSupportedInstallationTelemetryDefault(runtimePath: string, telemetrySupported: boolean): void {
-    if (!telemetrySupported || readRuntimeSettings(runtimePath).telemetry)
-        return;
-
-    updateRuntimeSettings(runtimePath, (runtime) => ({ ...runtime, telemetry: { consent: "granted", installationId: randomUUID() } }));
 }

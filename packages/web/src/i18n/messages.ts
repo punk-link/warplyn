@@ -916,8 +916,13 @@ export const messages = {
     "settings.loading": "Loading settings…",
     "settings.privacyAndDiagnostics": "Privacy & diagnostics",
     "settings.telemetry": "Share diagnostic and usage data",
+    "telemetry.invitation": "Please enable telemetry to help us understand your experience and improve Warplyn. Sharing is optional and off by default.",
+    "telemetry.enable": "Enable sharing",
+    "telemetry.learnMore": "Learn more",
+    "telemetry.dismiss": "Dismiss",
     "settings.telemetryHint": "Help us improve Warplyn by sending pseudonymous reliability and usage events to PostHog. Article text, prompts, AI responses, and API keys are never included.",
-    "settings.telemetryDisclosure": ("Enabled by default during the public beta so we can improve reliability and the editorial workflow. You can turn it off at any time; this " +
+    "settings.telemetryDisclosure": ("Telemetry is off by default. Please enable sharing to help us understand your experience and improve Warplyn. " +
+        "You can turn it off at any time; this " +
         "stops future collection and cannot recall data already sent."),
     "settings.telemetryDetails": "Telemetry details",
     "settings.telemetryIdentifier": "Telemetry ID",

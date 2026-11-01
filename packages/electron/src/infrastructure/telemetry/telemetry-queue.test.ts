@@ -57,6 +57,7 @@ test("pending events survive restart and opt-out deletes the bounded queue", asy
             },
         },
     }) });
+    writeFileSync(runtimePath, JSON.stringify({ telemetry: { consent: "granted", installationId: "11111111-1111-4111-8111-111111111111" } }));
     const first = makeOwner("0.1.0");
     try {
         const event = { kind: "ai_operation_finished", operation: "assistant", outcome: "failed", elapsedMs: 42, failure: "provider" } as const;
@@ -156,6 +157,7 @@ for (const action of ["opt-out", "shutdown"] as const) {
             },
         }) });
         try {
+            owner.setConsent(true);
             owner.capture({ kind: "app_session_started" });
             await until(() => existsSync(queuePath) && Boolean(scheduled));
             scheduled?.();
