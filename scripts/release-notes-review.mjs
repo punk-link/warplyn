@@ -5,21 +5,15 @@ import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import { prepareReleaseNotes } from "./release-notes.mjs";
 import { classifiedReleaseVersion, validateReleaseRecord } from "./release-notes-record.mjs";
-import { git, resolveCommit } from "./release-notes-range.mjs";
+import { resolveCommit } from "./release-notes-range.mjs";
 import { github } from "./publish-release-notes.mjs";
 import { reviewReleaseTestChanges } from "./explain-test-changes.mjs";
 import { runReleaseStep } from "./release-progress.mjs";
+import { assertReleaseWorktree } from "./release-worktree.mjs";
+import { ReleaseNotesStaleError } from "./release-notes-stale-error.mjs";
 
 
-const nullSeparator = "\0";
-
-
-export function assertReleaseWorktree(version, cwd = process.cwd()) {
-    const paths = [git(["diff", "--name-only", "-z", "HEAD"], cwd), git(["diff", "--cached", "--name-only", "-z"], cwd),
-    git(["ls-files", "--others", "--exclude-standard", "-z"], cwd)].flatMap((value) => value.split(nullSeparator).filter(Boolean));
-    assert(paths.every((path) => path === `release-notes/${version}.json`),
-        "Commit or stash changes before releasing. Only this release's notes may be uncommitted.");
-}
+export { assertReleaseWorktree } from "./release-worktree.mjs";
 
 
 function publishedReleases() {
@@ -48,20 +42,21 @@ export async function reviewReleaseNotes({ version, previousTag, manual = false,
         reviewTests = reviewReleaseTestChanges } = {}) {
     assertReleaseWorktree(version, cwd);
     const path = join(cwd, "release-notes", `${version}.json`);
-    if (!existsSync(path)) {
-        const published = await runReleaseStep("Reading published releases", releases, print);
-        const result = await runReleaseStep("Preparing release notes", () =>
-            prepareReleaseNotes({ version, previousTag, cwd, releases: published, generate: manual ? null : generate }), print);
-        print(`Generated ${path}. Review evidence: ${result.reviewPath}`);
-        if (manual)
-            await waitForDraftEdit(path, approve);
-    }
+    const prepare = (replace = false) => prepareReviewNotes({ version, previousTag, cwd, manual, replace },
+        { releases, generate, print, approve });
+    if (!existsSync(path))
+        await prepare();
 
     const head = resolveCommit("HEAD", cwd);
     while (true) {
         assert.equal(resolveCommit("HEAD", cwd), head, "The source changed during review. Rerun the release command.");
         assertReleaseWorktree(version, cwd);
         const draft = await readReviewDraft({ path, version, cwd }, { approve, print });
+        if (draft === "regenerate") {
+            await prepare(true);
+            continue;
+        }
+
         if (!draft)
             continue;
 
@@ -109,9 +104,27 @@ async function readReviewDraft({ path, version, cwd }, { approve, print }) {
 
         return { original, record, candidate, releaseVersion, body };
     } catch (error) {
+        if (error instanceof ReleaseNotesStaleError) {
+            print(`Release notes are stale: ${error.message} Regenerating against the current source; fresh approval is required.`);
+            return "regenerate";
+        }
+
         print(`Release notes need correction: ${error.message}`);
         await waitForDraftEdit(path, approve);
 
         return undefined;
     }
+}
+
+
+async function prepareReviewNotes({ version, previousTag, cwd, manual, replace }, { releases, generate, print, approve }) {
+    const published = await runReleaseStep("Reading published releases", releases, print);
+    const result = await runReleaseStep("Preparing release notes", () =>
+        prepareReleaseNotes({ version, previousTag, cwd, replace, releases: published, generate: manual ? null : generate }), print);
+    print(`Generated release-notes/${version}.json. Review evidence: ${result.reviewPath}`);
+    if (result.backupPath)
+        print(`Previous draft saved to ${result.backupPath}`);
+
+    if (manual)
+        await waitForDraftEdit(join(cwd, "release-notes", `${version}.json`), approve);
 }

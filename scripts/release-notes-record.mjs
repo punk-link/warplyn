@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { isDeepStrictEqual } from "node:util";
+import { ReleaseNotesStaleError } from "./release-notes-stale-error.mjs";
 import { compareVersions, git, releaseCommits, resolveCommit, versionParts } from "./release-notes-range.mjs";
 
 
@@ -108,13 +110,16 @@ function validatePreparationChanges(record, target, cwd) {
     const changes = git(["log", "-m", "--format=", "--name-only", "--no-renames", range], cwd).split(lineBreakPattern).filter(Boolean);
     const metadataPaths = ["package.json", "package-lock.json", "packages/electron/package.json"];
     const allowed = new Set([...metadataPaths, `release-notes/${record.version}.json`]);
-    assert(changes.every((path) => allowed.has(path)), "Product changes followed the reviewed source commit. Prepare and review notes again.");
+    if (!changes.every((path) => allowed.has(path)))
+        throw new ReleaseNotesStaleError("Product changes followed the reviewed source commit.");
+
     const commits = releaseCommits(record.sourceCommit, resolveCommit(target, cwd), cwd);
     for (const path of metadataPaths) {
         const before = versionMetadata(git(["show", `${record.sourceCommit}:${path}`], cwd), path);
         for (const commit of commits) {
             const after = versionMetadata(git(["show", `${commit}:${path}`], cwd), path);
-            assert.deepEqual(after, before, `Non-version changes in ${path}. Prepare notes again.`);
+            if (!isDeepStrictEqual(after, before))
+                throw new ReleaseNotesStaleError(`Non-version changes in ${path}.`);
         }
     }
 }

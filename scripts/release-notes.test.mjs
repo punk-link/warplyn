@@ -6,9 +6,55 @@ import test from "node:test";
 import { prepareReleaseNotes } from "./release-notes.mjs";
 import { compareVersions, git, releaseCommits, resolveCommit, selectBaseline } from "./release-notes-range.mjs";
 import { classifiedReleaseVersion, readTaggedNotes, renderReleaseNotes, validateReleaseRecord } from "./release-notes-record.mjs";
+import { reviewReleaseNotes } from "./release-notes-review.mjs";
 
 
 // Product scenario: application.release-summary-evidence
+
+
+test("stale drafts regenerate automatically, preserve the previous draft, and require fresh approval", async (t) => {
+    for (const fails of [false, true]) {
+        const cwd = repository(t);
+        const visible = commit(cwd, "Original change");
+        const version = "0.6.0";
+        const { record } = await prepareReleaseNotes({ cwd, version, releases: [], previousTag: "v0.5.5", generate: null });
+        const path = join(cwd, `release-notes/${version}.json`);
+        const original = JSON.stringify(reviewed(record, [visible]));
+        writeFileSync(path, original);
+        const head = commit(cwd, "New product change", "another.txt");
+        const printed = [];
+        let approvals = 0;
+        const reviewing = reviewReleaseNotes({ cwd, version, previousTag: "v0.5.5" }, {
+            releases: () => [], print: (message) => printed.push(message), reviewTests: async () => undefined,
+            generate: async () => {
+                if (fails)
+                    throw new Error("Regeneration failed");
+
+                return reviewed({ maintenanceOnly: false }, [head]);
+            },
+            approve: async (question) => {
+                assert(question.startsWith("Type yes to approve"));
+                const draft = JSON.parse(readFileSync(path));
+                assert.equal(draft.reviewed, false);
+                assert.equal(draft.sourceCommit, head);
+                approvals += 1;
+                return true;
+            },
+        });
+        if (fails) {
+            const failedPattern = /Regeneration failed/;
+            await assert.rejects(reviewing, failedPattern);
+            assert.equal(readFileSync(path, "utf8"), original);
+            assert.equal(approvals, 0);
+        } else {
+            assert.equal((await reviewing).sourceCommit, head);
+            assert.equal(approvals, 1);
+            const saved = printed.find((message) => message.startsWith("Previous draft saved to "));
+            assert(saved);
+            assert.equal(readFileSync(saved.slice("Previous draft saved to ".length), "utf8"), original);
+        }
+    }
+});
 
 
 function repository(t) {
