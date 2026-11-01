@@ -4,7 +4,7 @@ import { getSkillPresentation } from "../../i18n/skill-presentation.js";
 import { useRef, useState } from "react";
 import { useIntl } from "react-intl";
 import { ChevronDownIcon } from "../../ui/icons.js";
-import { Button } from "../../ui/primitives.js";
+import { Button, DisclosureRegion } from "../../ui/primitives.js";
 import { SettingRow, SettingsGroup } from "./SettingRow.js";
 import { ModelAndReasoning } from "./AiModelSelect.js";
 
@@ -59,12 +59,12 @@ export function AiModelsSection({ data, actions }: { data: AiModelsData; actions
                 <ChevronDownIcon className={`ml-auto size-4 shrink-0 text-brand transition-transform duration-200 motion-reduce:transition-none ${specificModelsOpen ? "rotate-180" : ""}`} />
             </button>
             <p className="mt-1 text-sm leading-5 text-muted">{intl.formatMessage({ id: "settings.specificModelsHint" })}</p>
-            <div
+            <DisclosureRegion
                 ref={specificModelsContent}
                 id="specific-model-overrides"
-                aria-hidden={!specificModelsOpen}
-                className={`grid transition-[grid-template-rows,opacity] duration-200 motion-reduce:transition-none ${specificModelsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-                <div className={`min-h-0 ${specificModelsOpen ? "overflow-visible" : "overflow-hidden"} pt-2`}>{editorialSkills.map((skill) => (
+                expanded={specificModelsOpen}
+                overflowVisibleWhenExpanded>
+                <div className="pt-2">{editorialSkills.map((skill) => (
                     <SettingRow
                         key={skill.id}
                         headingLevel={3}
@@ -86,7 +86,7 @@ export function AiModelsSection({ data, actions }: { data: AiModelsData; actions
                     </SettingRow>
                 ))}
                 </div>
-            </div>
+            </DisclosureRegion>
         </div>
     </SettingsGroup>;
 }

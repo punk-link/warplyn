@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { GeneralSettings, StyleCorpus } from "@skladno/shared";
-import { Button } from "../../ui/primitives.js";
+import { Button, DisclosureRegion } from "../../ui/primitives.js";
 import { ChevronRightIcon } from "../../ui/icons.js";
 import { formatDateTime } from "../../i18n/formatting.js";
 import type { MessageId } from "../../i18n/messages.js";
@@ -112,14 +112,10 @@ function ProfileSourceDisclosure({ expanded, toggle, contributors }: { expanded:
                 <ChevronRightIcon className={`size-3 transition-transform motion-reduce:transition-none ${expanded ? "rotate-90" : ""}`} />{intl.formatMessage({ id: "styleProfile.showProfileSources" })}
             </span>
         </Button>
-        <div
+        <DisclosureRegion
             id="style-profile-contributors"
-            aria-hidden={!expanded}
-            {...(!expanded ? { inert: true } : {}) as Record<string, boolean>}
-            className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
-            <div className="overflow-hidden">
-                <ul className="mt-1 space-y-1 border-l border-border pl-3 text-xs">{contributors.map((name) => <li className="break-words" key={name}>{name}</li>)}</ul>
-            </div>
-        </div>
+            expanded={expanded}>
+            <ul className="mt-1 space-y-1 border-l border-border pl-3 text-xs">{contributors.map((name) => <li className="break-words" key={name}>{name}</li>)}</ul>
+        </DisclosureRegion>
     </>;
 }

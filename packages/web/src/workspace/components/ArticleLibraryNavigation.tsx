@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { ArticleSummary } from "@skladno/shared";
 import { useIntl } from "react-intl";
 import { ChevronRightIcon } from "../../ui/icons.js";
+import { DisclosureRegion } from "../../ui/primitives.js";
 
 
 function ArchivedArticleSection({ count, expanded, archiveOnly, toggle, children }: { count: number; expanded: boolean; archiveOnly: boolean; toggle: () => void; children: ReactNode }) {
@@ -22,11 +23,7 @@ function ArchivedArticleSection({ count, expanded, archiveOnly, toggle, children
                     )}
                 </button>
             )}
-        <div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`} aria-hidden={!expanded} {...(!expanded ? { inert: true } : {}) as Record<string, boolean>}>
-            <div className="min-h-0 overflow-hidden">
-                <div className="mt-2 space-y-0.5">{children}</div>
-            </div>
-        </div>
+        <DisclosureRegion expanded={expanded} duration="150"><div className="mt-2 space-y-0.5">{children}</div></DisclosureRegion>
     </section>;
 }
 

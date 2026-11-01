@@ -1,6 +1,6 @@
 import { useRef, type ChangeEvent } from "react";
 import type { ArticleRevision, GeneralSettings, StyleCorpus } from "@skladno/shared";
-import { Banner, Button, Field, IconButton, TextareaField } from "../../ui/primitives.js";
+import { Banner, Button, DisclosureRegion, Field, IconButton, TextareaField } from "../../ui/primitives.js";
 import { DeleteIcon } from "../../ui/icons.js";
 import { formatDate } from "../../i18n/formatting.js";
 import { useIntl } from "react-intl";
@@ -56,12 +56,9 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
                 </Button>
             </div>
         </div>
-        <div
+        <DisclosureRegion
             id="style-profile-add-sample"
-            aria-hidden={!adding}
-            {...(!adding ? { inert: true } : {}) as Record<string, boolean>}
-            className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none ${adding ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0"}`}>
-            <div className="min-h-0 overflow-hidden">
+            expanded={adding}>
                 <div className="mb-3 rounded-panel border border-border bg-surface p-3">
                     <label className="field-label mb-1" htmlFor="style-profile-source-name">{intl.formatMessage({ id: "styleProfile.sourceName" })}</label>
                     <Field
@@ -105,8 +102,7 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
                         </Button>
                     </div>
                 </div>
-            </div>
-        </div>
+        </DisclosureRegion>
         <div className="space-y-3">
             {corpus?.items.map((item) => (
                 <article className={`rounded-panel border p-3 ${item.included ? "border-border bg-surface-raised" : "border-border bg-surface"}`} key={item.id}>

@@ -238,6 +238,27 @@ export function EmptyState({ title, children, className }: PropsWithChildren<{ t
 }
 
 
+export const DisclosureRegion = forwardRef<HTMLDivElement, PropsWithChildren<HTMLAttributes<HTMLDivElement> & {
+    expanded: boolean;
+    duration?: "150" | "200";
+    inertWhenCollapsed?: boolean;
+    overflowVisibleWhenExpanded?: boolean;
+}>>(function DisclosureRegion({ expanded, children, className = "", duration = "200", inertWhenCollapsed = true, overflowVisibleWhenExpanded = false, ...props }, ref) {
+    return <div
+        ref={ref}
+        {...props}
+        aria-hidden={!expanded}
+        {...(!expanded && inertWhenCollapsed ? { inert: true } : {}) as Record<string, boolean>}
+        className={joinClassNames(
+            `grid transition-[grid-template-rows,opacity] ${duration === "150" ? "duration-150" : "duration-200"} ${duration === "200" ? "ease-out" : ""} motion-reduce:transition-none`,
+            expanded ? "grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0",
+            className,
+        )}>
+        <div className={`min-h-0 ${overflowVisibleWhenExpanded && expanded ? "overflow-visible" : "overflow-hidden"}`}>{children}</div>
+    </div>;
+});
+
+
 export function Tooltip({ children, content }: { children: ReactNode; content: string }) {
     return <span className="group relative">{children}
         <span role="tooltip" className={("pointer-events-none absolute z-10 w-max max-w-64 translate-y-1 rounded-control bg-ink p-2 text-xs text-on-brand opacity-0 " +

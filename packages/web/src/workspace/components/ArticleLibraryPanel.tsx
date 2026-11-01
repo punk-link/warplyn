@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { type ArticleSummary, type KeyBindingOverrides } from "@skladno/shared";
-import { Button, Dialog } from "../../ui/primitives.js";
+import { Button, Dialog, DisclosureRegion } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import type { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
 import type { Notifications } from "../../notifications/notifications.js";
@@ -231,7 +231,14 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
     const renderRoots = (items: ArticleSummary[], close: () => void) => items.filter((article) => !query || isArticleMatch(article) || getChildArticles(article.id).some(isArticleMatch)).map((article) => {
         const nested = getChildArticles(article.id).filter((child) => !query || isArticleMatch(article) || isArticleMatch(child));
         const expanded = Boolean(query) || article.id === expandedRootId;
-        return <div key={article.id}>{renderArticleRow({ article, childCount: nested.length, expanded, close })}{nested.length > 0 && <div className={`grid transition-[grid-template-rows,opacity] duration-150 motion-reduce:transition-none ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`} aria-hidden={!expanded}><div className="min-h-0 space-y-0.5 overflow-hidden">{nested.map((child) => renderArticleRow({ article: child, child: true, hidden: !expanded, close }))}</div></div>}</div>;
+        return <div key={article.id}>
+            {renderArticleRow({ article, childCount: nested.length, expanded, close })}
+            {nested.length > 0 && <DisclosureRegion expanded={expanded} duration="150" inertWhenCollapsed={false}>
+                <div className="space-y-0.5">
+                    {nested.map((child) => renderArticleRow({ article: child, child: true, hidden: !expanded, close }))}
+                </div>
+            </DisclosureRegion>}
+        </div>;
     });
 
     const groupCount = deleteTarget && !deleteTarget.sourceArticleId ? getChildArticles(deleteTarget.id).length + 1 : 1;
