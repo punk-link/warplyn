@@ -27,7 +27,9 @@ export default defineConfig({
             },
         },
         {
-            command: "npm run dev --workspace @skladno/web -- --host 127.0.0.1",
+            command: "npm exec --workspace @skladno/web -- vite build && " +
+                "npm exec --workspace @skladno/web -- vite preview --host 127.0.0.1 --port 5173 --strictPort",
+            timeout: 120_000,
             url: "http://127.0.0.1:5173",
             reuseExistingServer: false,
         },

@@ -12,6 +12,7 @@ The report uses local `OPENAI_COMMIT_GENERATION_KEY` and `gpt-6-luna`, matching 
 It sends changed test patches and changed `packages/` implementation patches to OpenAI with
 `store: false`. It compares the release record's previous commit with its exact source commit and includes source links.
 Inputs above the size limit produce an explicit unavailable report rather than a partial explanation.
+Collection stops as soon as the evidence exceeds the limit; manual mode skips evidence collection entirely.
 The command saves and prints this manual-review notice without calling the provider, then continues to release approval and verification.
 Nonstandard test filenames and unchanged helpers can leave gaps; explanations must acknowledge uncertainty.
 
@@ -26,7 +27,7 @@ Use the smallest check that can fail for the changed behavior, then run the appl
 
 - `npm run verify:pr -- 83` resolves PR #83's current base through GitHub CLI and checks the prepared PR branch, including staged, unstaged, and untracked changes. It runs core verification and browser journeys. Omit the number to use the current branch's PR. Add `--desktop` when the journey table below requires Electron coverage. GitHub CLI must be authenticated; Chromium must be installed with `npx playwright install chromium`.
 - `npm run verify:core` attempts every static check, reports their results together, then runs workspace and script tests only when all static checks pass. It does not run E2E.
-- `npm run verify:browser` runs Chromium author journeys.
+- `npm run verify:browser` builds the web app once and runs Chromium author journeys against Vite preview's production assets. A single worker avoids races between journeys that mutate shared backend settings and data.
 - `npm run verify:desktop` runs Electron journeys against development and packaged builds. Build prerequisites are below.
 - `npm test --workspace <workspace>` runs the selected workspace tests.
 - `npm run lint` checks changed JavaScript and TypeScript lines against a 160-character limit, import boundaries, and ESLint rules. Functions and constructors allow at most nine parameters. Structured TypeScript declarations and object literals, including inferred return objects, allow at most 20 data properties, counting inherited, intersected, and spread keys once each. Callable members, including arrow-function properties and optional or nullable callbacks, are excluded as methods; members that can hold other non-callable data still count. Explicit lookup tables use an index signature or mapped key type through a type annotation or `satisfies` and are exempt. Property checks cover entire modified functions, including unchanged return blocks. Legacy violations outside modified functions and declarations do not block unrelated changes. Nested groups must represent coherent domain concepts, not generic wrappers. CI compares the pull request's base and head commits; locally, lint checks staged and unstaged changes against `HEAD`.

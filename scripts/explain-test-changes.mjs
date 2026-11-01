@@ -30,16 +30,22 @@ export function collectTestChanges(base, head, repository, cwd = process.cwd()) 
     assert(shaPattern.test(base) && shaPattern.test(head), "Provide full base and head commit SHAs.");
     const mergeBase = base;
     const paths = git(cwd, "diff", "--name-only", "-z", "--no-renames", base, head).split(nullCharacter).filter(Boolean);
-    const tests = paths.filter((path) => testPathPattern.test(path));
-    const changes = tests.map((path) => ({ path,
-        before: sourceLink(repository, mergeBase, path), after: sourceLink(repository, head, path),
-        patch: git(cwd, "diff", "--no-ext-diff", "--no-textconv", "--no-renames", "--unified=15", base, head, "--", path) }));
-    const implementation = paths.filter((path) => !testPathPattern.test(path) && path.startsWith("packages/"));
-    const context = implementation.map((path) => ({ path,
-        patch: git(cwd, "diff", "--no-ext-diff", "--no-textconv", "--unified=3", base, head, "--", path) }));
-    const evidence = { base, mergeBase, head, changes, implementation: context };
-    if (JSON.stringify(evidence).length > 180_000)
-        return { base, mergeBase, head, changes: [], implementation: [], unavailable: oversizedEvidenceMessage };
+    const evidence = { base, mergeBase, head, changes: [], implementation: [] };
+    for (const path of paths) {
+        const test = testPathPattern.test(path);
+        if (!test && !path.startsWith("packages/"))
+            continue;
+
+        const options = test ? ["--no-renames", "--unified=15"] : ["--unified=3"];
+        const patch = git(cwd, "diff", "--no-ext-diff", "--no-textconv", ...options, base, head, "--", path);
+        if (test)
+            evidence.changes.push({ path, before: sourceLink(repository, mergeBase, path), after: sourceLink(repository, head, path), patch });
+        else
+            evidence.implementation.push({ path, patch });
+
+        if (JSON.stringify(evidence).length > 180_000)
+            return { base, mergeBase, head, changes: [], implementation: [], unavailable: oversizedEvidenceMessage };
+    }
 
     return evidence;
 }
@@ -79,11 +85,13 @@ export async function explainTestChanges(evidence, { apiKey, fetchResponse = fet
 
 export async function reviewReleaseTestChanges(record, { cwd = process.cwd(), manual = false,
     generate = explainTestChanges, print = console.log } = {}) {
-    const evidence = collectTestChanges(record.previousCommit, record.sourceCommit, "punk-link/warplyn", cwd);
+    assert(shaPattern.test(record.previousCommit) && shaPattern.test(record.sourceCommit), "Provide full base and head commit SHAs.");
     let summary = "Manual mode: test changes have not been summarized. Review the test diff manually.";
-    if (!manual)
+    if (!manual) {
+        const evidence = collectTestChanges(record.previousCommit, record.sourceCommit, "punk-link/warplyn", cwd);
         summary = evidence.unavailable ?? await generate(evidence, { apiKey: process.env.OPENAI_COMMIT_GENERATION_KEY,
             model: process.env.OPENAI_COMMIT_GENERATION_MODEL || "gpt-6-luna" });
+    }
 
     const report = "# Test-change explanation\n\nAdvisory interpretation, not a test result or approval.\n\n" +
         `Compared ${record.previousCommit} to ${record.sourceCommit}.\n\n${summary}\n`;

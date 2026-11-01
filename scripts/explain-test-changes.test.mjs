@@ -18,6 +18,7 @@ test("oversized evidence produces a manual-review report without calling the pro
     git("commit", "--allow-empty", "-m", "Baseline");
     const previousCommit = git("rev-parse", "HEAD");
     writeFileSync(join(cwd, "large.test.mjs"), "x".repeat(180_000));
+    writeFileSync(join(cwd, "z-unneeded.test.mjs"), "x".repeat(4_100_000));
     git("add", ".");
     git("commit", "-m", "Large test change");
     const sourceCommit = git("rev-parse", "HEAD");
@@ -32,10 +33,12 @@ test("oversized evidence produces a manual-review report without calling the pro
 });
 
 
-test("collector compares exact commits and rejects option-like refs", () => {
+test("collector and manual review reject option-like refs", async () => {
     const sha = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
     assert.equal(collectTestChanges(sha, sha, "owner/repo").changes.length, 0);
     assert.throws(() => collectTestChanges("--help", sha, "owner/repo"));
+    const fullCommitPattern = /full base and head commit SHAs/;
+    await assert.rejects(reviewReleaseTestChanges({ previousCommit: "--help", sourceCommit: sha }, { manual: true }), fullCommitPattern);
 });
 
 
