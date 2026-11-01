@@ -17,12 +17,14 @@ export function publishReleaseNotes({ tag, body, targetCommit, run = github }) {
     const directory = mkdtempSync(join(tmpdir(), "warplyn-release-notes-"));
     const file = join(directory, "notes.txt");
     const prerelease = tag.includes("-preview.");
+    const security = tag.endsWith(".security") || body.startsWith("## Security release\n\n");
+    const title = `Warplyn ${tag}${security ? " - Security release" : ""}`;
     let releaseAlreadyExisted = false;
     try {
         writeFileSync(file, body, "utf8");
         try {
             run(["release", "create", tag, "--repo", "punk-link/warplyn", "--verify-tag",
-                `--prerelease=${prerelease}`, "--title", `Warplyn ${tag}`, "--notes-file", file]);
+                `--prerelease=${prerelease}`, "--title", title, "--notes-file", file]);
         } catch {
             releaseAlreadyExisted = true;
         }
@@ -33,6 +35,9 @@ export function publishReleaseNotes({ tag, body, targetCommit, run = github }) {
             : "Created release identity or channel differs. Inspect the release before retrying publication.";
         assert(release.tag_name === tag && release.draft === false && release.prerelease === prerelease,
             releaseIdentityError);
+        if (security)
+            assert.equal(release.name, title, "Security release title differs. Mark the release as a security release before retrying.");
+
         assert.equal(release.body?.replaceAll("\r\n", "\n").trim(), body,
             "Existing release summary differs from the tagged notes. Resolve the mismatch before uploading assets.");
         const ref = JSON.parse(run(["api", `repos/punk-link/warplyn/commits/${tag}`]));

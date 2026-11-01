@@ -5,6 +5,28 @@ import { publishReleaseNotes } from "./publish-release-notes.mjs";
 
 // Product scenario: application.release-summary-publication
 
+test("stable security publication labels the title and rejects an unmarked retry", () => {
+    for (const marked of [true, false]) {
+        const publish = () => publishReleaseNotes({ tag: "v0.8.0", body: "## Security release\n\n- Fix backups.",
+            targetCommit: "abc", run: (args) => {
+                if (args[0] === "release") {
+                    assert.equal(args[args.indexOf("--title") + 1], "Warplyn v0.8.0 - Security release");
+                    assert(args.includes("--prerelease=false"));
+                    return "";
+                }
+
+                return JSON.stringify(args[1].includes("/commits/") ? { sha: "abc" } : {
+                    tag_name: "v0.8.0", name: marked ? "Warplyn v0.8.0 - Security release" : "Warplyn v0.8.0",
+                    body: "## Security release\n\n- Fix backups.", draft: false, prerelease: false,
+                });
+            } });
+        if (marked)
+            assert.doesNotThrow(publish);
+        else
+            assert.throws(publish, /Security release title differs/);
+    }
+});
+
 
 test("platform creation, races, and retries publish the exact body through a file", () => {
     const tag = "v1.2.3-preview.1";
@@ -71,6 +93,6 @@ test("security-tagged previews publish with their exact identity and prerelease 
 
         return JSON.stringify(args[1].includes("/commits/")
             ? { sha: "abc" }
-            : { tag_name: tag, body, draft: false, prerelease: true });
+            : { tag_name: tag, name: `Warplyn ${tag} - Security release`, body, draft: false, prerelease: true });
     } });
 });

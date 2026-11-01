@@ -69,14 +69,16 @@ test("both release commands generate, review, verify, and commit notes before ta
         const cwd = repository(t);
         const events = [];
         const expected = mode === "preview" ? "0.5.6-preview.1.security" : "0.5.6";
+        const messages = [];
         await release([mode, "--previous-tag", "v0.5.5"], { cwd, ...releaseProcesses(cwd, events),
-            reviewNotes: (options) => reviewReleaseNotes(options, { releases: () => [], print: () => undefined,
+            reviewNotes: (options) => reviewReleaseNotes(options, { releases: () => [], print: (message) => messages.push(message),
                 reviewTests: async () => events.push("review tests"),
                 generate: async () => {
                     events.push("generate");
                     return generation(cwd, security);
                 },
                 approve: async () => {
+                    assert.equal(messages.some((message) => message.includes("Security update warning:")), security && mode === "stable");
                     events.push("approve");
                     return true;
                 } }) });

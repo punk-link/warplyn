@@ -63,6 +63,11 @@ export async function reviewReleaseNotes({ version, previousTag, manual = false,
         const { record, candidate, original, releaseVersion, body } = draft;
         await runReleaseStep("Reviewing test changes", () => reviewTests(record, { cwd, manual, print }), print);
         print(`\nRelease v${releaseVersion}\n\n${body}\n\nSecurity: ${record.security ? record.securityReason : "ordinary release"}\n`);
+        if (record.security && !releaseVersion.includes("-preview.")) {
+            print("Security update warning: installed versions before 0.8.0 cannot recognize stable security releases. " +
+                "They will offer this as an ordinary update. Adding .security would hide it from those installations. " +
+                "Versions 0.8.0 and later recognize the Security release heading.");
+        }
         if (record.reviewed === true)
             return record;
 
