@@ -1,4 +1,4 @@
-import { forwardRef, type ButtonHTMLAttributes, type DialogHTMLAttributes, type HTMLAttributes, type InputHTMLAttributes, type PropsWithChildren, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
+import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type DialogHTMLAttributes, type HTMLAttributes, type InputHTMLAttributes, type PropsWithChildren, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
 import { useIntl } from "react-intl";
 import { ChevronDownIcon, StatusIcon } from "./icons.js";
 
@@ -33,6 +33,17 @@ export function getNotificationClasses(tone: Tone): string {
 
 function joinClassNames(...names: (string | undefined)[]): string {
     return names.filter(Boolean).join(" ");
+}
+
+
+type TextActionProps = (AnchorHTMLAttributes<HTMLAnchorElement> & { as?: "a" }) | (ButtonHTMLAttributes<HTMLButtonElement> & { as: "button" });
+
+
+export function TextAction({ as = "a", className, ...props }: TextActionProps) {
+    const classes = joinClassNames("inline-flex min-h-9 items-center text-xs font-semibold text-brand underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand", as === "button" ? "cursor-pointer" : undefined, className);
+    return as === "button"
+        ? <button {...props as ButtonHTMLAttributes<HTMLButtonElement>} className={classes} />
+        : <a {...props as AnchorHTMLAttributes<HTMLAnchorElement>} className={classes} />;
 }
 
 

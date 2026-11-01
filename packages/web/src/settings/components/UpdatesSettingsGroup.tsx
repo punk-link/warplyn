@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useIntl, type IntlShape } from "react-intl";
 import type { DesktopUpdateClient, DesktopUpdateState } from "@skladno/shared";
-import { ActivityIndicator, Button, Dialog } from "../../ui/primitives.js";
+import { ActivityIndicator, Button, Dialog, TextAction } from "../../ui/primitives.js";
 import { SettingRow, SettingsGroup } from "./SettingRow.js";
 
 
@@ -99,14 +99,13 @@ function UpdateActions({ client, state, status, details, onState, intl }: { clie
         {canCheckNow && <Button variant="secondary" disabled={state.kind === "checking"} onClick={() => void client.checkNow().then(onState)}>{intl.formatMessage({ id: "settings.checkNow" })}</Button>}
         {details && <Button variant="quiet" onClick={() => void client.openReleaseNotes()}>{intl.formatMessage({ id: "settings.viewReleaseNotes" })}</Button>}
         {state.recoveryAvailable && (
-            <button
+            <TextAction
+                as="button"
                 type="button"
-                className={(("col-span-2 inline-flex min-h-9 cursor-pointer items-center justify-self-start text-sm font-semibold " +
-                "text-brand underline underline-offset-2 ") +
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:col-span-4")}
+                className="col-span-2 justify-self-start sm:col-span-4"
                 onClick={() => void client.openRecoveryGuide()}>
                 {intl.formatMessage({ id: "settings.updateRecovery" })}
-            </button>
+            </TextAction>
         )}
     </div>;
 }
