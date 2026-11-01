@@ -107,13 +107,12 @@ test("reviewed security classification controls the preview tag and tagged recor
         "- Recover your latest writing after restarting.");
     const classificationPattern = /security classification/;
     const reviewPattern = /Review/;
-    const previewRequiredPattern = /require a preview version/;
     const unsuffixedPattern = /unsuffixed/;
     assert.throws(() => validateReleaseRecord(final, version, "HEAD", cwd), classificationPattern);
     assert.throws(() => validateReleaseRecord({ ...final, security: false, securityReason: "", securityCommits: [] },
         `${version}.security`, "HEAD", cwd), classificationPattern);
     assert.throws(() => validateReleaseRecord({ ...final, reviewed: false }, `${version}.security`, "HEAD", cwd), reviewPattern);
-    assert.throws(() => classifiedReleaseVersion({ ...final, version: "0.6.0" }), previewRequiredPattern);
+    assert.equal(classifiedReleaseVersion({ ...final, version: "0.6.0" }), "0.6.0");
     assert.throws(() => classifiedReleaseVersion({ ...final, version: `${version}.security` }), unsuffixedPattern);
 });
 

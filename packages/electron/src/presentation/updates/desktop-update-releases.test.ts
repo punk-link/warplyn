@@ -3,6 +3,25 @@ import test from "node:test";
 import { getAvailableUpdateState, getNewestCompatibleRelease } from "./desktop-update-releases.js";
 
 
+test("stable security releases keep stable versions and show the security warning on both platforms", () => {
+    const release = { tag_name: "v0.8.0", html_url: "https://example.test", prerelease: false, draft: false,
+        body: "## Security release\r\n\r\n- Exclude credentials from backups.",
+        assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-0.8.0-full.nupkg" }, { name: "warplyn_0.8.0_amd64.deb" }] };
+    for (const platform of ["win32", "linux"] as const) {
+        const selected = getNewestCompatibleRelease([release], "0.7.4", { includePrereleaseUpdates: false }, platform);
+        assert(selected);
+        const state = getAvailableUpdateState(selected, "0.7.4", {}, platform === "win32");
+        assert.equal(state.version, "0.8.0");
+        assert.equal(state.security, true);
+    }
+
+    for (const body of ["- Security hardening.", "- Example: ## Security release\n\n", "x".repeat(8001), undefined])
+        assert.equal(getAvailableUpdateState({ ...release, body }, "0.7.4", {}, true).security, false);
+
+    assert.equal(getNewestCompatibleRelease([release], "0.8.0", {}, "win32"), undefined);
+});
+
+
 test("Warplyn release selection excludes Skladno packages on both platforms", () => {
     const release = { tag_name: "v0.6.0", html_url: "https://example.test", prerelease: false, draft: false };
     const legacy = { ...release, assets: [{ name: "RELEASES" }, { name: "io.github.kirillta.skladno-0.6.0-full.nupkg" }, { name: "skladno_0.6.0_amd64.deb" }] };

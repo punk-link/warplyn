@@ -65,11 +65,10 @@ function releaseProcesses(cwd, events) {
 
 
 test("both release commands generate, review, verify, and commit notes before tagging and pushing", async (t) => {
-    for (const mode of ["stable", "preview"]) {
+    for (const [mode, security] of [["stable", false], ["stable", true], ["preview", true]]) {
         const cwd = repository(t);
         const events = [];
-        const security = mode === "preview";
-        const expected = security ? "0.5.6-preview.1.security" : "0.5.6";
+        const expected = mode === "preview" ? "0.5.6-preview.1.security" : "0.5.6";
         await release([mode, "--previous-tag", "v0.5.5"], { cwd, ...releaseProcesses(cwd, events),
             reviewNotes: (options) => reviewReleaseNotes(options, { releases: () => [], print: () => undefined,
                 reviewTests: async () => events.push("review tests"),
@@ -86,7 +85,8 @@ test("both release commands generate, review, verify, and commit notes before ta
         const record = readTaggedNotes(expected, `v${expected}`, cwd);
         assert.equal(record.reviewed, true);
         assert.equal(record.security, security);
-        assert.equal(validateReleaseRecord(record, expected, `v${expected}`, cwd), "- Fix an Article import vulnerability.");
+        const heading = security && mode === "stable" ? "## Security release\n\n" : "";
+        assert.equal(validateReleaseRecord(record, expected, `v${expected}`, cwd), `${heading}- Fix an Article import vulnerability.`);
         assert.equal(git(["status", "--porcelain"], cwd), "");
     }
 });
@@ -138,6 +138,57 @@ test("generation and verification failures cannot version, tag, or push a releas
 });
 
 
+test("invalid drafts can be corrected and reloaded in the same console review without regeneration", async (t) => {
+    for (const invalid of ["{", JSON.stringify({ version: "0.5.6", security: true })]) {
+        const cwd = repository(t);
+        const path = join(cwd, "release-notes/0.5.6.json");
+        const options = { cwd, version: "0.5.6", previousTag: "v0.5.5" };
+        await assert.rejects(() => reviewReleaseNotes(options, { releases: () => [], print: () => undefined,
+            reviewTests: async () => undefined, generate: async () => generation(cwd), approve: async () => false }));
+        const valid = JSON.parse(readFileSync(path));
+        writeFileSync(path, invalid);
+        const prompts = [];
+        const printed = [];
+        const record = await reviewReleaseNotes(options, { print: (message) => printed.push(message),
+            reviewTests: async () => undefined, generate: () => assert.fail("Must reuse the saved draft"),
+            approve: async (question) => {
+                prompts.push(question);
+                if (prompts.length === 1)
+                    writeFileSync(path, JSON.stringify(valid));
+
+                return true;
+            } });
+        assert.equal(prompts.length, 2);
+        assert(printed[0].includes("need correction"));
+        assert.equal(record.reviewed, true);
+        assert.equal(JSON.parse(readFileSync(join(cwd, "package.json"))).version, "0.5.5");
+    }
+});
+
+
+test("console edit reloads the draft and requires fresh approval of its security classification", async (t) => {
+    const cwd = repository(t);
+    const path = join(cwd, "release-notes/0.5.6.json");
+    const printed = [];
+    const answers = ["edit", true, true];
+    const record = await reviewReleaseNotes({ cwd, version: "0.5.6", previousTag: "v0.5.5" }, {
+        releases: () => [], print: (message) => printed.push(message), reviewTests: async () => undefined,
+        generate: async () => generation(cwd), approve: async () => {
+            const answer = answers.shift();
+            if (answers.length === 1) {
+                const draft = JSON.parse(readFileSync(path));
+                writeFileSync(path, JSON.stringify({ ...draft, ...generation(cwd, true) }));
+            }
+
+            return answer;
+        } });
+    assert.equal(answers.length, 0);
+    assert.equal(record.security, true);
+    assert.equal(record.reviewed, true);
+    assert(printed.some((message) => message.includes("## Security release")));
+});
+
+
 test("comparison is available through both release commands without approval or publication", async (t) => {
     const cwd = repository(t);
     for (const mode of ["stable", "preview"]) {
@@ -153,6 +204,40 @@ test("comparison is available through both release commands without approval or 
 
     const scripts = JSON.parse(readFileSync(new URL("../package.json", import.meta.url))).scripts;
     assert.deepEqual(Object.keys(scripts).filter((name) => name.startsWith("release")), ["release", "release:preview"]);
+});
+
+
+test("edits during approval require fresh review and source changes still stop the run", async (t) => {
+    for (const change of ["draft", "source"]) {
+        const cwd = repository(t);
+        const path = join(cwd, "release-notes/0.5.6.json");
+        let approvals = 0;
+        const reviewing = reviewReleaseNotes({ cwd, version: "0.5.6", previousTag: "v0.5.5" }, {
+            releases: () => [], print: () => undefined, reviewTests: async () => undefined,
+            generate: async () => generation(cwd), approve: async () => {
+                approvals += 1;
+                if (approvals === 1 && change === "draft") {
+                    const draft = JSON.parse(readFileSync(path));
+                    writeFileSync(path, JSON.stringify({ ...draft, ...generation(cwd, true) }));
+                }
+
+                if (change === "source") {
+                    writeFileSync(join(cwd, "feature.txt"), "Changed source");
+                    git(["add", "feature.txt"], cwd);
+                    git(["commit", "-m", "Change source during review"], cwd);
+                }
+
+                return true;
+            } });
+        if (change === "draft") {
+            assert.equal((await reviewing).security, true);
+            assert.equal(approvals, 2);
+        } else {
+            const changedSourcePattern = /source changed/;
+            await assert.rejects(reviewing, changedSourcePattern);
+            assert.equal(JSON.parse(readFileSync(path)).reviewed, false);
+        }
+    }
 });
 
 
@@ -190,8 +275,8 @@ test("manual drafts and noninteractive review stop before granting approval", as
     const cwd = repository(t);
     const options = { cwd, version: "0.5.6", previousTag: "v0.5.5", manual: true };
     const dependencies = { releases: () => [], print: () => undefined, generate: () => assert.fail("Manual mode must not generate") };
-    const fillPattern = /Fill in/;
-    await assert.rejects(() => reviewReleaseNotes(options, dependencies), fillPattern);
+    const cancelledPattern = /Release cancelled/;
+    await assert.rejects(() => reviewReleaseNotes(options, { ...dependencies, approve: async () => false }), cancelledPattern);
     const path = join(cwd, "release-notes/0.5.6.json");
     const record = { ...JSON.parse(readFileSync(path)), ...generation(cwd) };
     writeFileSync(path, JSON.stringify(record));

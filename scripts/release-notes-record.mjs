@@ -43,8 +43,11 @@ export function renderReleaseDraft(record, commits) {
     }
 
     validateSecurityClassification(record, commits);
-    const body = record.maintenanceOnly ? maintenanceMessage : renderChangeSections(record.entries);
+    const changes = record.maintenanceOnly ? maintenanceMessage : renderChangeSections(record.entries);
+    const stableSecurity = record.security && record.version && !record.version.includes("-preview.");
+    const body = stableSecurity ? `## Security release\n\n${changes}` : changes;
     assert(body.length <= 8000, "Release summary exceeds 8,000 characters. Shorten it before publication.");
+
     return body;
 }
 
@@ -81,10 +84,9 @@ export function classifiedReleaseVersion(record) {
     versionParts(record.version);
     assert(!record.version.endsWith(".security"), "Keep the draft version unsuffixed; the reviewed security flag controls the release tag.");
     assert.equal(typeof record.security, "boolean", "Review and set the security flag explicitly.");
-    if (!record.security)
+    if (!record.security || !record.version.includes("-preview."))
         return record.version;
 
-    assert(record.version.includes("-preview."), "Security tags currently require a preview version. Prepare and review a preview release.");
     return `${record.version}.security`;
 }
 
@@ -134,6 +136,7 @@ export function validateReleaseRecord(record, version, target = "HEAD", cwd = pr
     const commits = new Set(releaseCommits(record.previousCommit, record.sourceCommit, cwd));
     releaseCommits(record.sourceCommit, resolveCommit(target, cwd), cwd);
     validatePreparationChanges(record, target, cwd);
+
     return renderReleaseNotes(record, commits);
 }
 

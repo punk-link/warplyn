@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -7,6 +7,7 @@ import { parseArgs } from "node:util";
 import { classifiedReleaseVersion, validateReleaseRecord } from "./release-notes-record.mjs";
 import { assertReleaseWorktree, reviewReleaseNotes } from "./release-notes-review.mjs";
 import { previewComparison } from "./release-notes.mjs";
+import { runReleaseStep } from "./release-progress.mjs";
 
 
 const STABLE_VERSION = /^(\d+)\.(\d+)\.(\d+)$/;
@@ -45,7 +46,24 @@ export function nextReleaseVersion(currentVersion, preview, requestedVersion, ex
 
 
 function run(command, args, options = {}) {
-    return execFileSync(command, args, { encoding: "utf8", stdio: "inherit", ...options });
+    return new Promise((resolve, reject) => {
+        const child = spawn(command, args, { stdio: "inherit", ...options });
+        let output = "";
+        let errors = "";
+        child.stdout?.setEncoding("utf8").on("data", (chunk) => {
+            output += chunk;
+        });
+        child.stderr?.setEncoding("utf8").on("data", (chunk) => {
+            errors += chunk;
+        });
+        child.on("error", reject);
+        child.on("close", (code, signal) => {
+            if (code === 0)
+                resolve(output);
+            else
+                reject(new Error(`${command} failed (${signal ?? code}). ${errors.trim()}`));
+        });
+    });
 }
 
 
@@ -63,18 +81,18 @@ export async function release(args = process.argv.slice(2), { cwd = process.cwd(
         "Use npm run release or npm run release:preview with an optional base version.");
     assert(!values.compare || (!values.manual && !values["previous-tag"]), "Comparison mode cannot use --manual or --previous-tag.");
     const execute = (command, commandArgs, options = {}) => runCommand(command, commandArgs, { cwd, ...options });
-    execute("git", ["fetch", "origin", "--tags", "--quiet"]);
+    await runReleaseStep("Fetching release tags", () => execute("git", ["fetch", "origin", "--tags", "--quiet"]));
 
     const { version: currentVersion } = JSON.parse(readFileSync(join(cwd, "package.json"), "utf8"));
     const lineBreakPattern = /\r?\n/;
-    const tags = execute("git", ["tag", "--list", "v*"], { stdio: "pipe" })
+    const tags = (await execute("git", ["tag", "--list", "v*"], { stdio: "pipe" }))
         .trim()
         .split(lineBreakPattern)
         .filter(Boolean)
         .map((tag) => tag.slice(1));
     const draftVersion = nextReleaseVersion(currentVersion, mode === "preview", requestedVersion, tags);
     if (values.compare) {
-        await compareNotes(draftVersion, values.compare, cwd);
+        await runReleaseStep("Generating release comparison", () => compareNotes(draftVersion, values.compare, cwd));
         return;
     }
 
@@ -83,23 +101,23 @@ export async function release(args = process.argv.slice(2), { cwd = process.cwd(
     const tag = `v${version}`;
     assert.equal(record.version, draftVersion, "Release notes version does not match the intended release.");
     validateReleaseRecord(record, version, "HEAD", cwd);
-    const source = execute("git", ["rev-parse", "HEAD"], { stdio: "pipe" }).trim();
-    npm(["run", "verify:core"], { cwd });
-    npm(["run", "verify:browser"], { cwd });
-    assert.equal(execute("git", ["rev-parse", "HEAD"], { stdio: "pipe" }).trim(), source,
+    const source = (await execute("git", ["rev-parse", "HEAD"], { stdio: "pipe" })).trim();
+    await runReleaseStep("Running core verification", () => npm(["run", "verify:core"], { cwd }));
+    await runReleaseStep("Running browser verification", () => npm(["run", "verify:browser"], { cwd }));
+    assert.equal((await execute("git", ["rev-parse", "HEAD"], { stdio: "pipe" })).trim(), source,
         "Source changed during verification. Rerun release.");
     assertReleaseWorktree(draftVersion, cwd);
     const notesPath = `release-notes/${draftVersion}.json`;
     assert.deepEqual(JSON.parse(readFileSync(join(cwd, notesPath), "utf8")), record, "Notes changed during verification. Review them again.");
 
-    npm(["pkg", "set", `version=${version}`], { cwd });
-    npm(["pkg", "set", `version=${version}`, "--workspace", "@skladno/electron"], { cwd });
-    npm(["install", "--package-lock-only", "--ignore-scripts"], { cwd });
-    execute("node", ["scripts/check-electron-release-tag.mjs", tag]);
-    execute("git", ["add", notesPath, "package.json", "package-lock.json", "packages/electron/package.json"]);
-    execute("git", ["commit", "-m", `Release ${tag}`]);
-    execute("git", ["tag", tag]);
-    execute("git", ["push", "--atomic", "origin", "HEAD", tag]);
+    await npm(["pkg", "set", `version=${version}`], { cwd });
+    await npm(["pkg", "set", `version=${version}`, "--workspace", "@skladno/electron"], { cwd });
+    await runReleaseStep("Updating the package lockfile", () => npm(["install", "--package-lock-only", "--ignore-scripts"], { cwd }));
+    await execute("node", ["scripts/check-electron-release-tag.mjs", tag]);
+    await execute("git", ["add", notesPath, "package.json", "package-lock.json", "packages/electron/package.json"]);
+    await runReleaseStep("Committing reviewed release", () => execute("git", ["commit", "-m", `Release ${tag}`]));
+    await execute("git", ["tag", tag]);
+    await runReleaseStep("Pushing the release commit and tag", () => execute("git", ["push", "--atomic", "origin", "HEAD", tag]));
 }
 
 

@@ -10,7 +10,8 @@ import { createUpdateNetwork } from "./electron-update-network.js";
 test("packaged updates show complete safe summaries without changing update authority", async () => {
     const root = await mkdtemp(join(tmpdir(), "warplyn-update-summary-"));
     const network = await createUpdateNetwork();
-    const body = `- ${"Recover café writing after restarting. ".repeat(40)}\n- <script>alert(1)</script> ![image](https://example.test/image)`;
+    const body = `## Security release\n\n- ${"Recover café writing after restarting. ".repeat(40)}\n` +
+        "- <script>alert(1)</script> ![image](https://example.test/image)";
     network.setBody(body);
     let app: Awaited<ReturnType<typeof launchPackaged>> | undefined;
     try {

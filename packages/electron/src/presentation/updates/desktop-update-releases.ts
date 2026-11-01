@@ -98,7 +98,7 @@ export function getAvailableUpdateState(release: Release, currentVersion: string
         title: typeof release.name === "string" && release.name ? release.name : `Warplyn ${match[0]}`,
         summary: readReleaseSummary(release.body),
         releaseNotesUrl: release.html_url,
-        security: match[5] === ".security",
+        security: match[5] === ".security" || readReleaseSummary(release.body).startsWith("## Security release\n\n"),
         downloadable,
         ...(settings.lastUpdateCheckAt ? { lastCheckedAt: settings.lastUpdateCheckAt } : {}),
         ...updatePreferences(settings, currentVersion),

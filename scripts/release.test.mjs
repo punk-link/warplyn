@@ -14,7 +14,9 @@ test("chooses stable and preview versions", () => {
 });
 
 
-test("runs npm through the platform-compatible process boundary", () => {
+test("runs npm through the platform-compatible process boundary", async () => {
     const numberPattern = /^\d+\.\d+\.\d+$/;
-    assert.match(runNpm(["--version"], { stdio: "pipe" }).trim(), numberPattern);
+    assert.match((await runNpm(["--version"], { stdio: "pipe" })).trim(), numberPattern);
+    const failedCommandPattern = /npm failed/;
+    await assert.rejects(runNpm(["run", "__missing_release_script__"], { stdio: "pipe" }), failedCommandPattern);
 });

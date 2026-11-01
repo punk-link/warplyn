@@ -90,7 +90,7 @@ npm run release
 npm run release:preview
 ```
 
-Each command generates missing notes, shows the summary and proposed security classification for approval, runs checks, and commits the approved notes with version changes before tagging and pushing. Cancel to edit the draft, then rerun the same command to reuse it. Add `--manual` to write notes without an API call, or `--compare v0.7.0` to generate a local comparison without publishing, for example `npm run release -- --compare v0.7.0`.
+Each command generates missing notes, shows the summary and proposed security classification for approval, runs checks, and commits the approved notes with version changes before tagging and pushing. Type `edit` during review to correct the saved draft and reload it in the same run. Long steps report elapsed progress. Stable and preview releases can both contain security fixes. Add `--manual` to write notes without an API call, or `--compare v0.7.0` to generate a local comparison without publishing, for example `npm run release -- --compare v0.7.0`.
 
 Generation sends bounded repository source diffs and commit evidence to OpenAI with response storage disabled. It excludes credentials, binaries, and test data. See the [release guide](docs/development/guides/mvp-release-and-recovery.md) for version selection, first-release setup, review, publication, and recovery procedures.
 
