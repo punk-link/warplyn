@@ -7,6 +7,7 @@
     ],
     "scripts": {
         "dev": "concurrently --kill-others -n server,web -c blue,green \"npm run dev --workspace @skladno/server\" \"npm run dev --workspace @skladno/web\"",
+        "dev:ui-preview": "npm run dev --workspace @skladno/web -- --open /ui-language-preview.html",
         "dev:site": "npm run docs:build && vite site --host 127.0.0.1 --config site/vite.config.mjs",
         "docs:dev": "node scripts/copy-site-assets.mjs && vitepress dev site/user-docs",
         "docs:build": "node scripts/copy-site-assets.mjs && vitepress build site/user-docs",

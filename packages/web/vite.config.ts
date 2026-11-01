@@ -7,6 +7,14 @@ const tailwindcssWithHighlightPseudoElementSupport = tailwindcss({ optimize: fal
 
 export default defineConfig({
     base: "./",
+    build: {
+        rollupOptions: {
+            input: {
+                app: fileURLToPath(new URL("./index.html", import.meta.url)),
+                uiLanguagePreview: fileURLToPath(new URL("./ui-language-preview.html", import.meta.url)),
+            },
+        },
+    },
     plugins: [
         react(),
         tailwindcssWithHighlightPseudoElementSupport,

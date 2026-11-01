@@ -2,6 +2,8 @@
 
 Use the shared tokens in `packages/web/src/design-tokens.css`, loaded by `packages/web/src/styles.css`, and the shared components in `packages/web/src/ui/primitives.tsx`. Feature code must not introduce raw palette, radius, focus, elevation, font-size, or tracking values.
 
+Run `npm run dev --workspace @skladno/web` and open [the live UI language preview](http://localhost:5173/ui-language-preview.html) to interact with the actual React primitives, including workspace tabs, button variants, form controls, feedback, diffs, and dialogs. Its entry point is [`ui-language-preview.html`](../../../packages/web/ui-language-preview.html).
+
 The [visual atlas](visual-atlas.md) maps typography, color, and visual roles to the token layer. `design-tokens.css` owns token values. Add a genuinely new role to both before using it.
 
 ## Components and feedback
