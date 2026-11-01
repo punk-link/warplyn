@@ -62,7 +62,12 @@ describe("Editorial Workspace assistant", () => {
     it("restores the latest completed Proposal Review from local Assistant records", async () => {
         const client = createFakeClient();
         const user = userEvent.setup();
-        const telemetry = { getTelemetryConsent: vi.fn(), setTelemetryConsent: vi.fn(), beginTelemetryCapture: vi.fn().mockResolvedValue(7), captureTelemetry: vi.fn().mockResolvedValue(undefined) };
+        const telemetry = {
+            getTelemetryConsent: vi.fn().mockResolvedValue({ supported: true, enabled: false }),
+            setTelemetryConsent: vi.fn(),
+            beginTelemetryCapture: vi.fn().mockResolvedValue(7),
+            captureTelemetry: vi.fn().mockResolvedValue(undefined)
+        };
         window.skladnoTelemetry = telemetry;
         client.acceptProposal = vi.fn().mockResolvedValue({
             id: "accepted-revision",
