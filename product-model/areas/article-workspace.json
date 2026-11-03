@@ -3,6 +3,16 @@
     "area": "article-workspace",
     "capabilities": [
         {
+            "id": "workspace.editor.context-menu",
+            "area": "Article Screen",
+            "title": "Editor actions and explicit selection Skill preparation",
+            "status": "implemented",
+            "owners": ["packages/web/src/workspace/editor/ArticleEditorContextMenu.tsx", "packages/web/src/workspace/editor/use-editor-skill-preparation.ts", "packages/electron/src/presentation/articles/desktop-editor-menu.ts"],
+            "contract": "The Article editor offers editing and formatting actions and a Skills submenu. Electron keeps contextual Link directly accessible and groups Bold, Italic, Strikethrough, and Inline code in a Formatting submenu with active-state checkmarks. Paragraph styles and lists have separate submenus with active choices. Built-in Skills retain catalog order, followed by alphabetically ordered Author Skills. Selection-incompatible Skills, including whole-Article translation, are omitted from the selection menu even when all text is selected. Choosing a Skill prepares the existing Assistant composer with selection scope and opens the Assistant, without sending a request or editing Article content. Electron retains native clipboard and spelling actions.",
+            "persistence": "Menu state is transient. Unsent Skill choices use existing composer recovery. Article Draft, immutable Revision, and Proposal approval behavior is unchanged.",
+            "limitations": ["Packaged keyboard, screen-reader, and narrow-window acceptance requires manual verification."]
+        },
+        {
             "id": "workspace.assistant.selection-context",
             "area": "Editorial Assistant",
             "title": "Bounded read-only neighboring selection context",

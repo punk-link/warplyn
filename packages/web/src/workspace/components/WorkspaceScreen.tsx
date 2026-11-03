@@ -1,5 +1,6 @@
 import type { AssistantSkillSummary, GeneralSettings, KeyBindingOverrides } from "@skladno/shared";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { EditorSkillContext } from "../editor/editor-skill-context.js";
 
 import type { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
 import type { AssistantSelectionSnapshot } from "../editor/ArticleEditorPlugins.js";
@@ -71,85 +72,104 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
     const { assistantSelection, onSelectionChange, clearAssistantSelection } = selection;
     const { notifyError } = useNotifications();
     const desktop = getDesktopSettingsClient();
-    return <WorkspaceShell
-        layout={{
-            focusMode: layout.focusMode,
-            libraryCollapsed: layout.libraryCollapsed,
-            setLibraryCollapsed: layout.setLibraryCollapsed,
-            assistantCollapsed: layout.assistantCollapsed,
-            setAssistantCollapsed: layout.setAssistantCollapsed,
-            assistantOpenRequest: layout.assistantOpenRequest,
-            libraryWidth: layout.libraryWidth,
-            setLibraryWidth: layout.setLibraryWidth,
-            assistantWidth: layout.assistantWidth,
-            setAssistantWidth: layout.setAssistantWidth,
-        }}
-        content={{
-            library: <ArticleLibraryPanel
-                files={articleFiles}
-                data={{ articles: workspace.articles, selectedArticleId: workspace.selectedArticleId, collapsed: layout.libraryCollapsed, language: workspace.selectedArticle?.language }}
-                navigation={{ selectArticle: workspace.selectArticle, setCollapsed: layout.setLibraryCollapsed,
-                    createBlank, openStyleProfile, openSettings, dispatcher, shortcutOverrides }}
-                mutations={{ remove: workspace.remove, setArchived: workspace.setArchived, setPinned: workspace.setPinned, reorderPinned: workspace.reorderPinned, notifyError }} />,
-            assistant: <EditorialAssistantPanel
-                key={workspace.selectedArticle?.id}
-                data={{
-                    articleId: workspace.selectedArticle?.id,
-                    state: assistant.state,
-                    message: assistant.message,
-                    errorDetails: assistant.errorDetails,
-                    hasUnavailableAiConnection: assistant.hasUnavailableAiConnection,
-                    hasUsableAiConnection,
-                    streamedMessage: assistant.streamedMessage,
-                    activity: assistant.activity,
-                    factCheckClaims: assistant.factCheckClaims ?? editorial.factCheck?.findings.map(({ claim }) => ({ claim, checked: true })),
-                    activeRequestId: assistant.activeRequestId,
-                    translationLanguages: generalSettings.defaultTranslationLanguages.filter((language) => language !== workspace.selectedArticle?.language),
-                    assistantMessages: assistant.messages,
-                    selection: assistantSelection,
-                    generalSettings,
-                    editMode: assistant.editMode,
-                    checkpointPreview: assistant.checkpointPreview,
-                    restoredComposer: assistant.restoredComposer,
-                    authorSkills,
-                }}
-                actions={{
-                    onRequest: assistant.request,
-                    onCancel: assistant.cancel,
-                    onRetry: assistant.retry,
-                    setClaimSelected: assistant.setClaimSelected,
-                    setEditMode: assistant.setEditMode,
-                    applyEdit: assistant.applyEdit,
-                    loadAuthorSkills,
-                    dispatcher,
-                    shortcutOverrides,
-                    openView: (view) => {
-                        if (view === "style-profile")
-                            openStyleProfile();
-                        else
-                            layout.setView(view);
-                    },
-                    openSkillFolder: desktop?.revealCreatedSkillDirectory ? (requestId) => void desktop.revealCreatedSkillDirectory?.(requestId) : undefined,
-                    openSettings: openModelSettings,
-                    clearSelection: clearAssistantSelection,
-                    previewCheckpoint: assistant.previewCheckpoint,
-                    restoreCheckpoint: assistant.restoreCheckpoint,
-                    closeCheckpoint: assistant.closeCheckpoint
-                }}
-                layout={{ collapsed: layout.assistantCollapsed, setCollapsed: layout.setAssistantCollapsed }} />,
-            children: <>
-                <TelemetryInvitation />
-                <ArticleWorkspace state={{
-                    workspace, layout, editorial, revisions, publishing, articleFiles, generalSettings,
-                    requestActive: assistant.state === "streaming",
-                    translationGeneration: assistant.translatingLanguages && { languages: assistant.translatingLanguages },
-                    checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined,
-                }} actions={{
-                    createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides,
-                    onSelectionChange, assistantSelection: assistantSelection?.preview,
-                }} />
-                {overlays}
-            </>,
-        }}
-    />;
+    const [prepared, setPrepared] = useState<{ articleId: string | undefined; skill: AssistantSkillSummary }>();
+
+    return <EditorSkillContext.Provider value={{
+        skills: authorSkills, refresh: loadAuthorSkills, consume: () => setPrepared(undefined),
+        prepared: prepared?.articleId === workspace.selectedArticleId ? prepared?.skill : undefined, prepare: (skill) => {
+            setPrepared({ articleId: workspace.selectedArticleId, skill: { ...skill } });
+            layout.setAssistantCollapsed(false);
+        }
+    }}><WorkspaceShell
+            layout={{
+                focusMode: layout.focusMode,
+                libraryCollapsed: layout.libraryCollapsed,
+                setLibraryCollapsed: layout.setLibraryCollapsed,
+                assistantCollapsed: layout.assistantCollapsed,
+                setAssistantCollapsed: layout.setAssistantCollapsed,
+                assistantOpenRequest: layout.assistantOpenRequest,
+                libraryWidth: layout.libraryWidth,
+                setLibraryWidth: layout.setLibraryWidth,
+                assistantWidth: layout.assistantWidth,
+                setAssistantWidth: layout.setAssistantWidth,
+            }}
+            content={{
+                library: <ArticleLibraryPanel
+                    files={articleFiles}
+                    data={{
+                        articles: workspace.articles, selectedArticleId: workspace.selectedArticleId,
+                        collapsed: layout.libraryCollapsed, language: workspace.selectedArticle?.language
+                    }}
+                    navigation={{
+                        selectArticle: workspace.selectArticle, setCollapsed: layout.setLibraryCollapsed,
+                        createBlank, openStyleProfile, openSettings, dispatcher, shortcutOverrides
+                    }}
+                    mutations={{
+                        remove: workspace.remove, setArchived: workspace.setArchived, setPinned: workspace.setPinned,
+                        reorderPinned: workspace.reorderPinned, notifyError
+                    }} />,
+                assistant: <EditorialAssistantPanel
+                    key={workspace.selectedArticle?.id}
+                    data={{
+                        articleId: workspace.selectedArticle?.id,
+                        state: assistant.state,
+                        message: assistant.message,
+                        errorDetails: assistant.errorDetails,
+                        hasUnavailableAiConnection: assistant.hasUnavailableAiConnection,
+                        hasUsableAiConnection,
+                        streamedMessage: assistant.streamedMessage,
+                        activity: assistant.activity,
+                        factCheckClaims: assistant.factCheckClaims ?? editorial.factCheck?.findings.map(({ claim }) => ({ claim, checked: true })),
+                        activeRequestId: assistant.activeRequestId,
+                        translationLanguages: generalSettings.defaultTranslationLanguages
+                            .filter((language) => language !== workspace.selectedArticle?.language),
+                        assistantMessages: assistant.messages,
+                        selection: assistantSelection,
+                        generalSettings,
+                        editMode: assistant.editMode,
+                        checkpointPreview: assistant.checkpointPreview,
+                        restoredComposer: assistant.restoredComposer,
+                        authorSkills,
+                    }}
+                    actions={{
+                        onRequest: assistant.request,
+                        onCancel: assistant.cancel,
+                        onRetry: assistant.retry,
+                        setClaimSelected: assistant.setClaimSelected,
+                        setEditMode: assistant.setEditMode,
+                        applyEdit: assistant.applyEdit,
+                        loadAuthorSkills,
+                        dispatcher,
+                        shortcutOverrides,
+                        openView: (view) => {
+                            if (view === "style-profile")
+                                openStyleProfile();
+                            else
+                                layout.setView(view);
+                        },
+                        openSkillFolder: desktop?.revealCreatedSkillDirectory
+                            ? (requestId) => void desktop.revealCreatedSkillDirectory?.(requestId) : undefined,
+                        openSettings: openModelSettings,
+                        clearSelection: clearAssistantSelection,
+                        previewCheckpoint: assistant.previewCheckpoint,
+                        restoreCheckpoint: assistant.restoreCheckpoint,
+                        closeCheckpoint: assistant.closeCheckpoint
+                    }}
+                    layout={{ collapsed: layout.assistantCollapsed, setCollapsed: layout.setAssistantCollapsed }} />,
+                children: <>
+                    <TelemetryInvitation />
+                    <ArticleWorkspace state={{
+                        workspace, layout, editorial, revisions, publishing, articleFiles, generalSettings,
+                        requestActive: assistant.state === "streaming",
+                        translationGeneration: assistant.translatingLanguages && { languages: assistant.translatingLanguages },
+                        checkingClaimCount: assistant.state === "streaming" ? assistant.factCheckClaims?.length : undefined,
+                    }} actions={{
+                        createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides,
+                        onSelectionChange, assistantSelection: assistantSelection?.preview,
+                    }} />
+                    {overlays}
+                </>,
+            }}
+        />
+    </EditorSkillContext.Provider>;
 }

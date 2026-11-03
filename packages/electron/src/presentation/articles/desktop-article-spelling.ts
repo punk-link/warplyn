@@ -1,6 +1,7 @@
 import { Menu, type BrowserWindow, type ContextMenuParams, type MenuItemConstructorOptions } from "electron";
 import { isPersonalSpellingWord, type ElectronMessages } from "@skladno/shared";
 import type { SpellingSession } from "../../infrastructure/window/spelling-session.js";
+import { getEditorMenuEntries } from "./desktop-editor-menu.js";
 
 
 export function registerArticleSpellingMenu(window: BrowserWindow, spelling: SpellingSession, messages: ElectronMessages): () => void {
@@ -53,6 +54,12 @@ export function registerArticleSpellingMenu(window: BrowserWindow, spelling: Spe
             }).catch(() => showFailure("word"));
             entries.push(...spellingEntries(params, addWordLabel, correct, add));
         }
+
+        if (article)
+            entries.push(...await getEditorMenuEntries(window, Boolean(params.selectionText)));
+
+        if (current !== generation || window.isDestroyed())
+            return;
 
         popup = Menu.buildFromTemplate(entries);
         popup.popup({ window });

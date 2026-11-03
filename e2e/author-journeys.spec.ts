@@ -37,6 +37,36 @@ async function activateWithKeyboard(page: import("@playwright/test").Page, targe
 }
 
 
+test("editor context menu prepares a selection Skill without sending or editing", async ({ page }) => {
+    await page.goto("/");
+    await createArticle(page);
+    const editor = page.getByRole("textbox", { name: "Article draft" });
+    await editor.click();
+    await editor.press("ControlOrMeta+A");
+    await editor.press("Shift+F10");
+    await page.getByRole("menuitem", { name: "Article formatting", exact: true }).click();
+    await page.getByRole("menu").getByRole("button", { name: "Bold", exact: true }).click();
+    await expect(editor.locator("strong")).toHaveText("Original fixture Article.");
+    await editor.press("ControlOrMeta+z");
+    await expect(editor.locator("strong")).toHaveCount(0);
+    await editor.press("ControlOrMeta+A");
+    const writes: string[] = [];
+    page.on("request", (request) => {
+        if (["POST", "PUT", "DELETE"].includes(request.method()))
+            writes.push(request.url());
+    });
+    await editor.press("Shift+F10");
+    await page.getByRole("menuitem", { name: "Skills", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Improve flow and clarity", exact: true }).click();
+    const composer = page.getByRole("combobox", { name: "Editorial guidance" });
+    await expect(composer).toContainText("Improve flow and clarity");
+    await expect(composer).toBeFocused();
+    await expect(editor).toHaveText("Original fixture Article.");
+    await expect(page.getByRole("button", { name: "Send editorial request" })).toBeEnabled();
+    expect(writes).toEqual([]);
+});
+
+
 async function createArticle(page: import("@playwright/test").Page, content = "Original fixture Article."): Promise<void> {
     const create = page.getByRole("button", { name: "Create" });
     const created = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");

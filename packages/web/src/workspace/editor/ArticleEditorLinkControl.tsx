@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
-import { $getSelection, $isRangeSelection, type LexicalEditor } from "lexical";
+import { $getSelection, $isRangeSelection, KEY_DOWN_COMMAND, COMMAND_PRIORITY_HIGH, type LexicalEditor } from "lexical";
 import { useIntl } from "react-intl";
 import { Button, Dialog, Field } from "../../ui/primitives.js";
 import { isSupportedArticleLink } from "./paste-constants.js";
 import { ArticleEditorToolbar } from "./ArticleEditorToolbar.js";
+import { ArticleEditorContextMenu } from "./ArticleEditorContextMenu.js";
 
 
 function LinkDialog({ editor, close }: { editor: LexicalEditor; close: () => void }) {
@@ -129,7 +130,18 @@ export function ArticleEditorLinkControl({ editor }: { editor: LexicalEditor }) 
         editor.focus();
     }, [editor]);
 
+    useEffect(() => editor.registerCommand(KEY_DOWN_COMMAND, (event) => {
+        if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey || event.key.toLowerCase() !== "k")
+            return false;
+
+        event.preventDefault();
+        void openLink();
+
+        return true;
+    }, COMMAND_PRIORITY_HIGH), [editor, openLink]);
+
     return <>{open && <LinkDialog editor={editor} close={() => setOpen(false)} />}
         <ArticleEditorToolbar editor={editor} openLink={openLink} />
+        <ArticleEditorContextMenu editor={editor} openLink={openLink} />
     </>;
 }

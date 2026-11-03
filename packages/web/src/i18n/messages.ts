@@ -3,6 +3,14 @@ import { defaultInterfaceLocale, getElectronMessagesFor } from "@skladno/shared"
 
 /** Canonical application-owned messages. IDs are stable; English is the source text. */
 export const messages = {
+    "editor.contextMenu": "Editing actions",
+    "editor.moreTextFormatting": "Formatting",
+    "editor.paragraphStyle": "Paragraph style",
+    "editor.lists": "Lists",
+    "editor.editLink": "Edit link…",
+    "editor.addLink": "Link…",
+    "editor.skills": "Skills",
+    "editor.clipboardFailed": "Could not paste. Allow clipboard access or use the Paste keyboard shortcut.",
     "typography.customPair": "Custom pair",
     "typography.articleSaved": "Article typography preferences saved.",
     "typography.articleSaveHint": "Article rules override or disable inherited language rules. Save to use them in the next check.",

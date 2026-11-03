@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEventHandler } from "react";
+import { useEditorSkillPreparation } from "../../editor/use-editor-skill-preparation.js";
 import { type IntlShape } from "react-intl";
 import { KEY_BINDING_COMMAND, areKeyBindingsEqual, resolveKeyBindings, type AssistantCheckpointComposer, type AssistantSkillSummary, type GeneralSettings, type KeyBindingOverrides } from "@skladno/shared";
 import { getEventKeyBinding, type KeyBindingDispatcher } from "../../../key-bindings/dispatcher.js";
@@ -249,6 +250,8 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         setSlashQuery("");
         setGuidance(nextGuidance);
     }, [caretOffset, guidance, selectedSkill, skillOffset, slashRange]);
+
+    useEditorSkillPreparation(intl, selectSkill);
 
     const send = useCallback(() => {
         if (!canSend)

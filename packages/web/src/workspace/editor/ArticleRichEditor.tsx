@@ -24,7 +24,7 @@ export function ArticleRichEditor({ articleId, content, setContent, onSelectionC
 
     return <LexicalComposer key={articleId} initialConfig={config}>
         <ArticleSpellingPlugin language={language} />
-        <div className="flex h-full min-h-0 flex-col">
+        <div data-article-editor-shell className="flex h-full min-h-0 flex-col">
             <ArticleEditorContents
                 content={content}
                 onChange={setContent}
