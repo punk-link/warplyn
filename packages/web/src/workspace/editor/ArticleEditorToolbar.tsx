@@ -216,6 +216,7 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
             className="flex w-max min-w-full items-center gap-1">
             <select
                 data-focus-area-entry
+                data-editor-block-style
                 aria-label={intl.formatMessage({ id: "editor.blockStyle" })}
                 title={intl.formatMessage({ id: "editor.blockStyle" })}
                 value={block}
@@ -232,6 +233,7 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                 return <IconButton
                     variant="toolbar"
                     key={format}
+                    data-editor-command={format}
                     type="button"
                     label={controlLabel}
                     title={getToolbarHint(controlLabel, shortcut)}
@@ -244,6 +246,7 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                 variant="toolbar"
                 type="button"
                 label={intl.formatMessage({ id: "editor.link" })}
+                data-editor-command="link"
                 title={intl.formatMessage({ id: "editor.link" })}
                 aria-pressed={linkActive}
                 onMouseDown={(event) => event.preventDefault()}
@@ -265,6 +268,7 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                 variant="toolbar"
                 type="button"
                 label={intl.formatMessage({ id: "editor.bulletedList" })}
+                data-editor-command="bullet"
                 title={intl.formatMessage({ id: "editor.bulletedList" })}
                 aria-pressed={listType === "bullet"}
                 onMouseDown={(event) => event.preventDefault()}
@@ -275,6 +279,7 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                 variant="toolbar"
                 type="button"
                 label={intl.formatMessage({ id: "editor.numberedList" })}
+                data-editor-command="number"
                 title={intl.formatMessage({ id: "editor.numberedList" })}
                 aria-pressed={listType === "number"}
                 onMouseDown={(event) => event.preventDefault()}

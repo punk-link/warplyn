@@ -17,7 +17,7 @@ export interface AssistantSkillPickerControls {
     availableSkills: readonly AssistantComposerSkill[];
     activeSkillIndex: number;
     setQuickActionsOpen: (value: boolean | ((current: boolean) => boolean)) => void;
-    selectSkill: (skill: AssistantComposerSkill) => void;
+    selectSkill: (skill: AssistantComposerSkill, immediate?: boolean) => void;
     focusQuickAction: (index: number) => void;
 }
 
@@ -221,6 +221,6 @@ function selectActiveSkill({ event, quickActionsOpen, availableSkills, activeSki
         return false;
 
     event?.preventDefault();
-    selectSkill(skill);
+    selectSkill(skill, event?.ctrlKey);
     return true;
 }

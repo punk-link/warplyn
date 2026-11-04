@@ -10,7 +10,7 @@ export function listArticleSummaries(database: SqliteDatabase): ArticleSummary[]
 
 
 export function listRevisionSummaries(database: SqliteDatabase, articleId: string): ArticleRevisionSummary[] {
-    const rows = database.prepare((`SELECT r.id, r.article_id, length(replace(r.content, char(0), char(1))) AS character_count,
+    const rows = database.prepare((`SELECT r.id, r.article_id, unicode_character_count(r.content) AS character_count,
         r.created_at, COALESCE(g.description, r.description) description, r.provenance_json, r.restored_from_revision_id
         FROM article_revisions r
         LEFT JOIN generated_revision_descriptions g ON g.revision_id = r.id

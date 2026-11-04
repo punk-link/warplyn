@@ -20,10 +20,12 @@ test("stable security publication labels the title and rejects an unmarked retry
                     body: "## Security release\n\n- Fix backups.", draft: false, prerelease: false,
                 });
             } });
-        if (marked)
+        if (marked) {
             assert.doesNotThrow(publish);
-        else
-            assert.throws(publish, /Security release title differs/);
+        } else {
+            const titleMismatchPattern = /Security release title differs/;
+            assert.throws(publish, titleMismatchPattern);
+        }
     }
 });
 

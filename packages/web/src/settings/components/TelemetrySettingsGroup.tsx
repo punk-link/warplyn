@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { DesktopTelemetryClient, TelemetryConsent } from "@skladno/shared";
 import { useIntl, type IntlShape } from "react-intl";
 import { SettingRow } from "./SettingRow.js";
+import { SwitchIndicator } from "../../ui/SwitchIndicator.js";
 
 
 export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryClient }) {
@@ -31,14 +32,14 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
                 aria-label={intl.formatMessage({ id: "settings.telemetry" })}
                 disabled={!consent || saving || (!consent.supported && !consent.enabled)}
                 className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink " +
-                "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55")}
+                    "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55")}
                 onClick={() => {
                     const enabled = !consent?.enabled;
                     setSaving(true);
                     setError(false);
                     void client.setTelemetryConsent(enabled).then(setConsent).catch(() => setError(true)).finally(() => setSaving(false));
                 }}>
-                <span aria-hidden="true" className={`relative inline-flex h-5 w-9 items-center rounded-full border p-0.5 transition-colors group-hover:border-brand ${consent?.enabled ? "border-brand bg-brand" : "border-border-strong bg-surface-raised"}`}><span className={`size-4 rounded-full border border-border-strong bg-surface transition-transform ${consent?.enabled ? "translate-x-4" : "translate-x-0"}`} /></span>
+                <SwitchIndicator checked={consent?.enabled ?? false} />
                 <span>{consent?.enabled ? intl.formatMessage({ id: "settings.on" }) : intl.formatMessage({ id: "settings.off" })}</span>
             </button>
         </SettingRow>
@@ -53,8 +54,8 @@ export function TelemetrySettingsGroup({ client }: { client: DesktopTelemetryCli
                     <button
                         type="button"
                         className={(("min-h-9 rounded border border-border-strong px-3 text-xs font-semibold text-ink hover:border-brand " +
-                        "hover:text-brand focus:outline-none ") +
-                        "focus-visible:ring-2 focus-visible:ring-brand")}
+                            "hover:text-brand focus:outline-none ") +
+                            "focus-visible:ring-2 focus-visible:ring-brand")}
                         onClick={() => void navigator.clipboard.writeText(consent.installationId!).then(() => setCopied(true)).catch(() => setCopied(false))}>
                         {intl.formatMessage({ id: "settings.copyTelemetryIdentifier" })}
                     </button>

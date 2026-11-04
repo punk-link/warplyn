@@ -33,6 +33,14 @@ Keep the Article as the visual and keyboard-order center. Navigation and assista
 
 Use the established supporting surface, alignment, and quiet scrollbar treatments across workspace regions. Keep intentional empty areas quiet, use real UI icons rather than unrelated glyphs or emojis, and preserve existing controls and responsive states.
 
+## Ctrl action shortcuts
+
+Use Ctrl as the standard modifier when activating an action to shorten its workflow, run a prepared request immediately, or complete a handoff with fewer steps. Keep ordinary activation available for preparation and additional Author input. Apply the same Ctrl behavior to pointer and keyboard activation and to browser and native menus.
+
+For example, selecting an Assistant Skill normally inserts it into the composer. Holding Ctrl while selecting it from Quick actions or the Article context menu sends the prepared request immediately, including any existing composer guidance. Existing prerequisites and validation still apply.
+
+Ctrl shortcuts must preserve explicit Author approval of generated changes, recovery guarantees, and required confirmations. Describe each supported shortcut beside its action or in its help; this convention does not imply that every action already supports Ctrl.
+
 ## Keyboard focus areas
 
 [ADR-012](../architecture/adr-012-workspace-keyboard-focus-areas.md) owns the area-based navigation decision. Tab and Shift+Tab traverse these visible Workspace areas in order:

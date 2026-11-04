@@ -22,6 +22,15 @@ test("Article summaries preserve library metadata and Draft recovery without bod
 }));
 
 
+test("Revision counts include leading, trailing, and repeated nulls alongside Unicode", () => withRepository(({ articles }) => {
+    for (const content of ["", `${NULL_CHARACTER}a`, `a${NULL_CHARACTER}`, `${NULL_CHARACTER}😀${NULL_CHARACTER}漢字`]) {
+        const article = articles.createArticle({ title: "Count", content });
+        assert.equal(articles.listRevisionSummaries(article.id)[0].characterCount, Array.from(content).length);
+        assert.equal(articles.getRevision(article.id, article.currentRevisionId)?.content, content);
+    }
+}));
+
+
 test("Assistant history sends each base once and keeps selection offsets and limited conversation order", () => withRepository(({ articles, assistant }, _close, database) => {
     const article = articles.createArticle({ title: "History", content: "😀 selected text" });
     for (let index = 0; index < 10; index++) {

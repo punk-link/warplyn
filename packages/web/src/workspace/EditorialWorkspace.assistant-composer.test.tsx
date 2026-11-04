@@ -15,6 +15,21 @@ import { AssistantQuickActions } from "./components/assistant/AssistantComposerA
 describe("Editorial Assistant composer", () => {
     afterEach(resetWorkspaceTestEnvironment);
 
+    it("sends a Quick action immediately when Ctrl is held", async () => {
+        const onRequest = vi.fn().mockResolvedValue(undefined);
+        renderLocalized(<EditorialAssistantPanel
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]} />);
+        fireEvent.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        fireEvent.click(screen.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }), { ctrlKey: true });
+        await waitFor(() => expect(onRequest).toHaveBeenCalledWith("", "talking_points", undefined, 0));
+    });
+
     it("restores an unsent message only for its Article and clears it after sending", async () => {
         const user = userEvent.setup();
         const onRequest = vi.fn().mockResolvedValue(undefined);

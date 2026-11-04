@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEventHandler } from "react";
+import { useEditorSkillPreparation } from "../../editor/use-editor-skill-preparation.js";
+import { useImmediateSkillSend } from "./use-immediate-skill-send.js";
 import { type IntlShape } from "react-intl";
 import { KEY_BINDING_COMMAND, areKeyBindingsEqual, resolveKeyBindings, type AssistantCheckpointComposer, type AssistantSkillSummary, type GeneralSettings, type KeyBindingOverrides } from "@skladno/shared";
 import { getEventKeyBinding, type KeyBindingDispatcher } from "../../../key-bindings/dispatcher.js";
@@ -25,7 +27,7 @@ function getSlashQueryAt(guidance: string, caretOffset: number): { start: number
 function handleComposerKeyDown(event: Parameters<KeyboardEventHandler<HTMLDivElement>>[0], context: {
     quickActionsOpen: boolean;
     selectedPickerSkill: AssistantComposerSkill | undefined;
-    selectSkill: (skill: AssistantComposerSkill) => void;
+    selectSkill: (skill: AssistantComposerSkill, immediate?: boolean) => void;
     assistantSendMode: GeneralSettings["assistantSendMode"];
     shortcutOverrides: KeyBindingOverrides;
     send: () => void;
@@ -57,7 +59,7 @@ function handlePickerKeyDown(event: Parameters<KeyboardEventHandler<HTMLDivEleme
         return false;
 
     event.preventDefault();
-    context.selectSkill(context.selectedPickerSkill);
+    context.selectSkill(context.selectedPickerSkill, event.ctrlKey);
     return true;
 }
 
@@ -230,7 +232,8 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
     }
 
 
-    const selectSkill = useCallback((skill: AssistantComposerSkill) => {
+    const [immediateSend, setImmediateSend] = useState(false);
+    const selectSkill = useCallback((skill: AssistantComposerSkill, immediate = false) => {
         const insertionOffset = selectedSkill ? skillOffset : slashRange?.start ?? caretOffset;
         const guidanceWithoutSlash = slashRange
             ? `${guidance.slice(0, slashRange.start)}${guidance.slice(slashRange.end)}`
@@ -248,7 +251,10 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         setSlashRange(undefined);
         setSlashQuery("");
         setGuidance(nextGuidance);
+        setImmediateSend(immediate);
     }, [caretOffset, guidance, selectedSkill, skillOffset, slashRange]);
+
+    useEditorSkillPreparation(intl, selectSkill);
 
     const send = useCallback(() => {
         if (!canSend)
@@ -272,6 +278,8 @@ export function useAssistantComposer({ articleId, intl, state, onRequest, onCanc
         setRestoredTargetLanguage(undefined);
     }, [canSend, clearSelection, guidance, isTranslation, onRequest, recentSkillIds, restoredTargetLanguage,
         selectedDefinition, selectedSkill, skillOffset, translationLanguages]);
+
+    useImmediateSkillSend(immediateSend, setImmediateSend, send);
 
     useEffect(() => {
         const unregisterSend = dispatcher?.register(KEY_BINDING_COMMAND.SEND_EDITORIAL_REQUEST, send);
