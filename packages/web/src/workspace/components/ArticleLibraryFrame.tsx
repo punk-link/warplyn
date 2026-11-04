@@ -8,6 +8,8 @@ import { Button, Drawer, Field, IconButton } from "../../ui/primitives.js";
 import { WarplynIcon } from "../../ui/WarplynIcon.js";
 import { UpdateController } from "./UpdateController.js";
 import { enterLibraryResults, moveLibraryFocus } from "./article-library-focus.js";
+import { ArticleAttentionIndicator } from "./ArticleAttentionIndicator.js";
+import type { ArticleAttention } from "../state/article-attention.js";
 
 
 function getLanguageCode(language: string | undefined): string {
@@ -19,7 +21,8 @@ function getLanguageCode(language: string | undefined): string {
 type LibraryView = "articles" | "search" | "archive";
 
 
-function PinnedArticleShortcuts({ articles, selectedArticleId, drawerOpen, onSelect }: {
+function PinnedArticleShortcuts({ articles, selectedArticleId, drawerOpen, onSelect, attention }: {
+    attention?: Record<string, ArticleAttention>;
     articles: readonly ArticleSummary[];
     selectedArticleId: string | undefined;
     drawerOpen: boolean;
@@ -38,13 +41,14 @@ function PinnedArticleShortcuts({ articles, selectedArticleId, drawerOpen, onSel
             return <IconButton
                 key={article.id}
                 variant="quiet"
-                className="shrink-0 text-xs font-medium aria-current:border-brand"
+                className="relative shrink-0 text-xs font-medium aria-current:border-brand"
                 label={intl.formatMessage({ id: "navigation.openPinnedArticle" }, { articleTitle: title })}
                 title={title}
                 data-focus-area-entry={selected && !drawerOpen || undefined}
                 aria-current={selected ? "page" : undefined}
                 aria-pressed={selected}
                 onClick={(event) => onSelect(article.id, event.currentTarget)}>{initials || <ArticleIcon className="size-4" />}
+                <span className="absolute bottom-0 right-0"><ArticleAttentionIndicator attention={attention?.[article.id]} /></span>
             </IconButton>;
         })}
     </div>;
@@ -52,7 +56,8 @@ function PinnedArticleShortcuts({ articles, selectedArticleId, drawerOpen, onSel
 
 
 export function ArticleLibraryFrame({ data, navigation, search, overlay, children }: {
-    data: { collapsed: boolean; language: string | undefined; pinnedArticles: readonly ArticleSummary[]; selectedArticleId: string | undefined };
+    data: { collapsed: boolean; language: string | undefined; pinnedArticles: readonly ArticleSummary[];
+        selectedArticleId: string | undefined; attention?: Record<string, ArticleAttention> };
     navigation: {
         selectArticle: (articleId: string) => void;
         setCollapsed: (value: boolean) => void;
@@ -261,6 +266,7 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
             : <>{searchField}{children(undefined, close)}</>}
         {collapsed && (
             <PinnedArticleShortcuts
+                attention={data.attention}
                 articles={pinnedArticles}
                 selectedArticleId={selectedArticleId}
                 drawerOpen={Boolean(activeView)}

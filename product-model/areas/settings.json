@@ -52,7 +52,7 @@
                 "packages/server/src/presentation/routes/settings-route.ts",
                 "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"
             ],
-            "contract": "General Settings persists a System, Light, or Dark appearance preference; the shared resolver maps System to the current device appearance for visual application. It also supports the Interface locale, device-local or explicit IANA time zones, device-local date and time formatting, and explicit date and time formats. Revision History honors saved formatting while generated supporting UI text uses the Interface locale independently of Article language.",
+            "contract": "General Settings persists an Animations preference, enabled by default, that disables interface dimming, CSS animations, and transitions when off while respecting device reduced motion. General Settings persists a System, Light, or Dark appearance preference; the shared resolver maps System to the current device appearance for visual application. It also supports the Interface locale, device-local or explicit IANA time zones, device-local date and time formatting, and explicit date and time formats. Revision History honors saved formatting while generated supporting UI text uses the Interface locale independently of Article language.",
             "persistence": "app_settings.application-general"
         },
         {

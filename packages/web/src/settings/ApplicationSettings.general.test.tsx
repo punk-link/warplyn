@@ -18,6 +18,28 @@ import { resetApplicationSettingsTestEnvironment, settingsSnapshot } from "./App
 describe("ApplicationSettings general", () => {
     afterEach(resetApplicationSettingsTestEnvironment);
 
+    it("defaults animations on and applies the saved preference immediately", async () => {
+        const user = userEvent.setup();
+        const updateGeneralSettings = vi.fn().mockResolvedValue({ ...defaultGeneralSettings, animationsEnabled: false });
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
+            getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()),
+            updateGeneralSettings,
+            getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
+        } as unknown as EditorialWorkspaceClient;
+        render(<IntlProvider locale="en" messages={messages}><NotificationProvider>
+            <ApplicationSettings client={client} back={vi.fn()} />
+        </NotificationProvider>
+        </IntlProvider>);
+        const control = await screen.findByRole("switch", { name: "Animations" });
+        expect(control.getAttribute("aria-checked")).toBe("true");
+        await user.click(control);
+        await waitFor(() => expect(updateGeneralSettings).toHaveBeenCalledWith({ ...defaultGeneralSettings, animationsEnabled: false }));
+        expect(document.documentElement.dataset.animations).toBe("off");
+        await user.click(control);
+        await waitFor(() => expect(document.documentElement.dataset.animations).toBe("on"));
+    });
+
     // Product scenario: settings.default-assistant-edit-mode
     it("saves the default Assistant edit mode", async () => {
         const user = userEvent.setup();

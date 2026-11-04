@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import type { Article, ArticleRevisionSummary, GeneralSettings, PublishLimitProfile } from "@skladno/shared";
 import type { ArticleRevisionsState } from "../state/article-revisions-state.js";
 import type { ArticleWorkspaceState } from "../state/article-workspace-state.js";
@@ -53,12 +53,36 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
     const { view, article, workspace, editorial, revisions, generalSettings, checkingClaimCount, publishProfile, publishProfileLabel } = content;
     const { runFactCheck, runTranslation, rejectTranslation, onSelectionChange, assistantSelection } = actions;
     const { proposalWarningsDismissed, dismissProposalWarnings, openWrite, openAssistant, selectedTranslationLanguages, setSelectedTranslationLanguage } = navigation;
+    const reviewing = view === "proposal" && Boolean(editorial.review);
+    const staleSnapshot = useRef(editorial.proposalStale ? editorial.review : undefined);
+    useEffect(() => {
+        if (!editorial.proposalStale) {
+            staleSnapshot.current = undefined;
+            return;
+        }
+
+        if (staleSnapshot.current === editorial.review)
+            return;
+
+        staleSnapshot.current = editorial.review;
+        if (view === "proposal")
+            openWrite();
+    }, [editorial.review, editorial.proposalStale, view, openWrite]);
+    const editorSurface = useRef<HTMLDivElement>(null);
+    const previousView = useRef(view);
+    useEffect(() => {
+        if (previousView.current === "proposal" && view === "write")
+            editorSurface.current?.querySelector<HTMLElement>("[contenteditable=true]")?.focus({ preventScroll: true });
+
+        previousView.current = view;
+    }, [view]);
+    const panelView = view === "proposal" ? "write" : view;
     const renderPanel = (children: ReactNode) => (
         <section
-            data-focus-area={view === "write" ? undefined : "article-editor"}
+            data-focus-area={panelView === "write" && !reviewing ? undefined : "article-editor"}
             role="tabpanel"
-            id={`workspace-panel-${view}`}
-            aria-labelledby={`workspace-tab-${view}`}
+            id={`workspace-panel-${panelView}`}
+            aria-labelledby={`workspace-tab-${panelView}`}
             className={panelClassName(view)}>{children}
         </section>
     );
@@ -73,43 +97,46 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
 
     switch (view) {
         case "write":
-            return renderPanel(<ArticleEditorView
-                articleId={article.id}
-                content={workspace.content}
-                setContent={workspace.setContent}
-                onSelectionChange={onSelectionChange}
-                assistantSelection={assistantSelection}
-                language={article.language} />);
-
         case "proposal":
-            return renderPanel(
-                <ProposalReviewView
-                    data={{
-                        review: editorial.review,
-                        accepted: editorial.accepted,
-                        stale: editorial.proposalStale,
-                        decisions: editorial.decisions,
-                        summaries: editorial.summary.values,
-                        summaryState: editorial.summary.state,
-                        warningsDismissed: proposalWarningsDismissed,
-                        typography: editorial.base?.typography,
-                        edits: editorial.edits,
-                        generating: editorial.state === "streaming",
-                    }}
-                    actions={{
-                        setDecision: editorial.setDecision,
-                        setReplacement: editorial.edits.setReplacement,
-                        markAllAccepted: editorial.markAllAccepted,
-                        resetAllDecisions: editorial.resetAllDecisions,
-                        applyDecisions: editorial.applyDecisions,
-                        rejectAll: editorial.rejectAll,
-                        dismissProposal: editorial.dismissProposal,
-                        dismissWarnings: dismissProposalWarnings,
-                        openWrite,
-                        openAssistant,
-                    }}
-                />,
-            );
+            return renderPanel(<>
+                <div ref={editorSurface} hidden={reviewing} className={reviewing ? "hidden" : "min-h-0 flex-1 flex flex-col"}>
+                    <ArticleEditorView
+                        articleId={article.id}
+                        content={workspace.content}
+                        setContent={workspace.setContent}
+                        onSelectionChange={onSelectionChange}
+                        assistantSelection={assistantSelection}
+                        language={article.language} />
+                </div>
+                {reviewing && (
+                    <ProposalReviewView
+                        data={{
+                            review: editorial.proposalStale ? editorial.edits.effectiveReview : editorial.review,
+                            accepted: editorial.accepted,
+                            stale: editorial.proposalStale,
+                            decisions: editorial.decisions,
+                            summaries: editorial.summary.values,
+                            summaryState: editorial.summary.state,
+                            warningsDismissed: proposalWarningsDismissed,
+                            typography: editorial.base?.typography,
+                            edits: editorial.edits,
+                            generating: editorial.state === "streaming",
+                        }}
+                        actions={{
+                            setDecision: editorial.setDecision,
+                            setReplacement: editorial.edits.setReplacement,
+                            markAllAccepted: editorial.markAllAccepted,
+                            resetAllDecisions: editorial.resetAllDecisions,
+                            applyDecisions: editorial.applyDecisions,
+                            rejectAll: editorial.rejectAll,
+                            dismissProposal: editorial.dismissProposal,
+                            dismissWarnings: dismissProposalWarnings,
+                            openWrite,
+                            openAssistant,
+                        }}
+                    />
+                )}
+            </>);
 
         case "revisions":
             return renderPanel(<RevisionHistoryView

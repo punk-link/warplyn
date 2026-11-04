@@ -63,6 +63,7 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
         void client.getApplicationSettings().then((settings) => {
             setKeyBindingOverrides(settings.keyBindingOverrides);
             setTheme(settings.general.theme);
+            document.documentElement.dataset.animations = settings.general.animationsEnabled === false ? "off" : "on";
             setQuickStartConnectionReady(hasUsableAiConnection(settings));
         }).catch(() => setQuickStartConnectionReady(false));
     }, [client]);

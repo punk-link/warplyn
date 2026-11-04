@@ -92,19 +92,50 @@ async function createArticle(page: import("@playwright/test").Page, content = "O
 }
 
 
+test("an earlier suggestion preserves Author edits without interrupting current writing", async ({ page }) => {
+    await page.goto("/");
+    await createArticle(page, "It is important to note that retries need limits.");
+    await page.getByRole("button", { name: "Quick actions" }).click();
+    await page.getByRole("option", { name: "Shorten text" }).click();
+    await page.getByRole("button", { name: "Send editorial request" }).click();
+    await page.getByRole("button", { name: "Resume review" }).click();
+    await page.getByRole("textbox", { name: "Proposed text for change 1" }).fill("Keep this wording.");
+    await page.getByRole("button", { name: "Continue writing" }).click();
+    const editor = page.getByRole("textbox", { name: "Article draft" });
+    await editor.fill("New Article wording.");
+    await editor.press("Control+s");
+    await expect(page.getByRole("button", { name: "Resume review" })).toHaveCount(0);
+    await page.getByRole("button", { name: "Earlier suggestion", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Earlier suggestion" })).toBeVisible();
+    await expect(page.getByText("Your Article has changed since this suggestion was created.")).toBeVisible();
+    await expect(page.locator("ins")).toContainText("Keep this wording.");
+    await expect(page.getByRole("button", { name: "Apply", exact: true })).toHaveCount(0);
+    await expect(page.getByText("Check preserved details", { exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "Continue writing" }).click();
+    await expect(editor).toHaveText("New Article wording.");
+});
+
+
 test("Apply finishes an all-rejected Proposal without changing the Article", async ({ page }) => {
     await page.goto("/");
     await createArticle(page, "It is important to note that retries need limits.");
     await page.getByRole("button", { name: "Quick actions" }).click();
     await page.getByRole("option", { name: "Shorten text" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
-    await page.getByRole("tab", { name: "Proposals: Review" }).click();
+    await expect(page.getByRole("button", { name: "Resume review" })).toBeVisible();
+    await page.getByRole("tab", { name: "Write", exact: true }).focus();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Resume review" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("tab", { name: "Write", exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tabpanel")).toHaveAttribute("id", "workspace-panel-write");
     await page.getByRole("button", { name: "Set all decisions…" }).click();
     await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
     await expect(page.getByRole("button", { name: "Apply" })).toBeEnabled();
-    await page.getByRole("tab", { name: "Write", exact: true }).click();
+    await page.getByRole("button", { name: "Continue writing" }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toBeFocused();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
-    await page.getByRole("tab", { name: "Proposals: Review" }).click();
+    await page.getByRole("button", { name: "Resume review" }).click();
     await page.getByRole("button", { name: "Set all decisions…" }).click();
     await page.getByRole("menuitem", { name: "Reset all decisions" }).click();
     await expect(page.getByText("Pending", { exact: true })).toBeVisible();
@@ -113,7 +144,7 @@ test("Apply finishes an all-rejected Proposal without changing the Article", asy
     await page.getByRole("menuitem", { name: "Mark all rejected" }).click();
     await expect(page.getByText("Rejected", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Apply", exact: true })).toBeEnabled();
-    for (const width of [1440, 900]) {
+    for (const width of [1440, 900, 640]) {
         await page.setViewportSize({ width, height: 900 });
         const title = await page.getByRole("heading", { name: "Proposal Review" }).boundingBox();
         const decisions = await page.getByRole("button", { name: "Set all decisions…" }).boundingBox();
@@ -135,10 +166,9 @@ test("Shorten text stays a Proposal until acceptance and survives reload", async
     await page.getByRole("button", { name: "Quick actions" }).click();
     await page.getByRole("option", { name: "Shorten text" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
-    await expect(page.getByRole("tab", { name: "Proposals: Review" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Resume review" })).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
-    const proposalPattern = /Proposal/;
-    await page.getByRole("tab", { name: proposalPattern }).click();
+    await page.getByRole("button", { name: "Resume review" }).click();
     const proposed = page.getByRole("textbox", { name: "Proposed text for change 1" });
     const diffBackgroundPattern = /repeating-linear-gradient/;
     for (const panel of [page.locator("del").first(), page.locator("ins").first()])
@@ -173,7 +203,7 @@ test("Shorten text stays a Proposal until acceptance and survives reload", async
     await expect(proposed).toHaveValue("Retries need clear limits.");
     await page.getByRole("tab", { name: "Write", exact: true }).click();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
-    await page.getByRole("tab", { name: proposalPattern }).click();
+    await page.getByRole("button", { name: "Resume review" }).click();
     await page.getByRole("button", { name: "Set all decisions…" }).click();
     await page.getByRole("menuitem", { name: "Mark all accepted" }).click();
     await page.getByRole("button", { name: "Apply", exact: true }).click();
@@ -181,7 +211,7 @@ test("Shorten text stays a Proposal until acceptance and survives reload", async
     await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need clear limits.");
     await page.reload();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText("Retries need clear limits.");
-    await page.getByRole("tab", { name: proposalPattern }).click();
+    await page.getByRole("button", { name: "Resume review" }).click();
     await expect(page.getByRole("textbox", { name: "Proposed text for change 1" })).toHaveValue("Retries need clear limits.");
     await expect(page.getByRole("textbox", { name: "Proposed text for change 1" })).toBeDisabled();
     await expect(page.getByRole("button", { name: "Stacked", exact: true })).toHaveAttribute("aria-pressed", "true");
@@ -229,9 +259,8 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.getByRole("button", { name: "Quick actions" }).click();
     await page.getByRole("option", { name: "Improve flow and clarity" }).click();
     await page.getByRole("button", { name: "Send editorial request" }).click();
-    await expect(page.getByRole("tab", { name: "Proposals: Review" })).toBeVisible();
-    const proposalPattern = /Proposal/;
-    await page.getByRole("tab", { name: proposalPattern }).click();
+    await expect(page.getByRole("button", { name: "Resume review" })).toBeVisible();
+    await page.getByRole("button", { name: "Resume review" }).click();
     await expect(page.getByText("Improved fixture note.")).toBeVisible();
 
     await page.getByRole("button", { name: "Set all decisions…" }).click();

@@ -4,7 +4,7 @@ import { IntlProvider } from "react-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { messages } from "../../i18n/messages.js";
 import { getMessage } from "../../i18n/test-message.js";
-import { workspaceViews } from "../workspace-views.js";
+import { workspaceViewDefinitions } from "../workspace-views.js";
 import { WorkspaceTabBar } from "./WorkspaceTabBar.js";
 
 // Product scenario: workspace.navigation.keyboard-tabs
@@ -25,15 +25,15 @@ describe("WorkspaceTabBar", () => {
         </IntlProvider>);
 
         const write = screen.getByRole("tab", { name: getMessage("workspace.tabs.write") });
-        const proposal = screen.getByRole("tab", { name: `${getMessage("workspace.tabs.proposal")}: Review` });
         const factCheck = screen.getByRole("tab", { name: `${getMessage("workspace.tabs.factCheck")}: 2 findings` });
         const translations = screen.getByRole("tab", { name: `${getMessage("workspace.tabs.translations")}: Stale` });
 
         expect(write.getAttribute("aria-selected")).toBe("true");
-        expect(proposal.getAttribute("aria-controls")).toBe("workspace-panel-proposal");
-        expect(proposal.textContent).toContain("Review");
+        const proposalTabName = /Proposals/;
+        expect(screen.queryByRole("tab", { name: proposalTabName })).toBeNull();
         expect(factCheck.textContent).toContain("2");
-        expect(translations.textContent).toContain("Stale");
+        expect(translations.textContent).not.toContain("Stale");
+        expect(translations.querySelector(".bg-warning.motion-safe\\:animate-pulse")).not.toBeNull();
         expect(screen.getByRole("tab", { name: getMessage("workspace.tabs.revisions") }).textContent).toBe(getMessage("workspace.tabs.revisions"));
 
         write.focus();
@@ -57,14 +57,14 @@ describe("WorkspaceTabBar", () => {
         </IntlProvider>);
 
         const tabs = screen.getAllByRole("tab");
-        const expectedViews = workspaceViews;
+        const expectedViews = workspaceViewDefinitions.map(({ id }) => id);
 
         expect(tabs).toHaveLength(expectedViews.length);
         for (const [index, id] of expectedViews.entries()) {
             expect(tabs[index]!.id).toBe(`workspace-tab-${id}`);
             expect(tabs[index]!.getAttribute("aria-controls")).toBe(`workspace-panel-${id}`);
-            expect(tabs[index]!.getAttribute("aria-selected")).toBe(index === 3 ? "true" : "false");
-            expect(tabs[index]!.getAttribute("tabindex")).toBe(index === 3 ? "0" : "-1");
+            expect(tabs[index]!.getAttribute("aria-selected")).toBe(index === 2 ? "true" : "false");
+            expect(tabs[index]!.getAttribute("tabindex")).toBe(index === 2 ? "0" : "-1");
         }
 
         const factCheck = screen.getByRole("tab", { name: `${getMessage("workspace.tabs.factCheck")}: 1 finding` });
@@ -80,7 +80,6 @@ describe("WorkspaceTabBar", () => {
         expect(setView).toHaveBeenLastCalledWith("translations");
 
         expect(screen.getByRole("tab", { name: getMessage("workspace.tabs.revisions") }).textContent).toBe(getMessage("workspace.tabs.revisions"));
-        expect(screen.getByRole("tab", { name: `${getMessage("workspace.tabs.proposal")}: Stale` }).textContent).toContain("Stale");
         expect(screen.getByRole("tab", { name: `${getMessage("workspace.tabs.translations")}: Ready` }).textContent).toContain("Ready");
     });
 });

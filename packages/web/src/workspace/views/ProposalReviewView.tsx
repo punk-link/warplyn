@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useViewPreference } from "../state/useViewPreference.js";
 import { type TextProposal } from "@skladno/shared";
 import { Banner, Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
@@ -38,19 +38,32 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
         <div className="mx-auto w-full max-w-6xl px-4 py-3">
             <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
-                    <div>
-                        <h2 className="text-base font-semibold">{intl.formatMessage({ id: "views.proposalReview" })}</h2>
-                        <p className="mt-1 text-xs text-muted">{stale || !presentation.reliable
-                            ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length })
-                            : intl.formatMessage(
-                                { id: "views.proposalCounts" },
-                                { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected }
-                            )}
-                        </p>
+                    <div className="flex min-w-0 items-start gap-2">
+                        <IconButton
+                            variant="quiet"
+                            label={intl.formatMessage({ id: "views.continueWriting" })}
+                            title={intl.formatMessage({ id: "views.continueWriting" })}
+                            onClick={openWrite}>
+                            <ChevronRightIcon className="size-4 rotate-180" />
+                        </IconButton>
+                        <div>
+                            <h2 className="text-base font-semibold">
+                                {intl.formatMessage({ id: stale ? "views.earlierSuggestion" : "views.proposalReview" })}
+                            </h2>
+                            <p className="mt-1 text-xs text-muted">{stale || !presentation.reliable
+                                ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length })
+                                : intl.formatMessage(
+                                    { id: "views.proposalCounts" },
+                                    { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected }
+                                )}
+                            </p>
+                        </div>
                     </div>
-                    <Button variant="quiet" disabled={!stale && bulkBlocked} onClick={dismissProposal}>
-                        {intl.formatMessage({ id: "views.dismissProposal" })}
-                    </Button>
+                    {!stale && (
+                        <Button variant="quiet" disabled={bulkBlocked} onClick={dismissProposal}>
+                            {intl.formatMessage({ id: "views.dismissProposal" })}
+                        </Button>
+                    )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     {presentation.changes.length > 0 && (
@@ -78,7 +91,7 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
                             </IconButton>
                         </div>
                     )}
-                    {presentation.changes.length > 1 && (
+                    {!stale && presentation.changes.length > 1 && (
                         <nav className="flex gap-2" aria-label={intl.formatMessage({ id: "views.changeNavigation" })}>
                             <IconButton
                                 variant="quiet"
@@ -96,8 +109,7 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
                     )}
                     <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
                         {stale ? <>
-                            <Button variant="secondary" onClick={openWrite}>{intl.formatMessage({ id: "views.reviewCurrentArticle" })}</Button>
-                            <Button variant="secondary" onClick={openAssistant}>{intl.formatMessage({ id: "views.regenerateInAssistant" })}</Button>
+                            <Button variant="secondary" onClick={openAssistant}>{intl.formatMessage({ id: "views.updateSuggestion" })}</Button>
                         </> : <>
                             <ProposalDecisionMenu
                                 disabled={disabled}
@@ -111,7 +123,7 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
                     </div>
                 </div>
             </div>
-            {stale && <p role="alert" className="mt-2 text-xs text-warning">{intl.formatMessage({ id: "views.proposalStale" })}</p>}
+            {stale && <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "views.earlierSuggestionHelp" })}</p>}
         </div>
     </header>;
 }
@@ -151,6 +163,10 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
         dismissWarnings, openWrite, openAssistant } = actions;
     const intl = useIntl();
     const cards = useRef<(HTMLElement | null)[]>([]);
+    const reviewRegion = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        reviewRegion.current?.focus({ preventScroll: true });
+    }, []);
     const [displayMode, setDisplayMode] = useViewPreference<"side-by-side" | "stacked">("proposal.layout", "side-by-side", ["side-by-side", "stacked"]);
     const [highlightChanges, setHighlightChanges] = useViewPreference("proposal.highlight-changes", false, [false, true]);
     const [currentChange, setCurrentChange] = useState<number>();
@@ -175,7 +191,13 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
         (!presentation.reliable && counts.accepted > 0 && counts.accepted !== presentation.changes.length);
     const allResolved = counts.pending === 0 && presentation.changes.length > 0;
 
-    return <div className="flex min-h-0 flex-1 flex-col">
+    return <div
+        ref={reviewRegion}
+        tabIndex={-1}
+        role="region"
+        data-focus-area-native-tab
+        aria-label={intl.formatMessage({ id: stale ? "views.earlierSuggestion" : "views.proposalReview" })}
+        className="flex min-h-0 flex-1 flex-col">
         <ProposalReviewHeader
             presentation={presentation}
             counts={counts}
@@ -199,7 +221,7 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
             "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
             <div className="mx-auto w-full max-w-6xl p-4 pb-5">
                 {accepted && <Status className="mb-4" label={intl.formatMessage({ id: "views.proposalAccepted" })} tone="success" />}
-                <ProposalWarnings warnings={presentation.warnings} dismissed={warningsDismissed} dismiss={dismissWarnings} />
+                {!stale && <ProposalWarnings warnings={presentation.warnings} dismissed={warningsDismissed} dismiss={dismissWarnings} />}
                 <ProposalFallbackDiff
                     review={review}
                     reliable={presentation.reliable}
