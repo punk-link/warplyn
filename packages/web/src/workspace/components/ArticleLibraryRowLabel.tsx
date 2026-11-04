@@ -1,9 +1,13 @@
 import type { ArticleSummary } from "@skladno/shared";
 import { useIntl } from "react-intl";
 import { ArticleIcon, ChevronRightIcon } from "../../ui/icons.js";
+import { ArticleAttentionIndicator } from "./ArticleAttentionIndicator.js";
+import type { ArticleAttention } from "../state/article-attention.js";
 
 
-export function ArticleLibraryRowLabel({ article, child, childCount, expanded }: { article: ArticleSummary; child: boolean; childCount: number; expanded: boolean }) {
+export function ArticleLibraryRowLabel({ article, child, childCount, expanded, attention }: {
+    article: ArticleSummary; child: boolean; childCount: number; expanded: boolean; attention?: ArticleAttention;
+}) {
     const intl = useIntl();
     const title = article.title.trim() || intl.formatMessage({ id: "article.defaultTitle" });
     const chevronClass = expanded ? "rotate-90" : "";
@@ -13,7 +17,10 @@ export function ArticleLibraryRowLabel({ article, child, childCount, expanded }:
             : <ArticleIcon className="mt-0.5 size-4 shrink-0 text-muted" />}
         <span className="min-w-0 flex-1">
             <span className={`block truncate font-medium ${child ? "text-xs leading-4" : "text-sm leading-5"}`} title={title}>{title}</span>
-            <span className="mt-0.5 block text-xs leading-4 text-muted">{[article.language, formatUpdatedAt(article.updatedAt, intl.formatMessage)].filter(Boolean).join(" · ")}</span>
+            <span className="mt-0.5 flex items-center gap-1 text-xs leading-4 text-muted">
+                <ArticleAttentionIndicator attention={attention} />
+                <span>{[article.language, formatUpdatedAt(article.updatedAt, intl.formatMessage)].filter(Boolean).join(" · ")}</span>
+            </span>
         </span>
     </span>;
 }

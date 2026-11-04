@@ -11,6 +11,7 @@ import type { StreamedAssistantMessage } from "../../state/assistant-messages-st
 
 
 interface AssistantTimelineData {
+    currentRevisionId?: string;
     state: "idle" | "streaming" | "error";
     message: string;
     errorDetails?: string;
@@ -198,7 +199,9 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
         {assistantMessages?.filter((item) => item !== greeting).map((item) => (
             <AssistantTimelineMessage
                 key={item.id}
+                trackRead
                 message={item}
+                earlierSuggestion={Boolean(data.currentRevisionId && item.baseRevisionId && item.baseRevisionId !== data.currentRevisionId)}
                 factCheckClaims={item === completedFactCheck ? factCheckClaims : undefined}
                 openView={openView}
                 openSkillFolder={openSkillFolder}

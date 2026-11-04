@@ -58,8 +58,6 @@ test("packaged typography works without AI and recovers its Proposal after resta
         app = undefined;
         app = await launchPackaged(root);
         page = app.page;
-        const proposalsNamePattern = /Proposals:/;
-        await page.getByRole("tab", { name: proposalsNamePattern }).click();
         await expect(page.getByText("Typography rules: Ellipsis: …", { exact: true })).toBeVisible();
         const proposed = page.getByRole("textbox", { name: "Proposed text for change 1" });
         await proposed.fill("Wait… please.");
@@ -75,7 +73,7 @@ test("packaged typography works without AI and recovers its Proposal after resta
         app = await launchPackaged(root);
         page = app.page;
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Wait… please.");
-        await page.getByRole("tab", { name: "Proposals", exact: true }).click();
+        await page.getByRole("button", { name: "Resume review" }).click();
         const acceptedInput = page.getByRole("textbox", { name: "Proposed text for change 1" });
         await expect(acceptedInput).toHaveValue("Wait… please.");
         await expect(acceptedInput).toBeDisabled();

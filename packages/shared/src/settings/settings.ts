@@ -77,6 +77,7 @@ export function isTimeZonePreference(value: unknown): value is TimeZonePreferenc
 
 
 export interface GeneralSettings {
+    animationsEnabled: boolean;
     theme: ThemePreference;
     interfaceLocale: InterfaceLocale;
     dateFormat: DateFormatPreference;
@@ -191,6 +192,7 @@ export interface ApplicationSettingsSnapshot {
 
 
 export const defaultGeneralSettings: GeneralSettings = {
+    animationsEnabled: true,
     theme: "system",
     interfaceLocale: defaultInterfaceLocale,
     dateFormat: "system",

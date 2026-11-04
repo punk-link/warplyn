@@ -1,6 +1,7 @@
 import type { Article, ArticleDraft, ArticleRevision, ArticleSummary } from "@skladno/shared";
 
 import { parseObject, type Row } from "./repository-utils.js";
+import { articleAttentionColumns } from "./article-attention-columns.js";
 
 
 export function mapRevisionFromRow(row: Row): ArticleRevision {
@@ -44,7 +45,15 @@ export function mapArticleSummaryFromRow(row: Row): ArticleSummary {
         version: Number(row.draft_version), updatedAt: String(row.draft_updated_at),
     } : undefined;
 
-    return { ...mapArticleMetadataFromRow(row), ...(draft ? { draft } : {}) };
+    const review = Boolean(row.attention_review);
+    const translation = Boolean(row.attention_translation);
+    const findings = Boolean(row.attention_findings);
+    const failed = Boolean(row.attention_failed);
+    const latestResponse = typeof row.attention_response === "string" ? row.attention_response : undefined;
+    const attention = review || translation || findings || failed || latestResponse
+        ? { review, translation, findings, failed, ...(latestResponse ? { latestResponse } : {}) } : undefined;
+
+    return { ...mapArticleMetadataFromRow(row), ...(draft ? { draft } : {}), ...(attention ? { attention } : {}) };
 }
 
 
@@ -76,4 +85,4 @@ const articleJoins = "FROM articles a JOIN article_revisions r ON r.id = a.curre
 
 export const articleSelect = `SELECT ${articleMetadataColumns}, r.*, g.description generated_description, d.content draft_content,
     ${draftMetadataColumns} ${articleJoins} LEFT JOIN generated_revision_descriptions g ON g.revision_id = r.id`;
-export const articleSummarySelect = `SELECT ${articleMetadataColumns}, r.id, ${draftMetadataColumns} ${articleJoins}`;
+export const articleSummarySelect = `SELECT ${articleMetadataColumns}, r.id, ${draftMetadataColumns}, ${articleAttentionColumns} ${articleJoins}`;

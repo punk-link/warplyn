@@ -75,6 +75,7 @@ export function useAssistantMessages(client: EditorialWorkspaceClient, workspace
     }, [article, checkpointPreview, clearStream, client, intl, notify, notifyError, store, workspace]);
 
     return {
+        libraryActivity: { stateByArticle: store.stateByArticle, messagesByArticle: store.messagesByArticle },
         ...selectedMessageState(store, article?.id),
         setClaimSelected,
         request, retry, checkpointPreview, previewCheckpoint, restoreCheckpoint, closeCheckpoint: () => setCheckpointPreview(undefined), restoredComposer,

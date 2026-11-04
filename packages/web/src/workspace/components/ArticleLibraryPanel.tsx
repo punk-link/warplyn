@@ -9,6 +9,7 @@ import { ArticleLibraryNavigation } from "./ArticleLibraryNavigation.js";
 import { ArticleLibraryRowLabel } from "./ArticleLibraryRowLabel.js";
 import { ArticleLibraryRowMenu } from "./ArticleLibraryRowMenu.js";
 import type { ArticleFilesState } from "../state/article-files-state.js";
+import { combineArticleAttention, type ArticleAttention } from "../state/article-attention.js";
 
 
 function groupArticleChildren(articles: readonly ArticleSummary[]): Map<string, ArticleSummary[]> {
@@ -27,6 +28,7 @@ function groupArticleChildren(articles: readonly ArticleSummary[]): Map<string, 
 
 
 interface ArticleLibraryData {
+    attention?: Record<string, ArticleAttention>;
     articles: ArticleSummary[];
     selectedArticleId: string | undefined;
     collapsed: boolean;
@@ -203,6 +205,8 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                 aria-expanded={childCount > 0 ? expanded : undefined}
                 tabIndex={hidden ? -1 : undefined}>
                 <ArticleLibraryRowLabel
+                    attention={combineArticleAttention([data.attention?.[article.id],
+                        ...(!expanded ? getChildArticles(article.id).map((item) => data.attention?.[item.id]) : [])])}
                     article={article}
                     child={child}
                     childCount={childCount}
@@ -250,7 +254,10 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
 
     return <>
         <ArticleLibraryFrame
-            data={{ collapsed, language, pinnedArticles: pinnedRoots, selectedArticleId }}
+            data={{ collapsed, language, pinnedArticles: pinnedRoots, selectedArticleId,
+                attention: Object.fromEntries(roots.map((article) => [article.id, combineArticleAttention([
+                    data.attention?.[article.id], ...getChildArticles(article.id).map((item) => data.attention?.[item.id]),
+                ])])) }}
             navigation={navigation}
             search={{ query, setQuery }}
             overlay={{ menuRef, modalOpen: Boolean(deleteTarget), dismissMenu: () => setMenuArticleId(undefined) }}>

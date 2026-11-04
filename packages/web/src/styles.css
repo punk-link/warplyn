@@ -88,6 +88,12 @@
         background-color: var(--color-brand-soft);
     }
 
+    html[data-animations="off"] *,
+    html[data-animations="off"] ::before,
+    html[data-animations="off"] ::after {
+        @apply !scroll-auto !duration-0 !animate-none;
+    }
+
     @media (prefers-reduced-motion: reduce) {
         *,
         ::before,

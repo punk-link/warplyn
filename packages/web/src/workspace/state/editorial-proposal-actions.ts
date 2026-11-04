@@ -308,6 +308,7 @@ export function useProposalActions({ client, workspace, openWrite, intl, proposa
         setProposal("");
         setBase(undefined);
         setDecisions({});
+        openWrite();
     };
     const proposeFactCorrections = (findings: FactCheck["findings"]) => {
         const authorContext = intl.formatMessage({ id: "assistant.factCheckCorrectionPrompt" }, { findings: findings.map((finding) => `- ${finding.claim}\n  ${finding.rationale}`).join("\n") });

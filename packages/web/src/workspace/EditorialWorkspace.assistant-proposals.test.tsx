@@ -151,7 +151,7 @@ describe("Editorial Workspace assistant", () => {
         expect(screen.getByText("Accepted")).toBeTruthy();
         expect(screen.getByText("Rejected")).toBeTruthy();
         expect(screen.getByRole("button", { name: getMessage("views.setAllDecisions") }).hasAttribute("disabled")).toBe(true);
-        expect(screen.getByRole("tab", { name: getMessage("workspace.tabs.proposal") })).toBeTruthy();
+        expect(screen.getByRole("tab", { name: getMessage("workspace.tabs.write") }).getAttribute("aria-selected")).toBe("true");
     });
 
 
@@ -186,8 +186,16 @@ describe("Editorial Workspace assistant", () => {
 
         render(<App client={client} />);
 
-        expect(await screen.findByText("This proposal is stale because the article has a newer revision. Generate a new proposal before accepting changes.")).toBeTruthy();
+        await screen.findByRole("textbox", { name: "Article draft" });
+        expect(screen.queryByRole("button", { name: "Resume review" })).toBeNull();
+        await userEvent.setup().click(await screen.findByRole("button", { name: "Earlier suggestion" }));
+        expect(await screen.findByText(getMessage("views.earlierSuggestionHelp"))).toBeTruthy();
         expect(screen.queryByText("This proposal was accepted. Its decisions are read-only.")).toBeNull();
+        await userEvent.setup().click(screen.getByRole("button", { name: "Update suggestion" }));
+        await waitFor(() => expect(client.streamAssistantRequest).toHaveBeenCalledWith(articleWithDifferentAcceptance.id,
+            expect.objectContaining({ authorMessage: getMessage("views.updateSuggestionPrompt"),
+                scope: { kind: "article", baseRevisionId: "accepted-revision" } }), expect.any(Function), expect.any(AbortSignal)));
+        expect(client.acceptProposal).not.toHaveBeenCalled();
     });
 
 

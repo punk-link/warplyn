@@ -33,6 +33,57 @@ function proposalClient() {
 describe("Author edits in Proposal Review", () => {
     afterEach(resetWorkspaceTestEnvironment);
 
+    it("leaves a review when its Revision changes and preserves Author wording in the earlier suggestion", async () => {
+        Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440, writable: true });
+        const client = proposalClient();
+        const [article] = await client.listArticles();
+        if (!article)
+            throw new Error("Missing Article fixture");
+
+        article.draft = { articleId: article.id, baseRevisionId: article.currentRevisionId, content: "New Article wording",
+            version: 1, updatedAt: article.updatedAt };
+        client.saveArticleDraft = vi.fn().mockResolvedValue(article.draft);
+        client.saveArticleRevision = vi.fn().mockResolvedValue({ id: "new-revision", articleId: "one",
+            content: "New Article wording", createdAt: "2026-01-02T00:00:00.000Z" });
+        const user = userEvent.setup();
+        render(<App client={client} />);
+        const proposed = await screen.findByRole("textbox", { name: "Proposed text for change 1" });
+        fireEvent.change(proposed, { target: { value: "Retained Author wording" } });
+        await user.click(screen.getByRole("button", { name: "Save revision" }));
+        await screen.findByRole("textbox", { name: "Article draft" });
+        expect(screen.queryByRole("button", { name: "Resume review" })).toBeNull();
+        await user.click(await screen.findByRole("button", { name: "Earlier suggestion" }));
+        await screen.findByRole("heading", { name: "Earlier suggestion" });
+        const retainedWording = /Retained Author wording/;
+        expect(screen.getByText(retainedWording)).toBeVisible();
+        expect(screen.queryByRole("button", { name: "Apply" })).toBeNull();
+        await user.click(screen.getByRole("button", { name: "Continue writing" }));
+        expect(screen.getByRole("textbox", { name: "Article draft" })).toHaveTextContent("New Article wording");
+    });
+
+    it("reviews inside Write and resumes without replacing the editor or losing decisions", async () => {
+        const client = proposalClient();
+        const user = userEvent.setup();
+        const mounted = render(<App client={client} />);
+        const proposed = await screen.findByRole("textbox", { name: "Proposed text for change 1" });
+        const editor = mounted.container.querySelector("[contenteditable=true]");
+        expect(screen.getByRole("tab", { name: "Write" })).toHaveAttribute("aria-selected", "true");
+        expect(screen.getByRole("tabpanel").id).toBe("workspace-panel-write");
+        expect(screen.getByRole("region", { name: "Proposal Review" })).toHaveFocus();
+        fireEvent.change(proposed, { target: { value: "Author wording" } });
+        await user.click(within(screen.getAllByRole("article")[0]!).getByRole("button", { name: "Accept" }));
+        await user.click(screen.getByRole("button", { name: "Continue writing" }));
+        expect(screen.getByRole("textbox", { name: "Article draft" })).toBe(editor);
+        expect(editor).toHaveFocus();
+        await user.click(screen.getByRole("button", { name: "Resume review" }));
+        expect(screen.getByRole("textbox", { name: "Proposed text for change 1" })).toHaveValue("Author wording");
+        expect(screen.getByText("Accepted", { exact: true })).toBeVisible();
+        expect(client.acceptProposal).not.toHaveBeenCalled();
+        await user.click(screen.getByRole("button", { name: "Dismiss proposal" }));
+        expect(screen.getByRole("textbox", { name: "Article draft" })).toBe(editor);
+        expect(screen.queryByRole("button", { name: "Resume review" })).toBeNull();
+    });
+
     // Product scenarios: workspace.proposal.edit-before-apply, workspace.proposal.accepted-restart
     it("applies only accepted edits and recovers their exact text after restart", async () => {
         const client = proposalClient();
@@ -60,7 +111,7 @@ describe("Author edits in Proposal Review", () => {
         expect(screen.queryByRole("heading", { name: "Proposal Review" })).toBeNull();
         mounted.unmount();
         render(<App client={client} />);
-        await user.click(await screen.findByRole("tab", { name: "Proposals" }));
+        await user.click(await screen.findByRole("button", { name: "Resume review" }));
         await screen.findByText("This proposal was accepted. Its decisions are read-only.");
         expect(screen.getByRole("textbox", { name: "Proposed text for change 1" })).toHaveValue("Author first\nSecond line");
         expect(screen.getByRole("textbox", { name: "Proposed text for change 1" })).toBeDisabled();

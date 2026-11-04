@@ -85,19 +85,18 @@ describe("ProposalReviewView", () => {
                 openAssistant={vi.fn()} />
         </IntlProvider>);
 
-        const warning = screen.getByText("This proposal is stale because the article has a newer revision. Generate a new proposal before accepting changes.");
-        const header = screen.getByRole("heading", { name: getMessage("views.proposalReview") }).closest("header");
+        const warning = screen.getByText(getMessage("views.earlierSuggestionHelp"));
+        const header = screen.getByRole("heading", { name: getMessage("views.earlierSuggestion") }).closest("header");
 
         expect(header?.contains(warning)).toBe(true);
         expect(warning.parentElement?.lastElementChild).toBe(warning);
-        expect(warning.previousElementSibling?.contains(screen.getByRole("button", { name: getMessage("views.dismissProposal") }))).toBe(true);
         expect(screen.getByText("Complete proposal · 2 changes")).toBeTruthy();
         expect(screen.queryByRole("button", { name: getMessage("views.setAllDecisions") })).toBeNull();
         expect(screen.queryByRole("button", { name: getMessage("views.applyProposal") })).toBeNull();
-        expect(header?.contains(screen.getByRole("button", { name: getMessage("views.reviewCurrentArticle") }))).toBe(true);
-        expect(header?.contains(screen.getByRole("button", { name: getMessage("views.regenerateInAssistant") }))).toBe(true);
-        fireEvent.click(screen.getByRole("button", { name: getMessage("views.dismissProposal") }));
-        expect(dismissProposal).toHaveBeenCalledOnce();
+        expect(header?.contains(screen.getByRole("button", { name: getMessage("views.updateSuggestion") }))).toBe(true);
+        expect(screen.queryByRole("button", { name: getMessage("views.dismissProposal") })).toBeNull();
+        expect(screen.queryByText(getMessage("views.preservationWarnings"))).toBeNull();
+        expect(screen.getByRole("button", { name: getMessage("views.continueWriting") })).toBeTruthy();
     });
 
     it("uses labelled chevron buttons to navigate between changes", () => {

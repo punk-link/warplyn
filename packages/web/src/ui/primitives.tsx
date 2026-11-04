@@ -7,9 +7,16 @@ export type ControlState = "default" | "loading" | "success" | "warning" | "erro
 export type Tone = "info" | "success" | "warning" | "error";
 
 
-export function ActivityIndicator({ className = "", size = "default" }: { className?: string; size?: "small" | "default" }) {
+export function ActivityIndicator({ className = "", size = "default", tone = "default" }: {
+    className?: string;
+    size?: "small" | "default";
+    tone?: "default" | "warning";
+}) {
     const sizeClass = size === "small" ? "size-1.5" : "size-2";
-    return <span aria-hidden="true" className={joinClassNames(sizeClass, "shrink-0 rounded-full bg-brand shadow-status-glow motion-safe:animate-pulse", className)} />;
+    const toneClass = tone === "warning" ? "bg-warning" : "bg-brand shadow-status-glow";
+    return <span
+        aria-hidden="true"
+        className={joinClassNames(sizeClass, "shrink-0 rounded-full motion-safe:animate-pulse", toneClass, className)} />;
 }
 
 

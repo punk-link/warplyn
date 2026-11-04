@@ -17,6 +17,7 @@ function isAssistantRequestTimeout(value: unknown): value is GeneralSettings["as
 
 function hasInvalidGeneralPreferences(candidate: Partial<GeneralSettings>): boolean {
     return (candidate.theme !== undefined && !isThemePreference(candidate.theme)) ||
+        (candidate.animationsEnabled !== undefined && typeof candidate.animationsEnabled !== "boolean") ||
         (candidate.dateFormat !== undefined && !isDateFormatPreference(candidate.dateFormat)) ||
         (candidate.timeFormat !== undefined && !isTimeFormatPreference(candidate.timeFormat)) ||
         (candidate.timeZone !== undefined && !isTimeZonePreference(candidate.timeZone)) ||
@@ -63,6 +64,7 @@ export function prepareGeneralSettings(value: unknown, rejectInvalidPreferences 
         ...defaultGeneralSettings,
         ...candidate,
         ...normalizeGeneralPreferences(candidate),
+        animationsEnabled: typeof candidate.animationsEnabled === "boolean" ? candidate.animationsEnabled : true,
         defaultTranslationLanguages: normalizeTranslationLanguages(candidate),
     });
 }

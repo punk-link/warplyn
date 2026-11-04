@@ -43,6 +43,7 @@ interface ArticleWorkspaceActions {
     shortcutOverrides?: KeyBindingOverrides;
     onSelectionChange?: (value: AssistantSelectionSnapshot | undefined) => void;
     assistantSelection?: string;
+    updateSuggestion?: () => void;
 }
 
 
@@ -139,10 +140,20 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
             </Banner>
         )}
         <WorkspaceTabBar
-            view={layout.view}
+            view={layout.view === "proposal" ? "write" : layout.view}
             setView={layout.setView}
             badges={badges}
-            shortcutOverrides={shortcutOverrides} />
+            shortcutOverrides={shortcutOverrides}
+            action={layout.view === "write" && editorial.review && !editorial.proposalStale && (
+                <Button
+                    data-focus-area="workspace-views"
+                    data-focus-area-native-tab
+                    className="ml-auto mr-3"
+                    variant="quiet"
+                    onClick={() => layout.setView("proposal")}>
+                    {intl.formatMessage({ id: "views.resumeReview" })}
+                </Button>
+            )} />
         <WorkspaceViewRouter
             content={{
                 view: layout.view, article, workspace, editorial, revisions, generalSettings, checkingClaimCount,
@@ -154,6 +165,7 @@ export function ArticleWorkspace({ state, actions }: { state: ArticleWorkspaceVi
                 proposalWarningsDismissed: layout.proposalWarningsDismissed, dismissProposalWarnings: () => layout.setProposalWarningsDismissed(true), openWrite: () => layout.setView("write"), openAssistant: () => {
                     layout.setAssistantCollapsed(false);
                     layout.setView("write");
+                    actions.updateSuggestion?.();
                 }, selectedTranslationLanguages: layout.selectedTranslationLanguages, setSelectedTranslationLanguage: layout.setSelectedTranslationLanguage
             }} />
         <ArticleStatusBar

@@ -10,6 +10,7 @@ export const workspaceViews = [
     "translations",
 ] as const;
 
+/** Includes the persisted Proposal Review mode of Write for existing routes and shortcuts. */
 export type WorkspaceView = typeof workspaceViews[number];
 
 
@@ -22,7 +23,6 @@ export interface WorkspaceViewDefinition {
 
 export const workspaceViewDefinitions: readonly WorkspaceViewDefinition[] = [
     { id: "write", label: "workspace.tabs.write", command: KEY_BINDING_COMMAND.VIEW_WRITE },
-    { id: "proposal", label: "workspace.tabs.proposal", command: KEY_BINDING_COMMAND.VIEW_PROPOSAL },
     { id: "revisions", label: "workspace.tabs.revisions", command: KEY_BINDING_COMMAND.VIEW_REVISIONS },
     { id: "fact-check", label: "workspace.tabs.factCheck", command: KEY_BINDING_COMMAND.VIEW_FACT_CHECK },
     { id: "translations", label: "workspace.tabs.translations", command: KEY_BINDING_COMMAND.VIEW_TRANSLATIONS },

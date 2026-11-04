@@ -22,6 +22,10 @@ test("result compatibility preserves semantic status and safe error parameters",
 
 
 test("Settings validation returns failures before persistence and retains tolerant reads", () => {
+    assert.equal(unwrapApplicationResult(prepareGeneralSettings({})).animationsEnabled, true);
+    assert.equal(unwrapApplicationResult(prepareGeneralSettings({ animationsEnabled: false })).animationsEnabled, false);
+    assert.equal(prepareGeneralSettings({ animationsEnabled: "off" }).ok, false);
+    assert.equal(unwrapApplicationResult(prepareGeneralSettings({ animationsEnabled: "off" }, false)).animationsEnabled, true);
     assert.equal(prepareEnvironmentVariableName("not-valid").ok, false);
     assert.equal(prepareGeneralSettings({ theme: "unknown" }).ok, false);
     assert.equal(prepareGeneralSettings({ theme: "unknown" }, false).ok, true);

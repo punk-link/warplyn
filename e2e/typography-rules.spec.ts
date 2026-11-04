@@ -77,8 +77,6 @@ test("typography rules rebuild automatically and corrections retain provenance a
     await page.getByRole("button", { name: "Review Proposal", exact: true }).click();
     await expect(page.getByText("Typography rules: Ellipsis: …", { exact: true })).toBeVisible();
     await page.reload();
-    const proposalsNamePattern = /Proposals:/;
-    await page.getByRole("tab", { name: proposalsNamePattern }).click();
     await expect(page.getByText("Typography rules: Ellipsis: …", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Set all decisions…" }).click();
     await page.getByRole("menuitem", { name: "Mark all accepted" }).click();

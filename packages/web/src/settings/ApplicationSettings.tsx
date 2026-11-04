@@ -44,6 +44,7 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
         void client.getApplicationSettings().then((loaded) => {
             setSettings(loaded);
             setGeneral(loaded.general);
+            document.documentElement.dataset.animations = loaded.general.animationsEnabled === false ? "off" : "on";
             setPreferences(loaded.modelPreferences);
             setAppModel(loaded.appModel);
             setBackupPolicy(loaded.backupPolicy);
@@ -79,6 +80,7 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
         setStatus(intl.formatMessage({ id: "settings.saving" }));
         try {
             await client.updateGeneralSettings(next);
+            document.documentElement.dataset.animations = next.animationsEnabled ? "on" : "off";
             setStatus(intl.formatMessage({ id: "settings.saved" }));
         } catch {
             setStatus(intl.formatMessage({ id: "settings.saveFailed" }));
