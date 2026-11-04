@@ -52,6 +52,8 @@ it("opens using Shift+F10 without invoking an edit", async () => {
     await waitFor(() => expect(root.textContent).toBe("Paragraph"));
     fireEvent.keyDown(root, { key: "F10", shiftKey: true });
     expect(await view.findByRole("menu", { name: "Editing actions" })).toBeTruthy();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(view.getByRole("menu", { name: "Editing actions" }).contains(document.activeElement)).toBe(true);
     expect(setContent).not.toHaveBeenCalled();
 });
 
@@ -79,7 +81,13 @@ it("preserves selected text and orders built-in Skills before alphabetical Autho
     const view = renderLocalized(<EditorSkillContext.Provider value={{ skills, prepare, refresh }}>
         <ArticleEditorContextMenu editor={editor} openLink={vi.fn()} />
     </EditorSkillContext.Provider>);
+    editor.update(() => $getRoot().selectStart());
     fireEvent.contextMenu(root);
+    expect(view.getByRole("menuitem", { name: "Skills" }).hasAttribute("disabled")).toBe(true);
+    fireEvent.keyDown(view.getByRole("menu"), { key: "Escape" });
+    editor.update(() => $getRoot().select(0, $getRoot().getChildrenSize()));
+    fireEvent.contextMenu(root);
+    await new Promise((resolve) => setTimeout(resolve, 0));
     fireEvent.click(await view.findByRole("menuitem", { name: "Skills" }));
     const entries = view.getAllByRole("menuitem");
     expect(entries.map((entry) => entry.textContent)).toEqual(["First", "Zulu"]);
@@ -91,7 +99,7 @@ it("preserves selected text and orders built-in Skills before alphabetical Autho
     fireEvent.keyDown(trigger, { key: "ArrowRight" });
     fireEvent.click(view.getByRole("menuitem", { name: "Zulu" }));
     expect(prepare).toHaveBeenCalledWith(skills[0], false);
-    expect(refresh).toHaveBeenCalledOnce();
+    expect(refresh).toHaveBeenCalledTimes(2);
     expect(root.textContent).toBe("Selected words");
     view.unmount();
     editor.setRootElement(null);

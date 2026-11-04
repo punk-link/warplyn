@@ -66,7 +66,7 @@ export function ArticleEditorContextMenu({ editor, openLink }: { editor: Lexical
             if (event instanceof KeyboardEvent && event.key !== "ContextMenu" && !(event.shiftKey && event.key === "F10"))
                 return;
 
-            editor.getEditorState().read(() => {
+            editor.read(() => {
                 selection.current = $getSelection()?.clone() ?? null;
             });
 
