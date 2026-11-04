@@ -55,7 +55,11 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
                 const badge = badges[item.id];
                 const label = intl.formatMessage({ id: item.label });
                 const accessibleName = badge ? `${label}: ${badge.accessibleLabel}` : label;
-                const badgeClasses = { error: "border-danger bg-danger-soft text-danger", warning: "border-warning bg-warning-soft text-warning", default: "border-border-strong bg-surface text-ink" };
+                const badgeClasses = {
+                    error: "border-danger bg-danger-soft text-danger",
+                    warning: "border-warning bg-warning-soft text-warning",
+                    default: "border-border-strong bg-surface text-ink"
+                };
                 const dotClasses = { warning: "bg-warning", error: "bg-danger", default: "bg-brand" };
                 const badgeClassName = badgeClasses[badge?.tone ?? "default"];
                 let indicatorClassName = `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`;

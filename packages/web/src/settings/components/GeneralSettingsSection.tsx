@@ -64,7 +64,8 @@ export function GeneralSettingsSection({ general, save, applyTheme, telemetry }:
                     role="switch"
                     aria-checked={general.animationsEnabled}
                     aria-label={intl.formatMessage({ id: "settings.animations" })}
-                    className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink " +
+                    className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent " +
+                        "px-0 py-1 text-xs font-semibold text-ink " +
                         "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
                     onClick={() => void save({ ...general, animationsEnabled: !general.animationsEnabled })}>
                     <SwitchIndicator checked={general.animationsEnabled} />

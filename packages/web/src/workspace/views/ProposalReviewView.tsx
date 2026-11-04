@@ -47,7 +47,9 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
                             <ChevronRightIcon className="size-4 rotate-180" />
                         </IconButton>
                         <div>
-                            <h2 className="text-base font-semibold">{intl.formatMessage({ id: stale ? "views.earlierSuggestion" : "views.proposalReview" })}</h2>
+                            <h2 className="text-base font-semibold">
+                                {intl.formatMessage({ id: stale ? "views.earlierSuggestion" : "views.proposalReview" })}
+                            </h2>
                             <p className="mt-1 text-xs text-muted">{stale || !presentation.reliable
                                 ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length })
                                 : intl.formatMessage(
