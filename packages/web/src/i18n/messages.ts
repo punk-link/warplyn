@@ -850,7 +850,7 @@ export const messages = {
     "settings.resetTimeFormat": "Use system time format",
     "settings.timeZone": "Time zone",
     "settings.timeZoneHint": "System time zone follows this device. Choose a region to keep its time while you travel. This changes displayed times only, not saved timestamps.",
-    "settings.systemTimeZone": "System time zone ({timeZone})",
+    "settings.systemTimeZone": "System time zone {timeZone}",
     "settings.localTimeZone": "local time",
     "settings.resetTimeZone": "Use system time zone",
     "settings.example": "Example: {value}",
