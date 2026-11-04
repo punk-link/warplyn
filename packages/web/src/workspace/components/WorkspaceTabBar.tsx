@@ -58,9 +58,16 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
                 const badgeClasses = { error: "border-danger bg-danger-soft text-danger", warning: "border-warning bg-warning-soft text-warning", default: "border-border-strong bg-surface text-ink" };
                 const dotClasses = { warning: "bg-warning", error: "bg-danger", default: "bg-brand" };
                 const badgeClassName = badgeClasses[badge?.tone ?? "default"];
+                let indicatorClassName = `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`;
+                if (badge?.display === "dot")
+                    indicatorClassName = `ml-1.5 inline-block size-2 rounded-full ${dotClasses[badge.tone]}`;
+
+                if (badge?.tone === "warning")
+                    indicatorClassName = "ml-1.5 inline-block size-1.5 shrink-0 rounded-full bg-warning motion-safe:animate-pulse";
 
                 return <Tab
                     key={item.id}
+                    className="inline-flex items-center"
                     id={`workspace-tab-${item.id}`}
                     aria-controls={`workspace-panel-${item.id}`}
                     aria-label={accessibleName}
@@ -74,11 +81,8 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
                     {badge && (
                         <span
                             aria-hidden="true"
-                            className={badge.display ===
-                            "dot"
-                                ? `ml-1.5 inline-block size-2 rounded-full ${dotClasses[badge.tone]}`
-                                : `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`}>
-                            {badge.display === "dot" ? undefined : badge.label}
+                            className={indicatorClassName}>
+                            {badge.tone !== "warning" && badge.display !== "dot" && badge.label}
                         </span>
                     )}
                 </Tab>;

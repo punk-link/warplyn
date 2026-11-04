@@ -32,7 +32,8 @@ describe("WorkspaceTabBar", () => {
         const proposalTabName = /Proposals/;
         expect(screen.queryByRole("tab", { name: proposalTabName })).toBeNull();
         expect(factCheck.textContent).toContain("2");
-        expect(translations.textContent).toContain("Stale");
+        expect(translations.textContent).not.toContain("Stale");
+        expect(translations.querySelector(".bg-warning.motion-safe\\:animate-pulse")).not.toBeNull();
         expect(screen.getByRole("tab", { name: getMessage("workspace.tabs.revisions") }).textContent).toBe(getMessage("workspace.tabs.revisions"));
 
         write.focus();
