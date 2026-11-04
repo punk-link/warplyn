@@ -1,6 +1,6 @@
 import type { KeyboardEvent, ReactNode } from "react";
 import type { KeyBindingOverrides } from "@skladno/shared";
-import { Tab, TabList } from "../../ui/primitives.js";
+import { ActivityIndicator, Tab, TabList } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import { getShortcutHint } from "../../key-bindings/shortcut-hint.js";
 import { workspaceViewDefinitions, type WorkspaceView } from "../workspace-views.js";
@@ -62,9 +62,6 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
                 if (badge?.display === "dot")
                     indicatorClassName = `ml-1.5 inline-block size-2 rounded-full ${dotClasses[badge.tone]}`;
 
-                if (badge?.tone === "warning")
-                    indicatorClassName = "ml-1.5 inline-block size-1.5 shrink-0 rounded-full bg-warning motion-safe:animate-pulse";
-
                 return <Tab
                     key={item.id}
                     className="inline-flex items-center"
@@ -78,11 +75,12 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
                     onClick={() => setView(item.id)}
                     onKeyDown={(event) => handleKeyDown(event, index)}>
                     {label}
-                    {badge && (
+                    {badge?.tone === "warning" && <ActivityIndicator size="small" tone="warning" className="ml-1.5" />}
+                    {badge && badge.tone !== "warning" && (
                         <span
                             aria-hidden="true"
                             className={indicatorClassName}>
-                            {badge.tone !== "warning" && badge.display !== "dot" && badge.label}
+                            {badge.display !== "dot" && badge.label}
                         </span>
                     )}
                 </Tab>;
