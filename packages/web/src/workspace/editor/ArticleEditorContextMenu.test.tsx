@@ -90,7 +90,7 @@ it("preserves selected text and orders built-in Skills before alphabetical Autho
     expect(document.activeElement).toBe(trigger);
     fireEvent.keyDown(trigger, { key: "ArrowRight" });
     fireEvent.click(view.getByRole("menuitem", { name: "Zulu" }));
-    expect(prepare).toHaveBeenCalledWith(skills[0]);
+    expect(prepare).toHaveBeenCalledWith(skills[0], false);
     expect(refresh).toHaveBeenCalledOnce();
     expect(root.textContent).toBe("Selected words");
     view.unmount();

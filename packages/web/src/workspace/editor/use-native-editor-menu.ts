@@ -4,6 +4,7 @@ import type { AssistantSkillSummary } from "@skladno/shared";
 import type { IntlShape } from "react-intl";
 import { getSkillPresentation } from "../../i18n/skill-presentation.js";
 
+
 function requestsImmediateSend(detail: object): boolean {
     return "ctrlKey" in detail && detail.ctrlKey === true;
 }

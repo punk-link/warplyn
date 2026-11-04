@@ -132,8 +132,8 @@ export function ArticleEditorContextMenu({ editor, openLink }: { editor: Lexical
         "focus-visible:outline focus-visible:outline-brand disabled:opacity-50";
     const compatibleSkills = (catalog?.skills ?? []).filter((skill) => (skill.scopes ?? ["article", "selection"]).includes("selection"));
     const skills = [...compatibleSkills.filter((skill) => skill.reference.source === "built-in"),
-    ...compatibleSkills.filter((skill) => skill.reference.source !== "built-in")
-        .sort((a, b) => a.name.localeCompare(b.name, intl.locale) || a.reference.id.localeCompare(b.reference.id))];
+        ...compatibleSkills.filter((skill) => skill.reference.source !== "built-in")
+            .sort((a, b) => a.name.localeCompare(b.name, intl.locale) || a.reference.id.localeCompare(b.reference.id))];
 
     return createPortal(<div
         ref={menu}

@@ -18,8 +18,13 @@ describe("Editorial Assistant composer", () => {
     it("sends a Quick action immediately when Ctrl is held", async () => {
         const onRequest = vi.fn().mockResolvedValue(undefined);
         renderLocalized(<EditorialAssistantPanel
-            state="idle" message="" onRequest={onRequest} onCancel={vi.fn()}
-            collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} />);
+            state="idle"
+            message=""
+            onRequest={onRequest}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]} />);
         fireEvent.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
         fireEvent.click(screen.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }), { ctrlKey: true });
         await waitFor(() => expect(onRequest).toHaveBeenCalledWith("", "talking_points", undefined, 0));
