@@ -5,6 +5,7 @@ import { formatDate, formatDateTime, formatTime, formatTimeZoneLabel, getSystemT
 import { Select, Button } from "../../ui/primitives.js";
 import { SettingRow } from "./SettingRow.js";
 import { TelemetrySettingsGroup } from "./TelemetrySettingsGroup.js";
+import { SwitchIndicator } from "../../ui/SwitchIndicator.js";
 
 
 function formatExample(general: GeneralSettings): string {
@@ -55,6 +56,20 @@ export function GeneralSettingsSection({ general, save, applyTheme, telemetry }:
                         void save({ ...general, interfaceLocale: value });
                 }}>{installedLocaleCatalogs.map((catalog) => <option key={catalog.code} value={catalog.code}>{intl.formatMessage({ id: catalog.nameMessageId })}</option>)}
                 </Select>
+            </SettingRow>
+            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.animations" })}
+                hint={intl.formatMessage({ id: "settings.animationsHint" })}>
+                <button
+                    type="button"
+                    role="switch"
+                    aria-checked={general.animationsEnabled}
+                    aria-label={intl.formatMessage({ id: "settings.animations" })}
+                    className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold text-ink " +
+                        "hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand")}
+                    onClick={() => void save({ ...general, animationsEnabled: !general.animationsEnabled })}>
+                    <SwitchIndicator checked={general.animationsEnabled} />
+                    <span>{intl.formatMessage({ id: general.animationsEnabled ? "settings.on" : "settings.off" })}</span>
+                </button>
             </SettingRow>
         </section>
         <section className="mt-6 pt-6" aria-labelledby="settings-date-and-time">

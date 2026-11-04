@@ -320,6 +320,8 @@ export const messages = {
     "workspace.tabs.translations": "Translations",
     "workspace.tabs.ariaLabel": "Article workspace views",
     "workspace.badges.review": "Review",
+    "settings.animations": "Animations",
+    "settings.animationsHint": "Animate indicators, Assistant messages, and interface effects. Device reduced-motion preferences still apply.",
     "workspace.badges.stale": "Stale",
     "workspace.badges.findings": "{count, plural, =0 {No findings} one {# finding} other {# findings}}",
     "workspace.badges.ready": "Ready",
