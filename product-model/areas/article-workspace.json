@@ -3,6 +3,19 @@
     "area": "article-workspace",
     "capabilities": [
         {
+            "id": "workspace.library.attention",
+            "area": "Article Library Panel",
+            "title": "Quiet per-Article attention indicators",
+            "status": "implemented",
+            "owners": [
+                "packages/web/src/workspace/state/use-article-attention.ts",
+                "packages/web/src/workspace/components/ArticleAttentionIndicator.tsx",
+                "packages/server/src/infrastructure/persistence/repositories/article-attention-columns.ts"
+            ],
+            "contract": "Article rows show a small outlined circle for running Assistant requests, an accent dot for unseen responses or current review work, and a warning icon for failed requests. Localized tooltips and accessible labels explain all applicable reasons. Pending Proposals, unapplied translations, and unresolved Findings retain attention after viewing. Collapsed source groups and pinned Rail shortcuts include hidden translations. Library reads return attention metadata without generated content bodies; metadata refreshes after request state changes, on window focus, and every five seconds.",
+            "persistence": "Review state derives from existing SQLite artifacts, messages, resolutions, and Revision provenance. A device-local browser storage map records the latest visibly displayed completed Assistant response per Article; Article selection alone does not mark it read. No Article text is stored in read receipts."
+        },
+        {
             "id": "workspace.editor.context-menu",
             "area": "Article Screen",
             "title": "Editor actions and explicit selection Skill preparation",

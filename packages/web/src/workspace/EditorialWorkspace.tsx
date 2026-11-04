@@ -9,6 +9,8 @@ import type { KeyBindingDispatcher } from "../key-bindings/dispatcher.js";
 import { DraftConflictDialog } from "./components/DraftConflictDialog.js";
 import { RestoreRevisionDialog as ExtractedRestoreRevisionDialog } from "./components/RestoreRevisionDialog.js";
 import { WorkspaceScreen } from "./components/WorkspaceScreen.js";
+import { useArticleAttention } from "./state/use-article-attention.js";
+import { ArticleResponseSeenContext } from "./state/article-response-seen-context.js";
 import { StyleProfileScreen } from "./components/StyleProfileScreen.js";
 import { useWorkspaceLayout, type WorkspaceLayoutState } from "./state/useWorkspaceLayout.js";
 import { useWorkspaceGeneralSettings } from "./state/useWorkspaceGeneralSettings.js";
@@ -273,6 +275,7 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
         editorial.applyAssistantResult(articleId, baseRevisionId, result, editorialArtifactId);
     }, [editorial]);
     const assistant = useAssistantMessages(client, workspace, selection.assistantSelection, applyAssistantResult, profileRebuilt);
+    const attention = useArticleAttention(client, workspace.articles, assistant.libraryActivity);
     const rejectTranslation = useCallback(async (targetLanguage: string) => {
         await editorial.rejectTranslation(targetLanguage);
         if (workspace.selectedArticle)
@@ -319,8 +322,9 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
                 backToWorkspace();
             }} />;
 
-    return <WorkspaceScreen
-        content={{ layout, workspace, assistant, editorial, revisions, publishing, articleFiles, generalSettings, authorSkills: authorSkills.authorSkills }}
+    return <ArticleResponseSeenContext.Provider value={attention.markSeen}><WorkspaceScreen
+        content={{ layout, workspace, assistant, editorial, revisions, publishing, articleFiles, generalSettings,
+            authorSkills: authorSkills.authorSkills, attention: attention.byArticle }}
         actions={{ ...actions, rejectTranslation, openSettings: actions.enterSettings, openStyleProfile: enterStyleProfile, openModelSettings }}
         environment={{ dispatcher, shortcutOverrides: keyBindingOverrides, hasUsableAiConnection, loadAuthorSkills: authorSkills.loadAuthorSkills, overlays: <>
             <ArticleFileDialogs state={articleFiles.dialogs} />
@@ -335,5 +339,6 @@ export function EditorialWorkspaceProvider({ context, navigation, bindings, upda
                 close={workspace.closeComparison}
                 resolve={workspace.resolveConflict} />
         </> }}
-        selection={selection} />;
+        selection={selection} />
+    </ArticleResponseSeenContext.Provider>;
 }

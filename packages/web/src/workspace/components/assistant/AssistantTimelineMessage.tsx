@@ -8,6 +8,7 @@ import { getSelectionPreview, responseMessages } from "./assistant-messages.js";
 import { FactCheckClaims } from "./FactCheckClaims.js";
 import { AssistantMarkdown } from "./AssistantMarkdown.js";
 import { AssistantMessageActions } from "./AssistantMessageActions.js";
+import { useResponseVisibility } from "../../state/use-response-visibility.js";
 
 
 type AssistantView = "proposal" | "fact-check" | "style-profile" | "translations";
@@ -211,7 +212,8 @@ export function AssistantTimelineMessage({ message,
     applyEdit,
     generalSettings,
     skillByRequest,
-    skillNames = new Map()
+    skillNames = new Map(),
+    trackRead = false
 }: {
     message: AssistantMessage;
     earlierSuggestion?: boolean;
@@ -223,12 +225,14 @@ export function AssistantTimelineMessage({ message,
     applyEdit?: (messageId: string) => Promise<void>;
     generalSettings: GeneralSettings;
     skillByRequest: ReadonlyMap<string, string>;
-    skillNames?: ReadonlyMap<string, string>
+    skillNames?: ReadonlyMap<string, string>;
+    trackRead?: boolean;
 }) {
     const intl = useIntl();
     const { authorMessage, skillId, label, messageContent, skillOffset, selectionText, view, handoffOwnsContent, dateTime } = getMessagePresentation(message, generalSettings, skillByRequest, skillNames, intl);
 
-    return <article className={authorMessage ? "group ml-6 mt-2" : "p-0"} aria-label={authorMessage ? label : undefined}>
+    const responseRef = useResponseVisibility(trackRead ? message : undefined);
+    return <article ref={responseRef} className={authorMessage ? "group ml-6 mt-2" : "p-0"} aria-label={authorMessage ? label : undefined}>
         <div className={authorMessage ? "rounded-panel border border-brand/45 bg-brand-soft p-2" : undefined}>
             {!authorMessage && <p className="text-xs font-semibold text-muted">{label}</p>}
             <AuthorMessageContent

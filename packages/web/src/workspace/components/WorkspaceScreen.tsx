@@ -19,9 +19,11 @@ import { WorkspaceShell } from "./WorkspaceShell.js";
 import { TelemetryInvitation } from "./TelemetryInvitation.js";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { getDesktopSettingsClient } from "../../application/desktop-client.js";
+import type { ArticleAttention } from "../state/article-attention.js";
 
 
 interface WorkspaceScreenContent {
+    attention: Record<string, ArticleAttention>;
     layout: WorkspaceLayoutState;
     workspace: ArticleWorkspaceState;
     assistant: AssistantMessagesState;
@@ -100,6 +102,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                 library: <ArticleLibraryPanel
                     files={articleFiles}
                     data={{
+                        attention: content.attention,
                         articles: workspace.articles, selectedArticleId: workspace.selectedArticleId,
                         collapsed: layout.libraryCollapsed, language: workspace.selectedArticle?.language
                     }}
