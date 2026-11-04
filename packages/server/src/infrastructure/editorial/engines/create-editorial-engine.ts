@@ -13,6 +13,7 @@ import { createProviderModel } from "../adapters/provider-model.js";
 import { getOpenAiResponsesProviderOptions } from "../adapters/openai-responses.js";
 import { createSourcedFactCheckProvider } from "../adapters/sourced-fact-check-provider.js";
 import { createFactClaimMatcher } from "../adapters/fact-claim-matcher.js";
+import { timeFactCheckProvider } from "../adapters/timed-fact-check-provider.js";
 import { createAiSdkGenerationOptions, isAcceptedFinish } from "../adapters/ai-sdk-provider.js";
 import { EDITORIAL_ENGINE_ERROR } from "../../../application/editorial/engine/editorial-engine-errors.js";
 import { EditorialEngineError } from "../../../application/editorial/engine/editorial-engine-error.js";
@@ -38,7 +39,7 @@ function createFactCheckProvider(options: Parameters<typeof createEditorialEngin
         provider = createSourcedFactCheckProvider(model, research);
     }
 
-    return { ...provider, matchClaims: createFactClaimMatcher(options.matchModel ?? createProviderModel(options)) };
+    return timeFactCheckProvider({ ...provider, matchClaims: createFactClaimMatcher(options.matchModel ?? createProviderModel(options)) });
 }
 
 

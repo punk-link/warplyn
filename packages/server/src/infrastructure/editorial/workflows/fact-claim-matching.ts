@@ -12,13 +12,18 @@ export async function matchFactCandidates(claims: Claim[], history: FactCheckFin
     if (!provider.matchClaims)
         return matched;
 
-    const unresolved = claims.flatMap(({ claim }, index) => matched.has(index) ? [] : [{ claim, index }]);
-    if (!unresolved.length)
-        return matched;
-
     const byId = new Map(history.flatMap((finding) => finding.factId ? [[finding.factId, finding] as const] : []));
     const candidates = [...byId.values()].filter((finding) => !used.has(finding.factId!));
     if (!candidates.length)
+        return matched;
+
+    const unresolved = claims.flatMap(({ claim }, index) => {
+        if (matched.has(index) || !candidates.some((candidate) => sameMaterialAnchors(claim, candidate.claim)))
+            return [];
+
+        return [{ claim, index }];
+    });
+    if (!unresolved.length)
         return matched;
 
     const matches = await provider.matchClaims(unresolved.map(({ claim }) => claim), candidates.map(({ factId, claim }) => ({ factId: factId!, claim })), signal);

@@ -33,6 +33,8 @@ Write JSON Lines for startup to stdout and failures to stderr. Allow only stable
 
 Provider-stage records allow only fixed stage names, elapsed milliseconds, allowlisted finish reasons and failure categories, and validated HTTP failure status codes. They contain no request identifiers or provider payloads. Do not scrub these fixed public values against arbitrary environment substrings, which can corrupt stage names and timestamps. SDK stream-error callbacks use these records instead of default raw-error logging.
 
+Fact Check also records local-only stages `fact_check_extraction`, `fact_check_matching`, `fact_check_research`, and `fact_check_evaluation`. These measure the complete provider method, including structured-output validation. Their success finish reason is `stop`, indicating accepted method completion rather than exposing provider metadata. Failures use the existing safe Editorial failure categories. The records contain no claim text, counts, Article identifiers, provider/model names, or remote telemetry additions. See the [Fact Check latency investigation guide](../guides/fact-check-latency-investigation.md).
+
 ## Packaged beta telemetry
 
 Schema version 4 adds `connection_verification_finished`, containing only a completed or failed outcome. Explicit connection tests and managed connection creation capture consent before verification. Success is recorded only after the verified connection is saved. Events contain no provider, connection identifier, credential source, or error text. Existing installations without a new verification will not enter this onboarding step until they explicitly verify a connection again.
