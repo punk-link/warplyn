@@ -8,6 +8,7 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import type { AssistantEditMode, KeyBindingOverrides } from "@skladno/shared";
 import { KEY_BINDING_COMMAND } from "@skladno/shared";
 import { IconButton } from "../../../ui/primitives.js";
+import { SwitchIndicator } from "../../../ui/SwitchIndicator.js";
 import { SendIcon, StopIcon } from "../../../ui/icons.js";
 import { getShortcutHint } from "../../../key-bindings/shortcut-hint.js";
 import type { AssistantSelectionScope } from "../../state/assistant-messages-state.js";
@@ -76,11 +77,7 @@ function AssistantEditModeControl({ mode, disabled, setMode }: { mode?: Assistan
         className={("group inline-flex min-h-9 appearance-none items-center gap-2 border-0 bg-transparent px-0 py-1 text-xs font-semibold " +
         `${checked ? "text-brand" : "text-muted"} hover:text-brand focus:outline-none focus-visible:ring-2 ` +
         "focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-55")}>
-        <span aria-hidden="true" className={"relative inline-flex h-5 w-9 items-center rounded-full border p-0.5 " +
-            `transition-colors group-hover:border-brand ${checked ? "border-brand bg-brand" : "border-border-strong bg-surface-raised"}`}>
-            <span className={"size-4 rounded-full border border-border-strong bg-surface transition-transform " +
-                `${checked ? "translate-x-4" : "translate-x-0"}`} />
-        </span>
+        <SwitchIndicator checked={checked} />
         <span>{label}</span>
     </button>;
 }
