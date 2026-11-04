@@ -59,49 +59,50 @@ export function StyleProfileSources({ data, actions }: { data: StyleProfileSourc
         <DisclosureRegion
             id="style-profile-add-sample"
             expanded={adding}>
-                <div className="mb-3 rounded-panel border border-border bg-surface p-3">
-                    <label className="field-label mb-1" htmlFor="style-profile-source-name">{intl.formatMessage({ id: "styleProfile.sourceName" })}</label>
-                    <Field
-                        id="style-profile-source-name"
-                        placeholder={intl.formatMessage({ id: "styleProfile.sourceName" })}
-                        value={name}
-                        onChange={(event) => setName(event.target.value)} />
-                    <label className="mt-3 block text-xs font-semibold text-ink" htmlFor="style-profile-source-content">{intl.formatMessage({ id: "styleProfile.paste" })}
-                        <span className="ml-1 text-danger" aria-hidden="true">*</span>
-                    </label>
-                    <TextareaField
-                        id="style-profile-source-content"
-                        required
-                        aria-required="true"
-                        aria-invalid={validationFailed && !content.trim()}
-                        className="mt-1 min-h-32"
-                        placeholder={intl.formatMessage({ id: "styleProfile.paste" })}
-                        value={content}
-                        onChange={(event) => setContent(event.target.value)} />
-                    {validationFailed && <p className="mt-3 text-xs text-muted" role="alert">{intl.formatMessage({ id: "styleProfile.required" })}</p>}
-                    {uploadFailed && <Banner className="mt-3" tone="warning" role="alert">{intl.formatMessage({ id: "styleProfile.invalidFile" })}</Banner>}
-                    <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.sourceNameHint" })}</p>
-                    <div className="mt-3 flex gap-3">
-                        <input
-                            ref={upload}
-                            className="sr-only"
-                            type="file"
-                            accept=".txt,.md,text/plain,text/markdown"
-                            onChange={onImport} />
-                        <Button
-                            className="flex-1"
-                            variant="secondary"
-                            disabled={Boolean(pendingAction)}
-                            onClick={() => upload.current?.click()}>{intl.formatMessage({ id: "styleProfile.upload" })}
-                        </Button>
-                        <Button
-                            state={pendingAction === "add" ? "loading" : "default"}
-                            loadingLabel={intl.formatMessage({ id: "styleProfile.generatingSourceName" })}
-                            disabled={Boolean(pendingAction)}
-                            onClick={() => onSubmit()}>{intl.formatMessage({ id: "styleProfile.add" })}
-                        </Button>
-                    </div>
+            <div className="mb-3 rounded-panel border border-border bg-surface p-3">
+                <label className="field-label mb-1" htmlFor="style-profile-source-name">{intl.formatMessage({ id: "styleProfile.sourceName" })}</label>
+                <Field
+                    id="style-profile-source-name"
+                    placeholder={intl.formatMessage({ id: "styleProfile.sourceName" })}
+                    value={name}
+                    onChange={(event) => setName(event.target.value)} />
+                <label className="mt-3 block text-xs font-semibold text-ink" htmlFor="style-profile-source-content">
+                    {intl.formatMessage({ id: "styleProfile.paste" })}
+                    <span className="ml-1 text-danger" aria-hidden="true">*</span>
+                </label>
+                <TextareaField
+                    id="style-profile-source-content"
+                    required
+                    aria-required="true"
+                    aria-invalid={validationFailed && !content.trim()}
+                    className="mt-1 min-h-32"
+                    placeholder={intl.formatMessage({ id: "styleProfile.paste" })}
+                    value={content}
+                    onChange={(event) => setContent(event.target.value)} />
+                {validationFailed && <p className="mt-3 text-xs text-muted" role="alert">{intl.formatMessage({ id: "styleProfile.required" })}</p>}
+                {uploadFailed && <Banner className="mt-3" tone="warning" role="alert">{intl.formatMessage({ id: "styleProfile.invalidFile" })}</Banner>}
+                <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "styleProfile.sourceNameHint" })}</p>
+                <div className="mt-3 flex gap-3">
+                    <input
+                        ref={upload}
+                        className="sr-only"
+                        type="file"
+                        accept=".txt,.md,text/plain,text/markdown"
+                        onChange={onImport} />
+                    <Button
+                        className="flex-1"
+                        variant="secondary"
+                        disabled={Boolean(pendingAction)}
+                        onClick={() => upload.current?.click()}>{intl.formatMessage({ id: "styleProfile.upload" })}
+                    </Button>
+                    <Button
+                        state={pendingAction === "add" ? "loading" : "default"}
+                        loadingLabel={intl.formatMessage({ id: "styleProfile.generatingSourceName" })}
+                        disabled={Boolean(pendingAction)}
+                        onClick={() => onSubmit()}>{intl.formatMessage({ id: "styleProfile.add" })}
+                    </Button>
                 </div>
+            </div>
         </DisclosureRegion>
         <div className="space-y-3">
             {corpus?.items.map((item) => (

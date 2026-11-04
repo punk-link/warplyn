@@ -228,18 +228,22 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
         </div>;
     };
 
-    const renderRoots = (items: ArticleSummary[], close: () => void) => items.filter((article) => !query || isArticleMatch(article) || getChildArticles(article.id).some(isArticleMatch)).map((article) => {
-        const nested = getChildArticles(article.id).filter((child) => !query || isArticleMatch(article) || isArticleMatch(child));
-        const expanded = Boolean(query) || article.id === expandedRootId;
-        return <div key={article.id}>
-            {renderArticleRow({ article, childCount: nested.length, expanded, close })}
-            {nested.length > 0 && <DisclosureRegion expanded={expanded} duration="150" inertWhenCollapsed={false}>
-                <div className="space-y-0.5">
-                    {nested.map((child) => renderArticleRow({ article: child, child: true, hidden: !expanded, close }))}
-                </div>
-            </DisclosureRegion>}
-        </div>;
-    });
+    const renderRoots = (items: ArticleSummary[], close: () => void) => (
+        items.filter((article) => !query || isArticleMatch(article) || getChildArticles(article.id).some(isArticleMatch)).map((article) => {
+            const nested = getChildArticles(article.id).filter((child) => !query || isArticleMatch(article) || isArticleMatch(child));
+            const expanded = Boolean(query) || article.id === expandedRootId;
+            return <div key={article.id}>
+                {renderArticleRow({ article, childCount: nested.length, expanded, close })}
+                {nested.length > 0 && (
+                    <DisclosureRegion expanded={expanded} duration="150" inertWhenCollapsed={false}>
+                        <div className="space-y-0.5">
+                            {nested.map((child) => renderArticleRow({ article: child, child: true, hidden: !expanded, close }))}
+                        </div>
+                    </DisclosureRegion>
+                )}
+            </div>;
+        })
+    );
 
     const groupCount = deleteTarget && !deleteTarget.sourceArticleId ? getChildArticles(deleteTarget.id).length + 1 : 1;
 

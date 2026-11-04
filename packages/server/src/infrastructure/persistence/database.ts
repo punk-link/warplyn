@@ -77,6 +77,7 @@ function restrictDatabasePermissions(filename: string): void {
 export function openDatabase(filename: string): SqliteDatabase {
     restrictDatabasePermissions(filename);
     const database = new DatabaseSync(filename);
+    database.function("unicode_character_count", { deterministic: true }, (value) => Array.from(String(value)).length);
     restrictDatabasePermissions(filename);
     database.exec("PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000;");
     database.exec("BEGIN IMMEDIATE;");
