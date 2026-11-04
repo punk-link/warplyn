@@ -4,9 +4,13 @@ import type { AssistantSkillSummary } from "@skladno/shared";
 import type { IntlShape } from "react-intl";
 import { getSkillPresentation } from "../../i18n/skill-presentation.js";
 
+function requestsImmediateSend(detail: object): boolean {
+    return "ctrlKey" in detail && detail.ctrlKey === true;
+}
+
 
 export function useNativeEditorMenu(editor: LexicalEditor, intl: IntlShape, skills: readonly AssistantSkillSummary[],
-    prepare: ((skill: AssistantSkillSummary) => void) | undefined, restore: () => void) {
+    prepare: ((skill: AssistantSkillSummary, immediate?: boolean) => void) | undefined, restore: () => void) {
     useEffect(() => {
         const root = editor.getRootElement();
         if (!root)
@@ -39,7 +43,7 @@ export function useNativeEditorMenu(editor: LexicalEditor, intl: IntlShape, skil
             if (detail.kind === "skill") {
                 const skill = skills.find((candidate) => candidate.reference.id === detail.id);
                 if (skill && (skill.scopes ?? ["article", "selection"]).includes("selection"))
-                    prepare?.(skill);
+                    prepare?.(skill, requestsImmediateSend(detail));
 
                 return;
             }

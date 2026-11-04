@@ -6,7 +6,7 @@ import { getSkillPresentation } from "../../i18n/skill-presentation.js";
 import type { AssistantComposerSkill } from "../components/assistant/AssistantSkillTagNode.js";
 
 
-export function useEditorSkillPreparation(intl: IntlShape, selectSkill: (skill: AssistantComposerSkill) => void) {
+export function useEditorSkillPreparation(intl: IntlShape, selectSkill: (skill: AssistantComposerSkill, immediate?: boolean) => void) {
     const context = useContext(EditorSkillContext);
     const consume = context?.consume;
     const lastPrepared = useRef<AssistantSkillSummary>();
@@ -17,8 +17,8 @@ export function useEditorSkillPreparation(intl: IntlShape, selectSkill: (skill: 
             return;
 
         lastPrepared.current = prepared;
-        selectSkill(getSkillPresentation(prepared, intl));
+        selectSkill(getSkillPresentation(prepared, intl), context?.immediate);
         consume?.();
         window.requestAnimationFrame(() => document.querySelector<HTMLElement>("[data-assistant-composer]")?.focus());
-    }, [consume, context?.prepared, intl, selectSkill]);
+    }, [consume, context?.prepared, context?.immediate, intl, selectSkill]);
 }

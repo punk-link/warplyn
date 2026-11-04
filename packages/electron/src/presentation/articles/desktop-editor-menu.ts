@@ -20,8 +20,8 @@ export async function getEditorMenuEntries(window: { webContents: Pick<BrowserWi
         !("owner" in metadata) || typeof metadata.owner !== "string")
         return [];
 
-    const dispatch = (kind: string, id: string) => {
-        const detail = JSON.stringify({ kind, id });
+    const dispatch = (kind: string, id: string, ctrlKey = false) => {
+        const detail = JSON.stringify({ kind, id, ctrlKey });
         const owner = JSON.stringify(metadata.owner);
         void window.webContents.executeJavaScript(`(() => {
             const root = document.querySelector('[data-article-spelling]');
@@ -35,13 +35,16 @@ export async function getEditorMenuEntries(window: { webContents: Pick<BrowserWi
     const author = skills.filter((skill) => skill.source !== "built-in").sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
     const skillItems: MenuItemConstructorOptions[] = builtIn.map((skill) => ({
         label: skill.name, enabled: selected && skill.enabled,
-        click: () => dispatch("skill", skill.id)
+        click: (_item, _window, event) => dispatch("skill", skill.id, event.ctrlKey)
     }));
 
     if (builtIn.length && author.length)
         skillItems.push({ type: "separator" });
 
-    skillItems.push(...author.map((skill) => ({ label: skill.name, enabled: selected && skill.enabled, click: () => dispatch("skill", skill.id) })));
+    skillItems.push(...author.map((skill): MenuItemConstructorOptions => ({
+        label: skill.name, enabled: selected && skill.enabled,
+        click: (_item, _window, event) => dispatch("skill", skill.id, event.ctrlKey)
+    })));
     const groups = readEntries("groups" in metadata ? metadata.groups : []);
     const label = (id: string) => groups.find((group) => group.id === id)?.name ?? "";
     const formats = readEntries(metadata.formats);

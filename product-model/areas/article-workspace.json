@@ -447,14 +447,14 @@
         },
         {
             "id": "workspace.assistant.quick-action",
-            "title": "Quick action inserts a skill tag and Send remains the sole request trigger",
+            "title": "Quick action inserts a skill tag and Ctrl selection sends immediately",
             "capabilityIds": [
                 "workspace.assistant.explicit-request"
             ],
             "preconditions": [
                 "An Article is open and Assistant is idle"
             ],
-            "event": "Author selects a Quick action then sends, with optional guidance.",
+            "event": "Author selects a Quick action or context-menu skill, optionally holding Ctrl to send immediately.",
             "expected": [
                 "The Quick Actions menu shows the five most recently used built-in Skills by default and offers a control to show all built-in Skills",
                 "Skill options show their hint on hover and expose it to assistive technology; optional speed hint metadata adds an information icon and hover caption",
@@ -462,7 +462,7 @@
                 "A selected skill can run against the whole Article without additional guidance"
             ],
             "forbidden": [
-                "Sending an Editorial Request when selecting a Quick action"
+                "Sending an Editorial Request when selecting a Quick action without Ctrl"
             ],
             "evidence": {
                 "kind": "automated",

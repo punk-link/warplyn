@@ -105,7 +105,16 @@ export function AssistantQuickActions({ context, picker }: {
 }
 
 
-function SkillOption({ skill, index, state, activeSkillIndex, selectSkill, focusQuickAction, setQuickActionsOpen, composer }: { skill: AssistantComposerSkill; index: number; state: "idle" | "streaming" | "error"; activeSkillIndex: number; selectSkill: (skill: AssistantComposerSkill) => void; focusQuickAction: (index: number) => void; setQuickActionsOpen: AssistantSkillPickerControls["setQuickActionsOpen"]; composer: RefObject<HTMLDivElement> }) {
+function SkillOption({ skill, index, state, activeSkillIndex, selectSkill, focusQuickAction, setQuickActionsOpen, composer }: {
+    skill: AssistantComposerSkill;
+    index: number;
+    state: "idle" | "streaming" | "error";
+    activeSkillIndex: number;
+    selectSkill: AssistantSkillPickerControls["selectSkill"];
+    focusQuickAction: (index: number) => void;
+    setQuickActionsOpen: AssistantSkillPickerControls["setQuickActionsOpen"];
+    composer: RefObject<HTMLDivElement>;
+}) {
     const hintId = `assistant-skill-hint-${skill.id}`;
     const speedHintId = `assistant-skill-speed-hint-${skill.id}`;
     const describedBy = [skill.description ? hintId : undefined, skill.speedHint ? speedHintId : undefined].filter(Boolean).join(" ");
@@ -121,11 +130,11 @@ function SkillOption({ skill, index, state, activeSkillIndex, selectSkill, focus
         aria-selected={index === activeSkillIndex}
         disabled={state === "streaming"}
         variant="quiet"
-        onClick={() => selectSkill(skill)}
+        onClick={(event) => selectSkill(skill, event.ctrlKey)}
         onKeyDown={(event) => {
             if (event.key === "Enter") {
                 event.preventDefault();
-                selectSkill(skill);
+                selectSkill(skill, event.ctrlKey);
             }
 
             if (event.key === "ArrowDown") {

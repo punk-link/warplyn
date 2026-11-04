@@ -43,10 +43,11 @@ test("native menu validates renderer metadata and preserves Skill ordering and c
     const chooseSkill = submenu[2]?.click;
     assert.equal(typeof chooseSkill, "function");
     if (chooseSkill)
-        Reflect.apply(chooseSkill, undefined, []);
+        Reflect.apply(chooseSkill, undefined, [undefined, undefined, { ctrlKey: true }]);
 
     assert.equal(scripts.length, 2);
     assert.ok(scripts[1]?.includes('"kind":"skill","id":"z"'));
+    assert.ok(scripts[1]?.includes('"ctrlKey":true'));
     assert.ok(scripts[1]?.includes('"editor-one"'));
     assert.deepEqual(await getEditorMenuEntries({ webContents: { executeJavaScript: async () => null } }, true), []);
 });

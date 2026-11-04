@@ -253,9 +253,9 @@ export function ArticleEditorContextMenu({ editor, openLink }: { editor: Lexical
                 <button
                     role="menuitem"
                     className={itemClass}
-                    onClick={() => {
+                    onClick={(event) => {
                         restore();
-                        catalog?.prepare(skill);
+                        catalog?.prepare(skill, event.ctrlKey);
                         close(false);
                     }}>{getSkillPresentation(skill, intl).name}
                 </button>

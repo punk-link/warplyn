@@ -72,12 +72,13 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
     const { assistantSelection, onSelectionChange, clearAssistantSelection } = selection;
     const { notifyError } = useNotifications();
     const desktop = getDesktopSettingsClient();
-    const [prepared, setPrepared] = useState<{ articleId: string | undefined; skill: AssistantSkillSummary }>();
+    const [prepared, setPrepared] = useState<{ articleId: string | undefined; skill: AssistantSkillSummary; immediate: boolean }>();
 
     return <EditorSkillContext.Provider value={{
         skills: authorSkills, refresh: loadAuthorSkills, consume: () => setPrepared(undefined),
-        prepared: prepared?.articleId === workspace.selectedArticleId ? prepared?.skill : undefined, prepare: (skill) => {
-            setPrepared({ articleId: workspace.selectedArticleId, skill: { ...skill } });
+        immediate: prepared?.immediate,
+        prepared: prepared?.articleId === workspace.selectedArticleId ? prepared?.skill : undefined, prepare: (skill, immediate = false) => {
+            setPrepared({ articleId: workspace.selectedArticleId, skill: { ...skill }, immediate });
             layout.setAssistantCollapsed(false);
         }
     }}><WorkspaceShell
