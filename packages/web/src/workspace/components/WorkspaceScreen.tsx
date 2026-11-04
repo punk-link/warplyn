@@ -1,5 +1,6 @@
 import type { AssistantSkillSummary, GeneralSettings, KeyBindingOverrides } from "@skladno/shared";
 import { useState, type ReactNode } from "react";
+import { useIntl } from "react-intl";
 import { EditorSkillContext } from "../editor/editor-skill-context.js";
 
 import type { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
@@ -71,6 +72,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
     const { dispatcher, shortcutOverrides, hasUsableAiConnection, loadAuthorSkills, overlays } = environment;
     const { assistantSelection, onSelectionChange, clearAssistantSelection } = selection;
     const { notifyError } = useNotifications();
+    const intl = useIntl();
     const desktop = getDesktopSettingsClient();
     const [prepared, setPrepared] = useState<{ articleId: string | undefined; skill: AssistantSkillSummary; immediate: boolean }>();
 
@@ -113,6 +115,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                     key={workspace.selectedArticle?.id}
                     data={{
                         articleId: workspace.selectedArticle?.id,
+                        currentRevisionId: workspace.selectedArticle?.currentRevisionId,
                         state: assistant.state,
                         message: assistant.message,
                         errorDetails: assistant.errorDetails,
@@ -167,6 +170,13 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                     }} actions={{
                         createBlank, runFactCheck, runTranslation, rejectTranslation, shortcutOverrides,
                         onSelectionChange, assistantSelection: assistantSelection?.preview,
+                        updateSuggestion: () => {
+                            if (editorial.base?.typography?.local)
+                                void editorial.checkTypography();
+                            else
+                                void assistant.request(intl.formatMessage({ id: "views.updateSuggestionPrompt" }),
+                                    undefined, undefined, undefined, true);
+                        },
                     }} />
                     {overlays}
                 </>,

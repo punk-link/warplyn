@@ -1,12 +1,13 @@
 import { BUILT_IN_SKILL, type AssistantMessage, type FactCheckClaimPreview, type GeneralSettings } from "@skladno/shared";
-import { Button, IconButton } from "../../../ui/primitives.js";
-import { ArticleIcon, FolderIcon, StatusIcon, UndoIcon, UpdateIcon } from "../../../ui/icons.js";
+import { IconButton } from "../../../ui/primitives.js";
+import { StatusIcon, UndoIcon } from "../../../ui/icons.js";
 import { formatDateTime } from "../../../i18n/formatting.js";
 import { useIntl } from "react-intl";
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { getSelectionPreview, responseMessages } from "./assistant-messages.js";
 import { FactCheckClaims } from "./FactCheckClaims.js";
 import { AssistantMarkdown } from "./AssistantMarkdown.js";
+import { AssistantMessageActions } from "./AssistantMessageActions.js";
 
 
 type AssistantView = "proposal" | "fact-check" | "style-profile" | "translations";
@@ -113,17 +114,6 @@ function getStatusTone(status: AssistantMessage["status"]): "warning" | "info" |
 }
 
 
-function getViewLabel(view: AssistantView, intl: Intl): string {
-    if (view === "fact-check" || view === "style-profile")
-        return intl.formatMessage({ id: "assistant.viewFindings" });
-
-    if (view === "translations")
-        return intl.formatMessage({ id: "assistant.reviewTranslation" });
-
-    return intl.formatMessage({ id: "assistant.reviewProposal" });
-}
-
-
 function AuthorMessageContent({ visible, content, selectionText, skillOffset, skillId, targetLanguage, skillNames, intl }: { visible: boolean; content: string; selectionText?: string; skillOffset?: number; skillId?: string; targetLanguage?: string; skillNames: ReadonlyMap<string, string>; intl: Intl }) {
     if (!visible || (!content && !selectionText && skillOffset === undefined))
         return null;
@@ -146,31 +136,6 @@ function AuthorMessageContent({ visible, content, selectionText, skillOffset, sk
 }
 
 
-function AssistantApplyButton({ message, applyEdit, intl }: { message: AssistantMessage; applyEdit: (messageId: string) => Promise<void>; intl: Intl }) {
-    const [applying, setApplying] = useState(false);
-
-    return <Button
-        compact
-        variant="secondary"
-        disabled={applying}
-        onClick={() => {
-            setApplying(true);
-            void applyEdit(message.id).finally(() => setApplying(false));
-        }}>{intl.formatMessage({ id: message.editCandidate?.target === "selection" ? "assistant.applySelection" : "assistant.applyArticle" })}
-    </Button>;
-}
-
-
-function getAvailableMessageActions(message: AssistantMessage, skillId: string | undefined, view: AssistantView | undefined, openSkillFolder: ((requestId: string) => void) | undefined, onRetry: ((requestId: string) => void) | undefined, applyEdit: ((messageId: string) => Promise<void>) | undefined) {
-    return {
-        review: Boolean(view && message.status !== "rejected"),
-        folder: Boolean(message.role !== "author" && skillId === BUILT_IN_SKILL.SKILL_CREATOR && message.status === "completed" && message.requestId && openSkillFolder),
-        retry: Boolean((message.status === "failed" || message.status === "cancelled") && message.requestId && onRetry),
-        apply: Boolean(!view && message.status === "completed" && message.editCandidate && !message.appliedEdit && applyEdit),
-    };
-}
-
-
 function AssistantMessageContent({ message, visible, content, handoffOwnsContent }: { message: AssistantMessage; visible: boolean; content: string; handoffOwnsContent: boolean }) {
     if (!visible || !content || handoffOwnsContent)
         return null;
@@ -179,45 +144,6 @@ function AssistantMessageContent({ message, visible, content, handoffOwnsContent
         return <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-ink">{content}</p>;
 
     return <AssistantMarkdown content={content} />;
-}
-
-
-function AssistantMessageActions({ message, skillId, view, openView, openSkillFolder, onRetry, applyEdit, intl }: { message: AssistantMessage; skillId: string | undefined; view: AssistantView | undefined; openView?: AssistantViewHandler; openSkillFolder?: (requestId: string) => void; onRetry?: (requestId: string) => void; applyEdit?: (messageId: string) => Promise<void>; intl: Intl }) {
-    const available = getAvailableMessageActions(message, skillId, view, openSkillFolder, onRetry, applyEdit);
-    if (!Object.values(available).some(Boolean) && !message.appliedEdit)
-        return null;
-
-    return <div className="flex shrink-0 gap-1">
-        {available.review && view && (
-            <IconButton
-                className="!size-6"
-                variant="secondary"
-                label={getViewLabel(view, intl)}
-                title={getViewLabel(view, intl)}
-                onClick={() => openView?.(view)}><ArticleIcon className="size-3" />
-            </IconButton>
-        )}
-        {available.folder && message.requestId && (
-            <IconButton
-                className="!size-6"
-                variant="secondary"
-                label={intl.formatMessage({ id: "assistant.openSkillFolder" })}
-                title={intl.formatMessage({ id: "assistant.openSkillFolder" })}
-                onClick={() => openSkillFolder?.(message.requestId!)}><FolderIcon className="size-3" />
-            </IconButton>
-        )}
-        {available.retry && message.requestId && (
-            <IconButton
-                className="!size-6"
-                variant="secondary"
-                label={intl.formatMessage({ id: "assistant.retry" })}
-                title={intl.formatMessage({ id: "assistant.retry" })}
-                onClick={() => onRetry?.(message.requestId!)}><UpdateIcon className="size-3" />
-            </IconButton>
-        )}
-        {available.apply && applyEdit && <AssistantApplyButton message={message} applyEdit={applyEdit} intl={intl} />}
-        {message.appliedEdit && <span className="text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.appliedEdit" })}</span>}
-    </div>;
 }
 
 
@@ -275,7 +201,30 @@ function getMessagePresentation(message: AssistantMessage, generalSettings: Gene
 }
 
 
-export function AssistantTimelineMessage({ message, factCheckClaims, openView, openSkillFolder, onRetry, onCheckpoint, applyEdit, generalSettings, skillByRequest, skillNames = new Map() }: { message: AssistantMessage; factCheckClaims?: FactCheckClaimPreview[]; openView?: AssistantViewHandler; openSkillFolder?: (requestId: string) => void; onRetry?: (requestId: string) => void; onCheckpoint?: (messageId: string) => void; applyEdit?: (messageId: string) => Promise<void>; generalSettings: GeneralSettings; skillByRequest: ReadonlyMap<string, string>; skillNames?: ReadonlyMap<string, string> }) {
+export function AssistantTimelineMessage({ message,
+    earlierSuggestion,
+    factCheckClaims,
+    openView,
+    openSkillFolder,
+    onRetry,
+    onCheckpoint,
+    applyEdit,
+    generalSettings,
+    skillByRequest,
+    skillNames = new Map()
+}: {
+    message: AssistantMessage;
+    earlierSuggestion?: boolean;
+    factCheckClaims?: FactCheckClaimPreview[];
+    openView?: AssistantViewHandler;
+    openSkillFolder?: (requestId: string) => void;
+    onRetry?: (requestId: string) => void;
+    onCheckpoint?: (messageId: string) => void;
+    applyEdit?: (messageId: string) => Promise<void>;
+    generalSettings: GeneralSettings;
+    skillByRequest: ReadonlyMap<string, string>;
+    skillNames?: ReadonlyMap<string, string>
+}) {
     const intl = useIntl();
     const { authorMessage, skillId, label, messageContent, skillOffset, selectionText, view, handoffOwnsContent, dateTime } = getMessagePresentation(message, generalSettings, skillByRequest, skillNames, intl);
 
@@ -322,6 +271,7 @@ export function AssistantTimelineMessage({ message, factCheckClaims, openView, o
             actions={<AssistantMessageActions
                 message={message}
                 skillId={skillId}
+                earlierSuggestion={earlierSuggestion}
                 view={view}
                 openView={openView}
                 openSkillFolder={openSkillFolder}

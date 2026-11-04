@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from "react";
+import type { KeyboardEvent, ReactNode } from "react";
 import type { KeyBindingOverrides } from "@skladno/shared";
 import { Tab, TabList } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
@@ -14,11 +14,12 @@ export interface WorkspaceTabBadgeDescriptor {
 }
 
 
-export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides = {} }: {
+export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides = {}, action }: {
     view: WorkspaceView;
     setView: (view: WorkspaceView) => void;
     badges?: Partial<Record<WorkspaceView, WorkspaceTabBadgeDescriptor>>;
     shortcutOverrides?: KeyBindingOverrides;
+    action?: ReactNode;
 }) {
     const intl = useIntl();
 
@@ -44,38 +45,45 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
     }
 
 
-    return <TabList data-focus-area="workspace-views" className="min-h-10 bg-surface px-3" aria-label={intl.formatMessage({ id: "workspace.tabs.ariaLabel" })}>
-        {workspaceViewDefinitions.map((item, index) => {
-            const badge = badges[item.id];
-            const label = intl.formatMessage({ id: item.label });
-            const accessibleName = badge ? `${label}: ${badge.accessibleLabel}` : label;
-            const badgeClasses = { error: "border-danger bg-danger-soft text-danger", warning: "border-warning bg-warning-soft text-warning", default: "border-border-strong bg-surface text-ink" };
-            const dotClasses = { warning: "bg-warning", error: "bg-danger", default: "bg-brand" };
-            const badgeClassName = badgeClasses[badge?.tone ?? "default"];
+    return <div className="flex flex-wrap items-center justify-between bg-surface">
+        <TabList
+            data-focus-area="workspace-views"
+            data-focus-area-native-tab
+            className="min-h-10 bg-surface px-3"
+            aria-label={intl.formatMessage({ id: "workspace.tabs.ariaLabel" })}>
+            {workspaceViewDefinitions.map((item, index) => {
+                const badge = badges[item.id];
+                const label = intl.formatMessage({ id: item.label });
+                const accessibleName = badge ? `${label}: ${badge.accessibleLabel}` : label;
+                const badgeClasses = { error: "border-danger bg-danger-soft text-danger", warning: "border-warning bg-warning-soft text-warning", default: "border-border-strong bg-surface text-ink" };
+                const dotClasses = { warning: "bg-warning", error: "bg-danger", default: "bg-brand" };
+                const badgeClassName = badgeClasses[badge?.tone ?? "default"];
 
-            return <Tab
-                key={item.id}
-                id={`workspace-tab-${item.id}`}
-                aria-controls={`workspace-panel-${item.id}`}
-                aria-label={accessibleName}
-                data-focus-area-entry={view === item.id || undefined}
-                selected={view === item.id}
-                tabIndex={view === item.id ? 0 : -1}
-                title={getShortcutHint(accessibleName, item.command, shortcutOverrides)}
-                onClick={() => setView(item.id)}
-                onKeyDown={(event) => handleKeyDown(event, index)}>
-                {label}
-                {badge && (
-                    <span
-                        aria-hidden="true"
-                        className={badge.display ===
+                return <Tab
+                    key={item.id}
+                    id={`workspace-tab-${item.id}`}
+                    aria-controls={`workspace-panel-${item.id}`}
+                    aria-label={accessibleName}
+                    data-focus-area-entry={view === item.id || undefined}
+                    selected={view === item.id}
+                    tabIndex={view === item.id ? 0 : -1}
+                    title={getShortcutHint(accessibleName, item.command, shortcutOverrides)}
+                    onClick={() => setView(item.id)}
+                    onKeyDown={(event) => handleKeyDown(event, index)}>
+                    {label}
+                    {badge && (
+                        <span
+                            aria-hidden="true"
+                            className={badge.display ===
                             "dot"
-                            ? `ml-1.5 inline-block size-2 rounded-full ${dotClasses[badge.tone]}`
-                            : `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`}>
-                        {badge.display === "dot" ? undefined : badge.label}
-                    </span>
-                )}
-            </Tab>;
-        })}
-    </TabList>;
+                                ? `ml-1.5 inline-block size-2 rounded-full ${dotClasses[badge.tone]}`
+                                : `ml-1.5 inline-flex rounded-control border px-1.5 py-0.5 text-micro font-semibold ${badgeClassName}`}>
+                            {badge.display === "dot" ? undefined : badge.label}
+                        </span>
+                    )}
+                </Tab>;
+            })}
+        </TabList>
+        {action}
+    </div>;
 }
