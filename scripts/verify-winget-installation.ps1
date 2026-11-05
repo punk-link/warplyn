@@ -89,7 +89,10 @@ $manifest = Get-Content (Join-Path $artifactRoot "$currentVersion/PunkLink.Warpl
 $checksum = (Get-FileHash -LiteralPath $currentInstaller -Algorithm SHA256).Hash
 if ($manifest -notmatch "InstallerSha256: $checksum") { throw 'Manifest checksum does not match the installer.' }
 
-Invoke-SilentInstaller $currentInstaller @('--silent')
+winget settings --enable LocalManifestFiles
+if ($LASTEXITCODE -ne 0) { throw 'Could not enable local manifests on the disposable runner.' }
+winget install --manifest (Join-Path $artifactRoot $currentVersion) --silent --disable-interactivity --accept-source-agreements --accept-package-agreements
+if ($LASTEXITCODE -ne 0) { throw 'WinGet could not silently install the local manifest.' }
 Assert-InstalledVersion $currentVersion $metadata.author
 Assert-SilentUninstall
 Write-Output "PASS fresh silent install and uninstall: $currentVersion"
