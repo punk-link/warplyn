@@ -24,6 +24,8 @@ export default defineConfig({
     },
     test: {
         environment: "jsdom",
+        /** Node's process-level Web Storage conflicts with jsdom's browser storage. */
+        execArgv: ["--no-experimental-webstorage"],
         maxWorkers: 4,
     },
     resolve: {

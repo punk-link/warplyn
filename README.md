@@ -79,6 +79,14 @@ On Windows, you control update checks, downloads, and restarts in **Settings > A
 - [User documentation](https://warplyn.com/docs/)
 - [Report a problem or suggest an improvement](https://github.com/punk-link/warplyn/issues)
 
+## Development setup
+
+Use Node.js 26.13.0, pinned in `.nvmrc` and shared by CI. With nvm, run `nvm install` and `nvm use`; with nvm-windows, run `nvm install 26.13.0` and `nvm use 26.13.0`. Then run `npm ci`.
+
+This version applies to development and release tooling. The desktop app uses Electron's bundled Node.js runtime.
+
+The `extract-zip` dependency override keeps Electron packaging compatible with Node 26; its older `yauzl` dependency can silently stop extracting archives. Remove the override when Forge's packaging dependencies support Node 26 directly.
+
 ## Create a release
 
 Maintainers need an authenticated GitHub CLI and a clean checkout of `main`. Set `OPENAI_COMMIT_GENERATION_KEY` in the release terminal to enable automatic release-note generation through OpenAI. The default model is `gpt-6-luna` with medium reasoning; `OPENAI_COMMIT_GENERATION_MODEL` can override it. This key is for release tooling and is never packaged with the app or written to release records or logs.
