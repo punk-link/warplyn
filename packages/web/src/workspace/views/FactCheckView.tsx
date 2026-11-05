@@ -143,7 +143,7 @@ export function FactCheckView({ data, actions }: { data: FactCheckData; actions:
                 return <button
                     type="button"
                     key={id}
-                    className={`block w-full border-l-2 p-3 text-left text-sm hover:bg-brand-soft ${active ? "border-brand bg-brand-soft" : "border-transparent"}`}
+                    className={`block w-full p-3 text-left text-sm hover:bg-brand-soft ${active ? "bg-brand-soft" : ""}`}
                     aria-current={active || undefined}
                     onClick={() => selectFinding(finding)}>
                     <span className={`block font-semibold ${finding.resolution ? "text-muted" : ""}`}>{finding.claim}</span>
