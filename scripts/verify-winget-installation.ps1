@@ -99,7 +99,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not enable local manifests on the dispos
 $manifestDirectory = Join-Path $artifactRoot $currentVersion
 $installationLog = Join-Path $artifactRoot 'winget-install.log'
 Invoke-SilentInstaller (Get-Command winget).Source @(
-    'install', '--manifest', "`"$manifestDirectory`"", '--source', 'winget', '--silent', '--disable-interactivity',
+    'install', '--manifest', "`"$manifestDirectory`"", '--silent', '--disable-interactivity',
     '--accept-source-agreements', '--accept-package-agreements', '--log', "`"$installationLog`""
 )
 Assert-InstalledVersion $currentVersion $metadata.author
