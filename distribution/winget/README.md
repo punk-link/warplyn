@@ -14,8 +14,10 @@ Validate from the repository root:
 winget validate --manifest distribution/winget/0.6.2 --disable-interactivity
 ```
 
-Schema validation passes. Before submitting, test silent installation, upgrade from the previous release, and uninstall in a disposable Windows 11 environment. Do not use an Author's working installation for these checks. The Squirrel installer uses `--silent`; its unattended behavior has not yet been verified for this release.
+Before submitting, run the **WinGet installation lifecycle** workflow from a published stable release checkout. Its GitHub-hosted Windows runner is disposable; a local VM is not required. The workflow runs on PRs that change the manifests or lifecycle check, and also supports manual dispatch after it is merged. It downloads the current and previous published installers, validates the generated manifests and checksum, checks silent fresh installation and uninstall, then upgrades the previous installation and verifies registration, publisher, executable, and preservation of a synthetic profile fixture. It saves manifests and `lifecycle-results.json` as workflow artifacts. A missing result file or failed job is not a passing lifecycle check.
 
-After those checks pass, copy the three manifests to `manifests/p/PunkLink/Warplyn/0.6.2/` in a fork of [winget-pkgs](https://github.com/microsoft/winget-pkgs), then open a pull request. Check for an existing Warplyn entry or submission first.
+The script refuses to run outside a GitHub-hosted Windows runner or with an existing installation/profile. Do not bypass those guards to test an Author's working installation. This check does not exercise the in-app update coordinator, database migrations, or actual Article recovery; the packaged desktop journeys cover application behavior separately.
+
+After those checks pass, copy the three validated manifests from the workflow artifact to `manifests/p/PunkLink/Warplyn/<version>/` in a fork of [winget-pkgs](https://github.com/microsoft/winget-pkgs), then open a pull request. Check for an existing Warplyn entry or submission first.
 
 See Microsoft's [submission guide](https://learn.microsoft.com/en-us/windows/package-manager/package/repository) and [installation validation guide](https://github.com/microsoft/winget-pkgs/blob/master/doc/Validation.md).
