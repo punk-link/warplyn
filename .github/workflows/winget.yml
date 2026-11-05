@@ -65,4 +65,5 @@ jobs:
                   path: |
                       ${{ runner.temp }}/warplyn-winget-lifecycle/lifecycle-results.json
                       ${{ runner.temp }}/warplyn-winget-lifecycle/*.log
+                      ${{ runner.temp }}/warplyn-winget-lifecycle/runner-desktop.png
                   if-no-files-found: ignore

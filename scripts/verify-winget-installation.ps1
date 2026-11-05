@@ -49,8 +49,8 @@ function Invoke-SilentInstaller([string] $file, [string[]] $arguments) {
 
 function Save-InstallationDiagnostics {
     Get-CimInstance Win32_Process | Where-Object {
-        $_.Name -match '^(winget|Warplyn|Warplyn-.+-setup)\.exe$' -or
-        ($_.Name -eq 'Update.exe' -and $_.ExecutablePath -match 'Warplyn|com\.warplyn')
+        $_.Name -match '^(winget|Warplyn|Warplyn-.+-setup|smartscreen|consent)\.exe$' -or
+        ($_.Name -eq 'Update.exe' -and $_.ExecutablePath -match 'Warplyn|com\.warplyn|SquirrelTemp')
     } | Select-Object Name, ProcessId, ParentProcessId, CommandLine |
         ConvertTo-Json | Set-Content (Join-Path $artifactRoot 'installer-processes.log')
 
@@ -67,6 +67,25 @@ function Save-InstallationDiagnostics {
                     $_ -notmatch 'https?://|Authorization|Token|signature'
                 } | Add-Content (Join-Path $artifactRoot 'installation-diagnostics.log')
             }
+    }
+    Save-RunnerDesktop
+}
+
+function Save-RunnerDesktop {
+    try {
+        Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+        $bounds = [Windows.Forms.SystemInformation]::VirtualScreen
+        $bitmap = [Drawing.Bitmap]::new($bounds.Width, $bounds.Height)
+        $graphics = [Drawing.Graphics]::FromImage($bitmap)
+        try {
+            $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.Size)
+            $bitmap.Save((Join-Path $artifactRoot 'runner-desktop.png'), [Drawing.Imaging.ImageFormat]::Png)
+        } finally {
+            $graphics.Dispose()
+            $bitmap.Dispose()
+        }
+    } catch {
+        Write-Warning 'Could not capture the disposable runner desktop.'
     }
 }
 
