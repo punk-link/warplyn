@@ -19,6 +19,16 @@ function Assert-InstalledVersion([string] $version, [string] $publisher) {
         throw "Expected exactly one installed Warplyn $version registration."
     }
     if ($entries[0].Publisher -ne $publisher) { throw "Installed publisher does not match the manifest: $publisher." }
+    if ($entries[0].UninstallString -notmatch '^"?(?<updater>[^\"]+?\\Update\.exe)"?\s+--uninstall') {
+        throw 'Expected a Squirrel Update.exe uninstall registration.'
+    }
+    $registeredRoot = [IO.Path]::GetFullPath([IO.Path]::GetDirectoryName($Matches.updater))
+    $localRoot = [IO.Path]::GetFullPath($env:LOCALAPPDATA).TrimEnd('\') + '\'
+    if (-not $registeredRoot.StartsWith($localRoot, [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'Registered installer location is outside the disposable user profile.'
+    }
+    $script:installRoot = $registeredRoot
+    Write-Output "Registered installation: $registeredRoot ($version, $publisher)"
     if (-not (Test-Path -LiteralPath (Join-Path $installRoot "app-$version/Warplyn.exe"))) {
         throw "Installed executable is missing for $version."
     }
@@ -46,7 +56,8 @@ function Assert-SilentUninstall {
     }
 }
 
-if ((Test-Path -LiteralPath $installRoot) -or (Test-Path -LiteralPath $profileRoot) -or @(Get-WarplynRegistration).Count) {
+if ((Test-Path -LiteralPath $installRoot) -or (Test-Path -LiteralPath (Join-Path $env:LOCALAPPDATA 'Warplyn')) -or
+    (Test-Path -LiteralPath $profileRoot) -or @(Get-WarplynRegistration).Count) {
     throw 'Expected a clean runner with no Warplyn installation or profile.'
 }
 
