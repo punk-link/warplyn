@@ -39,11 +39,35 @@ function Invoke-SilentInstaller([string] $file, [string[]] $arguments) {
         -RedirectStandardOutput (Join-Path $artifactRoot 'process-output.log') `
         -RedirectStandardError (Join-Path $artifactRoot 'process-error.log')
     if (-not $process.WaitForExit(120000)) {
+        Save-InstallationDiagnostics
         $process.Kill($true)
         throw 'Silent installer did not finish within two minutes.'
     }
     $process.Refresh()
     if ($process.ExitCode -ne 0) { throw "Silent installer exited with code $($process.ExitCode)." }
+}
+
+function Save-InstallationDiagnostics {
+    Get-CimInstance Win32_Process | Where-Object {
+        $_.Name -match '^(winget|Warplyn|Warplyn-.+-setup)\.exe$' -or
+        ($_.Name -eq 'Update.exe' -and $_.ExecutablePath -match 'Warplyn|com\.warplyn')
+    } | Select-Object Name, ProcessId, ParentProcessId, CommandLine |
+        ConvertTo-Json | Set-Content (Join-Path $artifactRoot 'installer-processes.log')
+
+    $logPaths = @(
+        (Join-Path $env:LOCALAPPDATA 'Packages/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe/LocalState/DiagOutputDir'),
+        (Join-Path $env:LOCALAPPDATA 'Microsoft/WinGet/DiagOutputDir'),
+        (Join-Path $env:LOCALAPPDATA 'SquirrelTemp')
+    )
+    foreach ($path in $logPaths) {
+        Get-ChildItem -LiteralPath $path -Filter '*.log' -ErrorAction SilentlyContinue |
+            Sort-Object LastWriteTime -Descending | Select-Object -First 3 | ForEach-Object {
+                Get-Content -LiteralPath $_.FullName | Where-Object {
+                    $_ -match 'Starting:|Installer|ShellExecute|Exception|Error|setup|install' -and
+                    $_ -notmatch 'https?://|Authorization|Token|signature'
+                } | Add-Content (Join-Path $artifactRoot 'installation-diagnostics.log')
+            }
+    }
 }
 
 function Stop-TestApplication {
