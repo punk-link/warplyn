@@ -48,7 +48,7 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         await editor.click();
         await editor.press("ControlOrMeta+A");
         const localMeaningVoiceNamePattern = /For local meaning and voice, selection requests/;
-        await expect(page.getByText(localMeaningVoiceNamePattern)).toBeVisible();
+        await expect(page.getByText(localMeaningVoiceNamePattern)).toHaveCount(0);
         await page.getByRole("button", { name: "Quick actions" }).click();
         await expect(page.getByRole("option", { name: "Shorten text" })).toBeVisible();
         await page.getByRole("option", { name: "Shorten text" }).click();
