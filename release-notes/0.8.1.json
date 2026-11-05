@@ -3,65 +3,65 @@
     "previousTag": "v0.8.0",
     "previousCommit": "df1dd17b98b050e6475dedd71c06aa3871c59676",
     "baseline": "published",
-    "sourceCommit": "2ba55f80c5c8052c8c9f6b74a535f2011c154b1c",
+    "sourceCommit": "8b76e7a4f344d9ba287201a94109683dd73c97c0",
     "reviewed": true,
     "maintenanceOnly": false,
     "entries": [
         {
             "bugFix": false,
-            "text": "Use editor context menus to format text and prepare a Skill for selected text. Hold Ctrl while choosing a Skill to send it immediately.",
+            "text": "Right-click in the editor to use formatting, paragraph and list styles, links, clipboard actions, and eligible Skills. Choosing a Skill prepares it in the Assistant with your selected text; hold Ctrl to send it immediately.",
             "commits": [
                 "15cd06d5c41258c3be88f4d7a8ec8dae2d3ace7e",
                 "6b6910f4342ee7ea65b9983eee0e2002c86d75f7"
             ]
         },
         {
+            "bugFix": true,
+            "text": "Ctrl could be lost when choosing a Skill from the editor menu, preventing immediate sending. The modifier now works through the action.",
+            "commits": [
+                "4a5634a66df6055ef770996a78c40fe749bd0484"
+            ]
+        },
+        {
             "bugFix": false,
-            "text": "When an Article changes, its outdated suggestion leaves active review. You can inspect it as an earlier suggestion, keep writing with your replacement edits, or request an updated suggestion for the current Article.",
+            "text": "Article rows show when Assistant requests are running or failed, responses are unread, or proposals, translations, and findings need review.",
             "commits": [
                 "af8c94515b68e53d1cb309436377da2856216b33"
             ]
         },
         {
             "bugFix": false,
-            "text": "Article rows show attention for running or failed Assistant requests, unseen replies, and work awaiting review, with labels explaining the reason.",
+            "text": "When an Article changes after a suggestion is created, you can view the earlier suggestion read-only, continue writing, or request an updated suggestion for the current Article.",
+            "commits": [
+                "af8c94515b68e53d1cb309436377da2856216b33"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "Dismissing an earlier suggestion could leave its review open. It now returns you to writing without changing the Article.",
             "commits": [
                 "af8c94515b68e53d1cb309436377da2856216b33"
             ]
         },
         {
             "bugFix": false,
-            "text": "Choose whether to disable interface dimming, animations, and transitions in General settings. Device reduced-motion preferences are still respected.",
+            "text": "Choose whether interface animations play in General settings. Turning them off disables dimming, animations, and transitions while respecting your device reduced-motion preference.",
             "commits": [
                 "af8c94515b68e53d1cb309436377da2856216b33"
             ]
         },
         {
             "bugFix": false,
-            "text": "Update information identifies stable security releases and warns when an update may be incompatible.",
+            "text": "Update information identifies stable security releases and warns when an update may have compatibility implications.",
             "commits": [
                 "751fe3f1d4d71004cfd317b603bc16355d458bc4"
             ]
         },
         {
             "bugFix": true,
-            "text": "Ctrl could be lost when choosing a Skill from editor actions, preventing immediate send. The Ctrl action now works from editor context menus.",
-            "commits": [
-                "4a5634a66df6055ef770996a78c40fe749bd0484"
-            ]
-        },
-        {
-            "bugFix": true,
-            "text": "Revision counts could be wrong for text containing Unicode characters. Counts now handle those characters correctly.",
+            "text": "Revision character counts now count Unicode characters correctly, including emoji.",
             "commits": [
                 "bfb3234762be83ce0ef08ad3dcd21102d34d8dc6"
-            ]
-        },
-        {
-            "bugFix": true,
-            "text": "Fact Check could try to match claims against history entries with no material anchors. It now skips those impossible matches.",
-            "commits": [
-                "2ba55f80c5c8052c8c9f6b74a535f2011c154b1c"
             ]
         }
     ],
