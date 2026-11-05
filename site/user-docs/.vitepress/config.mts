@@ -45,6 +45,7 @@ export default defineConfig({
             {
                 text: "Guides",
                 items: [
+                    { text: "Revise an Article with AI", link: "/revise-an-article-with-ai" },
                     { text: "Writing and organizing Articles", link: "/writing-and-articles" },
                     { text: "Article files", link: "/article-files" },
                     { text: "Editorial Assistant", link: "/editorial-assistant" },
