@@ -180,7 +180,7 @@ export function UpdatesSettingsGroup({ client, desktop }: { client: DesktopUpdat
             headingLevel={3}
             label={intl.formatMessage({ id: "settings.updateStatus" })}
             hint={intl.formatMessage({ id: "settings.updateStatusHint" }, { version: state.currentVersion })}
-            status={<>{(state.kind === "checking" || state.kind === "downloading") && <ActivityIndicator className="mr-2 inline-block align-middle" />}{status}</>}
+            status={<span className="inline-flex items-center gap-2">{(state.kind === "checking" || state.kind === "downloading") && <ActivityIndicator />}{status}</span>}
             fullWidthAction
             action={<>
                 {isUpdateDetails(state) && (
