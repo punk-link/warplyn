@@ -12,6 +12,10 @@ on:
 permissions:
     contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
     lifecycle:
         runs-on: windows-latest
@@ -47,5 +51,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: winget-lifecycle-results
-                  path: ${{ runner.temp }}/warplyn-winget-lifecycle/lifecycle-results.json
+                  path: |
+                      ${{ runner.temp }}/warplyn-winget-lifecycle/lifecycle-results.json
+                      ${{ runner.temp }}/warplyn-winget-lifecycle/*.log
                   if-no-files-found: ignore

@@ -36,7 +36,10 @@ function Assert-InstalledVersion([string] $version, [string] $publisher) {
 
 function Invoke-SilentInstaller([string] $file, [string[]] $arguments) {
     $process = Start-Process -FilePath $file -ArgumentList $arguments -WindowStyle Hidden -PassThru
-    if (-not $process.WaitForExit(120000)) { throw 'Silent installer did not finish within two minutes.' }
+    if (-not $process.WaitForExit(120000)) {
+        $process.Kill($true)
+        throw 'Silent installer did not finish within two minutes.'
+    }
     $process.Refresh()
     if ($process.ExitCode -ne 0) { throw "Silent installer exited with code $($process.ExitCode)." }
 }
@@ -91,8 +94,12 @@ if ($manifest -notmatch "InstallerSha256: $checksum") { throw 'Manifest checksum
 
 winget settings --enable LocalManifestFiles
 if ($LASTEXITCODE -ne 0) { throw 'Could not enable local manifests on the disposable runner.' }
-winget install --manifest (Join-Path $artifactRoot $currentVersion) --silent --disable-interactivity --accept-source-agreements --accept-package-agreements
-if ($LASTEXITCODE -ne 0) { throw 'WinGet could not silently install the local manifest.' }
+$manifestDirectory = Join-Path $artifactRoot $currentVersion
+$installationLog = Join-Path $artifactRoot 'winget-install.log'
+Invoke-SilentInstaller (Get-Command winget).Source @(
+    'install', '--manifest', "`"$manifestDirectory`"", '--silent', '--disable-interactivity',
+    '--accept-source-agreements', '--accept-package-agreements', '--log', "`"$installationLog`""
+)
 Assert-InstalledVersion $currentVersion $metadata.author
 Assert-SilentUninstall
 Write-Output "PASS fresh silent install and uninstall: $currentVersion"
