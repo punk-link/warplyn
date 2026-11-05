@@ -157,7 +157,8 @@ export function createTelemetryDelivery({ packaged, appVersion, delivery, osVers
     environment?: TelemetryDeliveryEnvironment;
     queuePath?: string;
 }): TelemetryDelivery {
-    const { fetch: fetchImplementation = fetch, scheduleTimeout = setTimeout, clearScheduledTimeout = clearTimeout, now = Date.now, requestTimeout = requestTimeoutMs } = environment;
+    const { fetch: fetchImplementation = fetch, scheduleTimeout = (callback, delay) => setTimeout(callback, delay),
+        clearScheduledTimeout = clearTimeout, now = Date.now, requestTimeout = requestTimeoutMs } = environment;
     const deliveryConfiguration = packaged ? parseTelemetryDeliveryConfiguration(delivery ?? {}) : undefined;
     const supported = Boolean(deliveryConfiguration);
     const store = packaged && queuePath ? createTelemetryQueueStore(queuePath) : undefined;
