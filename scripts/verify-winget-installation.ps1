@@ -35,7 +35,9 @@ function Assert-InstalledVersion([string] $version, [string] $publisher) {
 }
 
 function Invoke-SilentInstaller([string] $file, [string[]] $arguments) {
-    $process = Start-Process -FilePath $file -ArgumentList $arguments -WindowStyle Hidden -PassThru
+    $process = Start-Process -FilePath $file -ArgumentList $arguments -WindowStyle Hidden -PassThru `
+        -RedirectStandardOutput (Join-Path $artifactRoot 'process-output.log') `
+        -RedirectStandardError (Join-Path $artifactRoot 'process-error.log')
     if (-not $process.WaitForExit(120000)) {
         $process.Kill($true)
         throw 'Silent installer did not finish within two minutes.'
@@ -97,7 +99,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not enable local manifests on the dispos
 $manifestDirectory = Join-Path $artifactRoot $currentVersion
 $installationLog = Join-Path $artifactRoot 'winget-install.log'
 Invoke-SilentInstaller (Get-Command winget).Source @(
-    'install', '--manifest', "`"$manifestDirectory`"", '--silent', '--disable-interactivity',
+    'install', '--manifest', "`"$manifestDirectory`"", '--source', 'winget', '--silent', '--disable-interactivity',
     '--accept-source-agreements', '--accept-package-agreements', '--log', "`"$installationLog`""
 )
 Assert-InstalledVersion $currentVersion $metadata.author
