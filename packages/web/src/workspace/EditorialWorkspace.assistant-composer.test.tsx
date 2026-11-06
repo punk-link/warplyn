@@ -18,8 +18,13 @@ describe("Editorial Assistant composer", () => {
     it("inserts the translation chip without configured target languages", async () => {
         const user = userEvent.setup();
         const panel = renderLocalized(<EditorialAssistantPanel
-            state="idle" message="" onRequest={vi.fn()} onCancel={vi.fn()}
-            collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} />);
+            state="idle"
+            message=""
+            onRequest={vi.fn()}
+            onCancel={vi.fn()}
+            collapsed={false}
+            setCollapsed={vi.fn()}
+            assistantMessages={[]} />);
         await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.showAllSkills") }));
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.translation.label") }));
