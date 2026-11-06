@@ -39,6 +39,20 @@ function renderHistory(revisions: ArticleRevision[], currentRevisionId = revisio
 
 
 describe("RevisionHistoryView", () => {
+    it("localizes the fallback for an accepted Proposal without a generated description", () => {
+        const revision = createArticleRevision("accepted", "Accepted body", "accepted-proposal", "2026-01-01T10:00:00.000Z");
+        const localizedMessages: Record<string, string> = { ...messages, "revisions.acceptedProposal": "[Localized accepted Proposal]" };
+        render(<IntlProvider locale="en" messages={localizedMessages}>
+            <RevisionHistoryView
+                revisions={[revision]}
+                currentRevisionId={revision.id}
+                loadRevision={vi.fn()}
+                select={vi.fn()} />
+        </IntlProvider>);
+        expect(screen.getAllByText("[Localized accepted Proposal]").length).toBeGreaterThan(0);
+        expect(screen.queryByText("Accepted Proposal")).toBeNull();
+    });
+
     it("loads only the previewed historical body and exports its original Revision number", async () => {
         const old = createArticleRevision("old", "Historical body", "initial", "2026-01-01T10:00:00.000Z");
         const current = createArticleRevision("current", "Current body", "author-draft", "2026-01-02T10:00:00.000Z");

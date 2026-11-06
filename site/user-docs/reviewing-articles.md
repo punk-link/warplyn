@@ -40,8 +40,4 @@ Choose **Edit from here** on one of your earlier messages to continue the conver
 
 ## Read Fact Check findings
 
-Ask the Assistant to **Check facts** or choose **Check facts** from **Quick actions**. When the Assistant presents claims for checking, review the list and deselect claims you do not want checked. Open **Fact Check** to read findings tied to the *Revision* that was checked. Read each explanation, source, source date, and uncertainty. Only completed findings appear. If a run is incomplete, request another check for the unfinished claims.
-
-Use **Fact Check history** to read results from an earlier *Revision* or an earlier run. Earlier runs are read-only. If the checked *Revision* is no longer current, run Fact Check again before acting on a finding. Evidence can also become old; recheck when you need current sources.
-
-Choose **Accept as written** when a *Finding* describes wording you intend to keep. This records your decision without changing the *Article*. To correct a claim, ask the Assistant for a correction *Proposal*, review the changes, and accept them explicitly. A *Finding* is advice, not proof that your wording is wrong.
+Open **Fact Check** to review advisory *Findings* and their sources. Acceptance decisions resolve a *Finding* without changing the *Article* or its verdict. Correction *Proposals* require review before their changes enter the text. See [Fact Check](fact-checking.md) for the full workflow, verdicts, acceptance choices, and rechecking earlier results.

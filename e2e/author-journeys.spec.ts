@@ -270,7 +270,8 @@ test("critical local-first author journeys use deterministic provider output", a
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Improved fixture note.");
 
     await page.getByRole("tab", { name: "Revisions" }).click();
-    await page.getByRole("navigation", { name: "Revision history" }).getByRole("button", { name: "Added 25 characters" }).click();
+    const initialRevisionName = /^Initial Revision /;
+    await page.getByRole("navigation", { name: "Revision history" }).getByRole("button", { name: initialRevisionName }).click();
     await page.getByRole("button", { name: "Restore this revision" }).click();
     await page.getByRole("button", { name: "Restore revision" }).click();
     await expect(page.getByText("Restored Revision").first()).toBeVisible();

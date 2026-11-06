@@ -13,7 +13,7 @@ import type { CompletionEvent } from "./completion-event.js";
 
 export async function authorizeCompletedEdit(
     request: PreparedAssistantRequest, event: CompletionEvent, signal: AbortSignal,
-    capabilities: Pick<AssistantCapabilityLoop, "qualifiesReplacement" | "authorizesArticleEditIntent">,
+    capabilities: Pick<AssistantCapabilityLoop, "qualifiesReplacement">,
     articles: Pick<ArticleService, "describeContentChange">, settings: SettingsStore,
 ): Promise<ApplicationResult<void>> {
     validateProposalResult(getAssistantArticleExcerpt(request), event.text, request.resolvedSkill?.execution, request.article.title,
@@ -25,11 +25,10 @@ export async function authorizeCompletedEdit(
     if (request.editMode !== "direct")
         return success(undefined);
 
-    request.editIntentAuthorized ||= await capabilities.authorizesArticleEditIntent(request, signal);
-    if (request.editIntentAuthorized && !getEditCandidate(request, event))
+    if (!getEditCandidate(request, event))
         return failure(APPLICATION_ERROR.ASSISTANT_EDIT_INVALID);
 
-    request.directEditAuthorized = request.editIntentAuthorized;
+    request.directEditAuthorized = true;
     if (request.directEditAuthorized) {
         const content = getCompletedContent(request, event.text);
         const locale = request.interfaceLocale ?? normalizeGeneralSettings(settings.getSetting("application-general")?.value).interfaceLocale;

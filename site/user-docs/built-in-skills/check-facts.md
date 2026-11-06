@@ -16,4 +16,4 @@ In a chapter set beside the river, Ana says the full moon will raise the water e
 Open **Fact Check** and read each *Finding*, its sources, dates, and uncertainty. Sources can be incomplete or outdated, so use the evidence to decide what to verify or change.
 :::
 
-Fact checking needs an AI connection and a model that supports sourced fact checking. Provider charges may apply. A *Finding* is advice, not proof that a claim is wrong. For checks focused on technical terminology, see [Check technical terms](check-technical-terms.md).
+For verdicts, acceptance decisions, corrections, and reused evidence, see the [Fact Check guide](../fact-checking.md). Fact checking needs an AI connection and a model that supports sourced fact checking. Provider charges may apply. A *Finding* is advice, not proof that a claim is wrong. For checks focused on technical terminology, see [Check technical terms](check-technical-terms.md).

@@ -22,6 +22,22 @@ const factCheck = { reviewedRevisionId: "revision-1", findings: [{ factId: "fact
 afterEach(cleanup);
 
 describe("FactCheckView", () => {
+    it.each([undefined, factCheck])("shows discovery before claims are available", (previous) => {
+        render(<IntlProvider locale="en" messages={messages}><FactCheckView
+            factCheck={previous}
+            checkingClaimCount={0}
+            stale={false}
+            runAgain={vi.fn()}
+            resolve={vi.fn()}
+            proposeCorrections={vi.fn()} />
+        </IntlProvider>);
+
+        const discoveryMessage = /The Assistant is finding claims to check\./;
+        const zeroClaimsMessage = /checking 0 claims/;
+        expect(screen.getByText(discoveryMessage)).toBeTruthy();
+        expect(screen.queryByText(zeroClaimsMessage)).toBeNull();
+    });
+
     it("distinguishes previous findings from claims in a running check", () => {
         render(<IntlProvider locale="en" messages={messages}><FactCheckView
             factCheck={factCheck}

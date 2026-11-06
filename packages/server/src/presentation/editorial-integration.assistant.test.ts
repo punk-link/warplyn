@@ -98,19 +98,13 @@ test("completed selection reply applies exact text through one Author click", as
 
 
 // Product scenario: workspace.assistant.conversational-direct-edit
-test("direct mode applies only an explicitly authorized whole-Article edit", async () => {
+test("direct mode authorizes a validated whole-Article edit and rejects an invalid replacement", async () => {
     const engine = new FixtureEngine([{ type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "edit", text: "After" }]);
-    let authorized = false;
-    const verifier: AssistantActionIntentVerifier = { verify: async () => authorized, verifyReplacement: async () => true };
+    const verifier: AssistantActionIntentVerifier = { verify: async () => false, verifyReplacement: async () => true };
     await withService(engine, async (baseUrl, repositories) => {
         const article = repositories.articleService.createArticle({ title: "Direct", content: "Before" });
         const mode = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/messages/edit-mode`, { method: HTTP_METHOD.PUT, headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "direct" }) });
         assert.equal(await mode.json(), "direct");
-        await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, { method: HTTP_METHOD.POST, headers: { "content-type": "application/json" }, body: JSON.stringify({ requestId: "unauthorized", authorMessage: "Discuss a rewrite.", explicitSkillId: "flow_and_clarity", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }) });
-        assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "Before");
-        assert.deepEqual(repositories.assistant.listMessages(article.id).find((message) => message.requestId === "unauthorized" && message.role === "assistant")?.editCandidate, { target: "article", replacement: "After" });
-
-        authorized = true;
         const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, { method: HTTP_METHOD.POST, headers: { "content-type": "application/json" }, body: JSON.stringify({ requestId: "authorized", authorMessage: "Replace the Article with the improved wording.", explicitSkillId: "flow_and_clarity", scope: { kind: "article", baseRevisionId: article.currentRevisionId } }) });
         const responsekindEditAppliedPattern = /"responseKind":"edit_applied"/;
         assert.match(await response.text(), responsekindEditAppliedPattern);
@@ -122,6 +116,35 @@ test("direct mode applies only an explicitly authorized whole-Article edit", asy
         assert.match(await invalid.text(), assistantEditInvalidPattern);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "After");
         assert.equal(repositories.assistant.listMessages(article.id).find((message) => message.requestId === "invalid-direct-edit" && message.role === "assistant")?.status, "failed");
+    }, true, verifier);
+});
+
+// Product scenario: workspace.assistant.conversational-direct-edit
+test("direct mode authorizes a Skill-only replacement without inferring edit intent", async () => {
+    const engine = new FixtureEngine([{ type: EDITORIAL_ENGINE_EVENT.COMPLETED, responseId: "edit", text: "After" }]);
+    const verifier: AssistantActionIntentVerifier = {
+        verify: async () => false,
+        verifyReplacement: async () => true,
+    };
+    await withService(engine, async (baseUrl, repositories) => {
+        const article = repositories.articleService.createArticle({ title: "Direct", content: "Before" });
+        await fetch(`${baseUrl}/api/articles/${article.id}/assistant/messages/edit-mode`, {
+            method: HTTP_METHOD.PUT,
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ mode: "direct" }),
+        });
+        const response = await fetch(`${baseUrl}/api/articles/${article.id}/assistant/requests`, {
+            method: HTTP_METHOD.POST,
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                requestId: "skill-only", authorMessage: "", explicitSkillId: "flow_and_clarity",
+                scope: { kind: "article", baseRevisionId: article.currentRevisionId },
+            }),
+        });
+        const editAppliedPattern = /"responseKind":"edit_applied"/;
+        assert.match(await response.text(), editAppliedPattern);
+        assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "After");
+        assert.equal(repositories.articles.listRevisions(article.id).length, 2);
     }, true, verifier);
 });
 

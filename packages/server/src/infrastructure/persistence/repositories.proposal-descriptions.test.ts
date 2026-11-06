@@ -31,7 +31,7 @@ test("acceptance returns before description generation and preserves immutable R
     const revision = await service.acceptProposalWithDescription(article.id, {
         baseRevisionId: article.currentRevisionId, content: "after", provenance: {}, interfaceLocale: "es",
     }, new AbortController().signal);
-    assert.equal(revision.description, "Removed 1 characters");
+    assert.equal(revision.description, undefined);
     assert.equal(repositories.articles.getArticle(article.id)?.currentRevisionId, revision.id);
     const original = database.prepare("SELECT * FROM article_revisions WHERE id = ?").get(revision.id);
 

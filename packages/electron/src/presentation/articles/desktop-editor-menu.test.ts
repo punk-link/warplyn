@@ -21,11 +21,11 @@ test("native menu validates renderer metadata and preserves Skill ordering and c
             ],
         };
     } } }, true);
-    assert.deepEqual(entries.map((entry) => entry.label ?? entry.type), ["separator", "Edit link…",
-        "Formatting", "Paragraph style", "Lists", "separator", "Skills"]);
+    assert.deepEqual(entries.map((entry) => entry.label ?? entry.type), ["separator", "Formatting",
+        "Edit link…", "Paragraph style", "Lists", "separator", "Skills"]);
     assert.ok(entries.every((entry) => entry.type !== "checkbox" && entry.type !== "radio"));
-    assert.equal(entries[1]?.accelerator, "CmdOrCtrl+K");
-    const formatting = entries[2]?.submenu;
+    assert.equal(entries[2]?.accelerator, "CmdOrCtrl+K");
+    const formatting = entries[1]?.submenu;
     assert.ok(Array.isArray(formatting));
     assert.deepEqual(formatting.map((entry) => entry.label), ["Bold", "Italic", "Inline code"]);
     assert.equal(formatting[0]?.type, "checkbox");

@@ -49,7 +49,7 @@ export function WorkspaceTabBar({ view, setView, badges = {}, shortcutOverrides 
         <TabList
             data-focus-area="workspace-views"
             data-focus-area-native-tab
-            className="min-h-10 bg-surface px-3"
+            className="min-h-10 !border-b-0 bg-surface px-3"
             aria-label={intl.formatMessage({ id: "workspace.tabs.ariaLabel" })}>
             {workspaceViewDefinitions.map((item, index) => {
                 const badge = badges[item.id];

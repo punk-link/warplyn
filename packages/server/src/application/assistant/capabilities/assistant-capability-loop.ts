@@ -32,6 +32,7 @@ import { getSkillCapabilities, getSkillOrchestrationInstructions } from "../skil
 import { createAssistantStreamContext } from "./assistant-stream-context.js";
 import { getAssistantArticleExcerpt } from "../assistant-engine-request.js";
 import { formatSelectionContext, getSelectionContext } from "../../editorial/selection-context.js";
+import { getAssistantEditModeInstructions } from "./assistant-edit-mode-instructions.js";
 
 
 function isTransientReadFailure(error: unknown): boolean {
@@ -117,7 +118,11 @@ export class AssistantCapabilityLoop {
             interfaceLocale: request.interfaceLocale,
             article: "",
             scope: request.scope.kind,
-            instructions: [...selectedSkills.map(getSkillOrchestrationInstructions), ...(request.targetLanguage ? [`Target translation language: ${request.targetLanguage}`] : [])],
+            instructions: [
+                ...selectedSkills.map(getSkillOrchestrationInstructions),
+                ...(request.targetLanguage ? [`Target translation language: ${request.targetLanguage}`] : []),
+                ...getAssistantEditModeInstructions(request.editMode),
+            ],
             history: this.dependencies.conversationHistory(request.articleId, 12),
             skills: skills.filter((skill) => (skill.scopes ?? ["article", "selection"]).includes(request.scope.kind)).map((skill) => ({ id: skill.reference.id, name: skill.name, description: skill.description, instructions: getSkillOrchestrationInstructions(skill), capabilities: getSkillCapabilities(skill, request.scope.kind) })),
             onSkillLoaded: (id: string) => {
@@ -279,7 +284,8 @@ export class AssistantCapabilityLoop {
 
     private async stageAction(request: PreparedAssistantRequest, definition: EditorialCapabilityDefinition, input: Readonly<Record<string, string>>, signal: AbortSignal): Promise<{ status: "staged" }> {
         const action = definition.id as ActionCapability;
-        unwrapApplicationResult(await authorizeAssistantAction(this.dependencies.engines, request, action, input, signal));
+        const history = this.dependencies.conversationHistory(request.articleId, 12);
+        unwrapApplicationResult(await authorizeAssistantAction(this.dependencies.engines, request, action, input, signal, history));
         request.execution.authorizedActions = [...request.execution.authorizedActions, action];
         request.execution.pendingActions.push({ capability: action, input });
         this.completeCapability(request, definition);

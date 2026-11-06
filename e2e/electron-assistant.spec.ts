@@ -45,10 +45,15 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         await page.getByRole("button", { name: "Dismiss notification: Revision saved without an Article title" }).click();
 
         await page.getByRole("button", { name: "Expand Editorial Assistant Panel" }).click();
+        await page.getByRole("button", { name: "Quick actions" }).click();
+        await page.getByRole("button", { name: "Show all skills" }).click();
+        await page.getByRole("option", { name: "Translate text", exact: true }).click();
+        await expect(page.locator("[data-assistant-skill-chip]")).toContainText("Translate text");
+        await page.getByRole("button", { name: "Remove Translate text" }).click();
         await editor.click();
         await editor.press("ControlOrMeta+A");
         const localMeaningVoiceNamePattern = /For local meaning and voice, selection requests/;
-        await expect(page.getByText(localMeaningVoiceNamePattern)).toBeVisible();
+        await expect(page.getByText(localMeaningVoiceNamePattern)).toHaveCount(0);
         await page.getByRole("button", { name: "Quick actions" }).click();
         await expect(page.getByRole("option", { name: "Shorten text" })).toBeVisible();
         await page.getByRole("option", { name: "Shorten text" }).click();
@@ -63,7 +68,7 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         page = app.page;
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Electron fixture Article.");
         await page.getByRole("tab", { name: "Revisions" }).click();
-        await expect(page.getByRole("navigation", { name: "Revision history" })).toContainText("Added 25 characters");
+        await expect(page.getByRole("navigation", { name: "Revision history" })).toContainText("Initial Revision");
     } finally {
         if (app)
             await closePackaged(app);

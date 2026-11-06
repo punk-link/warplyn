@@ -63,3 +63,26 @@ test("Revision descriptions reject output stopped by the token limit", async () 
 
     await assert.rejects(adapter.generate("Before", "After", "en", new AbortController().signal), { code: EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT });
 });
+
+
+test("Revision descriptions include sentence context for partial-word edits and exclude unrelated sentences", async () => {
+    const model = new MockLanguageModelV3({ doGenerate: generated("Adjusted terminology", { unified: "stop", raw: undefined }) });
+    const adapter = new AiSdkRevisionDescriptionGeneratorAdapter(model);
+    await adapter.generate("Unrelated introduction. These models work. Unrelated ending.",
+        "Unrelated introduction. These m work. Unrelated ending.", "en", new AbortController().signal);
+    const prompt = JSON.stringify(model.doGenerateCalls[0]?.prompt);
+    assert.ok(prompt.includes("These models work."));
+    assert.ok(prompt.includes("These m work."));
+    assert.ok(!prompt.includes("Unrelated introduction"));
+    assert.ok(!prompt.includes("Unrelated ending"));
+    assert.ok(prompt.includes("Do not invent the Author's intention"));
+});
+
+
+test("Revision descriptions fall back without a provider call when changed sentences exceed the context budget", async () => {
+    const model = new MockLanguageModelV3();
+    const adapter = new AiSdkRevisionDescriptionGeneratorAdapter(model);
+    await assert.rejects(adapter.generate("a".repeat(12001), "b".repeat(12001), "en", new AbortController().signal),
+        { code: EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT });
+    assert.equal(model.doGenerateCalls.length, 0);
+});

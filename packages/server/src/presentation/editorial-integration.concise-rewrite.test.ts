@@ -107,7 +107,7 @@ test("inferred concise requests retain the Skill identity through the real tool 
             assert.equal(persistence.assistant.getRequest("inferred")?.resolvedSkillId, fixture.skillId);
             assert.equal(persistence.editorialArtifacts.listEditorialArtifacts(article.id).length, 1);
             assert.equal(services.articles.getArticle(article.id)?.currentRevision.content, source);
-        }, false, { verify: async () => true, verifyReplacement: async () => true });
+        }, false, { verify: async () => false, verifyReplacement: async () => true });
     }
 });
 

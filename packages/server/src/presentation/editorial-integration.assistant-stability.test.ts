@@ -122,7 +122,11 @@ for (const stage of ["replacement", "intent", "description"] as const) {
         await withService(engine, async (_url, persistence, services) => {
             const article = services.articles.createArticle({ title: "Synthetic", content: "Original wording." });
             services.assistant.setEditMode(article.id, "direct");
-            const request = services.assistant.prepare({ kind: "new", requestId: "deadline", articleId: article.id, authorMessage: "Improve clarity.", explicitSkillId: "flow_and_clarity", scope: { kind: "article", baseRevisionId: article.currentRevisionId } });
+            const request = services.assistant.prepare({
+                kind: "new", requestId: "deadline", articleId: article.id, authorMessage: "Improve clarity.",
+                ...(stage === "intent" ? {} : { explicitSkillId: "flow_and_clarity" }),
+                scope: { kind: "article", baseRevisionId: article.currentRevisionId },
+            });
             context.mock.timers.enable({ apis: ["setTimeout"] });
             const completion = (async () => {
                 for await (const event of services.assistant.stream(request, new AbortController().signal))

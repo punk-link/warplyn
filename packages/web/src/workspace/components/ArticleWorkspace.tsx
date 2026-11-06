@@ -47,7 +47,7 @@ interface ArticleWorkspaceActions {
 }
 
 
-function createWorkspaceBadges(editorial: EditorialProposalState, intl: IntlShape): Partial<Record<WorkspaceView, WorkspaceTabBadgeDescriptor>> {
+export function createWorkspaceBadges(editorial: EditorialProposalState, intl: IntlShape): Partial<Record<WorkspaceView, WorkspaceTabBadgeDescriptor>> {
     const badges: Partial<Record<WorkspaceView, WorkspaceTabBadgeDescriptor>> = {};
     const staleLabel = intl.formatMessage({ id: "workspace.badges.stale" });
     const reviewLabel = intl.formatMessage({ id: "workspace.badges.review" });
@@ -71,6 +71,9 @@ function addFactCheckBadge(badges: Partial<Record<WorkspaceView, WorkspaceTabBad
         return;
 
     const stale = editorial.factCheckStale;
+    if (stale && editorial.factCheck.findings.every((finding) => Boolean(finding.resolution)))
+        return;
+
     const label = stale ? staleLabel : intl.formatNumber(editorial.factCheck.findings.length);
     const accessibleLabel = stale ? staleLabel : intl.formatMessage({ id: "workspace.badges.findings" }, { count: editorial.factCheck.findings.length });
     badges["fact-check"] = { label, accessibleLabel, tone: stale ? "warning" : "default" };

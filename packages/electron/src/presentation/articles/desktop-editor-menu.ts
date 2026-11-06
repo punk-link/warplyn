@@ -69,8 +69,9 @@ export async function getEditorMenuEntries(window: { webContents: Pick<BrowserWi
     }));
 
     return [
-        { type: "separator" }, ...formats.filter((format) => format.id === "link").map(formatItem),
+        { type: "separator" },
         { label: label("text"), submenu: formats.filter((format) => ["bold", "italic", "strikethrough", "code"].includes(format.id)).map(formatItem) },
+        ...formats.filter((format) => format.id === "link").map(formatItem),
         { label: label("paragraph"), submenu: blocks },
         { label: label("lists"), submenu: formats.filter((format) => ["bullet", "number"].includes(format.id)).map(formatItem) },
         { type: "separator" }, { label: metadata.label, submenu: skillItems }

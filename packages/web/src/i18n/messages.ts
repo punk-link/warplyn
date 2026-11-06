@@ -462,8 +462,6 @@ export const messages = {
     "assistant.selectedSkill": "Selected skill: {skill}",
     "assistant.removeSkill": "Remove {skill}",
     "assistant.articleSelection": "Article selection",
-    "assistant.selectionContextHint": ("For local meaning and voice, selection requests that need Article text also send up to 500 characters on each side " +
-        "to your provider as read-only context. Neighboring text may be sensitive. Only the selection is replaced."),
     "assistant.clearArticleSelection": "Clear Article selection",
     "assistant.authorMessage": "Your message",
     "assistant.response.conversation": "Editorial conversation",
@@ -598,9 +596,13 @@ export const messages = {
     "views.revisionNumber": "v{revisionNumber}",
     "views.runFactCheck": "Run Fact Check",
     "views.factCheckStale": "These findings belong to an earlier Revision. They remain readable, but create no correction until you run the Fact Check again.",
-    "views.factCheckRunningPrevious": ("The Assistant is checking {count, plural, one {# claim} other {# claims}} now. These are findings from the previous completed check and " +
+    "views.factCheckRunningPrevious": ("{count, plural, =0 {The Assistant is finding claims to check.} " +
+        "one {The Assistant is checking # claim now.} other {The Assistant is checking # claims now.}} " +
+        "These are findings from the previous completed check and " +
         "will update when the new check finishes."),
-    "views.factCheckRunningEmpty": "The Assistant is checking {count, plural, one {# claim} other {# claims}} now. Findings will appear here when it finishes.",
+    "views.factCheckRunningEmpty": ("{count, plural, =0 {The Assistant is finding claims to check.} " +
+        "one {The Assistant is checking # claim now.} other {The Assistant is checking # claims now.}} " +
+        "Findings will appear here when it finishes."),
     "views.factCheckHistorical": "This earlier Fact Check run is read-only. The latest run for this Revision remains actionable.",
     "views.factCheckIncomplete": "This Fact Check is incomplete. Only completed findings are shown. Run it again to check the remaining claims.",
     "views.runFactCheckAgain": "Run Fact Check again",

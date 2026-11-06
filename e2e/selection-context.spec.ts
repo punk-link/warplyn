@@ -50,7 +50,7 @@ test("bounded selection questions and replacements preserve neighboring Article 
     await page.getByRole("button", { name: "Save revision", exact: true }).click();
     await selectPassage(editor);
     const localMeaningVoiceNamePattern = /For local meaning and voice, selection requests/;
-    await expect(page.getByText(localMeaningVoiceNamePattern)).toBeVisible();
+    await expect(page.getByText(localMeaningVoiceNamePattern)).toHaveCount(0);
     const composer = page.getByRole("combobox", { name: "Editorial guidance" });
     await composer.fill("E2E selection question");
     await page.getByRole("button", { name: "Send editorial request" }).click();

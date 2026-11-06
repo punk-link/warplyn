@@ -41,7 +41,7 @@ export function ArticleAttentionIndicator({ attention }: { attention?: ArticleAt
     if (attention.failed)
         icon = <WarningIcon className="size-3 text-warning" />;
     else if (attention.running)
-        icon = <span className="size-2 rounded-full border border-brand" />;
+        icon = <span className="size-1.5 rounded-full bg-brand/50 motion-safe:animate-pulse" />;
 
     return <span
         className="inline-flex size-3 shrink-0 items-center justify-center"

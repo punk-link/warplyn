@@ -17,6 +17,7 @@ import { AuthorSkillService } from "../skills/author-skill-service.js";
 import { FileAssistantSkillSource } from "../skills/file-assistant-skill-source.js";
 import { SkillRevisionStore } from "../../../infrastructure/skills/skill-revision-store.js";
 import { formatSelectionContext } from "../../editorial/selection-context.js";
+import { authorizeAssistantAction } from "./assistant-action-authorization.js";
 
 
 test("Assistant execution loads Skills from its catalog", async () => {
@@ -43,7 +44,7 @@ test("Assistant execution loads Skills from its catalog", async () => {
     const request: PreparedAssistantRequest = {
         kind: "new", requestId: "request", articleId: "article", authorMessage: "Improve this.",
         scope: { kind: "article", baseRevisionId: "revision" }, article: { content: "Article", title: "Title" },
-        resolvedSkillId: BUILT_IN_SKILL.FLOW_AND_CLARITY,
+        resolvedSkillId: BUILT_IN_SKILL.FLOW_AND_CLARITY, editMode: "direct",
         execution: { operation: "flow_revision", engine, usesCapabilityLoop: true, capabilityActivities: [], pendingActions: [], authorizedActions: [] },
     };
     const loop = new AssistantCapabilityLoop({
@@ -65,6 +66,24 @@ test("Assistant execution loads Skills from its catalog", async () => {
     const operationFlowRevisionPattern = /"operation":"flow_revision"/;
     assert.match(received?.instructions[0] ?? "", operationFlowRevisionPattern);
     assert.deepEqual(received?.skills.map((skill) => skill.name), ["Catalog Skill"]);
+    assert.ok(received?.instructions.includes("Conversation edit mode: direct."));
+    assert.ok(received?.instructions.join(" ").includes("rename the current Article"));
+    const history = [{ role: "assistant", content: "Suggested title: A clearer title" }] satisfies
+        Parameters<typeof authorizeAssistantAction>[5];
+    request.authorMessage = "Ok, apply it";
+    let verified = false;
+    const authorization = await authorizeAssistantAction({ resolveAssistantActionIntentVerifier: () => ({
+        verify: async (message, action, input, _signal, context) => {
+            assert.equal(message, "Ok, apply it");
+            assert.deepEqual(context, history);
+            assert.equal(action, "rename_article");
+            assert.deepEqual(input, { title: "A clearer title" });
+            verified = true;
+            return false;
+        },
+    }) }, request, "rename_article", { title: "A clearer title" }, new AbortController().signal, history);
+    assert.equal(verified, true);
+    assert.equal(authorization.ok, false);
 });
 
 

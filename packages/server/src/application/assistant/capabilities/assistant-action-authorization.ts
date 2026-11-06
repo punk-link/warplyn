@@ -3,15 +3,16 @@ import { failure, success, type ApplicationResult } from "../../errors/applicati
 import type { EditorialEngineResolver } from "../../editorial/engine/editorial-engine-resolver.js";
 import type { PreparedAssistantRequest } from "../requests/prepared-assistant-request.js";
 import type { EditorialCapabilityDefinition } from "./editorial-capability-definition.js";
+import type { ConversationHistory } from "../requests/conversation-history.js";
 
 
 export async function authorizeAssistantAction(
     engines: Pick<EditorialEngineResolver, "resolveAssistantActionIntentVerifier">,
     request: PreparedAssistantRequest, action: AssistantAuthorizedAction,
-    input: Readonly<Record<string, string>>, signal: AbortSignal,
+    input: Readonly<Record<string, string>>, signal: AbortSignal, history: ConversationHistory = [],
 ): Promise<ApplicationResult<void>> {
     const verifier = engines.resolveAssistantActionIntentVerifier?.();
-    if (!verifier || !await verifier.verify(request.authorMessage, action, input, signal))
+    if (!verifier || !await verifier.verify(request.authorMessage, action, input, signal, history))
         return failure(APPLICATION_ERROR.INVALID_REQUEST);
 
     signal.throwIfAborted();
