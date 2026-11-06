@@ -18,6 +18,7 @@ Warplyn gives you a local-first workspace for developing and refining *Articles*
 - [Article files](article-files.md)
 - [Editorial Assistant](editorial-assistant.md)
 - [Reviewing Articles](reviewing-articles.md)
+- [Fact Check](fact-checking.md)
 - [Translations](translations.md)
 
 ## Style Profile

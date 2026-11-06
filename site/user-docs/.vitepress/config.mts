@@ -49,6 +49,7 @@ export default defineConfig({
                     { text: "Article files", link: "/article-files" },
                     { text: "Editorial Assistant", link: "/editorial-assistant" },
                     { text: "Reviewing Articles", link: "/reviewing-articles" },
+                    { text: "Fact Check", link: "/fact-checking" },
                     { text: "Translations", link: "/translations" },
                 ],
             },
