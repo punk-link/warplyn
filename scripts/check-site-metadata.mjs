@@ -15,6 +15,17 @@ const locPattern = /<loc>([^<]+)<\/loc>/g;
 const sitemapUrls = [...sitemap.matchAll(locPattern)].map((match) => match[1]);
 const expectedUrls = pagePaths.map((path) => `https://warplyn.com/${path}`);
 const guideDescriptions = new Set();
+const homepage = readFileSync(new URL("dist/index.html", siteRoot), "utf8");
+const structuredDataPattern = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g;
+const structuredData = [...homepage.matchAll(structuredDataPattern)].map((match) => JSON.parse(match[1]));
+const application = structuredData.find((entry) => entry["@type"] === "SoftwareApplication");
+
+assert.ok(application, "Homepage must describe the software application");
+assert.equal(application.name, "Warplyn");
+assert.equal(application.url, "https://warplyn.com/");
+assert.equal(application.downloadUrl, "https://github.com/punk-link/warplyn/releases/latest");
+assert.equal(application.license, "https://github.com/punk-link/warplyn/blob/main/LICENSE");
+assert.equal(application.operatingSystem, "Windows 11 x64, Debian Linux");
 
 assert.deepEqual(sitemapUrls.sort(), expectedUrls.sort(), "Sitemap must list every public page exactly once");
 

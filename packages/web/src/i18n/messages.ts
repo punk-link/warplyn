@@ -805,7 +805,7 @@ export const messages = {
     "settings.publishing": "Publishing",
     "settings.dataBackups": "Data & backups",
     "settings.about": "About Warplyn",
-    "settings.aboutDescription": "A local-first AI editorial workspace for technical authors.",
+    "settings.aboutDescription": "A local-first writing workspace with an AI Editorial Assistant when you want help.",
     "settings.projectResources": "Project resources",
     "settings.mitLicense": "MIT License",
     "settings.documentation": "Documentation",
