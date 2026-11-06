@@ -4,7 +4,7 @@ import { useIntl } from "react-intl";
 import type { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
 import { getShortcutHint } from "../../key-bindings/shortcut-hint.js";
 import { ArchiveIcon, ArticleIcon, CloseIcon, SearchIcon, SettingsIcon, UserIcon } from "../../ui/icons.js";
-import { Button, Drawer, Field, IconButton } from "../../ui/primitives.js";
+import { Drawer, Field, IconButton } from "../../ui/primitives.js";
 import { WarplynIcon } from "../../ui/WarplynIcon.js";
 import { UpdateController } from "./UpdateController.js";
 import { enterLibraryResults, moveLibraryFocus } from "./article-library-focus.js";
@@ -276,42 +276,29 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                     selectArticle(articleId);
                 }} />
         )}
-        <footer className={collapsed ? "mt-auto flex shrink-0 flex-col items-center gap-1 border-t border-border px-0.5 pb-0 pt-2" : "shrink-0 border-t border-border px-2 pb-0 pt-2"}>
-            {collapsed
-                ? <><IconButton label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={() => {
-                    close();
-                    openStyleProfile();
-                }}><UserIcon className="size-4" />
-                </IconButton>
-                <IconButton label={intl.formatMessage({ id: "navigation.settings" })} title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)} onClick={() => {
+        <footer className={collapsed
+            ? "mt-auto flex shrink-0 flex-col items-center gap-1 border-t border-border px-0.5 py-2"
+            : "flex shrink-0 items-center gap-1 border-t border-border px-2 py-2"}>
+            <IconButton variant="quiet" label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={() => {
+                close();
+                openStyleProfile();
+            }}><UserIcon className="size-4" />
+            </IconButton>
+            <IconButton
+                variant="quiet"
+                label={intl.formatMessage({ id: "navigation.settings" })}
+                title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)}
+                onClick={() => {
                     close();
                     openSettings();
                 }}><SettingsIcon className="size-4" />
-                </IconButton>
-                <div className="size-9 shrink-0"><UpdateController /></div>
-                </>
-                : <><Button
-                    compact
-                    className="flex w-full items-center justify-start !py-1.5 text-left"
-                    variant="quiet"
-                    onClick={openStyleProfile}><UserIcon className="size-4 shrink-0" /><span className="ml-2">
-                        {intl.formatMessage({ id: "navigation.styleProfile" })}
-                    </span>
-                </Button>
-                <Button
-                    compact
-                    className="flex w-full items-center justify-start !py-1.5 text-left"
-                    variant="quiet"
-                    title={getShortcutHint(intl.formatMessage({ id: "navigation.settings" }), KEY_BINDING_COMMAND.OPEN_SETTINGS, shortcutOverrides)}
-                    onClick={openSettings}><SettingsIcon className="size-4 shrink-0" /><span className="ml-2">
-                        {intl.formatMessage({ id: "navigation.settings" })}
-                    </span>
-                </Button>
-                <div className="flex items-center justify-between px-2 pb-0 pt-2 text-micro font-medium text-muted">
-                    <span>{getLanguageCode(language)} · {intl.formatMessage({ id: "navigation.local" })}</span>
-                    <div className="size-9 shrink-0"><UpdateController /></div>
-                </div>
-                </>}
+            </IconButton>
+            <span className="grid size-9 shrink-0 place-items-center text-micro font-medium text-muted"
+                title={`${getLanguageCode(language)} · ${intl.formatMessage({ id: "navigation.local" })}`}
+                aria-label={`${getLanguageCode(language)} · ${intl.formatMessage({ id: "navigation.local" })}`}>
+                {getLanguageCode(language)}
+            </span>
+            <div className={collapsed ? "size-9 shrink-0" : "ml-auto size-9 shrink-0"}><UpdateController /></div>
         </footer>
         {activeView && (
             <Drawer
