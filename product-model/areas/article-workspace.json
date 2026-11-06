@@ -103,7 +103,7 @@
             "title": "Explicit reply replacement and opt-in direct edits",
             "status": "implemented",
             "owners": ["packages/web/src/workspace/components/assistant/AssistantComposer.tsx", "packages/web/src/workspace/components/assistant/AssistantTimelineMessage.tsx", "packages/web/src/workspace/state/assistant-messages-state.ts", "packages/server/src/application/assistant/completion/assistant-completion.ts", "packages/server/src/infrastructure/persistence/repositories/assistant-repository.ts"],
-            "contract": "Each Article conversation has Propose edits for review or Apply edits directly mode, shown in a compact composer popover selector without persistent explanatory copy; Proposal review is the default and existing conversations retain it. An exact, completed, single replacement from an explicit edit request can be applied once from its reply. An untagged explicit one-character substitution uses the captured Article or selection directly, preserving all other text. Direct mode applies a valid replacement after a separate structured intent check, without creating a Proposal; an invalid replacement fails rather than becoming a review Proposal. Generated capability summaries stay out of chat before the final provenance handoff. Selection scope never expands to the whole Article. Stale Revisions and any current Draft block application with recovery guidance. An applied reply identifies its immutable Assistant Revision; ordinary Proposals retain Proposal Review.",
+            "contract": "Each Article conversation has Propose edits for review or Apply edits directly mode, shown in a compact composer popover selector without persistent explanatory copy; Proposal review is the default and existing conversations retain it. An exact, completed, single replacement from an explicit edit request can be applied once from its reply. An untagged explicit one-character substitution uses the captured Article or selection directly, preserving all other text. Direct mode grants permission to apply a validated replacement from the requested operation without a separate edit-intent check or creating a Proposal; an invalid replacement fails rather than becoming a review Proposal. Operations requiring Proposal review remain in review. Generated capability summaries stay out of chat before the final provenance handoff. Selection scope never expands to the whole Article. Stale Revisions and any current Draft block application with recovery guidance. An applied reply identifies its immutable Assistant Revision; ordinary Proposals retain Proposal Review.",
             "persistence": "The per-Article mode, validated reply candidate, applied Revision identity, and Revision provenance persist locally in SQLite."
         },
         {
@@ -331,12 +331,12 @@
         },
         {
             "id": "workspace.assistant.conversational-direct-edit",
-            "title": "Opt-in direct mode requires exact edit intent",
+            "title": "Opt-in direct mode authorizes validated replacements",
             "capabilityIds": ["workspace.assistant.conversational-edits"],
             "preconditions": ["Apply edits directly mode is active for the Article conversation."],
             "event": "An Assistant request, with or without a Skill tag, completes with or without explicit edit intent.",
-            "expected": ["An untagged explicit edit request starts the Proposal capability with the captured Article or selection context; a one-character substitution preserves all other text.", "Only an explicitly authorized and validated replacement appends a Revision at completion."],
-            "forbidden": ["Mode alone authorizing an unrelated edit, a rejected direct edit becoming a review Proposal, or interim generated text appearing before provenance."],
+            "expected": ["An untagged explicit edit request starts the Proposal capability with the captured Article or selection context; a one-character substitution preserves all other text.", "Direct mode grants application permission for a validated replacement from the requested operation without a separate edit-intent check. Operations requiring Proposal review remain in review."],
+            "forbidden": ["An invalid replacement being applied or becoming a review Proposal, or interim generated text appearing before provenance."],
             "evidence": { "kind": "automated", "path": "packages/server/src/presentation/editorial-integration.assistant.test.ts" }
         },
         {
