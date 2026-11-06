@@ -139,7 +139,7 @@ export class ArticleService {
         articleId: string, input: AcceptProposalInput, signal: AbortSignal,
     ): Promise<ArticleOperationResult<ArticleRevision>> {
         const previousContent = this.store.getArticle(articleId)?.currentRevision.content ?? "";
-        const revision = runArticleOperation(() => this.store.acceptProposal(articleId, input, fallbackDescription(previousContent, input.content)));
+        const revision = runArticleOperation(() => this.store.acceptProposal(articleId, input));
         if (!revision.ok)
             return revision;
 
@@ -186,18 +186,14 @@ export class ArticleService {
     }
 
 
-    private describeChange(articleId: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string> {
+    private describeChange(articleId: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string | undefined> {
         const previousContent = this.store.getArticle(articleId)?.currentRevision.content ?? "";
         return this.describeContentChange(previousContent, content, interfaceLocale, signal);
     }
 
 
-    async describeContentChange(previousContent: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string> {
-        const generatedDescription = await this.tryGenerateRevisionDescription(previousContent, content, interfaceLocale, signal);
-        if (generatedDescription)
-            return generatedDescription;
-
-        return fallbackDescription(previousContent, content);
+    describeContentChange(previousContent: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string | undefined> {
+        return this.tryGenerateRevisionDescription(previousContent, content, interfaceLocale, signal);
     }
 
 
@@ -208,16 +204,4 @@ export class ArticleService {
             return undefined;
         }
     }
-}
-
-
-function fallbackDescription(previousContent: string, content: string): string {
-    const difference = Array.from(content).length - Array.from(previousContent).length;
-    if (difference > 0)
-        return `Added ${difference} characters`;
-
-    if (difference < 0)
-        return `Removed ${-difference} characters`;
-
-    return "Updated Article";
 }

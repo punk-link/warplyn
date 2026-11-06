@@ -63,7 +63,7 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         page = app.page;
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Electron fixture Article.");
         await page.getByRole("tab", { name: "Revisions" }).click();
-        await expect(page.getByRole("navigation", { name: "Revision history" })).toContainText("Added 25 characters");
+        await expect(page.getByRole("navigation", { name: "Revision history" })).toContainText("Initial Revision");
     } finally {
         if (app)
             await closePackaged(app);

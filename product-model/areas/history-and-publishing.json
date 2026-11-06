@@ -159,12 +159,12 @@
         },
         {
             "id": "history-and-publishing.revision-descriptions",
-            "title": "New content Revisions retain concise descriptions",
+            "title": "New content Revisions retain concise editorial descriptions with neutral fallbacks",
             "capabilityIds": ["history-and-publishing.revision-history"],
             "preconditions": ["An author explicitly saves or accepts changed Article content."],
             "event": "The configured text-generation model completes, fails, or is cancelled while the Revision is being created.",
-            "expected": ["Proposal acceptance returns without waiting for description generation, with a deterministic local fallback stored in the immutable Revision. A successfully completed background description is stored separately and preferred on subsequent history reads. Other new content Revisions store their generated or fallback description at creation; accepted content remains recoverable if background work fails or is interrupted."],
-            "forbidden": ["Changing existing Revision records, blocking Revision creation after model failure, or sending unchanged Article context to the model."],
+            "expected": ["Proposal acceptance returns without waiting for description generation. Missing generated descriptions use localized interface labels derived from immutable Revision provenance, without persisting fallback copy. A successfully completed background description is stored separately and preferred on subsequent history reads. Other new content Revisions store their generated description at creation when available; accepted content remains recoverable if background work fails or is interrupted."],
+            "forbidden": ["Changing existing Revision records, blocking Revision creation after model failure, reporting net character counts as the editorial change, inventing Author intent, or sending unrelated unchanged Article context to the model."],
             "evidence": { "kind": "automated", "path": "packages/server/src/infrastructure/persistence/repositories.article-lifecycle.test.ts" }
         },
         {
