@@ -45,6 +45,11 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         await page.getByRole("button", { name: "Dismiss notification: Revision saved without an Article title" }).click();
 
         await page.getByRole("button", { name: "Expand Editorial Assistant Panel" }).click();
+        await page.getByRole("button", { name: "Quick actions" }).click();
+        await page.getByRole("button", { name: "Show all skills" }).click();
+        await page.getByRole("option", { name: "Translate text", exact: true }).click();
+        await expect(page.locator("[data-assistant-skill-chip]")).toContainText("Translate text");
+        await page.getByRole("button", { name: "Remove Translate text" }).click();
         await editor.click();
         await editor.press("ControlOrMeta+A");
         const localMeaningVoiceNamePattern = /For local meaning and voice, selection requests/;

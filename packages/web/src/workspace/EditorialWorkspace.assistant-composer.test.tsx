@@ -15,6 +15,17 @@ import { AssistantQuickActions } from "./components/assistant/AssistantComposerA
 describe("Editorial Assistant composer", () => {
     afterEach(resetWorkspaceTestEnvironment);
 
+    it("inserts the translation chip without configured target languages", async () => {
+        const user = userEvent.setup();
+        const panel = renderLocalized(<EditorialAssistantPanel
+            state="idle" message="" onRequest={vi.fn()} onCancel={vi.fn()}
+            collapsed={false} setCollapsed={vi.fn()} assistantMessages={[]} />);
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.quickActions") }));
+        await user.click(screen.getByRole("button", { name: getMessage("assistant.showAllSkills") }));
+        await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.translation.label") }));
+        await waitFor(() => expect(panel.container.querySelector("[data-assistant-skill-chip]")?.textContent).toContain("Translate text"));
+    });
+
     it("sends a Quick action immediately when Ctrl is held", async () => {
         const onRequest = vi.fn().mockResolvedValue(undefined);
         renderLocalized(<EditorialAssistantPanel
