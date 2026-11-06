@@ -85,16 +85,6 @@ For visible debugging in PowerShell, set `$env:WARPLYN_ELECTRON_TEST_HIDDEN = "f
 
 Browser E2E does not exercise Electron IPC, preload isolation, native dialogs, credentials, packaging, or shutdown. For changes to these paths, run the relevant Electron and server tests and the affected desktop scenario in the [release guide](mvp-release-and-recovery.md). Report any desktop checks that could not be run separately from browser results.
 
-### Published Windows installer lifecycle
-
-Before submitting WinGet manifests, run the **WinGet installation lifecycle** workflow against a published stable release checkout. It runs on relevant manifest/lifecycle PRs and supports manual dispatch after the workflow is merged. GitHub-hosted Windows runners provide the disposable environment; a local VM is not required.
-
-The check downloads the current and previous published installers, generates manifests, validates their schema and checksum, and exercises silent installation, upgrade, and uninstall. It checks installed registration, publisher, version, executable, and preservation of a synthetic profile file. The WinGet CLI path uses local manifests and accepts source/package notices only on the disposable runner. The script rejects other environments and runners with an existing Warplyn installation or profile. Keep those guards intact.
-
-The workflow installs the signed current stable App Installer bundle and its x64 dependencies from Microsoft's [official WinGet releases](https://github.com/microsoft/winget-cli/releases), then verifies the client version. It saves validated manifests as `winget-lifecycle`, and `lifecycle-results.json` plus process logs as `winget-lifecycle-results`. A failed job or missing results file is not a passing check. Use the logs to diagnose failures. This test covers installer behavior and a profile fixture; it does not prove database migration, in-app update coordination, or Article recovery. Run the packaged desktop journeys and applicable recovery checks separately.
-
-After validation passes, check for an existing package/submission, then copy the three validated manifests to `manifests/p/PunkLink/Warplyn/<version>/` in a fork of [winget-pkgs](https://github.com/microsoft/winget-pkgs). Open a catalog PR with the workflow evidence. The account owner must review any Contributor License Agreement request; the agent must not sign on their behalf. Follow Microsoft's [submission guide](https://learn.microsoft.com/en-us/windows/package-manager/package/repository) and [manifest validation guide](https://github.com/microsoft/winget-pkgs/blob/master/doc/Validation.md). Catalog acceptance remains separate from a successful test run.
-
 ### E2E failures
 
 Browser and desktop failures retain screenshots, traces, and error context under `test-results/browser` and `test-results/desktop`. CI uploads these directories on failure for seven days. Open a trace with `npx playwright show-trace <path-to-trace.zip>`. Use isolated test fixtures without provider credentials or private Author content.
