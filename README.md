@@ -74,6 +74,15 @@ To get started on Windows:
 
 On Windows, you control update checks, downloads, and restarts in **Settings > About**. If an update causes trouble, follow the [update recovery guide](https://warplyn.com/docs/update-recovery.html).
 
+### Uninstall
+
+Close Warplyn, then remove the app:
+
+- **Windows:** Open Windows **Settings > Apps > Installed apps**, find **Warplyn**, and choose **Uninstall**.
+- **Debian and Debian-based distributions:** Run `sudo apt remove warplyn` in a terminal.
+
+Uninstalling preserves your writing data. To permanently remove it too, use **Settings > Data & backups > Delete local data** inside Warplyn before uninstalling. Create a backup first if you want to keep your work. See [Data and backup settings](https://warplyn.com/docs/application-settings.html) for details.
+
 ## Support & feedback
 
 - [User documentation](https://warplyn.com/docs/)
