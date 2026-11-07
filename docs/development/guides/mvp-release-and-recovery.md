@@ -4,6 +4,8 @@ Use this guide to prepare and verify the browser-based local-first MVP and unsig
 
 ## Release checklist
 
+Follow [Development setup](development-setup.md) for the required Node.js version and dependency installation.
+
 1. Start from a clean worktree and install the locked dependencies with `npm ci`.
 2. Run the release checks:
 

@@ -1,6 +1,6 @@
 # Security policy
 
-Skladno handles private author content and AI provider credentials. Do not report a vulnerability with credentials, Article bodies, local database files, private paths, prompts, or raw provider output attached.
+Warplyn handles private author content and AI provider credentials. Do not report a vulnerability with credentials, Article bodies, local database files, private paths, prompts, or raw provider output attached.
 
 Report security vulnerabilities through GitHub's private vulnerability reporting for this repository when available. If it is unavailable, open a public issue containing only a request for a private maintainer contact and a non-sensitive description of the affected area. Do not include reproduction details that expose users before a private channel is established.
 

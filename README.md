@@ -74,39 +74,11 @@ To get started on Windows:
 
 On Windows, you control update checks, downloads, and restarts in **Settings > About**. If an update causes trouble, follow the [update recovery guide](https://warplyn.com/docs/update-recovery.html).
 
-## Help
+## Support & feedback
 
 - [User documentation](https://warplyn.com/docs/)
 - [Report a problem or suggest an improvement](https://github.com/punk-link/warplyn/issues)
-
-## Development setup
-
-Use Node.js 26.13.0, pinned in `.nvmrc` and shared by CI. With nvm, run `nvm install` and `nvm use`; with nvm-windows, run `nvm install 26.13.0` and `nvm use 26.13.0`. Then run `npm ci`.
-
-This version applies to development and release tooling. The desktop app uses Electron's bundled Node.js runtime.
-
-The `extract-zip` dependency override keeps Electron packaging compatible with Node 26; its older `yauzl` dependency can silently stop extracting archives. Remove the override when Forge's packaging dependencies support Node 26 directly.
-
-## Create a release
-
-Maintainers need an authenticated GitHub CLI and a clean checkout of `main`. Set `OPENAI_COMMIT_GENERATION_KEY` in the release terminal to enable automatic release-note generation through OpenAI. The default model is `gpt-6-luna` with medium reasoning; `OPENAI_COMMIT_GENERATION_MODEL` can override it. This key is for release tooling and is never packaged with the app or written to release records or logs.
-
-Run one of these commands:
-
-```sh
-npm run release
-npm run release:preview
-```
-
-Each command generates missing notes, shows the summary and proposed security classification for approval, runs checks, and commits the approved notes with version changes before tagging and pushing. Type `edit` during review to correct the saved draft and reload it in the same run. Long steps report elapsed progress. Stable and preview releases can both contain security fixes. Add `--manual` to write notes without an API call, or `--compare v0.7.0` to generate a local comparison without publishing, for example `npm run release -- --compare v0.7.0`.
-
-Generation sends bounded repository source diffs and commit evidence to OpenAI with response storage disabled. It excludes credentials, binaries, and test data. See the [release guide](docs/development/guides/mvp-release-and-recovery.md) for version selection, first-release setup, review, publication, and recovery procedures.
-
-## Project history
-
-Warplyn is maintained by [punk-link](https://github.com/punk-link) and includes Skladno's Git history and inherited tags. Download Warplyn installers from the current [Warplyn releases](https://github.com/punk-link/warplyn/releases).
-
-Historical issues, pull-request reviews, and Skladno releases remain in [skladno-legacy](https://github.com/punk-link/skladno-legacy). Active issues moved to this repository through native transfer; see the [issue URL map](docs/development/guides/skladno-to-warplyn-issue-map.md).
+- [Report a security vulnerability](SECURITY.md)
 
 ## License
 

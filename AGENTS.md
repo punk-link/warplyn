@@ -49,6 +49,8 @@ Use the [plans and delegation skill](.codex/skills/plans-and-delegation/SKILL.md
 
 ## Documentation ownership
 
+Never use `README.md` to store development documentation or agent notes. Put development documentation in `docs/development`, following the ownership rules below.
+
 [README.md](README.md) covers setup. The [glossary](site/user-docs/glossary.md), `packages/shared`, and the product model define domain terms. Use **Article** for author content; reserve `document` for browser DOM APIs.
 
 Keep `docs/development/plans` for active work. Move lasting decisions from completed plans into an ADR or guide, then delete the plan. Generated product inventories are read-only; update `product-model/areas` and regenerate them.
