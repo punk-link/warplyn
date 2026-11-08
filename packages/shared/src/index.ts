@@ -305,3 +305,4 @@ export { hydrateAssistantMessageHistory, type AssistantMessageHistory } from "./
 export { createAssistantMessageHistoryPath } from "./assistant/assistant.js";
 
 export { success, failure, type Result } from "./cross-cutting/result.js";
+export { assistantActivityIds, type AssistantActivityId } from "./assistant/assistant-activity-id.js";

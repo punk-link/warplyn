@@ -174,9 +174,9 @@ test("assistant requests persist a revision-bound proposal and splice only the s
         assert.match(body, typeAcceptedPattern);
         const typeSkillResolvedPattern = /"type":"skill_resolved".*"skillId":"flow_and_clarity"/;
         assert.match(body, typeSkillResolvedPattern);
-        const capabilityActivityStartedPattern = /"type":"capability_activity".*"summary":"Preparing a Proposal\.".*"status":"started"/;
+        const capabilityActivityStartedPattern = /"type":"capability_activity".*"id":"prepareProposal".*"status":"started"/;
         assert.match(body, capabilityActivityStartedPattern);
-        const capabilityActivityCompletedPattern = /"type":"capability_activity".*"summary":"Preparing a Proposal\.".*"status":"completed"/;
+        const capabilityActivityCompletedPattern = /"type":"capability_activity".*"id":"prepareProposal".*"status":"completed"/;
         assert.match(body, capabilityActivityCompletedPattern);
         const typeCompletedResponsekindPattern = /"type":"completed".*"responseKind":"proposal_prepared"/;
         assert.match(body, typeCompletedResponsekindPattern);
@@ -262,8 +262,8 @@ test("the live Assistant tool loop runs no-input artifact capabilities", async (
         });
         const body = await response.text();
 
-        const summaryPreparingClaimsPattern = /"summary":"Preparing claims\."/;
-        assert.match(body, summaryPreparingClaimsPattern);
+        const claimsActivityPattern = /"type":"capability_activity".*"id":"claims"/;
+        assert.match(body, claimsActivityPattern);
         const typeStagedCompletionPattern = /"type":"staged_completion"/;
         assert.match(body, typeStagedCompletionPattern);
         const responsekindFindingsPreparedPattern = /"responseKind":"findings_prepared"/;

@@ -1,4 +1,5 @@
 import type { ApplicationErrorCode } from "../cross-cutting/errors.js";
+import { assistantActivityIds } from "./assistant-activity-id.js";
 import type { AssistantEditorialResult, AssistantResponseKind, AssistantSkillSource, AssistantStagedCompletion } from "./assistant.js";
 
 
@@ -64,7 +65,7 @@ function isCapabilityActivity(value: unknown): boolean {
     if (!isRecord(value))
         return false;
 
-    return typeof value.summary === "string" && (value.status === "started" || value.status === "completed");
+    return assistantActivityIds.some((id) => id === value.id) && (value.status === "started" || value.status === "completed");
 }
 
 

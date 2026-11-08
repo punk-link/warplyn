@@ -126,12 +126,22 @@ test("streams extracted Fact Check claims while the capability is still running"
         skills: new AssistantSkillCatalog([builtInSkillSource]), conversationHistory: () => [],
     });
     const stream = loop.stream(request, new AbortController().signal)[Symbol.asyncIterator]();
+    const started = await stream.next();
+    assert.equal(started.value?.type, EDITORIAL_ENGINE_EVENT.TOOL_STATUS);
+    if (started.value?.type === EDITORIAL_ENGINE_EVENT.TOOL_STATUS)
+        assert.equal(started.value.status, "started");
+
     const preview = await stream.next();
     assert.equal(preview.value?.type, EDITORIAL_ENGINE_EVENT.TOOL_STATUS);
     if (preview.value?.type === EDITORIAL_ENGINE_EVENT.TOOL_STATUS)
         assert.deepEqual(preview.value.claims, [{ claim: "First claim", checked: false }]);
 
     finishResearch();
+    const completed = await stream.next();
+    assert.equal(completed.value?.type, EDITORIAL_ENGINE_EVENT.TOOL_STATUS);
+    if (completed.value?.type === EDITORIAL_ENGINE_EVENT.TOOL_STATUS)
+        assert.equal(completed.value.status, "completed");
+
     assert.equal((await stream.next()).value?.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
 });
 
@@ -174,8 +184,10 @@ test("an Author Skill inspects the current Article before following its instruct
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
             getDefinitions: () => [
-                { id: "inspect_article", execution: "read", allowedContext: "article", input: "none", result: "article", retry: "transient-read", activity: "Reviewing the current Article." },
-                { id: "generate_proposal", execution: "artifact", allowedContext: "article", selectionCompatible: true, input: "proposal-operation", result: "proposal", retry: "never", activity: "Preparing a Proposal." },
+                { id: "inspect_article", execution: "read", allowedContext: "article", input: "none",
+                    result: "article", retry: "transient-read", activity: "article" },
+                { id: "generate_proposal", execution: "artifact", allowedContext: "article", selectionCompatible: true,
+                    input: "proposal-operation", result: "proposal", retry: "never", activity: "prepareProposal" },
             ],
             discover: () => [], read: () => ({ content: "Article" }), executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* (input) {
@@ -186,8 +198,12 @@ test("an Author Skill inspects the current Article before following its instruct
         skills: new AssistantSkillCatalog([source]), conversationHistory: () => [],
     });
 
+    const events = [];
     for await (const event of loop.stream(request, new AbortController().signal))
-        assert.equal(event.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
+        events.push(event);
+
+    assert.equal(events.at(-1)?.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
+    assert.equal(events.filter((event) => event.type === EDITORIAL_ENGINE_EVENT.TOOL_STATUS).length, 4);
 
     assert.equal(request.execution.completedCapability, "generate_proposal");
     assert.equal(proposalAuthorContext, "Rephrase without em dashes.");
@@ -239,7 +255,8 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
     const loop = new AssistantCapabilityLoop({
         assistant: { setExecution: () => undefined, resolveRequest: () => undefined }, engines: {},
         capabilities: {
-            getDefinitions: () => [{ id: "generate_proposal", execution: "artifact", allowedContext: "article", selectionCompatible: true, input: "proposal-operation", result: "proposal", retry: "never", activity: "Preparing a Proposal." }],
+            getDefinitions: () => [{ id: "generate_proposal", execution: "artifact", allowedContext: "article", selectionCompatible: true,
+                input: "proposal-operation", result: "proposal", retry: "never", activity: "prepareProposal" }],
             discover: () => [], read: () => undefined, executeAction: () => ({ items: [], rules: "", status: "empty" }),
             stream: async function* (input) {
                 streamInput = input;
@@ -249,8 +266,12 @@ test("an Author Skill prepares a Proposal from only the selected text", async ()
         skills: new AssistantSkillCatalog([source]), conversationHistory: () => [],
     });
 
+    const events = [];
     for await (const event of loop.stream(request, new AbortController().signal))
-        assert.equal(event.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
+        events.push(event);
+
+    assert.equal(events.at(-1)?.type, EDITORIAL_ENGINE_EVENT.COMPLETED);
+    assert.equal(events.filter((event) => event.type === EDITORIAL_ENGINE_EVENT.TOOL_STATUS).length, 2);
 
     assert.equal(streamInput?.article.content, "selected");
     assert.equal(streamInput?.article.selection, true);

@@ -30,7 +30,7 @@ export interface PreparedAssistantRequest extends ReplayedAssistantRequest {
         completedCapability?: string;
         partialFactCheck?: FactCheck;
         skipFactCheckClaim?: (claim: string) => boolean;
-        capabilityActivities: { summary: string; status: "started" | "completed" }[];
+        capabilityActivities: import("@skladno/shared").AssistantCapabilityActivity[];
         pendingActions: { capability: ActionCapability; input: Readonly<Record<string, string>> }[];
         pendingSkillChange?: AuthorSkillChange;
         authorizedActions: readonly AssistantAuthorizedAction[];

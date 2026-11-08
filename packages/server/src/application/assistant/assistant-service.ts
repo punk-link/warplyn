@@ -204,6 +204,9 @@ export class AssistantService {
     private async *consumeEditorialEvents(request: PreparedAssistantRequest, signal: AbortSignal): AsyncGenerator<AssistantEvent, EditorialEngineEvent | undefined> {
         let completedEvent: EditorialEngineEvent | undefined;
         for await (const event of this.streamEditorialEvents(request, signal)) {
+            for (const activity of request.execution.capabilityActivities.splice(0))
+                yield { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.requestId, activity };
+
             if (event.type === EDITORIAL_ENGINE_EVENT.COMPLETED)
                 completedEvent = event;
             else if (event.type === EDITORIAL_ENGINE_EVENT.FACT_CHECK_PROGRESS)

@@ -20,5 +20,5 @@ export function getAssistantInitialEvents(request: PreparedAssistantRequest): As
 
 
 export function createEditorialActivityEvent(requestId: string, operation: EditorialOperation, status: "started" | "completed"): AssistantEvent {
-    return { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId, activity: { summary: getActivityForEditorialOperation(operation), status } };
+    return { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId, activity: { id: getActivityForEditorialOperation(operation), status } };
 }

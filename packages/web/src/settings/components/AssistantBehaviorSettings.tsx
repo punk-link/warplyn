@@ -2,6 +2,7 @@ import { useIntl } from "react-intl";
 import type { GeneralSettings } from "@skladno/shared";
 import { Select } from "../../ui/primitives.js";
 import { SettingRow, SettingsGroup } from "./SettingRow.js";
+import { SwitchIndicator } from "../../ui/SwitchIndicator.js";
 
 const assistantRequestTimeoutOptions = [1, 2, 3, 5, 10, 15, 30] as const;
 
@@ -9,6 +10,19 @@ const assistantRequestTimeoutOptions = [1, 2, 3, 5, 10, 15, 30] as const;
 export function AssistantBehaviorSettings({ general, save }: { general: GeneralSettings; save: (next: GeneralSettings) => Promise<void> }) {
     const intl = useIntl();
     return <SettingsGroup label={intl.formatMessage({ id: "settings.assistantBehavior" })}>
+        <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.showExecutionProgress" })}
+            hint={intl.formatMessage({ id: "settings.showExecutionProgressHint" })}>
+            <button
+                type="button"
+                role="switch"
+                aria-checked={general.showExecutionProgress}
+                aria-label={intl.formatMessage({ id: "settings.showExecutionProgress" })}
+                className="inline-flex min-h-9 items-center gap-2 text-xs text-ink focus-visible:ring-2 focus-visible:ring-brand"
+                onClick={() => void save({ ...general, showExecutionProgress: !general.showExecutionProgress })}>
+                <SwitchIndicator checked={general.showExecutionProgress} />
+                <span>{intl.formatMessage({ id: general.showExecutionProgress ? "settings.on" : "settings.off" })}</span>
+            </button>
+        </SettingRow>
         <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.defaultAssistantEditMode" })} hint={intl.formatMessage({ id: "settings.defaultAssistantEditModeHint" })}>
             <Select aria-label={intl.formatMessage({ id: "settings.defaultAssistantEditMode" })} value={general.defaultAssistantEditMode} onChange={(event) => void save({ ...general, defaultAssistantEditMode: event.target.value === "direct" ? "direct" : "review" })}>
                 <option value="review">{intl.formatMessage({ id: "assistant.editMode.review" })}</option>

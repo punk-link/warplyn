@@ -3,10 +3,10 @@ import { ASSISTANT_EVENT, type AssistantEditorialResult, type AssistantEvent } f
 import type { ArticleWorkspaceState } from "./article-workspace-state.js";
 import type { AssistantRequestStore } from "./assistant-request-state.js";
 import { updateStreamedMessage } from "./assistant-streaming.js";
-import { messages } from "../../i18n/messages.js";
 import { useIntl } from "react-intl";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { notifyTitleGeneration } from "./article-title-notification.js";
+import { appendAssistantActivity } from "./append-assistant-activity.js";
 
 
 interface AssistantStreamEventsOptions {
@@ -42,7 +42,7 @@ export function useAssistantStreamEvents({ articleId, workspace, store, onResult
                 setActiveRequestIdByArticle((current) => ({ ...current, [id]: event.requestId }));
                 break;
             case ASSISTANT_EVENT.CAPABILITY_ACTIVITY:
-                setActivityByArticle((current) => ({ ...current, [id]: event.activity }));
+                setActivityByArticle((current) => ({ ...current, [id]: appendAssistantActivity(current[id], event.activity) }));
                 break;
             case ASSISTANT_EVENT.TOOL_STATUS: {
                 if (!event.claims)
@@ -50,10 +50,14 @@ export function useAssistantStreamEvents({ articleId, workspace, store, onResult
 
                 const { claims } = event;
                 setFactCheckClaimsByArticle((current) => ({ ...current, [id]: claims }));
-                setActivityByArticle((current) => ({ ...current, [id]: { summary: messages["assistant.checkingClaims"], status: "started" } }));
                 break;
             }
             case ASSISTANT_EVENT.COMPLETED: {
+                if (["proposal_prepared", "translation_proposal_prepared", "proposal_and_findings_prepared"].includes(event.responseKind)) {
+                    const ready = { id: "proposalReady", status: "completed" } as const;
+                    setActivityByArticle((current) => ({ ...current, [id]: appendAssistantActivity(current[id], ready) }));
+                }
+
                 if (!event.result)
                     break;
 

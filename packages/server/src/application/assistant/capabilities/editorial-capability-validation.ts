@@ -96,6 +96,6 @@ export function getCapabilityForEditorialOperation(operation: import("@skladno/s
 }
 
 
-export function getActivityForEditorialOperation(operation: import("@skladno/shared").EditorialOperation): string {
-    return definitions.find((definition) => definition.id === getCapabilityForEditorialOperation(operation))?.activity ?? "Preparing editorial work.";
+export function getActivityForEditorialOperation(operation: import("@skladno/shared").EditorialOperation): import("@skladno/shared").AssistantActivityId {
+    return definitions.find((definition) => definition.id === getCapabilityForEditorialOperation(operation))?.activity ?? "editorial";
 }

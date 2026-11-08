@@ -50,7 +50,7 @@ export interface AssistantSkillSummary {
 
 /** Renderer-safe progress for a validated capability, never a tool name or input. */
 export interface AssistantCapabilityActivity {
-    summary: string;
+    id: import("./assistant-activity-id.js").AssistantActivityId;
     status: "started" | "completed";
 }
 
