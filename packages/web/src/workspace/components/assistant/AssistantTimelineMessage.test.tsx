@@ -25,6 +25,15 @@ function renderMessage(message: AssistantMessage, props: Partial<ComponentProps<
 
 
 describe("AssistantTimelineMessage", () => {
+    it("hides proposal review when there is no available destination", () => {
+        const view = renderMessage({
+            id: "proposal", articleId: "article", role: "assistant", kind: "response",
+            status: "completed", responseKind: "proposal_prepared",
+            createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z",
+        });
+        expect(within(view.container).queryByRole("button", { name: "Review Proposal" })).toBeNull();
+    });
+
     it.each(["English", "Spanish"])("shows the translation target %s beside the Author's chip", (targetLanguage) => {
         const view = renderMessage({ id: "author", articleId: "article", role: "author", kind: "message", status: "completed", skillId: "translation", targetLanguage, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" });
         const chip = within(view.container).getByText("Translate text");

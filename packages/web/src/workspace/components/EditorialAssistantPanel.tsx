@@ -42,6 +42,7 @@ function useElapsedDuration(state: AssistantState, intl: IntlShape) {
 interface EditorialAssistantData {
     articleId?: string;
     currentRevisionId?: string;
+    hasProposal?: boolean;
     state: AssistantState;
     message: string;
     errorDetails?: string;
@@ -137,7 +138,8 @@ export function EditorialAssistantPanel({ data, actions, layout }: { data: Edito
             <h2 className="text-base font-semibold text-brand">{intl.formatMessage({ id: "assistant.heading" })}</h2>
         </header>
         <AssistantTimeline
-            data={{ currentRevisionId: data.currentRevisionId, state, message, errorDetails, activity, factCheckClaims, activeRequestId,
+            data={{ currentRevisionId: data.currentRevisionId, hasProposal: data.hasProposal,
+                state, message, errorDetails, activity, factCheckClaims, activeRequestId,
                 collapsed, assistantMessages, streamedMessage, generalSettings, elapsedDuration, hasUnavailableAiConnection, authorSkills }}
             actions={{ openView, openSkillFolder, onRetry, openSettings, onCheckpoint: openCheckpoint, applyEdit, setClaimSelected }} />
         {data.hasUsableAiConnection === false && (

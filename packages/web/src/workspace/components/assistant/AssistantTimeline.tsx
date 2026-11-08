@@ -14,6 +14,7 @@ import { AssistantActivityTrail } from "./AssistantActivityTrail.js";
 
 interface AssistantTimelineData {
     currentRevisionId?: string;
+    hasProposal?: boolean;
     state: "idle" | "streaming" | "error";
     message: string;
     errorDetails?: string;
@@ -216,7 +217,7 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
                 message={item}
                 earlierSuggestion={Boolean(data.currentRevisionId && item.baseRevisionId && item.baseRevisionId !== data.currentRevisionId)}
                 factCheckClaims={item === completedFactCheck ? factCheckClaims : undefined}
-                openView={openView}
+                openView={data.hasProposal === false && item.responseKind === "proposal_prepared" ? undefined : openView}
                 openSkillFolder={openSkillFolder}
                 onRetry={item === lastMessage && !streamedMessage ? onRetry : undefined}
                 onCheckpoint={state === "streaming" ? undefined : onCheckpoint}

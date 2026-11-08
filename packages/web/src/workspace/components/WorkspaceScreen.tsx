@@ -119,6 +119,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                     data={{
                         articleId: workspace.selectedArticle?.id,
                         currentRevisionId: workspace.selectedArticle?.currentRevisionId,
+                        hasProposal: Boolean(editorial.base),
                         state: assistant.state,
                         message: assistant.message,
                         errorDetails: assistant.errorDetails,

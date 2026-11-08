@@ -36,6 +36,28 @@ function AssistantTimeline({ state, message, errorDetails, activity, factCheckCl
 
 
 describe("AssistantTimeline", () => {
+    it("removes proposal review after dismissal while preserving completed history", () => {
+        const data = {
+            state: "idle" as const, message: "", collapsed: false,
+            generalSettings: defaultGeneralSettings, elapsedDuration: "",
+            assistantMessages: [{
+                id: "proposal", articleId: "article", role: "assistant" as const, kind: "response" as const,
+                status: "completed" as const, responseKind: "proposal_prepared" as const,
+                createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z",
+            }],
+        };
+        const actions = { openView: vi.fn() };
+        const view = render(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{ ...data, hasProposal: true }} actions={actions} />
+        </IntlProvider>);
+        expect(within(view.container).getByRole("button", { name: "Review Proposal" })).toBeTruthy();
+        view.rerender(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{ ...data, hasProposal: false }} actions={actions} />
+        </IntlProvider>);
+        expect(within(view.container).queryByRole("button", { name: "Review Proposal" })).toBeNull();
+        expect(within(view.container).getByText("Completed")).toBeTruthy();
+    });
+
     it("keeps completion metadata after the activity trail inside the response", () => {
         const timestamp = "2026-01-01T00:00:00.000Z";
         const view = render(<IntlProvider locale="en" messages={messages}>
@@ -165,6 +187,7 @@ describe("AssistantTimeline", () => {
             message=""
             collapsed={false}
             assistantMessages={assistantMessages}
+            openView={vi.fn()}
             generalSettings={defaultGeneralSettings}
             elapsedDuration="1 second" />
         </IntlProvider>);
