@@ -59,6 +59,13 @@ test("General settings preserve valid formatting preferences and reject invalid 
         const legacyGeneral = (await legacy.json() as { general: GeneralSettings }).general;
         assert.equal(legacyGeneral.timeZone, "system");
         assert.equal(legacyGeneral.assistantRequestTimeoutMinutes, 2);
+        assert.equal(legacyGeneral.showExecutionProgress, true);
+        const progressUpdate = await fetch(`${settingsUrl}/general`, {
+            method: HTTP_METHOD.PUT, headers: { "content-type": "application/json" },
+            body: JSON.stringify({ ...defaultGeneralSettings, showExecutionProgress: false }),
+        });
+        assert.equal(progressUpdate.status, HTTP_STATUS.OK);
+        assert.equal((await (await fetch(settingsUrl)).json() as { general: GeneralSettings }).general.showExecutionProgress, false);
 
         for (const minutes of [0, -1, 31, 1.5, "2", null]) {
             const response = await fetch(`${settingsUrl}/general`, {

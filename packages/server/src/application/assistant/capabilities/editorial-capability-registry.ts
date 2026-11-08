@@ -40,7 +40,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "article",
         retry: "transient-read",
-        activity: "Reviewing the current Article."
+        activity: "article"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_LINKED_ARTICLES,
         execution: "read",
@@ -48,7 +48,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "linked-articles",
         retry: "transient-read",
-        activity: "Reviewing linked Articles."
+        activity: "links"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_REVISIONS,
         execution: "read",
@@ -56,7 +56,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "revisions",
         retry: "transient-read",
-        activity: "Reviewing Revision history."
+        activity: "history"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_DRAFT,
         execution: "read",
@@ -64,7 +64,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "draft",
         retry: "transient-read",
-        activity: "Reviewing Draft state."
+        activity: "draft"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_ARTIFACTS,
         execution: "read",
@@ -72,7 +72,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "artifacts",
         retry: "transient-read",
-        activity: "Reviewing saved editorial work."
+        activity: "saved"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_PROPOSAL_SUMMARY,
         execution: "read",
@@ -80,7 +80,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: "artifact-id",
         result: "proposal-summary",
         retry: "transient-read",
-        activity: "Reviewing Proposal changes."
+        activity: "proposal"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_FACT_CHECKS,
         execution: "read",
@@ -88,7 +88,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "fact-checks",
         retry: "transient-read",
-        activity: "Reviewing Fact Check findings."
+        activity: "findings"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_PUBLISHING_GUIDANCE,
         execution: "read",
@@ -96,7 +96,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "publishing-guidance",
         retry: "transient-read",
-        activity: "Reviewing publishing guidance."
+        activity: "publishing"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_STYLE_CORPUS,
         execution: "read",
@@ -104,7 +104,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "style-corpus",
         retry: "transient-read",
-        activity: "Reviewing the Style Corpus."
+        activity: "corpus"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_ARTICLE_STYLE_RULES,
         execution: "read",
@@ -112,7 +112,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "style-rules",
         retry: "transient-read",
-        activity: "Reviewing Article style rules."
+        activity: "rules"
     }, {
         id: EDITORIAL_CAPABILITY.INSPECT_TRANSLATIONS,
         execution: "read",
@@ -120,7 +120,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "translations",
         retry: "transient-read",
-        activity: "Reviewing translations."
+        activity: "translations"
     }, {
         id: EDITORIAL_CAPABILITY.RENAME_ARTICLE,
         execution: "action",
@@ -128,7 +128,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.TITLE,
         result: "article",
         retry: "never",
-        activity: "Renaming the current Article."
+        activity: "rename"
     }, {
         id: EDITORIAL_CAPABILITY.CHANGE_ARTICLE_LANGUAGE,
         execution: "action",
@@ -136,7 +136,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.LANGUAGE,
         result: "article",
         retry: "never",
-        activity: "Changing the Article language."
+        activity: "language"
     }, {
         id: EDITORIAL_CAPABILITY.ASSIGN_PUBLISHING_PROFILE,
         execution: "action",
@@ -144,7 +144,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.PUBLISHING_PROFILE,
         result: "article",
         retry: "never",
-        activity: "Assigning publishing guidance."
+        activity: "assignPublishing"
     }, {
         id: EDITORIAL_CAPABILITY.SET_ARTICLE_STYLE_RULES,
         execution: "action",
@@ -152,7 +152,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.STYLE_RULES,
         result: "style-rules",
         retry: "never",
-        activity: "Updating Article style rules."
+        activity: "updateRules"
     }, {
         id: EDITORIAL_CAPABILITY.ADD_REVISION_TO_STYLE_CORPUS,
         execution: "action",
@@ -160,7 +160,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "style-corpus",
         retry: "never",
-        activity: "Adding the current Revision to the Style Corpus."
+        activity: "addCorpus"
     }, {
         id: EDITORIAL_CAPABILITY.REBUILD_STYLE_PROFILE,
         execution: "action",
@@ -169,7 +169,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         prerequisite: "style-corpus",
         result: "style-corpus",
         retry: "never",
-        activity: "Rebuilding the Style Profile."
+        activity: "rebuild"
     }, {
         id: EDITORIAL_CAPABILITY.REJECT_TRANSLATION,
         execution: "action",
@@ -177,7 +177,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.ARTIFACT_ID,
         result: "translations",
         retry: "never",
-        activity: "Rejecting the prepared translation."
+        activity: "rejectTranslation"
     }, {
         id: EDITORIAL_CAPABILITY.GENERATE_PROPOSAL,
         execution: "artifact",
@@ -186,7 +186,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.PROPOSAL_OPERATION,
         result: "proposal",
         retry: "never",
-        activity: "Preparing a Proposal."
+        activity: "prepareProposal"
     }, {
         id: EDITORIAL_CAPABILITY.GENERATE_FINDING_CORRECTIONS,
         execution: "artifact",
@@ -194,7 +194,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.FINDING_IDS,
         result: "proposal",
         retry: "never",
-        activity: "Preparing Finding corrections."
+        activity: "corrections"
     }, {
         id: EDITORIAL_CAPABILITY.FACT_CHECK,
         execution: "artifact",
@@ -203,7 +203,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         input: EDITORIAL_CAPABILITY_INPUT.NONE,
         result: "fact-check",
         retry: "never",
-        activity: "Preparing claims."
+        activity: "claims"
     }, {
         id: EDITORIAL_CAPABILITY.STYLE_REVIEW,
         execution: "artifact",
@@ -213,7 +213,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         prerequisite: "style-corpus",
         result: "style-review",
         retry: "never",
-        activity: "Reviewing style."
+        activity: "style"
     }, {
         id: EDITORIAL_CAPABILITY.TRANSLATE,
         execution: "artifact",
@@ -222,7 +222,7 @@ export const editorialCapabilityDefinitions: readonly EditorialCapabilityDefinit
         prerequisite: "target-language",
         result: "translation",
         retry: "never",
-        activity: "Preparing a translation."
+        activity: "translate"
     },
 ];
 

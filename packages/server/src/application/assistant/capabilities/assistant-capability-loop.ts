@@ -35,11 +35,6 @@ import { formatSelectionContext, getSelectionContext } from "../../editorial/sel
 import { getAssistantEditModeInstructions } from "./assistant-edit-mode-instructions.js";
 
 
-function isTransientReadFailure(error: unknown): boolean {
-    return error instanceof ApplicationServiceError && error.code === APPLICATION_ERROR.EDITORIAL_PROVIDER_FAILED;
-}
-
-
 export class AssistantCapabilityLoop {
     private readonly authorSkillActions?: AuthorSkillChatActions;
 
@@ -247,16 +242,20 @@ export class AssistantCapabilityLoop {
         if (!isValidatedEditorialCapabilityCall(definition.id, input))
             throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
-        request.execution.capabilityActivities.push({ summary: definition.activity, status: "started" });
+        request.execution.capabilityActivities.push({ id: definition.activity, status: "started" });
+        onProgress({ type: EDITORIAL_ENGINE_EVENT.TOOL_STATUS, tool: definition.id, status: "started" });
         this.dependencies.assistant.setExecution(request.requestId, definition.id);
 
+        let result: unknown;
         if (definition.execution === "read")
-            return this.executeReadCapability(request, definition, input);
+            result = this.executeReadCapability(request, definition, input);
+        else if (definition.execution === "action")
+            result = await this.stageAction(request, definition, input, signal);
+        else
+            result = await this.streamArtifactCapability(request, excerpt, authorContext, definition, input, signal, primary, setPrimary, onProgress);
 
-        if (definition.execution === "action")
-            return this.stageAction(request, definition, input, signal);
-
-        return this.streamArtifactCapability(request, excerpt, authorContext, definition, input, signal, primary, setPrimary, onProgress);
+        onProgress({ type: EDITORIAL_ENGINE_EVENT.TOOL_STATUS, tool: definition.id, status: "completed" });
+        return result;
     }
 
 
@@ -271,7 +270,8 @@ export class AssistantCapabilityLoop {
         try {
             result = read();
         } catch (error) {
-            if (definition.retry !== "transient-read" || !isTransientReadFailure(error))
+            const transient = error instanceof ApplicationServiceError && error.code === APPLICATION_ERROR.EDITORIAL_PROVIDER_FAILED;
+            if (definition.retry !== "transient-read" || !transient)
                 throw error;
 
             result = read();
@@ -340,7 +340,7 @@ export class AssistantCapabilityLoop {
 
 
     private completeCapability(request: PreparedAssistantRequest, definition: EditorialCapabilityDefinition): void {
-        request.execution.capabilityActivities.push({ summary: definition.activity, status: "completed" });
+        request.execution.capabilityActivities.push({ id: definition.activity, status: "completed" });
         this.dependencies.assistant.setExecution(request.requestId, definition.id, "completed");
     }
 }

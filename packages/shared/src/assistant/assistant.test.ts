@@ -32,7 +32,7 @@ test("describes source-neutral Skills and capability-run transport fixtures", ()
         updatedAt: "2026-08-30T00:00:00.000Z",
     } satisfies AssistantRequest;
     const events = [
-        { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.id, activity: { summary: "Checking facts.", status: "started" } },
+        { type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: request.id, activity: { id: "claims", status: "started" } },
         { type: ASSISTANT_EVENT.STAGED_COMPLETION, requestId: request.id, completion: { responseKind: "findings_prepared" } },
     ] satisfies AssistantEvent[];
     const input = {
@@ -56,8 +56,12 @@ test("describes source-neutral Skills and capability-run transport fixtures", ()
 
 
 test("validates renderer-safe capability activity stream events", () => {
-    assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: "request-1", activity: { summary: "Checking facts.", status: "started" } }), true);
-    assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: "request-1", activity: { summary: "Checking facts.", status: "running" } }), false);
+    assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: "request-1",
+        activity: { id: "unknown_activity", status: "started" } }), false);
+    assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: "request-1",
+        activity: { summary: "Private context", status: "started" } }), false);
+    assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: "request-1", activity: { id: "claims", status: "started" } }), true);
+    assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.CAPABILITY_ACTIVITY, requestId: "request-1", activity: { id: "claims", status: "running" } }), false);
     assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.TOOL_STATUS, requestId: "request-1", tool: "claim_extraction", status: "completed", claims: [{ claim: "A fact", checked: false }] }), true);
     assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.TOOL_STATUS, requestId: "request-1", tool: "claim_extraction", status: "completed", claims: [{ claim: "A fact", checked: "false" }] }), false);
     assert.equal(isAssistantEvent({ type: ASSISTANT_EVENT.TOOL_STATUS, requestId: "request-1", tool: "claim_extraction", status: "completed", claims: [{ claim: "A fact", checked: false, checking: true }] }), true);

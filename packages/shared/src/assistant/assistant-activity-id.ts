@@ -1,0 +1,30 @@
+export const assistantActivityIds = [
+    "article",
+    "links",
+    "history",
+    "draft",
+    "saved",
+    "proposal",
+    "findings",
+    "publishing",
+    "corpus",
+    "rules",
+    "translations",
+    "rename",
+    "language",
+    "assignPublishing",
+    "updateRules",
+    "addCorpus",
+    "rebuild",
+    "rejectTranslation",
+    "prepareProposal",
+    "corrections",
+    "claims",
+    "style",
+    "translate",
+    "editorial",
+    "proposalReady",
+] as const;
+
+
+export type AssistantActivityId = typeof assistantActivityIds[number];

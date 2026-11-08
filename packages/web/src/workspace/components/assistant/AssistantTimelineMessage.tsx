@@ -148,7 +148,16 @@ function AssistantMessageContent({ message, visible, content, handoffOwnsContent
 }
 
 
-function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl, onCheckpoint, actions }: { message: AssistantMessage; dateTime: string; skillId: string | undefined; skillNames: ReadonlyMap<string, string>; intl: Intl; onCheckpoint?: (messageId: string) => void; actions?: ReactNode }) {
+function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl, onCheckpoint, actions, compact }: {
+    message: AssistantMessage;
+    dateTime: string;
+    skillId: string | undefined;
+    skillNames: ReadonlyMap<string, string>;
+    intl: Intl;
+    onCheckpoint?: (messageId: string) => void;
+    actions?: ReactNode;
+    compact?: boolean;
+}) {
     if (message.role === "author")
         return <div className={("pointer-events-none mt-2 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:pointer-events-auto " +
             "group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100")}>
@@ -169,7 +178,7 @@ function AssistantMessageMetadata({ message, dateTime, skillId, skillNames, intl
     const skillUsedLabel = skillId ? intl.formatMessage({ id: "assistant.skillUsed" }) : undefined;
     const skillTitle = skillId ? getSkillLabel(skillId, skillNames) : undefined;
 
-    return <div className="mt-2 flex items-center gap-2">
+    return <div className={`${compact ? "mt-0" : "mt-2"} flex items-center gap-2`}>
         <p className="flex min-w-0 flex-wrap items-center gap-1 text-xs text-muted">
             <StatusIcon className="size-3" tone={getStatusTone(message.status)} />
             <span>{statusLabel}</span>
@@ -213,7 +222,8 @@ export function AssistantTimelineMessage({ message,
     generalSettings,
     skillByRequest,
     skillNames = new Map(),
-    trackRead = false
+    trackRead = false,
+    children
 }: {
     message: AssistantMessage;
     earlierSuggestion?: boolean;
@@ -227,6 +237,7 @@ export function AssistantTimelineMessage({ message,
     skillByRequest: ReadonlyMap<string, string>;
     skillNames?: ReadonlyMap<string, string>;
     trackRead?: boolean;
+    children?: ReactNode;
 }) {
     const intl = useIntl();
     const { authorMessage, skillId, label, messageContent, skillOffset, selectionText, view, handoffOwnsContent, dateTime } = getMessagePresentation(message, generalSettings, skillByRequest, skillNames, intl);
@@ -265,7 +276,9 @@ export function AssistantTimelineMessage({ message,
             )}
             {factCheckClaims?.length ? <FactCheckClaims claims={factCheckClaims} embedded className="mt-3" /> : null}
         </div>
+        {children}
         <AssistantMessageMetadata
+            compact={Boolean(children)}
             message={message}
             dateTime={dateTime}
             skillId={skillId}

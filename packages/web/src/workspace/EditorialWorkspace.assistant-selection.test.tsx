@@ -211,6 +211,7 @@ describe("Editorial Workspace assistant", () => {
     // product: editorial-workflows.assistant-request-proposal
     it("shows selected skills without Author text and names skill-specific proposals", () => {
         const panel = renderLocalized(<EditorialAssistantPanel
+            openView={vi.fn()}
             state="idle"
             message=""
             onRequest={vi.fn()}

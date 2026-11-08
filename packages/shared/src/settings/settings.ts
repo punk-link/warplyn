@@ -78,6 +78,7 @@ export function isTimeZonePreference(value: unknown): value is TimeZonePreferenc
 
 export interface GeneralSettings {
     animationsEnabled: boolean;
+    showExecutionProgress: boolean;
     theme: ThemePreference;
     interfaceLocale: InterfaceLocale;
     dateFormat: DateFormatPreference;
@@ -201,6 +202,7 @@ export const defaultGeneralSettings: GeneralSettings = {
     assistantSendMode: "enter",
     defaultAssistantEditMode: "review",
     assistantRequestTimeoutMinutes: 2,
+    showExecutionProgress: true,
     defaultArticleLanguage: "en",
     defaultTranslationLanguages: [],
 };

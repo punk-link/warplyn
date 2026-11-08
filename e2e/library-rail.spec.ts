@@ -147,6 +147,7 @@ for (const width of [1280, 760]) {
         await expect(pinned).toBeVisible();
         await page.keyboard.press("Escape");
         await library.getByRole("button", { name: "New article", exact: true }).click();
+        await expect(draft).toBeEmpty();
         await pinned.click();
         await expect(draft).toContainText("Rail draft recovery text.");
         await expect(pinned).toHaveAttribute("aria-current", "page");

@@ -36,6 +36,95 @@ function AssistantTimeline({ state, message, errorDetails, activity, factCheckCl
 
 
 describe("AssistantTimeline", () => {
+    it("removes proposal review after dismissal while preserving completed history", () => {
+        const data = {
+            state: "idle" as const, message: "", collapsed: false,
+            generalSettings: defaultGeneralSettings, elapsedDuration: "",
+            assistantMessages: [{
+                id: "proposal", articleId: "article", role: "assistant" as const, kind: "response" as const,
+                status: "completed" as const, responseKind: "proposal_prepared" as const,
+                createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z",
+            }],
+        };
+        const actions = { openView: vi.fn() };
+        const view = render(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{ ...data, hasProposal: true }} actions={actions} />
+        </IntlProvider>);
+        expect(within(view.container).getByRole("button", { name: "Review Proposal" })).toBeTruthy();
+        view.rerender(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{ ...data, hasProposal: false }} actions={actions} />
+        </IntlProvider>);
+        expect(within(view.container).queryByRole("button", { name: "Review Proposal" })).toBeNull();
+        expect(within(view.container).getByText("Completed")).toBeTruthy();
+    });
+
+    it("keeps completion metadata after the activity trail inside the response", () => {
+        const timestamp = "2026-01-01T00:00:00.000Z";
+        const view = render(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{
+                state: "idle", message: "", collapsed: false, generalSettings: defaultGeneralSettings, elapsedDuration: "1 second",
+                assistantMessages: [{ id: "response", articleId: "article", role: "assistant", kind: "response", status: "completed",
+                    responseKind: "proposal_prepared", createdAt: timestamp, updatedAt: timestamp }],
+                activity: { id: "proposalReady", status: "completed", steps: [{ id: "proposalReady", status: "completed" }] },
+            }} actions={{}} />
+        </IntlProvider>);
+        const trail = screen.getByText("Proposal ready to review").closest("details")!;
+        const response = trail.closest("article")!;
+        expect(response).toBeTruthy();
+        expect(response.lastElementChild?.textContent).toContain("Completed");
+        expect(response.lastElementChild?.contains(trail)).toBe(false);
+        view.unmount();
+    });
+
+    it("follows new activity unless the Author has scrolled away", () => {
+        const data = { state: "streaming", message: "", collapsed: false,
+            generalSettings: defaultGeneralSettings, elapsedDuration: "1 second" } as const;
+        const view = render(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={data} actions={{}} />
+        </IntlProvider>);
+        const timeline = view.container.querySelector<HTMLElement>("[aria-live='polite']")!;
+        Object.defineProperties(timeline, {
+            scrollHeight: { configurable: true, value: 500 },
+            clientHeight: { configurable: true, value: 100 },
+        });
+        view.rerender(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{ ...data, activity: { id: "article", status: "started" } }} actions={{}} />
+        </IntlProvider>);
+        expect(timeline.scrollTop).toBe(500);
+        timeline.scrollTop = 100;
+        fireEvent.scroll(timeline);
+        view.rerender(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{ ...data, activity: { id: "claims", status: "started" } }} actions={{}} />
+        </IntlProvider>);
+        expect(timeline.scrollTop).toBe(100);
+        view.unmount();
+    });
+
+    it("shows ordered completed activity in a disclosure and falls back to Working when disabled", () => {
+        const data = {
+            state: "streaming", message: "", collapsed: false, generalSettings: defaultGeneralSettings,
+            elapsedDuration: "1 second", activity: {
+                id: "translate", status: "started",
+                steps: [{ id: "article", status: "completed" },
+                    { id: "translate", status: "started" }],
+            },
+        } as const;
+        const view = render(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{ ...data, activity: { ...data.activity, steps: [...data.activity.steps] } }} actions={{}} />
+        </IntlProvider>);
+        expect(screen.getByRole("status").textContent).toContain("Preparing a translation");
+        expect(screen.getByText("Reading the Article").closest("details")?.hasAttribute("open")).toBe(false);
+        expect(screen.getByRole("status").closest("summary")).toBeTruthy();
+        expect(screen.queryByText("Completed: Reading the Article")).toBeNull();
+        view.rerender(<IntlProvider locale="en" messages={messages}>
+            <RenderAssistantTimeline data={{ ...data, activity: undefined,
+                generalSettings: { ...defaultGeneralSettings, showExecutionProgress: false } }} actions={{}} />
+        </IntlProvider>);
+        expect(screen.getByRole("status").textContent).toContain("Working");
+        expect(view.container.querySelector("details")).toBeNull();
+        view.unmount();
+    });
+
     it("shows the resolved Skill on the Author message while the request is running", () => {
         const view = render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
             state="streaming"
@@ -98,6 +187,7 @@ describe("AssistantTimeline", () => {
             message=""
             collapsed={false}
             assistantMessages={assistantMessages}
+            openView={vi.fn()}
             generalSettings={defaultGeneralSettings}
             elapsedDuration="1 second" />
         </IntlProvider>);
@@ -227,13 +317,13 @@ describe("AssistantTimeline", () => {
         render(<IntlProvider locale="en" messages={messages}><AssistantTimeline
             state="streaming"
             message=""
-            activity={{ summary: "Checking facts.", status: "started" }}
+            activity={{ id: "claims", status: "started" }}
             collapsed={false}
             generalSettings={defaultGeneralSettings}
             elapsedDuration="1 second" />
         </IntlProvider>);
 
-        expect(screen.getByRole("status").textContent).toContain("Checking facts.");
+        expect(screen.getByRole("status").textContent).toContain("Checking claims");
         expect(screen.queryByText("Working for 1 second")).toBeNull();
     });
 

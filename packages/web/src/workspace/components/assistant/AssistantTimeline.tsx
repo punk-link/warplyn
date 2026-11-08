@@ -1,21 +1,24 @@
-import { useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { getSkillPresentation } from "../../../i18n/skill-presentation.js";
 import { useIntl } from "react-intl";
-import type { AssistantCapabilityActivity, AssistantMessage, AssistantSkillSummary, FactCheckClaimPreview, GeneralSettings } from "@skladno/shared";
+import type { AssistantMessage, AssistantSkillSummary, FactCheckClaimPreview, GeneralSettings } from "@skladno/shared";
 import { ActivityIndicator, Banner, Button, IconButton } from "../../../ui/primitives.js";
 import { ChevronDownIcon } from "../../../ui/icons.js";
 import { FactCheckClaims } from "./FactCheckClaims.js";
 import { AssistantTimelineMessage } from "./AssistantTimelineMessage.js";
 import { AssistantMarkdown } from "./AssistantMarkdown.js";
 import type { StreamedAssistantMessage } from "../../state/assistant-messages-state.js";
+import type { AssistantActivity } from "../../state/assistant-activity.js";
+import { AssistantActivityTrail } from "./AssistantActivityTrail.js";
 
 
 interface AssistantTimelineData {
     currentRevisionId?: string;
+    hasProposal?: boolean;
     state: "idle" | "streaming" | "error";
     message: string;
     errorDetails?: string;
-    activity?: AssistantCapabilityActivity;
+    activity?: AssistantActivity;
     factCheckClaims?: FactCheckClaimPreview[];
     activeRequestId?: string;
     collapsed: boolean;
@@ -57,6 +60,14 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
 
     const skillNames = new Map(authorSkills.map((skill) => [skill.reference.id, getSkillPresentation(skill, intl).name] as const));
     const completedFactCheck = state === "idle" ? findLatestCompletedFactCheck(assistantMessages) : undefined;
+    const trailInResponse = state !== "streaming" && lastMessage?.role === "assistant" && lastMessage !== greeting;
+    const activityTrail = data.generalSettings.showExecutionProgress && data.activity ? (
+        <AssistantActivityTrail activity={data.activity} running={state === "streaming"} onToggle={() => {
+            const element = timeline.current;
+            if (element && followStream.current)
+                element.scrollTop = element.scrollHeight;
+        }} />
+    ) : undefined;
 
     useLayoutEffect(() => {
         if (collapsed)
@@ -87,7 +98,7 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
                     element.scrollTop = element.scrollHeight;
             });
         });
-    }, [assistantMessages, collapsed, factCheckClaims, state, streamedMessage]);
+    }, [assistantMessages, collapsed, data.activity, data.generalSettings.showExecutionProgress, factCheckClaims, state, streamedMessage]);
 
 
     function trackScroll() {
@@ -126,6 +137,7 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
         const index = actions.indexOf(document.activeElement as HTMLButtonElement);
         const positions: Record<string, number> = { Home: 0, End: actions.length - 1, ArrowRight: (index + 1) % actions.length, ArrowLeft: (index + actions.length - 1) % actions.length };
         const nextIndex = positions[event.key]!;
+
         actions[nextIndex]?.focus();
     }
 
@@ -137,19 +149,20 @@ export function AssistantTimeline({ data, actions }: { data: AssistantTimelineDa
             tabIndex={0}
             onScroll={trackScroll}
             className={("h-full select-text cursor-default flex flex-col gap-2 overflow-y-auto px-4 py-4 [scrollbar-color:var(--color-border-strong)_transparent] " +
-            "[scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full " +
-            "[&::-webkit-scrollbar-thumb]:bg-border-strong")}
+                "[scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full " +
+                "[&::-webkit-scrollbar-thumb]:bg-border-strong")}
             aria-label={intl.formatMessage({ id: "assistant.response.conversation" })}
             aria-live="polite">
             <AssistantTimelineMessages
                 data={data}
                 actions={actions}
+                activityTrail={trailInResponse ? activityTrail : undefined}
                 greeting={greeting}
                 lastMessage={lastMessage}
                 completedFactCheck={completedFactCheck}
                 skillByRequest={skillByRequest}
                 skillNames={skillNames} />
-            <AssistantTimelineStatus data={data} actions={actions} />
+            <AssistantTimelineStatus data={data} actions={actions} activityTrail={trailInResponse ? undefined : activityTrail} />
         </div>
         {!atEnd && (
             <IconButton
@@ -176,7 +189,7 @@ function findLatestCompletedFactCheck(messages: AssistantMessage[] | undefined):
 }
 
 
-function AssistantTimelineMessages({ data, actions, greeting, lastMessage, completedFactCheck, skillByRequest, skillNames }: {
+function AssistantTimelineMessages({ data, actions, greeting, lastMessage, completedFactCheck, skillByRequest, skillNames, activityTrail }: {
     data: AssistantTimelineData;
     actions: AssistantTimelineActions;
     greeting: AssistantMessage | undefined;
@@ -184,6 +197,7 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
     completedFactCheck: AssistantMessage | undefined;
     skillByRequest: Map<string, string>;
     skillNames: ReadonlyMap<string, string>;
+    activityTrail?: ReactNode;
 }) {
     const { assistantMessages, factCheckClaims, activeRequestId, state, streamedMessage, generalSettings } = data;
     const { openView, openSkillFolder, onRetry, onCheckpoint, applyEdit, setClaimSelected } = actions;
@@ -203,14 +217,16 @@ function AssistantTimelineMessages({ data, actions, greeting, lastMessage, compl
                 message={item}
                 earlierSuggestion={Boolean(data.currentRevisionId && item.baseRevisionId && item.baseRevisionId !== data.currentRevisionId)}
                 factCheckClaims={item === completedFactCheck ? factCheckClaims : undefined}
-                openView={openView}
+                openView={data.hasProposal === false && item.responseKind === "proposal_prepared" ? undefined : openView}
                 openSkillFolder={openSkillFolder}
                 onRetry={item === lastMessage && !streamedMessage ? onRetry : undefined}
                 onCheckpoint={state === "streaming" ? undefined : onCheckpoint}
                 applyEdit={applyEdit}
                 generalSettings={generalSettings}
                 skillByRequest={skillByRequest}
-                skillNames={skillNames} />
+                skillNames={skillNames}>
+                {item === lastMessage ? activityTrail : undefined}
+            </AssistantTimelineMessage>
         ))}
         <StreamedTimelineMessage
             message={streamedMessage}
@@ -252,17 +268,20 @@ function StreamedTimelineMessage({ message, openView, onRetry, generalSettings, 
 }
 
 
-function AssistantTimelineStatus({ data, actions }: { data: AssistantTimelineData; actions: AssistantTimelineActions }) {
+function AssistantTimelineStatus({ data, actions, activityTrail }: {
+    data: AssistantTimelineData; actions: AssistantTimelineActions; activityTrail?: ReactNode;
+}) {
     const { state, message, errorDetails, activity, elapsedDuration, hasUnavailableAiConnection } = data;
     const { openSettings } = actions;
     const intl = useIntl();
     return <>
-        {state === "streaming" && (
+        {state === "streaming" && !(data.generalSettings.showExecutionProgress && activity) && (
             <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted" role="status">
                 <ActivityIndicator />
-                <span>{activity?.summary ?? intl.formatMessage({ id: "assistant.workingFor" }, { duration: elapsedDuration })}</span>
+                <span>{intl.formatMessage({ id: "assistant.workingFor" }, { duration: elapsedDuration })}</span>
             </div>
         )}
+        {activityTrail}
         {message && (
             <Banner tone="error" className="border-danger/35 bg-surface-raised text-ink" role="alert">
                 <div>

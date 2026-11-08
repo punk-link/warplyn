@@ -73,7 +73,7 @@ export function AssistantMessageActions({ message,
         return null;
 
     return <div className="flex shrink-0 gap-1">
-        {available.review && view && (
+        {available.review && view && openView && (
             <IconButton
                 className="!size-6"
                 variant="secondary"

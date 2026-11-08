@@ -1,7 +1,10 @@
 import { success, failure, type Result } from "@skladno/shared";
 import { useCallback, useRef, useState, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
 import type { IntlShape } from "react-intl";
-import { APPLICATION_ERROR, ASSISTANT_EVENT, ApplicationClientError, type ArticleRevision, type AssistantCapabilityActivity, type AssistantEvent, type AssistantMessage, type FactCheckClaimPreview } from "@skladno/shared";
+import {
+    APPLICATION_ERROR, ASSISTANT_EVENT, ApplicationClientError,
+    type ArticleRevision, type AssistantEvent, type AssistantMessage, type FactCheckClaimPreview,
+} from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
 import { getErrorMessageId } from "../../i18n/errors.js";
 import type { ArticleWorkspaceState } from "./article-workspace-state.js";
@@ -9,6 +12,7 @@ import { getProviderLanguageName } from "./editorial-language.js";
 import { fingerprintArticleContent, requestedTranslationLanguages, type AssistantSelectionScope } from "./assistant-selection.js";
 import type { StreamBuffer, StreamedAssistantMessage } from "./assistant-streaming.js";
 import { runTranslationBatch } from "./translation-request-batch.js";
+import type { AssistantActivity } from "./assistant-activity.js";
 
 
 export type ProposalState = "idle" | "streaming" | "error";
@@ -34,8 +38,8 @@ export interface AssistantRequestStore {
     setFactCheckClaimsByArticle: Setter<Record<string, FactCheckClaimPreview[]>>;
     activeRequestIdByArticle: Record<string, string>;
     setActiveRequestIdByArticle: Setter<Record<string, string>>;
-    activityByArticle: Record<string, AssistantCapabilityActivity>;
-    setActivityByArticle: Setter<Record<string, AssistantCapabilityActivity>>;
+    activityByArticle: Record<string, AssistantActivity>;
+    setActivityByArticle: Setter<Record<string, AssistantActivity>>;
     streamedMessagesByArticle: Record<string, StreamedAssistantMessage>;
     setStreamedMessagesByArticle: Setter<Record<string, StreamedAssistantMessage>>;
     controllers: MutableRefObject<Map<string, AbortController>>;
@@ -52,7 +56,7 @@ export function useAssistantRequestStore(): AssistantRequestStore {
     const [aiConnectionUnavailableByArticle, setAiConnectionUnavailableByArticle] = useState<Record<string, boolean>>({});
     const [factCheckClaimsByArticle, setFactCheckClaimsByArticle] = useState<Record<string, FactCheckClaimPreview[]>>({});
     const [activeRequestIdByArticle, setActiveRequestIdByArticle] = useState<Record<string, string>>({});
-    const [activityByArticle, setActivityByArticle] = useState<Record<string, AssistantCapabilityActivity>>({});
+    const [activityByArticle, setActivityByArticle] = useState<Record<string, AssistantActivity>>({});
     const [streamedMessagesByArticle, setStreamedMessagesByArticle] = useState<Record<string, StreamedAssistantMessage>>({});
     const controllers = useRef(new Map<string, AbortController>());
     const streamBuffers = useRef<Record<string, StreamBuffer>>({});
@@ -105,6 +109,7 @@ export function clearAssistantRequestFeedback(store: AssistantRequestStore, arti
 
 
 function clearRetryFeedback(store: AssistantRequestStore, articleId: string) {
+    removeArticleValue(store.setActivityByArticle, articleId);
     store.setMessageByArticle((messages) => ({ ...messages, [articleId]: "" }));
     removeArticleValue(store.setErrorDetailsByArticle, articleId);
     removeArticleValue(store.setAiConnectionUnavailableByArticle, articleId);
@@ -174,7 +179,9 @@ async function performNewAssistantRequest({ options, article, authorMessage, exp
     const creatorRequest = selectedSkill?.execution?.capability === "manage_skills";
     const saved = creatorRequest || batch ? undefined : await options.workspace.save(article.id);
     const revision = batch?.revision ?? saved ?? article.currentRevision;
-    clearAssistantRequestFeedback(options.store, article.id);
+    if (!batch)
+        clearAssistantRequestFeedback(options.store, article.id);
+
     options.store.setStateByArticle((states) => ({ ...states, [article.id]: "streaming" }));
     options.store.setFactCheckClaimsByArticle((claims) => ({ ...claims, [article.id]: [] }));
     const controller = batch?.controller ?? options.store.controllers.current.get(article.id) ?? new AbortController();
@@ -222,7 +229,9 @@ async function performRetryAssistantRequest(options: AssistantRequestActionsOpti
     options.store.setStateByArticle((states) => ({ ...states, [article.id]: "streaming" }));
     const controller = new AbortController();
     options.store.controllers.current.set(article.id, controller);
+    clearAssistantRequestFeedback(options.store, article.id);
     const streamedId = `streaming-${crypto.randomUUID()}`;
+
     await options.client.streamAssistantRequest(article.id, {
         kind: "retry", requestId: crypto.randomUUID(), retryOfRequestId: options.retryOfRequestId, interfaceLocale: options.intl.locale,
     }, (event) => options.handleAssistantEvent(event, article.id, article.currentRevisionId, streamedId), controller.signal);

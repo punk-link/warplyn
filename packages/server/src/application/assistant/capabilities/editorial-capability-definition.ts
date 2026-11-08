@@ -13,5 +13,5 @@ export interface EditorialCapabilityDefinition {
     prerequisite?: "style-corpus" | "target-language";
     result: EditorialCapabilityResultKind;
     retry: "never" | "transient-read";
-    activity: string;
+    activity: import("@skladno/shared").AssistantActivityId;
 }

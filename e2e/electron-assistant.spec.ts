@@ -62,6 +62,13 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         await expect(page.getByRole("alert")).toBeVisible();
         await expect(editor).toContainText("Electron fixture Article.");
 
+        await page.getByRole("button", { name: "Settings", exact: true }).click();
+        await page.getByRole("button", { name: "AI assistant", exact: true }).click();
+        const progress = page.getByRole("switch", { name: "Show execution progress" });
+        await expect(progress).toHaveAttribute("aria-checked", "true");
+        await progress.click();
+        await expect(progress).toHaveAttribute("aria-checked", "false");
+
         await closePackaged(app);
         app = undefined;
         app = await launchPackaged(root, ["--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost"]);
@@ -69,6 +76,9 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Electron fixture Article.");
         await page.getByRole("tab", { name: "Revisions" }).click();
         await expect(page.getByRole("navigation", { name: "Revision history" })).toContainText("Initial Revision");
+        await page.getByRole("button", { name: "Settings", exact: true }).click();
+        await page.getByRole("button", { name: "AI assistant", exact: true }).click();
+        await expect(page.getByRole("switch", { name: "Show execution progress" })).toHaveAttribute("aria-checked", "false");
     } finally {
         if (app)
             await closePackaged(app);

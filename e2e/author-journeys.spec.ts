@@ -17,6 +17,11 @@ test("Assistant request time limit persists through Settings reload", async ({ p
     await page.getByRole("button", { name: "Settings" }).click();
     await page.getByRole("button", { name: "AI assistant" }).click();
     const limit = page.getByRole("combobox", { name: "Request time limit" });
+    const progress = page.getByRole("switch", { name: "Show execution progress" });
+    await expect(progress).toHaveAttribute("aria-checked", "true");
+    const progressSaved = page.waitForResponse((response) => response.url().endsWith("/api/settings/general") && response.request().method() === "PUT");
+    await progress.click();
+    await progressSaved;
     const saved = page.waitForResponse((response) => response.url().endsWith("/api/settings/general") && response.request().method() === "PUT");
     await limit.selectOption("5");
     await saved;
@@ -24,6 +29,10 @@ test("Assistant request time limit persists through Settings reload", async ({ p
     await page.getByRole("button", { name: "Settings" }).click();
     await page.getByRole("button", { name: "AI assistant" }).click();
     await expect(limit).toHaveValue("5");
+    await expect(progress).toHaveAttribute("aria-checked", "false");
+    const progressReset = page.waitForResponse((response) => response.url().endsWith("/api/settings/general") && response.request().method() === "PUT");
+    await progress.click();
+    await progressReset;
     const reset = page.waitForResponse((response) => response.url().endsWith("/api/settings/general") && response.request().method() === "PUT");
     await limit.selectOption("2");
     await reset;
@@ -44,7 +53,7 @@ test("editor context menu prepares a selection Skill without sending or editing"
     await editor.click();
     await editor.press("ControlOrMeta+A");
     await editor.press("Shift+F10");
-    await page.getByRole("menuitem", { name: "Article formatting", exact: true }).click();
+    await activateWithKeyboard(page, page.getByRole("menuitem", { name: "Article formatting", exact: true }));
     await page.getByRole("menu").getByRole("button", { name: "Bold", exact: true }).click();
     await expect(editor.locator("strong")).toHaveText("Original fixture Article.");
     await editor.press("ControlOrMeta+z");
@@ -56,8 +65,8 @@ test("editor context menu prepares a selection Skill without sending or editing"
             writes.push(request.url());
     });
     await editor.press("Shift+F10");
-    await page.getByRole("menuitem", { name: "Skills", exact: true }).click();
-    await page.getByRole("menuitem", { name: "Improve flow and clarity", exact: true }).click();
+    await activateWithKeyboard(page, page.getByRole("menuitem", { name: "Skills", exact: true }));
+    await activateWithKeyboard(page, page.getByRole("menuitem", { name: "Improve flow and clarity", exact: true }));
     const composer = page.getByRole("combobox", { name: "Editorial guidance" });
     await expect(composer).toContainText("Improve flow and clarity");
     await expect(composer).toBeFocused();
@@ -135,6 +144,14 @@ test("Apply finishes an all-rejected Proposal without changing the Article", asy
     await page.getByRole("button", { name: "Continue writing" }).click();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toBeFocused();
     await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("It is important to note");
+    const activity = page.locator("summary").filter({ hasText: "Proposal ready to review" });
+    await expect(activity).toBeVisible();
+    await expect(activity.locator("..")).not.toHaveAttribute("open");
+    await activity.click();
+    await expect(activity.locator("..")).toHaveAttribute("open", "");
+    await expect(activity.locator("..").getByText("Preparing a Proposal", { exact: false })).toBeVisible();
+    await activity.press("Enter");
+    await expect(activity.locator("..")).not.toHaveAttribute("open");
     await page.getByRole("button", { name: "Resume review" }).click();
     await page.getByRole("button", { name: "Set all decisions…" }).click();
     await page.getByRole("menuitem", { name: "Reset all decisions" }).click();
