@@ -53,7 +53,7 @@ test("editor context menu prepares a selection Skill without sending or editing"
     await editor.click();
     await editor.press("ControlOrMeta+A");
     await editor.press("Shift+F10");
-    await page.getByRole("menuitem", { name: "Article formatting", exact: true }).click();
+    await activateWithKeyboard(page, page.getByRole("menuitem", { name: "Article formatting", exact: true }));
     await page.getByRole("menu").getByRole("button", { name: "Bold", exact: true }).click();
     await expect(editor.locator("strong")).toHaveText("Original fixture Article.");
     await editor.press("ControlOrMeta+z");
@@ -65,8 +65,8 @@ test("editor context menu prepares a selection Skill without sending or editing"
             writes.push(request.url());
     });
     await editor.press("Shift+F10");
-    await page.getByRole("menuitem", { name: "Skills", exact: true }).click();
-    await page.getByRole("menuitem", { name: "Improve flow and clarity", exact: true }).click();
+    await activateWithKeyboard(page, page.getByRole("menuitem", { name: "Skills", exact: true }));
+    await activateWithKeyboard(page, page.getByRole("menuitem", { name: "Improve flow and clarity", exact: true }));
     const composer = page.getByRole("combobox", { name: "Editorial guidance" });
     await expect(composer).toContainText("Improve flow and clarity");
     await expect(composer).toBeFocused();
