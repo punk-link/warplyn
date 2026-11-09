@@ -98,7 +98,7 @@ export function AssistantComposer({ state, picker, actions }: {
 
     return <footer data-focus-area="assistant-composer" className="shrink-0 border-t border-border px-4 py-3">
         {incompatibleSelectionSkill && <p className="mb-2 text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.selectionSkillUnavailable" })}</p>}
-        <div className="flex min-h-25 flex-col rounded-control border border-border bg-surface-raised px-3 py-2" onClick={(event) => {
+        <div className="flex min-h-25 flex-col rounded-control border border-border bg-surface-raised px-2 py-1" onClick={(event) => {
             if (event.target instanceof Element && !event.target.closest("button, select, label, [contenteditable]"))
                 composer.current?.focus();
         }}>

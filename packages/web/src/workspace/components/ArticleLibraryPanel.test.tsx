@@ -229,7 +229,7 @@ describe("ArticleLibraryPanel", () => {
         const article = screen.getByRole("button", { name: motherArticlePattern });
         article.focus();
         fireEvent.keyDown(article, { key: "ArrowDown" });
-        expect(document.activeElement).toBe(screen.getByRole("button", { name: "Style Profile" }));
+        expect(document.activeElement).toBe(screen.getByRole("button", { name: "Settings" }));
 
         const search = screen.getByRole("textbox", { name: getMessage("navigation.searchArticles") });
         search.focus();

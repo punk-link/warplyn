@@ -279,11 +279,6 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
         <footer className={collapsed
             ? "mt-auto flex shrink-0 flex-col items-center gap-1 border-t border-border px-0.5 py-2"
             : "flex shrink-0 items-center gap-1 border-t border-border px-2 py-2"}>
-            <IconButton variant="quiet" label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={() => {
-                close();
-                openStyleProfile();
-            }}><UserIcon className="size-4" />
-            </IconButton>
             <IconButton
                 variant="quiet"
                 label={intl.formatMessage({ id: "navigation.settings" })}
@@ -292,6 +287,11 @@ export function ArticleLibraryFrame({ data, navigation, search, overlay, childre
                     close();
                     openSettings();
                 }}><SettingsIcon className="size-4" />
+            </IconButton>
+            <IconButton variant="quiet" label={intl.formatMessage({ id: "navigation.styleProfile" })} onClick={() => {
+                close();
+                openStyleProfile();
+            }}><UserIcon className="size-4" />
             </IconButton>
             <span className="grid size-9 shrink-0 place-items-center text-micro font-medium text-muted"
                 title={`${getLanguageCode(language)} · ${intl.formatMessage({ id: "navigation.local" })}`}
