@@ -66,7 +66,7 @@
                 "packages/web/src/settings/ApplicationSettings.tsx",
                 "packages/web/src/settings/components/AboutSettingsSection.tsx"
             ],
-            "contract": "A compact first-run dialog explains Article writing, advisory Assistant output, and model-key setup without blocking editing. It directs an Author without a usable connection to AI Settings and can be reopened from About Settings.",
+            "contract": "A compact first-run dialog explains Article writing, advisory Assistant output, and model-key setup without blocking editing. It directs an Author without a usable connection to Providers Settings and can be reopened from About Settings.",
             "persistence": "Browser storage contains only the versioned skladno.quick-start.v1 completion marker; no Article, Settings, or credential data is stored."
         },
         {
@@ -156,7 +156,7 @@
                 "packages/web/src/workspace/EditorialWorkspace.tsx",
                 "packages/web/src/workspace/state/useWorkspaceLayout.ts"
             ],
-            "contract": "The desktop shell supports collapsed panels, responsive workspace layout, and a prominent non-blocking warning with a direct AI Settings action whenever no active connected AI connection is available.",
+            "contract": "The desktop shell supports collapsed panels, responsive workspace layout, and a prominent non-blocking warning with a direct Providers Settings action whenever no active connected AI connection is available.",
             "persistence": "Workspace layout and proposal-advisory dismissal preferences are persisted locally in browser storage; AI connection readiness is read from application settings.",
             "limitations": [
                 "Mobile and browser-offline modes remain deferred."
@@ -435,7 +435,7 @@
             "capabilityIds": ["application.desktop-responsive-shell", "application.workspace-and-settings-screens"],
             "preconditions": ["No active connected AI connection is available."],
             "event": "The author opens the Editorial Workspace or selects Add model key.",
-            "expected": ["A non-blocking Assistant warning explains that local writing remains available and AI-assisted actions need a configured model connection, including supported local models.", "Add model key opens the AI Settings section.", "The warning is absent while configuration loads or when an active connected connection is available."],
+            "expected": ["A non-blocking Assistant warning explains that local writing remains available and AI-assisted actions need a configured model connection, including supported local models.", "Add model key opens the Providers Settings section.", "The warning is absent while configuration loads or when an active connected connection is available."],
             "forbidden": ["Preventing Article editing or showing the warning for a usable active connection."],
             "evidence": {
                 "kind": "automated",
@@ -474,11 +474,11 @@
         },
         {
             "id": "application.quick-start-ai-settings",
-            "title": "Quick start directs missing model-key setup to AI Settings",
+            "title": "Quick start directs missing model-key setup to Providers Settings",
             "capabilityIds": ["application.quick-start-tutorial", "application.workspace-and-settings-screens"],
             "preconditions": ["No usable AI connection exists."],
             "event": "The Author selects Add model key in the quick start.",
-            "expected": ["The dialog closes and AI Settings opens."],
+            "expected": ["The dialog closes and Providers Settings opens."],
             "forbidden": ["Handling or displaying a credential in the tutorial."],
             "evidence": { "kind": "automated", "path": "packages/web/src/application/QuickStartDialog.test.tsx" }
         }

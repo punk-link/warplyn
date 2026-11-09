@@ -29,7 +29,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
 
         await waitFor(() => expect(refreshAiModels).toHaveBeenCalledOnce());
         await user.click(screen.getByRole("button", { name: getMessage("settings.model") }));
@@ -50,7 +50,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         await user.selectOptions(screen.getByRole("combobox", { name: getMessage("settings.reasoningEffort") }), "high");
 
         await waitFor(() => expect(updateModelPreferences).toHaveBeenCalledWith({ defaultModel: "gpt-4.1", skillOverrides: {}, reasoningEffort: "high" }));
@@ -74,7 +74,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         await user.selectOptions(screen.getAllByRole("combobox", { name: getMessage("settings.reasoningEffort") })[1]!, "low");
         await waitFor(() => expect(updateAppModel).toHaveBeenCalledWith({ model: "gpt-5.5-mini", reasoningEffort: "low" }));
 
@@ -106,7 +106,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         await user.click(screen.getByRole("button", { name: getMessage("settings.model") }));
         const listbox = screen.getAllByRole("listbox", { name: getMessage("settings.model") })[0]!;
         const modelPicker = listbox.closest("details")!;
@@ -153,7 +153,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         await user.click(screen.getByRole("button", { name: getMessage("settings.model") }));
         const listbox = screen.getAllByRole("listbox", { name: getMessage("settings.model") })[0]!;
 

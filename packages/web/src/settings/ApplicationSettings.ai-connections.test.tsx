@@ -35,7 +35,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         const connectionName = screen.getByPlaceholderText("For example, Personal AI");
         const environmentName = screen.getByPlaceholderText("For example, AI_API_KEY");
 
@@ -75,7 +75,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         await user.selectOptions(screen.getByRole("combobox", { name: getMessage("settings.provider") }), "opencode");
         await user.type(screen.getByPlaceholderText("For example, Personal AI"), "OpenCode Zen");
         await user.type(screen.getByPlaceholderText("For example, AI_API_KEY"), "AI_API_KEY");
@@ -109,7 +109,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         expect(screen.queryByPlaceholderText("Paste your API key")).toBeNull();
         expect(screen.queryByPlaceholderText("For example, AI_API_KEY")).toBeNull();
         expect(screen.queryByRole("combobox", { name: getMessage("settings.provider") })).toBeNull();
@@ -136,7 +136,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         expect(screen.getAllByText("DeepSeek")).not.toHaveLength(0);
         await user.selectOptions(screen.getByRole("combobox", { name: getMessage("settings.provider") }), "anthropic");
         await user.type(screen.getByPlaceholderText("For example, Personal AI"), "Personal Claude");
@@ -165,7 +165,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         await user.click(screen.getByRole("button", { name: getMessage("settings.renameConnectionShort") }));
         const input = screen.getByRole("textbox", { name: getMessage("settings.connectionName") });
         await user.clear(input);
@@ -190,7 +190,7 @@ describe("ApplicationSettings AI", () => {
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
 
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         await user.click(screen.getByRole("button", { name: getMessage("settings.renameConnectionShort") }));
         const input = screen.getByRole("textbox", { name: getMessage("settings.connectionName") });
         await user.clear(input);

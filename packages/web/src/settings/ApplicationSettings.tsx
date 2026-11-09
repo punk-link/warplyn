@@ -10,6 +10,7 @@ import { SettingsContent } from "./components/SettingsContent.js";
 import { SettingsNavigation } from "./components/SettingsNavigation.js";
 import { AboutSettingsSection } from "./components/AboutSettingsSection.js";
 import { AiSettingsSection } from "./components/AiSettingsSection.js";
+import { AssistantBehaviorSettings } from "./components/AssistantBehaviorSettings.js";
 import { DataBackupsSettingsSection } from "./components/DataBackupsSettingsSection.js";
 import { GeneralSettingsSection } from "./components/GeneralSettingsSection.js";
 import { KeyBindingSettings } from "./components/KeyBindingSettings.js";
@@ -36,7 +37,7 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
     const [status, setStatus] = useState(() => intl.formatMessage({ id: "settings.loading" }));
     const desktopSettings = getDesktopSettingsClient();
     const telemetry = getDesktopTelemetryClient();
-    const ai = useAiSettingsController({ client, intl, settings, desktopSettings, setSettings, setStatus, aiSettingsOpen: section === "ai" });
+    const ai = useAiSettingsController({ client, intl, settings, desktopSettings, setSettings, setStatus, aiSettingsOpen: section === "providers" });
 
     useEffect(() => setSection(initialSection), [initialSection]);
 
@@ -172,6 +173,9 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
                 save={saveKeyBindingOverrides} />;
             break;
         case "ai":
+            sectionContent = <AssistantBehaviorSettings general={general} save={saveGeneral} />;
+            break;
+        case "providers":
             sectionContent = <AiSettingsSection
                 settings={settings!}
                 general={general}

@@ -32,7 +32,7 @@ describe("ApplicationSettings AI connection management", () => {
         } as unknown as EditorialWorkspaceClient;
 
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.ai") }));
+        await user.click(await screen.findByRole("button", { name: getMessage("settings.providers") }));
         await waitFor(() => expect(client.refreshAiModels).toHaveBeenCalledOnce());
         await user.type(screen.getByPlaceholderText("For example, Personal AI"), thirdConnection.label);
         await user.type(screen.getByPlaceholderText("For example, AI_API_KEY"), "AI_API_KEY");

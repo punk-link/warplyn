@@ -1,8 +1,13 @@
-export type SettingsSection = "general" | "keyBindings" | "ai" | "publishing" | "spelling" | "backups" | "about";
+export type SettingsSection = "general" | "keyBindings" | "providers" | "ai" | "publishing" | "spelling" | "backups" | "about";
 
-export const settingsSections: { id: SettingsSection; label: "settings.general" | "settings.keyBindings" | "settings.ai" | "settings.publishing" | "settings.spelling" | "settings.dataBackups" | "settings.about" }[] = [
+export const settingsSections: {
+    id: SettingsSection;
+    label: "settings.general" | "settings.keyBindings" | "settings.providers" | "settings.ai"
+        | "settings.publishing" | "settings.spelling" | "settings.dataBackups" | "settings.about";
+}[] = [
     { id: "general", label: "settings.general" },
     { id: "keyBindings", label: "settings.keyBindings" },
+    { id: "providers", label: "settings.providers" },
     { id: "ai", label: "settings.ai" },
     { id: "publishing", label: "settings.publishing" },
     { id: "spelling", label: "settings.spelling" },

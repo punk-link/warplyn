@@ -802,6 +802,7 @@ export const messages = {
     "keyBindings.sendEditorialRequest": "Send Editorial Request",
     "keyBindings.stopEditorialRequest": "Stop Editorial Request",
     "settings.ai": "AI assistant",
+    "settings.providers": "Providers",
     "settings.publishing": "Publishing",
     "settings.dataBackups": "Data & backups",
     "settings.about": "About Warplyn",

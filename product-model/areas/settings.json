@@ -157,7 +157,7 @@
                 "packages/server/src/infrastructure/editorial/services/ai-connection-model-discovery-service.ts",
                 "packages/server/src/presentation/routes/settings-route.ts"
             ],
-            "contract": "Opening AI Settings loads the current model lists for every active OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek connection; authors can refresh them again to retry or retrieve provider changes. Each returned model retains the connection that supplied it. The OpenAI catalog admits only the gpt-5.5, gpt-5.6, gpt-6, and gpt-6.1 model families; Zen retains its complete returned catalog. A refreshed list is not proof that every Editorial Operation is supported.",
+            "contract": "Opening Providers Settings loads the current model lists for every active OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok, or DeepSeek connection; authors can refresh them again to retry or retrieve provider changes. Each returned model retains the connection that supplied it. The OpenAI catalog admits only the gpt-5.5, gpt-5.6, gpt-6, and gpt-6.1 model families; Zen retains its complete returned catalog. A refreshed list is not proof that every Editorial Operation is supported.",
             "persistence": "Server-side provider refresh only; the resulting list is not persisted."
         },
         {
@@ -485,7 +485,7 @@
                 "settings.ai-connections"
             ],
             "preconditions": [
-                "The author is in the AI Settings section."
+                "The author is in the Providers Settings section."
             ],
             "event": "The author adds, activates, deactivates, or confirms removal of a connection.",
             "expected": [
@@ -529,7 +529,7 @@
             "preconditions": [
                 "At least one active AI connection is configured."
             ],
-            "event": "The author opens AI Settings, changes an activation state, or manually refreshes the list.",
+            "event": "The author opens Providers Settings, changes an activation state, or manually refreshes the list.",
             "expected": [
                 "Every active connection's current model list is offered for selection with its supplying connection, without persisting the refreshed list as preference data."
             ],

@@ -50,6 +50,7 @@ describe("ApplicationSettings general", () => {
         await screen.findByRole("button", { name: getMessage("settings.ai") });
         expect(screen.queryByRole("combobox", { name: getMessage("settings.defaultAssistantEditMode") })).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("settings.ai") }));
+        expect(screen.queryByRole("heading", { name: getMessage("settings.connections") })).toBeNull();
         const select = screen.getByRole("combobox", { name: getMessage("settings.defaultAssistantEditMode") });
         expect((select as HTMLSelectElement).value).toBe("review");
         expect(select.getAttribute("aria-describedby")).toBeTruthy();

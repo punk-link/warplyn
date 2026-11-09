@@ -90,7 +90,7 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
         refreshQuickStartConnection();
     };
     const openModelSettings = () => {
-        setSettingsSection("ai");
+        setSettingsSection("providers");
         setScreen("application-settings");
     };
     const startWriting = () => {
