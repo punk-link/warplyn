@@ -91,6 +91,7 @@ export default defineConfig({
                 text: "Reference",
                 items: [
                     { text: "Glossary", link: "/glossary" },
+                    { text: "Data requests", link: "/data-request" },
                 ],
             },
         ],

@@ -36,8 +36,10 @@ Events do not include *Article* or *Revision* IDs or titles, environment variabl
 
 ## Request deletion
 
+For access, correction, or other privacy requests, see [data requests](data-request.md).
+
 1. In **Settings** → **General** → **Privacy & diagnostics**, select **Copy telemetry ID**.
-2. Email the ID to [kirill.taran@hotmail.com](mailto:kirill.taran@hotmail.com) and request deletion.
+2. Email the ID to [kirill.taran@punk.link](mailto:kirill.taran@punk.link) and request deletion.
 3. Turn off **Share diagnostic and usage data**.
 
 Copy the ID before turning sharing off. Turning it off clears the ID from your device. The project owner deletes the matching pseudonymous record and confirms by email.

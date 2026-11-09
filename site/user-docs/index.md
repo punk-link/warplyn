@@ -42,4 +42,5 @@ Warplyn gives you a local-first workspace for developing and refining *Articles*
 
 ## Reference
 
+- [Request access to or deletion of your data](data-request.md)
 - [Glossary](glossary.md)
