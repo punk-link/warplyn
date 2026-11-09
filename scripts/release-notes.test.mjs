@@ -201,7 +201,7 @@ test("validates grouped evidence, maintenance-only notes, duplicates, unsupporte
 });
 
 
-test("validates committed notes and version-only preparation; rejects stale or moved evidence", async (t) => {
+test("validates committed notes and build-only preparation; rejects stale or moved evidence", async (t) => {
     const cwd = repository(t);
     const visible = commit(cwd, "Visible recovery fix");
     const { record } = await prepareReleaseNotes({ cwd, version: "0.6.0", releases: [], previousTag: "v0.5.5", generate: null });
@@ -212,6 +212,16 @@ test("validates committed notes and version-only preparation; rejects stale or m
     assert.equal(validateReleaseRecord(readTaggedNotes("0.6.0", "HEAD", cwd), "0.6.0", "HEAD", cwd),
         "- Recover your latest writing after restarting.");
     commit(cwd, "Release version", "package.json", JSON.stringify({ version: "0.6.0", scripts: { test: "node --test" } }));
+    assert(validateReleaseRecord(final, "0.6.0", "HEAD", cwd));
+    mkdirSync(join(cwd, "scripts"), { recursive: true });
+    commit(cwd, "Fix release build", "scripts/build.mjs", "// Build fix");
+    commit(cwd, "Fix packaging", "packages/electron/forge.config.js", "// Packaging fix");
+    const reused = await reviewReleaseNotes({ cwd, version: "0.6.0" }, {
+        print: () => undefined, reviewTests: async () => undefined,
+        generate: () => assert.fail("Build fixes must reuse reviewed notes"),
+        approve: () => assert.fail("Build fixes must preserve approval"),
+    });
+    assert.deepEqual(reused, final);
     assert(validateReleaseRecord(final, "0.6.0", "HEAD", cwd));
     commit(cwd, "Sneak product changes into package", "package.json", JSON.stringify({ version: "0.6.0", scripts: {} }));
     const nonVersionPattern = /Non-version/;

@@ -168,7 +168,7 @@
             "id": "application.release-summary-evidence",
             "title": "Release summaries use the reviewed reachable commit range",
             "capabilityIds": ["application.release-summaries"],
-            "preconditions": ["Release history contains stable, preview, draft, legacy, and unrelated releases."],
+            "preconditions": ["Release history contains stable, preview, draft, legacy, and unrelated releases.", "Same-version build retries reuse reviewed notes when subsequent changes are confined to scripts/, .github/, Electron forge.config.js, notes, and version-only metadata; other product changes require fresh notes and approval."],
             "event": "A maintainer prepares and validates a release summary.",
             "expected": ["The correct ancestor baseline and reachable commits are selected, entries cite in-range evidence, and maintenance-only wording requires an explicit decision. Security classification requires a reviewed flag, justification, in-range evidence supporting a visible entry, and matching publication metadata. Stable security releases retain stable versions and begin their rendered notes with the security heading; preview security releases retain the existing suffix."],
             "forbidden": ["Unreviewed or stale notes, unsupported claims without evidence, or internal commit subjects automatically becoming benefits."],

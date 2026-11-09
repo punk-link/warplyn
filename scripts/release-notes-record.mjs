@@ -110,7 +110,8 @@ function validatePreparationChanges(record, target, cwd) {
     const changes = git(["log", "-m", "--format=", "--name-only", "--no-renames", range], cwd).split(lineBreakPattern).filter(Boolean);
     const metadataPaths = ["package.json", "package-lock.json", "packages/electron/package.json"];
     const allowed = new Set([...metadataPaths, `release-notes/${record.version}.json`]);
-    if (!changes.every((path) => allowed.has(path)))
+    const buildOnly = (path) => path.startsWith("scripts/") || path.startsWith(".github/") || path === "packages/electron/forge.config.js";
+    if (!changes.every((path) => allowed.has(path) || buildOnly(path)))
         throw new ReleaseNotesStaleError("Product changes followed the reviewed source commit.");
 
     const commits = releaseCommits(record.sourceCommit, resolveCommit(target, cwd), cwd);
