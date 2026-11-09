@@ -1,0 +1,73 @@
+{
+    "version": "0.8.2",
+    "previousTag": "v0.8.1",
+    "previousCommit": "094b25227b2684a2fb798a22d7eb181ff1c44033",
+    "baseline": "published",
+    "sourceCommit": "9078289c2241ccef45880eb0e37b5d610166681b",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Assistant chat can show the current action and an expandable activity trail, with a setting to turn execution progress off.",
+            "commits": [
+                "a3933131a707c569be94f7950cc3d01ef7ea477d"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "The Assistant can use conversation context to resolve a follow-up choice, and direct edit mode can apply a validated replacement without a separate intent check.",
+            "commits": [
+                "79fcacff92b1f5878aad47e2b5b5888a779c2834",
+                "0a49d50446dd5e6dbea651445d4dff5008792a8a"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Fact Check cards now have controls to move to the previous or next finding.",
+            "commits": [
+                "722af8a28212a4a49391824f57b992e1d337f7e2"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "Revision descriptions better identify editorial changes, with neutral wording instead of character-count fallbacks when a description cannot be generated.",
+            "commits": [
+                "64982e9b68f69c0cf88637cf23f2a02bea92fb99"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Archived Articles are anchored at the bottom of library navigation, and footer controls align across expanded and collapsed navigation.",
+            "commits": [
+                "fd9bd577c06f08ca3cb61eb73c32abd54de676f9",
+                "361c25897255c73946219785cfe35f4c3aba19c3"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "The desktop editor menu now places link editing after the Formatting menu.",
+            "commits": [
+                "5b8e32a31f12be48bbc9403046abd5aa0fe392b7"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "A dedicated Fact Check guide explains verdicts, sources, finding decisions, corrections, and rechecking earlier results.",
+            "commits": [
+                "9decd1049342275e553535b3ebcf8a97e302d659"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "While Fact Check is still finding claims, its status no longer suggests that it is checking zero claims; resolved findings no longer leave a stale Fact Check badge.",
+            "commits": [
+                "c134237cb49ba04024953aab91e4274407414545",
+                "1ba24d3fbf7c7d57ac4928caa6f35c3aabbf0815"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
