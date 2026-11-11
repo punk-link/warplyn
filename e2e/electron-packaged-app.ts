@@ -39,8 +39,10 @@ export async function launchPackaged(root: string, extraArgs: string[] = []): Pr
                     return false;
 
                 const targets: unknown = await response.json();
+                const indexHtmlPattern = /index\.html$/;
                 return Array.isArray(targets) && targets.some((target: unknown) =>
-                    typeof target === "object" && target !== null && "type" in target && target.type === "page");
+                    typeof target === "object" && target !== null && "type" in target && target.type === "page" &&
+                    "url" in target && typeof target.url === "string" && indexHtmlPattern.test(target.url));
             } catch {
                 return false;
             }

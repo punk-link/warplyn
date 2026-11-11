@@ -63,7 +63,10 @@ jobs:
               run: npm run build --workspace @skladno/shared
 
             - name: Install Chromium
-              run: npx playwright install --with-deps chromium
+              run: |
+                  printf 'https://archive.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors.txt
+                  printf 'https://security.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors-security.txt
+                  npx playwright install --with-deps chromium
 
             - name: Verify browser journeys
               run: npm run verify:browser

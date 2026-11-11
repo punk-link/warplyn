@@ -35,7 +35,11 @@ jobs:
             - run: npm test --workspace @skladno/electron
             - run: npm run make:electron:linux
             - name: Install Debian package
-              run: sudo apt-get install -y ./packages/electron/out/make/deb/x64/*.deb
+              run: |
+                  printf 'https://archive.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors.txt
+                  printf 'https://security.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors-security.txt
+                  sudo apt-get update
+                  sudo apt-get install -y ./packages/electron/out/make/deb/x64/*.deb
             - name: Verify desktop journeys
               env:
                   WARPLYN_ELECTRON_EXECUTABLE: /usr/lib/warplyn/Warplyn
