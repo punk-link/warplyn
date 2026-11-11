@@ -94,6 +94,21 @@ test("both release commands generate, review, verify, and commit notes before ta
 });
 
 
+test("an existing release tag stops before review or package changes", async (t) => {
+    const cwd = repository(t);
+    git(["tag", "v0.5.6"], cwd);
+    const source = resolveCommit("HEAD", cwd);
+    const events = [];
+    const existingTagPattern = /Release tag v0\.5\.6 already exists/;
+    await assert.rejects(() => release(["stable"], { cwd, ...releaseProcesses(cwd, events),
+        reviewNotes: () => assert.fail("Existing tags must stop before review") }), existingTagPattern);
+    assert.equal(resolveCommit("HEAD", cwd), source);
+    assert.equal(resolveCommit("v0.5.6", cwd), source);
+    assert.equal(git(["status", "--porcelain"], cwd), "");
+    assert.deepEqual(events, ["fetch origin --tags --quiet"]);
+});
+
+
 test("declining retains an unreviewed draft and rerunning reuses it without another API call", async (t) => {
     const cwd = repository(t);
     const events = [];

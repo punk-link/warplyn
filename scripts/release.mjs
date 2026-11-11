@@ -72,6 +72,12 @@ export function runNpm(args, options = {}) {
 }
 
 
+async function assertReleaseTagAvailable(tag, execute) {
+    const existing = (await execute("git", ["tag", "--list", tag], { stdio: "pipe" })).trim();
+    assert(!existing, `Release tag ${tag} already exists. Inspect its commit and choose an unused version; existing tags are never replaced.`);
+}
+
+
 export async function release(args = process.argv.slice(2), { cwd = process.cwd(), runCommand = run, npm = runNpm,
     reviewNotes = reviewReleaseNotes, compareNotes = previewComparison } = {}) {
     const { positionals, values } = parseArgs({ args, allowPositionals: true,
@@ -96,6 +102,7 @@ export async function release(args = process.argv.slice(2), { cwd = process.cwd(
         return;
     }
 
+    await assertReleaseTagAvailable(`v${draftVersion}`, execute);
     const record = await reviewNotes({ version: draftVersion, previousTag: values["previous-tag"], manual: values.manual, cwd });
     const version = classifiedReleaseVersion(record);
     const tag = `v${version}`;
@@ -110,6 +117,7 @@ export async function release(args = process.argv.slice(2), { cwd = process.cwd(
     const notesPath = `release-notes/${draftVersion}.json`;
     assert.deepEqual(JSON.parse(readFileSync(join(cwd, notesPath), "utf8")), record, "Notes changed during verification. Review them again.");
 
+    await assertReleaseTagAvailable(tag, execute);
     await npm(["pkg", "set", `version=${version}`], { cwd });
     await npm(["pkg", "set", `version=${version}`, "--workspace", "@skladno/electron"], { cwd });
     await runReleaseStep("Updating the package lockfile", () => npm(["install", "--package-lock-only", "--ignore-scripts"], { cwd }));
