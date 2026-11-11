@@ -96,8 +96,8 @@ async function createArticle(page: import("@playwright/test").Page, content = "O
     await saved;
     await expect(page.getByRole("status", { name: "Saved", exact: true })).toBeVisible();
     const titleNotice = page.getByRole("button", { name: "Dismiss notification: Revision saved without an Article title" });
-    if (await titleNotice.isVisible())
-        await titleNotice.click();
+    await titleNotice.click();
+    await expect(titleNotice).toBeHidden();
 }
 
 

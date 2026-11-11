@@ -110,7 +110,7 @@ test("spelling menu correction follows Lexical Draft recovery and immutable save
         expect(revisions?.some((revision) => revision.content === "A helllo world.")).toBe(true);
     } finally {
         await app?.close();
-        await rm(root, { recursive: true, force: true });
+        await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
     }
 });
 
@@ -166,7 +166,7 @@ test("native spelling context supplies Russian suggestions for an underlined wor
         await expect(editor).toContainText("Это крайне важно.");
     } finally {
         await app?.close();
-        await rm(root, { recursive: true, force: true });
+        await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
     }
 });
 
@@ -213,7 +213,7 @@ test("packaged Spelling Settings prepares dictionaries and recovers personal voc
             await closePackaged(app);
         }
 
-        await rm(root, { recursive: true, force: true });
+        await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
     }
 });
 
