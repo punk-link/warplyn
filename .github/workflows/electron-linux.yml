@@ -36,8 +36,8 @@ jobs:
             - run: npm run make:electron:linux
             - name: Install Debian package
               run: |
-                  printf 'https://archive.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors.txt
-                  printf 'https://security.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors-security.txt
+                  printf 'https://mirrors.edge.kernel.org/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors.txt
+                  printf 'https://mirrors.edge.kernel.org/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors-security.txt
                   sudo apt-get update
                   sudo apt-get install -y ./packages/electron/out/make/deb/x64/*.deb
             - name: Verify desktop journeys

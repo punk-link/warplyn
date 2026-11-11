@@ -64,8 +64,8 @@ jobs:
 
             - name: Install Chromium
               run: |
-                  printf 'https://archive.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors.txt
-                  printf 'https://security.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors-security.txt
+                  printf 'https://mirrors.edge.kernel.org/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors.txt
+                  printf 'https://mirrors.edge.kernel.org/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors-security.txt
                   npx playwright install --with-deps chromium
 
             - name: Verify browser journeys
