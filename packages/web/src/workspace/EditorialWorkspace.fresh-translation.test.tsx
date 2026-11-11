@@ -43,9 +43,11 @@ describe("fresh translations through Assistant", () => {
         await screen.findByRole("heading", { name: source.title });
         const generate = async () => {
             await user.click(screen.getByRole("button", { name: "New translation…" }));
-            const spanish = within(screen.getByRole("dialog")).getByRole("checkbox", { name: "Spanish" });
-            if (!(spanish instanceof HTMLInputElement) || !spanish.checked)
-                await user.click(spanish);
+            const dialog = within(screen.getByRole("dialog"));
+            if (!dialog.queryByRole("button", { name: "Remove Spanish" })) {
+                await user.type(dialog.getByRole("combobox", { name: "Language or regional variant" }), "Spanish");
+                await user.click(dialog.getByRole("button", { name: "Add" }));
+            }
 
             await user.click(screen.getByRole("button", { name: "Generate Spanish translation" }));
         };

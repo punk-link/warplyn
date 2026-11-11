@@ -132,6 +132,7 @@ export function TranslationsView({ data, actions }: { data: TranslationsData; ac
                 article={article}
                 content={sourceContent}
                 defaults={translationLanguages}
+                existing={languages}
                 viewedLanguage={language}
                 revisionNumber={data.revisionNumbers?.[article.currentRevisionId]}
                 active={requestActive}

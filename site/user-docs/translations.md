@@ -8,7 +8,7 @@ A *translation* is a separate linked *Article*. It has its own title, *Draft*, a
 
 ## Request a translation
 
-Open the source *Article* and choose **New translation…** in **Translations**. The dialog may preselect the current *Article* language. If there is no viewed language to use, it offers the preferred languages from **Settings** → **Publishing** → **Language defaults**. Select and confirm each target. Warplyn uses the whole *Article* for translation, even if you had selected a passage in the editor. If the source has unsaved edits, save them as a *Revision* first so the *translation* can identify the exact text it used.
+Open the source *Article* and choose **New translation…** in **Translations**. The dialog may preselect the current *Article* language. If there is no viewed language to use, it offers the preferred languages from **Settings** → **Language defaults**. Select and confirm each target. Warplyn uses the whole *Article* for translation, even if you had selected a passage in the editor. If the source has unsaved edits, save them as a *Revision* first so the *translation* can identify the exact text it used.
 
 The Assistant creates a reviewable *translation* result for each language. Open a result to compare its title and text with the source. Choose **Side by side** to compare full passages, or **Aligned paragraphs** when you want corresponding paragraphs together. Protected text such as names, numbers, URLs, and code must remain intact. Warplyn marks results that change protected text or use an older source *Revision*. Review these notices before continuing.
 

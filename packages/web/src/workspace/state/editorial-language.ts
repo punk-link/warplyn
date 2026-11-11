@@ -1,8 +1,32 @@
+import { normalizeArticleLanguage } from "@skladno/shared";
+
+
 export function getTargetLanguageId(language: string): string {
-    return ({ English: "en", Spanish: "es", Portuguese: "pt", Russian: "ru", French: "fr", German: "de", Italian: "it" } as Record<string, string>)[language] ?? "en";
+    const ids: Record<string, string> = {
+        English: "en",
+        Spanish: "es",
+        Portuguese: "pt",
+        Russian: "ru",
+        French: "fr",
+        German: "de",
+        Italian: "it"
+    };
+
+    return ids[language] ?? normalizeArticleLanguage(language) ?? language;
 }
 
 
 export function getProviderLanguageName(languageId: string): string {
-    return ({ en: "English", es: "Spanish", pt: "Portuguese", ru: "Russian", fr: "French", de: "German", it: "Italian" } as Record<string, string>)[languageId] ?? languageId;
+    const normalized = normalizeArticleLanguage(languageId) ?? languageId;
+    const names: Record<string, string> = {
+        en: "English",
+        es: "Spanish",
+        pt: "Portuguese",
+        ru: "Russian",
+        fr: "French",
+        de: "German",
+        it: "Italian"
+    };
+
+    return names[normalized] ?? normalized;
 }

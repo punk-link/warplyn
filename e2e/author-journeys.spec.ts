@@ -261,8 +261,11 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.goto("/");
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: baseURL });
     await page.getByRole("button", { name: "Settings" }).click();
-    await page.getByRole("button", { name: "Publishing" }).click();
-    await page.getByRole("group", { name: "Default translation languages" }).getByRole("checkbox", { name: "Spanish" }).check();
+    await page.getByRole("button", { name: "Language defaults", exact: true }).click();
+    const translationDefaults = page.getByRole("group", { name: "Default translation languages" });
+    await translationDefaults.getByRole("combobox", { name: "Language or regional variant", exact: true }).fill("Spanish");
+    await translationDefaults.getByRole("button", { name: "Add", exact: true }).click();
+    await page.getByRole("button", { name: "Publishing", exact: true }).click();
     const publishingProfileSaved = page.waitForResponse((response) => response.url().endsWith("/api/settings/publish-limit-profile") && response.request().method() === "PUT");
     await page.getByRole("combobox", { name: "Character-limit profile" }).selectOption("linkedin-post");
     await publishingProfileSaved;

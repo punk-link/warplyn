@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
-    APPLICATION_ERROR, HTTP_STATUS, normalizeWritingLanguage, isPublishLimitProfileId,
+    APPLICATION_ERROR, HTTP_STATUS, normalizeArticleLanguage, isPublishLimitProfileId,
     type AcceptProposalInput, type CreateArticleInput, type SaveArticleRevisionInput, type UpdateArticleInput,
 } from "@skladno/shared";
 
@@ -73,7 +73,7 @@ function parseLanguage(value: unknown): CreateArticleInput["language"] {
         return undefined;
 
     const language = parseString(value, "language");
-    if (!normalizeWritingLanguage(language))
+    if (!normalizeArticleLanguage(language))
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
     return language;

@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { useIntl } from "react-intl";
-import { normalizeWritingLanguage } from "@skladno/shared";
+import { normalizeArticleLanguage } from "@skladno/shared";
 import { Banner, Button, Dialog, Field } from "../../ui/primitives.js";
 
 
@@ -11,7 +11,7 @@ export function WritingLanguageDialog({ save, close }: { save: (language: string
     const [value, setValue] = useState("");
     const [pending, setPending] = useState(false);
     const [failed, setFailed] = useState(false);
-    const language = normalizeWritingLanguage(value);
+    const language = normalizeArticleLanguage(value);
     const submit = async () => {
         if (!language || pending)
             return;
@@ -45,9 +45,10 @@ export function WritingLanguageDialog({ save, close }: { save: (language: string
                 close();
         }}>
         <h2 id={headingId} className="text-lg font-semibold">{intl.formatMessage({ id: "typography.otherLanguageTitle" })}</h2>
-        <label className="mt-4 block text-sm">
+        <label className="mt-4 block text-sm font-semibold">
             {intl.formatMessage({ id: "typography.languageCode" })}
             <Field
+                className="mt-2"
                 autoFocus
                 value={value}
                 maxLength={100}

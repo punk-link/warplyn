@@ -29,7 +29,13 @@ it("offers the existing app languages without adding preset regions and displays
 });
 
 
-it("sets a custom language without requiring a preset", async () => {
+it.each([
+    { input: "ja", expected: "ja" },
+    { input: "Polish", expected: "Polish" },
+    { input: "Spanish, Argentina", expected: "Spanish, Argentina" },
+    { input: "es-ar", expected: "es-AR" },
+    { input: "Spanish", expected: "es" },
+])("sets $input without requiring a preset", async ({ input, expected }) => {
     const user = userEvent.setup();
     const setLanguage = vi.fn().mockResolvedValue(undefined);
     renderLocalized(<LanguageStatusControl
@@ -44,7 +50,7 @@ it("sets a custom language without requiring a preset", async () => {
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "Source language" }));
     await user.click(screen.getByRole("menuitem", { name: "Other language…" }));
-    await user.type(screen.getByRole("textbox", { name: "Language code" }), "ja");
+    await user.type(screen.getByRole("textbox", { name: "Language or regional variant" }), input);
     await user.click(screen.getByRole("button", { name: "Use language" }));
-    expect(setLanguage).toHaveBeenCalledWith("ja");
+    expect(setLanguage).toHaveBeenCalledWith(expected);
 });

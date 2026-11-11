@@ -40,4 +40,11 @@ test("Settings keyboard navigation reaches sections and all visible content cont
     await expect(page.getByRole("combobox", { name: "Settings navigation" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(controls.first()).toBeFocused();
+
+    const navigation = page.getByRole("combobox", { name: "Settings Navigation", exact: true });
+    await navigation.selectOption("languages");
+    await expect(page.getByRole("heading", { name: "Language defaults", exact: true })).toBeVisible();
+    await navigation.focus();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("combobox", { name: "Default Article language", exact: true })).toBeFocused();
 });

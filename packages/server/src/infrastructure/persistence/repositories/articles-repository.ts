@@ -1,5 +1,5 @@
 import {
-    REVISION_PROVENANCE_KIND, normalizeWritingLanguage, isPublishLimitProfileId, type AcceptedChange, type AcceptProposalInput,
+    REVISION_PROVENANCE_KIND, normalizeArticleLanguage, isPublishLimitProfileId, type AcceptedChange, type AcceptProposalInput,
     type CreateArticleInput, type UpdateArticleInput, type Article, type ArticleDraft, type ArticleRevision,
     type SaveArticleDraftInput, type SaveArticleRevisionInput,
 } from "@skladno/shared";
@@ -25,7 +25,7 @@ export class ArticlesRepository {
 
 
     createArticle(input: CreateArticleInput): Article {
-        const language = normalizeWritingLanguage(input.language);
+        const language = normalizeArticleLanguage(input.language);
         if (input.language !== undefined && !language)
             throwInvalidArticleRequest();
 
@@ -114,7 +114,7 @@ export class ArticlesRepository {
         if (!this.getArticle(articleId))
             throwArticleNotFound();
 
-        const language = normalizeWritingLanguage(input.language);
+        const language = normalizeArticleLanguage(input.language);
         if (input.language !== undefined && !language)
             throwInvalidArticleRequest();
 

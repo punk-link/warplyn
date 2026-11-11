@@ -12,7 +12,9 @@ In **General** → **Appearance & language**, choose **System**, **Light**, or *
 
 In **Date & time**, choose a date format, 12-hour or 24-hour time, and a time zone. The system options follow your device. These choices change how saved times appear in Warplyn, not the saved times themselves.
 
-Set **Default Article language** for new *Articles*. Set **Default translation languages** to have those targets offered first when you request a *translation*. Warplyn still asks you to confirm each request.
+## Set writing defaults
+
+In **Language defaults**, set **Default Article language** for new *Articles*. Set **Default translation languages** to have those targets offered first when you request a *translation*. Enter a language name, regional variant, or code, then choose **Add**. Warplyn still asks you to confirm each translation request.
 
 ## Set Assistant behavior
 

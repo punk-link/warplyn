@@ -63,7 +63,7 @@ function validateTranslation(metadata: unknown, content: string, language: strin
         throwInvalidRefresh();
 
     const names: Record<string, string> = { en: "English", es: "Spanish", pt: "Portuguese", ru: "Russian", fr: "French", de: "German", it: "Italian" };
-    if (!language || translation.targetLanguage !== names[language] || !Array.isArray(translation.protectedSpans))
+    if (!language || translation.targetLanguage !== (names[language] ?? language) || !Array.isArray(translation.protectedSpans))
         throwInvalidRefresh();
 
     validateProtectedSpans(translation.protectedSpans, content);
