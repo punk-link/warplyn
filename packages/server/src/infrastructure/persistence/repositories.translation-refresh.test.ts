@@ -35,6 +35,19 @@ test("source edits preserve linked texts; refresh appends history and restores t
 }));
 
 
+test("custom translation languages preserve their names and append recoverable refresh Revisions", () => withRepository((repositories) => {
+    const { source, target, artifact, input } = prepareRefresh(repositories);
+    repositories.articles.updateArticle(target.id, { language: "Spanish, Argentina" });
+    repositories.editorialArtifacts.updateEditorialArtifactContent(artifact.id, source.id, JSON.stringify({
+        proposal: input.content, translation: { targetLanguage: "Spanish, Argentina", protectedSpans: [] },
+    }));
+    repositories.articles.acceptProposal(target.id, input);
+    assert.equal(repositories.articles.getArticle(target.id)?.language, "Spanish, Argentina");
+    assert.equal(repositories.articles.listRevisions(target.id).length, 2);
+    assert.equal(repositories.articles.getRevision(target.id, target.currentRevisionId)?.content, target.currentRevision.content);
+}));
+
+
 for (const change of ["source", "target", "draft", "content", "language", "rejected", "protected", "selection"] as const) {
     test(`refresh rejects ${change} conflicts without changing text, freshness, or history`, () => withRepository((repositories, _close, database) => {
         const { source, target, artifact, input } = prepareRefresh(repositories);

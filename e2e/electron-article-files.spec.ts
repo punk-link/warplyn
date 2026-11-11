@@ -20,10 +20,11 @@ async function launchArticleFiles(root: string): Promise<ElectronApplication> {
 
 
 async function chooseNativePaths(app: ElectronApplication, source: string | null, target: string | null): Promise<void> {
-    await app.evaluate(({ dialog }, paths) => {
+    const configured = await app.evaluateHandle(({ dialog }, paths) => {
         dialog.showOpenDialog = async () => ({ canceled: paths.source === null, filePaths: paths.source ? [paths.source] : [] });
         dialog.showSaveDialog = async () => ({ canceled: paths.target === null, filePath: paths.target ?? undefined });
     }, { source, target });
+    await configured.dispose();
 }
 
 

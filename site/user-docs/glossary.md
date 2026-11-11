@@ -104,4 +104,4 @@ In the expanded layout, the footer at the bottom of the Library panel is the **A
 - **Editorial Assistant Panel**: Editorial guidance, actions, request status, and activity. Its temporary small-screen form is the **Assistant Drawer**.
 - **Quick actions**: the dropdown above the Assistant composer for inserting a built-in Skill into a request.
 - **Composer**: the message input at the bottom of the Editorial Assistant Panel where the author enters Editorial guidance and sends a request.
-- **Application Settings Navigation**: navigation among the General, AI assistant, Publishing, and Data & backups Settings sections.
+- **Application Settings Navigation**: navigation among **General**, **Key bindings**, **Providers**, **AI assistant**, **Publishing**, **Language defaults**, **Spelling**, **Data & backups**, and **About Warplyn**.

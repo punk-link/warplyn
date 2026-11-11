@@ -1,14 +1,12 @@
-import { articleLanguages, isPublishLimitProfileId, PUBLISH_LIMIT_PROFILE, publishLimitProfiles, type CustomPublishLimitProfile, type GeneralSettings, type PublishingSettings } from "@skladno/shared";
+import { isPublishLimitProfileId, PUBLISH_LIMIT_PROFILE, publishLimitProfiles, type CustomPublishLimitProfile, type PublishingSettings } from "@skladno/shared";
 import { useState } from "react";
 import { useIntl } from "react-intl";
 import { Badge, Button, Field, Select } from "../../ui/primitives.js";
 import { CustomProfileRemovalDialog } from "./CustomProfileRemovalDialog.js";
 import { Control, SettingRow, SettingsGroup } from "./SettingRow.js";
 
-const languageMessageIds = { en: "languages.english", es: "languages.spanish", pt: "languages.portuguese", ru: "languages.russian", fr: "languages.french", de: "languages.german", it: "languages.italian" } as const;
 
-
-export function PublishingSettingsSection({ publishing, save, general, saveGeneral }: { publishing: PublishingSettings; save: (next: PublishingSettings) => void; general: GeneralSettings; saveGeneral: (next: GeneralSettings) => Promise<void> }) {
+export function PublishingSettingsSection({ publishing, save }: { publishing: PublishingSettings; save: (next: PublishingSettings) => void }) {
     const intl = useIntl();
     const [name, setName] = useState("");
     const [limit, setLimit] = useState("");
@@ -101,34 +99,7 @@ export function PublishingSettingsSection({ publishing, save, general, saveGener
                 </div>
             </div>
         </SettingsGroup>
-        <SettingsGroup label={intl.formatMessage({ id: "settings.languageDefaults" })}>
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.defaultArticleLanguage" })} hint={intl.formatMessage({ id: "settings.defaultArticleLanguageHint" })}>
-                <Select aria-label={intl.formatMessage({ id: "settings.defaultArticleLanguage" })} value={general.defaultArticleLanguage} onChange={(event) => void saveGeneral({ ...general, defaultArticleLanguage: event.target.value, defaultTranslationLanguages: general.defaultTranslationLanguages.filter((language) => language !== event.target.value) })}>
-                    {articleLanguages.map((language) => <option key={language} value={language}>{intl.formatMessage({ id: languageMessageIds[language] })}</option>)}
-                </Select>
-            </SettingRow>
-            <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.defaultTranslationLanguages" })} hint={intl.formatMessage({ id: "settings.defaultTranslationLanguagesHint" })}>
-                <div role="group" aria-label={intl.formatMessage({ id: "settings.defaultTranslationLanguages" })} className="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3">
-                    {articleLanguages.filter((language) => language !== general.defaultArticleLanguage).map((language) => (
-                        <label key={language} className="flex min-h-8 items-center gap-2 text-sm text-ink">
-                            <input
-                                className="size-4 accent-brand"
-                                type="checkbox"
-                                checked={general.defaultTranslationLanguages.includes(language)}
-                                onChange={(event) => void saveGeneral(
-                                    {
-                                        ...general,
-                                        defaultTranslationLanguages: event.target.checked
-                                            ? [...general.defaultTranslationLanguages, language]
-                                            : general.defaultTranslationLanguages.filter((item) => item !== language)
-                                    }
-                                )} />
-                            {intl.formatMessage({ id: languageMessageIds[language] })}
-                        </label>
-                    ))}
-                </div>
-            </SettingRow>
-        </SettingsGroup>
+
         {pendingRemoval && (
             <CustomProfileRemovalDialog
                 profile={pendingRemoval}

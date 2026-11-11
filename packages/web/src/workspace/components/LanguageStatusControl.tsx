@@ -1,6 +1,6 @@
 import { useId, useRef, useState } from "react";
 import { useIntl } from "react-intl";
-import { articleLanguages, normalizeWritingLanguage } from "@skladno/shared";
+import { articleLanguages, normalizeWritingLanguage, normalizeArticleLanguage } from "@skladno/shared";
 import { ChevronDownIcon } from "../../ui/icons.js";
 import { handleStatusMenuKeyDown, openStatusMenu } from "./ArticleStatusBarMenu.js";
 import { WritingLanguageDialog } from "./WritingLanguageDialog.js";
@@ -17,8 +17,8 @@ export function LanguageStatusControl({ language, setLanguage, open, onToggle, o
     const [customOpen, setCustomOpen] = useState(false);
     const languageNames = new Intl.DisplayNames([intl.locale], { type: "language" });
     const formatLanguage = (tag: string) => {
-        const normalized = normalizeWritingLanguage(tag);
-        if (!normalized)
+        const normalized = normalizeArticleLanguage(tag);
+        if (!normalized || normalizeWritingLanguage(normalized) !== normalized)
             return tag;
 
         const messageId = languageMessageIds[normalized];

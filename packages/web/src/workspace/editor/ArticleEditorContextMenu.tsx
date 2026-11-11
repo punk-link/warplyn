@@ -105,6 +105,20 @@ export function ArticleEditorContextMenu({ editor, openLink }: { editor: Lexical
         };
     }, [editor, refresh]);
 
+    useEffect(() => {
+        if (!position)
+            return;
+
+        const dismiss = (event: PointerEvent) => {
+            if (event.target instanceof Node && !menu.current?.contains(event.target)) {
+                setPosition(undefined);
+                setSubmenu(undefined);
+            }
+        };
+        document.addEventListener("pointerdown", dismiss);
+        return () => document.removeEventListener("pointerdown", dismiss);
+    }, [position]);
+
     useLayoutEffect(() => {
         if (!position || !menu.current)
             return;
@@ -143,11 +157,29 @@ export function ArticleEditorContextMenu({ editor, openLink }: { editor: Lexical
         style={position}
         className={("fixed z-50 max-h-screen w-64 max-w-full overflow-auto rounded-control " +
             "border border-border bg-surface-raised p-1 shadow-raised")}
-        onBlur={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget))
+        onClick={(event) => {
+            if (submenu === "formatting" && event.target instanceof Element && event.target.closest("button[data-editor-command]"))
                 close(false);
         }}
+        onChange={() => {
+            if (submenu === "formatting")
+                close(false);
+        }}
+        onBlur={(event) => {
+            if (event.relatedTarget && event.relatedTarget !== editor.getRootElement() && !event.currentTarget.contains(event.relatedTarget)) {
+                close(false);
+                return;
+            }
+
+            window.requestAnimationFrame(() => {
+                if (document.activeElement === editor.getRootElement())
+                    menu.current?.querySelector<HTMLElement>("button:not(:disabled)")?.focus();
+            });
+        }}
         onKeyDown={(event) => {
+            if (event.key === "Tab")
+                close(false);
+
             if (event.key === "ArrowRight" && document.activeElement instanceof HTMLButtonElement &&
                 document.activeElement.hasAttribute("aria-haspopup")) {
                 event.preventDefault();

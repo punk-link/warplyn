@@ -167,11 +167,13 @@
             "status": "partial",
             "owners": [
                 "packages/web/src/settings/components/PublishingSettingsSection.tsx",
+                "packages/web/src/settings/components/LanguageDefaultsSettingsSection.tsx",
+                "packages/web/src/settings/settings-sections.ts",
                 "packages/server/src/presentation/routes/publish-settings-route.ts",
                 "packages/server/src/application/publishing",
                 "packages/server/src/infrastructure/persistence/repositories/settings-repository.ts"
             ],
-            "contract": "Custom profiles use horizontal row dividers. Default, No restrictions, LinkedIn Post, LinkedIn Article, and named custom non-negative limits provide guidance; the selected default applies to new Articles while Articles retain independent selection. Custom profiles have stable IDs, appear before add controls, and require confirmed removal; removing the selected default resets to Default. Settings persists one default Article language and deduplicated translation languages excluding it. New translationâ€¦ offers configured defaults when no viewed language is available; Authors confirm selected supported targets before generation.",
+            "contract": "Custom profiles use horizontal row dividers. Default, No restrictions, LinkedIn Post, LinkedIn Article, and named custom non-negative limits provide guidance; the selected default applies to new Articles while Articles retain independent selection. Custom profiles have stable IDs, appear before add controls, and require confirmed removal; removing the selected default resets to Default. Publishing profiles and Language defaults have separate Settings navigation entries in the desktop sidebar and compact selector. Settings persists one default Article language and deduplicated translation languages excluding it. New translationâ€¦ offers configured defaults when no viewed language is available; Authors confirm selected targets, including custom language names and regional preferences before generation. The translation defaults section aligns with the other settings without an inset border: heading and hint, entry control, then the full-width list. Selected targets use removable rows with the Saved words spacing and one compact language input with app-styled suggestions with keyboard navigation plus an explicit Add action; the same input accepts custom names and regional preferences.",
             "persistence": "app_settings.publish-limit-profile"
         },
         {

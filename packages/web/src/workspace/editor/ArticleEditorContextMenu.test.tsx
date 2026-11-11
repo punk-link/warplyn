@@ -52,8 +52,11 @@ it("opens using Shift+F10 without invoking an edit", async () => {
     await waitFor(() => expect(root.textContent).toBe("Paragraph"));
     fireEvent.keyDown(root, { key: "F10", shiftKey: true });
     expect(await view.findByRole("menu", { name: "Editing actions" })).toBeTruthy();
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(view.getByRole("menu", { name: "Editing actions" }).contains(document.activeElement)).toBe(true);
+    await waitFor(() => expect(view.getByRole("menu", { name: "Editing actions" }).contains(document.activeElement)).toBe(true));
+    root.focus();
+    await waitFor(() => expect(view.getByRole("menu").contains(document.activeElement)).toBe(true));
+    fireEvent.pointerDown(document.body);
+    expect(view.queryByRole("menu")).toBeNull();
     expect(setContent).not.toHaveBeenCalled();
 });
 
@@ -95,7 +98,7 @@ it("preserves selected text and orders built-in Skills before alphabetical Autho
     expect(view.queryByRole("menuitem", { name: "Translate text" })).toBeNull();
     fireEvent.keyDown(view.getByRole("menu"), { key: "Escape" });
     const trigger = view.getByRole("menuitem", { name: "Skills" });
-    expect(document.activeElement).toBe(trigger);
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
     fireEvent.keyDown(trigger, { key: "ArrowRight" });
     fireEvent.click(view.getByRole("menuitem", { name: "Zulu" }));
     expect(prepare).toHaveBeenCalledWith(skills[0], false);

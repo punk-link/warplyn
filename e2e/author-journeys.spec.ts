@@ -41,8 +41,7 @@ test("Assistant request time limit persists through Settings reload", async ({ p
 
 
 async function activateWithKeyboard(page: import("@playwright/test").Page, target: Locator): Promise<void> {
-    await target.focus();
-    await page.keyboard.press("Enter");
+    await target.press("Enter");
 }
 
 
@@ -96,8 +95,8 @@ async function createArticle(page: import("@playwright/test").Page, content = "O
     await saved;
     await expect(page.getByRole("status", { name: "Saved", exact: true })).toBeVisible();
     const titleNotice = page.getByRole("button", { name: "Dismiss notification: Revision saved without an Article title" });
-    if (await titleNotice.isVisible())
-        await titleNotice.click();
+    await titleNotice.click();
+    await expect(titleNotice).toBeHidden();
 }
 
 
@@ -261,8 +260,11 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.goto("/");
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: baseURL });
     await page.getByRole("button", { name: "Settings" }).click();
-    await page.getByRole("button", { name: "Publishing" }).click();
-    await page.getByRole("group", { name: "Default translation languages" }).getByRole("checkbox", { name: "Spanish" }).check();
+    await page.getByRole("button", { name: "Language defaults", exact: true }).click();
+    const translationDefaults = page.getByRole("group", { name: "Default translation languages" });
+    await translationDefaults.getByRole("combobox", { name: "Language or regional variant", exact: true }).fill("Spanish");
+    await translationDefaults.getByRole("button", { name: "Add", exact: true }).click();
+    await page.getByRole("button", { name: "Publishing", exact: true }).click();
     const publishingProfileSaved = page.waitForResponse((response) => response.url().endsWith("/api/settings/publish-limit-profile") && response.request().method() === "PUT");
     await page.getByRole("combobox", { name: "Character-limit profile" }).selectOption("linkedin-post");
     await publishingProfileSaved;

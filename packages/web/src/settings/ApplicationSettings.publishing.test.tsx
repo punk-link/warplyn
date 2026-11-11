@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defaultGeneralSettings } from "@skladno/shared";
+
 
 import type { EditorialWorkspaceClient } from "../application/client.js";
 import { messages } from "../i18n/messages.js";
@@ -13,24 +13,6 @@ import { resetApplicationSettingsTestEnvironment, settingsSnapshot } from "./App
 
 describe("ApplicationSettings publishing", () => {
     afterEach(resetApplicationSettingsTestEnvironment);
-
-    it("keeps Article and translation language defaults together in Publishing Settings", async () => {
-        const user = userEvent.setup();
-        const updateGeneralSettings = vi.fn().mockResolvedValue(defaultGeneralSettings);
-        const client = {
-            getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()),
-            updateGeneralSettings,
-            getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
-        } as unknown as EditorialWorkspaceClient;
-
-        render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
-        await user.click(await screen.findByRole("button", { name: getMessage("settings.publishing") }));
-        const languages = screen.getByRole("group", { name: getMessage("settings.defaultTranslationLanguages") });
-        expect(languages.getAttribute("aria-describedby")).toBeTruthy();
-        await user.click(screen.getByRole("checkbox", { name: getMessage("languages.spanish") }));
-        await user.click(screen.getByRole("checkbox", { name: getMessage("languages.german") }));
-        await waitFor(() => expect(updateGeneralSettings).toHaveBeenCalledWith({ ...defaultGeneralSettings, defaultTranslationLanguages: ["es", "de"] }));
-    });
 
     it("retains an editable custom profile until the author saves its name and limit", async () => {
         const user = userEvent.setup();

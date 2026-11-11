@@ -73,7 +73,7 @@ describe("fresh translation review", () => {
         await user.click(screen.getByRole("button", { name: "Cancel" }));
         expect(translate).not.toHaveBeenCalled();
         await user.click(screen.getByRole("button", { name: "New translation…" }));
-        expect(screen.getByRole("checkbox", { name: "Spanish" }).getAttribute("checked")).not.toBeNull();
+        expect(screen.getByRole("button", { name: "Remove Spanish" })).toBeTruthy();
         rerender(view("Changed Draft"));
         const unsavedDraftWillPattern = /unsaved Draft will be saved/;
         expect(screen.getByText(unsavedDraftWillPattern)).toBeTruthy();

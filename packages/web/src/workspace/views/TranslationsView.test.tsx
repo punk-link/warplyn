@@ -86,9 +86,28 @@ describe("TranslationsView", () => {
         expect(screen.queryByText(sourcePattern)).toBeNull();
         await user.click(screen.getByRole("button", { name: getMessage("views.translate") }));
         expect(translate).not.toHaveBeenCalled();
-        await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Generate translations" }));
+        await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Translate to 2 languages" }));
         expect(translate).toHaveBeenCalledOnce();
         expect(translate).toHaveBeenCalledWith(["es", "de"]);
+    });
+
+    it("confirms a custom default target without generating before approval", async () => {
+        const user = userEvent.setup();
+        const translate = vi.fn();
+        render(<IntlProvider locale="en" messages={messages}>
+            <TranslationsView
+                article={article}
+                stale={false}
+                create={vi.fn()}
+                translate={translate}
+                translationLanguages={["Spanish, Argentina"]} />
+        </IntlProvider>);
+        await user.click(screen.getByRole("button", { name: getMessage("views.translate") }));
+        const dialog = within(screen.getByRole("dialog"));
+        expect(dialog.getByRole("button", { name: "Remove Spanish, Argentina" })).toBeTruthy();
+        expect(translate).not.toHaveBeenCalled();
+        await user.click(dialog.getByRole("button", { name: "Generate Spanish, Argentina translation" }));
+        expect(translate).toHaveBeenCalledWith(["Spanish, Argentina"]);
     });
 
     it("workspace.translations.stale-source blocks creating a translation from stale source content", () => {
