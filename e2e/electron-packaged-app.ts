@@ -34,7 +34,13 @@ export async function launchPackaged(root: string, extraArgs: string[] = []): Pr
                 throw new Error("Packaged Warplyn exited before opening its window.");
 
             try {
-                return (await fetch(`http://127.0.0.1:${port}/json/version`)).ok;
+                const response = await fetch(`http://127.0.0.1:${port}/json/list`);
+                if (!response.ok)
+                    return false;
+
+                const targets: unknown = await response.json();
+                return Array.isArray(targets) && targets.some((target: unknown) =>
+                    typeof target === "object" && target !== null && "type" in target && target.type === "page");
             } catch {
                 return false;
             }
