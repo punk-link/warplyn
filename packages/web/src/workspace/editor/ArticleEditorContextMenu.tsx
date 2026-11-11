@@ -114,8 +114,11 @@ export function ArticleEditorContextMenu({ editor, openLink }: { editor: Lexical
         element.style.top = `${Math.max(0, Math.min(position.top, window.innerHeight - element.offsetHeight))}px`;
         const trigger = previousSubmenu.current;
         const target = !submenu && trigger ? element.querySelector<HTMLElement>(`[data-editor-submenu="${trigger}"]`) : undefined;
-        (target ?? element.querySelector<HTMLElement>("button:not(:disabled)"))?.focus();
+        const frame = window.requestAnimationFrame(() => {
+            (target ?? element.querySelector<HTMLElement>("button:not(:disabled)"))?.focus();
+        });
         previousSubmenu.current = submenu;
+        return () => window.cancelAnimationFrame(frame);
     }, [position, submenu]);
 
     if (!position)
