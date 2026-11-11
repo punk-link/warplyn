@@ -5,6 +5,15 @@ import { join, resolve } from "node:path";
 import { _electron, expect, test, type ElectronApplication } from "@playwright/test";
 
 
+async function addNativeWord(app: ElectronApplication, word: string): Promise<void> {
+    const added = await app.evaluateHandle(({ session }, value) => {
+        if (!session.defaultSession.addWordToSpellCheckerDictionary(value))
+            throw new Error("Could not add the native dictionary fixture word.");
+    }, word);
+    await added.dispose();
+}
+
+
 test("desktop backups restore native personal words at startup without removing existing vocabulary", async () => {
     test.setTimeout(120_000);
     const root = await mkdtemp(join(tmpdir(), "warplyn-personal-e2e-"));
@@ -25,7 +34,7 @@ test("desktop backups restore native personal words at startup without removing 
         app = await _electron.launch({ args, env });
         const page = await app.firstWindow();
         await page.waitForURL("http://127.0.0.1:5173/");
-        expect(await app.evaluate(({ session }, word) => session.defaultSession.addWordToSpellCheckerDictionary(word), savedWord)).toBe(true);
+        await addNativeWord(app, savedWord);
         const selected = await page.evaluate(async () => {
             if (!window.skladnoDesktop)
                 throw new Error("Missing desktop client");
@@ -34,7 +43,7 @@ test("desktop backups restore native personal words at startup without removing 
         });
         expect(JSON.parse(await readFile(join(`${selected.path}.skills`, "personal-dictionary.json"), "utf8"))).toContain(savedWord);
         await app.evaluate(({ session }, word) => session.defaultSession.removeWordFromSpellCheckerDictionary(word), savedWord);
-        expect(await app.evaluate(({ session }, word) => session.defaultSession.addWordToSpellCheckerDictionary(word), localWord)).toBe(true);
+        await addNativeWord(app, localWord);
         const recovery = await page.evaluate(async () => {
             if (!window.skladnoDesktop)
                 throw new Error("Missing desktop client");
