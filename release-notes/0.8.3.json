@@ -1,0 +1,50 @@
+{
+    "version": "0.8.3",
+    "previousTag": "v0.8.2",
+    "previousCommit": "4171824b7fc5342b9920db2addeb419a7712e11f",
+    "baseline": "published",
+    "sourceCommit": "e85860f92433f00e4e9b483556c71f54809eecb1",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Settings is easier to reach from the Library, with separate sections for provider setup, Assistant behavior, and language defaults.",
+            "commits": [
+                "32465733e4d40ae887626baa9c2d4a5960a1988e",
+                "26ee1d6992eb9c07360be1d6a3682ed0c28cf1fa"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Set writing languages with a language name, regional variant, or language code, including for Article languages and translation defaults.",
+            "commits": [
+                "e85860f92433f00e4e9b483556c71f54809eecb1"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Choose translation targets using searchable suggestions or add a custom language, then remove targets before confirming. Existing translations are identified in the dialog.",
+            "commits": [
+                "e85860f92433f00e4e9b483556c71f54809eecb1"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "The editor context menu now closes when you click outside it, and its formatting submenu closes after you choose a command.",
+            "commits": [
+                "e85860f92433f00e4e9b483556c71f54809eecb1"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Find guidance for requesting access to, correction of, or deletion of personal data, including how to request deletion of optional desktop telemetry.",
+            "commits": [
+                "97722f50cfdc7be30e191eb419e19a20ad7257f9"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
