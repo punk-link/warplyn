@@ -53,6 +53,10 @@ it("opens using Shift+F10 without invoking an edit", async () => {
     fireEvent.keyDown(root, { key: "F10", shiftKey: true });
     expect(await view.findByRole("menu", { name: "Editing actions" })).toBeTruthy();
     await waitFor(() => expect(view.getByRole("menu", { name: "Editing actions" }).contains(document.activeElement)).toBe(true));
+    root.focus();
+    await waitFor(() => expect(view.getByRole("menu").contains(document.activeElement)).toBe(true));
+    fireEvent.pointerDown(document.body);
+    expect(view.queryByRole("menu")).toBeNull();
     expect(setContent).not.toHaveBeenCalled();
 });
 

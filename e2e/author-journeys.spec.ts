@@ -41,8 +41,7 @@ test("Assistant request time limit persists through Settings reload", async ({ p
 
 
 async function activateWithKeyboard(page: import("@playwright/test").Page, target: Locator): Promise<void> {
-    await target.focus();
-    await page.keyboard.press("Enter");
+    await target.press("Enter");
 }
 
 
