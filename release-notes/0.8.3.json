@@ -1,0 +1,57 @@
+{
+    "version": "0.8.3",
+    "previousTag": "v0.8.2",
+    "previousCommit": "4171824b7fc5342b9920db2addeb419a7712e11f",
+    "baseline": "published",
+    "sourceCommit": "5e07bca025e1e5322ca8ee82a953d2b61d5d0be2",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Choose a writing language by name, regional variant, or code, and add custom or regional translation targets.",
+            "commits": [
+                "5e07bca025e1e5322ca8ee82a953d2b61d5d0be2"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Set default Article and translation languages in a dedicated Language defaults section, with controls to search, add, and remove targets.",
+            "commits": [
+                "26ee1d6992eb9c07360be1d6a3682ed0c28cf1fa",
+                "5e07bca025e1e5322ca8ee82a953d2b61d5d0be2"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Find provider connections and model setup separately from Assistant behavior preferences in Settings.",
+            "commits": [
+                "26ee1d6992eb9c07360be1d6a3682ed0c28cf1fa"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Settings now appears before the style profile in the Library utilities.",
+            "commits": [
+                "32465733e4d40ae887626baa9c2d4a5960a1988e"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Find guidance in the user guide for requesting access to, correction of, or deletion of personal data.",
+            "commits": [
+                "97722f50cfdc7be30e191eb419e19a20ad7257f9"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "The Assistant composer uses less padding, leaving more room for its contents.",
+            "commits": [
+                "26ee1d6992eb9c07360be1d6a3682ed0c28cf1fa"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
