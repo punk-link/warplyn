@@ -83,7 +83,7 @@ test("both release commands generate, review, verify, and commit notes before ta
                     return true;
                 } }) });
         assert.deepEqual(events.slice(1, 6), ["generate", "review tests", "approve", "run verify:core", "run verify:browser"]);
-        assert.equal(events.at(-1), `push --atomic origin HEAD v${expected}`);
+        assert.equal(events.at(-1), `push --atomic origin HEAD:refs/heads/main refs/tags/v${expected}`);
         const record = readTaggedNotes(expected, `v${expected}`, cwd);
         assert.equal(record.reviewed, true);
         assert.equal(record.security, security);
@@ -106,6 +106,19 @@ test("an existing release tag stops before review or package changes", async (t)
     assert.equal(resolveCommit("v0.5.6", cwd), source);
     assert.equal(git(["status", "--porcelain"], cwd), "");
     assert.deepEqual(events, ["fetch origin --tags --quiet"]);
+});
+
+
+test("detached releases stop before review, version changes, or tagging", async (t) => {
+    const cwd = repository(t);
+    git(["checkout", "--detach"], cwd);
+    const events = [];
+    const detachedPattern = /checked-out branch/;
+    await assert.rejects(() => release(["stable"], { cwd, ...releaseProcesses(cwd, events),
+        reviewNotes: () => assert.fail("Detached releases must not review notes") }), detachedPattern);
+    assert.deepEqual(events, ["fetch origin --tags --quiet"]);
+    assert.equal(git(["tag", "--list"], cwd), "v0.5.5");
+    assert.equal(git(["status", "--porcelain"], cwd), "");
 });
 
 
