@@ -96,6 +96,9 @@ export async function release(args = process.argv.slice(2), { cwd = process.cwd(
         return;
     }
 
+    const branch = (await execute("git", ["rev-parse", "--abbrev-ref", "HEAD"], { stdio: "pipe" })).trim();
+    assert(branch && branch !== "HEAD", "Release requires a checked-out branch. Switch to the intended release branch and rerun release.");
+
     const record = await reviewNotes({ version: draftVersion, previousTag: values["previous-tag"], manual: values.manual, cwd });
     const version = classifiedReleaseVersion(record);
     const tag = `v${version}`;
@@ -117,7 +120,8 @@ export async function release(args = process.argv.slice(2), { cwd = process.cwd(
     await execute("git", ["add", notesPath, "package.json", "package-lock.json", "packages/electron/package.json"]);
     await runReleaseStep("Committing reviewed release", () => execute("git", ["commit", "-m", `Release ${tag}`]));
     await execute("git", ["tag", tag]);
-    await runReleaseStep("Pushing the release commit and tag", () => execute("git", ["push", "--atomic", "origin", "HEAD", tag]));
+    await runReleaseStep("Pushing the release commit and tag", () =>
+        execute("git", ["push", "--atomic", "origin", `HEAD:refs/heads/${branch}`, `refs/tags/${tag}`]));
 }
 
 
