@@ -6,6 +6,7 @@ import type { Article, DesktopUpdateClient } from "@skladno/shared";
 import { messages } from "../../i18n/messages.js";
 import { getMessage } from "../../i18n/test-message.js";
 import { ArticleLibraryPanel as RenderArticleLibraryPanel } from "./ArticleLibraryPanel.js";
+import { NotificationProvider } from "../../notifications/NotificationProvider.js";
 
 
 function ArticleLibraryPanel({ articles, selectedArticleId, selectArticle, collapsed, setCollapsed, createBlank, openStyleProfile, openSettings, language, dispatcher, shortcutOverrides, remove, setArchived, setPinned, reorderPinned, notifyError }: {
@@ -26,7 +27,11 @@ function ArticleLibraryPanel({ articles, selectedArticleId, selectArticle, colla
     reorderPinned?: (articleIds: string[]) => Promise<void>;
     notifyError?: Parameters<typeof RenderArticleLibraryPanel>[0]["mutations"]["notifyError"];
 }) {
-    return <RenderArticleLibraryPanel data={{ articles, selectedArticleId, collapsed, language }} navigation={{ selectArticle, setCollapsed, createBlank, openStyleProfile, openSettings, dispatcher, shortcutOverrides }} mutations={{ remove, setArchived, setPinned, reorderPinned, notifyError }} />;
+    return <NotificationProvider><RenderArticleLibraryPanel
+        data={{ articles, selectedArticleId, collapsed, language }}
+        navigation={{ selectArticle, setCollapsed, createBlank, openStyleProfile, openSettings, dispatcher, shortcutOverrides }}
+        mutations={{ remove, setArchived, setPinned, reorderPinned, notifyError }} />
+    </NotificationProvider>;
 }
 
 
@@ -239,11 +244,13 @@ describe("ArticleLibraryPanel", () => {
 
 
 
-    it("shows the icon-only update control beside Settings when an update is available", async () => {
+    it.each([true, false])("runs the Utility Area update action with downloadable=%s", async (downloadable) => {
         window.skladnoUpdates = {
             getState: vi.fn().mockResolvedValue({ kind: "available", currentVersion: "0.1.0-preview.1", version: "0.1.1-preview.1", title: "Preview", summary: "", releaseNotesUrl: "https://example.test/release", security: false, automaticChecks: true, includePrereleases: true, networkAccess: true }),
             setNetworkAccess: vi.fn(), setAutomaticChecks: vi.fn(), setIncludePrereleases: vi.fn(), checkNow: vi.fn(), download: vi.fn(), restartAndUpdate: vi.fn(), openReleaseNotes: vi.fn(), openRecoveryGuide: vi.fn(), rendererReady: vi.fn(), subscribe: () => () => undefined,
         } satisfies DesktopUpdateClient;
+        const initialState = await window.skladnoUpdates.getState();
+        window.skladnoUpdates.getState = vi.fn().mockResolvedValue({ ...initialState, downloadable });
         render(<IntlProvider locale="en" messages={messages}>
             <ArticleLibraryPanel
                 articles={[]}
@@ -264,6 +271,9 @@ describe("ArticleLibraryPanel", () => {
         expect(updateButton.parentElement?.classList.contains("ml-auto")).toBe(true);
         expect(updateButton.classList.contains("relative")).toBe(true);
         expect(updateButton.classList.contains("hover:bg-brand-soft")).toBe(true);
+        await userEvent.setup().click(updateButton);
+        const action = downloadable ? window.skladnoUpdates.download : window.skladnoUpdates.openReleaseNotes;
+        expect(action).toHaveBeenCalledOnce();
     });
 
 
