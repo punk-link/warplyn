@@ -22,6 +22,7 @@ import { registerDesktopArticleFilesAdapter } from "./articles/desktop-article-f
 import { registerDesktopSpelling } from "./settings/desktop-spelling-settings.js";
 import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpdatesAdapter, supportsNativeUpdates, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
 import { createAppImageUpdater, getInstalledAppImage } from "./updates/appimage-updater.js";
+import { restartAppImage } from "./updates/restart-appimage.js";
 import { createDesktopUpdateFetch } from "./updates/create-desktop-update-fetch.js";
 
 
@@ -277,10 +278,8 @@ if (supportsNativeUpdates() && squirrelStartup) {
         const installedAppImage = await getInstalledAppImage(app.isPackaged).catch(() => undefined);
         const fetchUpdateAsset = createDesktopUpdateFetch();
         const updater = installedAppImage ? createAppImageUpdater(installedAppImage,
-            join(dirname(config.databasePath), "update-cache"), fetchUpdateAsset, () => {
-                app.relaunch({ execPath: installedAppImage });
-                app.exit(0);
-            }) : autoUpdater;
+            join(dirname(config.databasePath), "update-cache"), fetchUpdateAsset,
+            () => restartAppImage(installedAppImage, app)) : autoUpdater;
         if (supportsReleaseDiscovery())
             updates = createDesktopUpdateCoordinator(
                 { runtimePath, currentVersion: app.getVersion(), supported: app.isPackaged && process.arch === "x64",

@@ -34,6 +34,8 @@ AppImage installation uses a small application-owned replacement operation. The 
 
 ## Consequences
 
+After AppImage replacement and service shutdown, release the single-instance lock and spawn the stable installed image directly as a detached process. Exit only after process creation succeeds; reacquire the lock on launch failure. A mounted AppImage failed to reopen through Electron's relaunch helper in the Linux probe, while direct spawning reopened it. Keep the working directory outside the temporary AppImage mount. Desktop-menu integration remains separate and must target the stable installed image path.
+
 Authors can defer any update and recover their data. Unsigned Windows packages may trigger warnings or be blocked by policy; HTTPS and package integrity do not establish publisher identity. No separate update service is needed.
 
 ## Verification and references

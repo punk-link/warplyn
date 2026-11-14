@@ -70,7 +70,7 @@ async function downloadImage(response: Response, path: string, expected: { size:
 }
 
 
-export function createAppImageUpdater(installed: string, cache: string, fetchAsset: typeof fetch, restart: () => void) {
+export function createAppImageUpdater(installed: string, cache: string, fetchAsset: typeof fetch, restart: () => void | Promise<void>) {
     const events = new EventEmitter();
     let feed = "";
     let downloaded: string | undefined;
@@ -172,7 +172,7 @@ export function createAppImageUpdater(installed: string, cache: string, fetchAss
             try {
                 await replacement.apply();
             } finally {
-                restart();
+                await restart();
             }
         },
     };
