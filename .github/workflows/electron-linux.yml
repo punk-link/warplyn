@@ -120,6 +120,8 @@ jobs:
               with:
                   ref: ${{ inputs.tag || github.ref }}
                   fetch-depth: 0
+            - name: Use publication tooling from the workflow commit
+              run: git restore --source=${{ github.sha }} -- scripts/publish-release-notes.mjs
             - uses: actions/setup-node@v4
               with:
                   node-version-file: .nvmrc

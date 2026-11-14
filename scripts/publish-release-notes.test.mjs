@@ -1,9 +1,21 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { publishReleaseNotes } from "./publish-release-notes.mjs";
+import { getRelease, publishReleaseNotes } from "./publish-release-notes.mjs";
 
 // Product scenario: application.release-summary-publication
+
+test("draft lookup uses the authenticated paginated release list", () => {
+    const draft = { tag_name: "v1.2.3", draft: true };
+    assert.deepEqual(getRelease(draft.tag_name, args => {
+        assert.equal(args[1], "repos/punk-link/warplyn/releases");
+        assert(args.includes("--paginate"));
+        assert.equal(args.at(-1), '.[] | select(.tag_name == "v1.2.3")');
+        return JSON.stringify(draft);
+    }), draft);
+    assert.equal(getRelease(draft.tag_name, () => ""), undefined);
+});
+
 
 test("stable security publication labels the title and rejects an unmarked retry", () => {
     for (const marked of [true, false]) {
@@ -48,7 +60,7 @@ test("platform creation, races, and retries publish the exact body through a fil
                 return "";
             }
 
-            return JSON.stringify(args[1].includes("/commits/") ? { sha: "abc" } : published);
+            return JSON.stringify(args[1].includes("/commits/") ? { sha: "abc" } : published) ?? "";
         } });
     }
 });

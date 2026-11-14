@@ -13,6 +13,18 @@ export function github(args) {
 }
 
 
+export function getRelease(tag, run = github) {
+    const result = run(["api", "repos/punk-link/warplyn/releases", "--paginate", "--jq",
+        `.[] | select(.tag_name == ${JSON.stringify(tag)})`]);
+    if (!result.trim())
+        return undefined;
+
+    const release = JSON.parse(result.trim().split("\n")[0]);
+    assert(release, `Release ${tag} was not found, including drafts.`);
+    return release;
+}
+
+
 export function publishReleaseNotes({ tag, body, targetCommit, run = github }) {
     const directory = mkdtempSync(join(tmpdir(), "warplyn-release-notes-"));
     const file = join(directory, "notes.txt");
@@ -22,14 +34,19 @@ export function publishReleaseNotes({ tag, body, targetCommit, run = github }) {
     let releaseAlreadyExisted = false;
     try {
         writeFileSync(file, body, "utf8");
-        try {
-            run(["release", "create", tag, "--repo", "punk-link/warplyn", "--verify-tag",
-                "--draft", `--prerelease=${prerelease}`, "--title", title, "--notes-file", file]);
-        } catch {
-            releaseAlreadyExisted = true;
+        let release = getRelease(tag, run);
+        if (!release) {
+            try {
+                run(["release", "create", tag, "--repo", "punk-link/warplyn", "--verify-tag",
+                    "--draft", `--prerelease=${prerelease}`, "--title", title, "--notes-file", file]);
+            } catch {
+                releaseAlreadyExisted = true;
+            }
+
+            release = getRelease(tag, run);
         }
 
-        const release = JSON.parse(run(["api", `repos/punk-link/warplyn/releases/tags/${tag}`]));
+        assert(release, `Release ${tag} was not found, including drafts.`);
         const releaseIdentityError = releaseAlreadyExisted
             ? "Existing release identity or channel differs. Inspect the release before retrying publication."
             : "Created release identity or channel differs. Inspect the release before retrying publication.";

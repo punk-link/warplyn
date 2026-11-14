@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
     release-linux:
+        needs: release-windows
         if: github.event_name != 'pull_request'
         uses: ./.github/workflows/electron-linux.yml
         with:
@@ -90,6 +91,9 @@ jobs:
               with:
                   ref: ${{ inputs.tag || github.ref }}
                   fetch-depth: 0
+
+            - name: Use publication tooling from the workflow commit
+              run: git restore --source=${{ github.sha }} -- scripts/publish-release-notes.mjs
 
             - name: Set up Node.js
               uses: actions/setup-node@v4

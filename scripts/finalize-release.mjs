@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { pathToFileURL } from "node:url";
-import { github } from "./publish-release-notes.mjs";
+import { getRelease, github } from "./publish-release-notes.mjs";
 
 
 export function finalizeRelease(tag, run = github) {
     const numberPattern = /^v\d+\.\d+\.\d+(?:-preview\.\d+(?:\.security)?)?$/;
     assert(numberPattern.test(tag), "Invalid release tag.");
-    const release = JSON.parse(run(["api", `repos/punk-link/warplyn/releases/tags/${tag}`]));
+    const release = getRelease(tag, run);
+    assert(release, `Release ${tag} was not found, including drafts.`);
     assert.equal(release.tag_name, tag);
     const version = tag.slice(1);
     const [base, preview] = version.split("-");
