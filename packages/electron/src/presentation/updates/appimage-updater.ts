@@ -25,29 +25,11 @@ export async function getInstalledAppImage(packaged: boolean): Promise<string | 
 
 
 async function fetchReleaseAsset(url: string, fetchAsset: typeof fetch): Promise<Response> {
-    for (let redirects = 0; redirects < 5; redirects += 1) {
-        const target = new URL(url);
-        if (target.protocol !== "https:" || target.username || target.password || target.port ||
-            !["github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com"].includes(target.hostname))
-            throw new Error("Invalid update destination.");
+    const response = await fetchAsset(url);
+    if (!response.ok)
+        throw new Error("Update download failed.");
 
-        const response = await fetchAsset(url, { redirect: "manual" });
-        if (response.status >= 300 && response.status < 400) {
-            const location = response.headers.get("location");
-            await response.body?.cancel();
-            if (!location)
-                throw new Error("Missing update destination.");
-
-            url = new URL(location, url).href;
-        } else {
-            if (!response.ok)
-                throw new Error("Update download failed.");
-
-            return response;
-        }
-    }
-
-    throw new Error("Too many update redirects.");
+    return response;
 }
 
 

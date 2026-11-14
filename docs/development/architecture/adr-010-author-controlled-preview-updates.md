@@ -18,6 +18,8 @@ Keep network access, release validation, updater control, snapshots, and restart
 
 Use an in-memory Electron session with credentials omitted for public release requests and downloads. Updates need no workspace cookies or persisted browser state. This also keeps Linux discovery independent of persistent cookie-store encryption and keyring initialization.
 
+Follow release-asset redirects through Electron's native fetch. Its manual redirect mode rejects redirects with "Redirect was cancelled". The isolated update session validates HTTPS and the exact GitHub API/release-asset host allowlist in `webRequest.onBeforeRequest`, including every redirected request before contact. Keep redirect policy at this transport boundary rather than relying on Node fetch semantics in the updater. Native Electron regression coverage verifies both permitted redirects and rejection of an untrusted destination before it is contacted.
+
 On Windows, use the native Squirrel updater. Restart and update first obtains the latest Draft checkpoint and creates a pre-update snapshot. Either failure cancels the update. Then close streams, services, and SQLite through the existing shutdown path before applying the update. Ordinary close or OS shutdown does not apply it.
 
 Mark startup successful only after the database opens, migrations complete, services start, and the renderer is ready. Retain recovery state outside SQLite and a snapshot from the previous installed version until the next update succeeds. Database rollback requires the prior binary and its matching snapshot; opening migrated data with an older binary alone is unsupported.

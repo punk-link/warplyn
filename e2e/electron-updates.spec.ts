@@ -50,6 +50,7 @@ test("packaged updates show complete safe summaries without changing update auth
         if (process.platform === "linux" && downloadable) {
             await download.click();
             await expect(page.getByText("Couldn’t download the update. Try again.", { exact: true })).toBeVisible();
+            expect(network.downloadRequestCount()).toBe(1);
             await expect(page.getByRole("button", { name: "Restart and update", exact: true })).toHaveCount(0);
             await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeEnabled();
         }

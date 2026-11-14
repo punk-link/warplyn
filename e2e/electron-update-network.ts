@@ -12,8 +12,14 @@ export async function createUpdateNetwork() {
     const fingerprint = createHash("sha256").update(publicKey).digest("base64");
     let body = "";
     let requests = 0;
+    let downloads = 0;
     const server = createServer({ cert: testCertificate, key: testPrivateKey }, (request, response) => {
         if (request.url === "/punk-link/warplyn/releases/download/v99.0.0/warplyn-appimage-x64.json") {
+            response.writeHead(302, { location: "/update-metadata.json" }).end();
+            return;
+        }
+
+        if (request.url === "/update-metadata.json") {
             response.writeHead(200, { "Content-Type": "application/json" }).end(JSON.stringify({
                 version: "99.0.0", architecture: "x64", file: "Warplyn-99.0.0-linux-x64.AppImage",
                 size: 3, sha256: createHash("sha256").update("new").digest("hex"),
@@ -22,6 +28,12 @@ export async function createUpdateNetwork() {
         }
 
         if (request.url === "/punk-link/warplyn/releases/download/v99.0.0/Warplyn-99.0.0-linux-x64.AppImage") {
+            response.writeHead(302, { location: "/update-payload.AppImage" }).end();
+            return;
+        }
+
+        if (request.url === "/update-payload.AppImage") {
+            downloads += 1;
             response.writeHead(200).end("bad");
             return;
         }
@@ -53,6 +65,7 @@ export async function createUpdateNetwork() {
             body = value;
         },
         requestCount: () => requests,
+        downloadRequestCount: () => downloads,
         close: () => new Promise<void>((resolveClose, rejectClose) => {
             server.close((error) => error ? rejectClose(error) : resolveClose());
             server.closeAllConnections();

@@ -22,6 +22,7 @@ import { registerDesktopArticleFilesAdapter } from "./articles/desktop-article-f
 import { registerDesktopSpelling } from "./settings/desktop-spelling-settings.js";
 import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpdatesAdapter, supportsNativeUpdates, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
 import { createAppImageUpdater, getInstalledAppImage } from "./updates/appimage-updater.js";
+import { createDesktopUpdateFetch } from "./updates/create-desktop-update-fetch.js";
 
 
 const rendererUrl = "http://127.0.0.1:5173";
@@ -274,8 +275,7 @@ if (supportsNativeUpdates() && squirrelStartup) {
         };
 
         const installedAppImage = await getInstalledAppImage(app.isPackaged).catch(() => undefined);
-        const fetchUpdateAsset: typeof fetch = (url, options) => session.fromPartition("warplyn-updates").fetch(
-            url instanceof URL ? url.href : url, { ...options, credentials: "omit" });
+        const fetchUpdateAsset = createDesktopUpdateFetch();
         const updater = installedAppImage ? createAppImageUpdater(installedAppImage,
             join(dirname(config.databasePath), "update-cache"), fetchUpdateAsset, () => {
                 app.relaunch({ execPath: installedAppImage });
