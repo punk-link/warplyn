@@ -1,0 +1,30 @@
+{
+    "version": "0.8.4-preview.6",
+    "previousTag": "v0.8.4-preview.5",
+    "previousCommit": "065ebec5ef4fbc013fb2091d16deebe86cfb3236",
+    "baseline": "published",
+    "sourceCommit": "6ce4102f20c8f3548efaaf0b8fa79dc04a0c134a",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": true,
+            "text": "AppImage updates now reuse a verified download instead of downloading it again, and restart Warplyn by launching the installed image in a detached process after applying the update.",
+            "commits": [
+                "74701ce295619d5d96bdc95b1a8c9d2760bc2709",
+                "13ee72def8f43a0b08e5560f9c65b85837259796"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Windows update screens explain that downloading an update approves automatic installation the next time you open Warplyn, and the ready status confirms when it will apply.",
+            "commits": [
+                "13ee72def8f43a0b08e5560f9c65b85837259796",
+                "6ce4102f20c8f3548efaaf0b8fa79dc04a0c134a"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
