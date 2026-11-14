@@ -61,6 +61,12 @@ jobs:
                   uname -m > linux-acceptance/architecture.txt
                   date -u --iso-8601=seconds > linux-acceptance/date.txt
                   sha256sum packages/electron/out/make/deb/x64/*.deb > linux-acceptance/checksums.txt
+                  if compgen -G 'packages/electron/out/make/appimage/x64/*.AppImage' > /dev/null; then
+                    sha256sum packages/electron/out/make/appimage/x64/*.AppImage >> linux-acceptance/checksums.txt
+                  fi
+                  if test -f packages/electron/out/make/appimage/x64/warplyn-appimage-x64.json; then
+                    cp packages/electron/out/make/appimage/x64/warplyn-appimage-x64.json linux-acceptance/
+                  fi
                   dpkg-query -s warplyn > linux-acceptance/package.txt
                   if test -f installed-dependencies.txt; then cp installed-dependencies.txt linux-acceptance/; fi
                   cp docs/development/guides/linux-installed-acceptance.md linux-acceptance/manual-checklist.md
@@ -68,6 +74,12 @@ jobs:
               env:
                   WARPLYN_ELECTRON_EXECUTABLE: /usr/lib/warplyn/Warplyn
               run: xvfb-run --auto-servernum npm run verify:desktop
+            - name: Validate AppImage and update metadata
+              run: node scripts/validate-appimage.mjs
+            - name: Verify AppImage desktop journeys
+              run: |
+                  image="$(realpath packages/electron/out/make/appimage/x64/*.AppImage)"
+                  WARPLYN_ELECTRON_EXECUTABLE="$image" xvfb-run --auto-servernum npm run verify:desktop
             - name: Save desktop test failure evidence
               if: always()
               uses: actions/upload-artifact@v4
@@ -137,6 +149,8 @@ jobs:
                   test -n "$WARPLYN_POSTHOG_PROJECT_KEY"
                   printf '%s' "{\"endpoint\":\"https://us.i.posthog.com/batch\",\"projectKey\":\"$WARPLYN_POSTHOG_PROJECT_KEY\"}" > packages/electron/telemetry.json
             - run: npm run make:electron:linux
+            - name: Validate AppImage and update metadata
+              run: node scripts/validate-appimage.mjs
             - name: Validate Debian package
               run: |
                   shopt -s nullglob
@@ -156,7 +170,7 @@ jobs:
                   grep -qx 'Categories=Office;' <<< "$desktop"
                   grep -Eq '^Exec=.+$' <<< "$desktop"
                   grep -Eq '^Icon=.+$' <<< "$desktop"
-            - name: Upload Debian package
+            - name: Upload Linux packages and update metadata
               env:
                   GH_TOKEN: ${{ github.token }}
                   RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
@@ -165,4 +179,4 @@ jobs:
                   assets=(packages/electron/out/make/deb/x64/*.deb)
                   test "${#assets[@]}" -eq 1
                   node scripts/publish-release-notes.mjs "$RELEASE_TAG"
-                  gh release upload "$RELEASE_TAG" "${assets[0]}" --clobber
+                  gh release upload "$RELEASE_TAG" "${assets[0]}" packages/electron/out/make/appimage/x64/*.AppImage packages/electron/out/make/appimage/x64/warplyn-appimage-x64.json --clobber

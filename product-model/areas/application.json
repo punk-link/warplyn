@@ -140,11 +140,21 @@
                 "packages/server/src/local-application.ts",
                 ".github/workflows/electron-linux.yml"
             ],
-            "contract": "The unsigned Debian x64 application runs the existing context-isolated, sandboxed Electron workspace and local services from one Debian package. Ubuntu 22.04 x64 is the release-validation baseline; compatible Debian-based distributions may install the same package. CI publishes only tags whose commit is contained in main, and manual release dispatches must run from main. It preserves Article, Draft, Revision, backup, credential, renderer-isolation, single-window, native-dialog, and shutdown guarantees. After author-approved GitHub access, About Settings can show the newest matching Debian release and open its release notes. Package-manager upgrades or manual .deb reinstalls remain author-controlled; Linux exposes no in-app download or apply action.",
+            "contract": "The unsigned Debian x64 application runs the existing context-isolated, sandboxed Electron workspace and local services from one Debian package. Ubuntu 22.04 x64 is the release-validation baseline; compatible Debian-based distributions may install the same package. CI publishes only tags whose commit is contained in main, and manual release dispatches must run from main. It preserves Article, Draft, Revision, backup, credential, renderer-isolation, single-window, native-dialog, and shutdown guarantees. After author-approved GitHub access, About Settings can show the newest matching Debian release and open its release notes. Package-manager upgrades or manual .deb reinstalls remain author-controlled; Debian installations expose no in-app download or apply action.",
             "persistence": "Electron runtime state uses Linux userData while Article data remains in the resolved user-local .warplyn directory. Install, upgrade, reinstall, and uninstall do not delete or rewrite author data.",
             "limitations": [
-                "The installed Ubuntu 22.04 acceptance pass, including Secret Service, launcher, upgrade, reinstall, uninstall, and data-preservation evidence, remains required before any Linux target is guaranteed. Other compatible Debian-based distributions require the same pass; ARM64, RPM, Snap, Flatpak, AppImage, and in-app Linux updates require separate demand and acceptance evidence."
+                "The installed Ubuntu 22.04 Debian acceptance evidence is recorded in the Linux acceptance guide. Additional distributions and AppImage require their own installed acceptance. ARM64, RPM, Snap and Flatpak remain outside this release scope."
             ]
+        },
+        {
+            "id": "application.electron-appimage",
+            "area": "Application shell",
+            "title": "AppImage x64 distribution and author-controlled updates",
+            "status": "partial",
+            "owners": ["packages/electron/src/presentation/updates", "packages/electron/src/infrastructure/recovery/appimage-replacement.ts", "scripts/make-appimage.mjs", "scripts/validate-appimage.mjs", ".github/workflows/electron-linux.yml"],
+            "contract": "Linux builds publish an x64 AppImage and version-bound checksum metadata alongside Debian. A validated AppImage runtime can explicitly download after GitHub permission and explicitly restart to apply. Architecture and format select compatible artifacts. Debian remains manual. Checkpoint, snapshot and staged executable preparation precede shutdown and atomic replacement; ordinary close does not install.",
+            "persistence": "Article data and Settings remain in the existing profile. Recovery retains the previous executable and matching pre-update snapshot outside SQLite, with startup success recorded only after application readiness.",
+            "limitations": ["Installed desktop, keyring, accessibility, previous-preview upgrade and failed-startup recovery acceptance remain pending. WSL automation does not certify desktop distribution support."]
         },
         {
             "id": "application.desktop-responsive-shell",
@@ -342,7 +352,7 @@
             "preconditions": ["A packaged Debian release has a newer matching Debian package on GitHub and the author has allowed update network access."],
             "event": "The Linux desktop coordinator checks release metadata." ,
             "expected": ["It offers the newest matching Debian release and release notes without starting a download."],
-            "forbidden": ["Squirrel or autoUpdater calls on Linux, an in-app Linux download, or a discovery request without author permission."],
+            "forbidden": ["Squirrel or autoUpdater calls for Debian installations, an in-app Debian download, or a discovery request without author permission."],
             "evidence": { "kind": "automated", "path": "packages/electron/src/presentation/updates/desktop-updates.test.ts" }
         },
         {
@@ -397,6 +407,16 @@
             "expected": ["Only the newest complete compatible release allowed by the stable-only or prerelease-inclusive preference is offered and no download starts before the author requests it."],
             "forbidden": ["Making an update-discovery request without author permission or sending Article content or raw GitHub errors to the renderer."],
             "evidence": { "kind": "automated", "path": "packages/electron/src/presentation/updates/desktop-updates.test.ts" }
+        },
+        {
+            "id": "application.electron-appimage-update-recovery",
+            "title": "AppImage updates preserve lifecycle and recovery gates",
+            "capabilityIds": ["application.electron-appimage"],
+            "preconditions": ["An x64 AppImage is running and the Author allows GitHub updates."],
+            "event": "The Author downloads an update and requests restart.",
+            "expected": ["Only matching x64 AppImage releases with metadata are offered.", "Checkpoint, snapshot and executable preparation complete before shutdown and apply."],
+            "forbidden": ["Installing after a failed checkpoint, snapshot or preparation.", "Offering AppImage apply to Debian installations."],
+            "evidence": { "kind": "automated", "path": "packages/electron/src/presentation/updates/appimage-update-coordinator.test.ts" }
         },
         {
             "id": "application.electron-preview-update-recovery",

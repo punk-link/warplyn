@@ -1,5 +1,24 @@
 # Linux installed release acceptance
 
+## AppImage acceptance for issue #54
+
+AppImage installed acceptance is pending. Per the implementation-session decision, WSL is used for automation; GNOME desktop acceptance remains a separate release gate. The primary target is Ubuntu 22.04.5 x64/GNOME/GNOME Keyring. Additional compatibility targets are Ubuntu 24.04 x64/GNOME and Fedora 43 x64/GNOME. No AppImage target is certified by the existing Debian results below. Record exact session, keyring, sandbox, spelling, dialogs, accessibility, upgrade data retention and failed-startup recovery results for each target, following the release guide.
+
+### AppImage automation evidence, 2026-11-14
+
+The uncommitted issue #54 implementation is based on source commit `1928980084dcab8023634b8057d01a1794afdaa4`. The local AppImage is a working-tree test build, not a published release or installed desktop certification.
+
+- Environment: Ubuntu 22.04.3 x86_64 under WSL2, kernel `6.18.58.1-microsoft-standard-WSL2`, 3.8 GiB RAM, two build processors, Xvfb. Packaging uses appimagetool 1.9.1 and type2-runtime 20251108, with pinned SHA-256 digests checked before use.
+- AppImage version: `0.8.4-preview.1`; size: `120171000` bytes; SHA-256: `6cc6c01ed7d9c8992414b822cf4308ff0388130e1b14b9592793efb28bf11d27`.
+- Debian version: `0.8.4-preview.1`, architecture `amd64`, SHA-256 `a161ac8ae60c7cfcf883d5f08b2122750899637b0e3826e77a7a6a028c641b79`. Both formats contain an identical `app.asar` payload with SHA-256 `0d8dc4cf9fee53a9b652edb443a69fdeee3741cdca98c60ef1a18f36d3203418`.
+- Package validation passed for ELF x64, embedded product/version, Linux keyring native module, executable permissions, sandbox-preserving launcher, desktop entry and checksum metadata. The documented optional desktop launcher also passed `desktop-file-validate`.
+- Core verification, 48 browser journeys, site build/metadata, product-model checks and final lint/type checks passed on Windows. Windows and WSL desktop gates each passed serially with 11 passed and one visible spelling test skipped. The WSL parallel run timed out in Assistant typing and native file export; a focused serial rerun and then the full serial gate passed without changing timeouts.
+- The packaged update journey exercised GitHub permission, compatible AppImage discovery, shared controls and rejection of a corrupt download through real IPC. Unit tests cover successful staging/replacement, retained executable recovery, wrong format/architecture, malformed metadata, redirects, checksum/truncation failures, and checkpoint/snapshot/preparation gates.
+
+Installed GNOME, keyring, accessibility, previous-preview upgrade and failed-startup recovery acceptance remain pending, as do the additional distribution targets. The older Debian evidence below does not satisfy those gates.
+
+## Debian installed evidence
+
 Ubuntu 22.04 x64 with a GNOME desktop and GNOME Keyring is the primary acceptance target for issue #36. Installed acceptance was completed on Ubuntu 22.04.5 x64 in Hyper-V on 2026-11-14. No additional distribution/version is guaranteed. Linux verification and release builds are pinned to `ubuntu-22.04`. Headless CI does not establish GNOME desktop or accessibility acceptance.
 
 The Linux workflow uploads package checksums, source SHA, OS, architecture, date, installed package metadata, resolved libraries and desktop test evidence even after failures. The included checklist remains pending until a reviewer records linked results. CI does not certify the manual rows.

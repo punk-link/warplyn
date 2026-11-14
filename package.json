@@ -24,7 +24,7 @@
         "dev:electron": "npm run build --workspace @skladno/electron && concurrently --kill-others-on-fail -n web,electron -c green,blue \"node scripts/start-electron-web.mjs\" \"npm run start --workspace @skladno/electron\"",
         "package:electron": "npm run package --workspace @skladno/electron",
         "make:electron": "npm run make --workspace @skladno/electron",
-        "make:electron:linux": "npm run make:linux --workspace @skladno/electron",
+        "make:electron:linux": "npm run make:linux --workspace @skladno/electron && node scripts/make-appimage.mjs",
         "lint": "node scripts/check-line-length.mjs && node scripts/web-import-boundaries.mjs && eslint . --max-warnings 0 && node scripts/check-data-properties.mjs",
         "lint:fix": "eslint . --fix --max-warnings 0",
         "complexity:check": "node scripts/complexity-check.mjs",

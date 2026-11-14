@@ -14,6 +14,7 @@ test("packaged updates show complete safe summaries without changing update auth
         "- <script>alert(1)</script> ![image](https://example.test/image)";
     network.setBody(body);
     let app: Awaited<ReturnType<typeof launchPackaged>> | undefined;
+    const downloadable = process.platform === "win32" || process.env.WARPLYN_ELECTRON_EXECUTABLE?.endsWith(".AppImage");
     try {
         app = await launchPackaged(root, network.args);
         const page = app.page;
@@ -33,7 +34,7 @@ test("packaged updates show complete safe summaries without changing update auth
         await expect(details.locator("script, img, a")).toHaveCount(0);
         await expect(page.getByRole("button", { name: "View release notes", exact: true })).toBeEnabled();
         const download = page.getByRole("button", { name: "Download", exact: true });
-        await expect(download).toHaveCount(process.platform === "win32" ? 1 : 0);
+        await expect(download).toHaveCount(downloadable ? 1 : 0);
         await page.getByRole("heading", { name: "Changes in 99.0.0", exact: true }).scrollIntoViewIfNeeded();
         await page.screenshot({ path: "test-results/desktop/update-summary-wide.png" });
         await page.setViewportSize({ width: 760, height: 900 });
@@ -43,7 +44,14 @@ test("packaged updates show complete safe summaries without changing update auth
             await page.getByRole("button", { name: "Check now", exact: true }).click();
             await expect(details).toHaveText(summary || "Release details are unavailable. You can still update.");
             await expect(page.getByRole("button", { name: "View release notes", exact: true })).toBeEnabled();
-            await expect(download).toHaveCount(process.platform === "win32" ? 1 : 0);
+            await expect(download).toHaveCount(downloadable ? 1 : 0);
+        }
+
+        if (process.platform === "linux" && downloadable) {
+            await download.click();
+            await expect(page.getByText("Couldn’t download the update. Try again.", { exact: true })).toBeVisible();
+            await expect(page.getByRole("button", { name: "Restart and update", exact: true })).toHaveCount(0);
+            await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeEnabled();
         }
     } finally {
         if (app)

@@ -15,7 +15,9 @@ const automaticUpdateCheckInterval = 86_400_000;
 interface NativeUpdater {
     setFeedURL(options: { url: string }): void;
     checkForUpdates(): void;
-    quitAndInstall(): void;
+    quitAndInstall(): void | Promise<void>;
+    prepareApply?(): Promise<void>;
+    cancelDownload?(): void;
     on(event: "update-downloaded" | "error", listener: () => void): void;
 }
 
@@ -25,6 +27,7 @@ interface DesktopUpdateRuntime {
     currentVersion: string;
     supported: boolean;
     platform: "linux" | "win32";
+    appImage?: boolean;
 }
 
 
@@ -73,16 +76,17 @@ async function createUpdateSnapshot(createSnapshot: (path: string) => Promise<un
 
 
 export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, source: DesktopUpdateReleaseSource, execution: DesktopUpdateExecution, presentation: DesktopUpdatePresentation) {
-    const { runtimePath, currentVersion, supported, platform } = runtime;
+    const { runtimePath, currentVersion, supported, platform, appImage = false } = runtime;
     const { fetchReleases = () => fetch(releasesUrl), openExternal } = source;
     const { createSnapshot, dataDirectory, updater, requestCheckpoint, closeApplication, telemetry } = execution;
     const { notify, scheduleTimeout = setTimeout } = presentation;
     let release: Release | undefined;
+    let applying = false;
     let state: DesktopUpdateState = withRecoveryGuidance(getInitialUpdateState());
 
 
     function withRecoveryGuidance(next: DesktopUpdateState): DesktopUpdateState {
-        return { ...next, recoveryAvailable: platform === "win32" };
+        return { ...next, recoveryAvailable: platform === "win32" || appImage };
     }
 
 
@@ -113,7 +117,7 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
 
 
     async function checkNow(): Promise<DesktopUpdateState> {
-        if (state.kind === "unsupported")
+        if (state.kind === "unsupported" || state.kind === "checking" || state.kind === "downloading" || state.kind === "ready")
             return state;
 
         const runtime = readCurrentRuntimeSettings();
@@ -152,10 +156,10 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
         if (!response.ok || !Array.isArray(payload))
             throw new Error("Release discovery failed.");
 
-        release = getNewestCompatibleRelease(payload, currentVersion, runtime, platform);
+        release = getNewestCompatibleRelease(payload, currentVersion, runtime, platform, appImage);
         const nextRuntime = updateRuntimeSettings(runtimePath, (current) => ({ ...current, lastUpdateCheckAt: new Date().toISOString() }));
         return release
-            ? setState(getAvailableUpdateState(release, currentVersion, nextRuntime, platform === "win32"))
+            ? setState(getAvailableUpdateState(release, currentVersion, nextRuntime, platform === "win32" || appImage))
             : setState({ kind: "current", currentVersion, lastCheckedAt: nextRuntime.lastUpdateCheckAt, ...updatePreferences(nextRuntime, currentVersion) });
     }
 
@@ -168,6 +172,9 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
         }
     });
     updater.on("error", () => {
+        if (state.kind !== "downloading" && state.kind !== "ready")
+            return;
+
         const runtime = readCurrentRuntimeSettings();
         setState({
             kind: "failed",
@@ -181,6 +188,9 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
     return {
         getState: () => state,
         setNetworkAccess(enabled: boolean) {
+            if (!enabled)
+                updater.cancelDownload?.();
+
             const runtime = { ...readCurrentRuntimeSettings(), updateNetworkAccess: enabled };
             writeRuntimeSettings(runtimePath, runtime);
             if (state.kind === "unsupported")
@@ -217,7 +227,7 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
         },
         checkNow,
         download(): DesktopUpdateState {
-            if (!release || state.kind !== "available" || !state.downloadable)
+            if (!release || state.kind !== "available" || !state.downloadable || readCurrentRuntimeSettings().updateNetworkAccess !== true)
                 return state;
 
             const downloading = { ...state, kind: "downloading" as const };
@@ -227,22 +237,31 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
             return downloading;
         },
         async restartAndUpdate(): Promise<boolean> {
-            if (state.kind !== "ready" || !await requestCheckpoint())
+            if (state.kind !== "ready" || applying)
                 return false;
 
+            applying = true;
             try {
+                if (!await requestCheckpoint())
+                    return false;
+
                 const snapshot = await runBackup(() => createUpdateSnapshot(createSnapshot, join(dataDirectory, "update-recovery"), currentVersion, telemetry));
+
+                await updater.prepareApply?.();
                 writeRuntimeSettings(runtimePath, { ...readCurrentRuntimeSettings(), priorVersion: currentVersion, recoverySnapshotPath: snapshot, startupSuccess: false });
                 await closeApplication();
-                updater.quitAndInstall();
+                await updater.quitAndInstall();
+
                 return true;
             } catch {
                 setState({ kind: "failed", currentVersion, error: "apply_failed", ...updatePreferences(readCurrentRuntimeSettings(), currentVersion) });
                 return false;
+            } finally {
+                applying = false;
             }
         },
         openReleaseNotes: () => state.kind === "available" || state.kind === "downloading" || state.kind === "ready" ? openExternal(state.releaseNotesUrl) : Promise.resolve(),
-        openRecoveryGuide: () => platform === "win32" ? openExternal(recoveryGuideUrl) : Promise.resolve(),
+        openRecoveryGuide: () => platform === "win32" || appImage ? openExternal(recoveryGuideUrl) : Promise.resolve(),
         schedule() {
             async function runAutomaticUpdateCheck(): Promise<void> {
                 const runtime = readCurrentRuntimeSettings();

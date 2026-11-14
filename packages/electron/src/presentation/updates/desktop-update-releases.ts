@@ -70,7 +70,9 @@ export function updatePreferences(settings: RuntimeSettings, currentVersion: str
 }
 
 
-export function getNewestCompatibleRelease(payload: unknown, currentVersion: string, settings: RuntimeSettings, platform: "linux" | "win32"): Release | undefined {
+export function getNewestCompatibleRelease(
+    payload: unknown, currentVersion: string, settings: RuntimeSettings, platform: "linux" | "win32", appImage = false,
+): Release | undefined {
     if (!Array.isArray(payload))
         return undefined;
 
@@ -81,11 +83,23 @@ export function getNewestCompatibleRelease(payload: unknown, currentVersion: str
             hasSupportedVersion(item) &&
             (!item.prerelease || updatePreferences(settings, currentVersion).includePrereleases) &&
             (platform === "linux"
-                ? item.assets.some((asset) => warplynAmdDebPattern.test(asset.name))
+                ? hasLinuxArtifact(item, appImage, warplynAmdDebPattern)
                 : item.assets.some((asset) => asset.name === "RELEASES") && item.assets.some((asset) => comWarplynDesktopPattern.test(asset.name)))
         );
 
     return candidates.sort((first, second) => isNewerThan(first.tag_name, second.tag_name) ? -1 : 1).find((item) => isNewerThan(item.tag_name, currentVersion));
+}
+
+
+function hasLinuxArtifact(release: Release, appImage: boolean, debPattern: RegExp): boolean {
+    if (!appImage)
+        return release.assets.some((asset) => debPattern.test(asset.name));
+
+    const punctuationPattern = /^v/;
+    const version = release.tag_name.replace(punctuationPattern, "");
+
+    return release.assets.some((asset) => asset.name === `Warplyn-${version}-linux-x64.AppImage`) &&
+        release.assets.some((asset) => asset.name === "warplyn-appimage-x64.json");
 }
 
 

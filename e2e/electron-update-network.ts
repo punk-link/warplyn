@@ -13,6 +13,19 @@ export async function createUpdateNetwork() {
     let body = "";
     let requests = 0;
     const server = createServer({ cert: testCertificate, key: testPrivateKey }, (request, response) => {
+        if (request.url === "/punk-link/warplyn/releases/download/v99.0.0/warplyn-appimage-x64.json") {
+            response.writeHead(200, { "Content-Type": "application/json" }).end(JSON.stringify({
+                version: "99.0.0", architecture: "x64", file: "Warplyn-99.0.0-linux-x64.AppImage",
+                size: 3, sha256: createHash("sha256").update("new").digest("hex"),
+            }));
+            return;
+        }
+
+        if (request.url === "/punk-link/warplyn/releases/download/v99.0.0/Warplyn-99.0.0-linux-x64.AppImage") {
+            response.writeHead(200).end("bad");
+            return;
+        }
+
         if (request.url !== "/repos/punk-link/warplyn/releases") {
             response.writeHead(404).end();
             return;
@@ -22,7 +35,8 @@ export async function createUpdateNetwork() {
         response.writeHead(200, { "Content-Type": "application/json" }).end(JSON.stringify([
             { tag_name: "v99.0.0", name: "Warplyn v99.0.0", body,
                 html_url: "https://github.com/punk-link/warplyn/releases/tag/v99.0.0", prerelease: false, draft: false,
-                assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-99.0.0-full.nupkg" }, { name: "warplyn_99.0.0_amd64.deb" }] },
+                assets: [{ name: "RELEASES" }, { name: "com.warplyn.desktop-99.0.0-full.nupkg" }, { name: "warplyn_99.0.0_amd64.deb" },
+                    { name: "Warplyn-99.0.0-linux-x64.AppImage" }, { name: "warplyn-appimage-x64.json" }] },
         ]));
     });
     server.listen(0, "127.0.0.1");
@@ -32,7 +46,8 @@ export async function createUpdateNetwork() {
         throw new Error("Could not open the isolated update fixture.");
 
     return {
-        args: ["--no-proxy-server", `--host-resolver-rules=MAP api.github.com 127.0.0.1:${address.port}`,
+        args: ["--no-proxy-server",
+            `--host-resolver-rules=MAP api.github.com 127.0.0.1:${address.port}, MAP github.com 127.0.0.1:${address.port}`,
             `--ignore-certificate-errors-spki-list=${fingerprint}`],
         setBody: (value: string) => {
             body = value;

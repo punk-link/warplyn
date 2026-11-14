@@ -37,7 +37,7 @@ Warplyn gives you a local-first workspace for developing and refining *Articles*
 - [AI provider costs](provider-costs.md)
 - [Application settings](application-settings.md)
 - [Backups and recovery](backups-and-recovery.md)
-- [Windows preview update recovery](update-recovery.md)
+- [Desktop update recovery](update-recovery.md)
 - [Share diagnostic and usage data](telemetry.md)
 
 ## Reference

@@ -1025,7 +1025,8 @@ export const messages = {
     "settings.backupSaveFailed": "Couldn't save backup Settings. Your previous Settings are unchanged. Try again.",
     "settings.updates": "Updates",
     "settings.updateNetworkAccess": "Allow network access for updates",
-    "settings.updateNetworkAccessHint": "Allows Warplyn to contact GitHub for public release metadata. It never sends Article content, account information, device identifiers, or analytics.",
+    "settings.updateNetworkAccessHint": "Allows Warplyn to contact GitHub for public release metadata and updates you choose to download. " +
+        "It never sends Article content, account information, device identifiers, or analytics.",
     "settings.updateNetworkPermissionTitle": "Allow Warplyn to check GitHub for updates?",
     "settings.updateNetworkPermissionDescription": "Warplyn will contact api.github.com for public release metadata. It will not send Article content, account information, device identifiers, or analytics.",
     "settings.allowNetworkAccess": "Allow",
@@ -1043,7 +1044,7 @@ export const messages = {
     "settings.updatesAvailable": "Version {version} is available.",
     "settings.updatesError.discovery_failed": "Couldn’t check for updates. Try again.",
     "settings.updatesError.download_failed": "Couldn’t download the update. Try again.",
-    "settings.updatesError.apply_failed": "Couldn’t prepare the update. Your current version is still open.",
+    "settings.updatesError.apply_failed": "Couldn’t prepare the update. Try again, or open Update recovery for help.",
     "settings.checkNow": "Check now",
     "settings.viewReleaseNotes": "View release notes",
     "settings.updateChanges": "Changes in {version}",

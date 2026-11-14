@@ -1,5 +1,7 @@
 # Desktop release and update policy
 
+Linux x64 release assets include Debian and AppImage packages for the same version. AppImage update metadata is `warplyn-appimage-x64.json` with `version`, `architecture: "x64"`, exact `file`, positive bounded `size` and SHA-256 `sha256`. Publish it with the validated image. Debian installations remain manual; only validated AppImage runtimes offer in-app download and restart. Follow ADR-010 for consent, integrity and recovery gates.
+
 [ADR-010](../architecture/adr-010-author-controlled-preview-updates.md) owns update authority and recovery. The [release guide](../guides/mvp-release-and-recovery.md) owns build, publication, installed upgrade, and rollback procedures. [Settings product records](../../../product-model/areas/settings.json) own visible update behavior.
 
 ## Feeds, versions, and assets

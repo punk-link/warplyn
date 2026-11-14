@@ -1,5 +1,5 @@
 import { dirname, join } from "node:path";
-import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, net, screen, session, shell } from "electron";
+import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, screen, session, shell } from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 import { createLocalApplication, loadServerConfig, loadServerEnvironment, registerElectronIpcApplicationAdapter, validateDatabaseSnapshot } from "@skladno/server/electron";
 import { defaultInterfaceLocale, getElectronMessagesFor } from "@skladno/shared";
@@ -21,6 +21,7 @@ import { registerDesktopShellAdapter } from "./shell/desktop-shell.js";
 import { registerDesktopArticleFilesAdapter } from "./articles/desktop-article-files.js";
 import { registerDesktopSpelling } from "./settings/desktop-spelling-settings.js";
 import { createDesktopUpdateCoordinator, desktopUpdatesEvent, registerDesktopUpdatesAdapter, supportsNativeUpdates, supportsReleaseDiscovery } from "./updates/desktop-updates.js";
+import { createAppImageUpdater, getInstalledAppImage } from "./updates/appimage-updater.js";
 
 
 const rendererUrl = "http://127.0.0.1:5173";
@@ -272,17 +273,26 @@ if (supportsNativeUpdates() && squirrelStartup) {
             closing = true;
         };
 
+        const installedAppImage = await getInstalledAppImage(app.isPackaged).catch(() => undefined);
+        const fetchUpdateAsset: typeof fetch = (url, options) => session.fromPartition("warplyn-updates").fetch(
+            url instanceof URL ? url.href : url, { ...options, credentials: "omit" });
+        const updater = installedAppImage ? createAppImageUpdater(installedAppImage,
+            join(dirname(config.databasePath), "update-cache"), fetchUpdateAsset, () => {
+                app.relaunch({ execPath: installedAppImage });
+                app.exit(0);
+            }) : autoUpdater;
         if (supportsReleaseDiscovery())
             updates = createDesktopUpdateCoordinator(
-                { runtimePath, currentVersion: app.getVersion(), supported: app.isPackaged, platform: supportsNativeUpdates() ? "win32" : "linux" },
+                { runtimePath, currentVersion: app.getVersion(), supported: app.isPackaged && process.arch === "x64",
+                    platform: supportsNativeUpdates() ? "win32" : "linux", appImage: Boolean(installedAppImage) },
                 {
-                    fetchReleases: () => net.fetch("https://api.github.com/repos/punk-link/warplyn/releases"),
+                    fetchReleases: () => fetchUpdateAsset("https://api.github.com/repos/punk-link/warplyn/releases"),
                     openExternal: (url) => shell.openExternal(url),
                 },
                 {
                     createSnapshot: (path) => backup(application.database, path),
                     dataDirectory: dirname(config.databasePath),
-                    updater: autoUpdater,
+                    updater,
                     requestCheckpoint: () => mainWindow ? requestDraftCheckpoint(ipcMain, mainWindow.webContents) : Promise.resolve(false),
                     closeApplication: async () => {
                         await closeApplication?.();

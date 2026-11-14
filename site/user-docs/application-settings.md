@@ -36,7 +36,7 @@ In **Key bindings**, choose a shortcut beside an action, then press the key comb
 
 ## Check desktop updates
 
-Packaged desktop apps can check for releases in **Settings** → **About Warplyn** → **Updates**. First allow **Allow network access for updates**. This lets Warplyn contact GitHub for public release details. Then choose **Automatically check for updates** and whether to **Include prerelease updates**. Choose **Check now** to check at any time. An available release shows its notes. Warplyn never downloads or applies an update without your action. Windows provides **Download** and **Restart and update** actions. On Linux, use **View release notes**, then update with your package manager or a newer `.deb` installer. See [Windows preview update recovery](update-recovery.md) if an update prevents the app from starting.
+Packaged desktop apps can check for releases in **Settings** → **About Warplyn** → **Updates**. First allow **Allow network access for updates**. This lets Warplyn contact GitHub for public release details and updates you choose to download. Then choose **Automatically check for updates** and whether to **Include prerelease updates**. Choose **Check now** to check at any time. An available release shows its notes. Windows and Linux AppImage installations provide **Download** and **Restart and update** actions. Debian installations use **View release notes**, followed by a package-manager upgrade or newer `.deb` installer. See [Desktop update recovery](update-recovery.md) if an update prevents the app from starting.
 
 ## Delete local data
 
