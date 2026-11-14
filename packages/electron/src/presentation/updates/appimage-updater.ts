@@ -8,6 +8,7 @@ import { readAppImageUpdateMetadata } from "./appimage-update-metadata.js";
 
 const releaseRoot = "https://github.com/punk-link/warplyn/releases/download/";
 
+
 async function hasVerifiedImage(path: string, expected: { size: number; sha256: string }): Promise<boolean> {
     try {
         const hash = createHash("sha256");

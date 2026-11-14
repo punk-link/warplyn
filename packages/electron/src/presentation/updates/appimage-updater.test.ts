@@ -32,6 +32,7 @@ test("AppImage download verifies bytes and waits for explicit prepare and apply"
         const reopened = createAppImageUpdater(installed, join(root, "cache"), async (url) => {
             if (!String(url).endsWith(".json"))
                 imageRequests += 1;
+
             return new Response(String(url).endsWith(".json") ? JSON.stringify(metadata) : "new");
         }, () => undefined);
         reopened.setFeedURL({ url: "https://github.com/punk-link/warplyn/releases/download/v0.9.0" });

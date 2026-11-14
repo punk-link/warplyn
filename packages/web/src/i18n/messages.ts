@@ -1032,7 +1032,8 @@ export const messages = {
     "settings.allowNetworkAccess": "Allow",
     "settings.automaticUpdates": "Automatically check for updates",
     "settings.automaticUpdatesHint": "Checks GitHub when Warplyn starts and then daily while it stays open. Updates download only when you choose Download.",
-    "settings.windowsUpdateDownloadHint": "On Windows, downloading an update also approves installation. Once downloaded, it will apply automatically the next time you open Warplyn, including after closing the app normally.",
+    "settings.windowsUpdateDownloadHint": "Downloading an update also approves installation. " +
+        "Once downloaded, it will apply automatically the next time you open Warplyn, including after closing the app normally.",
     "status.windowsUpdateReady": "Update downloaded. It will apply automatically the next time you open Warplyn.",
     "status.windowsUpdateAvailable": "Download update {version} and approve automatic installation the next time you open Warplyn",
     "settings.includePrereleaseUpdates": "Include prerelease updates",

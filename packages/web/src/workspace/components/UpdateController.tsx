@@ -89,7 +89,8 @@ function updateLabel(state: DesktopUpdateState, intl: IntlShape): string {
         case "downloading":
             return intl.formatMessage({ id: "status.updateDownloading" });
         case "available":
-            return intl.formatMessage({ id: state.installsOnNextLaunch ? "status.windowsUpdateAvailable" : "status.updateAvailable" }, { version: state.version });
+            return intl.formatMessage(
+                { id: state.installsOnNextLaunch ? "status.windowsUpdateAvailable" : "status.updateAvailable" }, { version: state.version });
         default:
             return "";
     }
