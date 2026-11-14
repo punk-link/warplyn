@@ -1,0 +1,35 @@
+{
+    "version": "0.8.4-preview.2",
+    "previousTag": "v0.8.4-preview.1",
+    "previousCommit": "87bc7604d3e3860c3d6bfd1124d22e99ef0e1207",
+    "baseline": "published",
+    "sourceCommit": "15ed5f71747caac35d1efc02788962cf111ee8d6",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "After the first-run quick start, Warplyn asks whether it may check for updates. Allowing or dismissing the prompt is remembered.",
+            "commits": [
+                "b4f01d01a332c49fecb6ee48a168908ee6dee6d8"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Linux x64 AppImage releases are now available, with installation and recovery guidance. After allowing update access, use Updates to download and explicitly restart to apply one; Warplyn saves a recovery snapshot and retains the previous image.",
+            "commits": [
+                "15ed5f71747caac35d1efc02788962cf111ee8d6"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "Turning off update network access now cancels an active download and prevents new downloads until access is allowed again.",
+            "commits": [
+                "15ed5f71747caac35d1efc02788962cf111ee8d6"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
