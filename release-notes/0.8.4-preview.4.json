@@ -1,0 +1,23 @@
+{
+    "version": "0.8.4-preview.4",
+    "previousTag": "v0.8.4-preview.3",
+    "previousCommit": "02880ac0c074dc55ce1c5ccb760e667b852a200a",
+    "baseline": "published",
+    "sourceCommit": "77e3c61ab1c27d97a9f723390cd16a5af2f7507f",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": true,
+            "text": "Native update downloads now follow redirects only to approved GitHub hosts, preventing downloads from being redirected to other sites.",
+            "commits": [
+                "77e3c61ab1c27d97a9f723390cd16a5af2f7507f"
+            ]
+        }
+    ],
+    "security": true,
+    "securityReason": "Native update downloads previously followed redirects without validating each destination, allowing an update download to be redirected to an unapproved host.",
+    "securityCommits": [
+        "77e3c61ab1c27d97a9f723390cd16a5af2f7507f"
+    ]
+}
