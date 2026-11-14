@@ -42,6 +42,9 @@ jobs:
                   sudo apt-get install -y desktop-file-utils ./packages/electron/out/make/deb/x64/*.deb
             - name: Check installed integration
               run: |
+                  set -x
+                  stat -c '%A %U:%G %n' /usr/lib/warplyn /usr/lib/warplyn/Warplyn
+                  find /usr/lib/warplyn -perm /022 -printf '%M %u:%g %p\n'
                   test -x /usr/lib/warplyn/Warplyn
                   test "$(stat -c '%U:%G' /usr/lib/warplyn/Warplyn)" = root:root
                   test -z "$(find /usr/lib/warplyn -perm /022 -print -quit)"
@@ -50,6 +53,7 @@ jobs:
                   ldd /usr/lib/warplyn/Warplyn | tee installed-dependencies.txt
                   ! grep -q 'not found' installed-dependencies.txt
             - name: Record package evidence
+              if: always()
               run: |
                   mkdir -p linux-acceptance
                   git rev-parse HEAD > linux-acceptance/source.txt
@@ -58,7 +62,7 @@ jobs:
                   date -u --iso-8601=seconds > linux-acceptance/date.txt
                   sha256sum packages/electron/out/make/deb/x64/*.deb > linux-acceptance/checksums.txt
                   dpkg-query -s warplyn > linux-acceptance/package.txt
-                  cp installed-dependencies.txt linux-acceptance/
+                  if test -f installed-dependencies.txt; then cp installed-dependencies.txt linux-acceptance/; fi
                   cp docs/development/guides/linux-installed-acceptance.md linux-acceptance/manual-checklist.md
             - name: Verify desktop journeys
               env:
