@@ -1,0 +1,21 @@
+{
+    "version": "0.8.4-preview.5",
+    "previousTag": "v0.8.4-preview.4.security",
+    "previousCommit": "f96f87d9a8150879edc3e83edf93cefdfe6e6a66",
+    "baseline": "published",
+    "sourceCommit": "540acad36dcecf651586b6c19c0a149045493959",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "About Settings now shows a warning badge on release details marked as security updates.",
+            "commits": [
+                "540acad36dcecf651586b6c19c0a149045493959"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
