@@ -11,6 +11,7 @@ async function launchSpelling(root: string): Promise<ElectronApplication> {
     const app = await _electron.launch({ args: [resolve("packages/electron"), `--user-data-dir=${join(root, "profile")}`], env });
     const page = await app.firstWindow();
     await page.waitForURL("http://127.0.0.1:5173/");
+    await page.evaluate(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
     await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.reload();
     return app;
@@ -177,6 +178,7 @@ test("packaged Spelling Settings prepares dictionaries and recovers personal voc
     try {
         app = await launchPackaged(root);
         let page = app.page;
+        await page.evaluate(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
         await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await page.getByRole("button", { name: "Settings", exact: true }).click();

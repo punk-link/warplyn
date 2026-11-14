@@ -15,6 +15,7 @@ test("packaged typography works without AI and recovers its Proposal after resta
         app = await launchPackaged(root);
         let page = app.page;
         await page.emulateMedia({ reducedMotion: "reduce" });
+        await page.addInitScript(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
         await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await page.getByRole("button", { name: "Create", exact: true }).click();

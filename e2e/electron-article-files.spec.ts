@@ -13,6 +13,7 @@ async function launchArticleFiles(root: string): Promise<ElectronApplication> {
     });
     const page = await app.firstWindow();
     await page.waitForURL("http://127.0.0.1:5173/");
+    await page.evaluate(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
     await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.reload();
     return app;
@@ -156,6 +157,7 @@ test("built file renderer imports DOCX and RTF in isolated workers", async () =>
         await app.evaluate(async ({ BrowserWindow }, path) => BrowserWindow.getAllWindows()[0].loadFile(path), resolve("packages/web/dist/index.html"));
         const filePattern = /^file:/;
         await page.waitForURL(filePattern);
+        await page.evaluate(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
         await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await page.getByRole("button", { name: "Create" }).click();

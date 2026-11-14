@@ -38,6 +38,7 @@ test("native backup finishes through the production bridge before desktop shutdo
         if (process.env.WARPLYN_ELECTRON_TEST_HIDDEN === "true")
             expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isVisible())).toBe(false);
 
+        await page.evaluate(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
         await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await page.getByRole("button", { name: "Create" }).click();
@@ -110,6 +111,7 @@ test("daily native backups create a complete bundle at every application startup
             app = await _electron.launch({ args: [resolve("packages/electron"), `--user-data-dir=${profile}`], env });
             const page = await app.firstWindow();
             await page.waitForURL("http://127.0.0.1:5173/");
+            await page.evaluate(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
             await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
             await page.reload();
             await expect.poll(async () => (await readdir(destination)).filter((name) => name.endsWith(".sqlite")).length, { timeout: 20_000 }).toBe(initialCount + expectedCount);

@@ -18,6 +18,7 @@ test("packaged Electron Assistant failure preserves the Article and its Revision
         app = await launchPackaged(root, ["--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost"]);
         let page = app.page;
         page.setDefaultTimeout(5_000);
+        await page.addInitScript(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
         await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
         await page.reload();
         await expect(page.evaluate(() => "skladno" in window)).resolves.toBe(true);

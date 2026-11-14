@@ -6,6 +6,7 @@ import { I18nProvider } from "./i18n/I18nProvider.js";
 import { NotificationProvider } from "./notifications/NotificationProvider.js";
 import { useKeyBindingDispatcher } from "./key-bindings/KeyBindingProvider.js";
 import { AutomaticBackups } from "./settings/AutomaticBackups.js";
+import { FirstRunUpdatePermission } from "./settings/FirstRunUpdatePermission.js";
 import type { SettingsSection } from "./settings/settings-sections.js";
 import { QuickStartDialog } from "./application/QuickStartDialog.js";
 import { desktopShellCommands, resolveTheme, type KeyBindingOverrides, type ResolvedTheme, type ThemePreference } from "@skladno/shared";
@@ -118,6 +119,7 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
     return <I18nProvider client={client}>
         <NotificationProvider>
             <AutomaticBackups client={client} />
+            <FirstRunUpdatePermission ready={!quickStartOpen} />
             <EditorialWorkspaceProvider
                 context={{ client, screen, settingsSection }}
                 navigation={{ openSettings: () => {

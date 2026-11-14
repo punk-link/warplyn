@@ -18,6 +18,9 @@ test("packaged updates show complete safe summaries without changing update auth
         app = await launchPackaged(root, network.args);
         const page = app.page;
         await page.getByRole("button", { name: "Skip quick start", exact: true }).click();
+        await expect(page.locator('dialog[aria-labelledby="update-network-permission-title"]')).toBeVisible();
+        expect(network.requestCount()).toBe(0);
+        await page.getByRole("button", { name: "Cancel", exact: true }).click();
         await page.getByRole("button", { name: "Settings", exact: true }).click();
         await page.getByRole("button", { name: "About Warplyn", exact: true }).click();
         expect(network.requestCount()).toBe(0);
