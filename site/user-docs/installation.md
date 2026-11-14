@@ -21,6 +21,8 @@ A digital signature uses a code-signing certificate to identify the publisher an
 
 ## Debian and Debian-based distributions
 
+Ubuntu 22.04 x64 is the primary release-validation target. Full installed acceptance is still pending; other distribution versions are not guaranteed. Use an amd64 system with a graphical desktop session.
+
 1. Open [Warplyn releases](https://github.com/punk-link/warplyn/releases).
 2. Under **Assets**, download the `warplyn_VERSION_amd64.deb` package.
 3. Open a terminal in the folder where you downloaded it. If the folder contains only that Warplyn package, install it with:
@@ -31,9 +33,13 @@ A digital signature uses a code-signing certificate to identify the publisher an
 
 4. Open Warplyn from your applications menu.
 
-Install updates with your package manager or by installing the newer `.deb` package.
+For a manual upgrade, download the newer `.deb` and run the same `sudo apt install` command with that file. The download does not configure an automatic package repository. Apt resolves declared dependencies; do not force installation if they cannot be satisfied.
+
+Writing is stored in `~/.warplyn` by default. Back it up before upgrading. Reinstalling or removing the application should preserve this folder and credentials in your desktop keyring.
 
 Managed API keys on Linux require an available, unlocked Secret Service, such as GNOME Keyring. See [AI providers and models](providers.md) for other connection options.
+
+If a key cannot be saved or read, unlock your desktop keyring and retry. If your session has no Secret Service, enable one or use an environment-variable connection from that guide. Offline editing remains available. Do not disable the sandbox to work around startup failures; report the distribution, version, and error.
 
 ## After installation
 

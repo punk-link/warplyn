@@ -51,7 +51,7 @@ export default {
                     maintainer: "Kirill Taran",
                     homepage: "https://github.com/punk-link/warplyn",
                     categories: ["Office"],
-                    icon: path.join(import.meta.dirname, "..", "web", "src", "ui", "warplyn.svg"),
+                    icon: { scalable: path.join(import.meta.dirname, "..", "web", "src", "ui", "warplyn.svg") },
                 },
             },
         },

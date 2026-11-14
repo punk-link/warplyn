@@ -21,7 +21,7 @@ concurrency:
 jobs:
     verify-linux:
         if: github.event_name == 'pull_request'
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
         timeout-minutes: 20
         steps:
             - uses: actions/checkout@v4
@@ -39,17 +39,43 @@ jobs:
                   printf 'https://mirrors.edge.kernel.org/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors.txt
                   printf 'https://mirrors.edge.kernel.org/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors-security.txt
                   sudo apt-get update
-                  sudo apt-get install -y ./packages/electron/out/make/deb/x64/*.deb
+                  sudo apt-get install -y desktop-file-utils ./packages/electron/out/make/deb/x64/*.deb
+            - name: Check installed integration
+              run: |
+                  set -x
+                  stat -c '%A %U:%G %n' /usr/lib/warplyn /usr/lib/warplyn/Warplyn
+                  find /usr/lib/warplyn -perm /022 -printf '%M %u:%g %p\n'
+                  test -x /usr/lib/warplyn/Warplyn
+                  test "$(stat -c '%U:%G' /usr/lib/warplyn/Warplyn)" = root:root
+                  test -z "$(find /usr/lib/warplyn -perm /022 -print -quit)"
+                  desktop-file-validate /usr/share/applications/warplyn.desktop
+                  test -s /usr/share/icons/hicolor/scalable/apps/warplyn.svg
+                  ldd /usr/lib/warplyn/Warplyn | tee installed-dependencies.txt
+                  ! grep -q 'not found' installed-dependencies.txt
+            - name: Record package evidence
+              if: always()
+              run: |
+                  mkdir -p linux-acceptance
+                  git rev-parse HEAD > linux-acceptance/source.txt
+                  cat /etc/os-release > linux-acceptance/os.txt
+                  uname -m > linux-acceptance/architecture.txt
+                  date -u --iso-8601=seconds > linux-acceptance/date.txt
+                  sha256sum packages/electron/out/make/deb/x64/*.deb > linux-acceptance/checksums.txt
+                  dpkg-query -s warplyn > linux-acceptance/package.txt
+                  if test -f installed-dependencies.txt; then cp installed-dependencies.txt linux-acceptance/; fi
+                  cp docs/development/guides/linux-installed-acceptance.md linux-acceptance/manual-checklist.md
             - name: Verify desktop journeys
               env:
                   WARPLYN_ELECTRON_EXECUTABLE: /usr/lib/warplyn/Warplyn
               run: xvfb-run --auto-servernum npm run verify:desktop
             - name: Save desktop test failure evidence
-              if: failure()
+              if: always()
               uses: actions/upload-artifact@v4
               with:
                   name: linux-desktop-test-results
-                  path: test-results/desktop
+                  path: |
+                      test-results/desktop
+                      linux-acceptance
                   if-no-files-found: ignore
                   retention-days: 7
             - name: Validate Debian package
@@ -74,7 +100,7 @@ jobs:
 
     release-linux:
         if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
         environment: Production
         timeout-minutes: 25
         permissions:
