@@ -138,6 +138,8 @@ Mark the desktop pass failed if the renderer gains Node, filesystem, database, c
 
 ## Debian Electron preview
 
+The [Linux installed acceptance record](linux-installed-acceptance.md) owns the support matrix and pending release checks. Ubuntu 22.04 x64 is a validation target, not a completed support certification. Do not claim another distribution/version is supported without its completed record.
+
 The release-validation target is Ubuntu 22.04 x64. Compatible Debian-based distributions may install the same package when their glibc and Secret Service environment are compatible, but become guaranteed targets only after this pass succeeds there. Build the Debian package with `npm run make:electron:linux`. Install the `.deb` through the system package manager; About Settings can, with the author's permission, check GitHub for a newer matching Debian release and open its release notes. Installation remains a manual package-manager upgrade or `.deb` reinstall.
 
 Run the Desktop acceptance scenario above on an installed `.deb`, using GNOME Keyring or the distribution's Secret Service for the managed-credential checks. Also verify locked and unavailable Secret Service states leave Article editing and environment-variable connections usable, launcher integration opens one focused window, file picking and folder reveal work, and upgrade, reinstall, and uninstall preserve the disposable `.warplyn` data. Record the package version, distribution and version, architecture, pass/fail, and remaining checks without credentials, Article content, or private paths.
