@@ -42,22 +42,23 @@ test("stable security publication labels the title and rejects an unmarked retry
 });
 
 
-test("platform creation, races, and retries publish the exact body through a file", () => {
+test("platform creation and retries publish the exact body through a file", () => {
     const tag = "v1.2.3-preview.1";
     const body = '- Recover writing with Unicode: café.\n- Keep literal shell characters $() and "quotes".';
     let published;
     for (const creator of ["Windows", "Linux", "retry"]) {
         publishReleaseNotes({ tag, body, targetCommit: "abc", run: (args) => {
-            if (args[0] === "release") {
-                assert(args.includes("--verify-tag") && args.includes("--prerelease=true"));
-                const actual = readFileSync(args[args.indexOf("--notes-file") + 1], "utf8");
-                assert.equal(actual, body);
+            if (args.includes("POST")) {
+                const actual = JSON.parse(readFileSync(args[args.indexOf("--input") + 1], "utf8"));
+                assert.equal(actual.body, body);
+                assert.equal(actual.tag_name, tag);
+                assert.equal(actual.prerelease, true);
                 if (published)
                     throw new Error(`Already created before ${creator}`);
 
-                assert(args.includes("--draft"));
-                published = { tag_name: tag, body: actual, draft: true, prerelease: true };
-                return "";
+                assert.equal(actual.draft, true);
+                published = actual;
+                return JSON.stringify(published);
             }
 
             return JSON.stringify(args[1].includes("/commits/") ? { sha: "abc" } : published) ?? "";
@@ -66,12 +67,30 @@ test("platform creation, races, and retries publish the exact body through a fil
 });
 
 
+test("creation uses its response even while release listings remain stale", () => {
+    const tag = "v1.2.3-preview.1";
+    const body = "- Recover writing.";
+    let listReads = 0;
+    publishReleaseNotes({ tag, body, targetCommit: "abc", run: args => {
+        if (args[1].includes("/commits/"))
+            return JSON.stringify({ sha: "abc" });
+
+        if (args.includes("POST"))
+            return readFileSync(args.at(-1), "utf8");
+
+        listReads += 1;
+        return "";
+    } });
+    assert.equal(listReads, 1);
+});
+
+
 test("publication rejects mismatched body, channel, tag, draft, remote commit, and authentication failures", () => {
     const release = { tag_name: "v1.2.3", body: "- Changes", draft: true, prerelease: false };
     const variants = [{ body: "Other notes" }, { prerelease: true }, { tag_name: "v1.2.4" }, { draft: false }];
     for (const extra of variants) {
-        assert.throws(() => publishReleaseNotes({ tag: "v1.2.3", body: release.body, targetCommit: "abc", run: () => {
-            return JSON.stringify({ ...release, ...extra });
+        assert.throws(() => publishReleaseNotes({ tag: "v1.2.3", body: release.body, targetCommit: "abc", run: args => {
+            return JSON.stringify(args[1].includes("/commits/") ? { sha: "abc" } : { ...release, ...extra });
         } }));
     }
 

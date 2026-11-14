@@ -27,38 +27,33 @@ export function getRelease(tag, run = github) {
 
 export function publishReleaseNotes({ tag, body, targetCommit, run = github }) {
     const directory = mkdtempSync(join(tmpdir(), "warplyn-release-notes-"));
-    const file = join(directory, "notes.txt");
+    const file = join(directory, "release.json");
     const prerelease = tag.includes("-preview.");
     const security = tag.endsWith(".security") || body.startsWith("## Security release\n\n");
     const title = `Warplyn ${tag}${security ? " - Security release" : ""}`;
-    let releaseAlreadyExisted = false;
     try {
-        writeFileSync(file, body, "utf8");
+        const ref = JSON.parse(run(["api", `repos/punk-link/warplyn/commits/${tag}`]));
+        assert.equal(ref.sha, targetCommit, "Remote release tag differs from the verified commit. Stop and inspect the tag.");
         let release = getRelease(tag, run);
         if (!release) {
+            writeFileSync(file, JSON.stringify({ tag_name: tag, name: title, body, draft: true, prerelease }), "utf8");
             try {
-                run(["release", "create", tag, "--repo", "punk-link/warplyn", "--verify-tag",
-                    "--draft", `--prerelease=${prerelease}`, "--title", title, "--notes-file", file]);
-            } catch {
-                releaseAlreadyExisted = true;
+                release = JSON.parse(run(["api", "repos/punk-link/warplyn/releases", "--method", "POST", "--input", file]));
+            } catch (error) {
+                release = getRelease(tag, run);
+                if (!release)
+                    throw error;
             }
-
-            release = getRelease(tag, run);
         }
 
         assert(release, `Release ${tag} was not found, including drafts.`);
-        const releaseIdentityError = releaseAlreadyExisted
-            ? "Existing release identity or channel differs. Inspect the release before retrying publication."
-            : "Created release identity or channel differs. Inspect the release before retrying publication.";
         assert(release.tag_name === tag && release.draft === true && release.prerelease === prerelease,
-            releaseIdentityError);
+            "Release identity or channel differs. Inspect the release before retrying publication.");
         if (security)
             assert.equal(release.name, title, "Security release title differs. Mark the release as a security release before retrying.");
 
         assert.equal(release.body?.replaceAll("\r\n", "\n").trim(), body,
             "Existing release summary differs from the tagged notes. Resolve the mismatch before uploading assets.");
-        const ref = JSON.parse(run(["api", `repos/punk-link/warplyn/commits/${tag}`]));
-        assert.equal(ref.sha, targetCommit, "Remote release tag differs from the verified commit. Stop and inspect the tag.");
     } finally {
         rmSync(directory, { recursive: true, force: true });
     }
