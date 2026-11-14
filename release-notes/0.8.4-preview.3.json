@@ -1,0 +1,13 @@
+{
+    "version": "0.8.4-preview.3",
+    "previousTag": "v0.8.4-preview.2",
+    "previousCommit": "1f1b5bf1f3106ba3e3da0f37233b062f946bec3b",
+    "baseline": "published",
+    "sourceCommit": "1f1b5bf1f3106ba3e3da0f37233b062f946bec3b",
+    "reviewed": true,
+    "maintenanceOnly": true,
+    "entries": [],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}

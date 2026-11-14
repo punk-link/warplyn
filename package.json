@@ -9,7 +9,7 @@
             "yauzl": "^3.4.0"
         }
     },
-    "version": "0.8.4-preview.2",
+    "version": "0.8.4-preview.3",
     "workspaces": [
         "packages/*"
     ],
