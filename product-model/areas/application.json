@@ -190,7 +190,7 @@
             "capabilityIds": ["application.release-summaries"],
             "preconditions": ["Both platform workflows publish the same tagged release record."],
             "event": "A platform creates or retries publication of the release.",
-            "expected": ["Both platforms use the exact rendered body, and matching releases survive creation races and retries."],
+            "expected": ["Both platforms use the exact rendered body, and matching draft releases survive creation races and retries. The coordinating Windows workflow publishes only after both platform jobs succeed and all six nonempty assets are uploaded; a platform failure leaves an unpublished draft."],
             "forbidden": ["A workflow overwrites mismatched notes or uploads assets after a tag, body, or channel mismatch."],
             "evidence": { "kind": "human-reviewed", "path": "docs/development/guides/mvp-release-and-recovery.md" }
         },

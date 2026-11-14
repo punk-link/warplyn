@@ -5,6 +5,15 @@ import { readFileSync } from "node:fs";
 import forgeConfig from "../packages/electron/forge.config.js";
 
 
+test("Windows executable metadata uses a numeric version without changing package identity", () => {
+    const root = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+    if (process.platform === "win32")
+        assert.equal(forgeConfig.packagerConfig.appVersion, root.version.split("-")[0]);
+
+    assert(forgeConfig.makers[0].config.setupExe.includes(root.version));
+});
+
+
 test("the Debian launcher uses Electron's packaged executable", () => {
     const debMaker = forgeConfig.makers.find(({ name }) => name === "@electron-forge/maker-deb");
 

@@ -2,14 +2,12 @@ name: Warplyn Linux release
 
 on:
     pull_request:
-    workflow_dispatch:
+    workflow_call:
         inputs:
             tag:
                 description: Existing release tag
                 required: true
-    push:
-        tags:
-            - "v*"
+                type: string
 
 permissions:
     contents: read

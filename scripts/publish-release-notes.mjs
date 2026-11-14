@@ -24,7 +24,7 @@ export function publishReleaseNotes({ tag, body, targetCommit, run = github }) {
         writeFileSync(file, body, "utf8");
         try {
             run(["release", "create", tag, "--repo", "punk-link/warplyn", "--verify-tag",
-                `--prerelease=${prerelease}`, "--title", title, "--notes-file", file]);
+                "--draft", `--prerelease=${prerelease}`, "--title", title, "--notes-file", file]);
         } catch {
             releaseAlreadyExisted = true;
         }
@@ -33,7 +33,7 @@ export function publishReleaseNotes({ tag, body, targetCommit, run = github }) {
         const releaseIdentityError = releaseAlreadyExisted
             ? "Existing release identity or channel differs. Inspect the release before retrying publication."
             : "Created release identity or channel differs. Inspect the release before retrying publication.";
-        assert(release.tag_name === tag && release.draft === false && release.prerelease === prerelease,
+        assert(release.tag_name === tag && release.draft === true && release.prerelease === prerelease,
             releaseIdentityError);
         if (security)
             assert.equal(release.name, title, "Security release title differs. Mark the release as a security release before retrying.");

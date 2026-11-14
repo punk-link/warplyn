@@ -17,7 +17,7 @@ test("stable security publication labels the title and rejects an unmarked retry
 
                 return JSON.stringify(args[1].includes("/commits/") ? { sha: "abc" } : {
                     tag_name: "v0.8.0", name: marked ? "Warplyn v0.8.0 - Security release" : "Warplyn v0.8.0",
-                    body: "## Security release\n\n- Fix backups.", draft: false, prerelease: false,
+                    body: "## Security release\n\n- Fix backups.", draft: true, prerelease: false,
                 });
             } });
         if (marked) {
@@ -43,7 +43,8 @@ test("platform creation, races, and retries publish the exact body through a fil
                 if (published)
                     throw new Error(`Already created before ${creator}`);
 
-                published = { tag_name: tag, body: actual, draft: false, prerelease: true };
+                assert(args.includes("--draft"));
+                published = { tag_name: tag, body: actual, draft: true, prerelease: true };
                 return "";
             }
 
@@ -54,8 +55,8 @@ test("platform creation, races, and retries publish the exact body through a fil
 
 
 test("publication rejects mismatched body, channel, tag, draft, remote commit, and authentication failures", () => {
-    const release = { tag_name: "v1.2.3", body: "- Changes", draft: false, prerelease: false };
-    const variants = [{ body: "Other notes" }, { prerelease: true }, { tag_name: "v1.2.4" }, { draft: true }];
+    const release = { tag_name: "v1.2.3", body: "- Changes", draft: true, prerelease: false };
+    const variants = [{ body: "Other notes" }, { prerelease: true }, { tag_name: "v1.2.4" }, { draft: false }];
     for (const extra of variants) {
         assert.throws(() => publishReleaseNotes({ tag: "v1.2.3", body: release.body, targetCommit: "abc", run: () => {
             return JSON.stringify({ ...release, ...extra });
@@ -95,6 +96,6 @@ test("security-tagged previews publish with their exact identity and prerelease 
 
         return JSON.stringify(args[1].includes("/commits/")
             ? { sha: "abc" }
-            : { tag_name: tag, name: `Warplyn ${tag} - Security release`, body, draft: false, prerelease: true });
+            : { tag_name: tag, name: `Warplyn ${tag} - Security release`, body, draft: true, prerelease: true });
     } });
 });

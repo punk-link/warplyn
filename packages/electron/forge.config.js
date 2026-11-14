@@ -21,6 +21,7 @@ export default {
         },
     },
     packagerConfig: {
+        ...(process.platform === "win32" ? { appVersion: rootPackage.version.split("-")[0] } : {}),
         asar: { unpack: "**/*.node" },
         appBundleId: "com.warplyn.desktop",
         executableName: "Warplyn",
