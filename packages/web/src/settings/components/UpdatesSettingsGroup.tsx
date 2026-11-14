@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useIntl, type IntlShape } from "react-intl";
 import type { DesktopUpdateClient, DesktopUpdateState } from "@skladno/shared";
-import { ActivityIndicator, Button, TextAction } from "../../ui/primitives.js";
+import { ActivityIndicator, Badge, Button, TextAction } from "../../ui/primitives.js";
 import { NetworkPermissionDialog } from "./NetworkPermissionDialog.js";
 import { SettingRow, SettingsGroup } from "./SettingRow.js";
 import { SwitchIndicator } from "../../ui/SwitchIndicator.js";
@@ -160,6 +160,11 @@ export function UpdatesSettingsGroup({ client, desktop }: { client: DesktopUpdat
             action={<>
                 {isUpdateDetails(state) && (
                     <section className="mb-3 min-w-0 border-l border-border-strong pl-4" aria-labelledby="settings-update-changes">
+                        {state.security && (
+                            <Badge tone="warning" className="mb-2">
+                                {intl.formatMessage({ id: "settings.securityUpdate" })}
+                            </Badge>
+                        )}
                         <h3 id="settings-update-changes" className="text-sm font-semibold">
                             {intl.formatMessage({ id: "settings.updateChanges" }, { version: state.version })}
                         </h3>

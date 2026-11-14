@@ -63,6 +63,7 @@ describe("ApplicationSettings updates", () => {
         await screen.findByRole("button", { name: getMessage("settings.downloadUpdate") });
         expect(checkNow).toHaveBeenCalledOnce();
         expect(screen.getByText("Unsigned Windows preview")).toBeTruthy();
+        expect(screen.getByText("Security update")).toBeTruthy();
         expect(screen.queryByText("Warplyn checks public release metadata.")).toBeNull();
         expect(screen.getByRole("button", { name: getMessage("settings.viewReleaseNotes") }).classList.contains("bg-transparent")).toBe(true);
     });
@@ -111,6 +112,7 @@ describe("ApplicationSettings updates", () => {
         const { container } = render(<IntlProvider locale="en" messages={messages}><UpdatesSettingsGroup client={updates} desktop /></IntlProvider>);
         const heading = await screen.findByRole("heading", { name: "Changes in 0.8.0" });
         expect(heading.nextElementSibling?.textContent).toBe(summary);
+        expect(screen.queryByText("Security update")).toBeNull();
         expect(container.querySelector("script, img, a")).toBeNull();
         expect(screen.getByRole("button", { name: getMessage("settings.viewReleaseNotes") })).toBeTruthy();
     });

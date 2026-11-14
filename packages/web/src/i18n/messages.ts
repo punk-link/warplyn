@@ -1048,6 +1048,7 @@ export const messages = {
     "settings.checkNow": "Check now",
     "settings.viewReleaseNotes": "View release notes",
     "settings.updateChanges": "Changes in {version}",
+    "settings.securityUpdate": "Security update",
     "settings.updateChangesUnavailable": "Release details are unavailable. You can still update.",
     "settings.downloadUpdate": "Download",
     "settings.restartAndUpdate": "Restart and update",
