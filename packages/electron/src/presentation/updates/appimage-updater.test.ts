@@ -28,6 +28,21 @@ test("AppImage download verifies bytes and waits for explicit prepare and apply"
         await downloaded;
         assert.equal(await readFile(installed, "utf8"), "old");
         assert.equal(restarted, false);
+        let imageRequests = 0;
+        const reopened = createAppImageUpdater(installed, join(root, "cache"), async (url) => {
+            if (!String(url).endsWith(".json"))
+                imageRequests += 1;
+            return new Response(String(url).endsWith(".json") ? JSON.stringify(metadata) : "new");
+        }, () => undefined);
+        reopened.setFeedURL({ url: "https://github.com/punk-link/warplyn/releases/download/v0.9.0" });
+        const restored = new Promise<void>((resolve, reject) => {
+            reopened.on("update-downloaded", resolve);
+            reopened.on("error", () => reject(new Error("Cache restore failed")));
+        });
+        reopened.checkForUpdates();
+        await restored;
+        assert.equal(imageRequests, 0);
+        assert.equal(await readFile(installed, "utf8"), "old");
         await updater.prepareApply();
         await updater.quitAndInstall();
         assert.equal(await readFile(installed, "utf8"), "new");

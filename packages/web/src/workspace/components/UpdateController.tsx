@@ -85,11 +85,11 @@ function updateLabel(state: DesktopUpdateState, intl: IntlShape): string {
         case "failed":
             return intl.formatMessage({ id: `settings.updatesError.${state.error}` });
         case "ready":
-            return intl.formatMessage({ id: "status.updateReady" });
+            return intl.formatMessage({ id: state.installsOnNextLaunch ? "status.windowsUpdateReady" : "status.updateReady" });
         case "downloading":
             return intl.formatMessage({ id: "status.updateDownloading" });
         case "available":
-            return intl.formatMessage({ id: "status.updateAvailable" }, { version: state.version });
+            return intl.formatMessage({ id: state.installsOnNextLaunch ? "status.windowsUpdateAvailable" : "status.updateAvailable" }, { version: state.version });
         default:
             return "";
     }

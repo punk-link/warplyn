@@ -86,7 +86,7 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
 
 
     function withRecoveryGuidance(next: DesktopUpdateState): DesktopUpdateState {
-        return { ...next, recoveryAvailable: platform === "win32" || appImage };
+        return { ...next, recoveryAvailable: platform === "win32" || appImage, installsOnNextLaunch: platform === "win32" };
     }
 
 

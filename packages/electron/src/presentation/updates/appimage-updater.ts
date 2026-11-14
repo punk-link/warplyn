@@ -1,12 +1,31 @@
 import { createHash } from "node:crypto";
 import { EventEmitter } from "node:events";
-import { constants } from "node:fs";
+import { constants, createReadStream } from "node:fs";
 import { access, mkdir, open, realpath, rm } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { prepareAppImageReplacement } from "../../infrastructure/recovery/appimage-replacement.js";
 import { readAppImageUpdateMetadata } from "./appimage-update-metadata.js";
 
 const releaseRoot = "https://github.com/punk-link/warplyn/releases/download/";
+
+async function hasVerifiedImage(path: string, expected: { size: number; sha256: string }): Promise<boolean> {
+    try {
+        const hash = createHash("sha256");
+        let size = 0;
+
+        for await (const chunk of createReadStream(path)) {
+            size += chunk.length;
+            if (size > expected.size)
+                return false;
+
+            hash.update(chunk);
+        }
+
+        return size === expected.size && hash.digest("hex") === expected.sha256;
+    } catch {
+        return false;
+    }
+}
 
 
 export async function getInstalledAppImage(packaged: boolean): Promise<string | undefined> {
@@ -118,6 +137,13 @@ export function createAppImageUpdater(installed: string, cache: string, fetchAss
         await mkdir(cache, { recursive: true, mode: 0o700 });
 
         const path = join(cache, metadata.file);
+        if (await hasVerifiedImage(path, metadata)) {
+            downloaded = path;
+            events.emit("update-downloaded");
+
+            return;
+        }
+
         await rm(path, { force: true });
 
         try {

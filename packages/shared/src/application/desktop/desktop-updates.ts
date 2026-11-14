@@ -4,6 +4,7 @@ export type DesktopUpdateState = {
     includePrereleases: boolean;
     networkAccess: boolean;
     recoveryAvailable?: boolean;
+    installsOnNextLaunch?: boolean;
 } & (
     | { kind: "unsupported" }
     | { kind: "current"; lastCheckedAt?: string }
@@ -41,6 +42,7 @@ function hasCommonState(value: Record<string, unknown>): boolean {
         typeof value.includePrereleases === "boolean" &&
         typeof value.networkAccess === "boolean" &&
         (value.recoveryAvailable === undefined || typeof value.recoveryAvailable === "boolean") &&
+        (value.installsOnNextLaunch === undefined || typeof value.installsOnNextLaunch === "boolean") &&
         (value.lastCheckedAt === undefined || typeof value.lastCheckedAt === "string");
 }
 

@@ -28,6 +28,9 @@ function getUpdateStatus(state: DesktopUpdateState, intl: IntlShape): string {
     if (state.kind === "downloading")
         return intl.formatMessage({ id: "status.updateDownloading" });
 
+    if (state.kind === "ready" && state.installsOnNextLaunch)
+        return intl.formatMessage({ id: "status.windowsUpdateReady" });
+
     if (isUpdateDetails(state))
         return intl.formatMessage({ id: "settings.updatesAvailable" }, { version: state.version });
 
@@ -158,6 +161,11 @@ export function UpdatesSettingsGroup({ client, desktop }: { client: DesktopUpdat
             status={<span className="inline-flex items-center gap-2">{(state.kind === "checking" || state.kind === "downloading") && <ActivityIndicator />}{status}</span>}
             fullWidthAction
             action={<>
+                {state.installsOnNextLaunch && isUpdateDetails(state) && (
+                    <p className="mb-3 text-sm text-muted">
+                        {intl.formatMessage({ id: "settings.windowsUpdateDownloadHint" })}
+                    </p>
+                )}
                 {isUpdateDetails(state) && (
                     <section className="mb-3 min-w-0 border-l border-border-strong pl-4" aria-labelledby="settings-update-changes">
                         {state.security && (
