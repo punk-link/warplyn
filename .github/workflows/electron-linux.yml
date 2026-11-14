@@ -49,7 +49,7 @@ jobs:
                   test "$(stat -c '%U:%G' /usr/lib/warplyn/Warplyn)" = root:root
                   test -z "$(find /usr/lib/warplyn -perm /022 -print -quit)"
                   desktop-file-validate /usr/share/applications/warplyn.desktop
-                  test -n "$(find /usr/share/icons -iname '*warplyn*' -print -quit)"
+                  test -s /usr/share/icons/hicolor/scalable/apps/warplyn.svg
                   ldd /usr/lib/warplyn/Warplyn | tee installed-dependencies.txt
                   ! grep -q 'not found' installed-dependencies.txt
             - name: Record package evidence

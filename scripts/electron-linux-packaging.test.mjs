@@ -9,6 +9,7 @@ test("the Debian launcher uses Electron's packaged executable", () => {
     const debMaker = forgeConfig.makers.find(({ name }) => name === "@electron-forge/maker-deb");
 
     assert.equal(debMaker?.config.options.bin, forgeConfig.packagerConfig.executableName);
+    assert.ok(debMaker.config.options.icon.scalable.endsWith("warplyn.svg"));
 });
 
 test("Linux verification and release stay on the acceptance baseline and retain evidence", () => {
