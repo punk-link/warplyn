@@ -1,0 +1,28 @@
+{
+    "version": "0.8.4-preview.1",
+    "previousTag": "v0.8.3",
+    "previousCommit": "631b71fb9ff9c1791f5bda9f6f7f1ec9a9f4e781",
+    "baseline": "published",
+    "sourceCommit": "7f64bdb01dc8d27b2de76053bd83036b4047f1b8",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "The Utility Area update control now lets you download an available update, apply a ready update by restarting, open release notes when downloading is unavailable, or retry after an update error.",
+            "commits": [
+                "152b30c8a8be5b74640b2ed266378f5a9048adc7"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Linux installation guidance now explains manual upgrades, where writing data is stored and how to back it up, and how to address keyring issues while keeping offline editing available.",
+            "commits": [
+                "7f64bdb01dc8d27b2de76053bd83036b4047f1b8"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
