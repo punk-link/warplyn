@@ -17,6 +17,20 @@ The uncommitted issue #54 implementation is based on source commit `1928980084dc
 
 Installed GNOME, keyring, accessibility, previous-preview upgrade and failed-startup recovery acceptance remain pending, as do the additional distribution targets. The older Debian evidence below does not satisfy those gates.
 
+### Wayland first-launch regression, 2026-11-14
+
+On the Ubuntu 22.04.5 Hyper-V VM, the AppImage targeted by the desktop shortcut reported `0.8.4-preview.2`.
+Under its GNOME Wayland session, the first launch remained running without creating an `xdg_toplevel`;
+a second launch showed the existing window. An X11 launch opened on the first attempt.
+The startup path waited for `ready-to-show` before showing the hidden window.
+
+A temporary extracted copy with only the startup visibility change showed the window after renderer loading.
+Two independent first-launch probes created a Wayland toplevel and received configure acknowledgements
+without a second launch. The probes used separate temporary profiles; the fixed probes also used isolated data directories.
+The installed AppImages were not replaced. This verifies the startup fix, not a packaged upgrade/restart or recovery drill.
+The source change passed core verification, all 48 browser journeys, and the packaged Windows desktop gate
+(13 passed, one existing manual spelling test skipped), including the new first-launch visibility regression.
+
 ## Debian installed evidence
 
 Ubuntu 22.04 x64 with a GNOME desktop and GNOME Keyring is the primary acceptance target for issue #36. Installed acceptance was completed on Ubuntu 22.04.5 x64 in Hyper-V on 2026-11-14. No additional distribution/version is guaranteed. Linux verification and release builds are pinned to `ubuntu-22.04`. Headless CI does not establish GNOME desktop or accessibility acceptance.

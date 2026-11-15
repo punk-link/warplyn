@@ -180,13 +180,11 @@ async function createMainWindow(): Promise<void> {
             writeWindowBounds(statePath, window.getBounds());
     });
 
-    window.once("ready-to-show", () => {
-        if (!hiddenTestWindow)
-            window.show();
-
-        telemetry?.capture({ kind: "app_session_started" });
-    });
     await loadRenderer(window);
+    if (!hiddenTestWindow)
+        window.show();
+
+    telemetry?.capture({ kind: "app_session_started" });
 }
 
 
