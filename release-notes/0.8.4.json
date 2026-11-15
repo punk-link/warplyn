@@ -1,0 +1,65 @@
+{
+    "version": "0.8.4",
+    "previousTag": "v0.8.3",
+    "previousCommit": "631b71fb9ff9c1791f5bda9f6f7f1ec9a9f4e781",
+    "baseline": "published",
+    "sourceCommit": "61a9ac4fc4bb58019428d4d05b6ee38464cab3b3",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Linux x64 AppImage releases are available alongside Debian packages. After allowing update access, you can download an AppImage update and choose Restart and update to apply it.",
+            "commits": [
+                "15ed5f71747caac35d1efc02788962cf111ee8d6"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "After the first-run quick start, desktop users are asked whether Warplyn may check GitHub for updates. You can allow access or dismiss the request.",
+            "commits": [
+                "b4f01d01a332c49fecb6ee48a168908ee6dee6d8"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "The Utility Area update control can download an available update or restart to apply a ready update without first opening About Settings.",
+            "commits": [
+                "152b30c8a8be5b74640b2ed266378f5a9048adc7"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Windows update details explain that downloading also approves installation on the next launch, and the ready status reminds you when it will apply.",
+            "commits": [
+                "13ee72def8f43a0b08e5560f9c65b85837259796",
+                "6ce4102f20c8f3548efaaf0b8fa79dc04a0c134a"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "About Settings marks releases identified as security updates with a Security update badge.",
+            "commits": [
+                "540acad36dcecf651586b6c19c0a149045493959"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "A verified AppImage update already downloaded was not restored as ready after checking releases again; it is now recognized, and restarting an installed AppImage launches the replacement.",
+            "commits": [
+                "c5aa30908ade359d7391b0ab66ab5c4314b70331",
+                "74701ce295619d5d96bdc95b1a8c9d2760bc2709"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "The desktop window could remain hidden after its first renderer load; it now appears once that load completes.",
+            "commits": [
+                "7a77d001b30d0c8347ae243dfa558026d711299c"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
