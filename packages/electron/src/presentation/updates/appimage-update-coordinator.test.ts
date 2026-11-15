@@ -1,10 +1,44 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { createDesktopUpdateCoordinator } from "./desktop-update-coordinator.js";
 import { getNewestCompatibleRelease } from "./desktop-update-releases.js";
+import { createAppImageUpdater } from "./appimage-updater.js";
+
+
+for (const cached of ["new", "bad", "missing"])
+    test(`AppImage discovery restores only the verified latest download: ${cached}`, async () => {
+        const root = await mkdtemp(join(tmpdir(), "warplyn-cached-discovery-"));
+        try {
+            const file = "Warplyn-1.10.0-linux-x64.AppImage";
+            if (cached !== "missing")
+                await writeFile(join(root, file), cached);
+
+            const runtimePath = join(root, "runtime.json");
+            await writeFile(runtimePath, JSON.stringify({ updateNetworkAccess: true }));
+            const updater = createAppImageUpdater(join(root, "installed"), root, async (url) => {
+                assert.ok(String(url).endsWith(".json"), "Discovery must not download an image");
+                return new Response(JSON.stringify({ version: "1.10.0", architecture: "x64", file,
+                    size: 3, sha256: createHash("sha256").update("new").digest("hex") }));
+            }, () => assert.fail("Discovery must not restart"));
+            const coordinator = createDesktopUpdateCoordinator(
+                { runtimePath, currentVersion: "1.9.0", supported: true, platform: "linux", appImage: true },
+                { openExternal: async () => undefined, fetchReleases: async () => new Response(JSON.stringify([
+                    { tag_name: "v1.10.0", html_url: "https://github.com/punk-link/warplyn/releases/tag/v1.10.0",
+                        prerelease: false, draft: false, assets: [{ name: file }, { name: "warplyn-appimage-x64.json" }] },
+                ])) },
+                { dataDirectory: root, updater, createSnapshot: async () => undefined,
+                    requestCheckpoint: async () => false, closeApplication: () => assert.fail("Discovery must not close") },
+                { notify: () => undefined },
+            );
+            assert.equal((await coordinator.checkNow()).kind, cached === "new" ? "ready" : "available");
+        } finally {
+            await rm(root, { recursive: true, force: true });
+        }
+    });
 
 // Product scenarios: application.electron-appimage-update-recovery
 test("AppImage releases require same-version x64 images and metadata", () => {

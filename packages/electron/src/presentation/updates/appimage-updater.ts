@@ -127,13 +127,19 @@ export function createAppImageUpdater(installed: string, cache: string, fetchAss
     }
 
 
+    async function getMetadata(url: string, fetchUpdate: typeof fetch) {
+        const versionPrefix = /^v/;
+        const version = url.slice(releaseRoot.length).replace(versionPrefix, "");
+        const response = await fetchReleaseAsset(`${url}/warplyn-appimage-x64.json`, fetchUpdate);
+
+        return readAppImageUpdateMetadata(await readMetadata(response), version);
+    }
+
+
     async function download(): Promise<void> {
         const signal = controller.signal;
         const fetchUpdate: typeof fetch = (url, options) => fetchAsset(url, { ...options, signal });
-        const punctuationPattern = /^v/;
-        const version = feed.slice(releaseRoot.length).replace(punctuationPattern, "");
-        const metadataResponse = await fetchReleaseAsset(`${feed}/warplyn-appimage-x64.json`, fetchUpdate);
-        const metadata = readAppImageUpdateMetadata(await readMetadata(metadataResponse), version);
+        const metadata = await getMetadata(feed, fetchUpdate);
 
         await mkdir(cache, { recursive: true, mode: 0o700 });
 
@@ -159,6 +165,15 @@ export function createAppImageUpdater(installed: string, cache: string, fetchAss
 
 
     return {
+        async restoreDownloaded(url: string): Promise<boolean> {
+            const metadata = await getMetadata(url, fetchAsset);
+            const path = join(cache, metadata.file);
+            if (!await hasVerifiedImage(path, metadata))
+                return false;
+
+            downloaded = path;
+            return true;
+        },
         on: (event: "update-downloaded" | "error", listener: () => void) => {
             events.on(event, listener);
         },

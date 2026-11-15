@@ -18,6 +18,7 @@ interface NativeUpdater {
     quitAndInstall(): void | Promise<void>;
     prepareApply?(): Promise<void>;
     cancelDownload?(): void;
+    restoreDownloaded?(url: string): Promise<boolean>;
     on(event: "update-downloaded" | "error", listener: () => void): void;
 }
 
@@ -158,6 +159,12 @@ export function createDesktopUpdateCoordinator(runtime: DesktopUpdateRuntime, so
 
         release = getNewestCompatibleRelease(payload, currentVersion, runtime, platform, appImage);
         const nextRuntime = updateRuntimeSettings(runtimePath, (current) => ({ ...current, lastUpdateCheckAt: new Date().toISOString() }));
+        if (release && appImage && await updater.restoreDownloaded?.(`${releasesDownloadUrl}/${release.tag_name}`)) {
+            const available = getAvailableUpdateState(release, currentVersion, nextRuntime, true);
+            if (available.kind === "available")
+                return setState({ ...available, kind: "ready" });
+        }
+
         return release
             ? setState(getAvailableUpdateState(release, currentVersion, nextRuntime, platform === "win32" || appImage))
             : setState({ kind: "current", currentVersion, lastCheckedAt: nextRuntime.lastUpdateCheckAt, ...updatePreferences(nextRuntime, currentVersion) });
