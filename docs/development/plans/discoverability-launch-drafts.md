@@ -2,6 +2,8 @@
 
 Prepared 2026-11-05. These drafts are for review; nothing has been submitted. Keep the [discoverability checklist](discoverability.md) as the status owner.
 
+After submission, record the published URLs in the checklist and delete the corresponding drafts. Delete abandoned drafts once the maintainer closes that channel's work.
+
 ## Publication prerequisites
 
 - The workflow URL must return the guide, not a 404 or the homepage: https://warplyn.com/docs/revise-an-article-with-ai.html. It returned 404 during this audit.

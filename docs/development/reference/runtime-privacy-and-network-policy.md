@@ -33,7 +33,16 @@ Write JSON Lines for startup to stdout and failures to stderr. Allow only stable
 
 Provider-stage records allow only fixed stage names, elapsed milliseconds, allowlisted finish reasons and failure categories, and validated HTTP failure status codes. They contain no request identifiers or provider payloads. Do not scrub these fixed public values against arbitrary environment substrings, which can corrupt stage names and timestamps. SDK stream-error callbacks use these records instead of default raw-error logging.
 
-Fact Check also records local-only stages `fact_check_extraction`, `fact_check_matching`, `fact_check_research`, and `fact_check_evaluation`. These measure the complete provider method, including structured-output validation. Their success finish reason is `stop`, indicating accepted method completion rather than exposing provider metadata. Failures use the existing safe Editorial failure categories. The records contain no claim text, counts, Article identifiers, provider/model names, or remote telemetry additions. See the [Fact Check latency investigation guide](../guides/fact-check-latency-investigation.md).
+Fact Check also records local-only stages `fact_check_extraction`, `fact_check_matching`, `fact_check_research`, and `fact_check_evaluation`. These measure the complete provider method, including structured-output validation. Their success finish reason is `stop`, indicating accepted method completion rather than exposing provider metadata. Failures use the existing safe Editorial failure categories. The records contain no claim text, counts, Article identifiers, provider/model names, or remote telemetry additions.
+
+### Investigating Fact Check latency
+
+Use synthetic/public input and an already approved connection for live measurements. Keep provider/model and claim/reuse counts in private experiment notes outside application diagnostics. Exclude prompts, claims, credentials, provider payloads, and raw errors.
+
+1. Isolate one operation because stage records have no run identifier. Compare 1, 3, and 12 fresh claims, then repeated and edited runs. Record time to first finding and completion.
+2. Compare elapsed time with stage durations. Three claim workers overlap; generic `editorial_generation` records can overlap enclosing method timings. Neither set should be summed as elapsed time. Matching may be absent after exact reuse or material-anchor filtering; research and evaluation run per checked claim.
+3. Use [fact-claim-matching.test.ts](../../../packages/server/src/infrastructure/editorial/workflows/fact-claim-matching.test.ts) to check avoided matching calls and preserved claim indices. Run focused tests using the [testing guide](../guides/testing.md#focused-tests). Assert call counts and completed results rather than wall-clock thresholds.
+4. Optimize only after timings identify the cost. Preserve source quality, uncertainty, citation validation, cancellation, and partial findings. Record before/after evidence; synthetic timings alone do not establish live-provider speedups.
 
 ## Packaged beta telemetry
 

@@ -1,5 +1,7 @@
 # Skladno to Warplyn issue map
 
+Historical reference: use this map when resolving pre-migration issue numbers or broken original issue URLs.
+
 On 2026-09-29, all 60 open issues moved from `punk-link/skladno-legacy` to `punk-link/warplyn` through GitHub's native issue transfer. Authors, original creation times, attachments, labels, assignees, and milestone assignments were reconciled. None of the transferred issues had comments. GitHub qualified issue references during transfer; no issue bodies were manually rewritten.
 
 Closed issues, historical pull requests, and Skladno releases remain in [skladno-legacy](https://github.com/punk-link/skladno-legacy). Links using the legacy organization's issue URLs redirect to the new issues. Tested issue URLs under the earlier `kirillta/skladno` location returned 404 after the issue moves; use the direct URLs below.
