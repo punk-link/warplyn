@@ -15,10 +15,12 @@ export function TelemetryInvitation() {
 
     useEffect(() => {
         let active = true;
-        let dismissed = false;
+        let dismissed: boolean;
         try {
             dismissed = localStorage.getItem(dismissalKey) === "true";
-        } catch { /** Storage failure leaves the invitation available for this session. */ }
+        } catch {
+            dismissed = false;
+        }
 
         if (!dismissed && telemetry)
             void telemetry.getTelemetryConsent().then((consent) => {
@@ -35,7 +37,10 @@ export function TelemetryInvitation() {
     function dismiss() {
         try {
             localStorage.setItem(dismissalKey, "true");
-        } catch { /** Storage failure limits dismissal to this session. */ }
+        } catch {
+            setVisible(false);
+            return;
+        }
 
         setVisible(false);
     }

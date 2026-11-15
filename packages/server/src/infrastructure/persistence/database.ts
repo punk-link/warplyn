@@ -27,8 +27,6 @@ function readSnapshotRows(database: DatabaseSync, statement: string): Record<str
 
 
 /** Checks an unopened backup without running migrations or changing its contents. */
-
-
 export function validateDatabaseSnapshot(filename: string): void {
     let database: DatabaseSync | undefined;
     let writableSnapshotDirectory: string | undefined;
