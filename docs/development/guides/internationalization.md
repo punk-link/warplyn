@@ -2,7 +2,7 @@
 
 Warplyn includes interface catalogs for English (`en`), neutral Spanish (`es`), Brazilian Portuguese (`pt-BR`), French (`fr`), German (`de`), Russian (`ru`), Japanese (`ja`), Simplified Chinese (`zh-CN`), Italian (`it`), Polish (`pl`), and Korean (`ko`). Application-owned renderer copy lives in `packages/web/src/i18n/messages.ts`; semantic IDs are stable and grouped by responsibility. Every installed catalog must contain exactly that inventory and preserve ICU arguments and rich-text tags. Native dialogs use the matching shared catalog.
 
-The ten new locales are translation drafts pending human review. For issue #114, the Author explicitly authorized implementation before named-reviewer approval. Kirill can review `es`, `pt-BR`, `ru`, and `pl`; reviewers for the other locales remain unassigned. Installation does not establish release approval. See the [terminology drafts](../i18n/locale-terminology-drafts.md) for terminology and review status.
+The ten new locales are translation drafts pending human review. For issue #114, the Author explicitly authorized implementation before named-reviewer approval. Kirill can review `es`, `pt-BR`, `ru`, and `pl`; reviewers for the other locales remain unassigned. Installation does not establish release approval. See [locale terminology](../i18n/locale-terminology.md) for terminology proposals and review status.
 
 The interface language selector shows each language's native name so it remains recognizable after switching languages. A successful Settings save changes renderer copy immediately, updates the HTML language, and persists the locale independently of Article language. Unknown persisted locale values fall back to English.
 

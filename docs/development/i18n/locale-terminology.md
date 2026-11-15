@@ -1,6 +1,6 @@
-# Locale terminology drafts
+# Locale terminology
 
-Status: working terminology proposals for issue #114. The Author authorized installing translation drafts before named-reviewer approval for this implementation. Human review remains pending and is required before release approval. These records cover the core glossary concepts; expand them with interface-specific variants during review.
+Status: terminology proposals for issue #114; human review remains pending and is required before release approval. The Author authorized installing translation drafts before named-reviewer approval for this implementation. These records cover the core glossary concepts; expand them with interface-specific variants during review.
 
 | Locale | Review issue | Available reviewer | Review status |
 | --- | --- | --- | --- |
