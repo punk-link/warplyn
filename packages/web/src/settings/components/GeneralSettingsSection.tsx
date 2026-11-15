@@ -54,7 +54,11 @@ export function GeneralSettingsSection({ general, save, applyTheme, telemetry }:
                     const value = event.target.value;
                     if (isInterfaceLocale(value))
                         void save({ ...general, interfaceLocale: value });
-                }}>{installedLocaleCatalogs.map((catalog) => <option key={catalog.code} value={catalog.code}>{catalog.nativeName}</option>)}
+                }}>{installedLocaleCatalogs.map((catalog) => <option key={catalog.code} value={catalog.code}>
+                    {catalog.nativeName === new Intl.DisplayNames(["en"], { type: "language" }).of(catalog.code)
+                        ? catalog.nativeName
+                        : `${catalog.nativeName} (${new Intl.DisplayNames(["en"], { type: "language" }).of(catalog.code) ?? catalog.code})`}
+                </option>)}
                 </Select>
             </SettingRow>
             <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.animations" })}

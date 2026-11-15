@@ -8,6 +8,7 @@ import type { Translation } from "./translations-view-types.js";
 import { ChevronDownIcon } from "../../ui/icons.js";
 import { handleStatusMenuKeyDown, openStatusMenu } from "../components/ArticleStatusBarMenu.js";
 import { getProvenanceMessageId, getRevisionTitle } from "./revision-history-presentation.js";
+import { getDisplayLanguageName } from "../state/editorial-language.js";
 
 
 interface TranslationsNavigationProps {
@@ -51,7 +52,7 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
             <TabList className="mt-4">
                 {languages.map((language) => (
                     <Tab key={language} selected={language === selectedLanguage} onClick={() => selectTargetLanguage?.(language)}>
-                        {language}
+                        {getDisplayLanguageName(language, intl.locale)}
                     </Tab>
                 ))}
             </TabList>

@@ -1,13 +1,13 @@
 import type { PropsWithChildren } from "react";
 import { useIntl } from "react-intl";
-import { getProviderLanguageName } from "../state/editorial-language.js";
 import type { TranslationsData } from "./translations-view-data.js";
 import { ActivityIndicator } from "../../ui/primitives.js";
+import { getDisplayLanguageName } from "../state/editorial-language.js";
 
 
 export function TranslationReviewSurface({ generation, children }: PropsWithChildren<{ generation: TranslationsData["generation"] }>) {
     const intl = useIntl();
-    const languages = generation?.languages.map(getProviderLanguageName);
+    const languages = generation?.languages.map((language) => getDisplayLanguageName(language, intl.locale));
     return <div className="relative mx-auto flex h-full min-h-0 w-full max-w-6xl flex-col">
         <div {...(generation ? { inert: "" } : {})} aria-busy={Boolean(generation)} className={`flex h-full min-h-0 w-full flex-col ${generation ? "opacity-40" : ""}`}>
             {children}

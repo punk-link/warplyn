@@ -4,6 +4,7 @@ import { articleLanguages, normalizeWritingLanguage, normalizeArticleLanguage } 
 import { ChevronDownIcon } from "../../ui/icons.js";
 import { handleStatusMenuKeyDown, openStatusMenu } from "./ArticleStatusBarMenu.js";
 import { WritingLanguageDialog } from "./WritingLanguageDialog.js";
+import { getDisplayLanguageName } from "../state/editorial-language.js";
 
 
 type LanguageMessageId = "languages.english" | "languages.spanish" | "languages.portuguese" | "languages.russian" | "languages.french" | "languages.german" | "languages.italian";
@@ -15,14 +16,15 @@ export function LanguageStatusControl({ language, setLanguage, open, onToggle, o
     const trigger = useRef<HTMLButtonElement>(null);
     const menuId = useId();
     const [customOpen, setCustomOpen] = useState(false);
-    const languageNames = new Intl.DisplayNames([intl.locale], { type: "language" });
     const formatLanguage = (tag: string) => {
         const normalized = normalizeArticleLanguage(tag);
         if (!normalized || normalizeWritingLanguage(normalized) !== normalized)
             return tag;
 
         const messageId = languageMessageIds[normalized];
-        return messageId ? intl.formatMessage({ id: messageId }) : languageNames.of(normalized) ?? tag;
+        return messageId
+            ? `${intl.formatMessage({ id: messageId })} (${new Intl.DisplayNames(["en"], { type: "language" }).of(normalized) ?? tag})`
+            : getDisplayLanguageName(normalized, intl.locale);
     };
 
 
@@ -38,7 +40,7 @@ export function LanguageStatusControl({ language, setLanguage, open, onToggle, o
             data-focus-area-entry
             ref={trigger}
             className={("inline-flex h-6 items-center gap-1 border-x border-border px-1.5 text-xs text-muted hover:bg-brand-soft hover:text-brand focus:outline-none " +
-            "focus-visible:ring-2 focus-visible:ring-brand")}
+                "focus-visible:ring-2 focus-visible:ring-brand")}
             type="button"
             aria-label={intl.formatMessage({ id: "articleHeader.sourceLanguage" })}
             aria-controls={open ? menuId : undefined}

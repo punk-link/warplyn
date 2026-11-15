@@ -3,6 +3,7 @@ import { useIntl } from "react-intl";
 import { articleLanguages, normalizeArticleLanguage } from "@skladno/shared";
 import { Button } from "./primitives.js";
 import { TranslationLanguageInput } from "./TranslationLanguageInput.js";
+import { getDisplayLanguageName } from "../workspace/state/editorial-language.js";
 
 const languageMessageIds = {
     en: "languages.english", es: "languages.spanish", pt: "languages.portuguese", ru: "languages.russian",
@@ -22,7 +23,9 @@ export function TranslationLanguagePicker({ selected, sourceLanguage, change, ex
     const [query, setQuery] = useState("");
     const label = (language: string) => {
         const common = articleLanguages.find((item) => item === language);
-        return common ? intl.formatMessage({ id: languageMessageIds[common] }) : language;
+        return common
+            ? `${intl.formatMessage({ id: languageMessageIds[common] })} (${new Intl.DisplayNames(["en"], { type: "language" }).of(common) ?? language})`
+            : getDisplayLanguageName(language, intl.locale);
     };
 
     const candidates = [...new Set([...articleLanguages, ...existing])];
