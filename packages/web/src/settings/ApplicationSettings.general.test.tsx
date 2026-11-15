@@ -7,7 +7,7 @@ import { defaultGeneralSettings, type GeneralSettings } from "@skladno/shared";
 
 import type { EditorialWorkspaceClient } from "../application/client.js";
 import { messages } from "../i18n/messages.js";
-import { es } from "../i18n/locales/es.js";
+import { es } from "../i18n/locales/es/index.js";
 import { I18nProvider } from "../i18n/I18nProvider.js";
 import { getMessage } from "../i18n/test-message.js";
 import { NotificationProvider } from "../notifications/NotificationProvider.js";

@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 
 export const zhCNAssistant = {
     "assistant.panel": "写作助理面板",

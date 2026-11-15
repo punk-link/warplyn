@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 import { getElectronMessagesFor, INTERFACE_LOCALE } from "@skladno/shared";
 import { ruReview } from "./review.js";
 import { ruSettings } from "./settings.js";

@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 import { articleMessages } from "./article.js";
 import { articleFilesMessages } from "./articleFiles.js";
 import { workspaceMessages } from "./workspace.js";

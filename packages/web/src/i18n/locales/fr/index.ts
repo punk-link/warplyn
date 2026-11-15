@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 import { assistantMessages } from "./assistant.js";
 import { previewMessages } from "./preview.js";
 import { editorMessages } from "./editor.js";

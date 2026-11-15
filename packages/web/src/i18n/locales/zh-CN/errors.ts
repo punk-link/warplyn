@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 
 export const zhCNErrors = {
     "errors.generic": "无法完成此操作。文章未更改。请重试。",

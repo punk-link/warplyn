@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 import { zhCNWorkspace } from "./workspace.js";
 import { zhCNAssistant } from "./assistant.js";
 import { zhCNReview } from "./review.js";

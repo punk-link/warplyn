@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 
 export const zhCNSettings = {
     "settings.navigation": "设置导航",

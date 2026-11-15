@@ -1,14 +1,14 @@
 import { defaultInterfaceLocale, INTERFACE_LOCALE, type InterfaceLocale } from "../../settings/settings.js";
-import { es } from "./locales/es.js";
-import { ptBR } from "./locales/pt-BR.js";
-import { fr } from "./locales/fr.js";
-import { de } from "./locales/de.js";
-import { ru } from "./locales/ru.js";
-import { ja } from "./locales/ja.js";
-import { zhCN } from "./locales/zh-CN.js";
-import { it } from "./locales/it.js";
-import { pl } from "./locales/pl.js";
-import { ko } from "./locales/ko.js";
+import { es } from "./locales/es/index.js";
+import { ptBR } from "./locales/pt-BR/index.js";
+import { fr } from "./locales/fr/index.js";
+import { de } from "./locales/de/index.js";
+import { ru } from "./locales/ru/index.js";
+import { ja } from "./locales/ja/index.js";
+import { zhCN } from "./locales/zh-CN/index.js";
+import { it } from "./locales/it/index.js";
+import { pl } from "./locales/pl/index.js";
+import { ko } from "./locales/ko/index.js";
 
 
 const englishElectronMessages = {

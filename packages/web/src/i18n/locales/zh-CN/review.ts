@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 
 export const zhCNReview = {
     "operations.thesisToNarrative": "从要点到正文",

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { createIntl } from "react-intl";
 import { installedLocaleCatalogs } from "./catalogs.js";
 import { validateCatalog } from "./catalog-validation.js";
-import { en } from "./locales/en.js";
+import { en } from "./locales/en/index.js";
 import { messages } from "./messages.js";
 import { INTERFACE_LOCALE, getElectronMessagesFor } from "@skladno/shared";
 

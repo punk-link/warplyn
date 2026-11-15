@@ -1,4 +1,4 @@
-import type { ElectronMessages } from "../electron-messages.js";
+import type { ElectronMessages } from "../../electron-messages.js";
 
 export const zhCN: ElectronMessages = {
     "electron.spelling.addWord": "添加到词典",

@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 import { jaWorkspace } from "./workspace.js";
 import { jaAssistant } from "./assistant.js";
 import { jaReview } from "./review.js";

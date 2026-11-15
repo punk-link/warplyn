@@ -1,4 +1,4 @@
-import type { ElectronMessages } from "../electron-messages.js";
+import type { ElectronMessages } from "../../electron-messages.js";
 
 export const es: ElectronMessages = {
     "electron.spelling.addWord": "Añadir al diccionario",
