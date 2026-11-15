@@ -9,7 +9,7 @@ export const settings2 = {
     "settings.addFavoriteModel": "Añadir {model} a favoritos",
     "settings.removeFavoriteModel": "Quitar {model} de favoritos",
     "settings.noMatchingModels": "No hay modelos que coincidan con este filtro.",
-    "settings.refreshModels": "Actualizar modelos disponibles",
+    "settings.refreshModels": "Actualizar modelos",
     "settings.specificModels": "Modelos para tareas concretas",
     "settings.specificModelsHint": "Elige un modelo para una tarea o usa el predeterminado. Solo afecta a futuras solicitudes de IA.",
     "settings.useDefaultModel": "Usar modelo predeterminado",
@@ -26,7 +26,7 @@ export const settings2 = {
         "Elige una carpeta local para las copias de seguridad. Warplyn solo puede escribir en ella después de " +
         "que la elijas."
     ),
-    "settings.chooseBackupFolder": "Elegir carpeta de copias de seguridad",
+    "settings.chooseBackupFolder": "Elegir carpeta…",
     "settings.revealBackupFolder": "Mostrar carpeta",
     "settings.managedCredential": "Credencial gestionada",
     "settings.backupFolderSelected": "Usando {folderName}",
@@ -49,7 +49,7 @@ export const settings2 = {
     "settings.retentionHint": "Controla cuántas copias automáticas conserva Warplyn. Las copias manuales nunca se eliminan automáticamente.",
     "settings.keepBackups": "Conservar {count} copias",
     "settings.keepAllBackups": "Conservar todas las copias",
-    "settings.createBackup": "Crear copia de seguridad",
+    "settings.createBackup": "Crear copia",
     "settings.createBackupHint": (
         "Copia tus artículos, versiones guardadas, configuración, habilidades del autor e historial de " +
         "habilidades. En el navegador se admiten archivos de hasta 100 MB y 500 MB en total. Se excluyen las " +
@@ -62,7 +62,7 @@ export const settings2 = {
         "inténtalo de nuevo. La sesión de edición no ha cambiado."
     ),
     "settings.backupCreateUnavailable": "Las copias de seguridad no están disponibles en esta sesión del navegador.",
-    "settings.restoreBackup": "Restaurar una copia de seguridad",
+    "settings.restoreBackup": "Restaurar copia",
     "settings.restoreBackupHint": (
         "Elige una copia de la carpeta seleccionada. Warplyn comprueba sus archivos, conserva una copia de " +
         "recuperación y restaura sus artículos, versiones guardadas, configuración y habilidades guardadas. " +
@@ -75,7 +75,7 @@ export const settings2 = {
         "datos activos no han cambiado."
     ),
     "settings.restoreBackupUnavailable": "No se puede restaurar esa copia.",
-    "settings.chooseBackup": "Elegir una copia de seguridad",
+    "settings.chooseBackup": "Elegir copia",
     "settings.restoreBackupConfirm": "¿Restaurar {name}? Warplyn sustituirá los datos locales activos y se recargará.",
     "settings.deleteData": "Eliminar datos locales",
     "settings.deleteLocalData": "Eliminar todos los datos locales",
@@ -103,7 +103,7 @@ export const settings2 = {
         "Incluye este ID al solicitar la eliminación. Cópialo antes de desactivar la telemetría, ya que al " +
         "desactivarla se elimina el ID."
     ),
-    "settings.copyTelemetryIdentifier": "Copiar ID de telemetría",
+    "settings.copyTelemetryIdentifier": "Copiar ID",
     "settings.telemetryIdentifierCopied": "ID de telemetría copiado.",
     "settings.telemetrySaveFailed": "No se pudo guardar esta elección. Se conserva la configuración anterior. Inténtalo de nuevo.",
     "settings.telemetryUnavailable": "La telemetría solo está disponible en una aplicación empaquetada y configurada.",
@@ -174,10 +174,10 @@ export const settings2 = {
     "settings.customProfileLimit": "Límite personalizado de caracteres",
     "settings.customProfileLimitHint": "Un límite orientativo no negativo. Nunca impide copiar.",
     "settings.customProfileInvalid": "Introduce un nombre y un límite de caracteres entero no negativo.",
-    "settings.saveCustomProfile": "Guardar perfil personalizado",
+    "settings.saveCustomProfile": "Guardar perfil",
     "settings.customProfiles": "Perfiles personalizados",
     "settings.customProfilesHint": "Añade todos los perfiles locales de límite de caracteres que necesites.",
-    "settings.addCustomProfile": "Añadir perfil personalizado",
+    "settings.addCustomProfile": "Añadir perfil",
     "settings.remove": "Eliminar",
     "settings.removeCustomProfile": "Eliminar {name}",
     "settings.removeCustomProfileTitle": "¿Eliminar perfil personalizado?",

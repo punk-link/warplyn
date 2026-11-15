@@ -16,9 +16,9 @@ export const settingsMessages = {
     ),
     "settings.general.interfaceLocale.english": "Anglais",
     "settings.navigation": "Navigation des paramètres",
-    "settings.backToWorkspace": "Retour à l’espace de travail",
+    "settings.backToWorkspace": "Retour",
     "settings.general": "Général",
-    "settings.keyBindings": "Raccourcis clavier",
+    "settings.keyBindings": "Raccourcis",
     "settings.keyBindingsIntro": (
         "Choisissez les raccourcis de Warplyn sur cet ordinateur. Les modifications s’appliquent aux " +
         "utilisations suivantes et ne modifient jamais un article."
@@ -35,14 +35,14 @@ export const settingsMessages = {
     "settings.recordKeyBinding": "Enregistrer un raccourci pour {command}",
     "settings.recordingKeyBinding": "Appuyez sur un raccourci…",
     "settings.clearKeyBinding": "Effacer",
-    "settings.resetKeyBinding": "Rétablir la valeur par défaut",
+    "settings.resetKeyBinding": "Réinitialiser",
     "settings.keyBindingConflict": "Effacez-le ou modifiez-le d’abord.",
     "settings.keyBindingConflictTitle": "Affecté à",
     "settings.ai": "Assistant IA",
     "settings.providers": "Fournisseurs",
     "settings.publishing": "Publication",
-    "settings.dataBackups": "Données et sauvegardes",
-    "settings.about": "À propos de Warplyn",
+    "settings.dataBackups": "Données",
+    "settings.about": "À propos",
     "settings.aboutDescription": "Un espace de rédaction privilégiant le stockage local, avec un assistant éditorial IA quand vous souhaitez de l’aide.",
     "settings.projectResources": "Ressources du projet",
     "settings.mitLicense": "Licence MIT",
@@ -51,7 +51,7 @@ export const settingsMessages = {
     "settings.reportProblem": "Signaler un problème",
     "settings.quickStart": "Guide de démarrage",
     "settings.quickStartHint": "Découvrez le fonctionnement des articles, de l’assistant et des clés de modèle.",
-    "settings.openQuickStart": "Ouvrir le guide de démarrage",
+    "settings.openQuickStart": "Ouvrir le guide",
     "settings.appearanceAndLanguage": "Apparence et langue",
     "settings.dateAndTime": "Date et heure",
     "settings.connections": "Connexions",
@@ -74,7 +74,7 @@ export const settingsMessages = {
     "settings.dateFormat": "Format de date",
     "settings.dateFormatHint": "Modifie l’affichage des dates dans Warplyn, sans changer les dates enregistrées ni l’historique des versions.",
     "settings.systemDateFormat": "Format de date du système ({value})",
-    "settings.resetDateFormat": "Utiliser le format de date du système",
+    "settings.resetDateFormat": "Format système",
     "settings.dayFirstSlash": "JJ/MM/AAAA",
     "settings.dayFirstDots": "JJ.MM.AAAA",
     "settings.monthFirstSlash": "MM/JJ/AAAA",
@@ -84,7 +84,7 @@ export const settingsMessages = {
     "settings.timeFormat": "Format d’heure",
     "settings.timeFormatHint": "Modifie l’affichage des heures dans Warplyn, sans changer les dates enregistrées ni l’historique des versions.",
     "settings.systemTimeFormat": "Format d’heure du système ({value})",
-    "settings.resetTimeFormat": "Utiliser le format d’heure du système",
+    "settings.resetTimeFormat": "Format système",
     "settings.timeZone": "Fuseau horaire",
     "settings.timeZoneHint": (
         "Le fuseau horaire du système suit votre appareil. Choisissez une région pour conserver son heure " +
@@ -92,7 +92,7 @@ export const settingsMessages = {
     ),
     "settings.systemTimeZone": "Fuseau horaire du système {timeZone}",
     "settings.localTimeZone": "heure locale",
-    "settings.resetTimeZone": "Utiliser le fuseau horaire du système",
+    "settings.resetTimeZone": "Fuseau système",
     "settings.example": "Exemple : {value}",
     "settings.defaultArticleLanguage": "Langue par défaut des articles",
     "settings.defaultArticleLanguageHint": (
@@ -104,7 +104,7 @@ export const settingsMessages = {
         "Présélectionnées au début d’une nouvelle traduction. Vous pouvez changer les langues cibles avant la " +
         "génération."
     ),
-    "settings.addConnection": "Ajouter une connexion à une IA",
+    "settings.addConnection": "Ajouter une connexion",
     "settings.connectionHint": "Votre clé fournisseur reste privée sur cet ordinateur. Warplyn ne conserve que le nom de son emplacement de stockage.",
     "settings.provider": "Fournisseur",
     "settings.providerHint": "Choisissez le service qui a émis cette clé API.",
@@ -146,7 +146,7 @@ export const settingsMessages = {
     "settings.activeConnectionShort": "Active",
     "settings.activateConnectionShort": "Activer",
     "settings.deactivateConnectionShort": "Désactiver",
-    "settings.useConnection": "Utiliser cette connexion",
+    "settings.useConnection": "Utiliser",
     "settings.useConnectionShort": "Utiliser",
     "settings.renameConnection": "Renommer la connexion",
     "settings.renameConnectionShort": "Renommer",
@@ -185,13 +185,13 @@ export const settingsMessages = {
     "settings.addFavoriteModel": "Ajouter {model} aux favoris",
     "settings.removeFavoriteModel": "Retirer {model} des favoris",
     "settings.noMatchingModels": "Aucun modèle ne correspond à ce filtre.",
-    "settings.refreshModels": "Actualiser les modèles disponibles",
+    "settings.refreshModels": "Actualiser",
     "settings.specificModels": "Modèles pour les tâches spécifiques",
     "settings.specificModelsHint": (
         "Choisissez un modèle pour une tâche, ou utilisez le modèle par défaut. Seules les futures demandes à " +
         "l’IA sont concernées."
     ),
-    "settings.useDefaultModel": "Utiliser le modèle par défaut",
+    "settings.useDefaultModel": "Modèle par défaut",
     "settings.specificModelHint": "Gardez l’option Utiliser le modèle par défaut, sauf si cette tâche nécessite un autre modèle.",
     "settings.publishingProfile": "Profil de limite de caractères",
     "settings.publishingProfileHint": (
@@ -205,7 +205,7 @@ export const settingsMessages = {
     "settings.profileCharacters": "{label} — {count} caractères",
     "settings.backupFolder": "Dossier des sauvegardes",
     "settings.backupFolderHint": "Choisissez un dossier local pour les copies de sauvegarde. Warplyn ne peut y écrire qu’après votre sélection.",
-    "settings.chooseBackupFolder": "Choisir le dossier des sauvegardes",
+    "settings.chooseBackupFolder": "Choisir…",
     "settings.revealBackupFolder": "Afficher le dossier",
     "settings.managedCredential": "Identifiant géré",
     "settings.backupFolderSelected": "Dossier utilisé : {folderName}",
@@ -231,7 +231,7 @@ export const settingsMessages = {
     ),
     "settings.keepBackups": "Conserver {count} sauvegardes",
     "settings.keepAllBackups": "Conserver toutes les sauvegardes",
-    "settings.createBackup": "Créer une sauvegarde",
+    "settings.createBackup": "Sauvegarder",
     "settings.createBackupHint": (
         "Sauvegarde vos articles, versions enregistrées, paramètres, compétences de l’auteur et leur " +
         "historique. Les sauvegardes du navigateur prennent en charge des fichiers de 100 Mo maximum et 500 " +
@@ -244,7 +244,7 @@ export const settingsMessages = {
         "navigateur, puis réessayez. Votre session d’édition reste inchangée."
     ),
     "settings.backupCreateUnavailable": "Les sauvegardes sont indisponibles dans cette session du navigateur.",
-    "settings.restoreBackup": "Restaurer une sauvegarde",
+    "settings.restoreBackup": "Restaurer",
     "settings.restoreBackupHint": (
         "Choisissez une sauvegarde dans le dossier sélectionné. Warplyn vérifie ses fichiers, conserve une " +
         "copie de récupération, puis restaure ses articles, versions enregistrées, paramètres et compétences. " +

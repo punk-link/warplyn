@@ -28,6 +28,8 @@ Review terminology by concept across the complete locale, including existing mes
 
 ## Command labels
 
+Prefer single-line button captions at supported widths. Let the surrounding row or help carry redundant context while keeping distinctions between actions clear. Review each workspace tab set together for parallel, similarly concise wording.
+
 Append the single ellipsis character `…` to commands that require further Author input, such as choosing a file or entering options, before completing. Use matching wording and punctuation in menus, button labels, and tooltips. The file commands are `Save to file…` and `Load from file…` in both desktop and browser. Immediate actions and commands that only ask for confirmation, such as Archive and Delete, use plain labels without an ellipsis.
 
 ## Enforcement

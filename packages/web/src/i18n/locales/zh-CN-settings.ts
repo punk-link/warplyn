@@ -2,7 +2,7 @@ import type { MessageId } from "../messages.js";
 
 export const zhCNSettings = {
     "settings.navigation": "设置导航",
-    "settings.backToWorkspace": "返回工作区",
+    "settings.backToWorkspace": "返回",
     "settings.general": "常规",
     "settings.keyBindings": "快捷键",
     "settings.keyBindingsIntro": "选择此电脑上Warplyn使用的快捷键。更改仅影响之后的操作，不会修改文章。",
@@ -208,10 +208,10 @@ export const zhCNSettings = {
     "settings.customProfileLimit": "自定义字符上限",
     "settings.customProfileLimitHint": "非负的参考上限，绝不限制复制。",
     "settings.customProfileInvalid": "请输入名称及非负整数的字符上限。",
-    "settings.saveCustomProfile": "保存自定义配置",
+    "settings.saveCustomProfile": "保存",
     "settings.customProfiles": "自定义配置",
     "settings.customProfilesHint": "按需添加本地字符上限配置，数量不限。",
-    "settings.addCustomProfile": "添加自定义配置",
+    "settings.addCustomProfile": "添加配置",
     "settings.remove": "移除",
     "settings.removeCustomProfile": "移除{name}",
     "settings.removeCustomProfileTitle": "移除自定义配置？",

@@ -3,9 +3,9 @@ import type { MessageId } from "../../messages.js";
 export const workspace = {
     "workspace.tabs.write": "Escribir",
     "workspace.tabs.proposal": "Propuestas",
-    "workspace.tabs.revisions": "Versiones guardadas",
-    "workspace.tabs.factCheck": "Verificación de datos",
-    "workspace.tabs.styleProfile": "Perfil de estilo",
+    "workspace.tabs.revisions": "Versiones",
+    "workspace.tabs.factCheck": "Verificación",
+    "workspace.tabs.styleProfile": "Estilo",
     "workspace.tabs.translations": "Traducciones",
     "workspace.tabs.ariaLabel": "Vistas del espacio de trabajo del artículo",
     "workspace.badges.review": "Revisar",

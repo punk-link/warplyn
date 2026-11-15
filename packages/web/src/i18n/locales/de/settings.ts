@@ -16,9 +16,9 @@ export const settingsMessages = {
     ),
     "settings.general.interfaceLocale.english": "Englisch",
     "settings.navigation": "Einstellungsnavigation",
-    "settings.backToWorkspace": "Zurück zum Arbeitsbereich",
+    "settings.backToWorkspace": "Zurück",
     "settings.general": "Allgemein",
-    "settings.keyBindings": "Tastenkombinationen",
+    "settings.keyBindings": "Tastenkürzel",
     "settings.keyBindingsIntro": (
         "Wählen Sie die Tastenkombinationen, die Warplyn auf diesem Computer verwendet. Änderungen gelten für " +
         "die künftige Nutzung und verändern niemals einen Artikel."
@@ -35,13 +35,13 @@ export const settingsMessages = {
     "settings.recordKeyBinding": "Tastenkombination für {command} aufzeichnen",
     "settings.recordingKeyBinding": "Tastenkombination drücken…",
     "settings.clearKeyBinding": "Löschen",
-    "settings.resetKeyBinding": "Auf Standard zurücksetzen",
+    "settings.resetKeyBinding": "Zurücksetzen",
     "settings.keyBindingConflict": "Löschen oder ändern Sie sie zuerst.",
     "settings.keyBindingConflictTitle": "Zugewiesen an",
     "settings.ai": "KI-Assistent",
     "settings.providers": "Anbieter",
     "settings.publishing": "Veröffentlichung",
-    "settings.dataBackups": "Daten und Sicherungen",
+    "settings.dataBackups": "Daten",
     "settings.about": "Über Warplyn",
     "settings.aboutDescription": (
         "Ein Arbeitsbereich zum Schreiben mit vorrangig lokaler Speicherung und einem redaktionellen " +
@@ -77,7 +77,7 @@ export const settingsMessages = {
     "settings.dateFormat": "Datumsformat",
     "settings.dateFormatHint": "Ändert die Datumsanzeige in Warplyn. Gespeicherte Datumswerte und der Fassungsverlauf bleiben unverändert.",
     "settings.systemDateFormat": "System-Datumsformat ({value})",
-    "settings.resetDateFormat": "System-Datumsformat verwenden",
+    "settings.resetDateFormat": "Systemformat",
     "settings.dayFirstSlash": "TT/MM/JJJJ",
     "settings.dayFirstDots": "TT.MM.JJJJ",
     "settings.monthFirstSlash": "MM/TT/JJJJ",
@@ -87,7 +87,7 @@ export const settingsMessages = {
     "settings.timeFormat": "Zeitformat",
     "settings.timeFormatHint": "Ändert die Zeitanzeige in Warplyn. Gespeicherte Datumswerte und der Fassungsverlauf bleiben unverändert.",
     "settings.systemTimeFormat": "System-Zeitformat ({value})",
-    "settings.resetTimeFormat": "System-Zeitformat verwenden",
+    "settings.resetTimeFormat": "Systemformat",
     "settings.timeZone": "Zeitzone",
     "settings.timeZoneHint": (
         "Die Systemzeitzone folgt diesem Gerät. Wählen Sie eine Region, um auf Reisen deren Uhrzeit " +
@@ -95,7 +95,7 @@ export const settingsMessages = {
     ),
     "settings.systemTimeZone": "Systemzeitzone {timeZone}",
     "settings.localTimeZone": "Ortszeit",
-    "settings.resetTimeZone": "Systemzeitzone verwenden",
+    "settings.resetTimeZone": "Systemzeitzone",
     "settings.example": "Beispiel: {value}",
     "settings.defaultArticleLanguage": "Standard-Artikelsprache",
     "settings.defaultArticleLanguageHint": "Wird für neue Artikel verwendet, wenn Sie keine Sprache auswählen. Bestehende Artikel werden nicht geändert.",
@@ -146,7 +146,7 @@ export const settingsMessages = {
     "settings.activeConnectionShort": "Aktiv",
     "settings.activateConnectionShort": "Aktivieren",
     "settings.deactivateConnectionShort": "Deaktivieren",
-    "settings.useConnection": "Diese Verbindung verwenden",
+    "settings.useConnection": "Verwenden",
     "settings.useConnectionShort": "Verwenden",
     "settings.renameConnection": "Verbindung umbenennen",
     "settings.renameConnectionShort": "Umbenennen",
@@ -185,10 +185,10 @@ export const settingsMessages = {
     "settings.addFavoriteModel": "{model} zu Favoriten hinzufügen",
     "settings.removeFavoriteModel": "{model} aus Favoriten entfernen",
     "settings.noMatchingModels": "Keine Modelle entsprechen diesem Filter.",
-    "settings.refreshModels": "Verfügbare Modelle aktualisieren",
+    "settings.refreshModels": "Aktualisieren",
     "settings.specificModels": "Modelle für bestimmte Aufgaben",
     "settings.specificModelsHint": "Wählen Sie ein Modell für eine Aufgabe oder verwenden Sie das Standardmodell. Dies betrifft nur künftige KI-Anfragen.",
-    "settings.useDefaultModel": "Standardmodell verwenden",
+    "settings.useDefaultModel": "Standardmodell",
     "settings.specificModelHint": "Behalten Sie Standardmodell verwenden bei, sofern diese Aufgabe kein anderes Modell benötigt.",
     "settings.publishingProfile": "Zeichengrenzenprofil",
     "settings.publishingProfileHint": (
@@ -202,7 +202,7 @@ export const settingsMessages = {
     "settings.profileCharacters": "{label} — {count} Zeichen",
     "settings.backupFolder": "Sicherungsordner",
     "settings.backupFolderHint": "Wählen Sie einen lokalen Ordner für Sicherungskopien. Warplyn kann erst nach Ihrer Auswahl dorthin schreiben.",
-    "settings.chooseBackupFolder": "Sicherungsordner auswählen",
+    "settings.chooseBackupFolder": "Auswählen…",
     "settings.revealBackupFolder": "Ordner anzeigen",
     "settings.managedCredential": "Verwaltete Anmeldedaten",
     "settings.backupFolderSelected": "Verwendet {folderName}",
@@ -232,7 +232,7 @@ export const settingsMessages = {
     ),
     "settings.keepBackups": "{count} Sicherungen behalten",
     "settings.keepAllBackups": "Alle Sicherungen behalten",
-    "settings.createBackup": "Sicherung erstellen",
+    "settings.createBackup": "Sichern",
     "settings.createBackupHint": (
         "Sichert Ihre Artikel, gespeicherten Fassungen, Einstellungen, Autorenfähigkeiten und deren Verlauf. " +
         "Browsersicherungen unterstützen Dateien bis 100 MB und insgesamt 500 MB. API-Schlüssel werden " +
@@ -246,7 +246,7 @@ export const settingsMessages = {
         "unverändert."
     ),
     "settings.backupCreateUnavailable": "Sicherungen sind in dieser Browsersitzung nicht verfügbar.",
-    "settings.restoreBackup": "Sicherung wiederherstellen",
+    "settings.restoreBackup": "Wiederherstellen",
     "settings.restoreBackupHint": (
         "Wählen Sie eine Sicherung aus dem gewählten Ordner. Warplyn prüft ihre Dateien, behält eine " +
         "Wiederherstellungskopie und stellt dann Artikel, gespeicherte Fassungen, Einstellungen und " +

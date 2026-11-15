@@ -48,7 +48,7 @@ test("native backup finishes through the production bridge before desktop shutdo
         await app.evaluate(({ dialog }, path) => {
             dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [path] });
         }, destination);
-        await page.getByRole("button", { name: "Choose backup folder" }).click();
+        await page.getByRole("button", { name: "Choose folder…" }).click();
         const usingBackupsPattern = /Using .*backups/;
         await expect(page.getByText(usingBackupsPattern)).toBeVisible();
         await page.getByRole("button", { name: "Create backup", exact: true }).click();

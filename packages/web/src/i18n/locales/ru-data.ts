@@ -3,7 +3,7 @@ import type { MessageId } from "../messages.js";
 export const ruData = {
     "settings.backupFolder": "Папка резервных копий",
     "settings.backupFolderHint": "Выберите локальную папку для резервных копий. Warplyn сможет записывать в неё только после вашего выбора.",
-    "settings.chooseBackupFolder": "Выбрать папку резервных копий",
+    "settings.chooseBackupFolder": "Выбрать папку…",
     "settings.revealBackupFolder": "Открыть папку",
     "settings.managedCredential": "Сохранённые учётные данные",
     "settings.backupFolderSelected": "Используется {folderName}",
@@ -24,7 +24,7 @@ export const ruData = {
     "settings.retentionHint": "Определяет количество автоматических копий. Ручные копии никогда не удаляются автоматически.",
     "settings.keepBackups": "Хранить копии: {count}",
     "settings.keepAllBackups": "Хранить все копии",
-    "settings.createBackup": "Создать резервную копию",
+    "settings.createBackup": "Создать копию",
     "settings.createBackupHint":
         "Сохраняет статьи, версии, настройки, авторские навыки и их историю. В браузере поддерживаются файлы " +
         "до 100 МБ и суммарно до 500 МБ. Ключи API не включаются.",
@@ -34,7 +34,7 @@ export const ruData = {
         "Не удалось создать резервную копию. Проверьте выбранную папку и ограничения браузера на размер, " +
         "затем повторите попытку. Сеанс редактирования не изменён.",
     "settings.backupCreateUnavailable": "Резервные копии недоступны в этом сеансе браузера.",
-    "settings.restoreBackup": "Восстановить резервную копию",
+    "settings.restoreBackup": "Восстановить…",
     "settings.restoreBackupHint":
         "Выберите копию из указанной папки. Warplyn проверит файлы, сохранит копию для восстановления, затем " +
         "восстановит статьи, версии, настройки и навыки. Существующие подключения к ИИ останутся локальными. " +
@@ -70,7 +70,7 @@ export const ruData = {
     "settings.telemetryIdentifierHint":
         "Укажите этот идентификатор при запросе удаления. Скопируйте его до выключения телеметрии: при " +
         "выключении он удаляется.",
-    "settings.copyTelemetryIdentifier": "Копировать идентификатор телеметрии",
+    "settings.copyTelemetryIdentifier": "Копировать ID",
     "settings.telemetryIdentifierCopied": "Идентификатор телеметрии скопирован.",
     "settings.telemetrySaveFailed": "Не удалось сохранить выбор. Предыдущая настройка не изменена. Повторите попытку.",
     "settings.telemetryUnavailable": "Телеметрия доступна только в настроенной сборке приложения.",
@@ -114,7 +114,7 @@ export const ruData = {
     "settings.updatesError.download_failed": "Не удалось скачать обновление. Повторите попытку.",
     "settings.updatesError.apply_failed": "Не удалось подготовить обновление. Повторите попытку или откройте справку по восстановлению обновлений.",
     "settings.checkNow": "Проверить сейчас",
-    "settings.viewReleaseNotes": "Посмотреть примечания к выпуску",
+    "settings.viewReleaseNotes": "Что нового",
     "settings.updateChanges": "Изменения в {version}",
     "settings.securityUpdate": "Обновление безопасности",
     "settings.updateChangesUnavailable": "Сведения о выпуске недоступны. Обновление по-прежнему возможно.",

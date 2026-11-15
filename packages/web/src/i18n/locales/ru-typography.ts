@@ -23,7 +23,7 @@ export const ruTypography = {
     "typography.languageSaveFailed": "Не удалось сохранить язык статьи. Повторите попытку; текст не изменён.",
     "typography.useLanguage": "Использовать язык",
     "typography.loadFailed": "Не удалось загрузить настройки типографики. Повторите загрузку перед редактированием или проверкой.",
-    "typography.retryLoad": "Повторить загрузку настроек",
+    "typography.retryLoad": "Загрузить снова",
     "typography.openingMark": "Открывающий знак",
     "typography.closingMark": "Закрывающий знак",
     "typography.innerSpace": "Пробел внутри кавычек",
@@ -43,8 +43,8 @@ export const ruTypography = {
     "typography.presetReviewHint": "Предварительные наборы ожидают проверки носителем языка. Вы можете добавить свои правила ниже.",
     "typography.applyPreset": "Применить набор",
     "typography.legacyHint": "Прежние общие правила сохранены. Скопируйте их для языка, чтобы использовать в новых проверках.",
-    "typography.copyLegacy": "Скопировать прежние правила для этого языка",
-    "typography.resetInheritance": "Восстановить унаследованные правила",
+    "typography.copyLegacy": "Копировать прежние правила",
+    "typography.resetInheritance": "Сбросить изменения",
     "typography.inheritanceHint":
         "Редактирование заменяет унаследованное правило, удаление отключает его. Восстановите унаследованные " +
         "правила, чтобы сбросить изменения.",

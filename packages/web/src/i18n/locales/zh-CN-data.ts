@@ -3,7 +3,7 @@ import type { MessageId } from "../messages.js";
 export const zhCNData = {
     "settings.backupFolder": "备份文件夹",
     "settings.backupFolderHint": "选择用于保存备份的本地文件夹。只有在您选择后，Warplyn才能写入。",
-    "settings.chooseBackupFolder": "选择备份文件夹",
+    "settings.chooseBackupFolder": "选择文件夹…",
     "settings.revealBackupFolder": "打开文件夹",
     "settings.managedCredential": "托管凭据",
     "settings.backupFolderSelected": "正在使用{folderName}",
@@ -48,7 +48,7 @@ export const zhCNData = {
     "settings.telemetryDetails": "遥测详情",
     "settings.telemetryIdentifier": "遥测ID",
     "settings.telemetryIdentifierHint": "请求删除数据时请附上此ID。关闭遥测会删除ID，请在关闭前复制。",
-    "settings.copyTelemetryIdentifier": "复制遥测ID",
+    "settings.copyTelemetryIdentifier": "复制ID",
     "settings.telemetryIdentifierCopied": "已复制遥测ID。",
     "settings.telemetrySaveFailed": "无法保存选择。之前的设置未更改。请重试。",
     "settings.telemetryUnavailable": "遥测仅在已配置的打包应用中可用。",

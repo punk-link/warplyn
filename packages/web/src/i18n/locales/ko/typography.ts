@@ -33,7 +33,7 @@ export const typographyMessages = {
     "typography.presetReviewHint": "프리셋 미리 보기는 원어민 검토를 기다리고 있습니다. 아래에서 직접 규칙을 추가할 수 있습니다.",
     "typography.applyPreset": "프리셋 적용",
     "typography.legacyHint": "이전 전역 규칙은 유지됩니다. 새 검사에 사용하려면 특정 언어에 복사하세요.",
-    "typography.copyLegacy": "이전 규칙을 이 언어에 복사",
+    "typography.copyLegacy": "이전 규칙 복사",
     "typography.resetInheritance": "상속된 규칙 복원",
     "typography.inheritanceHint": "편집하면 상속된 규칙을 덮어쓰고, 제거하면 비활성화합니다. 덮어쓰기를 지우려면 상속된 규칙을 복원하세요.",
     "typography.noConvention": "적용 가능한 기계적 규칙이 없습니다. 표기 규칙을 선택하거나 이 언어의 규칙을 추가하고 저장하세요.",

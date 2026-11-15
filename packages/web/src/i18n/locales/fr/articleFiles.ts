@@ -2,9 +2,9 @@ import type { MessageId } from "../../messages.js";
 
 export const articleFilesMessages = {
     "articleFiles.save": "Enregistrer dans un fichier",
-    "articleFiles.load": "Charger depuis un fichier",
+    "articleFiles.load": "Charger un fichier",
     "articleFiles.menuSave": "Enregistrer dans un fichier…",
-    "articleFiles.menuLoad": "Charger depuis un fichier…",
+    "articleFiles.menuLoad": "Charger un fichier…",
     "articleFiles.saved": "Article enregistré dans un fichier",
     "articleFiles.downloadStarted": "Téléchargement de l’article lancé",
     "articleFiles.loaded": "Article chargé depuis un fichier",

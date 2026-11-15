@@ -35,7 +35,7 @@ export const views = {
     "views.translationGenerateDescription": "Traduci {title}, versione di origine {revisionId}.",
     "views.translationGenerateDraft": "La bozza non salvata verrà salvata come versione prima della generazione.",
     "views.translationGenerateTargets": "Lingue di destinazione",
-    "views.translationGenerateConfirm": "Genera traduzione in {languages}",
+    "views.translationGenerateConfirm": "Traduci in {languages}",
     "views.translationGenerateBatch": "Traduci in {count, number} lingue",
     "views.translationPreservation": (
         "I risultati e gli articoli esistenti sono conservati. Aggiornare un articolo di traduzione richiede " +
@@ -89,7 +89,7 @@ export const views = {
     "views.restoreDraftDescription": "Questa bozza ha modifiche non presenti in una versione salvata. Salvala o scartala prima di ripristinare.",
     "views.restoreRevision": "Ripristina versione",
     "views.saveAndRestore": "Salva e ripristina",
-    "views.discardDraftAndRestore": "Scarta bozza e ripristina",
+    "views.discardDraftAndRestore": "Scarta e ripristina",
     "views.copy": "Copia",
     "views.factCheck": "Verifica dei fatti",
     "views.factCheckEmptyTitle": "Nessun rilievo di verifica dei fatti",

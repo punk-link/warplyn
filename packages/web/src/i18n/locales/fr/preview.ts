@@ -44,7 +44,7 @@ export const previewMessages = {
     "preview.restoreThisRevision": "Restaurer cette version enregistrée ?",
     "preview.restoringAppendsANewRevisionExisting": "La restauration ajoute une nouvelle version enregistrée. L’historique existant reste disponible.",
     "preview.cancel": "Annuler",
-    "preview.restoreRevision": "Restaurer la version enregistrée",
+    "preview.restoreRevision": "Restaurer",
     "preview.previewNavigation": "Navigation de l’aperçu",
     "preview.saving": "Enregistrement",
     "preview.pinArticle": "Épingler l’article",

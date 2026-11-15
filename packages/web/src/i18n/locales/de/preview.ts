@@ -47,7 +47,7 @@ export const previewMessages = {
         "verfügbar."
     ),
     "preview.cancel": "Abbrechen",
-    "preview.restoreRevision": "Gespeicherte Fassung wiederherstellen",
+    "preview.restoreRevision": "Wiederherstellen",
     "preview.previewNavigation": "Vorschaunavigation",
     "preview.saving": "Wird gespeichert",
     "preview.pinArticle": "Artikel anheften",

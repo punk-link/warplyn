@@ -3,9 +3,9 @@ import type { MessageId } from "../../messages.js";
 export const workspaceMessages = {
     "workspace.tabs.write": "글쓰기",
     "workspace.tabs.proposal": "제안",
-    "workspace.tabs.revisions": "저장된 버전",
+    "workspace.tabs.revisions": "버전",
     "workspace.tabs.factCheck": "팩트 체크",
-    "workspace.tabs.styleProfile": "문체 프로필",
+    "workspace.tabs.styleProfile": "문체",
     "workspace.tabs.translations": "번역",
     "workspace.tabs.ariaLabel": "글 작업 공간 보기",
     "workspace.badges.review": "검토",

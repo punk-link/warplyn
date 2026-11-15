@@ -1,10 +1,10 @@
 import type { MessageId } from "../../messages.js";
 
 export const workspaceMessages = {
-    "workspace.tabs.write": "Écrire",
+    "workspace.tabs.write": "Rédaction",
     "workspace.tabs.proposal": "Propositions",
-    "workspace.tabs.revisions": "Versions enregistrées",
-    "workspace.tabs.factCheck": "Vérification des faits",
+    "workspace.tabs.revisions": "Versions",
+    "workspace.tabs.factCheck": "Fact-check",
     "workspace.tabs.styleProfile": "Profil de style",
     "workspace.tabs.translations": "Traductions",
     "workspace.tabs.ariaLabel": "Vues de l’espace de travail de l’article",

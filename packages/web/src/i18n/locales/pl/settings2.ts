@@ -11,10 +11,10 @@ export const settings2 = {
     "settings.customProfileLimit": "Własny limit znaków",
     "settings.customProfileLimitHint": "Nieujemny limit orientacyjny. Nigdy nie blokuje kopiowania.",
     "settings.customProfileInvalid": "Wpisz nazwę i nieujemny całkowity limit znaków.",
-    "settings.saveCustomProfile": "Zapisz własny profil",
+    "settings.saveCustomProfile": "Zapisz profil",
     "settings.customProfiles": "Własne profile",
     "settings.customProfilesHint": "Dodaj tyle lokalnych profili limitów znaków, ile potrzebujesz.",
-    "settings.addCustomProfile": "Dodaj własny profil",
+    "settings.addCustomProfile": "Dodaj profil",
     "settings.remove": "Usuń",
     "settings.removeCustomProfile": "Usuń {name}",
     "settings.removeCustomProfileTitle": "Usunąć własny profil?",
@@ -22,7 +22,7 @@ export const settings2 = {
     "settings.removeCustomDefaultDescription": "Usunąć <profile>{name}</profile>? Domyślny profil publikacji wróci do wartości Domyślny.",
     "settings.backupFolder": "Folder kopii zapasowych",
     "settings.backupFolderHint": "Wybierz lokalny folder na kopie zapasowe. Warplyn może tam zapisywać dopiero po jego wybraniu.",
-    "settings.chooseBackupFolder": "Wybierz folder kopii zapasowych",
+    "settings.chooseBackupFolder": "Wybierz folder…",
     "settings.revealBackupFolder": "Pokaż folder",
     "settings.managedCredential": "Zarządzane poświadczenie",
     "settings.backupFolderSelected": "Używany: {folderName}",
@@ -45,7 +45,7 @@ export const settings2 = {
     "settings.retentionHint": "Określa liczbę automatycznych kopii zachowywanych przez Warplyn. Ręczne kopie nigdy nie są usuwane automatycznie.",
     "settings.keepBackups": "Zachowaj {count} kopii zapasowych",
     "settings.keepAllBackups": "Zachowaj wszystkie kopie",
-    "settings.createBackup": "Utwórz kopię zapasową",
+    "settings.createBackup": "Utwórz kopię",
     "settings.createBackupHint": (
         "Tworzy kopię artykułów, zapisanych wersji, ustawień, umiejętności autora i ich historii. Kopie w prz" +
         "eglądarce obsługują pliki do 100 MB i 500 MB łącznie. Klucze API są wykluczone."
@@ -57,7 +57,7 @@ export const settings2 = {
         "onownie. Sesja edycji nie uległa zmianie."
     ),
     "settings.backupCreateUnavailable": "Kopie zapasowe są niedostępne w tej sesji przeglądarki.",
-    "settings.restoreBackup": "Przywróć kopię zapasową",
+    "settings.restoreBackup": "Przywróć kopię",
     "settings.restoreBackupHint": (
         "Wybierz kopię z wybranego folderu. Warplyn sprawdza pliki, zachowuje kopię odzyskiwania i przywraca " +
         "artykuły, zapisane wersje, ustawienia i umiejętności. Istniejące połączenia AI pozostają lokalne. Mo" +
@@ -69,7 +69,7 @@ export const settings2 = {
         "wne dane nie uległy zmianie."
     ),
     "settings.restoreBackupUnavailable": "Nie można przywrócić tej kopii.",
-    "settings.chooseBackup": "Wybierz kopię zapasową",
+    "settings.chooseBackup": "Wybierz kopię",
     "settings.restoreBackupConfirm": "Przywrócić {name}? Warplyn zastąpi aktywne dane lokalne i załaduje się ponownie.",
     "settings.deleteData": "Usuń dane lokalne",
     "settings.deleteLocalData": "Usuń wszystkie dane lokalne",
@@ -97,7 +97,7 @@ export const settings2 = {
         "Podaj ten identyfikator przy żądaniu usunięcia danych. Skopiuj go przed wyłączeniem telemetrii, poni" +
         "eważ wyłączenie go usuwa."
     ),
-    "settings.copyTelemetryIdentifier": "Kopiuj identyfikator telemetrii",
+    "settings.copyTelemetryIdentifier": "Kopiuj ID",
     "settings.telemetryIdentifierCopied": "Skopiowano identyfikator telemetrii.",
     "settings.telemetrySaveFailed": "Nie udało się zapisać tego wyboru. Poprzednie ustawienie pozostaje bez zmian. Spróbuj ponownie.",
     "settings.telemetryUnavailable": "Telemetria jest dostępna tylko w skonfigurowanej, spakowanej aplikacji.",

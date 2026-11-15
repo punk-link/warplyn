@@ -26,6 +26,6 @@ export const views2 = {
     ),
     "views.restoreRevision": "Restaurar versión",
     "views.saveAndRestore": "Guardar y restaurar",
-    "views.discardDraftAndRestore": "Descartar borrador y restaurar",
+    "views.discardDraftAndRestore": "Descartar y restaurar",
     "views.copy": "Copiar",
 } satisfies Partial<Record<MessageId, string>>;

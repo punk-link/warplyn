@@ -12,7 +12,7 @@ export const settingsMessages2 = {
         "Geben Sie diese ID bei einem Löschantrag an. Kopieren Sie sie vor dem Ausschalten der Telemetrie, da " +
         "dabei die ID gelöscht wird."
     ),
-    "settings.copyTelemetryIdentifier": "Telemetrie-ID kopieren",
+    "settings.copyTelemetryIdentifier": "ID kopieren",
     "settings.telemetryIdentifierCopied": "Telemetrie-ID kopiert.",
     "settings.telemetrySaveFailed": (
         "Diese Auswahl konnte nicht gespeichert werden. Ihre bisherige Einstellung bleibt unverändert. " +
@@ -76,12 +76,12 @@ export const settingsMessages2 = {
         "Update-Wiederherstellung für Hilfe."
     ),
     "settings.checkNow": "Jetzt prüfen",
-    "settings.viewReleaseNotes": "Versionshinweise anzeigen",
+    "settings.viewReleaseNotes": "Versionshinweise",
     "settings.updateChanges": "Änderungen in {version}",
     "settings.securityUpdate": "Sicherheitsupdate",
     "settings.updateChangesUnavailable": "Versionsdetails sind nicht verfügbar. Sie können dennoch aktualisieren.",
     "settings.downloadUpdate": "Herunterladen",
-    "settings.restartAndUpdate": "Neu starten und aktualisieren",
+    "settings.restartAndUpdate": "Update & Neustart",
     "settings.retry": "Erneut versuchen",
     "settings.updateRecovery": "Update-Wiederherstellung",
     "settings.on": "Ein",
@@ -107,10 +107,10 @@ export const settingsMessages2 = {
     "settings.customProfileLimit": "Eigene Zeichengrenze",
     "settings.customProfileLimitHint": "Ein nicht negativer Richtwert. Er blockiert niemals das Kopieren.",
     "settings.customProfileInvalid": "Geben Sie einen Namen und eine ganze, nicht negative Zeichengrenze ein.",
-    "settings.saveCustomProfile": "Eigenes Profil speichern",
+    "settings.saveCustomProfile": "Speichern",
     "settings.customProfiles": "Eigene Profile",
     "settings.customProfilesHint": "Fügen Sie so viele lokale Zeichengrenzenprofile hinzu, wie Sie benötigen.",
-    "settings.addCustomProfile": "Eigenes Profil hinzufügen",
+    "settings.addCustomProfile": "Profil hinzufügen",
     "settings.remove": "Entfernen",
     "settings.removeCustomProfile": "{name} entfernen",
     "settings.removeCustomProfileTitle": "Eigenes Profil entfernen?",

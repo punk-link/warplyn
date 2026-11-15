@@ -127,7 +127,7 @@ export const typographyMessages = {
     ),
     "typography.checkFailed": "Não foi possível verificar a tipografia. Salve regras válidas e tente novamente.",
     "typography.saveDraftFirst": "Salve o rascunho atual antes de verificar a tipografia. A verificação local utiliza a versão salva.",
-    "typography.reviewProposal": "Proposta de Revisão",
+    "typography.reviewProposal": "Revisar proposta",
     "typography.correction": "{source} → {replacement}",
     "typography.ordinarySpace": "espaço",
     "typography.deleted": "removido",

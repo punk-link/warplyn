@@ -44,8 +44,8 @@ export const assistantMessages = {
     "assistant.reviewTranslation": "Übersetzung prüfen",
     "assistant.guidance": "Redaktionelle Anweisungen",
     "assistant.guidancePlaceholder": "Frage oder Anweisung eingeben…",
-    "assistant.send": "Redaktionelle Anfrage senden",
-    "assistant.stop": "Anfrage stoppen",
+    "assistant.send": "Senden",
+    "assistant.stop": "Stoppen",
     "assistant.greeting": (
         "Hallo! Ich helfe Ihnen, diesen Artikel zu gestalten. Sie behalten die Kontrolle. Erzählen Sie, woran " +
         "Sie arbeiten, oder wählen Sie eine Schnellaktion."
@@ -55,7 +55,7 @@ export const assistantMessages = {
     "assistant.profileRebuilt": "Profil aus {count, plural, one {# aktiven Quelle} other {# aktiven Quellen}} neu erstellt.",
     "assistant.requestStartFailed": "Diese redaktionelle Anfrage konnte nicht abgeschlossen werden.",
     "assistant.errorDetails": "Fehlerdetails",
-    "assistant.openSettings": "Anwendungseinstellungen öffnen",
+    "assistant.openSettings": "Einstellungen",
     "assistant.retry": "Erneut versuchen",
     "assistant.checkpoint.action": "Ab hier bearbeiten",
     "assistant.checkpoint.accessible": "Ab der Autorennachricht von {time} bearbeiten; spätere Gespräche und Arbeiten werden verworfen",
@@ -77,8 +77,8 @@ export const assistantMessages = {
         "Der aktuelle Entwurf kann nicht zur wiederhergestellten Fassung bestehen bleiben. Speichern Sie ihn " +
         "als Fassung oder verwerfen Sie ihn."
     ),
-    "assistant.checkpoint.discard": "Entwurf verwerfen und wiederherstellen",
-    "assistant.checkpoint.save": "Aktuelle Arbeit speichern und wiederherstellen",
+    "assistant.checkpoint.discard": "Verwerfen & laden",
+    "assistant.checkpoint.save": "Speichern & laden",
     "assistant.checkpoint.restore": "Gespräch wiederherstellen",
     "assistant.status.completed": "Abgeschlossen",
     "assistant.status.pending": "In Arbeit",
@@ -88,9 +88,9 @@ export const assistantMessages = {
     "assistant.skillUsed": "Verwendete Fähigkeit",
     "assistant.skill.talkingPoints.label": "Kernpunkte entwickeln",
     "assistant.skill.talkingPoints.hint": "Entwickeln Sie die Kernaussagen, die dieser Artikel vermitteln soll.",
-    "assistant.skill.narrativeDraft.label": "Ideen in einen Entwurf umwandeln",
+    "assistant.skill.narrativeDraft.label": "Entwurf schreiben",
     "assistant.skill.narrativeDraft.hint": "Verwandeln Sie Ihre Ideen in einen zusammenhängenden ersten Entwurf.",
-    "assistant.skill.flowAndClarity.label": "Lesefluss und Klarheit verbessern",
+    "assistant.skill.flowAndClarity.label": "Text klarer machen",
     "assistant.skill.flowAndClarity.hint": "Verbessern Sie Struktur, Übergänge und Lesbarkeit, ohne Ihre Behauptungen zu ändern.",
     "assistant.skill.conciseRewrite.label": "Text kürzen",
     "assistant.skill.conciseRewrite.hint": "Streichen Sie Wiederholungen und Füllwörter, während Bedeutung, Belege und Ihre Stimme erhalten bleiben.",
@@ -131,8 +131,8 @@ export const assistantMessages = {
     "assistant.selectionSkillUnavailable": "Die Übersetzung verwendet den gesamten Artikel. Heben Sie die Auswahl auf, um ihn zu senden.",
     "assistant.setupRequired": "Richten Sie eine Modellverbindung ein, um den Assistenten zu nutzen. Lokales Schreiben bleibt verfügbar.",
     "assistant.editMode.label": "Bearbeitungsmodus",
-    "assistant.editMode.review": "Bearbeitungen zur Prüfung vorschlagen",
-    "assistant.editMode.direct": "Bearbeitungen direkt anwenden",
+    "assistant.editMode.review": "Änderungen vorschlagen",
+    "assistant.editMode.direct": "Direkt anwenden",
     "assistant.activity.proposalReady": "Vorschlag zur Prüfung bereit",
     "assistant.activity.article": "Artikel wird gelesen",
     "assistant.activity.links": "Verknüpfte Artikel werden gelesen",

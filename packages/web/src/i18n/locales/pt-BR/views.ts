@@ -76,8 +76,8 @@ export const viewsMessages = {
     ),
     "views.proposalWhole": "Proposta completa{separator}{changes, plural, one {# mudar} other {# mudanças}}",
     "views.acceptAll": "Marcar tudo como aceito",
-    "views.setAllDecisions": "Defina todas as decisões…",
-    "views.resetAllDecisions": "Redefinir todas as decisões",
+    "views.setAllDecisions": "Decisões…",
+    "views.resetAllDecisions": "Redefinir decisões",
     "views.applyProposal": "Aplicar",
     "views.proposedChangeInput": "Texto proposto para mudança {index}",
     "views.proposalAuthorEdited": "Você editou este texto. Revise seu texto antes de aplicá-lo.",
@@ -159,7 +159,7 @@ export const viewsMessages = {
     "views.translationGenerateDescription": "Traduzir {title}, versão salva de origem {revisionId}.",
     "views.translationGenerateDraft": "Seu rascunho não salvo será salvo como uma versão salva antes da geração.",
     "views.translationGenerateTargets": "Idiomas alvo",
-    "views.translationGenerateConfirm": "Gerar {languages} tradução",
+    "views.translationGenerateConfirm": "Traduzir para {languages}",
     "views.translationGenerateBatch": "Traduzir para {count, number} idiomas",
     "views.translationPreservation": (
         "Os resultados e artigos existentes são mantidos. A atualização de um artigo de tradução requer " +
@@ -216,6 +216,6 @@ export const viewsMessages = {
     ),
     "views.restoreRevision": "Restaurar versão salva",
     "views.saveAndRestore": "Salvar e restaurar",
-    "views.discardDraftAndRestore": "Descartar rascunho e restaurar",
+    "views.discardDraftAndRestore": "Descartar e restaurar",
     "views.copy": "Cópia",
 } satisfies Partial<Record<MessageId, string>>;

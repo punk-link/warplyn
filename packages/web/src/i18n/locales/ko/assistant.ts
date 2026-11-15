@@ -60,7 +60,7 @@ export const assistantMessages = {
     "assistant.checkpoint.replaceComposer": "복원한 메시지가 입력란의 보내지 않은 텍스트를 대체합니다.",
     "assistant.checkpoint.draft": "현재 초안을 복원된 버전에 연결된 상태로 유지할 수 없습니다. 버전으로 저장하거나 버리세요.",
     "assistant.checkpoint.discard": "초안 버리고 복원",
-    "assistant.checkpoint.save": "현재 작업 저장 후 복원",
+    "assistant.checkpoint.save": "저장 후 복원",
     "assistant.checkpoint.restore": "대화 복원",
     "assistant.status.completed": "완료",
     "assistant.status.pending": "작업 중",

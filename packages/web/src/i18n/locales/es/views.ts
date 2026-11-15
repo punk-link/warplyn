@@ -73,8 +73,8 @@ export const views = {
     ),
     "views.proposalWhole": "Propuesta completa{separator}{changes, plural, one {# cambio} other {# cambios}}",
     "views.acceptAll": "Marcar todo como aceptado",
-    "views.setAllDecisions": "Establecer todas las decisiones…",
-    "views.resetAllDecisions": "Restablecer todas las decisiones",
+    "views.setAllDecisions": "Decisiones…",
+    "views.resetAllDecisions": "Restablecer decisiones",
     "views.applyProposal": "Aplicar",
     "views.proposedChangeInput": "Texto propuesto para el cambio {index}",
     "views.proposalAuthorEdited": "Has editado esta redacción. Revisa el texto antes de aplicarlo.",
@@ -156,7 +156,7 @@ export const views = {
     "views.translationGenerateDescription": "Traducir {title}, versión de origen {revisionId}.",
     "views.translationGenerateDraft": "El borrador sin guardar se guardará como una versión antes de generar.",
     "views.translationGenerateTargets": "Idiomas de destino",
-    "views.translationGenerateConfirm": "Generar traducción a {languages}",
+    "views.translationGenerateConfirm": "Traducir a {languages}",
     "views.translationGenerateBatch": "Traducir a {count, number} idiomas",
     "views.translationPreservation": (
         "Se conservan los resultados y artículos existentes. Actualizar un artículo de traducción requiere " +

@@ -76,13 +76,13 @@ export const viewsMessages = {
         "rejetée} other {# rejetées}}"
     ),
     "views.proposalWhole": "Proposition complète{separator}{changes, plural, one {# modification} other {# modifications}}",
-    "views.acceptAll": "Tout marquer comme accepté",
-    "views.setAllDecisions": "Définir toutes les décisions…",
-    "views.resetAllDecisions": "Réinitialiser toutes les décisions",
+    "views.acceptAll": "Tout accepter",
+    "views.setAllDecisions": "Tout décider…",
+    "views.resetAllDecisions": "Tout réinitialiser",
     "views.applyProposal": "Appliquer",
     "views.proposedChangeInput": "Texte proposé pour la modification {index}",
     "views.proposalAuthorEdited": "Vous avez modifié cette formulation. Vérifiez votre texte avant de l’appliquer.",
-    "views.rejectAll": "Tout marquer comme rejeté",
+    "views.rejectAll": "Tout rejeter",
     "views.acceptChange": "Accepter",
     "views.rejectChange": "Rejeter",
     "views.changeNavigation": "Navigation des modifications",
@@ -118,7 +118,7 @@ export const viewsMessages = {
     "views.decision.accepted": "Acceptée",
     "views.decision.rejected": "Rejetée",
     "views.selectChange": "Sélectionner la modification",
-    "views.acceptSelected": "Accepter les modifications sélectionnées",
+    "views.acceptSelected": "Accepter la sélection",
     "views.rejectProposal": "Rejeter la proposition",
     "views.styleProfile": "Profil de style",
     "views.styleIntro": "Votre corpus de style local n’est jamais envoyé intégralement ; seul le profil qui en est dérivé est utilisé.",
@@ -160,7 +160,7 @@ export const viewsMessages = {
     "views.translationGenerateDescription": "Traduire {title}, version source enregistrée {revisionId}.",
     "views.translationGenerateDraft": "Votre brouillon non enregistré sera enregistré comme nouvelle version avant la génération.",
     "views.translationGenerateTargets": "Langues cibles",
-    "views.translationGenerateConfirm": "Générer la traduction en {languages}",
+    "views.translationGenerateConfirm": "Traduire en {languages}",
     "views.translationGenerateBatch": "Traduire en {count, number} langues",
     "views.translationPreservation": (
         "Les résultats et articles existants sont conservés. L’actualisation d’un article traduit nécessite " +
@@ -216,8 +216,8 @@ export const viewsMessages = {
         "Ce brouillon contient des modifications absentes des versions enregistrées. Enregistrez-le d’abord, " +
         "ou abandonnez-le avant la restauration."
     ),
-    "views.restoreRevision": "Restaurer la version enregistrée",
+    "views.restoreRevision": "Restaurer",
     "views.saveAndRestore": "Enregistrer et restaurer",
-    "views.discardDraftAndRestore": "Abandonner le brouillon et restaurer",
+    "views.discardDraftAndRestore": "Abandonner et restaurer",
     "views.copy": "Copier",
 } satisfies Partial<Record<MessageId, string>>;

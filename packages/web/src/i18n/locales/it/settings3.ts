@@ -45,7 +45,7 @@ export const settings3 = {
     "settings.connectionRemoveFailed": "Impossibile rimuovere questa connessione IA. È ancora disponibile nelle Impostazioni. Riprova.",
     "settings.publishingSaveFailed": "Impossibile salvare le impostazioni di pubblicazione. Quelle precedenti non sono cambiate. Riprova.",
     "settings.navigation": "Navigazione delle impostazioni",
-    "settings.backToWorkspace": "Torna all'area di lavoro",
+    "settings.backToWorkspace": "Indietro",
     "settings.general": "Generali",
     "settings.keyBindings": "Scorciatoie da tastiera",
     "settings.keyBindingsIntro": (

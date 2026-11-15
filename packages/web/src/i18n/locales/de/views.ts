@@ -13,7 +13,7 @@ export const viewsMessages = {
         "geändert haben. Führen Sie die Faktenprüfung erneut aus, um sie zu aktualisieren."
     ),
     "views.revisionNumber": "v{revisionNumber}",
-    "views.runFactCheck": "Faktenprüfung ausführen",
+    "views.runFactCheck": "Fakten prüfen",
     "views.factCheckStale": (
         "Diese Hinweise gehören zu einer früheren gespeicherten Fassung. Sie bleiben lesbar, ermöglichen " +
         "jedoch keine Korrektur, bis Sie die Faktenprüfung erneut ausführen."
@@ -33,7 +33,7 @@ export const viewsMessages = {
         "Diese Faktenprüfung ist unvollständig. Es werden nur abgeschlossene Hinweise angezeigt. Führen Sie " +
         "sie erneut aus, um die übrigen Behauptungen zu prüfen."
     ),
-    "views.runFactCheckAgain": "Faktenprüfung erneut ausführen",
+    "views.runFactCheckAgain": "Erneut prüfen",
     "views.selectAllNeedingReview": "Alle zu prüfenden Einträge auswählen",
     "views.proposeFactCorrections": "Korrekturen vorschlagen ({count})",
     "views.proposeFactCorrection": "Korrektur vorschlagen",
@@ -72,13 +72,13 @@ export const viewsMessages = {
         "one {# abgelehnt} other {# abgelehnt}}"
     ),
     "views.proposalWhole": "Vollständiger Vorschlag{separator}{changes, plural, one {# Änderung} other {# Änderungen}}",
-    "views.acceptAll": "Alle als angenommen markieren",
-    "views.setAllDecisions": "Alle Entscheidungen festlegen…",
-    "views.resetAllDecisions": "Alle Entscheidungen zurücksetzen",
+    "views.acceptAll": "Alle annehmen",
+    "views.setAllDecisions": "Alle festlegen…",
+    "views.resetAllDecisions": "Alle zurücksetzen",
     "views.applyProposal": "Anwenden",
     "views.proposedChangeInput": "Vorgeschlagener Text für Änderung {index}",
     "views.proposalAuthorEdited": "Sie haben diese Formulierung bearbeitet. Prüfen Sie Ihren Text vor dem Anwenden.",
-    "views.rejectAll": "Alle als abgelehnt markieren",
+    "views.rejectAll": "Alle ablehnen",
     "views.acceptChange": "Annehmen",
     "views.rejectChange": "Ablehnen",
     "views.changeNavigation": "Änderungsnavigation",
@@ -114,7 +114,7 @@ export const viewsMessages = {
     "views.decision.accepted": "Angenommen",
     "views.decision.rejected": "Abgelehnt",
     "views.selectChange": "Änderung auswählen",
-    "views.acceptSelected": "Ausgewählte Änderungen annehmen",
+    "views.acceptSelected": "Auswahl annehmen",
     "views.rejectProposal": "Vorschlag ablehnen",
     "views.styleProfile": "Stilprofil",
     "views.styleIntro": "Ihr lokaler Stilkorpus wird niemals vollständig gesendet. Nur das daraus abgeleitete Profil wird verwendet.",
@@ -156,7 +156,7 @@ export const viewsMessages = {
     "views.translationGenerateDescription": "{title} übersetzen, gespeicherte Quellfassung {revisionId}.",
     "views.translationGenerateDraft": "Ihr ungespeicherter Entwurf wird vor der Generierung als Fassung gespeichert.",
     "views.translationGenerateTargets": "Zielsprachen",
-    "views.translationGenerateConfirm": "Übersetzung für {languages} erzeugen",
+    "views.translationGenerateConfirm": "In {languages} übersetzen",
     "views.translationGenerateBatch": "In {count, number} Sprachen übersetzen",
     "views.translationPreservation": (
         "Bestehende Ergebnisse und Artikel bleiben erhalten. Das Aktualisieren eines Übersetzungsartikels " +
@@ -211,8 +211,8 @@ export const viewsMessages = {
         "Dieser Entwurf enthält Änderungen, die in keiner gespeicherten Fassung enthalten sind. Speichern Sie " +
         "ihn zuerst oder verwerfen Sie ihn vor der Wiederherstellung."
     ),
-    "views.restoreRevision": "Gespeicherte Fassung wiederherstellen",
-    "views.saveAndRestore": "Speichern und wiederherstellen",
-    "views.discardDraftAndRestore": "Entwurf verwerfen und wiederherstellen",
+    "views.restoreRevision": "Wiederherstellen",
+    "views.saveAndRestore": "Speichern & laden",
+    "views.discardDraftAndRestore": "Verwerfen & laden",
     "views.copy": "Kopieren",
 } satisfies Partial<Record<MessageId, string>>;
