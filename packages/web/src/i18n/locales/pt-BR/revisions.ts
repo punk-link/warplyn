@@ -1,0 +1,27 @@
+import type { MessageId } from "../../messages.js";
+
+export const revisionsMessages = {
+    "revisions.heading": "Histórico de versões salvas",
+    "revisions.current": "Atual",
+    "revisions.revision": "Versão salva",
+    "revisions.restore": "Restaurar esta versão salva",
+    "revisions.count": "{count, plural, =0 {Sem versões salvas} one {# versão salva} other {# versões salvas}}",
+    "revisions.historyNavigation": "Histórico de versões salvas",
+    "revisions.select": "Selecione uma versão salva",
+    "revisions.articleContent": "Conteúdo do artigo salvo",
+    "revisions.inactive": "Inativo",
+    "revisions.emptyContent": "Esta Versão salva não possui texto de Artigo salvo.",
+    "revisions.characterCount": "{count} caracteres",
+    "revisions.initial": "Versão salva Inicial",
+    "revisions.empty": "Versão salva Vazia",
+    "revisions.author": "Versão salva do autor",
+    "revisions.acceptedProposal": "Proposta aceita",
+    "revisions.restored": "Versão salva Restaurada",
+    "revisions.restoredTarget": "Versão salva Restaurada #{number}",
+    "revisions.restoredTargetDescribed": "Versão salva restaurada #{number}: {description}",
+    "revisions.saved": "Versão salva",
+    "revisions.restoredFromEarlier": "Restaurado de uma versão salva anterior",
+    "revisions.currentRevision": "Versão salva Atual",
+    "revisions.currentExplanation": "Esta é a versão salva atual.",
+    "revisions.assistantEdit": "Edição do assistente",
+} satisfies Partial<Record<MessageId, string>>;

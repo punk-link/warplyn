@@ -2,7 +2,7 @@ import { dirname, join } from "node:path";
 import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, screen, session, shell } from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 import { createLocalApplication, loadServerConfig, loadServerEnvironment, registerElectronIpcApplicationAdapter, validateDatabaseSnapshot } from "@skladno/server/electron";
-import { defaultInterfaceLocale, getElectronMessagesFor } from "@skladno/shared";
+import { defaultInterfaceLocale, getElectronMessagesFor, type ElectronMessages } from "@skladno/shared";
 import { requestDraftCheckpoint } from "../application/lifecycle/close-coordinator.js";
 import { applyPendingRestore } from "../infrastructure/recovery/pending-restore.js";
 import { PendingRestoreError } from "../infrastructure/recovery/pending-restore-error.js";
@@ -32,7 +32,7 @@ let mainWindow: BrowserWindow | undefined;
 let backups: ReturnType<typeof createDesktopBackupScheduler> | undefined;
 let closeApplication: (() => Promise<void>) | undefined;
 let closing = false;
-let nativeMessages = getElectronMessagesFor(defaultInterfaceLocale);
+const nativeMessages: ElectronMessages = { ...getElectronMessagesFor(defaultInterfaceLocale) };
 let updates: ReturnType<typeof createDesktopUpdateCoordinator> | undefined;
 let telemetry: ReturnType<typeof createTelemetryOwner> | undefined;
 
@@ -227,8 +227,11 @@ if (supportsNativeUpdates() && squirrelStartup) {
             throw pendingRestore ? new PendingRestoreError(error) : error;
         }
 
-        nativeMessages = getElectronMessagesFor((await application.services.settings.getSnapshot()).general.interfaceLocale);
-        const cancelStreams = registerElectronIpcApplicationAdapter(ipcMain, application.services, application.editorial);
+        Object.assign(nativeMessages, getElectronMessagesFor((await application.services.settings.getSnapshot()).general.interfaceLocale));
+        const cancelStreams = registerElectronIpcApplicationAdapter(
+            ipcMain, application.services, application.editorial, undefined,
+            (locale) => Object.assign(nativeMessages, getElectronMessagesFor(locale)),
+        );
         registerDesktopSettingsAdapter({
             ipcMain,
             shell,

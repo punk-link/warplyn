@@ -1,10 +1,18 @@
 # Internationalization
 
-Skladno ships one complete interface locale, English (`en`). Application-owned renderer copy lives in `packages/web/src/i18n/messages.ts`; semantic IDs are stable and grouped by responsibility. `locales/en.ts` must contain exactly that inventory.
+Warplyn includes interface catalogs for English (`en`), neutral Spanish (`es`), Brazilian Portuguese (`pt-BR`), French (`fr`), German (`de`), Russian (`ru`), Japanese (`ja`), Simplified Chinese (`zh-CN`), Italian (`it`), Polish (`pl`), and Korean (`ko`). Application-owned renderer copy lives in `packages/web/src/i18n/messages.ts`; semantic IDs are stable and grouped by responsibility. Every installed catalog must contain exactly that inventory and preserve ICU arguments and rich-text tags. Native dialogs use the matching shared catalog.
+
+The ten new locales are translation drafts pending human review. For issue #114, the Author explicitly authorized implementation before named-reviewer approval. Kirill can review `es`, `pt-BR`, `ru`, and `pl`; reviewers for the other locales remain unassigned. Installation does not establish release approval. See the [terminology drafts](../i18n/locale-terminology-drafts.md) for terminology and review status.
+
+The interface language selector shows each language's native name so it remains recognizable after switching languages. A successful Settings save changes renderer copy immediately, updates the HTML language, and persists the locale independently of Article language. Unknown persisted locale values fall back to English.
+
+The landing build emits static pages at `/<locale>/` using `site/locales`, including translated metadata and accessible labels. Footer language links provide explicit selection and a route back to English. Canonical URLs, language alternatives, and the sitemap include these pages. The plans page and linked user documentation remain in English.
 
 Use ICU messages for interpolation and count-dependent wording. Parameters are named data such as `{articleTitle}` and `{count}`; never concatenate translated fragments or treat author input as ICU source. Use `intl.formatNumber`/`FormattedNumber` for displayed numbers and `formatDateTime` for timestamps so General date and time preferences stay consistent.
 
 Accessible-only names have their own IDs. Do not translate Article text, proposals, findings, citations, user-entered names, model IDs, environment-variable names, paths, URLs, Markdown, or persisted enum values.
+
+Skill instruction bodies and model system prompts remain in English independently of the interface locale. This also applies to catalog entries sent as model instructions, such as `assistant.factCheckCorrectionPrompt` and `views.updateSuggestionPrompt`. Translate interface labels and help around Skills, without rewriting the instruction packages themselves.
 
 ## Application terminology
 

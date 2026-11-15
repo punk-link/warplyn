@@ -1,0 +1,27 @@
+import type { MessageId } from "../../messages.js";
+
+export const revisionsMessages = {
+    "revisions.heading": "Historique des versions enregistrées",
+    "revisions.current": "Actuelle",
+    "revisions.revision": "Version enregistrée",
+    "revisions.restore": "Restaurer cette version enregistrée",
+    "revisions.count": "{count, plural, =0 {Aucune version enregistrée} one {# version enregistrée} other {# versions enregistrées}}",
+    "revisions.historyNavigation": "Historique des versions enregistrées",
+    "revisions.select": "Choisir une version enregistrée",
+    "revisions.articleContent": "Contenu enregistré de l’article",
+    "revisions.inactive": "Inactive",
+    "revisions.emptyContent": "Cette version enregistrée ne contient aucun texte d’article.",
+    "revisions.characterCount": "{count} caractères",
+    "revisions.initial": "Version enregistrée initiale",
+    "revisions.empty": "Version enregistrée vide",
+    "revisions.author": "Version enregistrée par l’auteur",
+    "revisions.acceptedProposal": "Proposition acceptée",
+    "revisions.restored": "Version restaurée",
+    "revisions.restoredTarget": "Version enregistrée n° {number} restaurée",
+    "revisions.restoredTargetDescribed": "Version enregistrée n° {number} restaurée — {description}",
+    "revisions.saved": "Version enregistrée",
+    "revisions.restoredFromEarlier": "Restaurée depuis une version antérieure",
+    "revisions.currentRevision": "Version enregistrée actuelle",
+    "revisions.currentExplanation": "Il s’agit de la version enregistrée actuelle.",
+    "revisions.assistantEdit": "Retouche de l’assistant",
+} satisfies Partial<Record<MessageId, string>>;

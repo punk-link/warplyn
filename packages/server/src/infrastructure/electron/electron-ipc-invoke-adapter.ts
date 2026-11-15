@@ -1,4 +1,7 @@
-import { APPLICATION_ERROR, ELECTRON_APPLICATION_METHOD, HTTP_STATUS, isElectronApplicationMethod, type ElectronApplicationMethod, type ElectronInvokeRequest, type ElectronInvokeResult, type ElectronIpcError } from "@skladno/shared";
+import {
+    APPLICATION_ERROR, ELECTRON_APPLICATION_METHOD, HTTP_STATUS, isElectronApplicationMethod,
+    type ElectronApplicationMethod, type ElectronInvokeRequest, type ElectronInvokeResult, type ElectronIpcError, type InterfaceLocale,
+} from "@skladno/shared";
 
 import type { ApplicationServices } from "../../application/application-services.js";
 import { ArticleDraftConflictError } from "../../application/articles/article-draft-conflict-error.js";
@@ -58,7 +61,10 @@ function setAssistantClaimSelected(args: readonly unknown[], services: Applicati
 }
 
 
-async function invokeApplicationMethod(method: ElectronApplicationMethod, args: readonly unknown[], services: ApplicationServices, now: () => string): Promise<unknown> {
+async function invokeApplicationMethod(
+    method: ElectronApplicationMethod, args: readonly unknown[], services: ApplicationServices, now: () => string,
+    onInterfaceLocaleChanged?: (locale: InterfaceLocale) => void,
+): Promise<unknown> {
     switch (method) {
         case ELECTRON_APPLICATION_METHOD.listArticleSummaries:
             return services.articles.listArticleSummaries();
@@ -82,8 +88,11 @@ async function invokeApplicationMethod(method: ElectronApplicationMethod, args: 
             return { status: "ok", service: "skladno-local-service", timestamp: now() };
         case ELECTRON_APPLICATION_METHOD.getApplicationSettings:
             return services.settings.getSnapshot();
-        case ELECTRON_APPLICATION_METHOD.updateGeneralSettings:
-            return services.settings.updateGeneral(args[0]);
+        case ELECTRON_APPLICATION_METHOD.updateGeneralSettings: {
+            const saved = services.settings.updateGeneral(args[0]);
+            onInterfaceLocaleChanged?.(saved.interfaceLocale);
+            return saved;
+        }
         case ELECTRON_APPLICATION_METHOD.updateBackupPolicy:
             return services.settings.updateBackupPolicy(args[0]);
         case ELECTRON_APPLICATION_METHOD.updateKeyBindingOverrides:
@@ -208,12 +217,16 @@ function restoreAssistantCheckpoint(args: readonly unknown[], services: Applicat
 }
 
 
-export async function invokeElectronApplication(request: unknown, services: ApplicationServices, now: () => string): Promise<ElectronInvokeResult> {
+export async function invokeElectronApplication(
+    request: unknown, services: ApplicationServices, now: () => string,
+    onInterfaceLocaleChanged?: (locale: InterfaceLocale) => void,
+): Promise<ElectronInvokeResult> {
     if (!isValidInvokeRequest(request))
         return { ok: false, error: { code: APPLICATION_ERROR.INVALID_REQUEST, status: HTTP_STATUS.BAD_REQUEST } };
 
     try {
-        return { ok: true, value: await invokeApplicationMethod(request.method, request.args, services, now) } as ElectronInvokeResult;
+        const value = await invokeApplicationMethod(request.method, request.args, services, now, onInterfaceLocaleChanged);
+        return { ok: true, value } as ElectronInvokeResult;
     } catch (error) {
         return { ok: false, error: createErrorPayload(error) };
     }

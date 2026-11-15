@@ -54,7 +54,7 @@ export function GeneralSettingsSection({ general, save, applyTheme, telemetry }:
                     const value = event.target.value;
                     if (isInterfaceLocale(value))
                         void save({ ...general, interfaceLocale: value });
-                }}>{installedLocaleCatalogs.map((catalog) => <option key={catalog.code} value={catalog.code}>{intl.formatMessage({ id: catalog.nameMessageId })}</option>)}
+                }}>{installedLocaleCatalogs.map((catalog) => <option key={catalog.code} value={catalog.code}>{catalog.nativeName}</option>)}
                 </Select>
             </SettingRow>
             <SettingRow headingLevel={3} label={intl.formatMessage({ id: "settings.animations" })}

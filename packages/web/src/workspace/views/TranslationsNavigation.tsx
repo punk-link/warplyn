@@ -39,6 +39,7 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
             ? getRevisionTitle(revision, intl.formatMessage({ id: getProvenanceMessageId(revision, revisions) }))
             : intl.formatMessage({ id: "revisions.saved" });
         return intl.formatMessage({ id: "views.translationResultOption" }, {
+            separator: " · ",
             number: index + 1,
             date: result.createdAt ? formatDate(result.createdAt, generalSettings?.dateFormat, generalSettings?.timeZone) : "",
             description,

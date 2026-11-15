@@ -1397,6 +1397,20 @@ p {
     gap: 17px;
   }
 }
+.language-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1.5rem;
+}
+html:lang(ko) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.language-navigation [aria-current="page"] {
+  font-weight: 700;
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

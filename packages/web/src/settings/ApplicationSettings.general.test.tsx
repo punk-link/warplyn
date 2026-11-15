@@ -3,10 +3,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defaultGeneralSettings } from "@skladno/shared";
+import { defaultGeneralSettings, type GeneralSettings } from "@skladno/shared";
 
 import type { EditorialWorkspaceClient } from "../application/client.js";
 import { messages } from "../i18n/messages.js";
+import { es } from "../i18n/locales/es.js";
+import { I18nProvider } from "../i18n/I18nProvider.js";
 import { getMessage } from "../i18n/test-message.js";
 import { NotificationProvider } from "../notifications/NotificationProvider.js";
 import { ApplicationSettings } from "./ApplicationSettings.js";
@@ -14,9 +16,39 @@ import { resetApplicationSettingsTestEnvironment, settingsSnapshot } from "./App
 
 
 // Product scenario: settings.general-time-zone-preferences
+// Product scenarios: cross-cutting.interface-locale-switching
 
 describe("ApplicationSettings general", () => {
     afterEach(resetApplicationSettingsTestEnvironment);
+
+    it("applies a saved interface language immediately and loads it again after remount", async () => {
+        const user = userEvent.setup();
+        let general = { ...defaultGeneralSettings };
+        const client = {
+            listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
+            getApplicationSettings: vi.fn().mockImplementation(async () => ({ ...settingsSnapshot(), general })),
+            updateGeneralSettings: vi.fn().mockImplementation(async (next: GeneralSettings) => {
+                general = next;
+                return next;
+            }),
+            getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }),
+        } as unknown as EditorialWorkspaceClient;
+        const fixture = <I18nProvider client={client}>
+            <NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider>
+        </I18nProvider>;
+        const rendered = render(fixture);
+        const heading = await screen.findByText(messages["settings.interfaceLanguage"]);
+        const select = heading.closest("section")?.querySelector("select") as HTMLSelectElement;
+        await user.selectOptions(select, "es");
+        await screen.findByText(es["settings.appearanceAndLanguage"]);
+        expect(document.documentElement.lang).toBe("es");
+        expect(general.interfaceLocale).toBe("es");
+        rendered.unmount();
+        render(fixture);
+        await screen.findByText(es["settings.appearanceAndLanguage"]);
+        expect(document.documentElement.lang).toBe("es");
+        document.documentElement.lang = "en";
+    });
 
     it("defaults animations on and applies the saved preference immediately", async () => {
         const user = userEvent.setup();
@@ -165,13 +197,14 @@ describe("ApplicationSettings general", () => {
         expect(onThemeApplied).toHaveBeenCalledWith("dark");
     });
 
-    it("marks the single supported interface language as unavailable", async () => {
+    it("offers the installed interface languages", async () => {
         const client = {
             listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture), getApplicationSettings: vi.fn().mockResolvedValue(settingsSnapshot()), getPublishingSettings: vi.fn().mockResolvedValue({ defaultProfileId: "default", customProfiles: [] }) } as unknown as EditorialWorkspaceClient;
         render(<IntlProvider locale="en" messages={messages}><NotificationProvider><ApplicationSettings client={client} back={vi.fn()} /></NotificationProvider></IntlProvider>);
         const heading = await screen.findByText("Interface language");
         const select = heading.closest("section")?.querySelector("select") as HTMLSelectElement;
-        expect(select.disabled).toBe(true);
+        expect(select.disabled).toBe(false);
+        expect(Array.from(select.options, (option) => option.value)).toContain("es");
         expect(select.getAttribute("aria-describedby")).toBeTruthy();
     });
 
