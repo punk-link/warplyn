@@ -1,0 +1,21 @@
+{
+    "version": "0.8.4-preview.7",
+    "previousTag": "v0.8.4-preview.6",
+    "previousCommit": "65a090551d02f96bca68a7c82a04fb7b5f0eae76",
+    "baseline": "published",
+    "sourceCommit": "4085144496c5274c5f65a5085798e9713abc8847",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": true,
+            "text": "Fixed an app startup issue where the window could remain hidden. Warplyn now shows the window after the first screen loads.",
+            "commits": [
+                "7a77d001b30d0c8347ae243dfa558026d711299c"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
