@@ -83,7 +83,7 @@ test("interface languages switch immediately and survive reload without changing
         }
 
         await page.reload();
-        await expect(page.locator("html")).toHaveAttribute("lang", "ko");
+        await expect(page.locator("html")).toHaveAttribute("lang", installedLocaleCatalogs.at(-1)!.code);
         const stored = await (await page.request.get(`${service}/api/articles/${article.id}`)).json();
         expect(stored.title).toBe(article.title);
         expect(stored.language).toBe(article.language);

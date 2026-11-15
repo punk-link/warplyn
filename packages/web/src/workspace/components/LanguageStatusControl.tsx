@@ -7,10 +7,6 @@ import { WritingLanguageDialog } from "./WritingLanguageDialog.js";
 import { getDisplayLanguageName } from "../../i18n/display-language-name.js";
 
 
-type LanguageMessageId = "languages.english" | "languages.spanish" | "languages.portuguese" | "languages.russian" | "languages.french" | "languages.german" | "languages.italian";
-const languageMessageIds: Record<string, LanguageMessageId> = { en: "languages.english", es: "languages.spanish", pt: "languages.portuguese", ru: "languages.russian", fr: "languages.french", de: "languages.german", it: "languages.italian" };
-
-
 export function LanguageStatusControl({ language, setLanguage, open, onToggle, onOpen, onClose }: { language: string; setLanguage: (language: string) => Promise<void>; open: boolean; onToggle: () => void; onOpen: () => void; onClose: () => void }) {
     const intl = useIntl();
     const trigger = useRef<HTMLButtonElement>(null);
@@ -21,10 +17,7 @@ export function LanguageStatusControl({ language, setLanguage, open, onToggle, o
         if (!normalized || normalizeWritingLanguage(normalized) !== normalized)
             return tag;
 
-        const messageId = languageMessageIds[normalized];
-        return messageId
-            ? `${intl.formatMessage({ id: messageId })} (${new Intl.DisplayNames(["en"], { type: "language" }).of(normalized) ?? tag})`
-            : getDisplayLanguageName(normalized, intl.locale);
+        return getDisplayLanguageName(normalized, intl.locale);
     };
 
 

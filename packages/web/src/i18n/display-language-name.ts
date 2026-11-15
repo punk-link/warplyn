@@ -1,9 +1,9 @@
-import { normalizeWritingLanguage } from "@skladno/shared";
+import { normalizeArticleLanguage, normalizeWritingLanguage } from "@skladno/shared";
 
 
 export function getDisplayLanguageName(languageId: string, locale: string): string {
-    const normalized = normalizeWritingLanguage(languageId);
-    if (!normalized)
+    const normalized = normalizeArticleLanguage(languageId);
+    if (!normalized || normalizeWritingLanguage(normalized) !== normalized)
         return languageId;
 
     const localName = new Intl.DisplayNames([locale], { type: "language" }).of(normalized);

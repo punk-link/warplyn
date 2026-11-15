@@ -71,7 +71,7 @@ export const settings3 = {
     "settings.providers": "Provider",
     "settings.publishing": "Pubblicazione",
     "settings.dataBackups": "Dati e backup",
-    "settings.about": "Informazioni su Warplyn",
+    "settings.about": "Informazioni",
     "settings.aboutDescription": "Un'area di scrittura che privilegia i dati locali, con un assistente editoriale IA quando vuoi aiuto.",
     "settings.projectResources": "Risorse del progetto",
     "settings.mitLicense": "Licenza MIT",
