@@ -17,6 +17,7 @@ const nullCharacter = "\0";
 function getChangedLines() {
     return execFileSync("git", ["diff", "--no-ext-diff", "--unified=0", comparison.revision, "--"], {
         encoding: "utf8",
+        maxBuffer: 64 * 1024 * 1024,
     });
 }
 

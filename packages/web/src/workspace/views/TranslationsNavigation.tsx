@@ -8,7 +8,7 @@ import type { Translation } from "./translations-view-types.js";
 import { ChevronDownIcon } from "../../ui/icons.js";
 import { handleStatusMenuKeyDown, openStatusMenu } from "../components/ArticleStatusBarMenu.js";
 import { getProvenanceMessageId, getRevisionTitle } from "./revision-history-presentation.js";
-import { getDisplayLanguageName } from "../state/editorial-language.js";
+import { getDisplayLanguageName } from "../../i18n/display-language-name.js";
 
 
 interface TranslationsNavigationProps {

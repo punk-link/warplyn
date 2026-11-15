@@ -5,7 +5,7 @@ import { SettingsGroup, SettingRow } from "./SettingRow.js";
 import { useSpellingSettings } from "../use-spelling-settings.js";
 import type { DictionaryState } from "@skladno/shared";
 import type { MessageId } from "../../i18n/messages.js";
-import { getDisplayLanguageName } from "../../workspace/state/editorial-language.js";
+import { getDisplayLanguageName } from "../../i18n/display-language-name.js";
 
 const stateMessages: Record<DictionaryState, MessageId> = {
     unverified: "spelling.unverified", preparing: "spelling.preparing", ready: "spelling.ready", failed: "spelling.failed", unloaded: "spelling.unloaded",
@@ -23,7 +23,11 @@ export function SpellingSettingsSection() {
 
     const query = languageSearch.trim().toLocaleLowerCase(intl.locale);
     const languages = (snapshot?.dictionaries.supported ?? [])
-        .map((code) => ({ code, label: intl.formatMessage({ id: "spelling.languageVariant" }, { language: getDisplayLanguageName(code, intl.locale), code }), downloaded: snapshot?.dictionaries.states[code] === "ready" }))
+        .map((code) => ({
+            code,
+            label: intl.formatMessage({ id: "spelling.languageVariant" }, { language: getDisplayLanguageName(code, intl.locale), code }),
+            downloaded: snapshot?.dictionaries.states[code] === "ready",
+        }))
         .filter((language) => language.label.toLocaleLowerCase(intl.locale).includes(query))
         .sort((left, right) => Number(right.downloaded) - Number(left.downloaded) || left.label.localeCompare(right.label, intl.locale));
     const words = snapshot?.personal.words.filter((word) => word.toLocaleLowerCase(intl.locale).includes(spelling.search.toLocaleLowerCase(intl.locale))) ?? [];

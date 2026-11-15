@@ -4,7 +4,7 @@ import { articleLanguages, normalizeWritingLanguage, normalizeArticleLanguage } 
 import { ChevronDownIcon } from "../../ui/icons.js";
 import { handleStatusMenuKeyDown, openStatusMenu } from "./ArticleStatusBarMenu.js";
 import { WritingLanguageDialog } from "./WritingLanguageDialog.js";
-import { getDisplayLanguageName } from "../state/editorial-language.js";
+import { getDisplayLanguageName } from "../../i18n/display-language-name.js";
 
 
 type LanguageMessageId = "languages.english" | "languages.spanish" | "languages.portuguese" | "languages.russian" | "languages.french" | "languages.german" | "languages.italian";

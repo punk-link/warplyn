@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { articleLanguages, normalizeArticleLanguage } from "@skladno/shared";
 import { Button } from "./primitives.js";
 import { TranslationLanguageInput } from "./TranslationLanguageInput.js";
-import { getDisplayLanguageName } from "../workspace/state/editorial-language.js";
+import { getDisplayLanguageName } from "../i18n/display-language-name.js";
 
 const languageMessageIds = {
     en: "languages.english", es: "languages.spanish", pt: "languages.portuguese", ru: "languages.russian",

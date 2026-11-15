@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { useIntl } from "react-intl";
 import type { TranslationsData } from "./translations-view-data.js";
 import { ActivityIndicator } from "../../ui/primitives.js";
-import { getDisplayLanguageName } from "../state/editorial-language.js";
+import { getDisplayLanguageName } from "../../i18n/display-language-name.js";
 
 
 export function TranslationReviewSurface({ generation, children }: PropsWithChildren<{ generation: TranslationsData["generation"] }>) {

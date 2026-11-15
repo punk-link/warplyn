@@ -54,7 +54,7 @@ export const settings = {
     "settings.connections": "Conexiones",
     "settings.models": "Modelos",
     "settings.publishingProfiles": "Perfiles de publicación",
-    "settings.languageDefaults": "Idiomas predeterminados",
+    "settings.languageDefaults": "Idiomas",
     "settings.backupStorage": "Almacenamiento de copias de seguridad",
     "settings.backupAutomation": "Copias de seguridad automáticas",
     "settings.preferredAppearance": "Apariencia preferida",

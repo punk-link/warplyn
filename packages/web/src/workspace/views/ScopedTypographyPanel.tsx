@@ -6,7 +6,7 @@ import {
 } from "@skladno/shared";
 import { Button, Select, Banner } from "../../ui/primitives.js";
 import { TypographyScopeEditor } from "./TypographyScopeEditor.js";
-import { getDisplayLanguageName } from "../state/editorial-language.js";
+import { getDisplayLanguageName } from "../../i18n/display-language-name.js";
 
 
 export function ScopedTypographyPanel({ data, actions }: {
