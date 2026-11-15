@@ -1,4 +1,14 @@
 import { defaultInterfaceLocale, INTERFACE_LOCALE, type InterfaceLocale } from "../../settings/settings.js";
+import { es } from "./locales/es/index.js";
+import { ptBR } from "./locales/pt-BR/index.js";
+import { fr } from "./locales/fr/index.js";
+import { de } from "./locales/de/index.js";
+import { ru } from "./locales/ru/index.js";
+import { ja } from "./locales/ja/index.js";
+import { zhCN } from "./locales/zh-CN/index.js";
+import { it } from "./locales/it/index.js";
+import { pl } from "./locales/pl/index.js";
+import { ko } from "./locales/ko/index.js";
 
 
 const englishElectronMessages = {
@@ -41,6 +51,16 @@ export type ElectronMessages = Record<keyof typeof englishElectronMessages, stri
 
 const electronCatalogs = {
     [INTERFACE_LOCALE.EN]: englishElectronMessages,
+    [INTERFACE_LOCALE.ES]: es,
+    [INTERFACE_LOCALE.PT_BR]: ptBR,
+    [INTERFACE_LOCALE.FR]: fr,
+    [INTERFACE_LOCALE.DE]: de,
+    [INTERFACE_LOCALE.RU]: ru,
+    [INTERFACE_LOCALE.JA]: ja,
+    [INTERFACE_LOCALE.ZH_CN]: zhCN,
+    [INTERFACE_LOCALE.IT]: it,
+    [INTERFACE_LOCALE.PL]: pl,
+    [INTERFACE_LOCALE.KO]: ko,
 } satisfies Record<InterfaceLocale, ElectronMessages>;
 
 

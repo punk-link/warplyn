@@ -61,11 +61,11 @@ export function UiLanguagePreview() {
                 <div className="min-w-0 space-y-6">
                     <section id="workspace" className="overflow-hidden rounded-panel border border-border bg-surface">
                         <div className="border-b border-border p-5">
-                            <p className="text-xs text-muted">{intl.formatMessage({ id: "preview.articleUpdatedJustNow" })}</p>
+                            <p className="text-xs text-muted">{intl.formatMessage({ id: "preview.articleUpdatedJustNow" }, { separator: " · " })}</p>
                             <h2 className="mt-2 font-editor text-2xl">
                                 {intl.formatMessage({ id: "preview.makeSpaceForTheImportantSentence" })}
                             </h2>
-                            <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "preview.draftSavedLocally" })}</p>
+                            <p className="mt-1 text-xs text-muted">{intl.formatMessage({ id: "preview.draftSavedLocally" }, { separator: " · " })}</p>
                         </div>
                         <WorkspaceTabBar
                             view={view}
@@ -157,6 +157,7 @@ export function UiLanguagePreview() {
                         <h2 className="text-base font-semibold">{intl.formatMessage({ id: "preview.feedbackAndReview" })}</h2>
                         <div className="mt-4 grid gap-4 lg:grid-cols-2">
                             <Status label={intl.formatMessage({ id: "preview.saved" })} tone="success">
+                                {" · "}
                                 {intl.formatMessage({ id: "preview.yourDraftIsAvailableLocally" })}
                             </Status>
                             <Banner tone="warning" role="alert">

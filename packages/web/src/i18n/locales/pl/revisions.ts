@@ -1,0 +1,27 @@
+import type { MessageId } from "../../messages.js";
+
+export const revisions = {
+    "revisions.assistantEdit": "Edycja asystenta",
+    "revisions.heading": "Historia wersji",
+    "revisions.current": "Obecna",
+    "revisions.revision": "Zapisana wersja",
+    "revisions.restore": "Przywróć tę wersję",
+    "revisions.count": "{count, plural, =0 {Brak zapisanych wersji} one {# zapisana wersja} few {# zapisane wersje} other {# zapisanych wersji}}",
+    "revisions.historyNavigation": "Historia wersji",
+    "revisions.select": "Wybierz zapisaną wersję",
+    "revisions.articleContent": "Zapisana treść artykułu",
+    "revisions.inactive": "Nieaktywna",
+    "revisions.emptyContent": "Ta wersja nie zawiera zapisanego tekstu artykułu.",
+    "revisions.characterCount": "{count} znaków",
+    "revisions.initial": "Wersja początkowa",
+    "revisions.empty": "Pusta wersja",
+    "revisions.author": "Wersja autora",
+    "revisions.acceptedProposal": "Zaakceptowana propozycja",
+    "revisions.restored": "Przywrócona wersja",
+    "revisions.restoredTarget": "Przywrócona wersja nr {number}",
+    "revisions.restoredTargetDescribed": "Przywrócona wersja nr {number}: {description}",
+    "revisions.saved": "Zapisana wersja",
+    "revisions.restoredFromEarlier": "Przywrócono z wcześniejszej wersji",
+    "revisions.currentRevision": "Obecna wersja",
+    "revisions.currentExplanation": "To jest obecna wersja.",
+} satisfies Partial<Record<MessageId, string>>;

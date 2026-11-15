@@ -26,7 +26,9 @@ export function TypographyPresetPicker({ language, saved, disabled, apply }: {
                 <option value="">{intl.formatMessage({ id: "typography.noPreset" })}</option>
                 {typographyPresets.filter((item) => item.language.split("-")[0] === language.split("-")[0]).map((item) => (
                     <option key={`${item.id}@${item.version}`} value={`${item.id}@${item.version}`}>
-                        {item.review.status === "pending" ? intl.formatMessage({ id: "typography.presetPending" }, { language: item.language }) : item.language}
+                        {item.review.status === "pending" ? intl.formatMessage(
+                            { id: "typography.presetPending" }, { language: item.language, separator: " · " },
+                        ) : item.language}
                     </option>
                 ),
                 )}

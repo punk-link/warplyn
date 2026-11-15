@@ -1,0 +1,27 @@
+import type { MessageId } from "../../messages.js";
+
+export const revisions = {
+    "revisions.heading": "Historial de versiones",
+    "revisions.current": "Actual",
+    "revisions.revision": "Versión guardada",
+    "revisions.restore": "Restaurar esta versión",
+    "revisions.count": "{count, plural, =0 {Sin versiones guardadas} one {# versión guardada} other {# versiones guardadas}}",
+    "revisions.historyNavigation": "Historial de versiones",
+    "revisions.select": "Elegir una versión guardada",
+    "revisions.articleContent": "Contenido guardado del artículo",
+    "revisions.inactive": "Inactiva",
+    "revisions.emptyContent": "Esta versión no tiene texto del artículo guardado.",
+    "revisions.characterCount": "{count} caracteres",
+    "revisions.initial": "Versión inicial",
+    "revisions.empty": "Versión vacía",
+    "revisions.author": "Versión del autor",
+    "revisions.acceptedProposal": "Propuesta aceptada",
+    "revisions.restored": "Versión restaurada",
+    "revisions.restoredTarget": "Versión restaurada n.º {number}",
+    "revisions.restoredTargetDescribed": "Versión restaurada n.º {number}: {description}",
+    "revisions.saved": "Versión guardada",
+    "revisions.restoredFromEarlier": "Restaurada desde una versión anterior",
+    "revisions.currentRevision": "Versión actual",
+    "revisions.currentExplanation": "Esta es la versión actual.",
+    "revisions.assistantEdit": "Edición del asistente",
+} satisfies Partial<Record<MessageId, string>>;

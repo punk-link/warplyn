@@ -28,7 +28,7 @@ export function SettingsNavigation({ section, setSection, back, status }: { sect
         <header data-focus-area="settings-navigation" data-focus-area-native-tab className="flex shrink-0 items-center gap-3 border-b border-border bg-surface-supporting p-2 md:hidden">
             <Button
                 data-focus-area-entry
-                className="inline-flex items-center gap-2"
+                className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap"
                 variant="quiet"
                 onClick={back}>
                 <ArrowLeftIcon className="size-4" />{intl.formatMessage({ id: "settings.backToWorkspace" })}
@@ -49,7 +49,7 @@ export function SettingsNavigation({ section, setSection, back, status }: { sect
             <header className="flex min-h-18 items-center border-b border-border px-3">
                 <Button
                     data-focus-area-entry
-                    className="inline-flex items-center gap-2"
+                    className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap"
                     variant="quiet"
                     onClick={back}><ArrowLeftIcon className="size-4" />{intl.formatMessage({ id: "settings.backToWorkspace" })}
                 </Button>

@@ -6,7 +6,7 @@ description: "Build a local Style Profile from your writing and manage rules for
 
 Use **Style Profile** to give the Assistant examples of your writing and reusable guidance. Your samples stay on this device. They do not become part of an *Article* or *Revision*.
 
-Open **Style Profile** from the **Article Library utility area**. Use the side menu, or the section selector on a narrow window, to choose **Writing samples**, **Manual rules**, or **Typography rules**. **Back to workspace** returns to your *Article* and the view you left.
+Open **Style Profile** from the **Article Library utility area**. Use the side menu, or the section selector on a narrow window, to choose **Writing samples**, **Manual rules**, or **Typography rules**. **Back** returns to your *Article* and the view you left.
 
 ::: tip Choose a starting point
 Add writing samples when you want detected voice characteristics, or add **Manual rules** when you already know what guidance to give. You can use either one without the other.

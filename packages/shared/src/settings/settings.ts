@@ -22,6 +22,16 @@ export interface BackupBundleManifest {
 export type ApplicationScreen = "editorial-workspace" | "application-settings";
 export const INTERFACE_LOCALE = {
     EN: "en",
+    ES: "es",
+    PT_BR: "pt-BR",
+    FR: "fr",
+    DE: "de",
+    RU: "ru",
+    JA: "ja",
+    ZH_CN: "zh-CN",
+    IT: "it",
+    PL: "pl",
+    KO: "ko",
 } as const;
 
 export type InterfaceLocale = typeof INTERFACE_LOCALE[keyof typeof INTERFACE_LOCALE];

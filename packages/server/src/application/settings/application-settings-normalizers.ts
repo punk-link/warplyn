@@ -40,7 +40,7 @@ function normalizeTranslationLanguages(candidate: Partial<GeneralSettings>): str
 function normalizeGeneralPreferences(candidate: Partial<GeneralSettings>): Pick<GeneralSettings, "theme" | "interfaceLocale" | "dateFormat" | "timeFormat" | "timeZone" | "assistantSendMode" | "defaultAssistantEditMode" | "assistantRequestTimeoutMinutes"> {
     return {
         theme: isThemePreference(candidate.theme) ? candidate.theme : defaultGeneralSettings.theme,
-        interfaceLocale: candidate.interfaceLocale === INTERFACE_LOCALE.EN ? candidate.interfaceLocale : defaultInterfaceLocale,
+        interfaceLocale: Object.values(INTERFACE_LOCALE).find((locale) => locale === candidate.interfaceLocale) ?? defaultInterfaceLocale,
         dateFormat: isDateFormatPreference(candidate.dateFormat) ? candidate.dateFormat : defaultGeneralSettings.dateFormat,
         timeFormat: isTimeFormatPreference(candidate.timeFormat) ? candidate.timeFormat : defaultGeneralSettings.timeFormat,
         timeZone: isTimeZonePreference(candidate.timeZone) ? candidate.timeZone : defaultGeneralSettings.timeZone,

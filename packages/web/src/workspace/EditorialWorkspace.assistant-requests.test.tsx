@@ -265,7 +265,7 @@ describe("Editorial Workspace assistant requests", () => {
         await user.click(screen.getByRole("option", { name: getMessage("assistant.skill.talkingPoints.label") }));
         await user.click(screen.getByRole("button", { name: getMessage("assistant.send") }));
         await user.click(await screen.findByRole("button", { name: "Open Application Settings" }));
-        await user.click(screen.getAllByRole("button", { name: "Back to workspace" })[0]);
+        await user.click(screen.getAllByRole("button", { name: "Back" })[0]);
 
         expect(screen.getByRole("heading", { name: "First Article" })).toBeTruthy();
         expect(screen.getByRole("tab", { name: "Revisions" }).getAttribute("aria-selected")).toBe("true");

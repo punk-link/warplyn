@@ -1,0 +1,27 @@
+import type { MessageId } from "../../messages.js";
+
+export const revisionsMessages = {
+    "revisions.heading": "Fassungsverlauf",
+    "revisions.current": "Aktuell",
+    "revisions.revision": "Fassung",
+    "revisions.restore": "Wiederherstellen",
+    "revisions.count": "{count, plural, =0 {Keine gespeicherten Fassungen} one {# gespeicherte Fassung} other {# gespeicherte Fassungen}}",
+    "revisions.historyNavigation": "Fassungsverlauf",
+    "revisions.select": "Fassung wählen",
+    "revisions.articleContent": "Gespeicherter Artikelinhalt",
+    "revisions.inactive": "Inaktiv",
+    "revisions.emptyContent": "Diese gespeicherte Fassung enthält keinen Artikeltext.",
+    "revisions.characterCount": "{count} Zeichen",
+    "revisions.initial": "Erste gespeicherte Fassung",
+    "revisions.empty": "Leere gespeicherte Fassung",
+    "revisions.author": "Vom Autor gespeicherte Fassung",
+    "revisions.acceptedProposal": "Angenommener Vorschlag",
+    "revisions.restored": "Wiederhergestellte Fassung",
+    "revisions.restoredTarget": "Wiederhergestellte Fassung Nr. {number}",
+    "revisions.restoredTargetDescribed": "Wiederhergestellte Fassung Nr. {number} — {description}",
+    "revisions.saved": "Gespeicherte Fassung",
+    "revisions.restoredFromEarlier": "Aus einer früheren Fassung wiederhergestellt",
+    "revisions.currentRevision": "Aktuelle gespeicherte Fassung",
+    "revisions.currentExplanation": "Dies ist die aktuelle gespeicherte Fassung.",
+    "revisions.assistantEdit": "Bearbeitung durch den Assistenten",
+} satisfies Partial<Record<MessageId, string>>;

@@ -18,7 +18,6 @@ export function registerArticleSpellingMenu(window: BrowserWindow, spelling: Spe
         if (!window.isDestroyed())
             window.webContents.send("warplyn:spelling-failed", kind);
     };
-    const addWordLabel = messages["electron.spelling.addWord"];
     const show = async (_event: Electron.Event, params: ContextMenuParams) => {
         if (!params.isEditable)
             return;
@@ -52,7 +51,7 @@ export function registerArticleSpellingMenu(window: BrowserWindow, spelling: Spe
                 if (failed.length)
                     showFailure("word");
             }).catch(() => showFailure("word"));
-            entries.push(...spellingEntries(params, addWordLabel, correct, add));
+            entries.push(...spellingEntries(params, messages["electron.spelling.addWord"], correct, add));
         }
 
         if (article)

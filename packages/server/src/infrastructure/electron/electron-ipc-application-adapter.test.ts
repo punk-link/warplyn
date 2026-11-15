@@ -5,9 +5,9 @@ import { join } from "node:path";
 import test from "node:test";
 
 import {
-    APPLICATION_ERROR, HTTP_STATUS, ELECTRON_APPLICATION_METHOD, ELECTRON_IPC_CHANNEL,
+    APPLICATION_ERROR, HTTP_STATUS, ELECTRON_APPLICATION_METHOD, ELECTRON_IPC_CHANNEL, defaultGeneralSettings,
     type ElectronStreamRequest, type ElectronStreamEvent, type ElectronApplicationMethod,
-    type ElectronApplicationArguments, type ElectronIpcError, type ElectronInvokeResult,
+    type ElectronApplicationArguments, type ElectronIpcError, type ElectronInvokeResult, type InterfaceLocale,
 } from "@skladno/shared";
 
 import { createApplicationServices } from "../../application/create-application-services.js";
@@ -54,7 +54,9 @@ class FakeIpcMain implements ElectronIpcMain {
 }
 
 
-function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; persistence: ReturnType<typeof createTestPersistence>; close: () => void } {
+function createAdapter(
+    engine?: EditorialEngine, onInterfaceLocaleChanged?: (locale: InterfaceLocale) => void,
+): { ipcMain: FakeIpcMain; persistence: ReturnType<typeof createTestPersistence>; close: () => void } {
     const directory = mkdtempSync(join(tmpdir(), "skladno-electron-ipc-"));
     const database = openDatabase(join(directory, "skladno.sqlite"));
     const persistence = createTestPersistence(database);
@@ -69,7 +71,7 @@ function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; persis
     );
     const ipcMain = new FakeIpcMain();
 
-    registerElectronIpcApplicationAdapter(ipcMain, services, editorial, () => "2026-08-10T00:00:00.000Z");
+    registerElectronIpcApplicationAdapter(ipcMain, services, editorial, () => "2026-08-10T00:00:00.000Z", onInterfaceLocaleChanged);
 
     return {
         ipcMain,
@@ -80,6 +82,24 @@ function createAdapter(engine?: EditorialEngine): { ipcMain: FakeIpcMain; persis
         },
     };
 }
+
+
+test("native locale follows successfully persisted General Settings only", async () => {
+    const locales: InterfaceLocale[] = [];
+    const adapter = createAdapter(undefined, (locale) => locales.push(locale));
+    try {
+        const updated = await adapter.ipcMain.invoke({
+            method: "updateGeneralSettings", args: [{ ...defaultGeneralSettings, interfaceLocale: "es" }],
+        });
+        assert.equal(updated.ok, true);
+        assert.deepEqual(locales, ["es"]);
+        const invalid = await adapter.ipcMain.invoke({ method: "updateGeneralSettings", args: [JSON.parse('{"theme":"invalid"}')] });
+        assert.equal(invalid.ok, false);
+        assert.deepEqual(locales, ["es"]);
+    } finally {
+        adapter.close();
+    }
+});
 
 
 test("Electron acceptance enforces edited protected content and Revision conflicts", async () => {

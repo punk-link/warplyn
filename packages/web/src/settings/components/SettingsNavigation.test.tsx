@@ -25,7 +25,7 @@ it("reaches every desktop section and the back action with arrow keys", async ()
     await user.keyboard("{End}");
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "About Warplyn" }));
     await user.keyboard("{ArrowDown}");
-    expect(document.activeElement).toBe(screen.getAllByRole("button", { name: "Back to workspace" })[1]);
+    expect(document.activeElement).toBe(screen.getAllByRole("button", { name: "Back" })[1]);
     await user.keyboard("{ArrowUp}");
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "About Warplyn" }));
 });

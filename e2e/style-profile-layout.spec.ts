@@ -14,7 +14,7 @@ test("Style Profile section navigation preserves drafts on desktop and narrow sc
     await expect(page.getByRole("tab", { name: "Style Profile", exact: true })).toHaveCount(0);
     await page.getByRole("button", { name: "Style Profile", exact: true }).click();
     await expect(page.getByRole("tablist")).toHaveCount(0);
-    const back = page.getByRole("button", { name: "Back to workspace", exact: true });
+    const back = page.getByRole("button", { name: "Back", exact: true });
     await expect(back).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await expect(page.getByRole("button", { name: "Detected characteristics", exact: true })).toBeFocused();

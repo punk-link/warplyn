@@ -3,8 +3,10 @@ import { test } from "node:test";
 import { mkdtemp, readFile, readdir, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { BrowserWindow, IpcMain, IpcMainInvokeEvent, SaveDialogOptions } from "electron";
-import { articleFilesChannel, articleMarkdownByteLimit, getElectronMessagesFor, type ArticleFilesResult } from "@skladno/shared";
+import type { BrowserWindow, IpcMain, IpcMainInvokeEvent, OpenDialogOptions, SaveDialogOptions } from "electron";
+import {
+    articleFilesChannel, articleMarkdownByteLimit, getElectronMessagesFor, type ArticleFilesResult, type ElectronMessages,
+} from "@skladno/shared";
 import { registerDesktopArticleFilesAdapter } from "./desktop-article-files.js";
 import { createDesktopArticleFilesClient } from "./desktop-article-files-client.js";
 import { readArticleFile, writeArticleFile } from "../../infrastructure/articles/article-file-storage.js";
@@ -30,17 +32,24 @@ test("native file client saves and loads whole Markdown, cancels silently, and r
     let cancel = false;
     let fail = false;
     let dialogCount = 0;
+    const messages: ElectronMessages = { ...getElectronMessagesFor() };
     registerDesktopArticleFilesAdapter({
-        ipcMain, window, messages: getElectronMessagesFor(),
+        ipcMain, window, messages,
         dialog: {
-            async showOpenDialog() {
+            async showOpenDialog(...args: unknown[]) {
+                const options = args[1] as OpenDialogOptions;
+                assert.equal(options.title, messages["electron.articleFiles.load"]);
+                assert.equal(options.filters?.[0].name, messages["electron.articleFiles.markdown"]);
                 dialogCount++;
                 if (fail)
                     throw new Error("private path and raw error");
 
                 return { canceled: cancel, filePaths: [path] };
             },
-            async showSaveDialog() {
+            async showSaveDialog(...args: unknown[]) {
+                const options = args[1] as SaveDialogOptions;
+                assert.equal(options.title, messages["electron.articleFiles.save"]);
+                assert.equal(options.filters?.[0].name, messages["electron.articleFiles.markdown"]);
                 dialogCount++;
                 if (fail)
                     throw new Error("private path and raw error");
@@ -63,6 +72,9 @@ test("native file client saves and loads whole Markdown, cancels silently, and r
         const content = "# café 🙂\n\n[docs](https://example.com)\n\n```ts\nconst value = 34;\n```";
         assert.equal(await save(content), "saved");
         assert.equal(await readFile(path, "utf8"), content);
+        assert.deepEqual(await client.loadFile(), { fileName: "café.md", bytes: new TextEncoder().encode(content) });
+        Object.assign(messages, getElectronMessagesFor("es"));
+        assert.equal(await save(content), "saved");
         assert.deepEqual(await client.loadFile(), { fileName: "café.md", bytes: new TextEncoder().encode(content) });
         cancel = true;
         assert.equal(await client.loadFile(), null);

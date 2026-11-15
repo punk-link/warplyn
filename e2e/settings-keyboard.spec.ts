@@ -5,7 +5,7 @@ test("Settings keyboard navigation reaches sections and all visible content cont
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");
     await page.getByRole("button", { name: "Settings", exact: true }).click();
-    const back = page.getByRole("button", { name: "Back to workspace" });
+    const back = page.getByRole("button", { name: "Back", exact: true });
     await back.focus();
     await page.keyboard.press("ArrowDown");
     await expect(page.getByRole("button", { name: "General", exact: true })).toBeFocused();

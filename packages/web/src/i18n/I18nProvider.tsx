@@ -3,6 +3,7 @@ import { IntlProvider } from "react-intl";
 import { defaultInterfaceLocale, type ApplicationSettingsClient, type InterfaceLocale } from "@skladno/shared";
 import { catalogByLocale } from "./catalogs.js";
 import { messages } from "./messages.js";
+import { InterfaceLocaleContext } from "./interface-locale-context.js";
 
 
 export function I18nProvider({ client, children }: { client: ApplicationSettingsClient; children: ReactNode }) {
@@ -16,10 +17,17 @@ export function I18nProvider({ client, children }: { client: ApplicationSettings
     }, [client]);
 
     const catalog = catalogByLocale.get(locale)?.messages ?? messages;
-    return <IntlProvider
-        locale={locale}
-        defaultLocale={defaultInterfaceLocale}
-        messages={catalog}
-        defaultFormats={{}}>{children}
-    </IntlProvider>;
+    useEffect(() => {
+        document.documentElement.lang = locale;
+    }, [locale]);
+
+    return <InterfaceLocaleContext.Provider value={setLocale}>
+        <IntlProvider
+            locale={locale}
+            defaultLocale={defaultInterfaceLocale}
+            messages={catalog}
+            defaultFormats={{}}>
+            {children}
+        </IntlProvider>
+    </InterfaceLocaleContext.Provider>;
 }

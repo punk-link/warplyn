@@ -62,7 +62,9 @@ export function StyleProfileView({ data, actions }: { data: StyleProfileViewData
     const activeCount = corpus?.items.filter((item) => item.included).length ?? 0;
     const selectableRevisions = revisions.map((revision, index) => ({ revision, number: index + 1 })).sort((left, right) => right.revision.createdAt.localeCompare(left.revision.createdAt));
     const summary = corpus?.profile
-        ? intl.formatMessage({ id: "styleProfile.summary" }, { version: corpus.profile.version, confidence: corpus.profile.confidence })
+        ? intl.formatMessage({ id: "styleProfile.summary" }, {
+            version: corpus.profile.version, confidence: corpus.profile.confidence, separator: " · ",
+        })
         : intl.formatMessage({ id: "styleProfile.none" });
     const run = (action: string, operation: () => Promise<unknown>, onSuccess?: () => void) => {
         setPendingAction(action);

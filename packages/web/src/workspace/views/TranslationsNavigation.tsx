@@ -8,6 +8,7 @@ import type { Translation } from "./translations-view-types.js";
 import { ChevronDownIcon } from "../../ui/icons.js";
 import { handleStatusMenuKeyDown, openStatusMenu } from "../components/ArticleStatusBarMenu.js";
 import { getProvenanceMessageId, getRevisionTitle } from "./revision-history-presentation.js";
+import { getDisplayLanguageName } from "../../i18n/display-language-name.js";
 
 
 interface TranslationsNavigationProps {
@@ -39,6 +40,7 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
             ? getRevisionTitle(revision, intl.formatMessage({ id: getProvenanceMessageId(revision, revisions) }))
             : intl.formatMessage({ id: "revisions.saved" });
         return intl.formatMessage({ id: "views.translationResultOption" }, {
+            separator: " · ",
             number: index + 1,
             date: result.createdAt ? formatDate(result.createdAt, generalSettings?.dateFormat, generalSettings?.timeZone) : "",
             description,
@@ -50,7 +52,7 @@ export function TranslationsNavigation({ article, sourceArticle, languages, sele
             <TabList className="mt-4">
                 {languages.map((language) => (
                     <Tab key={language} selected={language === selectedLanguage} onClick={() => selectTargetLanguage?.(language)}>
-                        {language}
+                        {getDisplayLanguageName(language, intl.locale)}
                     </Tab>
                 ))}
             </TabList>
