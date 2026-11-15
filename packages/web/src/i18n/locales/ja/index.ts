@@ -1,12 +1,12 @@
 import type { MessageId } from "../messages.js";
-import { jaWorkspace } from "./ja-workspace.js";
-import { jaAssistant } from "./ja-assistant.js";
-import { jaReview } from "./ja-review.js";
-import { jaSettings } from "./ja-settings.js";
-import { jaData } from "./ja-data.js";
-import { jaErrors } from "./ja-errors.js";
-import { jaTypography } from "./ja-typography.js";
-import { jaPreview } from "./ja-preview.js";
+import { jaWorkspace } from "./workspace.js";
+import { jaAssistant } from "./assistant.js";
+import { jaReview } from "./review.js";
+import { jaSettings } from "./settings.js";
+import { jaData } from "./data.js";
+import { jaErrors } from "./errors.js";
+import { jaTypography } from "./typography.js";
+import { jaPreview } from "./preview.js";
 import { getElectronMessagesFor, INTERFACE_LOCALE } from "@skladno/shared";
 
 /** Complete translation draft; native-language review is pending. */

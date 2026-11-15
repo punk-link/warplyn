@@ -1,12 +1,12 @@
 import type { MessageId } from "../messages.js";
-import { zhCNWorkspace } from "./zh-CN-workspace.js";
-import { zhCNAssistant } from "./zh-CN-assistant.js";
-import { zhCNReview } from "./zh-CN-review.js";
-import { zhCNSettings } from "./zh-CN-settings.js";
-import { zhCNData } from "./zh-CN-data.js";
-import { zhCNErrors } from "./zh-CN-errors.js";
-import { zhCNTypography } from "./zh-CN-typography.js";
-import { zhCNPreview } from "./zh-CN-preview.js";
+import { zhCNWorkspace } from "./workspace.js";
+import { zhCNAssistant } from "./assistant.js";
+import { zhCNReview } from "./review.js";
+import { zhCNSettings } from "./settings.js";
+import { zhCNData } from "./data.js";
+import { zhCNErrors } from "./errors.js";
+import { zhCNTypography } from "./typography.js";
+import { zhCNPreview } from "./preview.js";
 import { getElectronMessagesFor, INTERFACE_LOCALE } from "@skladno/shared";
 
 /** Complete translation draft; native-language review is pending. */

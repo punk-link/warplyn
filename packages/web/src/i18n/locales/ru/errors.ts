@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 
 export const ruErrors = {
     "errors.generic": "Не удалось завершить действие. Статья не изменена. Повторите попытку.",

@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 
 export const jaErrors = {
     "errors.generic": "操作を完了できませんでした。記事は変更されていません。もう一度お試しください。",

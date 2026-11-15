@@ -1,11 +1,11 @@
 import type { MessageId } from "../messages.js";
 import { getElectronMessagesFor, INTERFACE_LOCALE } from "@skladno/shared";
-import { ruReview } from "./ru-review.js";
-import { ruSettings } from "./ru-settings.js";
-import { ruData } from "./ru-data.js";
-import { ruErrors } from "./ru-errors.js";
-import { ruTypography } from "./ru-typography.js";
-import { ruPreview } from "./ru-preview.js";
+import { ruReview } from "./review.js";
+import { ruSettings } from "./settings.js";
+import { ruData } from "./data.js";
+import { ruErrors } from "./errors.js";
+import { ruTypography } from "./typography.js";
+import { ruPreview } from "./preview.js";
 
 /** Complete translation draft; native-language review is pending. */
 export const ru: Record<MessageId, string> = {

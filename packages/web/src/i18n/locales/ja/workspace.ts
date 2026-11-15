@@ -1,4 +1,4 @@
-import type { MessageId } from "../messages.js";
+import type { MessageId } from "../../messages.js";
 
 export const jaWorkspace = {
     "workspace.tabs.translations": "翻訳",
