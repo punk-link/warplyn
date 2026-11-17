@@ -1,4 +1,4 @@
-# Skladno UI foundation
+# Warplyn UI foundation
 
 Use the shared tokens in `packages/web/src/design-tokens.css`, loaded by `packages/web/src/styles.css`, and the shared components in `packages/web/src/ui/primitives.tsx`. Feature code must not introduce raw palette, radius, focus, elevation, font-size, or tracking values.
 
@@ -67,5 +67,5 @@ Shared focus traversal owns movement and restoration. Features retain their loca
 Feature behavior belongs in the canonical records rather than this visual foundation:
 
 - [`product-model/areas`](../../../product-model/areas) records capabilities and contracts.
-- The UI guardrail references define the [Article Library Panel and Navigation Rail](../../../.codex/skills/skladno-ui-guardrails/references/article-library-panel.md) and [Editorial Assistant Panel](../../../.codex/skills/skladno-ui-guardrails/references/editorial-assistant-panel.md).
+- Focused design references define the [Article Library Panel and Navigation Rail](article-library-panel.md), [Editorial Assistant Panel](editorial-assistant-panel.md), [Article Workspace](article-workspace.md), and [Settings](settings.md). Read the matching reference when changing those surfaces.
 - Generated inventories in [`docs/development/product`](../product) summarize the product model and must not be edited directly.

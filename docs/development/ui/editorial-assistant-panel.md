@@ -16,7 +16,7 @@ Use these decisions for the desktop Editorial Assistant Panel and its collapsed 
 - Reserve textarea space for an inline paper-plane Send icon at the lower right. Give the icon-only Send control an accessible name and never let it cover entered text.
 - Offer optional built-in skills through one **Quick actions** dropdown button immediately above the composer. Open it upward without reflowing the composer.
 - Quick actions and `/` insert one structured skill tag at the composer caret. The visible tag can be removed without deleting the author’s remaining message.
-- Send is the sole request trigger. It is enabled for a non-empty author message, with or without a skill tag, and disabled while streaming.
+- Send submits a non-empty author message, with or without a skill tag, and is disabled while streaming. Ctrl-activation of a skill sends its prepared request immediately, including existing composer guidance, as described in the [Ctrl action shortcuts](design-system.md#ctrl-action-shortcuts). Preserve the same prerequisites and validation for both triggers.
 - A non-empty Article Editor selection becomes the active request scope. Show a removable `Article selection` chip and only offer selection-compatible skills.
 
 ## Shared state and safety

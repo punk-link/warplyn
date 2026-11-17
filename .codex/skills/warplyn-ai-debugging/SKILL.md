@@ -1,9 +1,9 @@
 ---
-name: skladno-ai-debugging
-description: Diagnose failed or slow Skladno Assistant and Editorial operations across AI SDK providers, completion, and Electron transport. Use for runtime AI failures, including failures that persist after a fix; not for general UI bugs or new AI features.
+name: warplyn-ai-debugging
+description: Diagnose failed or slow Warplyn Assistant and Editorial operations across AI SDK providers, completion, and Electron transport. Use for runtime AI failures, including failures that persist after a fix; not for general UI bugs or new AI features.
 ---
 
-# Skladno AI debugging
+# Warplyn AI debugging
 
 Find the failing stage before changing concurrency, deadlines, retries, or validation. Recovery improvements and passing mock tests do not establish the cause of a real provider failure. If the same symptom returns, reopen the diagnosis.
 

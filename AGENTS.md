@@ -26,7 +26,7 @@ Do not delete, disable, weaken, or bypass an existing lint rule or static check 
 
 ## Plans and delegation
 
-Use the [plans and delegation skill](.codex/skills/plans-and-delegation/SKILL.md) when creating or implementing a durable plan, or for requested agent delegation.
+Follow the [planning and delegation guidance](docs/development/guides/context-efficient-agent-work.md#plans-and-delegation) when creating or implementing a durable plan, or coordinating requested agents.
 
 ## Read for the affected area
 

@@ -12,6 +12,14 @@ When adding or changing an App Model caller, follow [ADR-007](../architecture/ad
 
 Use `rg` to find current owners and tests rather than relying on a fixed file map. For renderer ownership, consult [ADR-003](../architecture/adr-003-web-feature-oriented-react-architecture.md); for UI changes, consult the [design system](../ui/design-system.md). Keep command output focused on the failing diagnostic or a short success summary.
 
+## Plans and delegation
+
+Create a repository plan when work needs a durable handoff. Ground each step in current code, name owner files or symbols, settle design decisions, and specify an applicable check with its expected result. Group work by capability, including errors, accessibility, localization, diagnostics, and tests where relevant. Planning alone does not authorize implementation.
+
+Before implementing an existing plan, compare its assumptions and assignments with the current tree and refresh stale references. Execute authorized steps and their checks.
+
+Use agents when the user or an applicable instruction requests delegation and tasks have separate ownership. Record each task's owner, files, dependencies, deliverable, and verification. Give shared files one owner and integrate dependent edits in order. The main agent owns final verification. Follow the session's model and tool constraints; if a planned agent is unavailable, continue sequentially where authorized and report the limit.
+
 ## Import-checker limitation
 
 The application-client-to-feature rule in `scripts/web-import-boundaries.mjs` still matches the former `application-client.ts` filename. Until that rule covers the current `application/` adapters, review their imports directly. Passing the checker alone does not prove this boundary. This is a maintenance limitation, not an architectural exception.

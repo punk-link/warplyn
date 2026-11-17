@@ -1,9 +1,9 @@
 ---
-name: skladno-user-docs
-description: Write or revise Skladno user documentation, including help articles, setup guides, and feature explanations. Use when changing content in site/user-docs or other Author-facing instructions.
+name: warplyn-user-docs
+description: Write or revise Warplyn help articles, setup guides, and feature explanations in site/user-docs or other Author-facing instructions.
 ---
 
-# Skladno user documentation
+# Warplyn user documentation
 
 Write for Authors using the current application. Check the relevant screen's rendered controls and `packages/web/src/i18n/messages.ts` before naming a setting, action, view, or status. Use the exact English interface label in headings, steps, and cross-references. If the interface differs from the documentation, verify current behavior before choosing wording; do not invent a friendlier label and present it as a second product name.
 
@@ -15,9 +15,7 @@ Use a why-and-how approach: explain when a feature helps the Author, then show h
 
 When covering a list of documentation gaps, map every requested topic to a useful explanation and actionable instructions where appropriate. A glossary definition, passing mention, or link alone does not cover a workflow. Extend or rewrite existing articles where the topic belongs; add an article when it gives Authors a clearer place to find the material. Choose article boundaries around Author tasks, without forcing one article per topic or compressing unrelated topics to meet an article count.
 
-Keep introductory copy connected and useful: add context when sentences feel abrupt, but avoid padding the landing page with obvious guarantees or repeating content already covered by the index or navigation.
-
-Give each entity one name throughout an article. Repeat the same term when clarity needs it; do not alternate synonyms or pair two names for one entity. A heading about the **App model** setting should call it **App model**, matching the control, rather than renaming it “Text generation model for Skladno.” Distinguish genuinely different entities, such as the App model and the Default model.
+Use one name per entity, matching its interface label. Distinguish the App model from the Default model.
 
 Use Markdown emphasis for application domain terms in prose, such as *Article*, *Draft*, and *Revision*. Format commands the Author types or runs in inline code, such as `npm run dev`; use fenced code blocks for multiline commands.
 
