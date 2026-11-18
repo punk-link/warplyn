@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { defaultGeneralSettings, defaultPublishingSettings, type AppModelPreference, type ApplicationSettingsSnapshot, type BackupPolicy, type GeneralSettings, type KeyBindingOverrides, type ModelPreferences, type PublishingSettings } from "@skladno/shared";
 import type { EditorialWorkspaceClient } from "../application/client.js";
 import { useIntl } from "react-intl";
+import { InterfaceLocaleContext } from "../i18n/interface-locale-context.js";
 import { useNotifications } from "../notifications/NotificationProvider.js";
 import { getDesktopSettingsClient, getDesktopTelemetryClient } from "../application/desktop-client.js";
 import { ConnectionRemovalDialog } from "./components/ConnectionRemovalDialog.js";
@@ -23,6 +24,7 @@ import { settingsFocusAreas, useFocusAreaNavigation } from "../ui/focus-area-nav
 
 
 export function ApplicationSettings(props: { client: EditorialWorkspaceClient; back: () => void; initialSection?: SettingsSection; onKeyBindingsUpdated?: (overrides: KeyBindingOverrides) => void; onThemeApplied?: (theme: GeneralSettings["theme"]) => void; focusUpdates?: boolean; onUpdatesFocused?: () => void; openQuickStart?: () => void }) {
+    const setInterfaceLocale = useContext(InterfaceLocaleContext);
     const { client, back, initialSection = "general", onKeyBindingsUpdated, onThemeApplied, focusUpdates = false, onUpdatesFocused, openQuickStart } = props;
     const intl = useIntl();
     const focusAreas = useFocusAreaNavigation(settingsFocusAreas);
@@ -82,6 +84,7 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
         setStatus(intl.formatMessage({ id: "settings.saving" }));
         try {
             await client.updateGeneralSettings(next);
+            setInterfaceLocale?.(next.interfaceLocale);
             document.documentElement.dataset.animations = next.animationsEnabled ? "on" : "off";
             setStatus(intl.formatMessage({ id: "settings.saved" }));
         } catch {

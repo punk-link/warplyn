@@ -268,7 +268,7 @@ test("critical local-first author journeys use deterministic provider output", a
     const publishingProfileSaved = page.waitForResponse((response) => response.url().endsWith("/api/settings/publish-limit-profile") && response.request().method() === "PUT");
     await page.getByRole("combobox", { name: "Character-limit profile" }).selectOption("linkedin-post");
     await publishingProfileSaved;
-    await page.getByRole("button", { name: "Back to workspace" }).click();
+    await page.getByRole("button", { name: "Back", exact: true }).click();
     await createArticle(page);
     await expect(page.getByRole("button", { name: "Character count: 25 of 3,000 characters" })).toBeVisible();
     const publishPattern = /publish/i;
@@ -308,7 +308,7 @@ test("critical local-first author journeys use deterministic provider output", a
     await page.getByRole("button", { name: "Style Profile", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Style Profile" })).toBeVisible();
 
-    await page.getByRole("button", { name: "Back to workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Back", exact: true }).click();
     await page.getByRole("tab", { name: "Write" }).click();
     await page.getByRole("button", { name: "Copy", exact: true }).click();
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toContain("Original fixture Article.");
@@ -630,7 +630,7 @@ test("an unavailable automatic backup does not prevent editing", async ({ page }
         await page.getByRole("button", { name: "Settings" }).click();
         await page.getByRole("button", { name: "Data & backups" }).click();
         await page.getByRole("switch", { name: "Automatic backups" }).click();
-        await page.getByRole("button", { name: "Back to workspace" }).click();
+        await page.getByRole("button", { name: "Back", exact: true }).click();
         await page.reload();
         await createArticle(page);
     } finally {
@@ -653,7 +653,7 @@ for (const run of [
         for (const section of ["General", "Key bindings", "AI", "Publishing", "Data & backups"])
             await activateWithKeyboard(page, page.getByRole("button", { name: section }));
 
-        await activateWithKeyboard(page, page.getByRole("button", { name: "Back to workspace" }));
+        await activateWithKeyboard(page, page.getByRole("button", { name: "Back", exact: true }));
 
         await page.keyboard.press("Tab");
         const clickableElementPattern = /BUTTON|DIV/;

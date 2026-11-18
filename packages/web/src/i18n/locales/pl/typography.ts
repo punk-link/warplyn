@@ -1,0 +1,92 @@
+import type { MessageId } from "../../messages.js";
+
+export const typography = {
+    "typography.customPair": "Własna para",
+    "typography.articleSaved": "Zapisano preferencje typograficzne artykułu.",
+    "typography.articleSaveHint": "Reguły artykułu zastępują lub wyłączają reguły odziedziczone z języka. Zapisz je, aby użyć ich przy następnym sprawdzaniu.",
+    "typography.reviewLanguage": "Konwencje sprawdzania: {language}",
+    "typography.unknownLanguage": "Nie określono języka",
+    "typography.otherLanguage": "Inny język…",
+    "typography.otherLanguageTitle": "Wybierz inny język pisania",
+    "typography.languageCode": "Język lub odmiana regionalna",
+    "typography.languageCodeHint": "Wpisz nazwę lub odmianę regionalną, np. polski lub hiszpański, Argentyna. Możesz też użyć kodów, takich jak ja lub es-AR.",
+    "typography.languageSaveFailed": "Nie udało się zapisać języka artykułu. Spróbuj ponownie; tekst nie uległ zmianie.",
+    "typography.useLanguage": "Użyj języka",
+    "typography.loadFailed": "Nie udało się wczytać preferencji typograficznych. Spróbuj ponownie przed edycją lub sprawdzaniem.",
+    "typography.retryLoad": "Wczytaj preferencje ponownie",
+    "typography.openingMark": "Znak otwierający",
+    "typography.closingMark": "Znak zamykający",
+    "typography.innerSpace": "Spacja wewnątrz cudzysłowu",
+    "typography.punctuationMarks": "Znaki interpunkcyjne",
+    "typography.spaceBefore": "Spacja przed znakiem interpunkcyjnym",
+    "typography.punctuationSpacing": "Odstępy przy interpunkcji",
+    "typography.languageScope": "Język typografii",
+    "typography.chooseLanguage": "Wybierz język",
+    "typography.languageHint": "Zapisz osobne konwencje dla każdego języka pisania. Nie zmienia to języka artykułu ani interfejsu.",
+    "typography.missingLanguage": "Przed sprawdzeniem typografii wybierz język artykułu na pasku stanu.",
+    "typography.scope": "Zastosuj reguły do",
+    "typography.languagePreferences": "Wszystkich artykułów w tym języku",
+    "typography.articlePreferences": "Tylko tego artykułu",
+    "typography.preset": "Gotowy zestaw konwencji",
+    "typography.noPreset": "Własne konwencje",
+    "typography.presetPending": "{language}{separator}oczekuje na sprawdzenie przez rodzimego użytkownika języka",
+    "typography.presetReviewHint": "Podglądy zestawów oczekują na sprawdzenie przez rodzimych użytkowników języka. Poniżej możesz dodać własne reguły.",
+    "typography.applyPreset": "Zastosuj zestaw",
+    "typography.legacyHint": "Dotychczasowe reguły ogólne zostały zachowane. Skopiuj je do języka, aby użyć ich w nowych sprawdzeniach.",
+    "typography.copyLegacy": "Skopiuj dotychczasowe reguły do tego języka",
+    "typography.resetInheritance": "Przywróć odziedziczone reguły",
+    "typography.inheritanceHint": "Edycja zastępuje odziedziczoną regułę, a usunięcie ją wyłącza. Przywróć odziedziczone reguły, aby wyczyścić zastąpienia.",
+    "typography.noConvention": "Brak odpowiednich reguł mechanicznych. Wybierz konwencję albo dodaj i zapisz reguły dla tego języka.",
+    "typography.effectiveLanguage": "Sprawdzanie konwencji dla języka {language}",
+    "typography.earlierConvention": "Ten przegląd używał wcześniejszych preferencji języka lub typografii. Uruchom go ponownie, aby użyć obecnych konwencji.",
+    "typography.legacyReview": "Ten wcześniejszy przegląd nie ma zapisanych konwencji językowych.",
+    "typography.source.preset": "Zestaw",
+    "typography.source.language": "Preferencja języka",
+    "typography.source.article": "Zastąpienie w artykule",
+    "typography.invalid": (
+        "Nie udało się zapisać lub wczytać reguł typograficznych. Sprawdź reguły niepełne, powielone lub sprz" +
+        "eczne i spróbuj ponownie. Jeśli zapisane reguły nie wczytują się, przywróć kopię zapasową w Ustawien" +
+        "iach."
+    ),
+    "typography.correctionsConflict": (
+        "Nie udało się spójnie zastosować poprawek typograficznych. Zmień nakładające się lub powtarzające re" +
+        "guły i sprawdź ponownie. Artykuł nie uległ zmianie."
+    ),
+    "typography.required": "Nie można sprawdzić typografii. Wybierz język artykułu, a następnie zapisz reguły tego języka w Profilu stylu.",
+    "typography.title": "Reguły typograficzne",
+    "typography.saveHint": (
+        "Zapisanie przebudowuje profil lokalnie na podstawie uwzględnionych próbek i zapisanych reguł, w tym " +
+        "oczekujących zmian próbek. Niezapisane zmiany w innych formularzach są pomijane."
+    ),
+    "typography.empty": "Brak reguł typograficznych. Dodaj konwencję sprawdzania interpunkcji lub odstępów.",
+    "typography.add": "Dodaj regułę",
+    "typography.remove": "Usuń",
+    "typography.save": "Zapisz",
+    "typography.edit": "Edytuj",
+    "typography.closeEditor": "Zamknij",
+    "typography.savedRule": "Zapisana",
+    "typography.unsavedRule": "Niezapisana",
+    "typography.validation.invalid": "Uzupełnij pola tej reguły przed zapisaniem.",
+    "typography.validation.duplicate": "Ta konwencja już jest na liście. Edytuj lub usuń duplikat przed zapisaniem.",
+    "typography.validation.conflict": "Te konwencje są sprzeczne. Zmień lub usuń jedną z nich przed zapisaniem.",
+    "typography.validation.limit": "Przed zapisaniem ogranicz liczbę reguł do 30.",
+    "typography.saveFailed": "Nie udało się zapisać reguł typograficznych. Twoje zmiany są nadal tutaj. Spróbuj zapisać ponownie.",
+    "typography.check": "Sprawdź typografię",
+    "typography.saved": "Zapisano reguły typograficzne i przebudowano Profil stylu.",
+    "typography.localHint": (
+        "Sprawdzanie mechaniczne odbywa się lokalnie. Reguły kontekstowe wymagają pełnego przeglądu stylu. Te" +
+        "kst artykułu zmienia się dopiero po zaakceptowaniu propozycji."
+    ),
+    "typography.kind": "Konwencja reguły {number}",
+    "typography.ruleNumber": "Reguła {number}",
+    "typography.quotes": "Cudzysłowy",
+    "typography.dash": "Myślniki w prozie",
+    "typography.ellipsis": "Wielokropek",
+    "typography.ellipsisSingle": "Pojedynczy znak wielokropka, …",
+    "typography.ellipsisThree": "Trzy kropki, ...",
+    "typography.nonbreaking": "Para nierozdzielanych elementów",
+    "typography.horizontal": "Powtórzone spacje",
+    "typography.literal": "Dosłowne zastąpienie interpunkcji",
+    "typography.contextual": "Kontekstowa instrukcja typograficzna",
+    "typography.outer": "Zewnętrzny cudzysłów",
+} satisfies Partial<Record<MessageId, string>>;

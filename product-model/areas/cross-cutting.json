@@ -15,11 +15,12 @@
         {
             "id": "cross-cutting.internationalization",
             "area": "Internationalization",
-            "title": "Typed, validated catalogs and English interface catalog",
+            "title": "Typed, validated interface catalogs in eleven languages",
             "status": "implemented",
-            "owners": ["packages/shared/src/application/desktop/electron-messages.ts", "packages/web/src/i18n", "packages/electron/src/presentation/main.ts"],
-            "contract": "English is the only complete installed catalog. Application copy, including Electron-native dialogs, skill-specific Assistant completion labels, and fallback Proposal summaries, is catalog-validated; production surfaces use the selected Interface locale, localized text is excluded from selectors and logic, and generated supporting UI text requests the active Interface locale independently of Article language.",
-            "persistence": "Localized defaults become Article data only when author-editable content is created."
+            "owners": ["packages/shared/src/application/desktop/electron-messages.ts", "packages/web/src/i18n", "packages/electron/src/presentation/main.ts", "site/landing-localization.mjs", "site/locales", "site/vite.config.mjs"],
+            "contract": "Installed interface catalogs cover en, es, pt-BR, fr, de, ru, ja, zh-CN, it, pl, and ko. Application copy, including Electron-native dialogs, skill-specific Assistant completion labels, and fallback Proposal summaries, is catalog-validated for completeness, ICU syntax, arguments, and rich-text tags. Settings shows recognizable native language names and applies renderer language changes after successful persistence. Unknown stored locales fall back to English. Production surfaces use the selected Interface locale, localized text is excluded from selectors and logic, and generated supporting UI text requests the active Interface locale independently of Article language.",
+            "persistence": "The interface locale is saved in General Settings independently of Article language. Localized defaults become Article data only when author-editable content is created. Landing language selection uses static locale URLs.",
+            "limitations": ["The ten added locales await human language review. Skill instructions and model prompts remain in English. The landing page has static localized copy, metadata, and explicit language links; linked user documentation and the plans page remain in English."]
         },
         {
             "id": "cross-cutting.accessibility",
@@ -123,9 +124,19 @@
             "capabilityIds": ["cross-cutting.internationalization"],
             "preconditions": ["A locale catalog is registered for the application."],
             "event": "The catalog validation suite runs.",
-            "expected": ["The complete English catalog validates and is the only installed catalog."],
+            "expected": ["Every installed catalog exactly matches the canonical IDs and preserves valid ICU arguments and rich-text tags. Russian and Polish saved-version counts use their locale plural forms. Model instructions remain in English."],
             "forbidden": ["An incomplete catalog becomes selectable."],
             "evidence": { "kind": "automated", "path": "packages/web/src/i18n/catalog-validation.test.ts" }
+        },
+        {
+            "id": "cross-cutting.interface-locale-switching",
+            "title": "Interface language changes preserve Article content",
+            "capabilityIds": ["cross-cutting.internationalization"],
+            "preconditions": ["An Article exists and the Author opens General Settings."],
+            "event": "The Author chooses an installed interface locale and reloads the application.",
+            "expected": ["The selected locale applies after saving and survives reload. Article title, content, language, and current Revision remain unchanged."],
+            "forbidden": ["Changing interface language rewrites Article content or creates a Revision."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/settings/ApplicationSettings.general.test.tsx" }
         },
         {
             "id": "cross-cutting.electron-native-copy-catalogued",

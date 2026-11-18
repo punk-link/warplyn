@@ -24,7 +24,7 @@ test("Style Profile keeps one content scrollbar without empty page space", async
             element.scrollTop = element.scrollHeight;
         });
         await expect(page.getByRole("button", { name: "Add", exact: true })).toBeInViewport();
-        await expect(page.getByRole("button", { name: "Back to workspace", exact: true })).toBeInViewport();
+        await expect(page.getByRole("button", { name: "Back", exact: true })).toBeInViewport();
         await page.screenshot({ path: `test-results/style-profile-scroll-${viewport.width}.png` });
     }
 });

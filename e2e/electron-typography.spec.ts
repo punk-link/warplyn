@@ -34,7 +34,7 @@ test("packaged typography works without AI and recovers its Proposal after resta
             element.scrollTop = element.scrollHeight;
         });
         await expect(page.getByRole("button", { name: "Add", exact: true })).toBeInViewport();
-        await expect(page.getByRole("button", { name: "Back to workspace", exact: true })).toBeInViewport();
+        await expect(page.getByRole("button", { name: "Back", exact: true })).toBeInViewport();
         await page.getByRole("button", { name: "Typography rules", exact: true }).click();
         await page.getByRole("button", { name: "Add rule", exact: true }).click();
         await page.getByRole("button", { name: "Save", exact: true }).click();
@@ -97,7 +97,7 @@ test("packaged typography works without AI and recovers its Proposal after resta
                 { exact: true },
             ),
         ).toBeVisible();
-        await page.getByRole("button", { name: "Back to workspace", exact: true }).click();
+        await page.getByRole("button", { name: "Back", exact: true }).click();
         await page.getByRole("tab", { name: "Write", exact: true }).click();
         await expect(page.getByRole("textbox", { name: "Article draft" })).toContainText("Wait!!!!");
     } finally {

@@ -3,13 +3,15 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readSiteModuleGraph } from "./site-module-graph.mjs";
+import { landingLocales } from "../site/landing-localization.mjs";
 
 
 const siteRoot = new URL("../site/", import.meta.url);
 const userDocsRoot = fileURLToPath(new URL("user-docs/", siteRoot));
 const guideNames = findGuidePages(userDocsRoot);
 const markdownExtensionPattern = /\.md$/;
-const pagePaths = ["", "plans.html", ...guideNames.map((name) => `docs/${name.replace(markdownExtensionPattern, ".html")}`)];
+const pagePaths = ["", "plans.html", ...landingLocales.map((locale) => `${locale}/`),
+    ...guideNames.map((name) => `docs/${name.replace(markdownExtensionPattern, ".html")}`)];
 const sitemap = readFileSync(new URL("dist/sitemap.xml", siteRoot), "utf8");
 const locPattern = /<loc>([^<]+)<\/loc>/g;
 const sitemapUrls = [...sitemap.matchAll(locPattern)].map((match) => match[1]);
@@ -30,7 +32,8 @@ assert.equal(application.operatingSystem, "Windows 11 x64, Debian Linux");
 assert.deepEqual(sitemapUrls.sort(), expectedUrls.sort(), "Sitemap must list every public page exactly once");
 
 for (const path of pagePaths) {
-    const html = readFileSync(new URL(`dist/${path || "index.html"}`, siteRoot), "utf8");
+    const filePath = path.endsWith("/") ? `${path}index.html` : path || "index.html";
+    const html = readFileSync(new URL(`dist/${filePath}`, siteRoot), "utf8");
     const headPattern = /<head>([\s\S]*?)<\/head>/;
     const head = html.match(headPattern)?.[1];
 

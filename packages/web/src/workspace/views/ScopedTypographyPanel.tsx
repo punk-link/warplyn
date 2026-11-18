@@ -6,6 +6,7 @@ import {
 } from "@skladno/shared";
 import { Button, Select, Banner } from "../../ui/primitives.js";
 import { TypographyScopeEditor } from "./TypographyScopeEditor.js";
+import { getDisplayLanguageName } from "../../i18n/display-language-name.js";
 
 
 export function ScopedTypographyPanel({ data, actions }: {
@@ -28,7 +29,6 @@ export function ScopedTypographyPanel({ data, actions }: {
     const [loadAttempt, setLoadAttempt] = useState(0);
     const [saving, setSaving] = useState(false);
     const savingRef = useRef(false);
-    const languageNames = new Intl.DisplayNames([intl.locale], { type: "language" });
     const languages = [...new Set([
         ...articleLanguages,
         ...Object.keys(data.corpus?.typographyConfiguration?.languages ?? {}), ...(articleLanguage ? [articleLanguage] : []),
@@ -89,7 +89,7 @@ export function ScopedTypographyPanel({ data, actions }: {
                 aria-describedby={languageHelpId}
                 onChange={(event) => activate(scope, event.target.value)}>
                 {!language && <option value="">{intl.formatMessage({ id: "typography.chooseLanguage" })}</option>}
-                {languages.map((tag) => <option key={tag} value={tag}>{languageNames.of(tag) ?? tag}</option>)}
+                {languages.map((tag) => <option key={tag} value={tag}>{getDisplayLanguageName(tag, intl.locale)}</option>)}
             </Select>
         </label>
         <p id={languageHelpId} className="text-xs text-muted">{intl.formatMessage({ id: "typography.languageHint" })}</p>

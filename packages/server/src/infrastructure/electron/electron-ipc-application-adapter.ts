@@ -1,4 +1,4 @@
-import { ELECTRON_IPC_CHANNEL } from "@skladno/shared";
+import { ELECTRON_IPC_CHANNEL, type InterfaceLocale } from "@skladno/shared";
 
 import type { ApplicationServices } from "../../application/application-services.js";
 import type { EditorialService } from "../../application/editorial/editorial-service.js";
@@ -9,9 +9,13 @@ import type { ElectronIpcMain } from "./electron-ipc-types.js";
 export type { ElectronIpcMain, ElectronIpcMainEvent } from "./electron-ipc-types.js";
 
 
-export function registerElectronIpcApplicationAdapter(ipcMain: ElectronIpcMain, services: ApplicationServices, editorial: EditorialService, now = () => new Date().toISOString()): () => void {
+export function registerElectronIpcApplicationAdapter(
+    ipcMain: ElectronIpcMain, services: ApplicationServices, editorial: EditorialService,
+    now = () => new Date().toISOString(), onInterfaceLocaleChanged?: (locale: InterfaceLocale) => void,
+): () => void {
     const controllers = new Map<string, AbortController>();
-    ipcMain.handle(ELECTRON_IPC_CHANNEL.invoke, (_event, request) => invokeElectronApplication(request, services, now));
+    ipcMain.handle(ELECTRON_IPC_CHANNEL.invoke, (_event, request) =>
+        invokeElectronApplication(request, services, now, onInterfaceLocaleChanged));
     registerElectronStreamAdapters(ipcMain, services, editorial, controllers);
     return () => {
         for (const controller of controllers.values())

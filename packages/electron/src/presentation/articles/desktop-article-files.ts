@@ -13,12 +13,15 @@ interface ArticleFilesAdapterOptions {
 
 
 export function registerDesktopArticleFilesAdapter({ ipcMain, window, dialog, messages }: ArticleFilesAdapterOptions): void {
-    const filters = [
-        { name: messages["electron.articleFiles.markdown"], extensions: ["md"] },
-        { name: messages["electron.articleFiles.html"], extensions: ["html", "htm"] },
-        { name: messages["electron.articleFiles.docx"], extensions: ["docx"] },
-        { name: messages["electron.articleFiles.rtf"], extensions: ["rtf"] },
-    ];
+    function getFilters() {
+        return [
+            { name: messages["electron.articleFiles.markdown"], extensions: ["md"] },
+            { name: messages["electron.articleFiles.html"], extensions: ["html", "htm"] },
+            { name: messages["electron.articleFiles.docx"], extensions: ["docx"] },
+            { name: messages["electron.articleFiles.rtf"], extensions: ["rtf"] },
+        ];
+    }
+
 
     let selected: { target: ArticleSaveTarget; path: string; expires: number } | undefined;
     let choosing = false;
@@ -46,7 +49,7 @@ export function registerDesktopArticleFilesAdapter({ ipcMain, window, dialog, me
         const currentGeneration = generation;
         try {
             const result = await dialog.showSaveDialog(window, {
-                title: messages["electron.articleFiles.save"], filters,
+                title: messages["electron.articleFiles.save"], filters: getFilters(),
                 defaultPath: getArticleFileName(fileName, "markdown"), properties: ["showOverwriteConfirmation"],
             });
             if (currentGeneration !== generation || result.canceled || !result.filePath)
@@ -71,7 +74,9 @@ export function registerDesktopArticleFilesAdapter({ ipcMain, window, dialog, me
         const currentGeneration = generation;
 
         try {
-            const result = await dialog.showOpenDialog(window, { title: messages["electron.articleFiles.load"], filters, properties: ["openFile"] });
+            const result = await dialog.showOpenDialog(window, {
+                title: messages["electron.articleFiles.load"], filters: getFilters(), properties: ["openFile"],
+            });
             if (currentGeneration !== generation || result.canceled || !result.filePaths[0])
                 return { ok: true, value: null };
 

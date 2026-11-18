@@ -1,0 +1,43 @@
+import type { MessageId } from "../../messages.js";
+
+export const editorMessages = {
+    "editor.contextMenu": "Bearbeitungsaktionen",
+    "editor.moreTextFormatting": "Formatierung",
+    "editor.paragraphStyle": "Absatzstil",
+    "editor.lists": "Listen",
+    "editor.editLink": "Link bearbeiten…",
+    "editor.addLink": "Link…",
+    "editor.skills": "Fähigkeiten",
+    "editor.clipboardFailed": (
+        "Einfügen fehlgeschlagen. Erlauben Sie den Zugriff auf die Zwischenablage oder verwenden Sie die " +
+        "Tastenkombination zum Einfügen."
+    ),
+    "editor.articleDraft": "Artikelentwurf",
+    "editor.formatting": "Artikelformatierung",
+    "editor.blockStyle": "Blockstil",
+    "editor.paragraph": "Absatz",
+    "editor.heading": "Überschrift {level}",
+    "editor.blockQuote": "Zitatblock",
+    "editor.codeBlock": "Codeblock",
+    "editor.bold": "Fett",
+    "editor.italic": "Kursiv",
+    "editor.strikethrough": "Durchgestrichen",
+    "editor.inlineCode": "Inline-Code",
+    "editor.link": "Link",
+    "editor.openLink": "Link öffnen: {url}",
+    "editor.bulletedList": "Aufzählungsliste",
+    "editor.numberedList": "Nummerierte Liste",
+    "editor.linkText": "Linktext",
+    "editor.url": "URL",
+    "editor.cancel": "Abbrechen",
+    "editor.removeLink": "Link entfernen",
+    "editor.apply": "Anwenden",
+    "editor.placeholder": "Schreiben Sie Ihren Artikel…",
+    "editor.noOriginalText": "Kein Originaltext",
+    "editor.noProposedText": "Kein vorgeschlagener Text",
+    "editor.proposedChange": "Vorgeschlagene Textänderung",
+    "editor.original": "Original",
+    "editor.proposed": "Vorschlag",
+    "editor.removed": "Entfernt: ",
+    "editor.added": "Hinzugefügt: ",
+} satisfies Partial<Record<MessageId, string>>;

@@ -51,10 +51,11 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
                                 {intl.formatMessage({ id: stale ? "views.earlierSuggestion" : "views.proposalReview" })}
                             </h2>
                             <p className="mt-1 text-xs text-muted">{stale || !presentation.reliable
-                                ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length })
+                                ? intl.formatMessage({ id: "views.proposalWhole" }, { changes: presentation.changes.length, separator: " · " })
                                 : intl.formatMessage(
                                     { id: "views.proposalCounts" },
-                                    { total: presentation.changes.length, pending: counts.pending, accepted: counts.accepted, rejected: counts.rejected }
+                                    { total: presentation.changes.length, pending: counts.pending,
+                                        accepted: counts.accepted, rejected: counts.rejected, separator: " · " }
                                 )}
                             </p>
                         </div>
@@ -258,7 +259,7 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                                             <h3 className="text-sm font-semibold">
                                                 {intl.formatMessage(
                                                     { id: `views.changeType.${change.kind}` as never },
-                                                    { index: index + 1, total: presentation.changes.length },
+                                                    { index: index + 1, total: presentation.changes.length, separator: " · " },
                                                 )}
                                             </h3>
                                             <p className="mt-1 text-xs text-muted">

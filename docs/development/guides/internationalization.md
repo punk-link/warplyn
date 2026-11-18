@@ -1,10 +1,18 @@
 # Internationalization
 
-Skladno ships one complete interface locale, English (`en`). Application-owned renderer copy lives in `packages/web/src/i18n/messages.ts`; semantic IDs are stable and grouped by responsibility. `locales/en.ts` must contain exactly that inventory.
+Warplyn includes interface catalogs for English (`en`), neutral Spanish (`es`), Brazilian Portuguese (`pt-BR`), French (`fr`), German (`de`), Russian (`ru`), Japanese (`ja`), Simplified Chinese (`zh-CN`), Italian (`it`), Polish (`pl`), and Korean (`ko`). Application-owned renderer copy lives in `packages/web/src/i18n/messages.ts`; semantic IDs are stable and grouped by responsibility. Every installed catalog must contain exactly that inventory and preserve ICU arguments and rich-text tags. Native dialogs use the matching shared catalog.
+
+The ten new locales are translation drafts pending human review. For issue #114, the Author explicitly authorized implementation before named-reviewer approval. Kirill can review `es`, `pt-BR`, `ru`, and `pl`; reviewers for the other locales remain unassigned. Installation does not establish release approval. See [locale terminology](../i18n/locale-terminology.md) for terminology proposals and review status.
+
+The interface language selector shows each language's native name so it remains recognizable after switching languages. A successful Settings save changes renderer copy immediately, updates the HTML language, and persists the locale independently of Article language. Unknown persisted locale values fall back to English.
+
+The landing build emits static pages at `/<locale>/` using `site/locales`, including translated metadata and accessible labels. Footer language links provide explicit selection and a route back to English. Canonical URLs, language alternatives, and the sitemap include these pages. The plans page and linked user documentation remain in English.
 
 Use ICU messages for interpolation and count-dependent wording. Parameters are named data such as `{articleTitle}` and `{count}`; never concatenate translated fragments or treat author input as ICU source. Use `intl.formatNumber`/`FormattedNumber` for displayed numbers and `formatDateTime` for timestamps so General date and time preferences stay consistent.
 
 Accessible-only names have their own IDs. Do not translate Article text, proposals, findings, citations, user-entered names, model IDs, environment-variable names, paths, URLs, Markdown, or persisted enum values.
+
+Skill instruction bodies and model system prompts remain in English independently of the interface locale. This also applies to catalog entries sent as model instructions, such as `assistant.factCheckCorrectionPrompt` and `views.updateSuggestionPrompt`. Translate interface labels and help around Skills, without rewriting the instruction packages themselves.
 
 ## Application terminology
 
@@ -19,6 +27,8 @@ Keep contextual message IDs separate even when their English text matches. For e
 Review terminology by concept across the complete locale, including existing messages when adding new copy. Repeated command labels should express the same action while allowing reviewed grammatical differences. Catalog completeness and valid ICU syntax do not establish terminology consistency; native-language review remains required. Do not enforce identical substrings or ban ordinary words globally, since valid forms and unrelated uses vary by context.
 
 ## Command labels
+
+Prefer single-line button captions at supported widths. Let the surrounding row or help carry redundant context while keeping distinctions between actions clear. Review each workspace tab set together for parallel, similarly concise wording.
 
 Append the single ellipsis character `…` to commands that require further Author input, such as choosing a file or entering options, before completing. Use matching wording and punctuation in menus, button labels, and tooltips. The file commands are `Save to file…` and `Load from file…` in both desktop and browser. Immediate actions and commands that only ask for confirmation, such as Archive and Delete, use plain labels without an ellipsis.
 

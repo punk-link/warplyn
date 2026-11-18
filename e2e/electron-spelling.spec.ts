@@ -2,6 +2,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { _electron, expect, test, type ElectronApplication } from "@playwright/test";
+import { getElectronMessagesFor } from "@skladno/shared";
 import { launchPackaged, closePackaged } from "./electron-packaged-app.js";
 
 
@@ -75,6 +76,24 @@ test("spelling menu correction follows Lexical Draft recovery and immutable save
         });
         await page.mouse.click(point.x, point.y, { button: "right" });
         await expect.poll(() => app?.evaluate(({ Menu }) => Menu.getApplicationMenu()?.items.map((item) => item.label) ?? []), { timeout: 10_000 }).toContain("hello");
+        await page.evaluate(async () => {
+            if (!window.skladno)
+                throw new Error("Missing desktop client");
+
+            const settings = await window.skladno.getApplicationSettings();
+            await window.skladno.updateGeneralSettings({ ...settings.general, interfaceLocale: "es" });
+        });
+        await app.evaluate(({ Menu }) => Menu.setApplicationMenu(null));
+        await page.mouse.click(point.x, point.y, { button: "right" });
+        await expect.poll(() => app?.evaluate(({ Menu }) => Menu.getApplicationMenu()?.items.map((item) => item.label) ?? []))
+            .toContain(getElectronMessagesFor("es")["electron.spelling.addWord"]);
+        await page.evaluate(async () => {
+            if (!window.skladno)
+                throw new Error("Missing desktop client");
+
+            const settings = await window.skladno.getApplicationSettings();
+            await window.skladno.updateGeneralSettings({ ...settings.general, interfaceLocale: "en" });
+        });
         await app.evaluate(({ Menu, app }) => {
             const stale = Menu.getApplicationMenu()?.items.find((item) => item.label === "hello");
             app.once("spelling-test-stale-click", () => stale?.click());
