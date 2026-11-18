@@ -10,12 +10,19 @@ async function launchSpelling(root: string): Promise<ElectronApplication> {
     const env = { ...process.env, WARPLYN_DATA_DIR: join(root, "data"), WARPLYN_AI_API_KEY: "" };
     delete env.ELECTRON_RUN_AS_NODE;
     const app = await _electron.launch({ args: [resolve("packages/electron"), `--user-data-dir=${join(root, "profile")}`], env });
-    const page = await app.firstWindow();
-    await page.waitForURL("http://127.0.0.1:5173/");
-    await page.evaluate(() => localStorage.setItem("skladno.update-permission.v1", "complete"));
-    await page.evaluate(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
-    await page.reload();
-    return app;
+    try {
+        const page = await app.firstWindow();
+        await page.waitForURL("http://127.0.0.1:5173/", { waitUntil: "domcontentloaded" });
+        await page.evaluate(() => {
+            localStorage.setItem("skladno.update-permission.v1", "complete");
+            localStorage.setItem("skladno.quick-start.v1", "complete");
+        });
+        await page.reload({ waitUntil: "domcontentloaded" });
+        return app;
+    } catch (error) {
+        app.process().kill();
+        throw error;
+    }
 }
 
 
