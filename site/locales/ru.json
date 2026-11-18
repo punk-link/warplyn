@@ -20,7 +20,6 @@
   "Your voice.": "Ваш голос.",
   "Your agent.": "Ваш агент.",
   "Warplyn is an open-source, local-first writing workspace for Windows and Linux. Write and revise your Articles, with an AI Editorial Assistant when you want help. You decide what changes.": "Warplyn — рабочая область для письма с открытым кодом и локальным хранением данных для Windows и Linux. Пишите и редактируйте статьи, обращаясь к ИИ-помощнику, когда нужна помощь. Вы решаете, что изменить.",
-  "See a revision workflow": "Как работать с сохранёнными версиями",
   "→": "→",
   "Always open source · Free features stay free": "Открытый код навсегда · Бесплатные функции останутся бесплатными",
   "Illustration of Warplyn's article editor and proposal review": "Редактор статей Warplyn и просмотр предложения",
@@ -136,5 +135,6 @@
   "Issues & requests": "Ошибки и предложения",
   "License (MIT)": "Лицензия MIT",
   "© 2026 Warplyn contributors": "© 2026 участники проекта Warplyn",
-  "Your writing stays on your computer.": "Ваши тексты остаются на вашем компьютере."
+  "Your writing stays on your computer.": "Ваши тексты остаются на вашем компьютере.",
+  "Читать документацию": "Читать документацию"
 }

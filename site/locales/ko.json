@@ -20,7 +20,6 @@
   "Your voice.": "당신의 목소리.",
   "Your agent.": "당신의 에이전트.",
   "Warplyn is an open-source, local-first writing workspace for Windows and Linux. Write and revise your Articles, with an AI Editorial Assistant when you want help. You decide what changes.": "Warplyn은 Windows와 Linux용 오픈 소스, 로컬 우선 글쓰기 작업 공간입니다. 글을 쓰고 다듬으며 필요할 때 AI 글쓰기 도우미의 도움을 받을 수 있습니다. 무엇을 바꿀지는 직접 결정합니다.",
-  "See a revision workflow": "저장된 버전 활용 과정 보기",
   "→": "→",
   "Always open source · Free features stay free": "언제나 오픈 소스 · 무료 기능은 계속 무료",
   "Illustration of Warplyn's article editor and proposal review": "Warplyn 글 편집기와 제안 검토 화면 그림",
@@ -136,5 +135,6 @@
   "Issues & requests": "문제 및 요청",
   "License (MIT)": "라이선스 MIT",
   "© 2026 Warplyn contributors": "© 2026 Warplyn 기여자",
-  "Your writing stays on your computer.": "당신의 글은 당신의 컴퓨터에 보관됩니다."
+  "Your writing stays on your computer.": "당신의 글은 당신의 컴퓨터에 보관됩니다.",
+  "문서 읽기": "문서 읽기"
 }
