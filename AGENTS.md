@@ -45,6 +45,7 @@ Follow the [planning and delegation guidance](docs/development/guides/context-ef
 | Assistant Skills, capabilities, routing, or tool execution | [ADR-011](docs/development/architecture/adr-011-assistant-skills-and-bounded-capabilities.md) |
 | Workspace or Settings focus-area navigation | [ADR-012](docs/development/architecture/adr-012-workspace-keyboard-focus-areas.md) |
 | UI layout, controls, or interaction states | [Design system](docs/development/ui/design-system.md) |
+| Naming or renaming UI controls in copy or documentation | [UI terminology](docs/development/i18n/ui-terminology.md) |
 | Visible copy, accessible names, or locale formatting | [Internationalization](docs/development/guides/internationalization.md) |
 
 ## Documentation ownership

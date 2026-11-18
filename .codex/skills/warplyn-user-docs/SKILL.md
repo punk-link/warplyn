@@ -5,7 +5,7 @@ description: Write or revise Warplyn help articles, setup guides, and feature ex
 
 # Warplyn user documentation
 
-Write for Authors using the current application. Check the relevant screen's rendered controls and `packages/web/src/i18n/messages.ts` before naming a setting, action, view, or status. Use the exact English interface label in headings, steps, and cross-references. If the interface differs from the documentation, verify current behavior before choosing wording; do not invent a friendlier label and present it as a second product name.
+Write for Authors using the current application. Before naming a setting, action, view, or status, look up its exact label for the documentation's language in the generated [UI terminology reference](../../../docs/development/i18n/ui-terminology.md). Use that wording in headings, steps, and cross-references. Check the rendered controls for context and consult the current catalog if the reference is stale or missing a label.
 
 Use [the glossary](../../../site/user-docs/glossary.md) for domain terms and the implementation or product model for behavior. Describe only available behavior, including prerequisites, fallback behavior, and limits that affect the Author's decision. Explain what to do in the app, not its internal architecture.
 
