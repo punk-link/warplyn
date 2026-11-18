@@ -1355,8 +1355,10 @@ html:lang(ko) {
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
-html:lang(ja) .hero {
-  grid-template-columns: 1fr 1fr;
+@media (width > 850px) {
+  html:lang(ja) .hero {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 html:lang(ja) .hero h1 {
   font-size: clamp(38px, 3.3vw, 48px);

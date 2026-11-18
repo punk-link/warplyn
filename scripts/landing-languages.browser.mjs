@@ -5,6 +5,21 @@ import { chromium, expect } from "@playwright/test";
 import { landingLanguages } from "../site/localize-landing-page.mjs";
 import { guideLocales } from "../site/user-docs/.vitepress/locales.mjs";
 
+
+async function showLanguagePicker(page) {
+    const mobileMenu = page.locator(".mobile-nav");
+    const mobileToggle = mobileMenu.locator(":scope > summary");
+    if (await mobileToggle.isVisible()) {
+        if (await mobileMenu.getAttribute("open") === null)
+            await mobileToggle.click();
+
+        return mobileMenu.locator(".guide-languages");
+    }
+
+    return page.locator(".desktop-nav .guide-languages");
+}
+
+
 const browser = await chromium.launch();
 try {
     const page = await browser.newPage();
@@ -26,9 +41,11 @@ try {
             const path = language === "en" ? "/" : `/${language}/`;
             await page.goto(`http://landing.test${path}`);
             assert.equal(await page.locator("html").getAttribute("lang"), language);
-            await page.locator(".guide-languages summary").focus();
+            const picker = await showLanguagePicker(page);
+            const toggle = picker.locator("summary");
+            await toggle.focus();
             await page.keyboard.press("Enter");
-            const menu = page.locator(".guide-languages nav");
+            const menu = picker.locator("nav");
             const bounds = await menu.boundingBox();
             assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= width, `${language} dropdown fits at ${width}px`);
             await page.keyboard.press("Escape");
@@ -36,17 +53,17 @@ try {
             await page.keyboard.press("Enter");
             await page.locator(".hero").click({ position: { x: 3, y: 3 } });
             assert.equal(await menu.isVisible(), false);
-            await page.locator(".guide-languages summary").focus();
+            await toggle.focus();
             await page.keyboard.press("Enter");
-            await page.locator('.guide-languages a[lang="es"]').click();
+            await picker.locator('a[lang="es"]').click();
             await page.waitForURL("**/es/");
-            await page.locator(".guide-languages summary").click();
-            await page.locator('.guide-languages a[lang="en"]').click();
+            await (await showLanguagePicker(page)).locator("summary").click();
+            await picker.locator('a[lang="en"]').click();
             await page.waitForURL("http://landing.test/");
             await page.goto(`http://landing.test${path}`);
             const overflow = await page.evaluate(() => globalThis.document.documentElement.scrollWidth > globalThis.innerWidth);
             assert.equal(overflow, false, `${language} overflows at ${width}px`);
-            assert.equal(await page.locator('.guide-languages a[aria-current="page"]').count(), 1);
+            assert.equal(await picker.locator('a[aria-current="page"]').count(), 1);
             const plans = `${path}plans.html`;
             await page.locator(`.site-footer a[href="${plans}"]`).click();
             await page.waitForURL(`http://landing.test${plans}`);
@@ -54,11 +71,11 @@ try {
             const catalog = JSON.parse(readFileSync(new URL(`../site/plans-locales/${language}.json`, import.meta.url), "utf8"));
             assert.equal(await page.title(), catalog.plansTitle);
             assert.ok((await page.locator(".lede").innerText()).includes(catalog.plansIntro));
-            await page.locator(".guide-languages summary").click();
-            await page.locator('.guide-languages a[lang="fr"]').click();
+            await (await showLanguagePicker(page)).locator("summary").click();
+            await picker.locator('a[lang="fr"]').click();
             await page.waitForURL("**/fr/plans.html");
-            await page.locator(".guide-languages summary").click();
-            await page.locator(`.guide-languages a[lang="${language}"]`).click();
+            await (await showLanguagePicker(page)).locator("summary").click();
+            await picker.locator(`a[lang="${language}"]`).click();
             await page.waitForURL(`http://landing.test${plans}`);
             const plansOverflow = await page.evaluate(() => globalThis.document.documentElement.scrollWidth > globalThis.innerWidth);
             assert.equal(plansOverflow, false, `${language} plans overflows at ${width}px`);

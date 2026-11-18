@@ -23,7 +23,8 @@ test("all landing languages translate content, metadata, and accessible names wi
         assert.equal(document.querySelector(".editor-scene").getAttribute("aria-label"), catalog.illustration);
         assert.equal(document.querySelector(".guide-languages summary").getAttribute("aria-label"), catalog.language);
         assert.equal(document.querySelector("[data-current-language]").textContent, language.toUpperCase());
-        assert.ok(document.querySelector(".site-header > .guide-languages"));
+        assert.ok(document.querySelector(".desktop-nav > .guide-languages"));
+        assert.ok(document.querySelector(".mobile-nav .guide-languages"));
         assert.equal(document.querySelectorAll("link[hreflang]").length, 12);
         assert.equal(document.querySelectorAll(".feature-card").length, 6);
         const plansPath = language === "en" ? "/plans.html" : `/${language}/plans.html`;
