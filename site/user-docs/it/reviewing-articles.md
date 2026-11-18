@@ -30,7 +30,7 @@ Scegli **Ripristina questa versione** per rendere attuale una versione precedent
 
 ## Recuperare una bozza {#recover-a-draft}
 
-Un checkpoint di *bozza* è il testo recuperabile salvato mentre scrivi. Se il testo locale nell’editor è in conflitto con un checkpoint salvato o con la *versione salvata* attuale, Warplyn mostra il testo locale conservato accanto alle opzioni salvate. Confrontale e scegli **Conserva la mia bozza**, **Usa l'ultima bozza** oppure **Usa l'ultima versione salvata**. Un’opzione salvata può sostituire il testo locale, quindi Warplyn chiede prima una conferma.
+Un checkpoint è il testo recuperabile salvato mentre scrivi. Se il testo locale nell’editor è in conflitto con un checkpoint salvato o con la *versione salvata* attuale, Warplyn mostra il testo locale conservato accanto alle opzioni salvate. Confrontale e scegli **Conserva la mia bozza**, **Usa l'ultima bozza** oppure **Usa l'ultima versione salvata**. Un’opzione salvata può sostituire il testo locale, quindi Warplyn chiede prima una conferma.
 
 ## Scegliere come applicare le modifiche dell’assistente
 

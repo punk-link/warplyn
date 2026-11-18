@@ -12,7 +12,7 @@ Avant la migration, choisissez un **Dossier des sauvegardes** dans **Paramètres
 
 ## Procédure de migration
 
-1. Dans Skladno, terminez ou annulez les opérations d’IA en cours, puis fermez et rouvrez l’application afin d’enregistrer le point de contrôle du *brouillon* le plus récent. Pendant la création de la sauvegarde, évitez de modifier les fichiers de *compétences* de la personne autrice depuis l’extérieur.
+1. Dans Skladno, terminez ou annulez les opérations d’IA en cours, puis fermez et rouvrez l’application afin d’enregistrer le point de contrôle le plus récent. Pendant la création de la sauvegarde, évitez de modifier les fichiers de *compétences* de la personne autrice depuis l’extérieur.
 2. Créez une sauvegarde manuelle depuis Skladno en cours d’exécution, même si l’application utilise un répertoire de données personnalisé. Gardez le fichier `.sqlite` et le dossier `.sqlite.skills` associé ensemble, avec leurs noms d’origine. Fermez Skladno une fois la sauvegarde créée.
 3. Installez et ouvrez Warplyn avec son propre profil vide. Ne le dirigez jamais vers le répertoire de données actif de Skladno.
 4. Dans **Paramètres** → **Données**, choisissez le dossier de sauvegarde de migration, puis sélectionnez **Restaurer**. Choisissez l’instantané de Skladno, confirmez le remplacement et laissez Warplyn redémarrer. Si Warplyn contient déjà du travail, créez d’abord sa propre sauvegarde : la restauration remplace le travail existant et ne fusionne pas les bases de données.

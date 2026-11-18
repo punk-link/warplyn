@@ -41,7 +41,7 @@ Przywrócenie kopii `.skladno` lub migawki desktopowej wraz z dołączonym folde
 Przywrócenie kopii desktopowej dodaje do słownika również zapisane w niej osobiste słowa. Istniejące słowa pozostają. Starsze kopie bez osobistych słów nie zmieniają słownika. Pobrane słowniki językowe i ustawienia wstępnego ładowania słowników nie są uwzględniane.
 
 ::: warning Ustawienia AI po przywróceniu
-Przywracanie zachowuje istniejące w tej instalacji połączenia AI, dane logowania i wybór modeli. Jeśli nie skonfigurowano połączeń, Warplyn przywraca z kopii nazwy i odwołania do zmiennych środowiskowych, ale nigdy klucze API ani wartości zmiennych środowiskowych. Ustaw brakujące zmienne na tym komputerze, a następnie wybierz modele w **Ustawienia** → **Asystent AI**. Połączenia oparte na zapisanych kluczach API nie są importowane do nowej instalacji; dodaj je w Settings. Pozostałe ustawienia są przywracane. Nieudane przywracanie i wycofanie zmian zachowują poprzednią konfigurację AI.
+Przywracanie zachowuje istniejące w tej instalacji połączenia AI, dane logowania i wybór modeli. Jeśli nie skonfigurowano połączeń, Warplyn przywraca z kopii nazwy i odwołania do zmiennych środowiskowych, ale nigdy klucze API ani wartości zmiennych środowiskowych. Ustaw brakujące zmienne na tym komputerze, a następnie wybierz modele w **Ustawienia** → **Asystent AI**. Połączenia oparte na zapisanych kluczach API nie są importowane do nowej instalacji; dodaj je w **Ustawieniach**. Pozostałe ustawienia są przywracane. Nieudane przywracanie i wycofanie zmian zachowują poprzednią konfigurację AI.
 :::
 
 ## Ręcznie odzyskaj kopię zawierającą tylko bazę danych

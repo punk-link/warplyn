@@ -4,7 +4,7 @@ description: "Verwenden Sie „Aus Ideen einen Entwurf machen“, um bereitgeste
 
 # Aus Ideen einen Entwurf machen
 
-Verwenden Sie **Aus Ideen einen Entwurf machen**, wenn Ihnen Ausgangsmaterial vorliegt, Sie aber einen zusammenhängenden ersten Entwurf benötigen. Der Skill entwickelt bereitgestellte Ideen zu einer klaren Erzählung, bewahrt ihre Bedeutung und vermeidet unbelegte Behauptungen.
+Verwenden Sie **Aus Ideen einen Entwurf machen**, wenn Ihnen Ausgangsmaterial vorliegt, Sie aber einen zusammenhängenden ersten Entwurf benötigen. Die Fähigkeit entwickelt bereitgestellte Ideen zu einer klaren Erzählung, bewahrt ihre Bedeutung und vermeidet unbelegte Behauptungen.
 
 Öffnen Sie **Schnellaktionen**, wählen Sie **Aus Ideen einen Entwurf machen**, beschreiben Sie die gewünschte Richtung und wählen Sie anschließend **Editorial-Anfrage senden**. Wenn Sie eine Passage ausgewählt haben, verwendet die Anfrage diese Passage und das Material, das Sie ausdrücklich in Ihre Nachricht aufnehmen. Ohne Auswahl kann der aktuelle *Artikel* zusammen mit Ihren Vorgaben verwendet werden.
 
@@ -12,4 +12,4 @@ Verwenden Sie **Aus Ideen einen Entwurf machen**, wenn Ihnen Ausgangsmaterial vo
 Wählen Sie die Passage, in der Ana ihr Notizbuch öffnet, und fragen Sie: „Hilf mir, einen möglichen nächsten Absatz mit den bereits in dieser Passage enthaltenen Einzelheiten zu entwerfen. Lass die Seite leer und erkläre nicht, warum der Fluss sie wiederzuerkennen scheint.“
 :::
 
-Der Assistant erstellt einen *Vorschlag*, den Sie prüfen können. Prüfen Sie Aufbau, Behauptungen und Formulierungen, bevor Sie Änderungen annehmen. Der Skill speichert und ändert den *Artikel* nicht selbst. Informationen zum Umschreiben vorhandener Prosa finden Sie unter [Lesefluss und Klarheit verbessern](improve-flow-and-clarity.md).
+Der Assistent erstellt einen *Vorschlag*, den Sie prüfen können. Prüfen Sie Aufbau, Behauptungen und Formulierungen, bevor Sie Änderungen annehmen. Die Fähigkeit speichert und ändert den *Artikel* nicht selbst. Informationen zum Umschreiben vorhandener Prosa finden Sie unter [Lesefluss und Klarheit verbessern](improve-flow-and-clarity.md).

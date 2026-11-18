@@ -4,13 +4,13 @@ description: "Artikel schreiben und organisieren, das Speichern von Entwürfen v
 
 # Artikel schreiben und organisieren
 
-Ein *Artikel* ist ein Text in Ihrer Warplyn-Bibliothek. Während Sie ihn bearbeiten, speichert Warplyn einen wiederherstellbaren *Entwurfs*-Prüfpunkt. Eine *Version* ist ein gespeicherter Stand im Verlauf des *Artikels*. So können Sie weiterarbeiten, ohne jede Bearbeitung als fertige Fassung zu behandeln.
+Ein *Artikel* ist ein Text in Ihrer Warplyn-Bibliothek. Während Sie ihn bearbeiten, speichert Warplyn einen wiederherstellbaren Prüfpunkt. Eine *Version* ist ein gespeicherter Stand im Verlauf des *Artikels*. So können Sie weiterarbeiten, ohne jede Bearbeitung als fertige Fassung zu behandeln.
 
 ## Einen Artikel schreiben und speichern
 
 Wählen Sie in der Bibliothek **Neuer Artikel**, um zu beginnen. Benennen Sie den *Artikel* über sein Titelfeld um. Verwenden Sie die Formatierungsleiste für Überschriften, Listen, Hervorhebungen, Links, Zitate und Code. Wenn Sie formatierten Text einfügen, behält Warplyn unterstützte Formatierungen bei und entfernt unsichere oder nicht unterstützte Markierungen. Der *Artikel* wird als Markdown gespeichert; komplexe Seitenlayouts und eingebettete Elemente werden daher nicht übernommen.
 
-Warplyn speichert Ihren aktuellen *Entwurf* während der Bearbeitung automatisch. Ein *Entwurfs*-Prüfpunkt ist wiederherstellbarer Arbeitstext und kein neuer Eintrag im Versionsverlauf. Prüfen Sie bei Bedarf die Speicherstatusanzeige in der Artikel-Statusleiste, um festzustellen, ob die letzten Änderungen als Prüfpunkt gespeichert wurden. Warplyn speichert außerdem einen ausstehenden Prüfpunkt, wenn Sie zwischen *Artikeln* wechseln oder die Einstellungen öffnen.
+Warplyn speichert Ihren aktuellen *Entwurf* während der Bearbeitung automatisch. Ein Prüfpunkt ist wiederherstellbarer Arbeitstext und kein neuer Eintrag im Versionsverlauf. Prüfen Sie bei Bedarf die Speicherstatusanzeige in der Artikel-Statusleiste, um festzustellen, ob die letzten Änderungen als Prüfpunkt gespeichert wurden. Warplyn speichert außerdem einen ausstehenden Prüfpunkt, wenn Sie zwischen *Artikeln* wechseln oder die Einstellungen öffnen.
 
 [![Schreibarbeitsbereich mit „Der Fluss in der Abenddämmerung“ im Editor, Formatierungsleiste, Bibliothek und Anzeige für gespeicherten Entwurf.](/images/writing-workspace.png)](/images/writing-workspace.png)
 
@@ -34,6 +34,6 @@ Suchen Sie unter **Persönliches Wörterbuch** nach gespeicherten Wörtern oder 
 
 Mit **Fokusmodus** blenden Sie beim Schreiben beide Seitenbereiche aus. Wählen Sie den Modus erneut, um sie wieder einzublenden. Über die Einklappsteuerung eines Bereichs können Sie ihn schließen oder öffnen; ziehen Sie den Trenner daneben, um seine Größe anzupassen. In einem schmalen Fenster können die Bereiche als vorübergehende Schubladen über dem Editor geöffnet werden.
 
-Mit der Tastatur bewegen Sie sich über **Tab** und **Umschalt + Tab** durch Bibliothek, Artikelkopf, Ansichten, Formatierungsleiste, Editor, Statusleiste und Assistant. Im Editor, in der Suche und im Composer funktionieren die üblichen Tasten zur Textbearbeitung weiterhin. Die Einstellungen haben eine eigene Tastaturnavigation. Verwenden Sie in der Desktop-Seitenleiste **Nach oben**, **Nach unten**, **Pos1** oder **Ende**, um zwischen Bereichen zu wechseln, und öffnen Sie einen Bereich mit **Eingabe** oder **Leertaste**.
+Mit der Tastatur bewegen Sie sich über **Tab** und **Umschalt + Tab** durch Bibliothek, Artikelkopf, Ansichten, Formatierungsleiste, Editor, Statusleiste und den **Bereich des redaktionellen Assistenten**. Im Editor, in der Suche und im Composer funktionieren die üblichen Tasten zur Textbearbeitung weiterhin. Die Einstellungen haben eine eigene Tastaturnavigation. Verwenden Sie in der Desktop-Seitenleiste **Nach oben**, **Nach unten**, **Pos1** oder **Ende**, um zwischen Bereichen zu wechseln, und öffnen Sie einen Bereich mit **Eingabe** oder **Leertaste**.
 
 Wie Sie einen ganzen *Artikel* in Warplyn hinein- oder aus Warplyn herausbewegen, erfahren Sie unter [Artikeldateien](article-files.md). Informationen zu Sicherungen des gesamten Arbeitsbereichs finden Sie unter [Sicherungen und Wiederherstellung](backups-and-recovery.md).

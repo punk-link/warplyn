@@ -21,7 +21,7 @@ Die Ereignisse umfassen:
 - erfolgreiche oder fehlgeschlagene Verbindungsprüfungen, jedoch keine Verbindungsnamen oder Anbieterangaben
 - App-Starts sowie sichere Kategorien von Start-, Renderer- oder Kindprozessfehlern
 - abgeschlossene, fehlgeschlagene oder abgebrochene KI-Vorgänge und deren Phasen, einschließlich Fehlerkategorie und, falls verfügbar, HTTP-Status
-- ausdrücklich durchgeführte *Vorschlagsprüfungen* und aggregierte *Entwurfs*-Prüfpunkte
+- ausdrücklich durchgeführte *Vorschlagsprüfungen* und aggregierte Prüfpunkte
 - Ergebnisse von Sicherungen und Wiederherstellungen
 
 Ereignisse enthalten keinen *Artikel*-Text, keine Prompts, KI-Antworten oder API-Schlüssel.

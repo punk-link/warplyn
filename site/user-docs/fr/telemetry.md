@@ -1,5 +1,5 @@
 ---
-description: "Découvrez quelles données de diagnostic et d’utilisation Warplyn partage, ce qui reste privé et comment désactiver le partage dans Settings."
+description: "Découvrez quelles données de diagnostic et d’utilisation Warplyn partage, ce qui reste privé et comment désactiver le partage dans Paramètres."
 ---
 
 # Partager les données de diagnostic et d’utilisation

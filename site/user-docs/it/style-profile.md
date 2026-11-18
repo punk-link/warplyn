@@ -14,7 +14,7 @@ Aggiungi esempi di scrittura se vuoi rilevare le caratteristiche della tua voce 
 
 ## Aggiungere esempi di scrittura
 
-Apri **Campioni di scrittura** se vuoi che l’assistente impari dai tuoi testi esistenti. Scegli **Aggiungi campione di scrittura** per incollare del testo oppure carica un file `.txt` o `.md`. Puoi anche scegliere **Add Revision** per usare come esempio una versione salvata di un *articolo*. Assegna all’esempio un nome che ti aiuti a riconoscerlo in seguito.
+Apri **Campioni di scrittura** se vuoi che l’assistente impari dai tuoi testi esistenti. Scegli **Aggiungi campione di scrittura** per incollare del testo oppure carica un file `.txt` o `.md`. Puoi anche scegliere **Aggiungi questo articolo** per usare come esempio una versione salvata di un *articolo*. Assegna all’esempio un nome che ti aiuti a riconoscerlo in seguito.
 
 Usa la casella di controllo dell’esempio per includerlo nel profilo o escluderlo. Escludere un esempio lo mantiene nell’elenco. Rimuovilo quando non ti serve più. Per rimuoverlo serve una conferma, perché viene eliminato da Profilo di stile.
 

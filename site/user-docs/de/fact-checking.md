@@ -4,15 +4,15 @@ description: "Prüfen Sie Tatsachenbehauptungen, Quellen und Bewertungen und ent
 
 # Fakten prüfen
 
-Verwenden Sie **Fakten prüfen**, um überprüfbare Behauptungen in einem *Artikel* zu recherchieren, zum Beispiel historische Details oder Aussagen über einen Ort. Der Assistant liefert beratende *Hinweise* mit Erklärungen, Quellen und Angaben zur Unsicherheit. Eine Prüfung ändert Ihren Text nicht.
+Verwenden Sie **Fakten prüfen**, um überprüfbare Behauptungen in einem *Artikel* zu recherchieren, zum Beispiel historische Details oder Aussagen über einen Ort. Der Assistent liefert beratende *Hinweise* mit Erklärungen, Quellen und Angaben zur Unsicherheit. Eine Prüfung ändert Ihren Text nicht.
 
 Für die Faktenprüfung benötigen Sie eine [KI-Verbindung und ein Modell](providers.md), die beleggestützte Faktenprüfung unterstützen. Es können Gebühren des Anbieters anfallen.
 
 ## Eine Prüfung starten
 
 1. Öffnen Sie den *Artikel*. Wählen Sie eine Passage aus, wenn Sie die Prüfung darauf eingrenzen möchten.
-2. Öffnen Sie **Schnellaktionen** und wählen Sie **Fakten prüfen**. Sie können den Assistant auch bitten, Behauptungen in Ihrem Text zu prüfen.
-3. Prüfen Sie die vom Assistant ausgewählten Behauptungen und heben Sie die Auswahl für alle auf, die nicht geprüft werden sollen.
+2. Öffnen Sie **Schnellaktionen** und wählen Sie **Fakten prüfen**. Sie können den Assistenten auch bitten, Behauptungen in Ihrem Text zu prüfen.
+3. Prüfen Sie die vom Assistenten ausgewählten Behauptungen und heben Sie die Auswahl für alle auf, die nicht geprüft werden sollen.
 4. Wählen Sie **Editorial-Anfrage senden**.
 5. Öffnen Sie **Faktenprüfung**, um die Ergebnisse für die gespeicherte *Version* zu prüfen, auf die sich die Prüfung bezieht.
 
@@ -42,7 +42,7 @@ Wählen Sie bei einem ungelösten *Hinweis* aus der letzten Prüfung der aktuell
 | --- | --- |
 | **In der vorliegenden Form annehmen** | Hält fest, dass Sie die Behauptung in der vorliegenden Form beibehalten möchten. Der *Hinweis* wird als **In der vorliegenden Form angenommen** angezeigt. |
 | **Belege annehmen** | Hält fest, dass Sie die Belege geprüft und angenommen haben. Der *Hinweis* wird als **Belege angenommen** angezeigt. |
-| **Korrektur vorschlagen** | Bittet den Assistant bei einer **Umstrittenen** oder **Nicht verifizierbaren** Behauptung, einen Korrektur-*Vorschlag* vorzubereiten. Prüfen Sie ihn, bevor Sie Änderungen anwenden. |
+| **Korrektur vorschlagen** | Bittet den Assistenten bei einer **Umstrittenen** oder **Nicht verifizierbaren** Behauptung, einen Korrektur-*Vorschlag* vorzubereiten. Prüfen Sie ihn, bevor Sie Änderungen anwenden. |
 
 Beide Annahmeaktionen lösen den *Hinweis* auf, entfernen seine Entscheidungsschaltflächen und sorgen dafür, dass er in der Artikelbibliothek keine Aufmerksamkeit mehr anfordert. Keine davon ändert den *Artikel* oder die Bewertung. Sie halten unterschiedliche Gründe für Ihre Entscheidung fest, wirken sich ansonsten aber gleich auf den Prüfablauf aus.
 
@@ -58,4 +58,4 @@ Im **Verlauf der Faktenprüfung** können Sie frühere Durchläufe ansehen. Frü
 
 Eine spätere Prüfung kann Belege und Annahmeentscheidungen wiederverwenden, wenn sie eine unveränderte Tatsache erkennt – auch bei umformulierter Behauptung. Wiederverwendete Ergebnisse sind mit **Belege aus Version wiederverwendet** gekennzeichnet und behalten ihr ursprüngliches Prüfdatum. Hat sich die Tatsachenbedeutung geändert, kann neue Recherche nötig sein.
 
-Eine erneute Prüfung garantiert nicht, dass zu jeder unveränderten Behauptung neu recherchiert wird. Prüfen Sie bei zeitkritischen Details die Quelle und das Prüfdatum und bitten Sie den Assistant ausdrücklich, die Behauptung anhand aktueller Quellen zu verifizieren.
+Eine erneute Prüfung garantiert nicht, dass zu jeder unveränderten Behauptung neu recherchiert wird. Prüfen Sie bei zeitkritischen Details die Quelle und das Prüfdatum und bitten Sie den Assistenten ausdrücklich, die Behauptung anhand aktueller Quellen zu verifizieren.

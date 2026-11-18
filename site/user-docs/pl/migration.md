@@ -12,7 +12,7 @@ Przed migracją wybierz **Folder kopii zapasowych** w **Ustawienia** → **Dane 
 
 ## Procedura migracji
 
-1. W Skladno dokończ lub anuluj aktywne zadania AI, a następnie zamknij i ponownie otwórz aplikację, aby zapisać najnowszy punkt kontrolny *szkicu*. Podczas tworzenia kopii nie edytuj zewnętrznie plików autorskich *umiejętności*.
+1. W Skladno dokończ lub anuluj aktywne zadania AI, a następnie zamknij i ponownie otwórz aplikację, aby zapisać najnowszy punkt kontrolny. Podczas tworzenia kopii nie edytuj zewnętrznie plików autorskich *umiejętności*.
 2. Utwórz ręczną kopię zapasową z uruchomionej aplikacji Skladno, również jeśli korzysta z niestandardowego katalogu danych. Zachowaj plik `.sqlite` i sąsiadujący folder `.sqlite.skills` razem, pod ich oryginalnymi nazwami. Po utworzeniu kopii zamknij Skladno.
 3. Zainstaluj i otwórz Warplyn z osobnym, pustym profilem. Nigdy nie wskazuj aktywnego katalogu danych Skladno.
 4. W **Ustawienia** → **Dane i kopie** wybierz folder kopii migracyjnej i **Przywróć kopię**. Wybierz migawkę Skladno, potwierdź zastąpienie danych i poczekaj na ponowne uruchomienie Warplyn. Jeśli w Warplyn są już teksty, najpierw utwórz ich kopię zapasową: przywracanie zastępuje dane, a nie łączy baz.

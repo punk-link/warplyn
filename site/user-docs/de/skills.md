@@ -1,27 +1,27 @@
 ---
-description: "Erstellen und verwalten Sie wiederverwendbare Skills für Ihre Schreibaufgaben und prüfen Sie gespeicherte Versionen."
+description: "Erstellen und verwalten Sie wiederverwendbare Fähigkeiten für Ihre Schreibaufgaben und prüfen Sie gespeicherte Versionen."
 ---
 
-# Skills erstellen und verwalten
+# Fähigkeiten erstellen und verwalten
 
-*Skills* sind lokale Markdown-Anweisungspakete. Sie helfen dem Assistant, redaktionelle Funktionen auszuwählen und anzuordnen. Sie erweitern keine Berechtigungen und ändern keinen *Artikel*.
+*Fähigkeiten* sind lokale Markdown-Anweisungspakete. Sie helfen dem Assistenten, redaktionelle Funktionen auszuwählen und anzuordnen. Sie erweitern keine Berechtigungen und ändern keinen *Artikel*.
 
-## Eigene Skills erstellen und verwalten
+## Eigene Fähigkeiten erstellen und verwalten
 
-Bitten Sie den Assistant in einfacher Sprache, einen wiederverwendbaren *Skill* zu erstellen. Beschreiben Sie die wiederkehrende Aufgabe und benötigte Regeln oder Referenzen. Wenn ein fehlendes Detail den *Skill* verändern könnte, stellt der Assistant eine kurze Rückfrage, statt zu raten.
+Bitten Sie den Assistenten in einfacher Sprache, eine wiederverwendbare *Fähigkeit* zu erstellen. Beschreiben Sie die wiederkehrende Aufgabe und benötigte Regeln oder Referenzen. Wenn ein fehlendes Detail die *Fähigkeit* verändern könnte, stellt der Assistent eine kurze Rückfrage, statt zu raten.
 
 ::: tip Beispiel
-Um Belletristik im Stil einer ruhigen Flussszene zu überarbeiten, fragen Sie: „Erstelle einen *Skill* namens ‚Ruhiger Belletristik-Zeilenschliff‘. Straffe Anas Sätze und bewahre dabei ihre Stimme, den Schauplatz am Fluss und die Ereignisse der Szene. Füge keine Einzelheiten hinzu, sondern markiere unklare Passagen.“ Der Assistant kann diese Anweisungen bei späteren Bitten um einen Zeilenschliff wiederverwenden.
+Um Belletristik im Stil einer ruhigen Flussszene zu überarbeiten, fragen Sie: „Erstelle eine *Fähigkeit* namens ‚Ruhiger Belletristik-Zeilenschliff‘. Straffe Anas Sätze und bewahre dabei ihre Stimme, den Schauplatz am Fluss und die Ereignisse der Szene. Füge keine Einzelheiten hinzu, sondern markiere unklare Passagen.“ Der Assistent kann diese Anweisungen bei späteren Bitten um einen Zeilenschliff wiederverwenden.
 :::
 
-[![Warplyns Redaktioneller Assistent mit einer Anfrage, einen Skill für den Zeilenschliff fiktionaler Texte zu erstellen, und ausgewähltem Fähigkeiten erstellen.](/images/skill-creator-example.png)](/images/skill-creator-example.png)
+[![Der redaktionelle Assistent von Warplyn mit einer Anfrage, eine Fähigkeit für den Zeilenschliff fiktionaler Texte zu erstellen, und ausgewählter Funktion „Fähigkeiten erstellen“.](/images/skill-creator-example.png)](/images/skill-creator-example.png)
 
-*Beispiel einer Anfrage zum Erstellen eines Skills im Composer. Verbinden Sie vor dem Senden einen Anbieter.*
+*Beispiel einer Anfrage zum Erstellen einer Fähigkeit im Composer. Verbinden Sie vor dem Senden einen Anbieter.*
 
-Nach erfolgreicher Erstellung steht der *Skill* sofort für neue Assistant-Anfragen zur Verfügung. Bei der Erstellungsanfrage wird der Text Ihres *Artikels* nicht an das Modell gesendet; *Artikel*, *Entwurf*, *Vorschlag* und *Version* bleiben unverändert.
+Nach erfolgreicher Erstellung steht die *Fähigkeit* sofort für neue Anfragen an den Assistenten zur Verfügung. Bei der Erstellungsanfrage wird der Text Ihres *Artikels* nicht an das Modell gesendet; *Artikel*, *Entwurf*, *Vorschlag* und *Version* bleiben unverändert.
 
-Für jeden erstellten *Skill* gibt es einen lokalen, unveränderlichen Verlauf von *Skill-Versionen*. Dieser ist vom Versionsverlauf der *Artikel* getrennt. Sie können das lokale Markdown-Paket auch direkt bearbeiten. Warplyn aktualisiert den Katalog für die nächste Anfrage. Wenn Sie die Datei `SKILL.md` entfernen, verschwindet der *Skill* aus der Liste verfügbarer *Skills*.
+Für jede erstellte *Fähigkeit* gibt es einen lokalen, unveränderlichen Verlauf von *Fähigkeitsversionen*. Dieser ist vom Versionsverlauf der *Artikel* getrennt. Sie können das lokale Markdown-Paket auch direkt bearbeiten. Warplyn aktualisiert den Katalog für die nächste Anfrage. Wenn Sie die Datei `SKILL.md` entfernen, verschwindet die *Fähigkeit* aus der Liste verfügbarer *Fähigkeiten*.
 
-Bitten Sie den Assistant anhand des Namens, einen *Skill* zu überarbeiten oder zu löschen. Vor einer Änderung liest er das aktuelle Paket und prüft, ob die Datei inzwischen verändert wurde. Eine Überarbeitung behält die *Skill*-ID bei und fügt eine neue *Skill-Version* hinzu. Beim Löschen wird der *Skill* aus neuen Anfragen entfernt, sein Verlauf bleibt aber erhalten.
+Bitten Sie den Assistenten anhand des Namens, eine *Fähigkeit* zu überarbeiten oder zu löschen. Vor einer Änderung liest er das aktuelle Paket und prüft, ob die Datei inzwischen verändert wurde. Eine Überarbeitung behält die ID der *Fähigkeit* bei und fügt eine neue *Fähigkeitsversion* hinzu. Beim Löschen wird die *Fähigkeit* aus neuen Anfragen entfernt, ihr Verlauf bleibt aber erhalten.
 
-Um frühere Anweisungen wiederherzustellen, bitten Sie den Assistant um die *Versionen* dieses *Skills* und nennen Sie die gewünschte Version. Durch die Wiederherstellung wird eine neue aktive Fassung geschrieben und eine weitere *Skill-Version* angefügt. Auf diese Weise können Sie auch einen gelöschten *Skill* wiederherstellen. Das Wiederherstellen eines Unterhaltung-Prüfpunkts stellt keinen *Skill* wieder her und ändert ihn nicht; die Wiederherstellung eines *Skills* ist eine separate Anfrage.
+Um frühere Anweisungen wiederherzustellen, bitten Sie den Assistenten um die *Versionen* dieser *Fähigkeit* und nennen Sie die gewünschte Version. Durch die Wiederherstellung wird eine neue aktive Fassung geschrieben und eine weitere *Fähigkeitsversion* angefügt. Auf diese Weise können Sie auch eine gelöschte *Fähigkeit* wiederherstellen. Das Wiederherstellen eines Unterhaltung-Prüfpunkts stellt keine *Fähigkeit* wieder her und ändert sie nicht; die Wiederherstellung einer *Fähigkeit* ist eine separate Anfrage.

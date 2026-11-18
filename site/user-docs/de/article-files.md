@@ -15,7 +15,7 @@ Verwenden Sie **In Datei speichern** und **Aus Datei laden**, um vollständige *
 Die Datei enthält den gesamten aktuellen *Entwurf*, einschließlich nicht gespeicherter Änderungen. Eine Textauswahl begrenzt den gespeicherten Inhalt nicht. Diese Aktion erstellt keine *Version*. Mit **Version speichern** fügen Sie den aktuellen *Entwurf* weiterhin Ihrem Verlauf hinzu.
 
 ::: tip Sie benötigen eine portable Kopie Ihres Arbeitsbereichs?
-*Artikel*-Dateien enthalten nur den Text. Um Verlauf, Assistant-Arbeit, *Skills* und Einstellungen zu bewahren, erstellen Sie stattdessen eine [Sicherung](backups-and-recovery.md).
+*Artikel*-Dateien enthalten nur den Text. Um Verlauf, Arbeit des Assistenten, *Fähigkeiten* und Einstellungen zu bewahren, erstellen Sie stattdessen eine [Sicherung](backups-and-recovery.md).
 :::
 
 Die Web-App meldet **Artikel-Download gestartet**, sobald sie die Datei an den Browser übergibt. Prüfen Sie im Downloadbereich des Browsers, ob der Vorgang abgeschlossen wurde oder ein Fehler aufgetreten ist.

@@ -4,15 +4,15 @@ description: "Pisz i porządkuj artykuły, poznaj sposób zapisywania szkiców o
 
 # Pisanie i porządkowanie artykułów
 
-*Artykuł* to tekst w bibliotece Warplyn. Podczas edycji Warplyn zapisuje odzyskiwalny punkt kontrolny *szkicu*. *Zapisana wersja* to zapisany punkt w historii *artykułu*. Dzięki temu możesz kontynuować pracę, nie uznając każdej edycji za wersję ukończoną.
+*Artykuł* to tekst w bibliotece Warplyn. Podczas edycji Warplyn zapisuje odzyskiwalny punkt kontrolny. *Zapisana wersja* to zapisany punkt w historii *artykułu*. Dzięki temu możesz kontynuować pracę, nie uznając każdej edycji za wersję ukończoną.
 
 ## Pisz i zapisuj artykuł
 
 Wybierz **Nowy artykuł** w Library, aby rozpocząć. Zmień nazwę *artykułu* w polu tytułu. Za pomocą paska formatowania dodawaj nagłówki, listy, wyróżnienia, łącza, cytaty i kod. Po wklejeniu tekstu sformatowanego Warplyn zachowuje obsługiwane formatowanie i usuwa niebezpieczne lub nieobsługiwane znaczniki. *Artykuł* jest zapisywany jako Markdown, więc złożone układy stron i osadzone elementy nie zostaną przeniesione.
 
-Podczas edycji Warplyn automatycznie zapisuje bieżący *szkic*. Punkt kontrolny *szkicu* to odzyskiwalny tekst roboczy, a nie nowy element Historia wersji. Jeśli chcesz sprawdzić, czy ostatnie zmiany zapisano w punkcie kontrolnym, spójrz na wskaźnik stanu zapisu na Article Status Bar. Warplyn zapisuje również oczekujący punkt kontrolny po przełączeniu *artykułów* lub otwarciu Settings.
+Podczas edycji Warplyn automatycznie zapisuje bieżący *szkic*. Punkt kontrolny to odzyskiwalny tekst roboczy, a nie nowy element Historia wersji. Jeśli chcesz sprawdzić, czy ostatnie zmiany zapisano w punkcie kontrolnym, spójrz na wskaźnik stanu zapisu na pasku stanu artykułu. Warplyn zapisuje również oczekujący punkt kontrolny po przełączeniu *artykułów* lub otwarciu Ustawienia.
 
-[![Obszar pisania z artykułem The River at Dusk w edytorze, paskiem formatowania, biblioteką i wskaźnikiem Saved Draft.](/images/writing-workspace.png)](/images/writing-workspace.png)
+[![Obszar pisania z artykułem The River at Dusk w edytorze, paskiem formatowania, biblioteką i wskaźnikiem zapisanego szkicu.](/images/writing-workspace.png)](/images/writing-workspace.png)
 
 *Przykładowy artykuł zapisany jako szkic w obszarze pisania.*
 
@@ -34,6 +34,6 @@ W **Słownik osobisty** wyszukaj zapisane słowa albo wpisz pod nagłówkiem **S
 
 Użyj **Tryb skupienia**, aby podczas pisania ukryć oba panele pomocnicze. Wybierz tę opcję ponownie, aby je przywrócić. Kontrolką zwijania panelu zamykaj go lub otwieraj; przeciągnij separator obok panelu, aby zmienić jego szerokość. W wąskim oknie panele mogą otwierać się jako tymczasowe szuflady nad edytorem.
 
-Korzystając z klawiatury, użyj **Tab** i **Shift + Tab**, aby przechodzić między Library, Article header, widokami, paskiem formatowania, edytorem, paskiem stanu i asystentem. W edytorze, wyszukiwarce i Composer nadal działają standardowe klawisze edycji tekstu. Settings ma własną nawigację klawiaturową. Na desktopowym pasku bocznym użyj **Up**, **Down**, **Home** lub **End**, aby przejść między sekcjami, a następnie **Enter** lub **Space**, aby otworzyć wybraną.
+Korzystając z klawiatury, użyj **Tab** i **Shift + Tab**, aby przechodzić między Library, Article header, widokami, paskiem formatowania, edytorem, paskiem stanu i asystentem. W edytorze, wyszukiwarce i Composer nadal działają standardowe klawisze edycji tekstu. Ustawienia mają własną nawigację klawiaturową. Na desktopowym pasku bocznym użyj **Up**, **Down**, **Home** lub **End**, aby przejść między sekcjami, a następnie **Enter** lub **Space**, aby otworzyć wybraną.
 
 Aby przenieść cały *artykuł* do Warplyn lub z niego, zobacz [Pliki artykułów](article-files.md). Informacje o kopiach zapasowych całego obszaru roboczego znajdziesz w sekcji [Kopie zapasowe i odzyskiwanie danych](backups-and-recovery.md).

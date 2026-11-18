@@ -1,5 +1,5 @@
 ---
-description: "Definitionen zu Artikeln, Entwürfen, Versionen, Vorschlägen, Hinweisen und Skills im Schreibarbeitsbereich von Warplyn."
+description: "Definitionen zu Artikeln, Entwürfen, Versionen, Vorschlägen, Hinweisen und Fähigkeiten im Schreibarbeitsbereich von Warplyn."
 ---
 
 # Warplyn-Glossar
@@ -22,8 +22,8 @@ Diese Begriffe beschreiben Konzepte, die Authors sehen, sowie die Fachsprache de
 
 ## Redaktionelle Arbeit
 
-- **Redaktionelle Funktion**: ein validierter Warplyn-Vorgang, der festlegt, welchen *Artikel*-Kontext er verwenden darf, welche Voraussetzungen gelten und welches Ergebnis er liefert. Arbeitsbereichsansichten und Assistant-*Skills* können dieselbe Funktion aufrufen.
-- **Skill**: ein wiederverwendbares Anweisungspaket, das dem Assistant hilft, redaktionelle Funktionen für eine Anfrage des Authors auszuwählen und zu ordnen. Ein *Skill* verleiht keine Funktion oder Berechtigung. Ein **integrierter Skill** ist Teil von Warplyn. Ein **vom Author erstellter Skill** ist ein lokales Markdown-Paket, das im Assistant-Chat erstellt wird und einen eigenen Verlauf von *Skill-Versionen* hat.
+- **Redaktionelle Funktion**: ein validierter Warplyn-Vorgang, der festlegt, welchen *Artikel*-Kontext er verwenden darf, welche Voraussetzungen gelten und welches Ergebnis er liefert. Arbeitsbereichsansichten und Assistant-*Fähigkeiten* können dieselbe Funktion aufrufen.
+- **Fähigkeit**: ein wiederverwendbares Anweisungspaket, das dem Assistant hilft, redaktionelle Funktionen für eine Anfrage des Authors auszuwählen und zu ordnen. Eine *Fähigkeit* verleiht keine Funktion oder Berechtigung. Eine **integrierte Fähigkeit** ist Teil von Warplyn. Eine **vom Author erstellte Fähigkeit** ist ein lokales Markdown-Paket, das im Assistant-Chat erstellt wird und einen eigenen Verlauf von *Fähigkeitsversionen* hat.
 - **Redaktioneller Vorgang**: eine vom Author angeforderte Assistant-Aktivität, etwa Formulieren, Glätten, Faktenprüfung, Stilprüfung oder Übersetzen.
 - **Redaktionelle Anfrage**: ein einzelner Aufruf eines redaktionellen Vorgangs.
 - **Redaktionelle Sitzung**: die Interaktionsfolge und der Aktivitätsverlauf redaktioneller Anfragen.
@@ -101,6 +101,6 @@ In der ausgeklappten Ansicht ist die Fußzeile des Bibliothek-Panels der **Werkz
 - **Artikel-Editor**: Schreibansicht. Der zentrale Bearbeitungsbereich ist die **Schreibfläche**.
 - **Artikel-Statusleiste**: Leiste unter der ausgewählten Arbeitsbereichsansicht mit Artikelstatus und Metadaten, Sprachauswahl, Hinweisen zum Veröffentlichungsprofil und Kopiersteuerungen.
 - **Assistant-Panel**: redaktionelle Vorgaben, Aktionen, Anfragestatus und Aktivität. Auf kleinen Bildschirmen erscheint es vorübergehend als **Assistant-Schublade**.
-- **Schnellaktionen**: Dropdown über dem Assistant-Composer zum Einfügen eines integrierten Skills in eine Anfrage.
+- **Schnellaktionen**: Dropdown über dem Assistant-Composer zum Einfügen einer integrierten Fähigkeit in eine Anfrage.
 - **Composer**: Eingabefeld unten im Assistant-Panel, in dem der Author redaktionelle Vorgaben eingibt und eine Anfrage sendet.
 - **Navigation der Anwendungseinstellungen**: Navigation zwischen **Allgemein**, **Tastenkombinationen**, **Anbieter**, **KI-Assistent**, **Veröffentlichung**, **Sprachvorgaben**, **Rechtschreibung**, **Daten und Sicherungen** sowie **Über Warplyn**.

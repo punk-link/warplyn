@@ -1,5 +1,5 @@
 ---
-description: "Legen Sie Erscheinungsbild, Schreibvorgaben, Verhalten des Assistant, Veröffentlichungshinweise und Update-Einstellungen für den Desktop fest."
+description: "Legen Sie Erscheinungsbild, Schreibvorgaben, Verhalten des Assistenten, Veröffentlichungshinweise und Update-Einstellungen für den Desktop fest."
 ---
 
 # Anwendungseinstellungen
@@ -16,13 +16,13 @@ Wählen Sie unter **Datum und Uhrzeit** ein Datumsformat, eine 12- oder 24-Stund
 
 Legen Sie unter **Sprachvorgaben** die **Standardsprache für Artikel** für neue *Artikel* fest. Mit **Standardsprachen für Übersetzungen** werden diese Zielsprachen bei einer *Übersetzungs*-Anfrage zuerst angeboten. Geben Sie einen Sprachnamen, eine regionale Variante oder einen Code ein und wählen Sie **Hinzufügen**. Warplyn bittet Sie weiterhin, jede Übersetzungsanfrage zu bestätigen.
 
-## Verhalten des Assistant festlegen
+## Verhalten des Assistenten festlegen
 
 Wählen Sie unter **KI-Assistent** für neue *Artikel*-Unterhaltungen standardmäßig **Änderungen zur Prüfung vorschlagen** oder aktivieren Sie **Änderungen direkt anwenden** für ausdrücklich angeforderte Änderungen. Diese Vorgabe ändert keine bestehenden Unterhaltungen; andere generierte Ergebnisse müssen weiterhin geprüft werden.
 
 **Zeitlimit für Anfragen** gilt für jede neue Anfrage und jeden erneuten Versuch. Standardmäßig sind es zwei Minuten. Wählen Sie für Aufgaben, die mehr Zeit benötigen, ein längeres Limit oder **Unbegrenzt**. Eine Anfrage, die das Zeitlimit überschreitet, ändert den *Artikel* nicht.
 
-Legen Sie fest, ob **Eingabe** oder **Strg + Eingabe** zum Senden an den Assistant verwendet wird. Weitere Anwendungs-Kurzbefehle lassen sich unter **Tastenkombinationen** ändern. Warplyn erkennt Konflikte, bevor ein Kurzbefehl gespeichert wird.
+Legen Sie fest, ob **Eingabe** oder **Strg + Eingabe** zum Senden einer Anfrage an den Assistenten verwendet wird. Weitere Anwendungs-Kurzbefehle lassen sich unter **Tastenkombinationen** ändern. Warplyn erkennt Konflikte, bevor ein Kurzbefehl gespeichert wird.
 
 ## Veröffentlichungshinweise festlegen
 
@@ -30,9 +30,9 @@ Wählen Sie unter **Veröffentlichung** ein Standardprofil für neue *Artikel*. 
 
 ## KI-Modelloptionen prüfen
 
-Unter **KI-Assistent** können Sie mehrere Anbieter-Verbindungen speichern, nur gewünschte Verbindungen aktivieren und verschiedene Modelle für allgemeine Assistant-Aufgaben und bestimmte *Skills* festlegen. Das **Standardmodell** wird für KI-Aufgaben verwendet, sofern eine Aufgabe keine eigene Auswahl hat. Das optionale **App-Modell** übernimmt Warplyn-Aufgaben wie Zusammenfassungen und Titel; wenn es nicht festgelegt ist, wird das Standardmodell verwendet. Mit **Favoriten**, der Suche oder dem Anbieterfilter finden Sie ein Modell. Die **Reasoning-Stufe** wird für unterstützte OpenAI-Modelle angezeigt. Verfügbare Aufgaben und Steuerungen hängen vom Modell ab. Informationen zur Einrichtung und zu Anbietergrenzen finden Sie unter [KI-Anbieter und Modelle](providers.md).
+Unter **KI-Assistent** können Sie mehrere Anbieter-Verbindungen speichern, nur gewünschte Verbindungen aktivieren und verschiedene Modelle für allgemeine Aufgaben des Assistenten und bestimmte *Fähigkeiten* festlegen. Das **Standardmodell** wird für KI-Aufgaben verwendet, sofern eine Aufgabe keine eigene Auswahl hat. Das optionale **App-Modell** übernimmt Warplyn-Aufgaben wie Zusammenfassungen und Titel; wenn es nicht festgelegt ist, wird das Standardmodell verwendet. Mit **Favoriten**, der Suche oder dem Anbieterfilter finden Sie ein Modell. Die **Reasoning-Stufe** wird für unterstützte OpenAI-Modelle angezeigt. Verfügbare Aufgaben und Steuerungen hängen vom Modell ab. Informationen zur Einrichtung und zu Anbietergrenzen finden Sie unter [KI-Anbieter und Modelle](providers.md).
 
-Wählen Sie unter **Tastenkombinationen** neben einer Aktion einen Kurzbefehl aus und drücken Sie die gewünschte Tastenkombination. Sie können Kurzbefehle zum Speichern einer *Version*, zum Wechseln von Ansichten oder zum Umschalten des Fokusmodus festlegen. Warplyn nennt die Aktion, die bereits denselben Kurzbefehl verwendet; wählen Sie eine andere Kombination. **Senden mit** legt fest, ob **Eingabe** oder **Strg + Eingabe** eine Assistant-Anfrage sendet. Kurzbefehle zu ändern, ändert keinen *Artikel*-Inhalt.
+Wählen Sie unter **Tastenkombinationen** neben einer Aktion einen Kurzbefehl aus und drücken Sie die gewünschte Tastenkombination. Sie können Kurzbefehle zum Speichern einer *Version*, zum Wechseln von Ansichten oder zum Umschalten des Fokusmodus festlegen. Warplyn nennt die Aktion, die bereits denselben Kurzbefehl verwendet; wählen Sie eine andere Kombination. **Senden mit** legt fest, ob **Eingabe** oder **Strg + Eingabe** eine Anfrage an den Assistenten sendet. Kurzbefehle zu ändern, ändert keinen *Artikel*-Inhalt.
 
 ## Desktop-Updates prüfen
 
@@ -40,6 +40,6 @@ Installierte Desktop-Apps können unter **Einstellungen** → **Über Warplyn** 
 
 ## Lokale Daten löschen
 
-In der Desktop-App entfernt **Lokale Daten löschen** dauerhaft die aktiven Warplyn-Daten, einschließlich *Artikel*, *Versionen*, *Entwurfs*-Prüfpunkte, Assistant-Verlauf, Stildaten, Einstellungen und lokaler Sicherungen im Datenordner. Wenn ein Sicherungsordner eingerichtet ist, bietet der Bestätigungsdialog **Vor dem Löschen eine Sicherung erstellen** an. Warplyn muss diese Sicherung vollständig erstellen, bevor Daten gelöscht werden. Nach erfolgreichem Löschen wird die App geschlossen. Eine normale Deinstallation entfernt Ihre Schreibdaten nicht. Persönliche Rechtschreibwörter im Wörterbuch des Betriebssystems bleiben erhalten. Entfernen Sie sie bei Bedarf separat unter **Einstellungen** → **Rechtschreibung**.
+In der Desktop-App entfernt **Lokale Daten löschen** dauerhaft die aktiven Warplyn-Daten, einschließlich *Artikel*, *Versionen*, Prüfpunkte, Verlauf des Assistenten, Stildaten, Einstellungen und lokaler Sicherungen im Datenordner. Wenn ein Sicherungsordner eingerichtet ist, bietet der Bestätigungsdialog **Vor dem Löschen eine Sicherung erstellen** an. Warplyn muss diese Sicherung vollständig erstellen, bevor Daten gelöscht werden. Nach erfolgreichem Löschen wird die App geschlossen. Eine normale Deinstallation entfernt Ihre Schreibdaten nicht. Persönliche Rechtschreibwörter im Wörterbuch des Betriebssystems bleiben erhalten. Entfernen Sie sie bei Bedarf separat unter **Einstellungen** → **Rechtschreibung**.
 
 Unter **Einstellungen** → **Über Warplyn** finden Sie das Benutzerhandbuch, das Quell-Repository, den Issue-Tracker und die Lizenz. Mit **Schnellstart öffnen** können Sie die Einführung beim ersten Start erneut aufrufen.

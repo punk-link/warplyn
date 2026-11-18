@@ -12,7 +12,7 @@ Prima di migrare, scegli una **Cartella dei backup** in **Impostazioni** → **D
 
 ## Procedura di migrazione
 
-1. In Skladno, termina o annulla le operazioni di IA in corso, quindi chiudi e riapri l’app per salvare il checkpoint di *bozza* più recente. Durante la creazione della copia, evita di modificare dall’esterno i file delle *abilità* dell’autore.
+1. In Skladno, termina o annulla le operazioni di IA in corso, quindi chiudi e riapri l’app per salvare il checkpoint più recente. Durante la creazione della copia, evita di modificare dall’esterno i file delle *abilità* dell’autore.
 2. Crea una copia di sicurezza manuale dall’app Skladno mentre è in esecuzione, anche se usa una cartella dati personalizzata. Mantieni il file `.sqlite` e la cartella `.sqlite.skills` adiacente insieme e con i nomi originali. Al termine della copia, chiudi Skladno.
 3. Installa e avvia Warplyn con un profilo vuoto separato. Non indicare mai la cartella dei dati attivi di Skladno.
 4. In **Impostazioni** → **Dati e backup**, scegli la cartella della copia di migrazione e seleziona **Ripristina un backup**. Seleziona l’istantanea Skladno, conferma la sostituzione e attendi il riavvio di Warplyn. Se Warplyn contiene già del lavoro, crea prima una sua copia di sicurezza: il ripristino sostituisce il contenuto e non unisce i database.

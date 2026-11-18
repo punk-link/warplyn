@@ -56,6 +56,6 @@ Os *apontamentos* pertencem à *versão salva* que foi conferida. Quando outra *
 
 Use **Histórico de checagem de fatos** para consultar conferências anteriores. As anteriores são somente para leitura; você pode agir na conferência mais recente da *versão salva* atual.
 
-Uma conferência posterior pode reutilizar evidências e decisões de aceitação quando reconhece um fato inalterado, mesmo que a afirmação tenha sido reformulada. Os resultados reutilizados mostram **Evidence reused from Revision** e mantêm a data da conferência anterior. Uma mudança no sentido factual pode exigir nova pesquisa.
+Uma conferência posterior pode reutilizar evidências e decisões de aceitação quando reconhece um fato inalterado, mesmo que a afirmação tenha sido reformulada. Os resultados reutilizados mostram **Evidências reutilizadas da Versão salva** e mantêm a data da conferência anterior. Uma mudança no sentido factual pode exigir nova pesquisa.
 
 Executar outra conferência não garante uma pesquisa atualizada para cada afirmação inalterada. Para informações sujeitas a mudanças, confira as fontes e as datas da conferência e peça explicitamente ao assistente que verifique a afirmação com fontes atuais.

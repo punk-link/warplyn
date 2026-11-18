@@ -56,6 +56,6 @@ I *rilievi* appartengono alla *versione salvata* verificata. Quando diventa attu
 
 Usa **Cronologia delle verifiche dei fatti** per consultare le verifiche precedenti. Sono di sola lettura; puoi intervenire solo sull’ultima verifica della *versione salvata* attuale.
 
-Una verifica successiva può riutilizzare le prove e le decisioni di accettazione se riconosce un fatto invariato, anche quando l’affermazione è stata riformulata. I risultati riutilizzati mostrano **Evidence reused from Revision** e mantengono la data della verifica precedente. Se il significato fattuale è cambiato, potrebbe servire una nuova ricerca.
+Una verifica successiva può riutilizzare le prove e le decisioni di accettazione se riconosce un fatto invariato, anche quando l’affermazione è stata riformulata. I risultati riutilizzati mostrano **Prove riutilizzate dalla versione** e mantengono la data della verifica precedente. Se il significato fattuale è cambiato, potrebbe servire una nuova ricerca.
 
 Ripetere una verifica non garantisce nuove ricerche per ogni affermazione invariata. Per i dettagli che possono cambiare nel tempo, controlla le fonti e le date delle verifiche e chiedi esplicitamente all’assistente di verificare l’affermazione usando fonti aggiornate.

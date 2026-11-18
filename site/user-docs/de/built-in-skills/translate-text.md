@@ -4,7 +4,7 @@ description: "Verwenden Sie „Text übersetzen“, um eine vollständige Artike
 
 # Text übersetzen
 
-Verwenden Sie **Text übersetzen**, um eine Übersetzung des vollständigen *Artikels* in einer ausgewählten Sprache vorzubereiten. Der Skill übersetzt Titel und Haupttext und bewahrt Behauptungen, Zahlen, Schreibstimme und Markdown-Formatierung. Er verwendet den gesamten *Artikel*, auch wenn Sie eine Passage ausgewählt haben.
+Verwenden Sie **Text übersetzen**, um eine Übersetzung des vollständigen *Artikels* in einer ausgewählten Sprache vorzubereiten. Die Fähigkeit übersetzt Titel und Haupttext und bewahrt Behauptungen, Zahlen, Schreibstimme und Markdown-Formatierung. Sie verwendet den gesamten *Artikel*, auch wenn Sie eine Passage ausgewählt haben.
 
 Öffnen Sie die Ansicht **Übersetzungen** des *Artikels* und wählen Sie **Neue Übersetzung…**. Wählen Sie eine Zielsprache und bestätigen Sie die Anfrage. Wenn der Quelltext nicht gespeicherte Änderungen enthält, speichern Sie sie zuerst als *Version*. So bezieht sich das Ergebnis auf den Text, den Sie übersetzen möchten.
 

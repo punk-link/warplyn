@@ -69,4 +69,4 @@ Der Menüeintrag bleibt gültig, weil In-App-Updates das Image am selben Pfad er
 
 Für KI-Funktionen fügen Sie unter **Einstellungen** → **KI-Assistent** eine Anbieter-Verbindung hinzu. Wählen Sie unter **Einstellungen** → **Daten und Sicherungen** einen **Sicherungsordner**, um Ihre *Artikel* zu schützen.
 
-Warplyn speichert *Artikel* und *Entwurfs*-Prüfpunkte auf Ihrem Computer. KI-Anfragen benötigen eine Internetverbindung und übermitteln den relevanten *Artikel*-Text und Kontext an den von Ihnen gewählten Anbieter. Es gelten die Datenrichtlinien und Preise dieses Anbieters.
+Warplyn speichert *Artikel* und Prüfpunkte auf Ihrem Computer. KI-Anfragen benötigen eine Internetverbindung und übermitteln den relevanten *Artikel*-Text und Kontext an den von Ihnen gewählten Anbieter. Es gelten die Datenrichtlinien und Preise dieses Anbieters.

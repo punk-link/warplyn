@@ -14,7 +14,7 @@ Adicione exemplos de escrita para identificar características de voz, ou adicio
 
 ## Adicionar exemplos de escrita
 
-Abra **Escrevendo amostras** quando quiser que o assistente aprenda com textos que você já escreveu. Escolha **Adicionar amostra de escrita** para colar um texto ou enviar um arquivo `.txt` ou `.md`. Você também pode escolher **Add Revision** para usar como exemplo uma versão salva de um *artigo*. Dê ao exemplo um nome que ajude a reconhecê-lo depois.
+Abra **Escrevendo amostras** quando quiser que o assistente aprenda com textos que você já escreveu. Escolha **Adicionar amostra de escrita** para colar um texto ou enviar um arquivo `.txt` ou `.md`. Você também pode escolher **Adicione este artigo** para usar como exemplo uma versão salva de um *artigo*. Dê ao exemplo um nome que ajude a reconhecê-lo depois.
 
 Use a caixa de seleção do exemplo para incluí-lo ou excluí-lo do perfil. Excluir um exemplo o mantém na lista. Remova-o quando não precisar mais dele. A remoção exige confirmação porque o exemplo será excluído do Perfil de estilo.
 

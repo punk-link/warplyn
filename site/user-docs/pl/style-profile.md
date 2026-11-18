@@ -14,7 +14,7 @@ Dodaj próbki tekstu, jeśli chcesz uzyskać wykryte cechy stylu, albo **Reguły
 
 ## Dodaj próbki tekstu
 
-Otwórz **Próbki pisania**, jeśli chcesz, aby asystent uczył się na podstawie Twoich istniejących tekstów. Wybierz **Dodaj próbkę pisania**, aby wkleić tekst, albo prześlij plik `.txt` lub `.md`. Możesz też wybrać **Add Revision**, aby użyć zapisanej wersji *artykułu* jako próbki. Nadaj jej nazwę, która ułatwi późniejsze rozpoznanie.
+Otwórz **Próbki pisania**, jeśli chcesz, aby asystent uczył się na podstawie Twoich istniejących tekstów. Wybierz **Dodaj próbkę pisania**, aby wkleić tekst, albo prześlij plik `.txt` lub `.md`. Możesz też wybrać **Dodaj ten artykuł**, aby użyć zapisanej wersji *artykułu* jako próbki. Nadaj jej nazwę, która ułatwi późniejsze rozpoznanie.
 
 Zaznacz pole wyboru próbki, aby uwzględnić ją w profilu lub ją wykluczyć. Wykluczona próbka pozostaje na liście. Usuń próbkę, gdy nie jest już potrzebna. Usunięcie wymaga potwierdzenia, ponieważ próbka zostanie skasowana z Profil stylu.
 

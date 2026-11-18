@@ -6,7 +6,7 @@ description: "Verwenden Sie „Kernpunkte entwickeln“, um zentrale Gedanken in
 
 Verwenden Sie **Kernpunkte entwickeln**, wenn Sie eine knappe Liste der Hauptgedanken in Ihren Notizen oder Ihrem *Artikel* benötigen. Standardmäßig werden drei bis fünf unterschiedliche Punkte vorbereitet; der *Artikel* wird dabei nicht umgeschrieben.
 
-Öffnen Sie **Schnellaktionen**, wählen Sie **Kernpunkte entwickeln**, geben Sie bei Bedarf im Composer weitere Vorgaben ein und wählen Sie dann **Editorial-Anfrage senden**. Wenn Sie eine Passage auswählen, bestimmen diese Auswahl und der Text Ihrer Nachricht das Ergebnis. Ohne Auswahl folgt der Assistant zuerst Ihrer Nachricht; ist sie leer, verwendet er den *Artikel*.
+Öffnen Sie **Schnellaktionen**, wählen Sie **Kernpunkte entwickeln**, geben Sie bei Bedarf im Composer weitere Vorgaben ein und wählen Sie dann **Editorial-Anfrage senden**. Wenn Sie eine Passage auswählen, bestimmen diese Auswahl und der Text Ihrer Nachricht das Ergebnis. Ohne Auswahl folgt der Assistent zuerst Ihrer Nachricht; ist sie leer, verwendet er den *Artikel*.
 
 ::: tip Beispiel
 Wählen Sie die Szene aus, in der Ana am Fluss sitzt, und fragen Sie: „Nenne drei mögliche Deutungen von Anas Beziehung zum Fluss, die sich auf diese Passage stützen.“

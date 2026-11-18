@@ -14,7 +14,7 @@ Ajoutez des échantillons d’écriture pour détecter les caractéristiques de 
 
 ## Ajouter des échantillons d’écriture
 
-Ouvrez **Échantillons d’écriture** si vous souhaitez que l’assistant s’inspire de vos textes existants. Choisissez **Ajouter un échantillon d’écriture** pour coller du texte ou importer un fichier `.txt` ou `.md`. Vous pouvez aussi choisir **Add Revision** pour utiliser comme échantillon une version enregistrée d’un *article*. Donnez à chaque échantillon un nom qui vous aidera à le reconnaître plus tard.
+Ouvrez **Échantillons d’écriture** si vous souhaitez que l’assistant s’inspire de vos textes existants. Choisissez **Ajouter un échantillon d’écriture** pour coller du texte ou importer un fichier `.txt` ou `.md`. Vous pouvez aussi choisir **Ajouter cet article** pour utiliser comme échantillon une version enregistrée d’un *article*. Donnez à chaque échantillon un nom qui vous aidera à le reconnaître plus tard.
 
 Utilisez la case à cocher de l’échantillon pour l’inclure dans le profil ou l’en exclure. Un échantillon exclu reste dans votre liste. Supprimez un échantillon lorsque vous n’en avez plus besoin. Une confirmation est demandée, car sa suppression l’efface du profil de style.
 

@@ -10,9 +10,9 @@ Um *artigo* é um texto na sua biblioteca do Warplyn. Enquanto você edita, o Wa
 
 Escolha **Novo artigo** na biblioteca para começar. Renomeie o *artigo* pelo campo do título. Use a barra de formatação para aplicar títulos, listas, ênfase, links, citações e código. Ao colar texto formatado, o Warplyn mantém a formatação compatível e remove marcações inseguras ou sem suporte. O *artigo* é armazenado como Markdown, portanto layouts de página complexos e itens incorporados não são preservados.
 
-O Warplyn salva automaticamente o *rascunho* atual enquanto você edita. Um ponto de verificação de *rascunho* é um texto de trabalho recuperável, não um novo item no histórico de versões salvas. Se precisar saber se as edições recentes foram salvas, confira o indicador de estado na Article Status Bar. O Warplyn também salva um ponto de verificação pendente quando você troca de *artigo* ou abre Settings.
+O Warplyn salva automaticamente o *rascunho* atual enquanto você edita. Um ponto de verificação é um texto de trabalho recuperável, não um novo item no histórico de versões salvas. Se precisar saber se as edições recentes foram salvas, confira o indicador de estado na barra de status do artigo. O Warplyn também salva um ponto de verificação pendente quando você troca de *artigo* ou abre Configurações.
 
-[![Espaço de escrita mostrando A correnteza ao entardecer no editor, a barra de formatação, a biblioteca e o indicador Saved Draft.](/images/writing-workspace.png)](/images/writing-workspace.png)
+[![Espaço de escrita mostrando A correnteza ao entardecer no editor, a barra de formatação, a biblioteca e o indicador de rascunho salvo.](/images/writing-workspace.png)](/images/writing-workspace.png)
 
 *Exemplo de artigo salvo como rascunho no espaço de escrita.*
 
@@ -34,6 +34,6 @@ Em **Dicionário pessoal**, procure palavras salvas ou informe uma palavra ou te
 
 Use **Modo de foco** para ocultar os dois painéis de apoio enquanto escreve. Selecione-o novamente para exibi-los. Use o controle de recolher de cada painel para fechá-lo ou reabri-lo; arraste o divisor ao lado de um painel para redimensioná-lo. Em uma janela estreita, os painéis podem abrir temporariamente sobre o editor.
 
-Com o teclado, use **Tab** e **Shift + Tab** para percorrer a biblioteca, o cabeçalho do artigo, as visualizações, a barra de formatação, o editor, a barra de status e o assistente. No editor, na busca e no Composer, os atalhos usuais de edição de texto continuam funcionando. Settings tem navegação própria pelo teclado. Na barra lateral do desktop, use **Up**, **Down**, **Home** ou **End** para percorrer as seções e depois **Digitar** ou **Space** para abrir uma delas.
+Com o teclado, use **Tab** e **Shift + Tab** para percorrer a biblioteca, o cabeçalho do artigo, as visualizações, a barra de formatação, o editor, a barra de status e o assistente. No editor, na busca e no Composer, os atalhos usuais de edição de texto continuam funcionando. Configurações tem navegação própria pelo teclado. Na barra lateral do desktop, use **Up**, **Down**, **Home** ou **End** para percorrer as seções e depois **Digitar** ou **Space** para abrir uma delas.
 
 Para transferir um *artigo* inteiro de ou para o Warplyn, consulte [Arquivos de artigos](article-files.md). Para fazer cópias de segurança do espaço de trabalho inteiro, consulte [Cópias de segurança e recuperação](backups-and-recovery.md).

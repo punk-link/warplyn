@@ -41,7 +41,7 @@ Restaurar uma cópia `.skladno` ou um instantâneo do desktop com a pasta associ
 Restaurar uma cópia do desktop também adiciona ao dicionário as palavras pessoais de ortografia salvas nela. As palavras existentes são mantidas. Cópias antigas sem palavras pessoais não alteram seu dicionário. Dicionários de idiomas baixados e opções de pré-carregamento de ortografia não são incluídos.
 
 ::: warning Configurações de IA após a restauração
-A restauração mantém as conexões de IA, credenciais e seleções de modelos já existentes nesta instalação. Se nenhuma conexão estiver configurada, o Warplyn restaura da cópia os nomes e as referências de variáveis de ambiente, mas nunca as chaves de API nem os valores das variáveis. Configure as variáveis ausentes neste computador e escolha os modelos em **Configurações** → **Assistente de IA**. Conexões que usam chaves de API salvas não são importadas para uma instalação nova; adicione-as em Settings. As demais configurações são restauradas. Se a restauração falhar, a reversão preservará a configuração de IA anterior.
+A restauração mantém as conexões de IA, credenciais e seleções de modelos já existentes nesta instalação. Se nenhuma conexão estiver configurada, o Warplyn restaura da cópia os nomes e as referências de variáveis de ambiente, mas nunca as chaves de API nem os valores das variáveis. Configure as variáveis ausentes neste computador e escolha os modelos em **Configurações** → **Assistente de IA**. Conexões que usam chaves de API salvas não são importadas para uma instalação nova; adicione-as em Configurações. As demais configurações são restauradas. Se a restauração falhar, a reversão preservará a configuração de IA anterior.
 :::
 
 ## Recuperar manualmente uma cópia que contém apenas o banco de dados

@@ -69,4 +69,4 @@ La voce di menu continua a funzionare perché gli aggiornamenti dall’app sosti
 
 Per usare le funzioni di IA, aggiungi una connessione a un provider in **Impostazioni** → **Assistente IA**. Scegli una **Cartella dei backup** in **Impostazioni** → **Dati e backup** per proteggere i tuoi *articoli*.
 
-Warplyn conserva sul computer gli *articoli* e i checkpoint di *bozza*. Le richieste di IA richiedono una connessione a Internet e inviano al provider scelto il testo e il contesto pertinenti dell’*articolo*. Si applicano le norme sui dati e i prezzi del provider.
+Warplyn conserva sul computer gli *articoli* e i checkpoint. Le richieste di IA richiedono una connessione a Internet e inviano al provider scelto il testo e il contesto pertinenti dell’*articolo*. Si applicano le norme sui dati e i prezzi del provider.

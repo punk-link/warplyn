@@ -4,7 +4,7 @@ description: "Prüfen Sie vorgeschlagene Änderungen, sehen Sie den Artikelverla
 
 # Artikel prüfen
 
-Der Redaktioneller Assistent kann Änderungen vorschlagen, doch Sie entscheiden, was in einen *Artikel* übernommen wird. Mit der **Vorschlagsprüfung** können Sie Änderungen ansehen, bevor sie zu einer *Version* werden.
+Der redaktionelle Assistent kann Änderungen vorschlagen, doch Sie entscheiden, was in einen *Artikel* übernommen wird. Mit der **Vorschlagsprüfung** können Sie Änderungen ansehen, bevor sie zu einer *Version* werden.
 
 [![Vorschlagsprüfung mit drei ausstehenden Änderungen, Original- und Vorschlagstext, einzelnen Entscheidungen und der Schaltfläche Anwenden.](/images/proposal-review.png)](/images/proposal-review.png)
 
@@ -12,7 +12,7 @@ Der Redaktioneller Assistent kann Änderungen vorschlagen, doch Sie entscheiden,
 
 ## Einen Vorschlag prüfen {#review-a-proposal}
 
-Öffnen Sie die **Vorschlagsprüfung** über die Ergebniskarte des Assistant oder die Arbeitsbereich-Tab-Leiste. Lesen Sie die Änderungen und Hinweise zum Erhalt des Originals. Wechseln Sie zwischen dem Vergleich **Nebeneinander** und **Untereinander**, falls eines leichter zu lesen ist. Aktivieren Sie **Änderungen hervorheben**, wenn geänderte Formulierungen in beiden Fassungen markiert werden sollen. Prüfen Sie Namen, Zahlen, Behauptungen, Links und Schreibstimme im geänderten Text, bevor Sie ihn annehmen.
+Öffnen Sie die **Vorschlagsprüfung** über die Ergebniskarte des Assistenten oder die Arbeitsbereich-Tab-Leiste. Lesen Sie die Änderungen und Hinweise zum Erhalt des Originals. Wechseln Sie zwischen dem Vergleich **Nebeneinander** und **Untereinander**, falls eines leichter zu lesen ist. Aktivieren Sie **Änderungen hervorheben**, wenn geänderte Formulierungen in beiden Fassungen markiert werden sollen. Prüfen Sie Namen, Zahlen, Behauptungen, Links und Schreibstimme im geänderten Text, bevor Sie ihn annehmen.
 
 Wählen Sie für einzelne Änderungen **Annehmen** oder **Ablehnen**. Mit **Alle annehmen markieren** oder **Alle ablehnen markieren** unter **Alle Entscheidungen festlegen…** setzen Sie alle Entscheidungen gemeinsam. Wählen Sie anschließend **Anwenden**, um die Prüfung abzuschließen. Angenommener Text wird zu einer neuen *Version*. Wenn alle Vorschläge abgelehnt werden, schließt **Anwenden** die Prüfung, ohne den *Artikel* zu ändern oder eine *Version* zu erstellen. **Alle Entscheidungen zurücksetzen** setzt jeden Vorschlag auf „Ausstehend“ und behält Ihre Änderungen am Vorschlagstext bei. Die Entscheidungen allein ändern den *Artikel* nicht. **Vorschlag verwerfen** schließt die Prüfung, ohne Text anzuwenden. Ein *Vorschlag*, der sich nicht sicher aufteilen lässt, zeigt einen Hinweis an und muss als Ganzes geprüft werden.
 
@@ -32,11 +32,11 @@ Wählen Sie **Diese Version wiederherstellen**, um eine frühere Fassung zum akt
 
 Ein *Entwurfs*-Prüfpunkt ist wiederherstellbarer Text, der während der Bearbeitung gespeichert wird. Wenn lokaler Editor-Text nicht mit einem gespeicherten Prüfpunkt oder der aktuellen *Version* übereinstimmt, zeigt Warplyn den behaltenen lokalen Text neben den gespeicherten Optionen an. Vergleichen Sie die Fassungen und wählen Sie **Meinen Entwurf behalten**, **Letzten Entwurf verwenden** oder **Letzte Version verwenden**. Eine gespeicherte Auswahl kann den lokalen Text ersetzen; Warplyn bittet Sie daher vorher um Bestätigung.
 
-## Festlegen, wie Assistant-Änderungen angewendet werden
+## Festlegen, wie Änderungen des Assistenten angewendet werden
 
 Neue Unterhaltungen verwenden standardmäßig **Änderungen zur Prüfung vorschlagen**. Wenn Sie eine ausdrücklich angeforderte Änderung ohne *Vorschlag* anwenden möchten, wählen Sie im Composer **Änderungen direkt anwenden**. Eine erfolgreiche direkte Änderung erscheint als neue *Version*. Wenn Sie Text ausgewählt haben, bleibt die Änderung auf diese Auswahl beschränkt. Direkte Änderungen sind gesperrt, wenn ein *Entwurf* oder eine geänderte *Version* den Ersatz unsicher machen könnte. Klären Sie Ihre aktuelle Arbeit und stellen Sie die Anfrage erneut. Andere generierte Ergebnisse müssen weiterhin geprüft werden.
 
-Wählen Sie **Von hier aus bearbeiten** bei einer früheren eigenen Nachricht, um die Unterhaltung ab diesem Punkt fortzusetzen. Bevor Sie **Unterhaltung wiederherstellen** bestätigen, listet Warplyn spätere Arbeiten auf, die verworfen werden, zum Beispiel *Vorschläge*, *Hinweise* oder Übersetzungsergebnisse. Außerdem wird mitgeteilt, ob der *Artikel* auf eine frühere *Version* zurückgesetzt oder ungesendeter Composer-Text ersetzt wird. Wenn ein *Entwurf* bearbeitet werden muss, wählen Sie **Aktuelle Arbeit speichern und wiederherstellen** oder **Entwurf verwerfen und wiederherstellen**. Spätere und aktuelle *Versionen* bleiben im Versionsverlauf erhalten. Diese Aktion stellt keinen *Skill* wieder her und ändert ihn nicht.
+Wählen Sie **Von hier aus bearbeiten** bei einer früheren eigenen Nachricht, um die Unterhaltung ab diesem Punkt fortzusetzen. Bevor Sie **Unterhaltung wiederherstellen** bestätigen, listet Warplyn spätere Arbeiten auf, die verworfen werden, zum Beispiel *Vorschläge*, *Hinweise* oder Übersetzungsergebnisse. Außerdem wird mitgeteilt, ob der *Artikel* auf eine frühere *Version* zurückgesetzt oder ungesendeter Composer-Text ersetzt wird. Wenn ein *Entwurf* bearbeitet werden muss, wählen Sie **Aktuelle Arbeit speichern und wiederherstellen** oder **Entwurf verwerfen und wiederherstellen**. Spätere und aktuelle *Versionen* bleiben im Versionsverlauf erhalten. Diese Aktion stellt keine *Fähigkeit* wieder her und ändert sie nicht.
 
 ## Hinweise der Faktenprüfung lesen
 

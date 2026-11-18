@@ -1,5 +1,5 @@
 ---
-description: "Dowiedz się, jakie dane diagnostyczne i statystyki użytkowania udostępnia Warplyn, co pozostaje prywatne i jak wyłączyć udostępnianie w Settings."
+description: "Dowiedz się, jakie dane diagnostyczne i statystyki użytkowania udostępnia Warplyn, co pozostaje prywatne i jak wyłączyć udostępnianie w Ustawieniach."
 ---
 
 # Udostępnianie danych diagnostycznych i statystyk użytkowania

@@ -30,7 +30,7 @@ Elige **Restaurar esta versión** para convertir una versión anterior en la act
 
 ## Recuperar un borrador {#recover-a-draft}
 
-Un punto de control de *borrador* es el texto recuperable que se guarda mientras editas. Si el texto local del editor entra en conflicto con un punto de control guardado o con la *versión guardada* actual, Warplyn muestra el texto local conservado junto a las opciones guardadas. Compáralas y elige **Conservar mi borrador**, **Usar el borrador más reciente** o **Usar la versión más reciente**. Como una opción guardada puede reemplazar el texto local, Warplyn te pide confirmación.
+Un punto de control es el texto recuperable que se guarda mientras editas. Si el texto local del editor entra en conflicto con un punto de control guardado o con la *versión guardada* actual, Warplyn muestra el texto local conservado junto a las opciones guardadas. Compáralas y elige **Conservar mi borrador**, **Usar el borrador más reciente** o **Usar la versión más reciente**. Como una opción guardada puede reemplazar el texto local, Warplyn te pide confirmación.
 
 ## Elegir cómo se aplican las ediciones del asistente
 

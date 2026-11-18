@@ -1,6 +1,6 @@
 ---
 prev: false
-description: "Warplyn installieren, den Redaktioneller Assistent verwenden und Ihre Artikel mit Sicherungen und Wiederherstellung schützen."
+description: "Warplyn installieren, den redaktionellen Assistenten verwenden und Ihre Artikel mit Sicherungen und Wiederherstellung schützen."
 ---
 
 # Warplyn-Benutzerhandbuch
@@ -26,10 +26,10 @@ Warplyn bietet einen lokalen Arbeitsbereich, in dem Sie *Artikel* entwickeln und
 
 - [Stilprofil](style-profile.md)
 
-## Skills
+## Fähigkeiten
 
-- [Integrierte Skills](built-in-skills/index.md)
-- [Skills erstellen und verwalten](skills.md)
+- [Integrierte Fähigkeiten](built-in-skills/index.md)
+- [Fähigkeiten erstellen und verwalten](skills.md)
 
 ## Einstellungen
 

@@ -30,7 +30,7 @@ Escolha **Restaurar esta versão salva** para tornar atual uma versão anterior.
 
 ## Recuperar um rascunho {#recover-a-draft}
 
-Um ponto de verificação de *rascunho* contém o texto recuperável salvo durante a edição. Se o texto local do editor entrar em conflito com um ponto de verificação salvo ou com a *versão salva* atual, o Warplyn mostra o texto local mantido ao lado das opções salvas. Compare e escolha **Manter meu rascunho**, **Usar o rascunho mais recente** ou **Usar a versão salva mais recente**. Usar uma opção salva pode substituir o texto local; por isso, o Warplyn pede confirmação antes.
+Um ponto de verificação contém o texto recuperável salvo durante a edição. Se o texto local do editor entrar em conflito com um ponto de verificação salvo ou com a *versão salva* atual, o Warplyn mostra o texto local mantido ao lado das opções salvas. Compare e escolha **Manter meu rascunho**, **Usar o rascunho mais recente** ou **Usar a versão salva mais recente**. Usar uma opção salva pode substituir o texto local; por isso, o Warplyn pede confirmação antes.
 
 ## Escolher como as edições do assistente são aplicadas
 

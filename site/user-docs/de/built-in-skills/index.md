@@ -1,12 +1,12 @@
 ---
-description: "Wählen Sie einen integrierten Skill zum Entwerfen, Überarbeiten, Prüfen von Fakten, Bewerten des Schreibstils, Prüfen von Fachbegriffen oder Übersetzen."
+description: "Wählen Sie eine integrierte Fähigkeit zum Entwerfen, Überarbeiten, Prüfen von Fakten, Bewerten des Schreibstils, Prüfen von Fachbegriffen oder Übersetzen."
 ---
 
-# Integrierte Skills
+# Integrierte Fähigkeiten
 
-Integrierte *Skills* helfen dem Redaktioneller Assistent bei häufigen Schreibaufgaben. Wählen Sie unter **Schnellaktionen** einen redaktionellen *Skill* aus oder beschreiben Sie Ihre Anfrage und lassen Sie den Assistant einen passenden *Skill* ermitteln. Ein ausgewählter Skill-Chip kann allein gesendet werden; fügen Sie nur dann eine Nachricht hinzu, wenn Sie zusätzlichen Kontext oder eine Vorgabe haben. Wählen Sie **Editorial-Anfrage senden**, um zu beginnen. Um einen wiederverwendbaren *Skill* zu erstellen oder zu verwalten, bitten Sie den Assistant direkt darum; **Fähigkeiten erstellen** ist keine Schnellaktion im Composer.
+Integrierte *Fähigkeiten* helfen dem redaktionellen Assistenten bei häufigen Schreibaufgaben. Wählen Sie unter **Schnellaktionen** eine redaktionelle *Fähigkeit* aus oder beschreiben Sie Ihre Anfrage und lassen Sie den Assistenten eine passende *Fähigkeit* ermitteln. Ein ausgewählter Chip kann allein gesendet werden; fügen Sie nur dann eine Nachricht hinzu, wenn Sie zusätzlichen Kontext oder eine Vorgabe haben. Wählen Sie **Editorial-Anfrage senden**, um zu beginnen. Um eine wiederverwendbare *Fähigkeit* zu erstellen oder zu verwalten, bitten Sie den Assistenten direkt darum; **Fähigkeiten erstellen** ist keine Schnellaktion im Composer.
 
-Jede Seite erklärt den Zweck des jeweiligen *Skills* und worauf Sie das Ergebnis prüfen sollten. Der Assistant bereitet prüfbare Arbeit vor. Unter [Redaktioneller Assistent](../editorial-assistant.md) und [Artikel prüfen](../reviewing-articles.md) erfahren Sie, wie Sie mit Ergebnissen arbeiten.
+Jede Seite erklärt den Zweck der jeweiligen *Fähigkeit* und worauf Sie das Ergebnis prüfen sollten. Der Assistent bereitet prüfbare Arbeit vor. Unter [Redaktioneller Assistent](../editorial-assistant.md) und [Artikel prüfen](../reviewing-articles.md) erfahren Sie, wie Sie mit Ergebnissen arbeiten.
 
 ## Entwerfen und überarbeiten
 
@@ -25,4 +25,4 @@ Jede Seite erklärt den Zweck des jeweiligen *Skills* und worauf Sie das Ergebni
 ## Wiederverwendbare Anweisungen verwalten
 
 - [Fähigkeiten erstellen](skill-creator.md)
-- [Skills erstellen und verwalten](../skills.md)
+- [Fähigkeiten erstellen und verwalten](../skills.md)

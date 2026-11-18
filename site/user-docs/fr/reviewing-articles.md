@@ -30,7 +30,7 @@ Choisissez **Restaurer** pour rétablir une version antérieure. Warplyn ajoute 
 
 ## Récupérer un brouillon {#recover-a-draft}
 
-Le point de contrôle du *brouillon* contient le texte récupérable enregistré pendant que vous écrivez. Si le texte local de l’éditeur entre en conflit avec un point de contrôle enregistré ou avec la *version enregistrée* actuelle, Warplyn affiche le texte local conservé à côté des options enregistrées. Comparez-les avant de choisir **Conserver mon brouillon**, **Utiliser le dernier brouillon** ou **Utiliser la dernière version enregistrée**. Comme un choix enregistré peut remplacer le texte local, Warplyn vous demande de confirmer.
+Le point de contrôle contient le texte récupérable enregistré pendant que vous écrivez. Si le texte local de l’éditeur entre en conflit avec un point de contrôle enregistré ou avec la *version enregistrée* actuelle, Warplyn affiche le texte local conservé à côté des options enregistrées. Comparez-les avant de choisir **Conserver mon brouillon**, **Utiliser le dernier brouillon** ou **Utiliser la dernière version enregistrée**. Comme un choix enregistré peut remplacer le texte local, Warplyn vous demande de confirmer.
 
 ## Choisir comment l’assistant applique ses modifications
 

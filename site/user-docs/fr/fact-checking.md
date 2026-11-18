@@ -56,6 +56,6 @@ Les *observations* sont liées à la *version enregistrée* vérifiée. Lorsqu�
 
 Utilisez **Historique des vérifications des faits** pour consulter les vérifications précédentes. Elles sont en lecture seule. Seule la dernière vérification de la *version enregistrée* actuelle permet d’agir.
 
-Une vérification ultérieure peut réutiliser les éléments et les décisions d’acceptation si elle reconnaît un fait inchangé, même lorsque l’affirmation a été reformulée. Les résultats réutilisés affichent **Evidence reused from Revision** et conservent leur date de vérification d’origine. Si le sens factuel a changé, de nouvelles recherches peuvent être nécessaires.
+Une vérification ultérieure peut réutiliser les éléments et les décisions d’acceptation si elle reconnaît un fait inchangé, même lorsque l’affirmation a été reformulée. Les résultats réutilisés affichent **Éléments de preuve réutilisés de la version** et conservent leur date de vérification d’origine. Si le sens factuel a changé, de nouvelles recherches peuvent être nécessaires.
 
 Relancer une vérification ne garantit pas que chaque affirmation inchangée fera l’objet d’une nouvelle recherche. Pour les informations susceptibles de changer, examinez les sources et les dates de vérification, puis demandez explicitement à l’assistant de vérifier l’affirmation à partir de sources actuelles.

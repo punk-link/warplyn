@@ -12,9 +12,11 @@ export function formatUiTerminologyTable(installedCatalogs) {
 
             return escapeCell(value);
         });
+
         return `| \`${id}\` | ${cells.join(" | ")} |`;
     });
     const headings = catalogs.map((catalog) => catalog.code === "en" ? "English" : catalog.code);
+
     return [
         `| Message ID | ${headings.join(" | ")} |`,
         `| ${["---", ...catalogs.map(() => "---")].join(" | ")} |`,

@@ -29,7 +29,7 @@ Prüfen Sie, ob die Verbindung **Aktiv** ist, der gespeicherte Schlüssel gülti
 
 Warplyn unterstützt OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok und DeepSeek. Der Katalog von OpenCode Zen bietet außerdem Modelle anderer Anbieter.
 
-Wählen Sie unter **Einstellungen** → **KI-Assistent** die Option **Verfügbare Modelle aktualisieren** und anschließend ein **Standardmodell**. Wenn ein bestimmter *Skill* ein anderes Modell verwenden soll, wählen Sie es unter **Modelle für bestimmte Aufgaben** aus. Eine Aufgabe mit der Einstellung **Standardmodell verwenden** folgt dem Standardmodell.
+Wählen Sie unter **Einstellungen** → **KI-Assistent** die Option **Verfügbare Modelle aktualisieren** und anschließend ein **Standardmodell**. Wenn eine bestimmte *Fähigkeit* ein anderes Modell verwenden soll, wählen Sie es unter **Modelle für bestimmte Aufgaben** aus. Eine Aufgabe mit der Einstellung **Standardmodell verwenden** folgt dem Standardmodell.
 
 Aktualisieren Sie die Modellliste, nachdem Sie Verbindungen geändert haben oder wenn Sie den aktuellen Katalog eines Anbieters sehen möchten. Mit **Modelle suchen**, **Modelle nach Anbieter filtern** und **Favoriten** können Sie die Liste eingrenzen. Modellauswahlen gelten für künftige Anfragen. Bei einem ausgewählten OpenAI-Modell können Sie, sofern verfügbar, die **Reasoning-Stufe** einstellen; höhere Einstellungen können länger dauern. Das optionale **App-Modell** in den KI-Einstellungen ist vom Standardmodell getrennt und übernimmt Warplyn-Hilfsaufgaben wie Zusammenfassungen und Titel.
 
@@ -43,6 +43,6 @@ Die verfügbaren redaktionellen Funktionen variieren je nach Modell. Einige Mode
 
 ### App-Modell
 
-Das **App-Modell** übernimmt kurze Hilfsaufgaben, etwa Zusammenfassungen von *Vorschlägen*, Titel und das Erkennen der Absicht einer Assistant-Anfrage. Wenn Sie es nicht festlegen, verwendet Warplyn das Standardmodell.
+Das **App-Modell** übernimmt kurze Hilfsaufgaben, etwa Zusammenfassungen von *Vorschlägen*, Titel und das Erkennen der Absicht einer Anfrage an den Assistenten. Wenn Sie es nicht festlegen, verwendet Warplyn das Standardmodell.
 
 Wählen Sie ein effizientes Textmodell mit geringeren Kosten. **GPT-6 Luna** ist eine OpenAI-Option für diese gezielten Aufgaben ([Modelldetails](https://developers.openai.com/api/docs/models/gpt-6-luna)). Bei einem anderen Anbieter wählen Sie ein vergleichbares Modell. Sind die Ergebnisse nicht gut genug, versuchen Sie ein leistungsfähigeres Modell.

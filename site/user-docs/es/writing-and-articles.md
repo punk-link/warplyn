@@ -4,13 +4,13 @@ description: "Escribe y organiza artículos, entiende cómo se guardan los borra
 
 # Escribir y organizar artículos
 
-Un *artículo* es un texto de tu biblioteca de Warplyn. Mientras lo editas, Warplyn guarda un punto de control de *borrador* que se puede recuperar. Una *versión guardada* es un punto conservado en el historial del *artículo*. Así puedes seguir trabajando sin tratar cada edición como una versión terminada.
+Un *artículo* es un texto de tu biblioteca de Warplyn. Mientras lo editas, Warplyn guarda un punto de control que se puede recuperar. Una *versión guardada* es un punto conservado en el historial del *artículo*. Así puedes seguir trabajando sin tratar cada edición como una versión terminada.
 
 ## Escribir y guardar un artículo
 
 Elige **Nuevo artículo** en la Biblioteca para empezar. Cambia el nombre del *artículo* desde el campo de título. Usa la barra de formato para aplicar encabezados, listas, énfasis, enlaces, citas y código. Al pegar texto con formato, Warplyn conserva los formatos compatibles y elimina las marcas no seguras o no compatibles. Guarda el *artículo* como Markdown, por lo que no se conservan los diseños de página complejos ni los elementos incrustados.
 
-Warplyn guarda automáticamente el *borrador* actual mientras editas. Un punto de control de *borrador* es texto de trabajo recuperable, no una nueva entrada del Historial de versiones. Consulta el indicador de estado de guardado en la Barra de estado del artículo para saber si las ediciones recientes se han guardado como punto de control. Warplyn también guarda un punto de control pendiente cuando cambias de *artículo* o abres Configuración.
+Warplyn guarda automáticamente el *borrador* actual mientras editas. Un punto de control es texto de trabajo recuperable, no una nueva entrada del Historial de versiones. Consulta el indicador de estado de guardado en la Barra de estado del artículo para saber si las ediciones recientes se han guardado como punto de control. Warplyn también guarda un punto de control pendiente cuando cambias de *artículo* o abres Configuración.
 
 [![Espacio de escritura con «El río al anochecer» en el editor, barra de formato, Biblioteca e indicador de borrador guardado.](/images/writing-workspace.png)](/images/writing-workspace.png)
 

@@ -56,6 +56,6 @@ Aby poprosić o kilka poprawek naraz, zaznacz nierozstrzygnięte twierdzenia **Z
 
 Użyj **Historia weryfikacji faktów**, aby przejrzeć wcześniejsze sprawdzenia. Są one tylko do odczytu; możesz podejmować działania wyłącznie na podstawie najnowszego sprawdzenia bieżącej *zapisanej wersji*.
 
-Późniejsze sprawdzenie może ponownie wykorzystać dowody i decyzje o akceptacji, jeśli rozpozna niezmieniony fakt, również w przypadku zmienionego sformułowania twierdzenia. Przy ponownie użytych wynikach pojawi się **Evidence reused from Revision**, a wcześniejsza data sprawdzenia zostanie zachowana. Zmiana znaczenia faktu może wymagać nowego wyszukiwania.
+Późniejsze sprawdzenie może ponownie wykorzystać dowody i decyzje o akceptacji, jeśli rozpozna niezmieniony fakt, również w przypadku zmienionego sformułowania twierdzenia. Przy ponownie użytych wynikach pojawi się **Dowody użyte ponownie z wersji**, a wcześniejsza data sprawdzenia zostanie zachowana. Zmiana znaczenia faktu może wymagać nowego wyszukiwania.
 
 Ponowne sprawdzenie nie gwarantuje nowego wyszukiwania dla każdego niezmienionego twierdzenia. W przypadku informacji zależnych od czasu sprawdź źródła i daty, a następnie poproś asystenta o weryfikację twierdzenia na podstawie aktualnych źródeł.

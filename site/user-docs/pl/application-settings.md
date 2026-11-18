@@ -26,7 +26,7 @@ Wybierz **Enter** lub **Ctrl + Enter** jako klawisz wysyłania wiadomości do as
 
 ## Ustaw wskazówki publikacyjne
 
-W **Publikacja** wybierz domyślny profil dla nowych *artykułów*. Profile takie jak **LinkedIn Post** i **LinkedIn Article** pokazują wskazówki dotyczące liczby znaków na pasku **Article Status Bar**. Możesz też wybrać **Bez ograniczeń** albo dodać własny profil z nazwą i całkowitym limitem znaków. Domyślny profil dotyczy nowych *artykułów*; istniejący *artykuł* może zachować własny profil. Limity są jedynie wskazówkami i nigdy nie blokują kopiowania. Na pasku **Article Status Bar** wybierz **Kopiuj Markdown** albo otwórz menu i wybierz **Kopiuj zwykły tekst**. Warplyn kopiuje tekst na Twoje polecenie; nie publikuje go bezpośrednio.
+W **Publikacja** wybierz domyślny profil dla nowych *artykułów*. Profile takie jak **LinkedIn Post** i **LinkedIn Article** pokazują wskazówki dotyczące liczby znaków na pasku stanu artykułu. Możesz też wybrać **Bez ograniczeń** albo dodać własny profil z nazwą i całkowitym limitem znaków. Domyślny profil dotyczy nowych *artykułów*; istniejący *artykuł* może zachować własny profil. Limity są jedynie wskazówkami i nigdy nie blokują kopiowania. Na pasku stanu artykułu wybierz **Kopiuj Markdown** albo otwórz menu i wybierz **Kopiuj zwykły tekst**. Warplyn kopiuje tekst na Twoje polecenie; nie publikuje go bezpośrednio.
 
 ## Sprawdź opcje modeli AI
 

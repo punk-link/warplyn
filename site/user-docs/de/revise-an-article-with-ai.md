@@ -4,7 +4,7 @@ description: "Überarbeiten Sie einen Artikel in Warplyn mit KI: Formulieren Sie
 
 # Einen Artikel mit KI überarbeiten und jede Änderung prüfen
 
-Wenn eine Szene die richtigen Ereignisse enthält, sich das Tempo aber unausgewogen anfühlt, kann Warplyns Redaktioneller Assistent bei der Überarbeitung helfen. Bearbeiten Sie eine Passage oder einen ganzen *Artikel*, vergleichen Sie die vorgeschlagenen Formulierungen und übernehmen Sie nur die Änderungen, die Sie behalten möchten.
+Wenn eine Szene die richtigen Ereignisse enthält, sich das Tempo aber unausgewogen anfühlt, kann der redaktionelle Assistent von Warplyn bei der Überarbeitung helfen. Bearbeiten Sie eine Passage oder einen ganzen *Artikel*, vergleichen Sie die vorgeschlagenen Formulierungen und übernehmen Sie nur die Änderungen, die Sie behalten möchten.
 
 Warplyn ist ein quelloffener, lokal ausgerichteter Schreibarbeitsbereich für Windows und Linux. Ihre Texte bleiben auf Ihrem Computer. KI-Unterstützung erfordert eine Internetverbindung und eine unterstützte Anbieter-Verbindung mit Ihrem API-Schlüssel. Der relevante Text und Kontext werden an diesen Anbieter übermittelt; dessen Preise und Datenschutzrichtlinien gelten.
 
@@ -18,7 +18,7 @@ Wählen Sie **Editorial-Anfrage senden**. Warplyn übermittelt die Auswahl zusam
 
 [![Warplyns Composer mit einer Überarbeitungsanfrage für einen fiktionalen Text.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Beispiel einer Anfrage im Composer. Der Screenshot zeigt einen früheren Skill-Namen.*
+*Beispiel einer Anfrage im Composer. Der Screenshot zeigt einen früheren Namen der Fähigkeit.*
 
 ## Ursprüngliche und vorgeschlagene Formulierungen vergleichen
 

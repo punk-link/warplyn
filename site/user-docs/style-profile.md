@@ -14,7 +14,7 @@ Add writing samples when you want detected voice characteristics, or add **Manua
 
 ## Add writing samples
 
-Open **Writing samples** when you want the Assistant to learn from your existing writing. Choose **Add writing sample** to paste text, or upload a `.txt` or `.md` file. You can also choose **Add Revision** to use a saved *Article* version as a sample. Give a sample a name that helps you recognize it later.
+Open **Writing samples** when you want the Assistant to learn from your existing writing. Choose **Add writing sample** to paste text, or upload a `.txt` or `.md` file. You can also choose **Add this Article** to use a saved *Article* version as a sample. Give a sample a name that helps you recognize it later.
 
 Use the sample's checkbox to include or exclude it from the profile. Excluding a sample keeps it in your list. Remove a sample when you no longer need it. Removing is confirmed because the sample is deleted from Style Profile.
 

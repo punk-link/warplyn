@@ -26,7 +26,7 @@ Choisissez **Entrée** ou **Ctrl + Entrée** comme touche d’envoi de l’assis
 
 ## Définir les consignes de publication
 
-Dans **Publication**, choisissez un profil par défaut pour les nouveaux *articles*. Les profils tels que **LinkedIn Post** et **LinkedIn Article** affichent des indications de longueur dans l’**Article Status Bar**. Vous pouvez aussi choisir **Aucune restriction** ou ajouter un profil personnalisé avec un nom et une limite en nombre entier de caractères. Le profil par défaut concerne les nouveaux *articles* ; un *article* existant peut conserver son propre profil. Ces limites sont indicatives et n’empêchent jamais la copie. Dans l’**Article Status Bar**, choisissez **Copier en Markdown**, ou ouvrez son menu et choisissez **Copier en texte brut**. Warplyn copie le texte à votre demande, mais ne publie pas directement.
+Dans **Publication**, choisissez un profil par défaut pour les nouveaux *articles*. Les profils tels que **LinkedIn Post** et **LinkedIn Article** affichent des indications de longueur dans la barre d’état de l’article. Vous pouvez aussi choisir **Aucune restriction** ou ajouter un profil personnalisé avec un nom et une limite en nombre entier de caractères. Le profil par défaut concerne les nouveaux *articles* ; un *article* existant peut conserver son propre profil. Ces limites sont indicatives et n’empêchent jamais la copie. Dans la barre d’état de l’article, choisissez **Copier en Markdown**, ou ouvrez son menu et choisissez **Copier en texte brut**. Warplyn copie le texte à votre demande, mais ne publie pas directement.
 
 ## Choisir les options des modèles d’IA
 

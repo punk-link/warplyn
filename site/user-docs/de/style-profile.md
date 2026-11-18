@@ -4,7 +4,7 @@ description: "Erstellen Sie aus Ihren Texten ein lokales Stilprofil und verwalte
 
 # Stilprofil
 
-Verwenden Sie das **Stilprofil**, um dem Assistant Beispiele Ihrer Texte und wiederverwendbare Hinweise bereitzustellen. Ihre Beispiele bleiben auf diesem Gerät. Sie werden weder Teil eines *Artikels* noch einer *Version*.
+Verwenden Sie das **Stilprofil**, um dem Assistenten Beispiele Ihrer Texte und wiederverwendbare Hinweise bereitzustellen. Ihre Beispiele bleiben auf diesem Gerät. Sie werden weder Teil eines *Artikels* noch einer *Version*.
 
 Öffnen Sie das **Stilprofil** im **Werkzeugbereich der Artikelbibliothek**. Wählen Sie über das Seitenmenü oder bei schmalem Fenster über die Abschnittsauswahl **Schreibproben**, **Manuelle Regeln** oder **Typografieregeln**. Die Schaltfläche **Zurück** bringt Sie zu Ihrem *Artikel* und der zuvor geöffneten Ansicht zurück.
 
@@ -14,13 +14,13 @@ Fügen Sie Schreibproben hinzu, wenn Sie erkannte Merkmale der Schreibstimme erh
 
 ## Schreibproben hinzufügen
 
-Öffnen Sie **Schreibproben**, wenn der Assistant aus Ihren vorhandenen Texten lernen soll. Wählen Sie **Schreibprobe hinzufügen**, um Text einzufügen oder eine `.txt`- oder `.md`-Datei hochzuladen. Mit **Version hinzufügen** können Sie auch eine gespeicherte *Artikel*-Fassung als Beispiel verwenden. Geben Sie der Probe einen Namen, an dem Sie sie später wiedererkennen.
+Öffnen Sie **Schreibproben**, wenn der Assistent aus Ihren vorhandenen Texten lernen soll. Wählen Sie **Schreibprobe hinzufügen**, um Text einzufügen oder eine `.txt`- oder `.md`-Datei hochzuladen. Mit **Version hinzufügen** können Sie auch eine gespeicherte *Artikel*-Fassung als Beispiel verwenden. Geben Sie der Probe einen Namen, an dem Sie sie später wiedererkennen.
 
 Über das Kontrollkästchen einer Probe können Sie sie in das Profil aufnehmen oder daraus ausschließen. Ausgeschlossene Proben bleiben in Ihrer Liste. Entfernen Sie eine Probe, wenn Sie sie nicht mehr benötigen. Das Entfernen muss bestätigt werden, weil die Probe aus dem Stilprofil gelöscht wird.
 
 ## Hinweise hinzufügen und Profil neu erstellen
 
-Beschreiben Sie unter **Manuelle Regeln** Vorgaben, die der Assistant befolgen soll. Sie können ihn zum Beispiel bitten, in der Ich-Perspektive zu erzählen oder eine Abkürzung bei der ersten Verwendung zu erklären. Hinweise lassen sich auch ohne Schreibproben hinzufügen.
+Beschreiben Sie unter **Manuelle Regeln** Vorgaben, die der Assistent befolgen soll. Sie können ihn zum Beispiel bitten, in der Ich-Perspektive zu erzählen oder eine Abkürzung bei der ersten Verwendung zu erklären. Hinweise lassen sich auch ohne Schreibproben hinzufügen.
 
 Wählen Sie nach Änderungen an Proben oder Hinweisen **Profil neu erstellen**, um erkannte Merkmale zu aktualisieren. Das Profil zeigt, welche Proben verwendet wurden und wann es neu erstellt wurde. Bis dahin können erkannte Merkmale noch auf dem vorherigen Probensatz beruhen. Hinweise der Stilprüfung sind Empfehlungen und bleiben vom Text des *Artikels* getrennt.
 
@@ -50,6 +50,6 @@ Unter **Konventionsvoreinstellung** sehen Sie Vorschauen regionaler Konventionen
 
 Regeln werden als kurze Zusammenfassungen mit **Gespeichert** oder **Ungespeichert** angezeigt. Wählen Sie **Bearbeiten**, um eine Regel zu öffnen; es kann jeweils nur eine Regel bearbeitet werden. Mit **Speichern** sichern Sie den ausgewählten Geltungsbereich. Beim Speichern von Spracheinstellungen wird das *Stilprofil* lokal anhand der aktuell einbezogenen Proben und gespeicherten Hinweise neu erstellt, einschließlich Änderungen an der Probenauswahl. *Artikel*-Überschreibungen werden für den jeweiligen *Artikel* gespeichert. Ungespeicherter Text in anderen Formularen bleibt ungespeichert. Explizite Typografieregeln lassen sich ohne Schreibproben verwenden; Proben werden benötigt, um Merkmale der Schreibstimme abzuleiten.
 
-Speichern Sie den aktuellen *Entwurf* und wählen Sie dann **Typografie prüfen**, um den ausgewählten *Artikel* ohne KI-Verbindung zu prüfen. Die Prüfung verwendet die gespeicherte *Version* und deren Sprache, die in der Statusleiste angezeigt wird. Wählen Sie für die Prüfung dieselbe Sprache unter **Typografiesprache**. Code, URLs, technische Bezeichner und mehrdeutige Fälle mit Anführungszeichen bleiben unverändert. Kontextbezogene Regeln erfordern eine vollständige **Prüfung des Schreibstils** durch den Assistant. Für eine Sprache ohne passende mechanische Regeln gibt es keine lokale Typografieprüfung; fügen und speichern Sie eigene Regeln, bevor Sie sie prüfen.
+Speichern Sie den aktuellen *Entwurf* und wählen Sie dann **Typografie prüfen**, um den ausgewählten *Artikel* ohne KI-Verbindung zu prüfen. Die Prüfung verwendet die gespeicherte *Version* und deren Sprache, die in der Statusleiste angezeigt wird. Wählen Sie für die Prüfung dieselbe Sprache unter **Typografiesprache**. Code, URLs, technische Bezeichner und mehrdeutige Fälle mit Anführungszeichen bleiben unverändert. Kontextbezogene Regeln erfordern eine vollständige **Prüfung des Schreibstils** durch den Assistenten. Für eine Sprache ohne passende mechanische Regeln gibt es keine lokale Typografieprüfung; fügen und speichern Sie eigene Regeln, bevor Sie sie prüfen.
 
 Öffnen Sie **Vorschlag prüfen**, um Korrekturen und die zugrunde liegenden Regeln anzusehen. Markieren Sie die Korrekturen, die Sie annehmen möchten, und wählen Sie **Anwenden**. Angenommene Korrekturen erstellen eine *Version*; wenn alle Korrekturen abgelehnt werden, bleibt der *Artikel* unverändert. Das Speichern von Regeln und das Ausführen einer Prüfung wenden keine Korrekturen an. Bei einer Prüfung bleiben die verwendete Sprache und die verwendeten Regeldefinitionen erhalten; nach Änderungen an Sprache oder passenden Einstellungen wird eine erneute Prüfung angeboten. Die Typografieprüfung erkennt keine Sprachgrenzen innerhalb mehrsprachiger Passagen. Mehrdeutige Fälle bleiben unverändert.

@@ -10,9 +10,9 @@ Un *article* est un texte de votre bibliothèque Warplyn. Pendant que vous le mo
 
 Choisissez **Nouvel article** dans la Library pour commencer. Renommez l’*article* dans son champ de titre. Utilisez la barre de mise en forme pour ajouter des titres, des listes, de l’emphase, des liens, des citations et du code. Lorsque vous collez du texte mis en forme, Warplyn conserve les formats pris en charge et supprime les balises non sûres ou non prises en charge. Warplyn enregistre l’*article* en Markdown. Les mises en page complexes et les éléments intégrés ne sont donc pas conservés.
 
-Warplyn enregistre automatiquement le *brouillon* actuel pendant que vous écrivez. Un point de contrôle du *brouillon* est un texte de travail récupérable, pas une nouvelle entrée dans Historique des versions enregistrées. Consultez l’indicateur d’enregistrement dans l’Article Status Bar pour savoir si vos modifications récentes ont été enregistrées dans un point de contrôle. Warplyn enregistre aussi un point de contrôle en attente lorsque vous passez à un autre *article* ou ouvrez Settings.
+Warplyn enregistre automatiquement le *brouillon* actuel pendant que vous écrivez. Un point de contrôle est un texte de travail récupérable, pas une nouvelle entrée dans Historique des versions enregistrées. Consultez l’indicateur d’enregistrement dans la barre d’état de l’article pour savoir si vos modifications récentes ont été enregistrées dans un point de contrôle. Warplyn enregistre aussi un point de contrôle en attente lorsque vous passez à un autre *article* ou ouvrez Paramètres.
 
-[![Espace d’écriture affichant « La rivière au crépuscule » dans l’éditeur, la barre de mise en forme, la Library et l’indicateur Saved Draft.](/images/writing-workspace.png)](/images/writing-workspace.png)
+[![Espace d’écriture affichant « La rivière au crépuscule » dans l’éditeur, la barre de mise en forme, la bibliothèque et l’indicateur de brouillon enregistré.](/images/writing-workspace.png)](/images/writing-workspace.png)
 
 *Exemple d’article enregistré comme brouillon dans l’espace d’écriture.*
 
@@ -34,6 +34,6 @@ Dans **Dictionnaire personnel**, recherchez les mots enregistrés ou saisissez u
 
 Utilisez **Mode concentration** pour masquer les deux panneaux secondaires pendant que vous écrivez. Sélectionnez-le de nouveau pour les afficher. Utilisez la commande de chaque panneau pour le replier ou le rouvrir ; faites glisser le séparateur à côté d’un panneau pour le redimensionner. Dans une fenêtre étroite, les panneaux peuvent s’ouvrir temporairement par-dessus l’éditeur.
 
-Au clavier, utilisez **Tab** et **Shift + Tab** pour parcourir la Library, l’en-tête de l’article, les vues, la barre de mise en forme, l’éditeur, la barre d’état et l’assistant. Dans l’éditeur, la recherche et le Composer, les raccourcis habituels d’édition de texte restent disponibles. Settings possède sa propre navigation au clavier. Dans sa barre latérale de bureau, utilisez **Up**, **Down**, **Home** ou **End** pour parcourir les sections, puis **Entrée** ou **Space** pour en ouvrir une.
+Au clavier, utilisez **Tab** et **Shift + Tab** pour parcourir la Library, l’en-tête de l’article, les vues, la barre de mise en forme, l’éditeur, la barre d’état et l’assistant. Dans l’éditeur, la recherche et le Composer, les raccourcis habituels d’édition de texte restent disponibles. Paramètres possède sa propre navigation au clavier. Dans sa barre latérale de bureau, utilisez **Up**, **Down**, **Home** ou **End** pour parcourir les sections, puis **Entrée** ou **Space** pour en ouvrir une.
 
 Pour importer ou exporter un *article* entier dans Warplyn, consultez [Fichiers des articles](article-files.md). Pour sauvegarder tout votre espace de travail, consultez [Sauvegardes et récupération](backups-and-recovery.md).

@@ -4,15 +4,15 @@ description: "Scrivi e organizza gli articoli, scopri come si salvano le bozze e
 
 # Scrivere e organizzare gli articoli
 
-Un *articolo* è un testo nella tua raccolta Warplyn. Mentre lo modifichi, Warplyn salva un checkpoint di *bozza* recuperabile. Una *versione salvata* è un punto conservato nella cronologia dell’*articolo*. Così puoi continuare a lavorare senza considerare ogni modifica una versione definitiva.
+Un *articolo* è un testo nella tua raccolta Warplyn. Mentre lo modifichi, Warplyn salva un checkpoint recuperabile. Una *versione salvata* è un punto conservato nella cronologia dell’*articolo*. Così puoi continuare a lavorare senza considerare ogni modifica una versione definitiva.
 
 ## Scrivere e salvare un articolo
 
 Per iniziare, scegli **Nuovo articolo** nella Library. Rinomina l’*articolo* dal campo del titolo. Usa la barra di formattazione per applicare titoli, elenchi, enfasi, link, citazioni e codice. Quando incolli testo formattato, Warplyn mantiene la formattazione supportata e rimuove il markup non sicuro o non supportato. L’*articolo* viene salvato come Markdown, quindi impaginazioni complesse ed elementi incorporati non vengono mantenuti.
 
-Warplyn salva automaticamente la *bozza* attuale mentre scrivi. Un checkpoint di *bozza* è testo di lavoro recuperabile, non una nuova voce in Cronologia delle versioni. Se vuoi sapere se le modifiche recenti sono state salvate in un checkpoint, controlla l’indicatore di salvataggio nell’Article Status Bar. Warplyn salva anche un checkpoint in sospeso quando passi da un *articolo* a un altro o apri Settings.
+Warplyn salva automaticamente la *bozza* attuale mentre scrivi. Un checkpoint è testo di lavoro recuperabile, non una nuova voce in Cronologia delle versioni. Se vuoi sapere se le modifiche recenti sono state salvate in un checkpoint, controlla l’indicatore di salvataggio nella barra di stato dell’articolo. Warplyn salva anche un checkpoint in sospeso quando passi da un *articolo* a un altro o apri Impostazioni.
 
-[![Area di scrittura con «Il fiume al crepuscolo» nell’editor, la barra di formattazione, la Library e l’indicatore Saved Draft.](/images/writing-workspace.png)](/images/writing-workspace.png)
+[![Area di scrittura con «Il fiume al crepuscolo» nell’editor, la barra di formattazione, la Library e l’indicatore di bozza salvata.](/images/writing-workspace.png)](/images/writing-workspace.png)
 
 *Esempio di articolo salvato come bozza nell’area di scrittura.*
 
@@ -34,6 +34,6 @@ In **Dizionario personale**, cerca le parole salvate oppure inserisci una parola
 
 Usa **Modalità concentrazione** per nascondere entrambi i pannelli di supporto mentre scrivi. Selezionalo di nuovo per mostrarli. Usa il comando di ciascun pannello per comprimerlo o riaprirlo; trascina il divisore accanto al pannello per ridimensionarlo. In una finestra stretta, i pannelli possono aprirsi temporaneamente sopra l’editor.
 
-Con la tastiera, usa **Tab** e **Shift + Tab** per spostarti tra Library, intestazione dell’articolo, viste, barra di formattazione, editor, barra di stato e Assistant. Nell’editor, nella ricerca e nel Composer continuano a funzionare i normali tasti per modificare il testo. Settings ha una navigazione da tastiera dedicata. Nella barra laterale desktop, usa **Up**, **Down**, **Home** o **End** per spostarti tra le sezioni, poi **Invio** o **Space** per aprirne una.
+Con la tastiera, usa **Tab** e **Shift + Tab** per spostarti tra Library, intestazione dell’articolo, viste, barra di formattazione, editor, barra di stato e pannello dell’assistente editoriale. Nell’editor, nella ricerca e nel Composer continuano a funzionare i normali tasti per modificare il testo. Impostazioni ha una navigazione da tastiera dedicata. Nella barra laterale desktop, usa **Up**, **Down**, **Home** o **End** per spostarti tra le sezioni, poi **Invio** o **Space** per aprirne una.
 
 Per trasferire un *articolo* completo da o verso Warplyn, consulta [File degli articoli](article-files.md). Per le copie di sicurezza di tutta l’area di lavoro, consulta [Backup e ripristino](backups-and-recovery.md).
