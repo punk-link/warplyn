@@ -24,7 +24,7 @@ Podczas sprawdzania możesz dalej pisać lub przejść w inne miejsce. Jeśli sp
 
 ## Przeczytaj werdykt i źródła
 
-Wybierz twierdzenie w **Weryfikacja faktów**, aby przeczytać jego wyjaśnienie, źródła, datę sprawdzenia i informację o niepewności.
+Wybierz twierdzenie w widoku **Weryfikacja faktów**, aby przeczytać jego wyjaśnienie, źródła, datę sprawdzenia i informację o niepewności.
 
 | Werdykt | Znaczenie |
 | --- | --- |

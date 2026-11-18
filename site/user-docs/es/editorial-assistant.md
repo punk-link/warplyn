@@ -4,9 +4,9 @@ description: "Usa el asistente editorial de Warplyn para redactar, revisar, veri
 
 # Asistente editorial
 
-Usa el asistente editorial cuando necesites ayuda para redactar, revisar, verificar datos, analizar el estilo o preparar una traducción. Cada solicitud es explícita. Al elegir una opción de **Acciones rápidas**, solo se añade al Composer un inicio de *habilidad*. Selecciona **Enviar solicitud editorial** para empezar.
+Usa el asistente editorial cuando necesites ayuda para redactar, revisar, verificar datos, analizar el estilo o preparar una traducción. Cada solicitud es explícita. Al elegir una opción de **Acciones rápidas**, solo se añade al cuadro de mensaje un inicio de *habilidad*. Selecciona **Enviar solicitud editorial** para empezar.
 
-Seleccionar texto permite limitar los cambios a ese pasaje. Las definiciones cercanas y las pistas sobre la voz pueden ayudar al asistente a interpretar selecciones breves, pero compartirlas también revela a tu proveedor texto que no has seleccionado. Si una solicitud con selección necesita texto del *artículo*, Warplyn envía la selección junto con hasta 500 caracteres anteriores y 500 posteriores como contexto independiente y de solo lectura. Solo se puede sustituir el pasaje seleccionado. El Composer lo explica antes del envío; no envíes la solicitud si el texto cercano es sensible. Los consejos generales y la gestión de *habilidades* no necesitan este texto. Warplyn nunca amplía silenciosamente el contexto al *artículo* completo. Si el contexto no basta, incluye explícitamente el pasaje pertinente o vuelve a preguntar con otra selección.
+Seleccionar texto permite limitar los cambios a ese pasaje. Las definiciones cercanas y las pistas sobre la voz pueden ayudar al asistente a interpretar selecciones breves, pero compartirlas también revela a tu proveedor texto que no has seleccionado. Si una solicitud con selección necesita texto del *artículo*, Warplyn envía la selección junto con hasta 500 caracteres anteriores y 500 posteriores como contexto independiente y de solo lectura. Solo se puede sustituir el pasaje seleccionado. El cuadro de mensaje lo explica antes del envío; no envíes la solicitud si el texto cercano es sensible. Los consejos generales y la gestión de *habilidades* no necesitan este texto. Warplyn nunca amplía silenciosamente el contexto al *artículo* completo. Si el contexto no basta, incluye explícitamente el pasaje pertinente o vuelve a preguntar con otra selección.
 
 ::: tip Ejemplo
 Al revisar un relato, selecciona un pasaje y pregunta: «Mejora el ritmo sin perder el punto de vista de Ana ni la atmósfera tranquila. No añadas acontecimientos». El asistente prepara una *propuesta* para la **Revisión de propuestas**. También puedes pedirle que busque cambios entre pasado y presente en un capítulo; las *observaciones* de la revisión de estilo aparecen en el **Perfil de estilo**.
@@ -14,7 +14,7 @@ Al revisar un relato, selecciona un pasaje y pregunta: «Mejora el ritmo sin per
 
 [![Asistente editorial de Warplyn con una solicitud de revisión de ficción y una habilidad seleccionada.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Ejemplo de solicitud en el Composer. Conecta un proveedor antes de enviarla. La captura muestra el nombre anterior de una habilidad.*
+*Ejemplo de solicitud en el cuadro de mensaje. Conecta un proveedor antes de enviarla. La captura muestra el nombre anterior de una habilidad.*
 
 Mientras trabaja, el asistente muestra un breve mensaje de actividad. Elige **Detener solicitud** para cancelar una tarea que esté tardando demasiado. Una solicitud cancelada o fallida no modifica el *artículo*; elige **Reintentar** si quieres volver a ejecutarla. El asistente no muestra prompts, entradas privadas, credenciales ni errores del proveedor. Cuando el resultado esté listo, ábrelo desde la tarjeta correspondiente:
 

@@ -26,7 +26,7 @@ Escolha **Digitar** ou **Ctrl + Enter** como tecla para enviar mensagens ao assi
 
 ## Definir orientações para publicação
 
-Em **Publicação**, escolha um perfil padrão para novos *artigos*. Perfis como **LinkedIn Post** e **LinkedIn Article** mostram orientações de contagem de caracteres na barra de status do artigo. Você também pode escolher **Sem restrições** ou adicionar um perfil personalizado com um nome e um limite de caracteres em número inteiro. O padrão vale para novos *artigos*; um *artigo* existente pode manter seu próprio perfil. Os limites são apenas orientações e nunca impedem a cópia. Na barra de status do artigo, escolha **Copiar redução** ou abra o menu e escolha **Copiar texto simples**. O Warplyn copia o texto quando você solicita; ele não publica diretamente.
+Em **Publicação**, escolha um perfil padrão para novos *artigos*. Perfis como **Postagem no LinkedIn** e **Artigo do LinkedIn** mostram orientações de contagem de caracteres na barra de status do artigo. Você também pode escolher **Sem restrições** ou adicionar um perfil personalizado com um nome e um limite de caracteres em número inteiro. O padrão vale para novos *artigos*; um *artigo* existente pode manter seu próprio perfil. Os limites são apenas orientações e nunca impedem a cópia. Na barra de status do artigo, escolha **Copiar Markdown** ou abra o menu e escolha **Copiar texto simples**. O Warplyn copia o texto quando você solicita; ele não publica diretamente.
 
 ## Revisar opções de modelos de IA
 

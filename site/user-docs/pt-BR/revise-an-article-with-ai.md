@@ -10,15 +10,15 @@ O Warplyn é um espaço de escrita de código aberto e local, para Windows e Lin
 
 ## Começar com uma solicitação focada
 
-Abra seu *artigo* e selecione a passagem que deseja revisar. No Composer, descreva o que deve melhorar e o que precisa ser mantido. Por exemplo, ao trabalhar em A correnteza ao entardecer:
+Abra seu *artigo* e selecione a passagem que deseja revisar. No campo de mensagem, descreva o que deve melhorar e o que precisa ser mantido. Por exemplo, ao trabalhar em A correnteza ao entardecer:
 
 > Melhore o ritmo, mantendo o ponto de vista da Ana e o clima tranquilo. Não acrescente acontecimentos.
 
-Selecione **Enviar solicitação editorial**. O Warplyn envia a seleção com até 500 caracteres de cada lado como contexto somente para leitura. Apenas a passagem selecionada pode ser substituída. Antes de enviar um texto confidencial, confira a explicação de contexto no Composer. Para mais detalhes, consulte [Assistente editorial](editorial-assistant.md).
+Selecione **Enviar solicitação editorial**. O Warplyn envia a seleção com até 500 caracteres de cada lado como contexto somente para leitura. Apenas a passagem selecionada pode ser substituída. Antes de enviar um texto confidencial, confira a explicação de contexto no campo de mensagem. Para mais detalhes, consulte [Assistente editorial](editorial-assistant.md).
 
-[![Composer do Warplyn com uma solicitação de revisão de ficção.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![campo de mensagem do Warplyn com uma solicitação de revisão de ficção.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Exemplo de solicitação no Composer. A captura de tela mostra o nome antigo de uma habilidade.*
+*Exemplo de solicitação no campo de mensagem. A captura de tela mostra o nome antigo de uma habilidade.*
 
 ## Comparar o texto original e o proposto
 

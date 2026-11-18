@@ -9,7 +9,7 @@ Użyj **Zapisz do pliku** i **Wczytaj z pliku**, aby przenosić całe *artykuły
 ## Zapisz do pliku
 
 1. Otwórz *artykuł*, który chcesz zapisać.
-2. W nagłówku artykułu wybierz **Zapisz do pliku** obok **Zapisz wersję**. Możesz też kliknąć *artykuł* prawym przyciskiem myszy w Library i wybrać **Zapisz do pliku…**, nie otwierając go.
+2. W nagłówku artykułu wybierz **Zapisz do pliku** obok **Zapisz wersję**. Możesz też kliknąć *artykuł* prawym przyciskiem myszy w bibliotece i wybrać **Zapisz do pliku…**, nie otwierając go.
 3. W oknie zapisu aplikacji desktopowej wybierz Markdown, HTML, DOCX albo RTF z listy typów plików, a następnie wskaż nazwę i lokalizację. Zachowaj rozszerzenie pasujące do formatu. W aplikacji webowej wybierz **Format pliku**, a następnie **Pobierz** i użyj opcji pobierania w przeglądarce.
 
 Plik zawiera cały bieżący *szkic*, w tym niezapisane zmiany. Zaznaczenie tekstu nie ogranicza zakresu zapisu. Ta czynność nie tworzy *zapisanej wersji*. **Zapisz wersję** nadal służy do dodania bieżącego *szkicu* do historii.
@@ -22,10 +22,10 @@ Aplikacja webowa wyświetla **Rozpoczęto pobieranie artykułu**, gdy przekazuje
 
 ## Wczytaj z pliku
 
-1. W nagłówku artykułu wybierz **Wczytaj z pliku** obok **Zapisz wersję** albo kliknij *artykuł* prawym przyciskiem myszy w Library i wybierz **Wczytaj z pliku…**. Jeśli biblioteka jest pusta, najpierw wybierz **Utwórz**.
+1. W nagłówku artykułu wybierz **Wczytaj z pliku** obok **Zapisz wersję** albo kliknij *artykuł* prawym przyciskiem myszy w bibliotece i wybierz **Wczytaj z pliku…**. Jeśli biblioteka jest pusta, najpierw wybierz **Utwórz**.
 2. Wybierz jeden plik `.md`, `.html`, `.htm`, `.docx` lub `.rtf`.
 3. W przypadku HTML, DOCX i RTF zaznacz **Przejrzyj importowany artykuł**, a następnie wybierz **Importuj**. Możesz anulować sprawdzanie. Pliki Markdown otwierają się bezpośrednio.
-4. Warplyn otworzy zaimportowany tekst jako osobny *artykuł*. Poprzedni *artykuł* i jego możliwy do odzyskania *szkic* pozostaną w Library.
+4. Warplyn otworzy zaimportowany tekst jako osobny *artykuł*. Poprzedni *artykuł* i jego możliwy do odzyskania *szkic* pozostaną w bibliotece.
 
 Początkowy nagłówek pierwszego poziomu staje się nowym tytułem. Jeśli go nie ma, Warplyn użyje nazwy pliku bez rozszerzenia. Nagłówek pozostanie w treści *artykułu*. Ponowne wczytanie tego samego pliku tworzy kolejny niezależny *artykuł*.
 

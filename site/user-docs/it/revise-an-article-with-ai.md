@@ -10,15 +10,15 @@ Warplyn è un’area di scrittura open source e con dati locali, disponibile per
 
 ## Inizia con una richiesta mirata
 
-Apri il tuo *articolo* e seleziona il passaggio da rivedere. Nel Composer, descrivi cosa dovrebbe migliorare e cosa deve restare invariato. Per esempio, mentre lavori a «Il fiume al crepuscolo»:
+Apri il tuo *articolo* e seleziona il passaggio da rivedere. Nel campo di composizione, descrivi cosa dovrebbe migliorare e cosa deve restare invariato. Per esempio, mentre lavori a «Il fiume al crepuscolo»:
 
 > Migliora la fluidità mantenendo il punto di vista di Ana e l’atmosfera tranquilla. Non aggiungere nuovi eventi.
 
-Seleziona **Invia richiesta editoriale**. Warplyn invia la selezione con fino a 500 caratteri precedenti e 500 successivi come contesto in sola lettura. Può essere sostituito solo il passaggio selezionato. Prima di inviare testi sensibili, controlla nel Composer la spiegazione del contesto. Per maggiori dettagli, consulta [Assistente editoriale](editorial-assistant.md).
+Seleziona **Invia richiesta editoriale**. Warplyn invia la selezione con fino a 500 caratteri precedenti e 500 successivi come contesto in sola lettura. Può essere sostituito solo il passaggio selezionato. Prima di inviare testi sensibili, controlla nel campo di composizione la spiegazione del contesto. Per maggiori dettagli, consulta [Assistente editoriale](editorial-assistant.md).
 
-[![Composer di Warplyn con una richiesta di revisione di un testo narrativo.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![campo di composizione di Warplyn con una richiesta di revisione di un testo narrativo.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Esempio di richiesta nel Composer. Lo screenshot mostra il nome precedente di un’abilità.*
+*Esempio di richiesta nel campo di composizione. Lo screenshot mostra il nome precedente di un’abilità.*
 
 ## Confronta il testo originale con quello proposto
 

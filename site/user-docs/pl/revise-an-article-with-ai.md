@@ -10,15 +10,15 @@ Warplyn to lokalne środowisko do pisania na Windows i Linux, rozwijane jako ope
 
 ## Zacznij od ukierunkowanego zlecenia
 
-Otwórz *artykuł* i zaznacz fragment, który chcesz poprawić. W Composer opisz, co należy ulepszyć i co zachować. Na przykład, pracując nad The River at Dusk:
+Otwórz *artykuł* i zaznacz fragment, który chcesz poprawić. W polu wpisywania opisz, co należy ulepszyć i co zachować. Na przykład, pracując nad The River at Dusk:
 
 > Popraw płynność, zachowując punkt widzenia Any i spokojny nastrój. Nie dodawaj nowych wydarzeń.
 
-Wybierz **Wyślij żądanie redakcyjne**. Warplyn wysyła zaznaczenie oraz do 500 znaków z każdej jego strony jako kontekst tylko do odczytu. Zastąpiony może być wyłącznie zaznaczony fragment. Przed wysłaniem wrażliwego tekstu sprawdź wyjaśnienie kontekstu w Composer. Więcej informacji znajdziesz w sekcji [Asystent redakcyjny](editorial-assistant.md).
+Wybierz **Wyślij żądanie redakcyjne**. Warplyn wysyła zaznaczenie oraz do 500 znaków z każdej jego strony jako kontekst tylko do odczytu. Zastąpiony może być wyłącznie zaznaczony fragment. Przed wysłaniem wrażliwego tekstu sprawdź wyjaśnienie kontekstu w polu wpisywania. Więcej informacji znajdziesz w sekcji [Asystent redakcyjny](editorial-assistant.md).
 
-[![Composer Warplyn z prośbą o poprawę opowiadania.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![Pole wpisywania w Warplyn z prośbą o poprawę opowiadania.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Przykładowe zlecenie w Composer. Zrzut ekranu pokazuje wcześniejszą nazwę umiejętności.*
+*Przykładowe zlecenie w polu wpisywania. Zrzut ekranu pokazuje wcześniejszą nazwę umiejętności.*
 
 ## Porównaj oryginalne i proponowane brzmienie
 
@@ -28,7 +28,7 @@ Po zakończeniu zlecenia otwórz **Przegląd propozycji** z karty wyniku. Porów
 
 *Przykładowa recenzja dla The River at Dusk. Wygenerowane brzmienie zależy od zlecenia i modelu.*
 
-Dla poszczególnych zmian wybierz **Akceptuj** lub **Odrzuć**. Przed zastosowaniem możesz edytować proponowany tekst w **Propozycja**. Jeśli Warplyn nie może bezpiecznie podzielić *propozycji*, wyjaśni, że należy sprawdzić ją w całości.
+Dla poszczególnych zmian wybierz **Akceptuj** lub **Odrzuć**. Przed zastosowaniem możesz edytować proponowany tekst w polu **Propozycja**. Jeśli Warplyn nie może bezpiecznie podzielić *propozycji*, wyjaśni, że należy sprawdzić ją w całości.
 
 ## Zastosuj zmiany i zachowaj historię
 

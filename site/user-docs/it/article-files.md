@@ -9,7 +9,7 @@ Usa **Salva su file** e **Carica da file** per trasferire articoli completi tra 
 ## Salvare in un file
 
 1. Apri l’*articolo* da salvare.
-2. Nell’intestazione dell’articolo, scegli **Salva su file** accanto a **Salva versione**. Puoi anche fare clic destro su un *articolo* nella Library e scegliere **Salva su file…** senza aprirlo.
+2. Nell’intestazione dell’articolo, scegli **Salva su file** accanto a **Salva versione**. Puoi anche fare clic destro su un *articolo* nella libreria e scegliere **Salva su file…** senza aprirlo.
 3. Nella finestra di salvataggio dell’app desktop, seleziona Markdown, HTML, DOCX o RTF dall’elenco dei tipi di file, quindi scegli un nome e una posizione. Mantieni l’estensione corrispondente al formato. Nell’app web, scegli **Formato del file**, poi **Scarica** e usa i controlli di download del browser.
 
 Il file contiene l’intera *bozza* attuale, comprese le modifiche non salvate. Selezionare del testo non limita ciò che viene salvato. Questo comando non crea una *versione salvata*. **Salva versione** resta il comando per aggiungere la *bozza* attuale alla cronologia.
@@ -22,10 +22,10 @@ Quando l’app web passa il file al browser, mostra **Download dell'articolo avv
 
 ## Caricare da un file
 
-1. Nell’intestazione dell’articolo, scegli **Carica da file** accanto a **Salva versione**, oppure fai clic destro su un *articolo* nella Library e scegli **Carica da file…**. Se la raccolta è vuota, scegli prima **Crea**.
+1. Nell’intestazione dell’articolo, scegli **Carica da file** accanto a **Salva versione**, oppure fai clic destro su un *articolo* nella libreria e scegli **Carica da file…**. Se la raccolta è vuota, scegli prima **Crea**.
 2. Seleziona un file `.md`, `.html`, `.htm`, `.docx` o `.rtf`.
 3. Per HTML, DOCX e RTF, seleziona **Rivedi l'articolo importato**, poi scegli **Importa**. Puoi annullare la revisione. I file Markdown si aprono direttamente.
-4. Warplyn apre il testo importato come *articolo* separato. L’*articolo* precedente e la sua *bozza* recuperabile restano disponibili nella Library.
+4. Warplyn apre il testo importato come *articolo* separato. L’*articolo* precedente e la sua *bozza* recuperabile restano disponibili nella libreria.
 
 Un titolo di primo livello all’inizio del file diventa il nuovo titolo. In caso contrario, Warplyn usa il nome del file senza estensione. Il titolo resta nel corpo dell’*articolo*. Caricare di nuovo lo stesso file crea un altro *articolo* indipendente.
 

@@ -61,47 +61,48 @@ Estos términos describen conceptos visibles para quienes escriben y el vocabula
 Esquema de la aplicación de escritorio con los dos paneles laterales abiertos y el editor de artículos seleccionado. Los recuadros muestran ubicación y agrupación, no las dimensiones exactas.
 
 ```text
-Editorial Workspace
+Espacio de trabajo editorial
 ┌──────────────────────────┬──────────────────────────────┬──────────────────────────┐
-│ Article Library Panel    │ Article Workspace            │ Editorial Assistant Panel│
+│ Panel de biblioteca de   │ Espacio de trabajo del       │ Panel del asistente     │
+│ artículos                │ artículo                     │ editorial               │
 ├──────────────────────────┼──────────────────────────────┼──────────────────────────┤
-│ Warplyn · New Article    │ Article Header               │ Assistant header         │
-│ Collapse control         │ Title and Article metadata   │ Collapse control         │
+│ Warplyn · Artículo nuevo │ Encabezado del artículo      │ Encabezado del asistente │
+│ Control para contraer    │ Título y metadatos artículo │ Control para contraer    │
 ├──────────────────────────┼──────────────────────────────┼──────────────────────────┤
-│ Article search           │ Workspace Tab Bar            │ Conversation             │
-├──────────────────────────┼──────────────────────────────┤ Request status           │
-│ Article list             │ Workspace View               │ and activity             │
+│ Búsqueda de artículos    │ Pestañas del espacio        │ Conversación             │
+├──────────────────────────┼──────────────────────────────┤ Estado de solicitud      │
+│ Lista de artículos       │ Vista del espacio de trabajo│ y actividad              │
 │                          │                              │                          │
-│                          │ Article Editor               │                          │
+│                          │ Editor de artículos          │                          │
 │                          │ ┌──────────────────────────┐ │                          │
-│                          │ │ Writing surface          │ │                          │
+│                          │ │ Área de escritura         │ │                          │
 │                          │ │                          │ │                          │
 │                          │ └──────────────────────────┘ │                          │
 ├──────────────────────────┤                              ├──────────────────────────┤
-│ Article Library          │                              │ Quick actions            │
-│ utility area             │                              │ Composer                 │
-│ Style Profile · Settings ├──────────────────────────────┤ Editorial guidance       │
-│ Update, when relevant    │ Article Status Bar           │ and Send                 │
-│ Language · Local         │ Save status · Metadata · Copy │                          │
+│ Biblioteca de artículos  │                              │ Acciones rápidas         │
+│ Área de utilidades       │                              │ Campo de mensaje        │
+│ Perfil de estilo ·       ├──────────────────────────────┤ Indicaciones editoriales │
+│ Actualización · Idioma   │ Barra estado del artículo   │ y Enviar                 │
+│ Idioma · Local           │ Guardado · Metadatos · Copiar │                          │
 └──────────────────────────┴──────────────────────────────┴──────────────────────────┘
 ```
 
-En la vista expandida, el pie del panel Library es el **área de utilidades de la Biblioteca de artículos**. Su fila inferior muestra el código de idioma del *artículo* actual y la etiqueta **Local**. La **Article Status Bar**, debajo de la vista central del artículo, muestra el estado de guardado.
+En la vista expandida, el pie del panel de la biblioteca es el **área de utilidades de la Biblioteca de artículos**. Su fila inferior muestra el código de idioma del *artículo* actual y la etiqueta **Local**. La **barra de estado del artículo**, debajo de la vista central, muestra el estado de guardado.
 
 ### Términos de la interfaz
 
-- **Editorial Workspace**: pantalla principal de escritura que contiene el Panel de biblioteca de artículos, Article Workspace y Panel del asistente editorial.
-- **Panel de biblioteca de artículos**: incluye la búsqueda de artículos, la lista de artículos y los accesos al espacio de trabajo. Al contraerse, se convierte en la **Navigation Rail**; en pantallas pequeñas, aparece temporalmente como **Navigation Drawer**.
-- **área de utilidades de la Biblioteca de artículos**: pie del Panel de biblioteca de artículos expandido. Contiene Perfil de estilo, Settings, un control de actualización cuando corresponde y el código de idioma del artículo actual con la etiqueta **Local**.
-- **Save-state indicator**: estado de la Article Status Bar que indica si el *borrador* actual está guardado, se está guardando o requiere atención.
-- **Article Workspace**: contiene Article Header, Workspace Tab Bar, la vista seleccionada del espacio de trabajo y Article Status Bar.
-- **Article Header**: controles del título y los metadatos situados sobre Workspace Tab Bar.
-- **Workspace Tab Bar**: pestañas que permiten seleccionar una vista del espacio de trabajo.
-- **Workspace View**: editor de artículos seleccionado o vista de apoyo: Revisión de propuestas, Historial de versiones, Verificación de datos o Translations.
+- **Espacio de trabajo editorial**: pantalla principal de escritura que contiene el Panel de biblioteca de artículos, el espacio de trabajo del artículo y el Panel del asistente editorial.
+- **Panel de biblioteca de artículos**: incluye la búsqueda de artículos, la lista de artículos y los accesos al espacio de trabajo. Al contraerse, se convierte en la **barra de navegación**; en pantallas pequeñas, aparece temporalmente como **cajón de navegación**.
+- **Área de utilidades de la Biblioteca de artículos**: pie del Panel de biblioteca de artículos expandido. Contiene Perfil de estilo, Configuración, un control de actualización cuando corresponde y el código de idioma del artículo actual con la etiqueta **Local**.
+- **Indicador de estado de guardado**: estado de la barra de estado del artículo que indica si el *borrador* actual está guardado, se está guardando o requiere atención.
+- **Espacio de trabajo del artículo**: contiene el encabezado del artículo, las pestañas del espacio de trabajo, la vista seleccionada y la barra de estado del artículo.
+- **Encabezado del artículo**: controles del título y los metadatos situados sobre las pestañas del espacio de trabajo.
+- **Pestañas del espacio de trabajo**: pestañas que permiten seleccionar una vista del espacio de trabajo.
+- **Vista del espacio de trabajo**: editor de artículos seleccionado o vista de apoyo: Revisión de propuestas, Historial de versiones, Verificación de datos o Traducciones.
 - **Perfil de estilo**: pantalla independiente con características detectadas, observaciones de revisión de estilo, reglas tipográficas, indicaciones manuales y muestras de escritura.
-- **Article Editor**: vista de escritura. Su área principal de edición es el **writing surface**.
-- **Article Status Bar**: barra bajo la vista seleccionada del espacio de trabajo. Muestra el estado y los metadatos del artículo, el idioma, las pautas del perfil de publicación y los controles Copy.
-- **Panel del asistente editorial**: contiene las indicaciones editoriales, las acciones, el estado de las solicitudes y la actividad. En pantallas pequeñas, aparece temporalmente como **Assistant Drawer**.
+- **Editor de artículos**: vista de escritura. Su área principal de edición es el **área de escritura**.
+- **Barra de estado del artículo**: barra bajo la vista seleccionada del espacio de trabajo. Muestra el estado y los metadatos del artículo, el idioma, las pautas del perfil de publicación y los controles de copia.
+- **Panel del asistente editorial**: contiene las indicaciones editoriales, las acciones, el estado de las solicitudes y la actividad. En pantallas pequeñas, aparece temporalmente como **cajón del asistente**.
 - **Acciones rápidas**: menú desplegable sobre el compositor del asistente para insertar una habilidad integrada en una solicitud.
-- **Composer**: campo de mensaje al pie del Panel del asistente editorial, donde la persona autora escribe indicaciones editoriales y envía una solicitud.
-- **Application Navegación de configuración**: navegación entre **General**, **Atajos de teclado**, **Proveedores**, **Asistente de IA**, **Publicación**, **Idiomas**, **Ortografía**, **Datos y copias** y **Acerca de Warplyn**.
+- **Campo de mensaje del asistente**: campo al pie del Panel del asistente editorial, donde la persona autora escribe indicaciones editoriales y envía una solicitud.
+- **Navegación por la configuración de la aplicación**: navegación entre **General**, **Atajos de teclado**, **Proveedores**, **Asistente de IA**, **Publicación**, **Idiomas**, **Ortografía**, **Datos y copias** y **Acerca de Warplyn**.

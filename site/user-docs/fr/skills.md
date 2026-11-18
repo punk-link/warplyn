@@ -16,7 +16,7 @@ Pour réviser une fiction dans le style d’une scène calme près d’une rivi�
 
 [![Assistant éditorial de Warplyn avec une demande de création d’une compétence de révision phrase à phrase et Créateur de compétences sélectionné.](/images/skill-creator-example.png)](/images/skill-creator-example.png)
 
-*Exemple de demande de création d’une compétence dans le Composer. Connectez un fournisseur avant l’envoi.*
+*Exemple de demande de création d’une compétence dans la zone de saisie. Connectez un fournisseur avant l’envoi.*
 
 Après sa création, la *compétence* est immédiatement disponible pour les nouvelles demandes à l’assistant. La demande de création ne transmet pas le corps de votre *article* au modèle et ne modifie ni l’*article*, ni le *brouillon*, ni la *proposition*, ni la *version enregistrée*.
 

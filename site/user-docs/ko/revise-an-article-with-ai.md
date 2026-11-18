@@ -10,15 +10,15 @@ Warplyn은 Windows와 Linux용 오픈 소스 로컬 우선 글쓰기 작업 공�
 
 ## 범위를 좁혀 요청 시작하기
 
-*글*을 열고 수정할 부분을 선택합니다. Composer에서 개선할 점과 유지할 점을 설명하세요. 예를 들어 The River at Dusk를 작업 중이라면 다음과 같이 요청할 수 있습니다.
+*글*을 열고 수정할 부분을 선택합니다. 입력창에서 개선할 점과 유지할 점을 설명하세요. 예를 들어 The River at Dusk를 작업 중이라면 다음과 같이 요청할 수 있습니다.
 
 > 아나의 시점과 조용한 분위기를 유지하면서 글의 흐름을 개선해 주세요. 새로운 사건은 추가하지 마세요.
 
-**편집 요청 보내기**를 선택합니다. Warplyn은 선택한 부분과 앞뒤 각각 최대 500자를 읽기 전용 컨텍스트로 전송합니다. 바꿀 수 있는 부분은 선택한 문장뿐입니다. 민감한 글을 보내기 전에 Composer의 컨텍스트 설명을 확인하세요. 자세한 내용은 [글쓰기 도우미](editorial-assistant.md)를 참조하세요.
+**편집 요청 보내기**를 선택합니다. Warplyn은 선택한 부분과 앞뒤 각각 최대 500자를 읽기 전용 컨텍스트로 전송합니다. 바꿀 수 있는 부분은 선택한 문장뿐입니다. 민감한 글을 보내기 전에 입력창의 컨텍스트 설명을 확인하세요. 자세한 내용은 [글쓰기 도우미](editorial-assistant.md)를 참조하세요.
 
-[![소설 수정 요청이 입력된 Warplyn Composer.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![소설 수정 요청이 입력된 Warplyn 입력창.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Composer 요청 예시입니다. 스크린샷에는 이전 스킬 이름이 표시되어 있습니다.*
+*입력창 요청 예시입니다. 스크린샷에는 이전 스킬 이름이 표시되어 있습니다.*
 
 ## 원문과 제안된 문구 비교하기
 

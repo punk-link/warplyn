@@ -20,7 +20,7 @@ Escolha **Salvar versão** para guardar o *rascunho* atual como um ponto nomeado
 
 ## Encontrar e organizar artigos
 
-Use a busca da biblioteca para encontrar *artigos*, inclusive os arquivados. Escolha **Artigos** para consultar trabalhos fixados e recentes ou **Arquivar** para ver grupos de *artigos* arquivados. A Navigation Rail recolhida oferece atalhos para **Novo artigo**, **Search**, **Artigos** e **Arquivar**. No menu da biblioteca, fixe um *artigo* original para manter um atalho na Navigation Rail. Use **Subir** ou **Mover para baixo** para reordenar os *artigos* fixados. Fixar e reordenar não altera o conteúdo do *artigo*. Use o campo do título para renomeá-lo.
+Use a busca da biblioteca para encontrar *artigos*, inclusive os arquivados. Escolha **Artigos** para consultar trabalhos fixados e recentes ou **Arquivar** para ver grupos de *artigos* arquivados. A barra de navegação recolhida oferece atalhos para **Novo artigo**, **Pesquisar artigos**, **Artigos** e **Arquivar**. No menu da biblioteca, fixe um *artigo* original para manter um atalho na barra de navegação. Use **Subir** ou **Mover para baixo** para reordenar os *artigos* fixados. Fixar e reordenar não altera o conteúdo do *artigo*. Use o campo do título para renomeá-lo.
 
 Escolha **Arquivar artigo** para remover um grupo de *artigos* da lista ativa e mantê-lo em **Arquivar**. Selecione o grupo arquivado e escolha **Desarquivar artigo** para recuperá-lo. Excluir um *artigo* exige confirmação e remove suas *versões salvas* e os *rascunhos* recuperáveis. Excluir um artigo de origem também exclui as *traduções* vinculadas; excluir uma *tradução* mantém o artigo de origem. Se quiser apenas deixá-lo de lado, arquive-o.
 
@@ -34,6 +34,6 @@ Em **Dicionário pessoal**, procure palavras salvas ou informe uma palavra ou te
 
 Use **Modo de foco** para ocultar os dois painéis de apoio enquanto escreve. Selecione-o novamente para exibi-los. Use o controle de recolher de cada painel para fechá-lo ou reabri-lo; arraste o divisor ao lado de um painel para redimensioná-lo. Em uma janela estreita, os painéis podem abrir temporariamente sobre o editor.
 
-Com o teclado, use **Tab** e **Shift + Tab** para percorrer a biblioteca, o cabeçalho do artigo, as visualizações, a barra de formatação, o editor, a barra de status e o assistente. No editor, na busca e no Composer, os atalhos usuais de edição de texto continuam funcionando. Configurações tem navegação própria pelo teclado. Na barra lateral do desktop, use **Up**, **Down**, **Home** ou **End** para percorrer as seções e depois **Digitar** ou **Space** para abrir uma delas.
+Com o teclado, use **Tab** e **Shift + Tab** para percorrer a biblioteca, o cabeçalho do artigo, as visualizações, a barra de formatação, o editor, a barra de status e o assistente. No editor, na busca e no campo de mensagem, os atalhos usuais de edição de texto continuam funcionando. A área de configurações tem navegação própria pelo teclado. Na barra lateral do desktop, use **Up**, **Down**, **Home** ou **End** para percorrer as seções e depois **Enter** ou **Space** para abrir uma delas.
 
 Para transferir um *artigo* inteiro de ou para o Warplyn, consulte [Arquivos de artigos](article-files.md). Para fazer cópias de segurança do espaço de trabalho inteiro, consulte [Cópias de segurança e recuperação](backups-and-recovery.md).

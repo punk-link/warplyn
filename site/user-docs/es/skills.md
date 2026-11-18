@@ -16,7 +16,7 @@ Para revisar ficción con el estilo de una escena tranquila junto al río, pregu
 
 [![Asistente editorial de Warplyn con una solicitud para crear una habilidad de revisión de línea de ficción y Creador de habilidades seleccionado.](/images/skill-creator-example.png)](/images/skill-creator-example.png)
 
-*Ejemplo de solicitud para crear una habilidad en el Composer. Conecta un proveedor antes de enviarla.*
+*Ejemplo de solicitud para crear una habilidad en el cuadro de mensaje. Conecta un proveedor antes de enviarla.*
 
 Cuando se crea correctamente, la *habilidad* queda disponible de inmediato para nuevas solicitudes al asistente. La solicitud de creación no envía al modelo el cuerpo de tu *artículo* y no modifica el *artículo*, el *borrador*, la *propuesta* ni la *versión guardada*.
 

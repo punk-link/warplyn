@@ -10,15 +10,15 @@ Warplyn est un espace d’écriture open source qui conserve vos données locale
 
 ## Commencez par une demande précise
 
-Ouvrez votre *article* et sélectionnez le passage à réviser. Dans le Composer, indiquez ce qui doit être amélioré et ce qui doit rester inchangé. Par exemple, pour travailler sur « La rivière au crépuscule » :
+Ouvrez votre *article* et sélectionnez le passage à réviser. Dans la zone de saisie, indiquez ce qui doit être amélioré et ce qui doit rester inchangé. Par exemple, pour travailler sur « La rivière au crépuscule » :
 
 > Améliore la fluidité tout en gardant le point de vue d’Ana et l’atmosphère calme. N’ajoute aucun événement.
 
-Sélectionnez **Envoyer**. Warplyn transmet la sélection avec jusqu’à 500 caractères de chaque côté, à titre de contexte en lecture seule. Seul le passage sélectionné peut être remplacé. Avant d’envoyer un texte sensible, vérifiez l’explication du contexte dans le Composer. Pour en savoir plus, consultez [Assistant éditorial](editorial-assistant.md).
+Sélectionnez **Envoyer**. Warplyn transmet la sélection avec jusqu’à 500 caractères de chaque côté, à titre de contexte en lecture seule. Seul le passage sélectionné peut être remplacé. Avant d’envoyer un texte sensible, vérifiez l’explication du contexte dans la zone de saisie. Pour en savoir plus, consultez [Assistant éditorial](editorial-assistant.md).
 
-[![Composer de Warplyn avec une demande de révision d’un texte de fiction.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![zone de saisie de Warplyn avec une demande de révision d’un texte de fiction.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Exemple de demande dans le Composer. La capture d’écran montre l’ancien nom d’une compétence.*
+*Exemple de demande dans la zone de saisie. La capture d’écran montre l’ancien nom d’une compétence.*
 
 ## Comparez le texte original et le texte proposé
 

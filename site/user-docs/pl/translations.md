@@ -8,7 +8,7 @@ description: "Twórz, porównuj i aktualizuj połączone artykuły tłumaczeń, 
 
 ## Zleć tłumaczenie
 
-Otwórz źródłowy *artykuł* i wybierz **Nowe tłumaczenie…** w widoku **Tłumaczenia**. W oknie może być wstępnie wybrany bieżący język *artykułu*. Jeśli nie ma używanego języka, zostaną zaproponowane języki preferowane w **Ustawienia** → **Domyślne języki**. Wybierz i potwierdź każdy język docelowy. Warplyn tłumaczy cały *artykuł*, nawet jeśli w edytorze zaznaczono jego fragment. Jeśli w źródle są niezapisane zmiany, najpierw zapisz je jako *zapisaną wersję*, aby można było ustalić dokładny tekst użyty do *tłumaczenia*.
+Otwórz źródłowy *artykuł* i wybierz **Nowe tłumaczenie…** w widoku **Tłumaczenia**. W oknie może być wstępnie wybrany bieżący język *artykułu*. Jeśli nie ma używanego języka, zostaną zaproponowane języki preferowane w sekcji **Ustawienia** → **Domyślne języki**. Wybierz i potwierdź każdy język docelowy. Warplyn tłumaczy cały *artykuł*, nawet jeśli w edytorze zaznaczono jego fragment. Jeśli w źródle są niezapisane zmiany, najpierw zapisz je jako *zapisaną wersję*, aby można było ustalić dokładny tekst użyty do *tłumaczenia*.
 
 Asystent tworzy osobny wynik *tłumaczenia* dla każdego języka, gotowy do sprawdzenia. Otwórz wynik, aby porównać tytuł i tekst ze źródłem. Wybierz **Obok siebie**, aby porównać całe fragmenty, lub **Wyrównane akapity**, aby zestawić odpowiadające sobie akapity. Chroniony tekst, taki jak nazwy, liczby, adresy URL i kod, musi pozostać bez zmian. Warplyn oznacza wyniki, w których zmienił się chroniony tekst albo użyto starszej źródłowej *zapisanej wersji*. Przed kontynuowaniem sprawdź te powiadomienia.
 

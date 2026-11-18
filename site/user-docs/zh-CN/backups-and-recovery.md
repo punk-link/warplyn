@@ -8,9 +8,9 @@ description: "创建 Warplyn 自动或手动备份，恢复写作内容和技能
 
 在 **设置** → **数据与备份** 中选择 **备份文件夹**，然后点击 **创建备份**。在受支持的浏览器中，Warplyn 只会请求向该目录写入备份的权限。
 
-[![数据和备份设置，显示备份目录、创建备份 和 恢复备份 控件以及自动备份选项。](/images/backups-and-recovery.png)](/images/backups-and-recovery.png)
+[![“数据与备份”设置界面显示备份目录、“创建备份”和“恢复备份”控件以及自动备份选项。](/images/backups-and-recovery.png)](/images/backups-and-recovery.png)
 
-*桌面版中的 数据与备份 设置。*
+*桌面版的“数据与备份”设置。*
 
 ::: tip 备份包含哪些内容
 新的 `.skladno` 备份包含数据库、当前作者*技能*、其*技能已保存版本*历史以及文件清单。备份不包含 `.env` 文件或 API 密钥。

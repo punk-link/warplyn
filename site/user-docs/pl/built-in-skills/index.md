@@ -4,7 +4,7 @@ description: "Wybierz wbudowaną umiejętność do tworzenia szkiców, poprawian
 
 # Wbudowane umiejętności
 
-Wbudowane *umiejętności* pomagają asystentowi redakcyjnemu wykonywać typowe zadania pisarskie. Wybierz redakcyjną *umiejętność* z **Szybkie działania** albo opisz prośbę, aby asystent dobrał odpowiednią. Wybrany chip umiejętności można wysłać samodzielnie; dodaj wiadomość tylko wtedy, gdy chcesz przekazać dodatkowy kontekst lub ograniczenie. Aby rozpocząć, wybierz **Wyślij żądanie redakcyjne**. Aby utworzyć lub zarządzać umiejętnością wielokrotnego użytku, poproś bezpośrednio asystenta; **Kreator umiejętności** nie jest opcją szybkiego działania w Composer.
+Wbudowane *umiejętności* pomagają asystentowi redakcyjnemu wykonywać typowe zadania pisarskie. Wybierz redakcyjną *umiejętność* z menu **Szybkie działania** albo opisz prośbę, aby asystent dobrał odpowiednią. Wybrany chip umiejętności można wysłać samodzielnie; dodaj wiadomość tylko wtedy, gdy chcesz przekazać dodatkowy kontekst lub ograniczenie. Aby rozpocząć, wybierz **Wyślij żądanie redakcyjne**. Aby utworzyć lub zarządzać umiejętnością wielokrotnego użytku, poproś bezpośrednio asystenta; **Kreator umiejętności** nie jest opcją szybkiego działania w polu wpisywania.
 
 Każda strona opisuje przeznaczenie *umiejętności* i to, co należy sprawdzić w wyniku. Asystent przygotowuje pracę do sprawdzenia; informacje o korzystaniu z wyników znajdziesz w sekcjach [Asystent redakcyjny](../editorial-assistant.md) i [Recenzowanie artykułów](../reviewing-articles.md).
 

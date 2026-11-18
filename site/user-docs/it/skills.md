@@ -16,7 +16,7 @@ Per revisionare un testo di narrativa con lo stile di una scena quieta sul fiume
 
 [![Assistente editoriale di Warplyn con una richiesta di creazione di un’abilità per la revisione di narrativa e Creatore di abilità selezionato.](/images/skill-creator-example.png)](/images/skill-creator-example.png)
 
-*Esempio di richiesta di creazione di un’abilità nel Composer. Collega un provider prima di inviarla.*
+*Esempio di richiesta di creazione di un’abilità nel campo di composizione. Collega un provider prima di inviarla.*
 
 Dopo la creazione, l’*abilità* è subito disponibile per le nuove richieste all’assistente. La richiesta di creazione non invia al modello il testo dell’*articolo* e non modifica l’*articolo*, la *bozza*, la *proposta* o una *versione salvata*.
 

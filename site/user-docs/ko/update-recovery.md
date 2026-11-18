@@ -12,7 +12,7 @@ description: "이전 버전과 그 버전에 맞는 스냅샷을 사용해 실�
 
 1. [GitHub 릴리스](https://github.com/punk-link/warplyn/releases)에서 이전 프리뷰를 다운로드해 다시 설치합니다.
 2. 업데이트 전에 Warplyn이 기록한 해당 업데이트 전 SQLite 스냅샷을 복원합니다.
-3. 이전 프리뷰를 시작하고 *글(Articles)*, *초안(Drafts)*, *저장된 버전(Revisions)*, 설정을 확인합니다.
+3. 이전 프리뷰를 시작하고 *글*, *초안*, *저장된 버전*, 설정을 확인합니다.
 
 ## Linux AppImage
 

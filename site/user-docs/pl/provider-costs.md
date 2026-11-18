@@ -26,7 +26,7 @@ Do zwykłych zadań, takich jak wygładzanie fragmentu lub ukierunkowana poprawk
 
 Sprawdź wykorzystanie, opłaty, alerty i limity wydatków na koncie dostawcy. Warplyn nie pokazuje rachunku dostawcy ani nie egzekwuje limitów wydatków. W sprawie rozliczeń, zwrotów lub opłat na koncie skontaktuj się z dostawcą.
 
-Model użyty w zleceniu wpływa na jego koszt. W **Ustawienia** → **Asystent AI** wybierz **Model domyślny**, **Model aplikacji** oraz modele dla konkretnych zadań. Instrukcję konfiguracji znajdziesz w sekcji [Dostawcy i modele AI](providers.md).
+Model użyty w zleceniu wpływa na jego koszt. W sekcji **Ustawienia** → **Asystent AI** wybierz **Model domyślny**, **Model aplikacji** oraz modele dla konkretnych zadań. Instrukcję konfiguracji znajdziesz w sekcji [Dostawcy i modele AI](providers.md).
 
 ::: tip Możesz pracować bez AI
 Możesz pisać i zarządzać *artykułami* bez połączenia AI. Edycja, zapisywanie *zapisanych wersji* i korzystanie z lokalnych kopii zapasowych nie wysyłają zleceń AI.

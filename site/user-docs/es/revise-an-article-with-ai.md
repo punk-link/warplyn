@@ -10,15 +10,15 @@ Warplyn es un espacio de escritura de código abierto y con almacenamiento local
 
 ## Empieza con una solicitud concreta
 
-Abre tu *artículo* y selecciona el pasaje que quieras revisar. En el Composer, describe qué debería mejorar y qué debe conservarse. Por ejemplo, al trabajar en «El río al anochecer»:
+Abre tu *artículo* y selecciona el pasaje que quieras revisar. En el cuadro de mensaje, describe qué debería mejorar y qué debe conservarse. Por ejemplo, al trabajar en «El río al anochecer»:
 
 > Mejora el ritmo sin perder el punto de vista de Ana ni la atmósfera tranquila. No añadas acontecimientos.
 
-Selecciona **Enviar solicitud editorial**. Warplyn envía la selección con hasta 500 caracteres a cada lado como contexto de solo lectura. Solo se puede sustituir el pasaje seleccionado. Antes de enviar textos sensibles, revisa la explicación del contexto en el Composer. Para obtener más información, consulta [Asistente editorial](editorial-assistant.md).
+Selecciona **Enviar solicitud editorial**. Warplyn envía la selección con hasta 500 caracteres a cada lado como contexto de solo lectura. Solo se puede sustituir el pasaje seleccionado. Antes de enviar textos sensibles, revisa la explicación del contexto en el cuadro de mensaje. Para obtener más información, consulta [Asistente editorial](editorial-assistant.md).
 
-[![Composer de Warplyn con una solicitud de revisión de ficción.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![cuadro de mensaje de Warplyn con una solicitud de revisión de ficción.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Ejemplo de una solicitud en el Composer. La captura muestra el nombre anterior de una habilidad.*
+*Ejemplo de una solicitud en el cuadro de mensaje. La captura muestra el nombre anterior de una habilidad.*
 
 ## Compara la redacción original y la propuesta
 

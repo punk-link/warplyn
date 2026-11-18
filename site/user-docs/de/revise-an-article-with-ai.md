@@ -10,15 +10,15 @@ Warplyn ist ein quelloffener, lokal ausgerichteter Schreibarbeitsbereich für Wi
 
 ## Mit einer gezielten Anfrage beginnen
 
-Öffnen Sie Ihren *Artikel* und wählen Sie die zu überarbeitende Passage aus. Beschreiben Sie im Composer, was verbessert werden und was erhalten bleiben soll. Zum Beispiel bei der Arbeit an „Der Fluss in der Abenddämmerung“:
+Öffnen Sie Ihren *Artikel* und wählen Sie die zu überarbeitende Passage aus. Beschreiben Sie im Nachrichtenfeld, was verbessert werden und was erhalten bleiben soll. Zum Beispiel bei der Arbeit an „Der Fluss in der Abenddämmerung“:
 
 > Verbessere den Lesefluss, aber behalte Anas Perspektive und die ruhige Stimmung bei. Füge keine neuen Ereignisse hinzu.
 
-Wählen Sie **Editorial-Anfrage senden**. Warplyn übermittelt die Auswahl zusammen mit bis zu 500 Zeichen davor und danach als schreibgeschützten Kontext. Ersetzt werden kann nur die ausgewählte Passage. Prüfen Sie vor dem Senden vertraulicher Texte die Kontexterklärung im Composer. Weitere Informationen finden Sie unter [Redaktioneller Assistent](editorial-assistant.md).
+Wählen Sie **Editorial-Anfrage senden**. Warplyn übermittelt die Auswahl zusammen mit bis zu 500 Zeichen davor und danach als schreibgeschützten Kontext. Ersetzt werden kann nur die ausgewählte Passage. Prüfen Sie vor dem Senden vertraulicher Texte die Kontexterklärung im Nachrichtenfeld. Weitere Informationen finden Sie unter [Redaktioneller Assistent](editorial-assistant.md).
 
-[![Warplyns Composer mit einer Überarbeitungsanfrage für einen fiktionalen Text.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![Warplyns Nachrichtenfeld mit einer Überarbeitungsanfrage für einen fiktionalen Text.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Beispiel einer Anfrage im Composer. Der Screenshot zeigt einen früheren Namen der Fähigkeit.*
+*Beispiel einer Anfrage im Nachrichtenfeld. Der Screenshot zeigt einen früheren Namen der Fähigkeit.*
 
 ## Ursprüngliche und vorgeschlagene Formulierungen vergleichen
 

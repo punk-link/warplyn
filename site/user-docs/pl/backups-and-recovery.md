@@ -6,7 +6,7 @@ description: "Twórz automatyczne lub ręczne kopie zapasowe Warplyn, przywracaj
 
 ## Utwórz kopię zapasową
 
-W **Ustawienia** → **Dane i kopie** wybierz **Folder kopii zapasowych**, a następnie **Utwórz kopię**. Obsługiwane przeglądarki proszą Warplyn o zgodę na zapisywanie kopii wyłącznie w tym folderze.
+W sekcji **Ustawienia** → **Dane i kopie** wybierz folder w polu **Folder kopii zapasowych**, a następnie wybierz **Utwórz kopię**. Obsługiwane przeglądarki proszą Warplyn o zgodę na zapisywanie kopii wyłącznie w tym folderze.
 
 [![Ustawienia Data and backups z folderem kopii zapasowych, kontrolkami Utwórz kopię i Przywróć kopię oraz opcjami automatycznego tworzenia kopii.](/images/backups-and-recovery.png)](/images/backups-and-recovery.png)
 
@@ -32,7 +32,7 @@ Ustaw **Automatyczne kopie zapasowe** na **Codziennie**, aby tworzyć migawkę k
 
 ## Przywróć kopię zapasową
 
-1. W **Ustawienia** → **Dane i kopie** wybierz **Przywróć kopię**.
+1. W sekcji **Ustawienia** → **Dane i kopie** wybierz **Przywróć kopię**.
 2. Wybierz kopię do przywrócenia. Warplyn sprawdzi jej pliki i zachowa lokalną kopię odzyskiwania bieżącej bazy danych oraz plików *umiejętności*.
 3. Po zakończeniu przywracania sprawdź swoje *artykuły* i *zapisane wersje*.
 
@@ -41,7 +41,7 @@ Przywrócenie kopii `.skladno` lub migawki desktopowej wraz z dołączonym folde
 Przywrócenie kopii desktopowej dodaje do słownika również zapisane w niej osobiste słowa. Istniejące słowa pozostają. Starsze kopie bez osobistych słów nie zmieniają słownika. Pobrane słowniki językowe i ustawienia wstępnego ładowania słowników nie są uwzględniane.
 
 ::: warning Ustawienia AI po przywróceniu
-Przywracanie zachowuje istniejące w tej instalacji połączenia AI, dane logowania i wybór modeli. Jeśli nie skonfigurowano połączeń, Warplyn przywraca z kopii nazwy i odwołania do zmiennych środowiskowych, ale nigdy klucze API ani wartości zmiennych środowiskowych. Ustaw brakujące zmienne na tym komputerze, a następnie wybierz modele w **Ustawienia** → **Asystent AI**. Połączenia oparte na zapisanych kluczach API nie są importowane do nowej instalacji; dodaj je w **Ustawieniach**. Pozostałe ustawienia są przywracane. Nieudane przywracanie i wycofanie zmian zachowują poprzednią konfigurację AI.
+Przywracanie zachowuje istniejące w tej instalacji połączenia AI, dane logowania i wybór modeli. Jeśli nie skonfigurowano połączeń, Warplyn przywraca z kopii nazwy i odwołania do zmiennych środowiskowych, ale nigdy klucze API ani wartości zmiennych środowiskowych. Ustaw brakujące zmienne na tym komputerze, a następnie wybierz modele w sekcji **Ustawienia** → **Asystent AI**. Połączenia oparte na zapisanych kluczach API nie są importowane do nowej instalacji; dodaj je w **Ustawieniach**. Pozostałe ustawienia są przywracane. Nieudane przywracanie i wycofanie zmian zachowują poprzednią konfigurację AI.
 :::
 
 ## Ręcznie odzyskaj kopię zawierającą tylko bazę danych
@@ -52,7 +52,7 @@ Te kroki stosuj wyłącznie do starszej kopii `.sqlite`. Nie uruchamiaj Warplyn,
 2. Skopiuj kopię zapasową, zastępując nią plik `skladno.sqlite` w skonfigurowanym folderze danych Warplyn.
 3. Uruchom Warplyn i sprawdź swoje *artykuły* oraz *zapisane wersje*.
 
-Aby przywrócić kopię zawierającą *umiejętności*, użyj opcji **Przywróć kopię** w **Ustawienia**, aby Warplyn mógł sprawdzić i odtworzyć również manifest oraz historię *umiejętności*.
+Aby przywrócić kopię zawierającą *umiejętności*, użyj opcji **Przywróć kopię** w sekcji **Ustawienia**, aby Warplyn mógł sprawdzić i odtworzyć również manifest oraz historię *umiejętności*.
 
 ## Jeśli nie można utworzyć kopii zapasowej
 

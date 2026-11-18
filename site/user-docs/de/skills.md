@@ -16,7 +16,7 @@ Um Belletristik im Stil einer ruhigen Flussszene zu überarbeiten, fragen Sie: �
 
 [![Der redaktionelle Assistent von Warplyn mit einer Anfrage, eine Fähigkeit für den Zeilenschliff fiktionaler Texte zu erstellen, und ausgewählter Funktion „Fähigkeiten erstellen“.](/images/skill-creator-example.png)](/images/skill-creator-example.png)
 
-*Beispiel einer Anfrage zum Erstellen einer Fähigkeit im Composer. Verbinden Sie vor dem Senden einen Anbieter.*
+*Beispiel einer Anfrage zum Erstellen einer Fähigkeit im Nachrichtenfeld. Verbinden Sie vor dem Senden einen Anbieter.*
 
 Nach erfolgreicher Erstellung steht die *Fähigkeit* sofort für neue Anfragen an den Assistenten zur Verfügung. Bei der Erstellungsanfrage wird der Text Ihres *Artikels* nicht an das Modell gesendet; *Artikel*, *Entwurf*, *Vorschlag* und *Version* bleiben unverändert.
 

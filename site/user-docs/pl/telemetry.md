@@ -4,7 +4,7 @@ description: "Dowiedz się, jakie dane diagnostyczne i statystyki użytkowania u
 
 # Udostępnianie danych diagnostycznych i statystyk użytkowania
 
-Po włączeniu udostępniania spakowane aplikacje Warplyn dla Windows i Linux wysyłają pseudonimowe zdarzenia dotyczące niezawodności i użytkowania do PostHog Cloud w amerykańskim stanie Wirginia. Domyślnie udostępnianie jest wyłączone. Włącz je, aby pomóc nam poznać Twoje doświadczenia i ulepszać Warplyn. Swoją decyzję możesz zmienić w **Ustawienia** → **Ogólne** → **Prywatność i diagnostyka**.
+Po włączeniu udostępniania spakowane aplikacje Warplyn dla Windows i Linux wysyłają pseudonimowe zdarzenia dotyczące niezawodności i użytkowania do PostHog Cloud w amerykańskim stanie Wirginia. Domyślnie udostępnianie jest wyłączone. Włącz je, aby pomóc nam poznać Twoje doświadczenia i ulepszać Warplyn. Swoją decyzję możesz zmienić w sekcji **Ustawienia** → **Ogólne** → **Prywatność i diagnostyka**.
 
 Wyłączenie udostępniania zatrzymuje przyszłe zbieranie danych oraz usuwa oczekujące zdarzenia i lokalny Identyfikator telemetrii. Ponowne włączenie tworzy nowe ID. Nie można cofnąć zdarzeń już wysłanych.
 
@@ -38,7 +38,7 @@ Zdarzenia nie zawierają ID ani tytułów *artykułów* lub *zapisanych wersji*,
 
 Informacje o dostępie, poprawianiu lub innych żądaniach dotyczących prywatności znajdziesz w sekcji [Żądania dotyczące danych](data-request.md).
 
-1. W **Ustawienia** → **Ogólne** → **Prywatność i diagnostyka** wybierz **Kopiuj ID**.
+1. W sekcji **Ustawienia** → **Ogólne** → **Prywatność i diagnostyka** wybierz **Kopiuj ID**.
 2. Wyślij ID na adres [kirill.taran@punk.link](mailto:kirill.taran@punk.link) i zażądaj usunięcia.
 3. Wyłącz **Udostępniaj dane diagnostyczne i dane użycia**.
 

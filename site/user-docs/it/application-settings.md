@@ -26,7 +26,7 @@ Scegli **Invio** o **Ctrl + Invio** come tasto per inviare i messaggi all’assi
 
 ## Impostare le indicazioni di pubblicazione
 
-In **Pubblicazione**, scegli un profilo predefinito per i nuovi *articoli*. Profili come **LinkedIn Post** e **LinkedIn Article** mostrano indicazioni sul numero di caratteri nella barra di stato dell’articolo. Puoi anche scegliere **Nessuna restrizione** oppure aggiungere un profilo personalizzato con un nome e un limite di caratteri intero. L’impostazione predefinita vale per i nuovi *articoli*; un *articolo* esistente può mantenere il proprio profilo. I limiti sono solo indicativi e non impediscono mai di copiare il testo. Nella barra di stato dell’articolo, scegli **Copia Markdown** oppure apri il menu e scegli **Copia testo semplice**. Warplyn copia il testo su richiesta; non pubblica direttamente.
+In **Pubblicazione**, scegli un profilo predefinito per i nuovi *articoli*. Profili come **Post LinkedIn** e **Articolo LinkedIn** mostrano indicazioni sul numero di caratteri nella barra di stato dell’articolo. Puoi anche scegliere **Nessuna restrizione** oppure aggiungere un profilo personalizzato con un nome e un limite di caratteri intero. L’impostazione predefinita vale per i nuovi *articoli*; un *articolo* esistente può mantenere il proprio profilo. I limiti sono solo indicativi e non impediscono mai di copiare il testo. Nella barra di stato dell’articolo, scegli **Copia Markdown** oppure apri il menu e scegli **Copia testo semplice**. Warplyn copia il testo su richiesta; non pubblica direttamente.
 
 ## Rivedere le opzioni dei modelli di IA
 

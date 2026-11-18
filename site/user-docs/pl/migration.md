@@ -8,16 +8,16 @@ Warplyn jest osobną aplikacją. Zachowaj Skladno i jego dane do czasu sprawdzen
 
 Pobierz instalator Windows 11 x64 albo pakiet Debian x64 z [najnowszego wydania Warplyn](https://github.com/punk-link/warplyn/releases/latest). Instrukcje dla poszczególnych platform znajdziesz w sekcji [Instalacja](installation.md).
 
-Przed migracją wybierz **Folder kopii zapasowych** w **Ustawienia** → **Dane i kopie**, a następnie **Utwórz kopię**. Każdą kopię `.sqlite` przechowuj razem z sąsiadującym folderem `.sqlite.skills`. Szczegóły opisano w sekcji [Kopie zapasowe i odzyskiwanie danych](backups-and-recovery.md).
+Przed migracją wybierz folder w polu **Folder kopii zapasowych** w sekcji **Ustawienia** → **Dane i kopie**, a następnie wybierz **Utwórz kopię**. Każdą kopię `.sqlite` przechowuj razem z sąsiadującym folderem `.sqlite.skills`. Szczegóły opisano w sekcji [Kopie zapasowe i odzyskiwanie danych](backups-and-recovery.md).
 
 ## Procedura migracji
 
 1. W Skladno dokończ lub anuluj aktywne zadania AI, a następnie zamknij i ponownie otwórz aplikację, aby zapisać najnowszy punkt kontrolny. Podczas tworzenia kopii nie edytuj zewnętrznie plików autorskich *umiejętności*.
 2. Utwórz ręczną kopię zapasową z uruchomionej aplikacji Skladno, również jeśli korzysta z niestandardowego katalogu danych. Zachowaj plik `.sqlite` i sąsiadujący folder `.sqlite.skills` razem, pod ich oryginalnymi nazwami. Po utworzeniu kopii zamknij Skladno.
 3. Zainstaluj i otwórz Warplyn z osobnym, pustym profilem. Nigdy nie wskazuj aktywnego katalogu danych Skladno.
-4. W **Ustawienia** → **Dane i kopie** wybierz folder kopii migracyjnej i **Przywróć kopię**. Wybierz migawkę Skladno, potwierdź zastąpienie danych i poczekaj na ponowne uruchomienie Warplyn. Jeśli w Warplyn są już teksty, najpierw utwórz ich kopię zapasową: przywracanie zastępuje dane, a nie łączy baz.
+4. W sekcji **Ustawienia** → **Dane i kopie** wybierz folder kopii migracyjnej i **Przywróć kopię**. Wybierz migawkę Skladno, potwierdź zastąpienie danych i poczekaj na ponowne uruchomienie Warplyn. Jeśli w Warplyn są już teksty, najpierw utwórz ich kopię zapasową: przywracanie zastępuje dane, a nie łączy baz.
 5. Przed rozpoczęciem nowych prac sprawdź *artykuły*, najnowsze *szkice*, historię *zapisanych wersji*, rozmowy z asystentem, **Ustawienia**, profile publikacji i autorskie *umiejętności*.
-6. W **Ustawienia** → **Asystent AI** ponownie dodaj połączenia i wybierz modele dla swoich zadań. Przywracanie czyści zapisane połączenia i wybór modeli, ponieważ dane logowania nie są częścią kopii. Dane logowania w Skladno pozostają bez zmian.
+6. W sekcji **Ustawienia** → **Asystent AI** ponownie dodaj połączenia i wybierz modele dla swoich zadań. Przywracanie czyści zapisane połączenia i wybór modeli, ponieważ dane logowania nie są częścią kopii. Dane logowania w Skladno pozostają bez zmian.
 7. W przypadku połączeń opartych na zmiennych środowiskowych ponownie podaj nazwę zmiennej i upewnij się, że jest dostępna w środowisku procesu Warplyn. Kopie zapasowe nigdy nie kopiują plików `.env` ani ich wartości.
 8. Wybierz osobny folder na kolejne kopie zapasowe Warplyn. Ponownie ustaw preferencje dotyczące sieci aktualizacji i telemetrii. Migracja nie kopiuje ustawień folderu kopii zapasowych, identyfikatora telemetrii, oczekujących aktualizacji ani oczekujących zapisów odzyskiwania.
 

@@ -4,7 +4,7 @@ description: "Wählen Sie eine integrierte Fähigkeit zum Entwerfen, Überarbeit
 
 # Integrierte Fähigkeiten
 
-Integrierte *Fähigkeiten* helfen dem redaktionellen Assistenten bei häufigen Schreibaufgaben. Wählen Sie unter **Schnellaktionen** eine redaktionelle *Fähigkeit* aus oder beschreiben Sie Ihre Anfrage und lassen Sie den Assistenten eine passende *Fähigkeit* ermitteln. Ein ausgewählter Chip kann allein gesendet werden; fügen Sie nur dann eine Nachricht hinzu, wenn Sie zusätzlichen Kontext oder eine Vorgabe haben. Wählen Sie **Editorial-Anfrage senden**, um zu beginnen. Um eine wiederverwendbare *Fähigkeit* zu erstellen oder zu verwalten, bitten Sie den Assistenten direkt darum; **Fähigkeiten erstellen** ist keine Schnellaktion im Composer.
+Integrierte *Fähigkeiten* helfen dem redaktionellen Assistenten bei häufigen Schreibaufgaben. Wählen Sie unter **Schnellaktionen** eine redaktionelle *Fähigkeit* aus oder beschreiben Sie Ihre Anfrage und lassen Sie den Assistenten eine passende *Fähigkeit* ermitteln. Ein ausgewählter Chip kann allein gesendet werden; fügen Sie nur dann eine Nachricht hinzu, wenn Sie zusätzlichen Kontext oder eine Vorgabe haben. Wählen Sie **Editorial-Anfrage senden**, um zu beginnen. Um eine wiederverwendbare *Fähigkeit* zu erstellen oder zu verwalten, bitten Sie den Assistenten direkt darum; **Fähigkeiten erstellen** ist keine Schnellaktion im Nachrichtenfeld.
 
 Jede Seite erklärt den Zweck der jeweiligen *Fähigkeit* und worauf Sie das Ergebnis prüfen sollten. Der Assistent bereitet prüfbare Arbeit vor. Unter [Redaktioneller Assistent](../editorial-assistant.md) und [Artikel prüfen](../reviewing-articles.md) erfahren Sie, wie Sie mit Ergebnissen arbeiten.
 

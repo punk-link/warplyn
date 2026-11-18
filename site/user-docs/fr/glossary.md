@@ -34,7 +34,7 @@ Ces termes décrivent les concepts visibles pour les personnes qui écrivent et 
 ## Publication et paramètres
 
 - **Profil de publication** : consignes configurables pour une plateforme, y compris une limite de caractères. Le profil par défaut ne s’applique qu’aux nouveaux *articles*.
-- **Texte à publier** : texte Markdown ou brut explicitement copié depuis l’*article* actuel avec l’Article Status Bar. Warplyn ne fournit pas de vue du Workspace appelée Publishing Preview.
+- **Texte à publier** : texte Markdown ou brut explicitement copié depuis l’*article* actuel avec la barre d’état de l’article. Warplyn ne fournit pas de vue de prévisualisation de publication dans l’espace de travail.
 - **Paramètres de l’application** : préférences de l’espace de travail, configuration de l’IA, profils de publication et gestion des données locales. Les paramètres ne font jamais partie de l’historique des *versions enregistrées* d’un *article*.
 - **Connexion d’IA** : configuration nommée d’un fournisseur sur le serveur, avec une source d’identifiants. La **connexion d’IA active** est utilisée pour les nouvelles demandes éditoriales.
 - **Source d’identifiants** : source privée utilisée par une connexion d’IA. Il s’agit d’une référence à une variable d’environnement ou d’un identifiant géré.
@@ -61,47 +61,48 @@ Ces termes décrivent les concepts visibles pour les personnes qui écrivent et 
 Schéma de l’application de bureau avec les deux panneaux latéraux ouverts et l’éditeur d’article sélectionné. Les encadrés indiquent l’emplacement et le regroupement, pas les dimensions exactes.
 
 ```text
-Editorial Workspace
+Espace de travail éditorial
 ┌──────────────────────────┬──────────────────────────────┬──────────────────────────┐
-│ Article Library Panel    │ Article Workspace            │ Editorial Assistant Panel│
+│ Panneau bibliothèque    │ Espace de travail de        │ Panneau assistant       │
+│ d’articles               │ l’article                    │ éditorial               │
 ├──────────────────────────┼──────────────────────────────┼──────────────────────────┤
-│ Warplyn · New Article    │ Article Header               │ Assistant header         │
-│ Collapse control         │ Title and Article metadata   │ Collapse control         │
+│ Warplyn · Nouvel article │ En-tête de l’article         │ En-tête de l’assistant   │
+│ Commande réduire         │ Titre et métadonnées article│ Commande réduire         │
 ├──────────────────────────┼──────────────────────────────┼──────────────────────────┤
-│ Article search           │ Workspace Tab Bar            │ Conversation             │
-├──────────────────────────┼──────────────────────────────┤ Request status           │
-│ Article list             │ Workspace View               │ and activity             │
+│ Recherche d’articles     │ Barre des vues de l’espace  │ Conversation             │
+├──────────────────────────┼──────────────────────────────┤ État de la demande       │
+│ Liste d’articles         │ Vue de l’espace de travail  │ et activité              │
 │                          │                              │                          │
-│                          │ Article Editor               │                          │
+│                          │ Éditeur d’article             │                          │
 │                          │ ┌──────────────────────────┐ │                          │
-│                          │ │ Writing surface          │ │                          │
+│                          │ │ Zone d’écriture           │ │                          │
 │                          │ │                          │ │                          │
 │                          │ └──────────────────────────┘ │                          │
 ├──────────────────────────┤                              ├──────────────────────────┤
-│ Article Library          │                              │ Quick actions            │
-│ utility area             │                              │ Composer                 │
-│ Style Profile · Settings ├──────────────────────────────┤ Editorial guidance       │
-│ Update, when relevant    │ Article Status Bar           │ and Send                 │
-│ Language · Local         │ Save status · Metadata · Copy │                          │
+│ Bibliothèque d’articles │                              │ Actions rapides          │
+│ zone utilitaire          │                              │ Champ de message         │
+│ Profil de style ·        ├──────────────────────────────┤ Consignes éditoriales   │
+│ Paramètres               │ Barre d’état de l’article    │ et Envoyer               │
+│ Langue · Local           │ Enregistrement · Métadonnées · Copier│                          │
 └──────────────────────────┴──────────────────────────────┴──────────────────────────┘
 ```
 
-Dans la disposition développée, le pied du panneau Library est la **zone utilitaire du panneau de la bibliothèque d’articles**. Sa rangée inférieure indique le code de langue de l’*article* actuel et l’étiquette **Local**. L’**Article Status Bar**, sous la vue centrale de l’article, indique l’état d’enregistrement.
+Dans la disposition développée, le pied du panneau Bibliothèque est la **zone utilitaire du panneau de la bibliothèque d’articles**. Sa rangée inférieure indique le code de langue de l’*article* actuel et l’étiquette **Local**. La **barre d’état de l’article**, sous la vue centrale de l’article, indique l’état d’enregistrement.
 
 ### Termes de l’interface
 
-- **Editorial Workspace** : écran principal d’écriture contenant Panneau de la bibliothèque d’articles, Article Workspace et Panneau de l’assistant éditorial.
-- **Panneau de la bibliothèque d’articles** : recherche d’articles, liste d’articles et accès aux fonctions de l’espace de travail. Lorsqu’il est replié, il devient la **Navigation Rail** ; sur un petit écran, il s’ouvre temporairement sous la forme **Navigation Drawer**.
-- **zone utilitaire du panneau de la bibliothèque d’articles** : pied de l’Panneau de la bibliothèque d’articles développé, qui contient Profil de style, Settings, une commande de mise à jour lorsqu’elle est pertinente et le code de langue de l’article actuel avec l’étiquette **Local**.
-- **Save-state indicator** : état indiqué dans Article Status Bar, qui précise si le *brouillon* actuel est enregistré, en cours d’enregistrement ou nécessite votre attention.
-- **Article Workspace** : Article Header, Workspace Tab Bar, vue sélectionnée et Article Status Bar.
-- **Article Header** : commandes du titre et des métadonnées situées au-dessus de Workspace Tab Bar.
-- **Workspace Tab Bar** : onglets servant à sélectionner une vue de l’espace de travail.
-- **Workspace View** : Article Editor sélectionné ou vue complémentaire, comme Examen des propositions, Historique des versions enregistrées, Vérification des faits ou Translations.
+- **Espace de travail éditorial** : écran principal d’écriture contenant le panneau de la bibliothèque d’articles, l’espace de travail de l’article et le panneau de l’assistant éditorial.
+- **Panneau de la bibliothèque d’articles** : recherche d’articles, liste d’articles et accès aux fonctions de l’espace de travail. Lorsqu’il est replié, il devient la **barre de navigation** ; sur un petit écran, il s’ouvre temporairement sous la forme d’un **tiroir de navigation**.
+- **Zone utilitaire du panneau de la bibliothèque d’articles** : pied du panneau développé, qui contient le profil de style, les paramètres, une commande de mise à jour lorsqu’elle est pertinente et le code de langue de l’article actuel avec l’étiquette **Local**.
+- **Indicateur d’enregistrement** : état de la barre d’état de l’article qui précise si le *brouillon* actuel est enregistré, en cours d’enregistrement ou nécessite votre attention.
+- **Espace de travail de l’article** : en-tête de l’article, barre des vues de l’espace de travail, vue sélectionnée et barre d’état de l’article.
+- **En-tête de l’article** : commandes du titre et des métadonnées situées au-dessus de la barre des vues de l’espace de travail.
+- **Barre des vues de l’espace de travail** : onglets servant à sélectionner une vue de l’espace de travail.
+- **Vue de l’espace de travail** : éditeur d’article sélectionné ou vue complémentaire, comme Examen des propositions, Historique des versions enregistrées, Vérification des faits ou Traductions.
 - **Profil de style** : écran séparé qui présente les caractéristiques détectées, les *observations* de révision du style, les règles typographiques, les consignes manuelles et les échantillons d’écriture.
-- **Article Editor** : vue d’écriture. Sa principale zone de modification est le **writing surface**.
-- **Article Status Bar** : barre sous la vue sélectionnée, qui indique l’état et les métadonnées de l’article, la langue, les consignes du profil de publication et les commandes Copy.
-- **Panneau de l’assistant éditorial** : consignes éditoriales, actions, état des demandes et activité. Sur un petit écran, il s’ouvre temporairement sous la forme **Assistant Drawer**.
-- **Actions rapides** : menu déroulant au-dessus du Composer de l’assistant, qui permet d’insérer une compétence intégrée dans une demande.
-- **Composer** : champ de message en bas d’Panneau de l’assistant éditorial, dans lequel la personne autrice saisit des consignes éditoriales et envoie une demande.
+- **Éditeur d’article** : vue d’écriture. Sa principale zone de modification est la **zone d’écriture**.
+- **Barre d’état de l’article** : barre sous la vue sélectionnée, qui indique l’état et les métadonnées de l’article, la langue, les consignes du profil de publication et les commandes de copie.
+- **Panneau de l’assistant éditorial** : consignes éditoriales, actions, état des demandes et activité. Sur un petit écran, il s’ouvre temporairement sous la forme **tiroir de l’assistant**.
+- **Actions rapides** : menu déroulant au-dessus du champ de message de l’assistant, qui permet d’insérer une compétence intégrée dans une demande.
+- **Champ de message de l’assistant** : champ en bas du panneau de l’assistant éditorial, dans lequel la personne autrice saisit des consignes éditoriales et envoie une demande.
 - **Navigation des paramètres de l’application** : navigation entre **Général**, **Raccourcis**, **Fournisseurs**, **Assistant IA**, **Publication**, **Langues par défaut**, **Orthographe**, **Données** et **À propos**.

@@ -67,6 +67,6 @@ Skrót w menu będzie nadal działać, ponieważ aktualizacje w aplikacji zastę
 
 ## Po instalacji
 
-Aby korzystać z funkcji AI, dodaj połączenie z dostawcą w **Ustawienia** → **Asystent AI**. Wybierz **Folder kopii zapasowych** w **Ustawienia** → **Dane i kopie**, aby chronić swoje *artykuły*.
+Aby korzystać z funkcji AI, dodaj połączenie z dostawcą w sekcji **Ustawienia** → **Asystent AI**. Aby chronić swoje *artykuły*, wybierz folder w polu **Folder kopii zapasowych** w sekcji **Ustawienia** → **Dane i kopie**.
 
 Warplyn przechowuje *artykuły* i punkty kontrolne *szkiców* na Twoim komputerze. Zlecenia AI wymagają połączenia z internetem i wysyłają odpowiedni tekst *artykułu* oraz kontekst do wybranego dostawcy. Obowiązują zasady ochrony danych i cennik dostawcy.

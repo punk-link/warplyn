@@ -16,7 +16,7 @@ Aby poprawiać fikcję w stylu spokojnej sceny nad rzeką, poproś: „Utwórz *
 
 [![Asystent redakcyjny Warplyn z prośbą o utworzenie umiejętności do poprawy fikcji i wybranym narzędziem Kreator umiejętności.](/images/skill-creator-example.png)](/images/skill-creator-example.png)
 
-*Przykładowa prośba o utworzenie umiejętności w Composer. Przed wysłaniem połącz się z dostawcą.*
+*Przykładowa prośba o utworzenie umiejętności w polu wpisywania. Przed wysłaniem połącz się z dostawcą.*
 
 Po pomyślnym utworzeniu *umiejętność* jest od razu dostępna w nowych zleceniach dla asystenta. Prośba o jej utworzenie nie wysyła treści *artykułu* do modelu ani nie zmienia *artykułu*, *szkicu*, *propozycji* lub *zapisanej wersji*.
 

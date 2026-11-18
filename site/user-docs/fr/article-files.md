@@ -9,7 +9,7 @@ Utilisez **Enregistrer dans un fichier** et **Charger un fichier** pour transfé
 ## Enregistrer dans un fichier
 
 1. Ouvrez l’*article* à enregistrer.
-2. Dans l’en-tête de l’article, choisissez **Enregistrer dans un fichier** à côté de **Enregistrer une version**. Vous pouvez aussi faire un clic droit sur un *article* dans la Library et choisir **Enregistrer dans un fichier…** sans l’ouvrir.
+2. Dans l’en-tête de l’article, choisissez **Enregistrer dans un fichier** à côté de **Enregistrer une version**. Vous pouvez aussi faire un clic droit sur un *article* dans la bibliothèque et choisir **Enregistrer dans un fichier…** sans l’ouvrir.
 3. Dans la fenêtre d’enregistrement de l’application de bureau, sélectionnez Markdown, HTML, DOCX ou RTF dans la liste des types de fichiers, puis indiquez un nom et un emplacement. Conservez l’extension correspondant au format. Dans l’application web, choisissez **Format du fichier**, puis **Télécharger**, et utilisez les commandes de téléchargement du navigateur.
 
 Le fichier contient l’intégralité du *brouillon* actuel, y compris les modifications non enregistrées. La sélection de texte ne limite pas le contenu enregistré. Cette commande ne crée pas de *version enregistrée*. **Enregistrer une version** reste la commande pour ajouter le *brouillon* actuel à votre historique.
@@ -22,10 +22,10 @@ L’application web affiche **Téléchargement de l’article lancé** lorsqu’
 
 ## Charger depuis un fichier
 
-1. Dans l’en-tête de l’article, choisissez **Charger un fichier** à côté de **Enregistrer une version**, ou faites un clic droit sur un *article* dans la Library et choisissez **Charger un fichier…**. Si la Library est vide, choisissez d’abord **Créer**.
+1. Dans l’en-tête de l’article, choisissez **Charger un fichier** à côté de **Enregistrer une version**, ou faites un clic droit sur un *article* dans la bibliothèque et choisissez **Charger un fichier…**. Si la bibliothèque est vide, choisissez d’abord **Créer**.
 2. Sélectionnez un fichier `.md`, `.html`, `.htm`, `.docx` ou `.rtf`.
 3. Pour les fichiers HTML, DOCX et RTF, cochez **Vérifier l’article importé**, puis choisissez **Importer**. Vous pouvez annuler la vérification. Les fichiers Markdown s’ouvrent directement.
-4. Warplyn ouvre le texte importé dans un *article* distinct. L’*article* précédent et son *brouillon* récupérable restent accessibles dans la Library.
+4. Warplyn ouvre le texte importé dans un *article* distinct. L’*article* précédent et son *brouillon* récupérable restent accessibles dans la bibliothèque.
 
 Un titre de niveau 1 au début du fichier fournit le nouveau titre. Sinon, Warplyn utilise le nom du fichier sans son extension. Le titre reste dans le corps de l’*article*. Si vous chargez à nouveau le même fichier, Warplyn crée un autre *article* indépendant.
 

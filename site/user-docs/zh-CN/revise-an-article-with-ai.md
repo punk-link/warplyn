@@ -10,21 +10,21 @@ Warplyn 是适用于 Windows 和 Linux 的开源、本地优先写作工作区�
 
 ## 从具体请求开始
 
-打开你的*文章*并选中要修改的段落。在 Composer 中说明需要改进和保留的内容。例如，编辑《暮色之河》时可以这样请求：
+打开你的*文章*并选中要修改的段落。在输入框中说明需要改进和保留的内容。例如，编辑《暮色之河》时可以这样请求：
 
 > 改善行文流畅度，同时保留 Ana 的视角和安静的氛围。不要添加新事件。
 
-选择 **发送编辑请求**。Warplyn 会将选区及前后各最多 500 个字符作为只读上下文发送。只有选中的段落可以被替换。发送敏感写作内容前，请查看 Composer 对上下文的说明。详情请参阅[写作助理](editorial-assistant.md)。
+选择 **发送编辑请求**。Warplyn 会将选区及前后各最多 500 个字符作为只读上下文发送。只有选中的段落可以被替换。发送敏感写作内容前，请查看输入框对上下文的说明。详情请参阅[写作助理](editorial-assistant.md)。
 
-[![Warplyn 的 Composer 中包含小说修改请求。](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
+[![Warplyn 的输入框中包含小说修改请求。](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
-*Composer 中的请求示例。截图显示的是旧版技能名称。*
+*输入框中的请求示例。截图显示的是旧版技能名称。*
 
 ## 比较原文和建议文本
 
 请求完成后，从结果卡片打开 **提案审核**。比较 **原文** 和 **提案**，确认修改保留了场景事件、视角和语气。
 
-[![提案审核 比较 原文 和 提案 文本，带有单项决定和 应用 控件。](/images/proposal-review.png)](/images/proposal-review.png)
+[![提案审核界面比较原文和提案文本，并显示单项决定和应用控件。](/images/proposal-review.png)](/images/proposal-review.png)
 
 *《暮色之河》的审阅示例。生成的措辞会因请求和模型而异。*
 

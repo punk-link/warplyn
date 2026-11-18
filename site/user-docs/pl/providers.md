@@ -4,7 +4,7 @@ description: "Połącz dostawcę AI z Warplyn, zapisz klucz API, wybierz modele 
 
 # Dostawcy i modele AI
 
-Warplyn wysyła zlecenia AI do dostawcy skonfigurowanego w **Ustawienia** → **Asystent AI**. Potrzebujesz konta i klucza API tego dostawcy. Dostawca może pobierać opłaty za korzystanie z API.
+Warplyn wysyła zlecenia AI do dostawcy skonfigurowanego w sekcji **Ustawienia** → **Asystent AI**. Potrzebujesz konta i klucza API tego dostawcy. Dostawca może pobierać opłaty za korzystanie z API.
 
 ## Dodaj połączenie
 
@@ -19,7 +19,7 @@ Zarządzane klucze API wymagają aplikacji desktopowej i dostępnej usługi syst
 
 Dodanie połączenia z kluczem API powoduje sprawdzenie klucza u dostawcy. Dodanie połączenia ze zmienną środowiskową zapisuje tylko jego ustawienia. Warplyn ponownie kontaktuje się z dostawcą podczas odświeżania modeli lub wysyłania zlecenia AI. Te kontrole nie obejmują treści *artykułu*.
 
-Połączenia są wyświetlane w **Ustawienia** → **Asystent AI**. Użyj **Aktywne**, **Aktywuj** lub **Dezaktywuj**, aby określić, z których połączeń Warplyn może korzystać przy nowych zleceniach. Wybierz **Zmień nazwę**, aby zmienić lokalną nazwę połączenia, albo **Usuń** i potwierdź, aby usunąć je z Warplyn. Usunięcie połączenia ze zmienną środowiskową nie kasuje zmiennej ani klucza.
+Połączenia są wyświetlane w sekcji **Ustawienia** → **Asystent AI**. Użyj **Aktywne**, **Aktywuj** lub **Dezaktywuj**, aby określić, z których połączeń Warplyn może korzystać przy nowych zleceniach. Wybierz **Zmień nazwę**, aby zmienić lokalną nazwę połączenia, albo **Usuń** i potwierdź, aby usunąć je z Warplyn. Usunięcie połączenia ze zmienną środowiskową nie kasuje zmiennej ani klucza.
 
 ::: tip Jeśli odświeżanie modeli się nie powiedzie
 Sprawdź, czy połączenie jest **Aktywne**, zapisany klucz jest prawidłowy albo usługa aplikacji ma dostęp do zmiennej środowiskowej, a także czy konto dostawcy ma dostęp do jego API.
@@ -29,7 +29,7 @@ Sprawdź, czy połączenie jest **Aktywne**, zapisany klucz jest prawidłowy alb
 
 Warplyn obsługuje OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok i DeepSeek. Katalog OpenCode Zen zawiera również modele innych dostawców.
 
-W **Ustawienia** → **Asystent AI** wybierz **Odśwież modele**, a następnie **Model domyślny**. Aby użyć innego modelu dla określonej *umiejętności*, wybierz go w sekcji **Modele do konkretnych zadań**. Zadanie ustawione na **Użyj modelu domyślnego** korzysta z Model domyślny.
+W sekcji **Ustawienia** → **Asystent AI** wybierz **Odśwież modele**, a następnie **Model domyślny**. Aby użyć innego modelu dla określonej *umiejętności*, wybierz go w sekcji **Modele do konkretnych zadań**. Zadanie ustawione na **Użyj modelu domyślnego** korzysta z modelu domyślnego.
 
 Odśwież listę modeli po zmianie połączeń albo gdy chcesz zobaczyć aktualny katalog dostawcy. Użyj opcji **Szukaj modeli**, **Filtruj modele według dostawcy** i **Ulubione**, aby zawęzić listę. Wybór modelu dotyczy przyszłych zleceń. **Poziom rozumowania** pojawia się dla obsługiwanych modeli OpenAI; wyższe ustawienia mogą wydłużyć czas działania. Opcjonalny **Model aplikacji** w ustawieniach AI jest niezależny od Model domyślny i obsługuje zadania pomocnicze Warplyn, takie jak streszczenia i tytuły.
 
