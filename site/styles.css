@@ -1395,7 +1395,7 @@ html:lang(ja) .features .section-heading h2 {
     display: block;
     position: relative;
   }
-  .mobile-nav summary {
+  .mobile-nav > summary {
     width: 42px;
     height: 42px;
     padding: 12px 9px;
@@ -1408,15 +1408,15 @@ html:lang(ja) .features .section-heading h2 {
     cursor: pointer;
     list-style: none;
   }
-  .mobile-nav summary::-webkit-details-marker {
+  .mobile-nav > summary::-webkit-details-marker {
     display: none;
   }
-  .mobile-nav summary span {
+  .mobile-nav > summary span {
     width: 22px;
     height: 1.5px;
     background: #343a35;
   }
-  .mobile-nav nav {
+  .mobile-nav > nav {
     position: absolute;
     top: 50px;
     right: 0;
@@ -1428,7 +1428,7 @@ html:lang(ja) .features .section-heading h2 {
     background: var(--white);
     box-shadow: 0 12px 30px #27332c20;
   }
-  .mobile-nav nav a {
+  .mobile-nav > nav > a {
     padding: 11px 10px;
     display: flex;
     align-items: center;
@@ -1436,11 +1436,11 @@ html:lang(ja) .features .section-heading h2 {
     border-radius: 4px;
     font-size: 13px;
   }
-.mobile-nav nav a:hover,
-.mobile-nav nav a:focus-visible,
-.mobile-nav nav a:active,
-.mobile-nav nav a[aria-current="page"],
-.mobile-nav nav a[aria-current="location"] {
+.mobile-nav > nav > a:hover,
+.mobile-nav > nav > a:focus-visible,
+.mobile-nav > nav > a:active,
+.mobile-nav > nav > a[aria-current="page"],
+.mobile-nav > nav > a[aria-current="location"] {
   background: #eef2ec;
   color: var(--teal-dark);
   font-weight: 700;
