@@ -20,7 +20,6 @@
   "Your voice.": "Deine Stimme.",
   "Your agent.": "Dein Agent.",
   "Warplyn is an open-source, local-first writing workspace for Windows and Linux. Write and revise your Articles, with an AI Editorial Assistant when you want help. You decide what changes.": "Warplyn ist eine Open-Source-Schreibumgebung für Windows und Linux mit lokaler Datenhaltung. Schreibe und überarbeite Artikel, mit einem redaktionellen KI-Assistenten, wenn du Hilfe möchtest. Du entscheidest, was sich ändert.",
-  "See a revision workflow": "Arbeitsablauf mit gespeicherten Fassungen ansehen",
   "→": "→",
   "Always open source · Free features stay free": "Immer Open Source · Kostenlose Funktionen bleiben kostenlos",
   "Illustration of Warplyn's article editor and proposal review": "Illustration des Artikeleditors und der Vorschlagsprüfung in Warplyn",
@@ -136,5 +135,6 @@
   "Issues & requests": "Fehler und Wünsche",
   "License (MIT)": "Lizenz MIT",
   "© 2026 Warplyn contributors": "© 2026 Mitwirkende an Warplyn",
-  "Your writing stays on your computer.": "Deine Texte bleiben auf deinem Computer."
+  "Your writing stays on your computer.": "Deine Texte bleiben auf deinem Computer.",
+  "Dokumentation lesen": "Dokumentation lesen"
 }

@@ -3,6 +3,16 @@
     "area": "cross-cutting",
     "capabilities": [
         {
+            "id": "cross-cutting.public-site-languages",
+            "area": "Public website languages",
+            "title": "Localized landing pages, plans, and user guides",
+            "status": "implemented",
+            "owners": ["site/index.html", "site/plans.html", "site/landing-locales", "site/plans-locales", "site/language-menu.mjs", "site/localize-landing-page.mjs", "site/landing-languages-plugin.mjs", "site/user-docs/.vitepress/locales.mjs", "site/user-docs/.vitepress/locale-ui.json"],
+            "contract": "Readers can select English, German, Spanish, French, Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian, or Simplified Chinese. Landing and plans pages have static localized content, accessible labels, metadata, canonical URLs, and alternate-language links. Each page has its own selector that preserves the current page. Navigation among the landing page, plans, and documentation retains the selected language. The user-guide language menu preserves the current guide; sidebars and configurable documentation controls use translated labels.",
+            "persistence": "Language selection is represented by the URL; no additional visitor preference is stored.",
+            "limitations": ["Translation completeness checks do not replace native-language review."]
+        },
+        {
             "id": "cross-cutting.website-analytics",
             "area": "Website analytics",
             "title": "Minimal public website visit and download-click analytics",
@@ -108,6 +118,16 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "cross-cutting.public-site-languages",
+            "title": "Readers can open and switch localized landing pages",
+            "capabilityIds": ["cross-cutting.public-site-languages"],
+            "preconditions": ["The public landing template and all eleven language catalogs are available."],
+            "event": "The site renders a landing page in the selected language.",
+            "expected": ["Visible copy, accessible labels, search metadata, and structured descriptions use the selected language.", "Every language remains reachable and documentation links use the selected language.", "Download targets, analytics entry points, illustrations, and all six capability sections remain available."],
+            "forbidden": ["Silently shipping uncatalogued English copy in a translated page.", "Changing download destinations or adding visitor preference persistence."],
+            "evidence": { "kind": "human-reviewed", "path": "site/localize-landing-page.mjs" }
+        },
         {
             "id": "cross-cutting.website-analytics",
             "title": "Website analytics stays limited to explicit public activity",

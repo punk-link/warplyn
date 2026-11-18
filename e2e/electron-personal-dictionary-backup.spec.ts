@@ -2,15 +2,12 @@ import { randomUUID } from "node:crypto";
 import { copyFile, cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { _electron, expect, test, type ElectronApplication } from "@playwright/test";
+import { _electron, expect, test, type ElectronApplication, type Page } from "@playwright/test";
 
 
-async function addNativeWord(app: ElectronApplication, word: string): Promise<void> {
-    const added = await app.evaluateHandle(({ session }, value) => {
-        if (!session.defaultSession.addWordToSpellCheckerDictionary(value))
-            throw new Error("Could not add the native dictionary fixture word.");
-    }, word);
-    await added.dispose();
+async function addNativeWord(page: Page, word: string): Promise<void> {
+    const added = await page.evaluate((value) => window.warplynSpelling?.request({ method: "addWords", words: [value] }), word);
+    expect(added?.ok && added.value.personal.words.includes(word)).toBe(true);
 }
 
 
@@ -34,7 +31,7 @@ test("desktop backups restore native personal words at startup without removing 
         app = await _electron.launch({ args, env });
         const page = await app.firstWindow();
         await page.waitForURL("http://127.0.0.1:5173/");
-        await addNativeWord(app, savedWord);
+        await addNativeWord(page, savedWord);
         const selected = await page.evaluate(async () => {
             if (!window.skladnoDesktop)
                 throw new Error("Missing desktop client");
@@ -43,7 +40,7 @@ test("desktop backups restore native personal words at startup without removing 
         });
         expect(JSON.parse(await readFile(join(`${selected.path}.skills`, "personal-dictionary.json"), "utf8"))).toContain(savedWord);
         await app.evaluate(({ session }, word) => session.defaultSession.removeWordFromSpellCheckerDictionary(word), savedWord);
-        await addNativeWord(app, localWord);
+        await addNativeWord(page, localWord);
         const recovery = await page.evaluate(async () => {
             if (!window.skladnoDesktop)
                 throw new Error("Missing desktop client");

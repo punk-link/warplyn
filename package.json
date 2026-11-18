@@ -18,6 +18,7 @@
         "dev:ui-preview": "npm run dev --workspace @skladno/web -- --open /ui-language-preview.html",
         "dev:site": "npm run docs:build && vite site --host 127.0.0.1 --config site/vite.config.mjs",
         "docs:dev": "node scripts/copy-site-assets.mjs && vitepress dev site/user-docs",
+        "docs:i18n-terminology": "npm run build --workspace @skladno/shared && node --import tsx scripts/generate-ui-terminology.mjs",
         "docs:build": "node scripts/copy-site-assets.mjs && vitepress build site/user-docs",
         "build:site": "npm run docs:build && vite build site --config site/vite.config.mjs",
         "check:site": "node scripts/check-site-metadata.mjs",

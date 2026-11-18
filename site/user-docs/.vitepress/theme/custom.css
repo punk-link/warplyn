@@ -1,6 +1,7 @@
 @import "../../../../packages/web/src/design-tokens.css";
 
 :root {
+    --vp-nav-height: 64px;
     --vp-c-bg: var(--color-canvas);
     --vp-c-bg-alt: var(--color-surface);
     --vp-c-bg-elv: var(--color-surface-raised);
@@ -26,6 +27,33 @@
     --vp-c-success-1: var(--color-success);
     --vp-c-success-soft: var(--color-success-soft);
     --vp-font-family-base: var(--font-ui);
+}
+
+:root.has-multiline-nav-title {
+    --vp-nav-height: 72px;
+}
+
+.VPNavBar .title,
+.VPNavBarTitle .title {
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+.VPNavBarTitle .title {
+    overflow: hidden;
+}
+
+.VPNavBarTitle .title.is-multiline {
+    align-items: flex-start;
+    padding-top: 8px;
+}
+
+.VPNavBarTitle .title > span:not(.logo) {
+    min-width: 0;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    line-height: 1.2;
 }
 
 .vp-doc a[href^="https://"]::before,

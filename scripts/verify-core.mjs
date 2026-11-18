@@ -15,6 +15,7 @@ const staticChecks = [
     { name: "ESLint", args: ["node_modules/eslint/bin/eslint.js", ".", "--max-warnings", "0"] },
     { name: "Changed data properties", args: ["scripts/check-data-properties.mjs"] },
     { name: "Typecheck", args: ["node_modules/typescript/bin/tsc", "-b"] },
+    { name: "UI terminology table", args: ["--import", "tsx", "scripts/generate-ui-terminology.mjs", "--check"] },
 ];
 const tests = [{ name: "Script and workspace tests", args: [process.env.npm_execpath, "test"] }];
 process.exitCode = runVerificationChecklist(staticChecks, tests) ? 0 : 1;

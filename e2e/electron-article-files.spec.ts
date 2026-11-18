@@ -21,10 +21,16 @@ async function launchArticleFiles(root: string): Promise<ElectronApplication> {
 
 
 async function chooseNativePaths(app: ElectronApplication, source: string | null, target: string | null): Promise<void> {
-    const configured = await app.evaluateHandle(({ dialog }, paths) => {
+    const configure = () => app.evaluateHandle(({ dialog }, paths) => {
         dialog.showOpenDialog = async () => ({ canceled: paths.source === null, filePaths: paths.source ? [paths.source] : [] });
         dialog.showSaveDialog = async () => ({ canceled: paths.target === null, filePath: paths.target ?? undefined });
     }, { source, target });
+    const configured = await configure().catch((error: unknown) => {
+        if (!(error instanceof Error) || !error.message.includes("Resulting promise was garbage collected."))
+            throw error;
+
+        return configure();
+    });
     await configured.dispose();
 }
 
