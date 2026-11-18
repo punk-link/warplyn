@@ -1,10 +1,12 @@
 import { defineConfig } from "vitepress";
+import { guideLocales } from "./locales.mjs";
 
 export default defineConfig({
     title: "Warplyn user guide",
     description: "Installation, user guides, settings, and reference for Warplyn.",
     base: "/docs/",
     outDir: "../public/docs",
+    locales: guideLocales(),
     transformHead({ pageData, title, description }) {
         const url = `https://warplyn.com/docs/${pageData.relativePath.replace(/\.md$/, ".html")}`;
 

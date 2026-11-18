@@ -1,0 +1,122 @@
+{
+  "de": {
+    "outline": { "label": "Auf dieser Seite" },
+    "docFooter": { "prev": "Vorherige Seite", "next": "Nächste Seite" },
+    "darkModeSwitchLabel": "Darstellung",
+    "darkModeSwitchTitle": "Zum dunklen Design wechseln",
+    "lightModeSwitchTitle": "Zum hellen Design wechseln",
+    "sidebarMenuLabel": "Menü",
+    "returnToTopLabel": "Nach oben",
+    "langMenuLabel": "Sprache ändern",
+    "skipToContentLabel": "Zum Inhalt springen",
+    "notFound": { "title": "SEITE NICHT GEFUNDEN", "quote": "Diese Seite ist nicht verfügbar. Wählen Sie eine Seite im Handbuch.", "linkLabel": "Zur Startseite des Handbuchs", "linkText": "Zum Handbuch" }
+  },
+  "es": {
+    "outline": { "label": "En esta página" },
+    "docFooter": { "prev": "Página anterior", "next": "Página siguiente" },
+    "darkModeSwitchLabel": "Apariencia",
+    "darkModeSwitchTitle": "Cambiar al tema oscuro",
+    "lightModeSwitchTitle": "Cambiar al tema claro",
+    "sidebarMenuLabel": "Menú",
+    "returnToTopLabel": "Volver arriba",
+    "langMenuLabel": "Cambiar idioma",
+    "skipToContentLabel": "Saltar al contenido",
+    "notFound": { "title": "PÁGINA NO ENCONTRADA", "quote": "Esta página no está disponible. Elige una página de la guía.", "linkLabel": "Ir al inicio de la guía", "linkText": "Volver a la guía" }
+  },
+  "fr": {
+    "outline": { "label": "Sur cette page" },
+    "docFooter": { "prev": "Page précédente", "next": "Page suivante" },
+    "darkModeSwitchLabel": "Apparence",
+    "darkModeSwitchTitle": "Passer au thème sombre",
+    "lightModeSwitchTitle": "Passer au thème clair",
+    "sidebarMenuLabel": "Menu",
+    "returnToTopLabel": "Retour en haut",
+    "langMenuLabel": "Changer de langue",
+    "skipToContentLabel": "Aller au contenu",
+    "notFound": { "title": "PAGE INTROUVABLE", "quote": "Cette page n’est pas disponible. Choisissez une page du guide.", "linkLabel": "Aller à l’accueil du guide", "linkText": "Retour au guide" }
+  },
+  "it": {
+    "outline": { "label": "In questa pagina" },
+    "docFooter": { "prev": "Pagina precedente", "next": "Pagina successiva" },
+    "darkModeSwitchLabel": "Aspetto",
+    "darkModeSwitchTitle": "Passa al tema scuro",
+    "lightModeSwitchTitle": "Passa al tema chiaro",
+    "sidebarMenuLabel": "Menu",
+    "returnToTopLabel": "Torna in alto",
+    "langMenuLabel": "Cambia lingua",
+    "skipToContentLabel": "Vai al contenuto",
+    "notFound": { "title": "PAGINA NON TROVATA", "quote": "Questa pagina non è disponibile. Scegli una pagina della guida.", "linkLabel": "Vai all’inizio della guida", "linkText": "Torna alla guida" }
+  },
+  "ja": {
+    "outline": { "label": "このページの内容" },
+    "docFooter": { "prev": "前のページ", "next": "次のページ" },
+    "darkModeSwitchLabel": "外観",
+    "darkModeSwitchTitle": "ダークテーマに切り替える",
+    "lightModeSwitchTitle": "ライトテーマに切り替える",
+    "sidebarMenuLabel": "メニュー",
+    "returnToTopLabel": "ページの先頭へ",
+    "langMenuLabel": "言語を変更",
+    "skipToContentLabel": "本文へ移動",
+    "notFound": { "title": "ページが見つかりません", "quote": "このページは利用できません。ガイドからページを選んでください。", "linkLabel": "ガイドのホームへ", "linkText": "ガイドに戻る" }
+  },
+  "ko": {
+    "outline": { "label": "이 페이지의 내용" },
+    "docFooter": { "prev": "이전 페이지", "next": "다음 페이지" },
+    "darkModeSwitchLabel": "화면 설정",
+    "darkModeSwitchTitle": "어두운 테마로 전환",
+    "lightModeSwitchTitle": "밝은 테마로 전환",
+    "sidebarMenuLabel": "메뉴",
+    "returnToTopLabel": "맨 위로",
+    "langMenuLabel": "언어 변경",
+    "skipToContentLabel": "본문으로 건너뛰기",
+    "notFound": { "title": "페이지를 찾을 수 없습니다", "quote": "이 페이지는 사용할 수 없습니다. 안내서에서 페이지를 선택하세요.", "linkLabel": "안내서 첫 화면으로", "linkText": "안내서로 돌아가기" }
+  },
+  "pl": {
+    "outline": { "label": "Na tej stronie" },
+    "docFooter": { "prev": "Poprzednia strona", "next": "Następna strona" },
+    "darkModeSwitchLabel": "Wygląd",
+    "darkModeSwitchTitle": "Przełącz na ciemny motyw",
+    "lightModeSwitchTitle": "Przełącz na jasny motyw",
+    "sidebarMenuLabel": "Menu",
+    "returnToTopLabel": "Powrót na górę",
+    "langMenuLabel": "Zmień język",
+    "skipToContentLabel": "Przejdź do treści",
+    "notFound": { "title": "NIE ZNALEZIONO STRONY", "quote": "Ta strona jest niedostępna. Wybierz stronę z poradnika.", "linkLabel": "Przejdź do początku poradnika", "linkText": "Wróć do poradnika" }
+  },
+  "pt-BR": {
+    "outline": { "label": "Nesta página" },
+    "docFooter": { "prev": "Página anterior", "next": "Próxima página" },
+    "darkModeSwitchLabel": "Aparência",
+    "darkModeSwitchTitle": "Mudar para o tema escuro",
+    "lightModeSwitchTitle": "Mudar para o tema claro",
+    "sidebarMenuLabel": "Menu",
+    "returnToTopLabel": "Voltar ao topo",
+    "langMenuLabel": "Mudar idioma",
+    "skipToContentLabel": "Pular para o conteúdo",
+    "notFound": { "title": "PÁGINA NÃO ENCONTRADA", "quote": "Esta página não está disponível. Escolha uma página do guia.", "linkLabel": "Ir para o início do guia", "linkText": "Voltar ao guia" }
+  },
+  "ru": {
+    "outline": { "label": "На этой странице" },
+    "docFooter": { "prev": "Предыдущая страница", "next": "Следующая страница" },
+    "darkModeSwitchLabel": "Оформление",
+    "darkModeSwitchTitle": "Включить тёмную тему",
+    "lightModeSwitchTitle": "Включить светлую тему",
+    "sidebarMenuLabel": "Меню",
+    "returnToTopLabel": "Наверх",
+    "langMenuLabel": "Сменить язык",
+    "skipToContentLabel": "Перейти к содержимому",
+    "notFound": { "title": "СТРАНИЦА НЕ НАЙДЕНА", "quote": "Эта страница недоступна. Выберите страницу в руководстве.", "linkLabel": "На главную страницу руководства", "linkText": "Вернуться к руководству" }
+  },
+  "zh-CN": {
+    "outline": { "label": "本页内容" },
+    "docFooter": { "prev": "上一页", "next": "下一页" },
+    "darkModeSwitchLabel": "外观",
+    "darkModeSwitchTitle": "切换到深色主题",
+    "lightModeSwitchTitle": "切换到浅色主题",
+    "sidebarMenuLabel": "菜单",
+    "returnToTopLabel": "返回顶部",
+    "langMenuLabel": "切换语言",
+    "skipToContentLabel": "跳转到内容",
+    "notFound": { "title": "未找到页面", "quote": "此页面不可用。请从指南中选择一个页面。", "linkLabel": "转到指南首页", "linkText": "返回指南" }
+  }
+}

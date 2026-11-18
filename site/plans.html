@@ -62,13 +62,34 @@
         ><a class="current" href="/plans.html" aria-current="page">Plans</a
         ><a href="/docs/index.html">Docs</a
         ><a href="https://github.com/punk-link/warplyn">GitHub <svg class="action-icon" aria-hidden="true" focusable="false"><use href="#github-icon" /></svg></a
+        ><details class="guide-languages" name="header-menu">
+          <summary aria-label="Language">
+            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" /><ellipse cx="12" cy="12" rx="4" ry="9" /><path d="M3 12h18" />
+            </svg>
+            <span data-current-language>EN</span>
+          </summary>
+          <nav aria-label="Language">
+            <a href="/plans.html" lang="en">English</a>
+            <a href="/de/plans.html" lang="de">Deutsch</a>
+            <a href="/es/plans.html" lang="es">Español</a>
+            <a href="/fr/plans.html" lang="fr">Français</a>
+            <a href="/it/plans.html" lang="it">Italiano</a>
+            <a href="/ja/plans.html" lang="ja">日本語</a>
+            <a href="/ko/plans.html" lang="ko">한국어</a>
+            <a href="/pl/plans.html" lang="pl">Polski</a>
+            <a href="/pt-BR/plans.html" lang="pt-BR">Português (Brasil)</a>
+            <a href="/ru/plans.html" lang="ru">Русский</a>
+            <a href="/zh-CN/plans.html" lang="zh-CN">简体中文</a>
+          </nav>
+        </details
         ><a
           class="button button-small"
           href="https://github.com/punk-link/warplyn/releases/latest"
           >Download Warplyn <svg class="action-icon" aria-hidden="true" focusable="false"><use href="#download-icon" /></svg></a
         >
       </nav>
-      <details class="mobile-nav">
+      <details class="mobile-nav" name="header-menu">
         <summary aria-label="Open menu">
           <span></span><span></span><span></span>
         </summary>
@@ -146,7 +167,7 @@
         <div class="faq-list">
           <details>
             <summary>Will free features ever become paid?</summary>
-            <p>
+            <p data-message="plansFreeAnswer">
               No. Features offered for free will stay free. Warplyn will
               always remain open source under the
               <a href="https://github.com/punk-link/warplyn/blob/main/LICENSE">MIT License</a>.
@@ -155,7 +176,7 @@
           </details>
           <details>
             <summary>Will Warplyn charge me for AI?</summary>
-            <p>
+            <p data-message="plansBillingAnswer">
               Warplyn does not bill you for AI usage. Your connected provider
               may charge for requests. See the
               <a href="/#providers">supported providers</a>. You can also
@@ -164,7 +185,7 @@
           </details>
           <details>
             <summary>Does Warplyn upload or sync my Articles?</summary>
-            <p>
+            <p data-message="plansPrivacyAnswer">
               No sync service is provided. Articles and Revision history are
               stored locally. When you request AI help, only the relevant text
               and context are sent to your chosen provider. Read the
@@ -173,7 +194,7 @@
           </details>
           <details>
             <summary>Can I use it for commercial writing?</summary>
-            <p>
+            <p data-message="plansCommercialAnswer">
               The
               <a href="https://github.com/punk-link/warplyn/blob/main/LICENSE">MIT License</a>
               allows commercial use. Your writing remains yours.
@@ -181,7 +202,7 @@
           </details>
           <details>
             <summary>Where can I get help?</summary>
-            <p>
+            <p data-message="plansHelpAnswer">
               Read the
               <a href="/docs/index.html">documentation</a>
               or <a href="https://github.com/punk-link/warplyn/issues">open an issue on GitHub</a>.
@@ -247,5 +268,6 @@
         ><span>Your writing stays on your computer.</span>
       </div>
     </footer>
+    <script type="module" src="/language-menu.mjs"></script>
   </body>
 </html>
