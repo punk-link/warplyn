@@ -4,9 +4,9 @@ description: "Découvrez quelles données de diagnostic et d’utilisation Warpl
 
 # Partager les données de diagnostic et d’utilisation
 
-Lorsque vous activez le partage, les applications Warplyn empaquetées pour Windows et Linux envoient à PostHog Cloud, en Virginie (États-Unis), des événements pseudonymisés sur la fiabilité et l’utilisation. Le partage est désactivé par défaut. Activez-le si vous souhaitez nous aider à comprendre votre expérience et à améliorer Warplyn. Vous pouvez modifier votre choix dans **Paramètres** → **Général** → **Confidentialité et diagnostics**.
+Si vous activez le partage, Warplyn pour Windows ou Linux envoie des données sur le fonctionnement et l’utilisation de l’application à PostHog Cloud, en Virginie (États-Unis). Les événements sont associés à un identifiant pseudonyme. Le partage est désactivé par défaut. Activez-le si vous souhaitez nous aider à comprendre votre expérience et à améliorer Warplyn. Vous pouvez modifier votre choix dans **Paramètres** → **Général** → **Confidentialité et diagnostics**.
 
-Désactiver le partage arrête la collecte future et efface les événements en attente ainsi que l’identifiant de télémétrie local. Si vous le réactivez plus tard, un nouvel identifiant est créé. Les événements déjà envoyés ne peuvent pas être retirés.
+Lorsque vous désactivez le partage, Warplyn cesse de recueillir des données et efface de votre appareil les événements en attente et l’identifiant de télémétrie. Si vous réactivez le partage, Warplyn génère un nouvel identifiant. Les événements déjà envoyés restent enregistrés.
 
 Les événements en attente sont conservés dans le profil local de l’application afin que Warplyn puisse réessayer lorsque la connexion est rétablie. La prochaine fois que l’application vérifie la file d’attente, elle supprime les événements datant de plus de 24 heures. Désactiver le partage efface la file.
 
@@ -46,7 +46,7 @@ Copiez l’identifiant avant de désactiver le partage. Cette action efface l’
 
 ## Analytique du site web {#website-analytics}
 
-Les pages d’accueil et des offres utilisent PostHog pour mesurer les visites, les informations de provenance et de campagne, ainsi que les clics sur les liens de téléchargement. Les événements de téléchargement PostHog incluent l’emplacement du bouton sur la page. Google Analytics enregistre aussi un événement `download_clicked` lorsqu’une personne ouvre le lien vers la dernière version depuis la page d’accueil, la page des offres ou le guide utilisateur. Ces clics ne confirment ni le téléchargement ni l’installation.
+Les pages d’accueil et des offres utilisent PostHog pour mesurer les visites, les sources de trafic et les campagnes, ainsi que les clics sur les liens de téléchargement. Les événements de téléchargement PostHog incluent l’emplacement du bouton sur la page. Google Analytics enregistre aussi un événement `download_clicked` lorsqu’une personne ouvre le lien vers la dernière version depuis la page d’accueil, la page des offres ou le guide utilisateur. Ces clics ne confirment ni le téléchargement ni l’installation.
 
 Le suivi PostHog du site web n’utilise ni cookies ni stockage du navigateur, ne crée pas de profil de personne et n’enregistre ni lecture de session ni activité générale de clic. PostHog estime le nombre de visiteurs avec un hachage généré par le serveur. Les événements du site web sont distincts des identifiants de télémétrie de bureau, et la commande de partage de l’application ne contrôle pas le suivi du site.
 

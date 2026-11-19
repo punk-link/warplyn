@@ -4,7 +4,7 @@ description: "Stellen Sie Warplyn nach einem fehlgeschlagenen Desktop-Update mit
 
 # Wiederherstellung nach Desktop-Updates
 
-Vorabversionen sind optional. Kann Warplyn nach einem Update nicht mehr gestartet werden, installieren Sie die vorherige Vorabversion erneut und stellen Sie den passenden Schnappschuss von vor dem Update wieder her.
+Vorabversionen sind optional. Wenn Warplyn nach einem Update nicht mehr startet, installieren Sie die vorherige Vorabversion erneut. Stellen Sie dann Ihre Daten aus dem Schnappschuss wieder her, den Warplyn vor diesem Update angelegt hat.
 
 ::: warning Neuere Datenbank nicht öffnen
 Öffnen Sie keine Datenbank, die von einer neueren Vorabversion erstellt wurde, mit einer älteren Version. Stellen Sie zuerst den Schnappschuss wieder her, den Warplyn vor dem Update aufgezeichnet hat.
@@ -16,8 +16,8 @@ Vorabversionen sind optional. Kann Warplyn nach einem Update nicht mehr gestarte
 
 ## Linux AppImage
 
-Bewahren Sie Ihr AppImage in einem Ordner auf, in den Sie schreiben können. Unter [Warplyn installieren](installation.md#linux-appimage) finden Sie Laufzeitanforderungen, Hinweise zum Start und zur optionalen Desktop-Integration. Die Abnahme installierter AppImages für den Desktop steht noch aus.
+Bewahren Sie Ihr AppImage in einem Ordner auf, in den Sie schreiben können. Unter [Warplyn installieren](installation.md#linux-appimage) finden Sie die Systemanforderungen und eine Anleitung zum Starten und Einrichten eines Menüeintrags. Die Tests für AppImage als installierte Desktop-Anwendung sind noch nicht abgeschlossen.
 
 Nachdem Sie den Netzwerkzugriff auf GitHub erlaubt haben, wählen Sie **Herunterladen** und dann **Neu starten und aktualisieren**. Durch normales Schließen wird das heruntergeladene Update nicht installiert. Debian-Pakete werden weiterhin über die Paketverwaltung aktualisiert.
 
-Falls ein AppImage-Update nicht gestartet werden kann, schließen Sie Warplyn. Die vorherige ausführbare Datei bleibt neben dem Image mit der Endung `.previous` erhalten. Stellen Sie den passenden Schnappschuss von vor dem Update wieder her, bevor Sie gemäß obigem Hinweis die vorherige Version starten. Bewahren Sie beide ausführbaren Dateien und den Schnappschuss auf, bis die Wiederherstellung abgeschlossen ist. Ist der Image-Ordner nicht beschreibbar, verschieben Sie das Image in einen Ordner, der Ihnen gehört, oder laden Sie den Ersatz manuell herunter. Deaktivieren Sie nicht die Electron-Sandbox, um ein Image zu starten.
+Falls Warplyn nach einem AppImage-Update nicht startet, schließen Sie Warplyn. Die ausführbare Datei der vorherigen Version liegt neben dem Image und hat die Endung `.previous`. Stellen Sie den passenden Schnappschuss von vor dem Update wieder her, bevor Sie gemäß obigem Hinweis die vorherige Version starten. Bewahren Sie beide ausführbaren Dateien und den Schnappschuss auf, bis die Wiederherstellung abgeschlossen ist. Ist der Image-Ordner nicht beschreibbar, verschieben Sie das Image in einen Ordner, der Ihnen gehört, oder laden Sie den Ersatz manuell herunter. Deaktivieren Sie nicht die Electron-Sandbox, um ein Image zu starten.

@@ -4,9 +4,9 @@ description: "Consulta qué datos de diagnóstico y uso comparte Warplyn, qué i
 
 # Compartir datos de diagnóstico y uso
 
-Las aplicaciones empaquetadas de Warplyn para Windows y Linux envían a PostHog Cloud, en Virginia (Estados Unidos), eventos seudónimos sobre fiabilidad y uso cuando activas esta opción. El envío está desactivado de forma predeterminada. Actívalo si quieres ayudarnos a entender tu experiencia y mejorar Warplyn. Puedes cambiar esta opción en **Configuración** → **General** → **Privacidad y diagnóstico**.
+Si activas el envío, la aplicación de escritorio de Warplyn para Windows o Linux comparte datos de fiabilidad y uso con PostHog Cloud, en Virginia (Estados Unidos). Los eventos se asocian a un identificador seudónimo. El envío está desactivado de forma predeterminada. Puedes cambiar esta opción en **Configuración** → **General** → **Privacidad y diagnóstico**.
 
-Al desactivar el envío, se detiene la recopilación futura y se borran los eventos en cola y el identificador de telemetría local. Si lo activas más adelante, se crea un identificador nuevo. Los eventos que ya se enviaron no se pueden retirar.
+Cuando desactivas el envío, Warplyn deja de recopilar datos y borra del dispositivo los eventos pendientes y el identificador de telemetría. Si vuelves a activarlo, Warplyn genera otro identificador. Los eventos ya enviados permanecen en PostHog Cloud.
 
 Los eventos pendientes se guardan en el perfil local de la aplicación para que Warplyn pueda volver a enviarlos cuando se restablezca la conexión. La próxima vez que la aplicación revise la cola, descartará los eventos que tengan más de 24 horas. Al desactivar el envío, se elimina la cola.
 
@@ -46,8 +46,8 @@ Copia el identificador antes de desactivar el envío. Al desactivarlo, se borra 
 
 ## Analítica del sitio web {#website-analytics}
 
-Las páginas de inicio y de planes usan PostHog para medir las visitas, la información de referencia y de campañas, y los clics en enlaces de descarga. Los eventos de descarga de PostHog incluyen la ubicación del botón en la página. Google Analytics también registra un evento `download_clicked` cuando alguien abre el enlace a la versión más reciente desde la página de inicio, la página de planes o la guía de usuario. Estos clics no confirman que se haya descargado ni instalado la aplicación.
+Las páginas de inicio y de planes usan PostHog para medir las visitas, las fuentes de tráfico y las campañas, y los clics en enlaces de descarga. Los eventos de descarga de PostHog incluyen la ubicación del botón en la página. Google Analytics también registra un evento `download_clicked` cuando alguien abre el enlace a la versión más reciente desde la página de inicio, la página de planes o la guía de usuario. Estos clics no confirman que se haya descargado ni instalado la aplicación.
 
-El seguimiento de PostHog en el sitio web no usa cookies ni almacenamiento del navegador, no crea perfiles de personas ni registra reproducciones de sesiones o actividad general de clics. PostHog calcula una estimación de visitantes mediante un hash generado en el servidor. Los eventos del sitio web son independientes de los identificadores de telemetría de escritorio, y el control para compartir datos de la aplicación no modifica el seguimiento del sitio web.
+El seguimiento de PostHog en el sitio web no usa cookies ni almacenamiento del navegador, no crea perfiles de personas ni registra reproducciones de sesiones o actividad general de clics. PostHog estima el número de visitantes mediante un hash generado en el servidor. Los eventos del sitio web son independientes de los identificadores de telemetría de escritorio, y el control para compartir datos de la aplicación no modifica el seguimiento del sitio web.
 
 Las páginas de inicio y la guía de usuario también usan Google Analytics, que puede utilizar cookies para medir visitas y fuentes de tráfico. Google Analytics y PostHog omiten el seguimiento cuando el navegador envía las señales Do Not Track o Global Privacy Control. La descripción del seguimiento sin cookies anterior se refiere a PostHog.

@@ -4,9 +4,9 @@ description: "Erfahren Sie, welche Diagnose- und Nutzungsdaten Warplyn teilt, wa
 
 # Diagnose- und Nutzungsdaten teilen
 
-Die installierten Windows- und Linux-Apps von Warplyn senden pseudonyme Zuverlässigkeits- und Nutzungsereignisse an PostHog Cloud in den USA (Virginia), wenn Sie die Freigabe aktivieren. Standardmäßig ist sie ausgeschaltet. Aktivieren Sie sie gern, damit wir Ihre Erfahrungen besser verstehen und Warplyn verbessern können. Sie können Ihre Auswahl unter **Einstellungen** → **Allgemein** → **Datenschutz und Diagnose** ändern.
+Wenn Sie die Freigabe aktivieren, sendet die Desktop-App für Windows oder Linux Daten zur Stabilität und Nutzung an PostHog Cloud in Virginia (USA). Die Ereignisse sind einer pseudonymen ID zugeordnet. Standardmäßig ist die Freigabe ausgeschaltet. Sie können Ihre Auswahl unter **Einstellungen** → **Allgemein** → **Datenschutz und Diagnose** ändern.
 
-Wenn Sie die Freigabe ausschalten, werden künftige Erfassungen beendet, die Warteschlange mit Ereignissen geleert und die lokale Telemetrie-ID gelöscht. Wenn Sie die Freigabe später erneut aktivieren, wird eine neue ID erstellt. Bereits gesendete Ereignisse können nicht zurückgerufen werden.
+Wenn Sie die Freigabe ausschalten, erfasst Warplyn keine weiteren Ereignisse und löscht die Warteschlange sowie die lokale Telemetrie-ID. Schalten Sie die Freigabe später wieder ein, legt Warplyn eine neue ID an. Bereits gesendete Ereignisse bleiben bei PostHog Cloud gespeichert.
 
 Ausstehende Ereignisse werden im lokalen App-Profil gespeichert, damit Warplyn sie bei wiederhergestellter Verbindung erneut senden kann. Beim nächsten Prüfen der Warteschlange werden Ereignisse verworfen, die älter als 24 Stunden sind. Wenn Sie die Freigabe ausschalten, wird die Warteschlange gelöscht.
 
@@ -50,4 +50,4 @@ Die Landing- und Planseiten verwenden PostHog, um Besuche, Verweis- und Kampagne
 
 Das PostHog-Tracking der Website verwendet keine Cookies oder Browserspeicher, erstellt keine Personenprofile und zeichnet weder Sitzungen noch allgemeine Klickaktivitäten auf. PostHog schätzt die Anzahl der Besucher anhand eines serverseitig erstellten Hashwerts. Website-Ereignisse bleiben von den Telemetrie-IDs der Desktop-App getrennt; der Freigabeschalter der Desktop-App steuert das Website-Tracking nicht.
 
-Landingpages und Benutzerhandbuch verwenden auch Google Analytics, das möglicherweise Cookies einsetzt, um Besuche und Zugriffsquellen zu messen. Google-Analytics- und PostHog-Tracking werden übersprungen, wenn Ihr Browser „Do Not Track“ oder „Global Privacy Control“ übermittelt. Das oben beschriebene cookielose Verhalten gilt für PostHog.
+Landingpages und Benutzerhandbuch verwenden auch Google Analytics, das möglicherweise Cookies einsetzt, um Besuche und Zugriffsquellen zu messen. Wenn Ihr Browser „Do Not Track“ oder „Global Privacy Control“ übermittelt, deaktiviert die Website das Tracking durch beide Dienste. Das oben beschriebene cookielose Verhalten gilt für PostHog.

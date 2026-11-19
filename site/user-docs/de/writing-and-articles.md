@@ -4,7 +4,7 @@ description: "Artikel schreiben und organisieren, das Speichern von Entwürfen v
 
 # Artikel schreiben und organisieren
 
-Ein *Artikel* ist ein Text in Ihrer Warplyn-Bibliothek. Während Sie ihn bearbeiten, speichert Warplyn einen wiederherstellbaren Prüfpunkt. Eine *Version* ist ein gespeicherter Stand im Verlauf des *Artikels*. So können Sie weiterarbeiten, ohne jede Bearbeitung als fertige Fassung zu behandeln.
+Ein *Artikel* ist ein Text in Ihrer Warplyn-Bibliothek. Beim Schreiben speichert Warplyn automatisch Ihren *Entwurf*, damit Sie ihn wiederherstellen können. Eine *Version* hält einen bestimmten Stand im Verlauf des Artikels fest.
 
 ## Einen Artikel schreiben und speichern
 

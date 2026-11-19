@@ -5,7 +5,7 @@ description: "Zainstaluj Warplyn, korzystaj z asystenta redakcyjnego, skonfiguru
 
 # Podręcznik użytkownika Warplyn
 
-Warplyn zapewnia lokalne środowisko do tworzenia i doskonalenia *artykułów* — od wczesnych wersji roboczych po recenzje i kolejne wersje. Skorzystaj z tego podręcznika, aby zainstalować aplikację, tworzyć procesy pisania, konfigurować ustawienia i wyszukiwać potrzebne informacje.
+W Warplyn piszesz i redagujesz *artykuły* na swoim komputerze. Tu znajdziesz instrukcję instalacji oraz wskazówki, jak porządkować teksty i zmieniać ustawienia aplikacji.
 
 ## Instalacja
 

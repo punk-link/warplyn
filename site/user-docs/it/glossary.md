@@ -4,15 +4,15 @@ description: "Scopri cosa significano Articoli, Bozze, Versioni salvate, Propost
 
 # Glossario di Warplyn
 
-Questi termini descrivono concetti visibili agli autori e il linguaggio di dominio usato in Warplyn.
+Qui trovi i termini che compaiono in Warplyn e in questa guida.
 
 ## Articoli e versioni salvate
 
-- **Articolo**: contenuto editoriale recuperabile in modo indipendente. Warplyn usa “articolo” anziché “documento”.
+- **Articolo**: testo della raccolta che puoi recuperare separatamente dagli altri. Warplyn usa “articolo” anziché “documento”.
 - **Raccolta di articoli**: raccolta locale degli *articoli* dell’autore. L’**articolo attuale** è aperto nell’area di lavoro; un **elenco di articoli** mostra la raccolta.
 - **Bozza**: testo dell’*articolo* in fase di modifica ma non ancora salvato come *versione salvata*.
 - **Checkpoint della bozza**: stato recuperabile e modificabile della *bozza*, salvato localmente e associato a una *versione salvata* di base. Non è una *versione salvata*. Una **bozza attuale** si basa sulla *versione salvata* attuale dell’*articolo*; una **bozza non aggiornata** si basa su una *versione salvata* precedente.
-- **Versione salvata**: snapshot immutabile e salvato di un *articolo*.
+- **Versione salvata**: testo dell’*articolo* al momento del salvataggio. Una volta salvata, la versione resta invariata.
 - **Salvataggio della bozza come nuova versione**: salvataggio esplicito da parte dell’autore di una *bozza attuale* come nuova *versione salvata*. Cancella solo il checkpoint della *bozza* corrispondente.
 - **Proposta**: contenuto o modifica generati dall’IA che richiedono l’approvazione esplicita dell’autore.
 - **Versione salvata di base della proposta**: *versione salvata* esaminata per produrre una *proposta*. La *proposta* diventa obsoleta quando non corrisponde più alla *versione salvata* attuale.
@@ -27,8 +27,8 @@ Questi termini descrivono concetti visibili agli autori e il linguaggio di domin
 - **Operazione editoriale**: attività richiesta dall’autore all’assistente, come scrivere, rendere un testo più scorrevole, verificare i fatti, rivedere lo stile o tradurre.
 - **Richiesta editoriale**: singola esecuzione di un’operazione editoriale.
 - **Sessione editoriale**: sequenza di interazioni e cronologia delle attività per le richieste editoriali.
-- **Indicazioni editoriali (Indicazioni editoriali)**: istruzioni o contesto inseriti dall’autore insieme a una richiesta editoriale.
-- **Raccolta di testi per lo stile**: esempi di scrittura locali forniti dall’autore. Il **profilo di stile** è la loro rappresentazione sintetica derivata.
+- **Indicazioni editoriali**: istruzioni o contesto inseriti dall’autore insieme a una richiesta editoriale.
+- **Raccolta di testi per lo stile**: esempi di scrittura locali forniti dall’autore. Il **profilo di stile** riassume le caratteristiche che Warplyn individua in quei testi.
 - **Fase del flusso di lavoro**: indicazione facoltativa sullo stato di avanzamento, scelta dall’autore. Non avvia processi di IA né modifica il contenuto di un *articolo*.
 
 ## Pubblicazione e impostazioni
@@ -41,7 +41,7 @@ Questi termini descrivono concetti visibili agli autori e il linguaggio di domin
 - **Credenziale gestita**: chiave API custodita dal gestore delle credenziali del sistema operativo. Warplyn salva i metadati della connessione, ma non scrive mai la chiave in SQLite o in una copia di sicurezza.
 - **Preferenza del modello**: identificatore del modello predefinito o sostituzione specifica per un’operazione editoriale.
 - **Lingua dell’interfaccia**: lingua dell’interfaccia di Warplyn, distinta dalle lingue degli *articoli* e delle traduzioni.
-- **Lingua predefinita degli articoli (Lingua predefinita degli articoli)**: lingua assegnata a un nuovo *articolo* quando non ne viene indicata una.
+- **Lingua predefinita degli articoli**: lingua assegnata a un nuovo *articolo* quando non ne viene indicata una.
 - **Lingue predefinite per le traduzioni (Lingue di traduzione predefinite)**: lingue, in ordine, proposte per prime nelle richieste di traduzione. Non avviano mai automaticamente le traduzioni.
 - **Destinazione delle copie di sicurezza**: directory locale in cui Warplyn salva le copie di sicurezza.
 - **Copia di sicurezza**: copia coerente dei dati locali in un momento preciso, separata dal database attivo e priva di credenziali.
@@ -49,7 +49,7 @@ Questi termini descrivono concetti visibili agli autori e il linguaggio di domin
 - **Trasferimento dei dati**: copia e riavvio confermati dall’autore che spostano Warplyn in una nuova posizione dei dati, conservando la copia precedente per il ripristino.
 - **Copia di sicurezza di ripristino**: copia di sicurezza conservata prima che Warplyn sostituisca i dati attivi durante un ripristino.
 - **Aggiornamento dell’applicazione**: versione pacchettizzata di Warplyn più recente, che il client desktop può cercare, scaricare e applicare solo tramite passaggi controllati dall’autore. Un aggiornamento non modifica autonomamente il contenuto degli *articoli*.
-- **Aggiornamento di sicurezza (Aggiornamento di sicurezza)**: aggiornamento dell’applicazione il cui tag di release termina con il suffisso `.security`. Warplyn mostra un avviso, ma non impone mai un controllo, un download o un riavvio.
+- **Aggiornamento di sicurezza**: aggiornamento dell’applicazione il cui tag di release termina con il suffisso `.security`. Warplyn mostra un avviso, ma non impone mai un controllo, un download o un riavvio.
 - **Aggiornamento in attesa**: aggiornamento dell’applicazione scaricato, in attesa che l’autore scelga Riavvia e aggiorna. La normale chiusura non lo applica.
 - **Copia di sicurezza precedente all’aggiornamento**: copia dei dati locali creata prima che Warplyn applichi un aggiornamento in attesa. Per ripristinarla serve la versione precedente corrispondente dell’applicazione.
 - **Evento diagnostico**: registrazione locale oscurata, scritta nei log del processo host per supportare l’avvio o la risoluzione di errori recuperabili. Non include contenuti privati degli *articoli*, corpi dei modelli o valori delle variabili d’ambiente.

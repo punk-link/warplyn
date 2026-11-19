@@ -9,7 +9,7 @@ Use **Check facts** when you want to verify factual claims in an *Article*. It r
 Open **Quick actions**, choose **Check facts**, review the claims the Assistant selects, and deselect any you do not want checked. Then select **Send editorial request**. You can select a passage to focus the check. Results are tied to the saved *Revision* being checked.
 
 ::: tip Example
-In a chapter set beside the river, Ana says the full moon will raise the water enough to cover the path. Ask **Check facts** to check that detail against sources relevant to the story's setting.
+In a chapter set beside the river, Ana says the full moon will raise the water enough to cover the path. Use **Check facts** to verify that detail against sources relevant to the story's setting.
 :::
 
 ::: tip Review the evidence

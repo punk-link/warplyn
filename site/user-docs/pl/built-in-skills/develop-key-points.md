@@ -12,4 +12,4 @@ Otwórz **Szybkie działania**, wybierz **Rozwiń główne punkty**, wpisz dodat
 Zaznacz scenę, w której Ana siedzi nad rzeką, i poproś: „Podaj trzy możliwe interpretacje relacji Any z rzeką, oparte na tym fragmencie”.
 :::
 
-Zwrócone punkty mogą wymagać poprawienia lub innego rozłożenia akcentów. Sprawdź je przed użyciem w *artykule*. Aby na podstawie dostarczonych materiałów utworzyć pełny szkic, zobacz [Zamień pomysły w szkic](turn-ideas-into-a-draft.md).
+Przeczytaj listę, zanim wykorzystasz ją w *artykule*. Być może warto doprecyzować któryś punkt albo położyć nacisk na inną myśl. Aby na podstawie dostarczonych materiałów utworzyć pełny szkic, zobacz [Zamień pomysły w szkic](turn-ideas-into-a-draft.md).

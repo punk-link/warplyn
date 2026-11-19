@@ -4,7 +4,7 @@ description: "Utilisez Vérifier les termes pour comparer la terminologie inform
 
 # Vérifier les termes techniques
 
-Utilisez **Vérifier les termes** pour examiner la terminologie d’un *article* informatique. La compétence recherche les notions confondues, les développements trompeurs de sigles, les noms incorrects de produits ou d’API et les noms incohérents pour une même notion. Elle compare les termes à des sources pertinentes pour le domaine et la version concernés, tout en tenant compte des définitions locales et de l’évolution de la terminologie.
+Utilisez **Vérifier les termes** pour examiner la terminologie d’un *article* informatique. La compétence recherche les notions confondues, les sigles dont la signification est mal expliquée, les noms incorrects de produits ou d’API et les noms incohérents pour une même notion. Elle compare les termes à des sources pertinentes pour le domaine et la version concernés, tout en tenant compte des définitions locales et de l’évolution de la terminologie.
 
 Ouvrez votre *article*. Sélectionnez un passage pour cibler la vérification. Dans l’assistant, ouvrez **Actions rapides**, choisissez **Vérifier les termes**, puis sélectionnez **Envoyer**. Ouvrez le résultat terminé dans **Vérification des faits** et examinez chaque *observation*, son explication, les sources liées et le degré d’incertitude.
 

@@ -12,4 +12,4 @@ Apri **Azioni rapide**, scegli **Sviluppa i punti chiave**, aggiungi eventuali i
 Seleziona la scena in cui Ana siede accanto al fiume e chiedi: «Proponi tre possibili interpretazioni del rapporto di Ana con il fiume, basandoti su questo passaggio».
 :::
 
-I punti restituiti potrebbero richiedere correzioni o un’enfasi diversa. Rivedili prima di usarli in un *articolo*. Per una bozza completa basata sul materiale fornito, consulta [Trasformare le idee in una bozza](turn-ideas-into-a-draft.md).
+Rileggi l’elenco prima di usarlo in un *articolo*. Potresti voler precisare un punto o dare più spazio a un’altra idea. Per una bozza completa basata sul materiale fornito, consulta [Trasformare le idee in una bozza](turn-ideas-into-a-draft.md).

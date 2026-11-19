@@ -8,7 +8,7 @@ Ustawienia aplikacji określają wygląd i działanie Warplyn. Nie należą do h
 
 ## Ustaw wygląd i język
 
-W sekcji **Ogólne** → **Wygląd i język** wybierz **Systemowy**, **Jasny** lub **Ciemny** dla opcji **Preferowany wygląd**. **Systemowy** korzysta z ustawień urządzenia i aktualizuje wygląd, gdy Warplyn jest otwarty. Wybierz **Język interfejsu** dla menu i komunikatów. Obecnie jedynym w pełni dostępnym językiem interfejsu jest angielski. Te ustawienia nie zmieniają języka pisania ani zasad typograficznych *artykułu*.
+W sekcji **Ogólne** → **Wygląd i język** wybierz **Systemowy**, **Jasny** lub **Ciemny** dla opcji **Preferowany wygląd**. Gdy wybierzesz **Systemowy**, Warplyn przejmie wygląd systemu. Zmiany w ustawieniach urządzenia będą widoczne także wtedy, gdy aplikacja jest otwarta. Wybierz **Język interfejsu** dla menu i komunikatów. Obecnie jedynym w pełni dostępnym językiem interfejsu jest angielski. Te ustawienia nie zmieniają języka pisania ani zasad typograficznych *artykułu*.
 
 W sekcji **Data i godzina** wybierz format daty, zegar 12- lub 24-godzinny oraz strefę czasową. Opcje systemowe korzystają z ustawień urządzenia. Zmieniają sposób wyświetlania zapisanych godzin w Warplyn, ale nie same zapisane wartości.
 
@@ -36,7 +36,7 @@ W sekcji **Skróty klawiaturowe** wybierz skrót obok działania, a następnie n
 
 ## Sprawdź aktualizacje aplikacji desktopowej
 
-Spakowane aplikacje desktopowe mogą sprawdzać nowe wersje w sekcji **Ustawienia** → **O Warplyn** → **Aktualizacje**. Najpierw zezwól na **Zezwól na dostęp do sieci w celu aktualizacji**. Dzięki temu Warplyn może kontaktować się z GitHubem, aby pobierać publiczne informacje o wydaniach i aktualizacje, które zdecydujesz się pobrać. Następnie wybierz **Automatycznie sprawdzaj aktualizacje** i zdecyduj, czy **Uwzględniaj wydania wstępne**. W dowolnym momencie wybierz **Sprawdź teraz**. Dostępna aktualizacja wyświetla informacje o wydaniu. Instalacje Windows i Linux AppImage udostępniają przyciski **Pobierz** oraz **Uruchom ponownie i zaktualizuj**. Instalacje Debian używają **Zobacz informacje o wydaniu**, a następnie aktualizacji za pomocą menedżera pakietów lub nowszego instalatora `.deb`. Jeśli po aktualizacji aplikacja nie uruchamia się, zobacz [Odzyskiwanie po aktualizacji aplikacji desktopowej](update-recovery.md).
+Spakowane aplikacje desktopowe mogą sprawdzać nowe wersje w sekcji **Ustawienia** → **O Warplyn** → **Aktualizacje**. Najpierw włącz **Zezwól na dostęp do sieci w celu aktualizacji**. Dzięki temu Warplyn może kontaktować się z GitHubem, aby pobierać publiczne informacje o wydaniach i aktualizacje, które zdecydujesz się pobrać. Następnie wybierz **Automatycznie sprawdzaj aktualizacje** i zdecyduj, czy **Uwzględniaj wydania wstępne**. W dowolnym momencie wybierz **Sprawdź teraz**. Jeśli jest dostępna aktualizacja, Warplyn wyświetli informacje o wydaniu. Instalacje Windows i Linux AppImage udostępniają przyciski **Pobierz** oraz **Uruchom ponownie i zaktualizuj**. Instalacje Debian używają **Zobacz informacje o wydaniu**, a następnie aktualizacji za pomocą menedżera pakietów lub nowszego instalatora `.deb`. Jeśli po aktualizacji aplikacja nie uruchamia się, zobacz [Odzyskiwanie po aktualizacji aplikacji desktopowej](update-recovery.md).
 
 ## Usuń dane lokalne
 

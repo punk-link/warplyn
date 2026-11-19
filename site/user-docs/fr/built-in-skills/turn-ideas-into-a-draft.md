@@ -4,7 +4,7 @@ description: "Utilisez Rédiger un brouillon pour transformer des notes ou un ar
 
 # Transformer vos idées en brouillon
 
-Utilisez **Rédiger un brouillon** lorsque vous avez des éléments de départ, mais souhaitez obtenir une première version cohérente. La compétence développe les idées fournies sous la forme d’un récit simple, sans en changer le sens ni ajouter d’affirmations non étayées.
+Si vous avez des notes ou des idées éparses, choisissez **Rédiger un brouillon**. L’assistant en tire un premier texte cohérent, en gardant le sens de vos idées et en évitant d’ajouter des affirmations sans fondement.
 
 Ouvrez **Actions rapides**, choisissez **Rédiger un brouillon**, indiquez l’orientation souhaitée, puis sélectionnez **Envoyer**. Si vous avez sélectionné un passage, la demande s’appuie sur celui-ci et sur les éléments que vous incluez explicitement dans votre message. Sans sélection, elle peut utiliser l’*article* actuel avec vos indications.
 

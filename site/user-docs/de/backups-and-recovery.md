@@ -1,5 +1,5 @@
 ---
-description: "Erstellen Sie automatische oder manuelle Warplyn-Sicherungen, stellen Sie Texte und Fähigkeiten wieder her und reagieren Sie sicher auf Probleme."
+description: "So sichern Sie Ihre Warplyn-Daten automatisch oder manuell und stellen Texte und Fähigkeiten wieder her."
 ---
 
 # Sicherungen und Wiederherstellung
@@ -17,7 +17,7 @@ Eine neue Sicherung mit der Endung `.skladno` enthält die Datenbank, aktuelle *
 :::
 
 ::: tip Einschränkungen von Browser-Sicherungen
-Bei Sicherungsübertragungen im Browser sind Dateien bis zu je 100 MB und insgesamt bis zu 500 MB möglich. Verwenden Sie für größere lokale Daten die Desktop-App.
+Bei Sicherungsübertragungen im Browser sind Dateien bis zu je 100 MB und insgesamt bis zu 500 MB möglich. Wenn Ihre Sicherung diese Grenzen überschreitet, verwenden Sie die Desktop-App.
 :::
 
 In der Desktop-App hat jeder Datenbank-Schnappschuss einen zugehörigen Ordner `.sqlite.skills` mit aktuellen *Fähigkeiten* des Authors, deren Verlauf von *Fähigkeitsversionen*, persönlichen Rechtschreibwörtern und einem Manifest. Bewahren Sie beim Kopieren oder Wiederherstellen eines Schnappschusses die `.sqlite`-Datei und den Ordner `.sqlite.skills` zusammen auf. Browser-Sicherungen enthalten keine persönlichen Rechtschreibwörter.
@@ -26,14 +26,14 @@ In der Desktop-App hat jeder Datenbank-Schnappschuss einen zugehörigen Ordner `
 
 ## Automatische Sicherungen
 
-Legen Sie **Automatische Sicherungen** auf **Täglich** fest, um kurz nach dem Start von Warplyn einen Schnappschuss und anschließend alle 24 Stunden zu erstellen, solange die App geöffnet bleibt. Im Browser benötigt Warplyn die Berechtigung für den gewählten Ordner. Schlägt eine automatische Sicherung fehl, prüfen Sie den Ordner und erstellen Sie manuell eine Sicherung; der nächste geplante Versuch bleibt aktiviert.
+Legen Sie **Automatische Sicherungen** auf **Täglich** fest, um kurz nach dem Start von Warplyn einen Schnappschuss und anschließend alle 24 Stunden zu erstellen, solange die App geöffnet bleibt. Im Browser benötigt Warplyn die Berechtigung für den gewählten Ordner. Schlägt eine automatische Sicherung fehl, prüfen Sie den Ordner und erstellen Sie eine Sicherung von Hand. Warplyn versucht es zum nächsten geplanten Zeitpunkt erneut.
 
-Unter **Aufbewahrung automatischer Sicherungen** legen Sie fest, wie viele automatische Schnappschüsse Warplyn behält. Entfernt werden nur ältere automatische Schnappschüsse; manuell erstellte Sicherungen bleiben immer erhalten.
+Unter **Aufbewahrung automatischer Sicherungen** legen Sie fest, wie viele automatische Schnappschüsse Warplyn behält. Wenn die eingestellte Anzahl erreicht ist, löscht Warplyn die ältesten automatischen Sicherungen. Manuell erstellte Sicherungen bleiben erhalten.
 
 ## Sicherung wiederherstellen
 
 1. Wählen Sie unter **Einstellungen** → **Daten und Sicherungen** die Option **Sicherung wiederherstellen**.
-2. Wählen Sie die gewünschte Sicherung aus. Warplyn prüft deren Dateien und speichert lokal eine Wiederherstellungskopie der aktuellen Datenbank und Dateien für *Fähigkeiten*.
+2. Wählen Sie die gewünschte Sicherung aus. Warplyn prüft die Dateien und sichert die aktuelle Datenbank und die Dateien Ihrer *Fähigkeiten* auf Ihrem Gerät. So können Sie bei Bedarf zum bisherigen Stand zurückkehren.
 3. Prüfen Sie nach Abschluss der Wiederherstellung Ihre *Artikel* und *Versionen*.
 
 Die Wiederherstellung einer `.skladno`-Sicherung oder eines Desktop-Schnappschusses mit zugehörigem Ordner ersetzt die Datenbank und gespeicherten *Fähigkeiten*. Eine ältere Sicherung, die nur eine `.sqlite`-Datenbank enthält, ersetzt ausschließlich die Datenbank.
@@ -46,10 +46,10 @@ Bei der Wiederherstellung bleiben die vorhandenen KI-Verbindungen, Anmeldedaten 
 
 ## Sicherung wiederherstellen, die nur eine Datenbank enthält
 
-Führen Sie diese Schritte nur für eine ältere Sicherung mit der Endung `.sqlite` aus. Lassen Sie Warplyn ausgeschaltet, bis die Datenbank wieder am richtigen Ort ist.
+Führen Sie diese Schritte nur für eine ältere Sicherung mit der Endung `.sqlite` aus. Beenden Sie Warplyn, bevor Sie die Datenbankdatei ersetzen.
 
 1. Erstellen Sie eine Kopie Ihrer aktuellen lokalen Datenbank.
-2. Kopieren Sie die Sicherung im konfigurierten Warplyn-Datenordner über `skladno.sqlite`.
+2. Ersetzen Sie die Datei `skladno.sqlite` im Warplyn-Datenordner durch die Sicherung.
 3. Starten Sie Warplyn und prüfen Sie Ihre *Artikel* und *Versionen*.
 
 Um eine Sicherung mit *Fähigkeiten* wiederherzustellen, verwenden Sie unter **Einstellungen** die Option **Sicherung wiederherstellen**. So kann Warplyn auch Manifest und Verlauf der *Fähigkeiten* prüfen und wiederherstellen.

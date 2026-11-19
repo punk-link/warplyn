@@ -4,7 +4,7 @@ description: "Usa Accorciare il testo per eliminare ripetizioni e riempitivi pre
 
 # Accorciare il testo
 
-Usa **Accorcia testo** quando vuoi una versione più breve di un testo esistente. Elimina ripetizioni, riempitivi e formulazioni prolisse preservando significato, prove, incertezza e voce.
+Usa **Accorcia testo** quando vuoi una versione più breve di un testo esistente. L’assistente toglie ripetizioni e parole superflue, e snellisce le frasi più lunghe. Conserva il significato, le prove, le riserve e la tua voce.
 
 Apri **Azioni rapide**, scegli **Accorcia testo** e seleziona **Invia richiesta editoriale**. Aggiungi indicazioni su cosa mantenere o su dove tagliare. Seleziona un passaggio per accorciare solo quel testo; altrimenti, l’assistente interviene sull’intero *articolo*.
 

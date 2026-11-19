@@ -1,5 +1,5 @@
 ---
-description: "Instala Warplyn en Windows o Linux mediante paquetes Debian o AppImage y configura el espacio de escritura."
+description: "Instala Warplyn en Windows o Linux y configura la aplicación. Para Linux puedes usar un paquete Debian o un archivo AppImage."
 ---
 
 # Instalar Warplyn
@@ -16,12 +16,12 @@ Warplyn está disponible para Windows 11 x64 y Linux. Descarga los instaladores 
 Consulta [Recuperación tras actualizar la aplicación de escritorio](update-recovery.md) para conocer los controles de actualización y las opciones de recuperación.
 
 ::: info Sobre las firmas digitales
-Una firma digital usa un certificado de firma de código para identificar al editor y mostrar si el instalador se ha modificado desde que se firmó. No garantiza que el software sea seguro. Warplyn aún no ha establecido la firma de editor, por lo que Windows no puede verificar quién lo publicó a partir del instalador. Descárgalo únicamente desde la página oficial de versiones.
+Una firma digital usa un certificado de firma de código para identificar al editor y mostrar si el instalador se ha modificado desde que se firmó. No garantiza que el software sea seguro. El instalador de Warplyn aún no lleva firma digital, así que Windows no puede comprobar quién lo publicó. Descárgalo únicamente desde la página oficial de versiones.
 :::
 
 ## Debian y distribuciones basadas en Debian
 
-Ubuntu 22.04 x64 es el objetivo Debian principal validado; no se garantiza la compatibilidad con otras versiones de distribuciones. Usa un sistema amd64 con una sesión de escritorio gráfica.
+El paquete Debian se ha probado principalmente en Ubuntu 22.04 x64. La compatibilidad con otras versiones o distribuciones puede variar. Usa un sistema amd64 con entorno gráfico.
 
 1. Abre [versiones de Warplyn](https://github.com/punk-link/warplyn/releases).
 2. En **Assets**, descarga el paquete `warplyn_VERSION_amd64.deb`.
@@ -33,7 +33,7 @@ Ubuntu 22.04 x64 es el objetivo Debian principal validado; no se garantiza la co
 
 4. Abre Warplyn desde el menú de aplicaciones.
 
-Para actualizar manualmente, descarga el `.deb` más reciente y ejecuta el mismo comando `sudo apt install` con ese archivo. La descarga no configura un repositorio automático de paquetes. Apt resuelve las dependencias declaradas; no fuerces la instalación si no se pueden satisfacer.
+Para actualizar manualmente, descarga el `.deb` más reciente y ejecuta el mismo comando `sudo apt install` con ese archivo. La descarga no añade un repositorio de paquetes. Apt instala las dependencias que necesita Warplyn. Si no puede instalarlas, no fuerces la instalación.
 
 De forma predeterminada, los datos de escritura se guardan en `~/.warplyn`. Haz una copia de seguridad antes de actualizar. Reinstalar o desinstalar la aplicación debería conservar esta carpeta y las credenciales del llavero del escritorio.
 
@@ -45,9 +45,9 @@ Si no se puede guardar o leer una clave, desbloquea el llavero del escritorio e 
 
 Si una versión incluye un archivo `.AppImage` x64, guárdalo en una carpeta en la que puedas escribir. Descárgalo desde [versiones de Warplyn](https://github.com/punk-link/warplyn/releases), márcalo como ejecutable en el gestor de archivos y ejecútalo. También puedes ejecutar `chmod +x Warplyn-*-linux-x64.AppImage` en la carpeta de descargas. Linux necesita compatibilidad con FUSE y acceso a `/dev/fuse`, las bibliotecas de escritorio de Electron y un llavero Secret Service para gestionar credenciales. AppImage no incluye una sesión de escritorio ni un llavero.
 
-En el objetivo Ubuntu 22.04, las dependencias de escritorio incluyen `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` y `xdg-utils`. GNOME Keyring proporciona Secret Service. Una instalación habitual de GNOME incluye la mayoría de estos paquetes. Otras distribuciones usan nombres de paquete distintos y requieren sus propias comprobaciones de compatibilidad.
+En Ubuntu 22.04, para ejecutar Warplyn se necesitan, entre otros, estos paquetes: `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` y `xdg-utils`. GNOME Keyring proporciona Secret Service. Una instalación habitual de GNOME incluye la mayoría de estos paquetes. Otras distribuciones usan nombres de paquete distintos y requieren sus propias comprobaciones de compatibilidad.
 
-La integración con el escritorio es opcional: crea un lanzador que apunte a la ruta completa de la imagen. Mantén la misma ruta al actualizar. La aceptación de AppImage para escritorio está pendiente. Ubuntu 22.04 x64 es el objetivo principal de validación; Ubuntu 24.04 x64 y Fedora 43 x64 son objetivos adicionales de compatibilidad. Esto no implica compatibilidad universal con Linux.
+La integración con el escritorio es opcional: crea un lanzador que apunte a la ruta completa de la imagen. Mantén la misma ruta al actualizar. Las pruebas de AppImage como aplicación de escritorio instalada aún no han terminado. Se centran en Ubuntu 22.04 x64 e incluyen pruebas de compatibilidad con Ubuntu 24.04 x64 y Fedora 43 x64. La compatibilidad con otras distribuciones no está confirmada.
 
 Consulta [Recuperación tras actualizar la aplicación de escritorio](update-recovery.md) para ver los pasos de descarga, reinicio y recuperación.
 

@@ -1,10 +1,10 @@
 ---
-description: "Twórz, porównuj i aktualizuj połączone artykuły tłumaczeń, zachowując możliwość odzyskania pracy w każdym języku."
+description: "Twórz, porównuj i aktualizuj tłumaczenia artykułów. Każdy tekst możesz odzyskać osobno."
 ---
 
 # Tłumaczenia
 
-*Tłumaczenie* to osobny, połączony *artykuł*. Ma własny tytuł, *szkic* i historię *zapisanych wersji*, więc praca w jednym języku nie nadpisuje źródła.
+Warplyn tworzy osobny *artykuł* dla każdego *tłumaczenia* i łączy go z oryginałem. Tłumaczenie ma własny tytuł, *szkic* i historię *zapisanych wersji*. Możesz je edytować bez zmieniania oryginału.
 
 ## Zleć tłumaczenie
 

@@ -4,9 +4,9 @@ description: "Révisez un article avec l’IA dans Warplyn : formulez une demand
 
 # Réviser un article avec l’IA et vérifier chaque modification
 
-Quand une scène raconte les bons événements, mais que son rythme semble irrégulier, l’assistant éditorial de Warplyn peut vous aider à la réviser. Travaillez sur un passage ou sur un *article* entier, comparez les formulations proposées et appliquez les modifications que vous souhaitez conserver.
+Si le déroulement d’une scène vous convient mais que son rythme vous gêne, demandez à l’assistant éditorial de vous aider à la retravailler. Travaillez sur un passage ou sur un *article* entier, comparez les formulations proposées et appliquez les modifications que vous souhaitez conserver.
 
-Warplyn est un espace d’écriture open source qui conserve vos données localement, pour Windows et Linux. Vos textes restent sur votre ordinateur. L’assistance par IA nécessite une connexion Internet, une connexion à un fournisseur pris en charge et votre clé API. Le texte et le contexte pertinents sont transmis à ce fournisseur, dont les tarifs et les règles de traitement des données s’appliquent.
+Warplyn est un espace d’écriture open source qui conserve vos données localement, pour Windows et Linux. Vos textes restent sur votre ordinateur. Pour utiliser l’IA, vous avez besoin d’une connexion Internet et d’une clé API auprès d’un fournisseur pris en charge. Warplyn lui transmet le texte et le contexte nécessaires à votre demande. Les tarifs et les règles de traitement des données du fournisseur s’appliquent.
 
 ## Commencez par une demande précise
 
@@ -14,7 +14,7 @@ Ouvrez votre *article* et sélectionnez le passage à réviser. Dans la zone de 
 
 > Améliore la fluidité tout en gardant le point de vue d’Ana et l’atmosphère calme. N’ajoute aucun événement.
 
-Sélectionnez **Envoyer**. Warplyn transmet la sélection avec jusqu’à 500 caractères de chaque côté, à titre de contexte en lecture seule. Seul le passage sélectionné peut être remplacé. Avant d’envoyer un texte sensible, vérifiez l’explication du contexte dans la zone de saisie. Pour en savoir plus, consultez [Assistant éditorial](editorial-assistant.md).
+Sélectionnez **Envoyer**. Warplyn transmet la sélection avec jusqu’à 500 caractères de chaque côté, à titre de contexte en lecture seule. Seul le passage sélectionné peut être remplacé. Avant d’envoyer du texte sensible, lisez l’avis dans la zone de saisie. Il précise ce qui sera transmis. Pour en savoir plus, consultez [Assistant éditorial](editorial-assistant.md).
 
 [![zone de saisie de Warplyn avec une demande de révision d’un texte de fiction.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
@@ -32,7 +32,7 @@ Choisissez **Accepter** ou **Rejeter** pour chaque modification. Vous pouvez mod
 
 ## Appliquez les modifications et conservez l’historique
 
-Sélectionnez **Appliquer** après avoir pris une décision pour chaque modification. Le texte accepté crée une nouvelle *version enregistrée*. Si vous rejetez toutes les modifications, l’*article* reste inchangé et aucune *version enregistrée* n’est créée. Les décisions seules ne modifient pas votre texte.
+Sélectionnez **Appliquer** après avoir pris une décision pour chaque modification. Warplyn conserve le texte avec les modifications acceptées dans une nouvelle *version enregistrée*. Si vous rejetez toutes les modifications, l’*article* reste inchangé et aucune *version enregistrée* n’est créée. Les décisions seules ne modifient pas votre texte.
 
 Ouvrez **Historique des versions enregistrées** pour consulter les versions enregistrées précédentes. La restauration d’une version en ajoute une nouvelle et conserve l’historique intermédiaire. Consultez [Relire des articles](reviewing-articles.md) pour connaître les options de récupération et les *propositions* obsolètes.
 

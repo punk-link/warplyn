@@ -16,4 +16,4 @@ Chiedi: «Confronta questo passaggio su Ana al fiume con il punto di vista ravvi
 Leggi la *proposta* e i *rilievi* che la supportano. Ogni *rilievo* dovrebbe rimandare a una caratteristica o a una regola del profilo. Prima di accettare le modifiche, decidi quali suggerimenti sono adatti all’*articolo*.
 :::
 
-La revisione dello stile richiede uno *Profilo di stile* disponibile e una connessione a un servizio di IA. Gli esempi di scrittura originali non vengono inviati: l’assistente usa il profilo sintetico elaborato localmente. La richiesta può inviare l’*articolo* o il passaggio selezionato al provider di IA configurato.
+Per la revisione servono un *Profilo di stile* e una connessione a un servizio di IA. Gli esempi di scrittura restano sul dispositivo. L’assistente usa il profilo sintetico che Warplyn ricava da quei testi. La richiesta può inviare l’*articolo* o il passaggio selezionato al provider di IA configurato.

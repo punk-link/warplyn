@@ -4,9 +4,9 @@ description: "Confira afirmações factuais, revise fontes e vereditos e decida 
 
 # Conferência de fatos
 
-Use **Verifique os fatos** para pesquisar afirmações verificáveis em um *artigo*, como detalhes históricos ou informações sobre um lugar. O assistente retorna *apontamentos* consultivos com explicações, fontes e incertezas. A conferência não altera seu texto.
+Use **Verifique os fatos** para verificar afirmações em um *artigo*, como detalhes históricos ou informações sobre um lugar. O assistente apresenta *apontamentos* com explicações, fontes e as dúvidas que ainda restam. A conferência não altera seu texto.
 
-A conferência de fatos precisa de uma [conexão e um modelo de IA](providers.md) que ofereçam suporte à verificação com fontes. Podem ser cobradas tarifas pelo provedor.
+A conferência de fatos precisa de uma [conexão e um modelo de IA](providers.md) que ofereçam suporte à verificação com fontes. O provedor pode cobrar pelo uso.
 
 ## Iniciar uma conferência
 
@@ -17,10 +17,10 @@ A conferência de fatos precisa de uma [conexão e um modelo de IA](providers.md
 5. Abra **Verificação de fatos** para examinar os resultados da *versão salva* que está sendo conferida.
 
 ::: tip Exemplo
-Em A correnteza ao entardecer, Ana diz que a lua cheia elevará o nível da água o bastante para cobrir o caminho. Confira essa afirmação em fontes relevantes para o rio e o cenário da história. Antes de mudar a cena, leia se as fontes falam daquele rio específico.
+Em A correnteza ao entardecer, Ana diz que a lua cheia elevará o nível da água o bastante para cobrir o caminho. Confira essa afirmação em fontes relevantes para o rio e o cenário da história. Antes de mudar a cena, confirme se as fontes tratam daquele rio específico.
 :::
 
-Você pode continuar escrevendo ou navegar para outro lugar enquanto a conferência é executada. Se ela não for concluída, somente os *apontamentos* já finalizados ficarão disponíveis. Solicite outra conferência para verificar as afirmações restantes.
+Você pode continuar escrevendo ou abrir outra tela enquanto o assistente faz a conferência. Se ela não for concluída, somente os *apontamentos* já finalizados ficarão disponíveis. Solicite outra conferência para verificar as afirmações restantes.
 
 ## Ler o veredito e as fontes
 
@@ -54,7 +54,7 @@ Para solicitar várias correções de uma vez, selecione afirmações **Disputad
 
 Os *apontamentos* pertencem à *versão salva* que foi conferida. Quando outra *versão salva* se torna a atual, os *apontamentos* anteriores continuam disponíveis para consulta, mas ficam desatualizados. Escolha **Execute a verificação de fatos novamente** antes de agir com base neles.
 
-Use **Histórico de checagem de fatos** para consultar conferências anteriores. As anteriores são somente para leitura; você pode agir na conferência mais recente da *versão salva* atual.
+Use **Histórico de checagem de fatos** para consultar conferências anteriores. As conferências anteriores ficam disponíveis para consulta. As ações só estão disponíveis na conferência mais recente da *versão salva* atual.
 
 Uma conferência posterior pode reutilizar evidências e decisões de aceitação quando reconhece um fato inalterado, mesmo que a afirmação tenha sido reformulada. Os resultados reutilizados mostram **Evidências reutilizadas da Versão salva** e mantêm a data da conferência anterior. Uma mudança no sentido factual pode exigir nova pesquisa.
 

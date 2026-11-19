@@ -4,7 +4,7 @@ description: "Contacta con Warplyn sobre tus datos personales y solicita la elim
 
 # Solicitar acceso o eliminación de tus datos
 
-Escribe a [kirill.taran@punk.link](mailto:kirill.taran@punk.link) para consultar los datos personales recibidos por el proyecto Warplyn, solicitar acceso o rectificación, o pedir su eliminación. Indica a qué datos o interacción se refiere tu solicitud. El responsable del proyecto responderá por correo electrónico y puede pedirte la información necesaria para localizar los datos o verificar la solicitud.
+Escribe a [kirill.taran@punk.link](mailto:kirill.taran@punk.link) para consultar los datos personales recibidos por el proyecto Warplyn, solicitar acceso o rectificación, o pedir su eliminación. Indica de qué datos se trata o cuándo tuviste contacto con el proyecto. El responsable del proyecto responderá por correo electrónico y puede pedirte la información necesaria para localizar los datos o verificar la solicitud.
 
 No incluyas contenido de *artículos*, claves API, contraseñas ni documentos de identidad en el primer correo.
 
@@ -16,15 +16,15 @@ Si activaste el envío de datos de diagnóstico y uso:
 2. Envía el identificador a la dirección anterior y describe tu solicitud.
 3. Para detener la recopilación futura, desactiva **Compartir datos de diagnóstico y uso**.
 
-Copia el identificador antes de desactivar el envío, porque al hacerlo se borra de tu dispositivo. Desactivar el envío no puede retirar los eventos ya enviados. Si solicitas su eliminación, el responsable del proyecto borra el registro seudónimo correspondiente y te lo confirma por correo electrónico.
+Copia el identificador antes de desactivar el envío, porque al hacerlo se borra de tu dispositivo. Los eventos que ya se enviaron no se borran al desactivar el envío. Si solicitas su eliminación, el responsable del proyecto borra el registro seudónimo correspondiente y te lo confirma por correo electrónico.
 
-Consulta [datos de diagnóstico y uso](telemetry.md) para ver los campos recopilados y los controles para compartirlos.
+Consulta [datos de diagnóstico y uso](telemetry.md) para saber qué datos recopila Warplyn y cómo activar o desactivar el envío.
 
 ## Tus textos y los proveedores de IA
 
 Tus *artículos* y su historial se guardan localmente. Una solicitud al responsable del proyecto no elimina los archivos ni los datos de la aplicación de tu ordenador. Guarda una copia de seguridad de los textos que quieras conservar antes de eliminar datos locales.
 
-Cuando usas funciones de IA, el texto y el contexto pertinentes se envían al proveedor que elegiste. Para solicitar información sobre los datos que conserva ese proveedor, debes contactar con él por separado.
+Cuando usas funciones de IA, Warplyn envía al proveedor que elegiste el texto y el contexto necesarios para atender la solicitud. Para solicitar información sobre los datos que conserva ese proveedor, debes contactar con él por separado.
 
 ## Analítica del sitio web
 

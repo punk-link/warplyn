@@ -4,7 +4,7 @@ description: "Scegli un'abilità integrata per scrivere bozze, revisionare, veri
 
 # Abilità integrate
 
-Le *abilità* integrate aiutano l'assistente editoriale a svolgere le attività di scrittura più comuni. Scegli un'abilità editoriale da **Azioni rapide** oppure descrivi la richiesta e lascia che l'assistente individui un'abilità adatta. Puoi inviare direttamente il chip dell’abilità selezionata; aggiungi un messaggio solo se hai altro contesto o un vincolo da specificare. Seleziona **Invia richiesta editoriale** per iniziare. Per creare o gestire un'abilità riutilizzabile, chiedilo direttamente all'assistente: **Creatore di abilità** non è un'azione rapida nel campo di composizione.
+Le *abilità* integrate aiutano l'assistente editoriale a svolgere le attività di scrittura più comuni. Scegli un'abilità editoriale da **Azioni rapide** oppure descrivi la richiesta e lascia che l'assistente individui un'abilità adatta. Una volta scelta l’*abilità*, puoi inviarla direttamente. Aggiungi un messaggio solo se vuoi dare ulteriori informazioni o indicare un vincolo. Seleziona **Invia richiesta editoriale** per iniziare. Per creare o gestire un'abilità riutilizzabile, chiedilo direttamente all'assistente: **Creatore di abilità** non è un'azione rapida nel campo di composizione.
 
 Ogni pagina spiega a cosa serve l'abilità e cosa controllare nel risultato. L'assistente prepara contenuti da esaminare; consulta [Assistente editoriale](../editorial-assistant.md) e [Revisione degli articoli](../reviewing-articles.md) per capire come lavorare con i risultati.
 

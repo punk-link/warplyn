@@ -12,4 +12,4 @@ Open **Quick actions**, choose **Shorten text**, and select **Send editorial req
 Ask, "Suggest a tighter version of the sentence about the river threading through the willows. Keep the silver image and quiet mood."
 :::
 
-The result must be shorter than its source. If safe shortening is not possible, the Assistant returns the source unchanged. Review the *Proposal* before applying it; names, claims, links, code, quotations, and technical terms should remain accurate. For clarity edits without a shortening request, use [Improve flow and clarity](improve-flow-and-clarity.md).
+The result must be shorter than its source. If the Assistant cannot shorten the text without losing important details, it returns the original. Review the *Proposal* before applying it; names, claims, links, code, quotations, and technical terms should remain accurate. For clarity edits without a shortening request, use [Improve flow and clarity](improve-flow-and-clarity.md).

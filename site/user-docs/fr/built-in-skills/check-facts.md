@@ -9,7 +9,7 @@ Utilisez **Vérifier les faits** pour vérifier les affirmations factuelles d’
 Ouvrez **Actions rapides**, choisissez **Vérifier les faits**, examinez les affirmations sélectionnées par l’assistant et désélectionnez celles que vous ne souhaitez pas vérifier. Sélectionnez ensuite **Envoyer**. Vous pouvez choisir un passage pour cibler la vérification. Les résultats sont liés à la *version enregistrée* vérifiée.
 
 ::: tip Exemple
-Dans un chapitre situé près de la rivière, Ana affirme que la pleine lune fera assez monter l’eau pour recouvrir le sentier. Demandez à **Vérifier les faits** de vérifier ce détail à l’aide de sources adaptées au cadre de l’histoire.
+Dans un chapitre situé près de la rivière, Ana affirme que la pleine lune fera assez monter l’eau pour recouvrir le sentier. Choisissez **Vérifier les faits** et demandez à l’assistant de chercher des sources sur le lieu où se déroule l’histoire.
 :::
 
 ::: tip Examiner les éléments

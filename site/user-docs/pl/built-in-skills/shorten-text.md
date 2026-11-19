@@ -4,7 +4,7 @@ description: "Użyj Skróć tekst, aby usunąć powtórzenia i wypełniacze, zac
 
 # Skróć tekst
 
-Użyj **Skróć tekst**, jeśli chcesz skrócić istniejący tekst. Funkcja usuwa powtórzenia, wypełniacze i rozwlekłe sformułowania, zachowując znaczenie, dowody, niepewność i styl.
+Użyj **Skróć tekst**, jeśli chcesz skrócić istniejący tekst. Asystent usuwa powtórzenia i zbędne słowa oraz skraca rozwlekłe sformułowania. Zachowuje sens tekstu, przytoczone dowody, zastrzeżenia i Twój styl.
 
 Otwórz **Szybkie działania**, wybierz **Skróć tekst**, a następnie **Wyślij żądanie redakcyjne**. Dodaj wskazówki dotyczące tego, co zachować lub gdzie skrócić tekst. Zaznacz fragment, aby skrócić tylko jego treść; bez zaznaczenia asystent pracuje nad całym *artykułem*.
 

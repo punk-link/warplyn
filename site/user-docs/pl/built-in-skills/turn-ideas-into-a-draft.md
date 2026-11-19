@@ -4,7 +4,7 @@ description: "Użyj Zmień pomysły w szkic, aby rozwinąć dostarczone notatki 
 
 # Zamień pomysły w szkic
 
-Użyj **Zmień pomysły w szkic**, gdy masz materiały źródłowe, ale potrzebujesz spójnej pierwszej wersji. Funkcja rozwija dostarczone pomysły w prostą narrację, zachowując ich znaczenie i unikając twierdzeń bez pokrycia.
+Użyj **Zmień pomysły w szkic**, gdy masz materiały źródłowe, ale potrzebujesz spójnej pierwszej wersji. Asystent układa z Twoich pomysłów spójny tekst. Zachowuje ich sens i unika dodawania twierdzeń bez pokrycia.
 
 Otwórz **Szybkie działania**, wybierz **Zmień pomysły w szkic**, opisz oczekiwany kierunek, a następnie wybierz **Wyślij żądanie redakcyjne**. Jeśli zaznaczysz fragment, zlecenie wykorzysta go oraz materiały wyraźnie dołączone w wiadomości. Bez zaznaczenia może użyć bieżącego *artykułu* wraz z Twoimi wskazówkami.
 

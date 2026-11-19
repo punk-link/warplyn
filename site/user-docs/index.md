@@ -5,7 +5,7 @@ description: "Install Warplyn, use the Editorial Assistant, configure AI provide
 
 # Warplyn user guide
 
-Warplyn gives you a local-first workspace for developing and refining *Articles*, from early drafts through review and revision. Use this guide to install the app, build writing workflows, configure settings, and look up reference material.
+Warplyn gives you a local-first workspace for developing and refining *Articles*, from early drafts through review and revision. Use this guide to install the app, learn how to write and review Articles, and find the settings you need.
 
 ## Installation
 

@@ -8,7 +8,7 @@ description: "Crea copie di sicurezza automatiche o manuali di Warplyn, ripristi
 
 In **Impostazioni** → **Dati e backup**, scegli una **Cartella dei backup**, quindi seleziona **Crea backup**. Nei browser supportati, Warplyn chiede il permesso di scrivere le copie di sicurezza solo in quella cartella.
 
-[![Impostazioni Data and backups con la cartella per le copie di sicurezza, i comandi Crea backup e Ripristina un backup e le opzioni di copia automatica.](/images/backups-and-recovery.png)](/images/backups-and-recovery.png)
+[![Impostazioni Dati e backup con la cartella per le copie di sicurezza, i comandi Crea backup e Ripristina un backup e le opzioni di copia automatica.](/images/backups-and-recovery.png)](/images/backups-and-recovery.png)
 
 *Impostazioni Dati e backup nell’app desktop.*
 
@@ -17,7 +17,7 @@ Una nuova copia `.skladno` include il database, le *abilità* attuali create dal
 :::
 
 ::: tip Limiti delle copie dal browser
-Il trasferimento di copie di sicurezza dal browser supporta file fino a 100 MB ciascuno e 500 MB in totale. Per dati locali più grandi, usa l’app desktop.
+Il trasferimento di copie di sicurezza dal browser supporta file fino a 100 MB ciascuno e 500 MB in totale. Se la copia supera questi limiti, usa l’app desktop.
 :::
 
 Nell’app desktop, ogni snapshot del database ha una cartella `.sqlite.skills` associata, che contiene le *abilità* attuali create dall’autore, la relativa cronologia delle versioni, le parole personali per il controllo ortografico e un manifest. Quando copi o ripristini uno snapshot, tieni insieme il file `.sqlite` e la cartella `.sqlite.skills`. Le copie dal browser non includono le parole personali per il controllo ortografico.
@@ -26,14 +26,14 @@ Le copie `.sqlite` meno recenti contengono solo il database. Ripristinandone una
 
 ## Copie di sicurezza automatiche
 
-Imposta **Backup automatici** su **Ogni giorno** per creare uno snapshot poco dopo l’avvio di Warplyn e poi ogni 24 ore finché resta aperto. Nel browser, Warplyn deve avere il permesso di usare la cartella scelta. Se una copia automatica non riesce, controlla la cartella e creane una manuale; il tentativo pianificato successivo resta attivo.
+Imposta **Backup automatici** su **Ogni giorno** per creare uno snapshot poco dopo l’avvio di Warplyn e poi ogni 24 ore finché resta aperto. Nel browser, Warplyn deve avere il permesso di usare la cartella scelta. Se una copia automatica non riesce, controlla la cartella e creane una manuale. Warplyn riproverà all’orario previsto.
 
 **Conservazione dei backup automatici** determina quanti snapshot automatici Warplyn conserva. Rimuove solo gli snapshot automatici meno recenti; le copie create manualmente vengono sempre mantenute.
 
 ## Ripristinare una copia di sicurezza
 
 1. In **Impostazioni** → **Dati e backup**, seleziona **Ripristina un backup**.
-2. Scegli la copia da ripristinare. Warplyn ne controlla i file e conserva una copia di recupero locale del database e dei file delle *abilità* attuali.
+2. Scegli la copia da ripristinare. Warplyn controlla i file del backup e salva sul dispositivo una copia del database e dei file delle *abilità* attuali. Così puoi tornare allo stato precedente, se necessario.
 3. Al termine del ripristino, controlla i tuoi *articoli* e le relative *versioni salvate*.
 
 Il ripristino di una copia `.skladno` o di uno snapshot desktop con la relativa cartella associata sostituisce il database e le *abilità* salvate. Il ripristino di una vecchia copia `.sqlite` che contiene solo il database sostituisce solo il database.
@@ -49,7 +49,7 @@ Il ripristino mantiene le connessioni di IA, le credenziali e le selezioni dei m
 Segui questi passaggi solo per una copia `.sqlite` legacy. Non riavviare Warplyn finché il database non è stato ripristinato.
 
 1. Crea una copia del database locale attuale.
-2. Copia la copia di sicurezza sopra `skladno.sqlite` nella cartella dati configurata per Warplyn.
+2. Nella cartella dati di Warplyn, sostituisci il file `skladno.sqlite` con la copia di sicurezza.
 3. Avvia Warplyn e controlla i tuoi *articoli* e le relative *versioni salvate*.
 
 Per ripristinare una copia che include *abilità*, usa **Ripristina un backup** in **Impostazioni**, così Warplyn può verificare e ripristinare anche il relativo manifest e la cronologia delle versioni.

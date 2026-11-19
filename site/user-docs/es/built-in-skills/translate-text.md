@@ -4,7 +4,7 @@ description: "Usa Traducir texto para preparar una traducción completa de un ar
 
 # Traducir texto
 
-Usa **Traducir texto** para preparar la traducción completa de un *artículo* al idioma que elijas. Traduce el título y el cuerpo, y conserva las afirmaciones, cifras, voz y formato Markdown. Esta *habilidad* usa el *artículo* entero, aunque hayas seleccionado un pasaje.
+Usa **Traducir texto** para preparar la traducción completa de un *artículo* al idioma que elijas. El asistente traduce el título y el texto, y conserva las afirmaciones, las cifras, tu voz y el formato Markdown. Aunque selecciones un pasaje, traducirá el *artículo* entero.
 
 Abre la vista **Traducciones** del *artículo* y elige **Nueva traducción…**. Selecciona el idioma de destino y confirma la solicitud. Si el original tiene cambios sin guardar, guárdalos primero como *versión guardada* para que el resultado corresponda al texto que quieres traducir.
 

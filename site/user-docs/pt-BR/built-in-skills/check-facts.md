@@ -9,7 +9,7 @@ Use **Verifique os fatos** quando quiser verificar afirmações factuais em um *
 Abra **Ações rápidas**, escolha **Verifique os fatos**, revise as afirmações selecionadas pelo assistente e desmarque as que não deseja conferir. Depois, selecione **Enviar solicitação editorial**. Você pode selecionar uma passagem para direcionar a conferência. Os resultados ficam vinculados à *versão salva* que está sendo verificada.
 
 ::: tip Exemplo
-Em um capítulo ambientado perto de um rio, Ana diz que a lua cheia elevará o nível da água o bastante para cobrir o caminho. Peça a **Verifique os fatos** que confira esse detalhe em fontes relevantes para o cenário da história.
+Em um capítulo ambientado perto de um rio, Ana diz que a lua cheia elevará o nível da água o bastante para cobrir o caminho. Escolha **Verifique os fatos** e peça ao assistente que procure fontes sobre o lugar onde a história se passa.
 :::
 
 ::: tip Avalie as evidências

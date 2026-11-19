@@ -4,7 +4,7 @@ description: "Sprawdzaj twierdzenia faktyczne, analizuj źródła i werdykty ora
 
 # Weryfikacja faktów
 
-Użyj **Sprawdź fakty**, aby sprawdzić weryfikowalne twierdzenia w *artykule*, na przykład szczegóły historyczne lub informacje o danym miejscu. Asystent zwraca doradcze *uwagi* z wyjaśnieniami, źródłami i informacją o niepewności. Sprawdzenie nie zmienia tekstu.
+Użyj **Sprawdź fakty**, aby sprawdzić weryfikowalne twierdzenia w *artykule*, na przykład szczegóły historyczne lub informacje o danym miejscu. Asystent opisuje wyniki w *uwagach*. Podaje źródła, wyjaśnia wnioski i wskazuje, czego nie udało się ustalić. Sprawdzenie nie zmienia tekstu.
 
 Weryfikacja faktów wymaga [połączenia AI i modelu](providers.md) obsługujących sprawdzanie faktów ze źródłami. Dostawca może naliczyć opłatę.
 
@@ -20,7 +20,7 @@ Weryfikacja faktów wymaga [połączenia AI i modelu](providers.md) obsługując
 W The River at Dusk Ana mówi, że pełnia podniesie poziom wody na tyle, by zakryć ścieżkę. Sprawdź to twierdzenie w źródłach dotyczących rzeki i miejsca, w którym rozgrywa się historia. Zanim zmienisz scenę, sprawdź, czy źródła opisują właśnie tę rzekę.
 :::
 
-Podczas sprawdzania możesz dalej pisać lub przejść w inne miejsce. Jeśli sprawdzanie nie zostanie ukończone, dostępne będą tylko ukończone *uwagi*. Zleć ponowne sprawdzenie niedokończonych twierdzeń.
+Podczas sprawdzania możesz dalej pisać lub przełączyć się na inny widok. Jeśli sprawdzanie zostanie przerwane, możesz przeczytać *uwagi*, które już powstały. Zleć sprawdzenie pozostałych twierdzeń.
 
 ## Przeczytaj werdykt i źródła
 
@@ -46,7 +46,7 @@ Dla nierozstrzygniętej *uwagi* z najnowszego sprawdzenia bieżącej *zapisanej 
 
 Oba działania akceptacji oznaczają *uwagę* jako rozstrzygniętą, usuwają przyciski decyzji i sprawiają, że przestaje ona wymagać uwagi w bibliotece artykułów. Żadne z nich nie zmienia *artykułu* ani werdyktu. Zapisują różne powody decyzji, ale poza tym tak samo wpływają na proces przeglądu.
 
-Na przykład **Disputed · Dowody zaakceptowane** oznacza, że sprawdzenie podważyło twierdzenie, a Ty zaakceptowałeś przedstawione dowody. **Nie oznacza**, że twierdzenie zostało poprawione lub jest teraz potwierdzone. Jeśli tekst wymaga zmiany, popraw *artykuł* albo poproś o korektę przed rozstrzygnięciem *uwagi*.
+Na przykład **Zakwestionowane · Dowody zaakceptowane** oznacza, że sprawdzenie podważyło twierdzenie, a Ty zaakceptowałeś przedstawione dowody. **Nie oznacza**, że twierdzenie zostało poprawione lub jest teraz potwierdzone. Jeśli tekst wymaga zmiany, popraw *artykuł* albo poproś o korektę przed rozstrzygnięciem *uwagi*.
 
 Aby poprosić o kilka poprawek naraz, zaznacz nierozstrzygnięte twierdzenia **Zakwestionowane** lub **Nieweryfikowalne** i wybierz **Zaproponuj poprawki**. W widoku [Przegląd propozycji](reviewing-articles.md#review-a-proposal) sprawdź proponowane brzmienie i zastosuj zaakceptowane zmiany. Zastosowanie zaakceptowanego tekstu tworzy nową *zapisaną wersję*.
 
@@ -56,6 +56,6 @@ Aby poprosić o kilka poprawek naraz, zaznacz nierozstrzygnięte twierdzenia **Z
 
 Użyj **Historia weryfikacji faktów**, aby przejrzeć wcześniejsze sprawdzenia. Są one tylko do odczytu; możesz podejmować działania wyłącznie na podstawie najnowszego sprawdzenia bieżącej *zapisanej wersji*.
 
-Późniejsze sprawdzenie może ponownie wykorzystać dowody i decyzje o akceptacji, jeśli rozpozna niezmieniony fakt, również w przypadku zmienionego sformułowania twierdzenia. Przy ponownie użytych wynikach pojawi się **Dowody użyte ponownie z wersji**, a wcześniejsza data sprawdzenia zostanie zachowana. Zmiana znaczenia faktu może wymagać nowego wyszukiwania.
+Późniejsze sprawdzenie może ponownie wykorzystać dowody i decyzje o akceptacji, jeśli rozpozna niezmieniony fakt, również w przypadku zmienionego sformułowania twierdzenia. Przy ponownie użytych wynikach pojawi się **Dowody użyte ponownie z wersji**, a wcześniejsza data sprawdzenia zostanie zachowana. Jeśli po zmianie sformułowania zdanie stwierdza coś innego, może być konieczne ponowne wyszukanie źródeł.
 
 Ponowne sprawdzenie nie gwarantuje nowego wyszukiwania dla każdego niezmienionego twierdzenia. W przypadku informacji zależnych od czasu sprawdź źródła i daty, a następnie poproś asystenta o weryfikację twierdzenia na podstawie aktualnych źródeł.

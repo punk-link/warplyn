@@ -17,7 +17,7 @@ A new `.skladno` backup includes the database, current Author *Skills*, their *S
 :::
 
 ::: tip Browser backup limits
-Browser backup transfers support files up to 100 MB each and 500 MB total. Use the desktop app for larger local data.
+In a browser, each file can be up to 100 MB, and all files together can be up to 500 MB. Use the desktop app for larger backups.
 :::
 
 In the desktop app, each database snapshot has a neighboring `.sqlite.skills` folder with current Author *Skills*, their *Skill Revision* history, your personal spelling words, and a manifest. Keep the `.sqlite` file and `.sqlite.skills` folder together when copying or restoring a snapshot. Browser backups do not include personal spelling words.
@@ -26,7 +26,7 @@ Older `.sqlite` backups contain only the database. Restoring one keeps your curr
 
 ## Automatic backups
 
-Set **Automatic backups** to **Daily** to create a snapshot shortly after Warplyn starts, then every 24 hours while it stays open. In a browser, Warplyn needs permission to use the chosen folder. If an automatic backup fails, check the folder and create a manual backup; the next scheduled attempt remains enabled.
+Set **Automatic backups** to **Daily** to create a snapshot shortly after Warplyn starts, then every 24 hours while it stays open. In a browser, Warplyn needs permission to use the chosen folder. If an automatic backup fails, check the folder and create a manual backup. Warplyn will still attempt the next scheduled backup.
 
 **Automatic backup retention** controls how many automatic snapshots Warplyn keeps. It removes only older automatic snapshots; backups you created manually are always kept.
 
@@ -62,4 +62,4 @@ Warplyn leaves your active database and editing session unchanged. Check that th
 
 By default, the local service stores its database in `~/.warplyn`. Set `WARPLYN_DATA_DIR` to choose another folder. Warplyn ignores `SKLADNO_DATA_DIR` and will not use a folder that overlaps Skladno's old data location. If you are moving from Skladno, choose a separate Warplyn folder and restore a backup.
 
-On POSIX systems, Warplyn limits access to the data folder and SQLite files to your account, including after an upgrade. Windows uses filesystem permissions managed by Windows. Browser-created backup files use the permissions of the folder you choose, so keep backups in a private folder and check sharing settings before using a shared or synced location.
+On POSIX systems, Warplyn limits access to the data folder and SQLite files to your account, including after an upgrade. On Windows, the operating system manages access through filesystem permissions. Browser-created backup files use the permissions of the folder you choose, so keep backups in a private folder and check sharing settings before using a shared or synced location.

@@ -4,9 +4,9 @@ description: "Popraw artykuł w Warplyn z pomocą AI: ukierunkuj zlecenie, poró
 
 # Popraw artykuł z pomocą AI i sprawdź każdą zmianę
 
-Gdy w scenie wydarzenia są odpowiednie, ale tempo narracji wydaje się nierówne, asystent redakcyjny Warplyn może pomóc ją poprawić. Pracuj nad fragmentem lub całym *artykułem*, porównaj proponowane brzmienie i zastosuj wybrane zmiany.
+Jeśli przebieg sceny Ci odpowiada, ale tempo narracji sprawia wrażenie nierównego, poproś asystenta redakcyjnego o pomoc w poprawkach. Pracuj nad fragmentem lub całym *artykułem*, porównaj proponowane brzmienie i zastosuj wybrane zmiany.
 
-Warplyn to lokalne środowisko do pisania na Windows i Linux, rozwijane jako open source. Twoje teksty pozostają na komputerze. Pomoc AI wymaga połączenia z internetem, obsługiwanego dostawcy i klucza API. Odpowiedni tekst i kontekst są wysyłane do tego dostawcy, którego cennik i zasady ochrony danych mają zastosowanie.
+Warplyn to lokalne środowisko do pisania na Windows i Linux, rozwijane jako open source. Twoje teksty pozostają na komputerze. Pomoc AI wymaga połączenia z internetem, obsługiwanego dostawcy i klucza API. Warplyn przekazuje dostawcy tekst i kontekst potrzebne do wykonania zlecenia. Obowiązują cennik i zasady ochrony danych dostawcy.
 
 ## Zacznij od ukierunkowanego zlecenia
 
@@ -14,7 +14,7 @@ Otwórz *artykuł* i zaznacz fragment, który chcesz poprawić. W polu wpisywani
 
 > Popraw płynność, zachowując punkt widzenia Any i spokojny nastrój. Nie dodawaj nowych wydarzeń.
 
-Wybierz **Wyślij żądanie redakcyjne**. Warplyn wysyła zaznaczenie oraz do 500 znaków z każdej jego strony jako kontekst tylko do odczytu. Zastąpiony może być wyłącznie zaznaczony fragment. Przed wysłaniem wrażliwego tekstu sprawdź wyjaśnienie kontekstu w polu wpisywania. Więcej informacji znajdziesz w sekcji [Asystent redakcyjny](editorial-assistant.md).
+Wybierz **Wyślij żądanie redakcyjne**. Warplyn wysyła zaznaczenie oraz do 500 znaków z każdej jego strony jako kontekst tylko do odczytu. Zastąpiony może być wyłącznie zaznaczony fragment. Jeśli tekst zawiera poufne informacje, przed wysłaniem przeczytaj komunikat w polu wpisywania. Dowiesz się z niego, jaki tekst zostanie przesłany. Więcej informacji znajdziesz w sekcji [Asystent redakcyjny](editorial-assistant.md).
 
 [![Pole wpisywania w Warplyn z prośbą o poprawę opowiadania.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 

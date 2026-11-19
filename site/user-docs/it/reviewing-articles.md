@@ -4,7 +4,7 @@ description: "Esamina le modifiche proposte, consulta la cronologia degli artico
 
 # Rivedere gli articoli
 
-L’Assistente editoriale può suggerire modifiche, ma sei tu a decidere cosa entra in un *articolo*. **Revisione della proposta** ti permette di esaminare le modifiche prima che diventino una *versione salvata*.
+L’Assistente editoriale può suggerire modifiche, ma sei tu a decidere cosa entra in un *articolo*. In **Revisione della proposta** puoi confrontare le modifiche con l’originale e scegliere quali includere in una nuova *versione salvata*.
 
 [![Revisione della proposta mostra tre modifiche in sospeso, i testi Originale e Proposto, le decisioni individuali e il comando Applica.](/images/proposal-review.png)](/images/proposal-review.png)
 
@@ -12,7 +12,7 @@ L’Assistente editoriale può suggerire modifiche, ma sei tu a decidere cosa en
 
 ## Esaminare una proposta {#review-a-proposal}
 
-Apri **Revisione della proposta** dalla scheda dei risultati dell’assistente o dalla barra delle schede dell'area di lavoro. Leggi le modifiche e gli eventuali avvisi sugli elementi da conservare. Passa dalla visualizzazione affiancata a quella sovrapposta, se una è più facile da leggere, e attiva **Evidenzia modifiche** per evidenziare in entrambe le versioni le formulazioni modificate. Prima di accettarle, controlla nomi, numeri, affermazioni, link e voce del testo modificato.
+Apri **Revisione della proposta** dalla scheda dei risultati dell’assistente o dalla barra delle schede dell'area di lavoro. Leggi le modifiche e gli eventuali avvisi sugli elementi da conservare. Passa dalla visualizzazione affiancata a quella sovrapposta, se una è più facile da leggere, e attiva **Evidenzia modifiche** per vedere subito dove i due testi differiscono. Prima di accettarle, controlla nomi, numeri, affermazioni, link e voce del testo modificato.
 
 Scegli **Accetta** o **Rifiuta** per ogni modifica. Per impostare tutte le decisioni insieme, scegli **Segna tutto come accettato** o **Segna tutto come rifiutato** da **Decisioni…**. Poi seleziona **Applica** per completare la revisione. Il testo accettato crea una nuova *versione salvata*. Se rifiuti tutti i suggerimenti, Applica chiude la revisione senza modificare l’*articolo* né creare una *versione salvata*. **Reimposta decisioni** riporta ogni suggerimento allo stato In attesa e conserva le modifiche apportate al testo proposto. Le decisioni da sole non modificano l’*articolo*. **Scarta proposta** chiude la revisione senza applicare il testo. Se una *proposta* non può essere suddivisa in sicurezza, un avviso richiede di esaminarla per intero.
 
@@ -30,11 +30,11 @@ Scegli **Ripristina questa versione** per rendere attuale una versione precedent
 
 ## Recuperare una bozza {#recover-a-draft}
 
-Un checkpoint è il testo recuperabile salvato mentre scrivi. Se il testo locale nell’editor è in conflitto con un checkpoint salvato o con la *versione salvata* attuale, Warplyn mostra il testo locale conservato accanto alle opzioni salvate. Confrontale e scegli **Conserva la mia bozza**, **Usa l'ultima bozza** oppure **Usa l'ultima versione salvata**. Un’opzione salvata può sostituire il testo locale, quindi Warplyn chiede prima una conferma.
+Mentre scrivi, Warplyn salva un checkpoint da cui puoi recuperare la *bozza*. Se il testo locale nell’editor è in conflitto con un checkpoint salvato o con la *versione salvata* attuale, Warplyn mostra il testo dell’editor accanto alle versioni che puoi recuperare. Confrontale e scegli **Conserva la mia bozza**, **Usa l'ultima bozza** oppure **Usa l'ultima versione salvata**. Un’opzione salvata può sostituire il testo locale, quindi Warplyn chiede prima una conferma.
 
 ## Scegliere come applicare le modifiche dell’assistente
 
-Per impostazione predefinita, le nuove conversazioni usano **Proponi modifiche da rivedere**. Nel campo di composizione puoi scegliere **Applica modifiche direttamente** per applicare una modifica richiesta esplicitamente senza creare una *proposta*. Una modifica diretta riuscita appare come nuova *versione salvata*. Se hai selezionato del testo, la modifica resta limitata alla selezione. Le modifiche dirette vengono bloccate quando una *bozza* o una *versione salvata* modificata potrebbe rendere rischiosa la sostituzione. Risolvi il lavoro attuale e invia di nuovo la richiesta. Gli altri risultati generati richiedono comunque una revisione.
+Per impostazione predefinita, le nuove conversazioni usano **Proponi modifiche da rivedere**. Nel campo di composizione puoi scegliere **Applica modifiche direttamente** per applicare una modifica richiesta esplicitamente senza creare una *proposta*. Una modifica diretta riuscita appare come nuova *versione salvata*. Se hai selezionato del testo, la modifica resta limitata alla selezione. Le modifiche dirette vengono bloccate quando una *bozza* o una *versione salvata* modificata potrebbe rendere rischiosa la sostituzione. Salva o scarta le modifiche in sospeso, secondo il caso, poi invia di nuovo la richiesta. Gli altri risultati generati richiedono comunque una revisione.
 
 Scegli **Modifica da qui** su uno dei tuoi messaggi precedenti per continuare la conversazione da quel punto. Prima di confermare **Ripristina conversazione**, Warplyn elenca il lavoro successivo che verrà rifiutato, ad esempio *proposte*, *rilievi* o risultati di traduzione. Indica anche se l’*articolo* tornerà a una *versione salvata* precedente o se il testo non inviato nel campo di composizione sarà sostituito. Se una *bozza* richiede attenzione, scegli **Salva e ripristina** o **Scarta e ripristina**. Le *versioni salvate* attuali e successive restano nella cronologia delle versioni. Questa operazione non ripristina né modifica un’*abilità*.
 

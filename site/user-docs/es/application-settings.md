@@ -8,13 +8,13 @@ La configuración de la aplicación controla el aspecto y el comportamiento de W
 
 ## Configurar el aspecto y el idioma
 
-En **General** → **Aspecto e idioma**, elige **Sistema**, **Claro** u **Oscuro** en **Aspecto preferido**. **Sistema** sigue la configuración de tu dispositivo y se actualiza mientras Warplyn esté abierto. Elige un **Idioma de la interfaz** para los menús y mensajes. Por ahora, el inglés es el único idioma de interfaz completo. Estas opciones no cambian el idioma de escritura ni las reglas tipográficas de un *artículo*.
+En **General** → **Aspecto e idioma**, elige **Sistema**, **Claro** u **Oscuro** en **Aspecto preferido**. Con **Sistema**, Warplyn usa el aspecto de tu dispositivo y se adapta si lo cambias mientras la aplicación está abierta. Elige un **Idioma de la interfaz** para los menús y mensajes. Por ahora, el inglés es el único idioma de interfaz completo. Estas opciones no cambian el idioma de escritura ni las reglas tipográficas de un *artículo*.
 
-En **Fecha y hora**, elige el formato de fecha, la hora en formato de 12 o 24 horas y una zona horaria. Las opciones del sistema siguen las de tu dispositivo. Estas preferencias cambian cómo se muestran las horas guardadas en Warplyn, no las horas almacenadas.
+En **Fecha y hora**, elige el formato de fecha, el reloj de 12 o 24 horas y la zona horaria. Las opciones del sistema siguen las de tu dispositivo. Estas preferencias cambian cómo se muestran las horas guardadas en Warplyn, no las horas almacenadas.
 
 ## Configurar las preferencias de escritura
 
-En **Idiomas predeterminados**, configura el **Idioma predeterminado de los artículos** para los nuevos *artículos*. Define los **Idiomas predeterminados de traducción** para que esos destinos aparezcan primero al solicitar una *traducción*. Introduce el nombre de un idioma, una variante regional o un código y selecciona **Añadir**. Warplyn seguirá pidiéndote que confirmes cada solicitud de traducción.
+En **Idiomas predeterminados**, configura el **Idioma predeterminado de los artículos** para los nuevos *artículos*. Define los **Idiomas predeterminados de traducción** para que esos idiomas aparezcan primero al solicitar una *traducción*. Introduce el nombre de un idioma, una variante regional o un código y selecciona **Añadir**. Warplyn seguirá pidiéndote que confirmes cada solicitud de traducción.
 
 ## Configurar el comportamiento del asistente
 
@@ -36,7 +36,7 @@ En **Atajos de teclado**, elige un atajo junto a una acción y pulsa la combinac
 
 ## Buscar actualizaciones de escritorio
 
-Las aplicaciones de escritorio instaladas pueden buscar versiones nuevas en **Configuración** → **Acerca de Warplyn** → **Actualizaciones**. Primero permite **Permitir acceso a la red para las actualizaciones**. Así Warplyn puede contactar con GitHub para consultar información pública de las versiones y descargar las actualizaciones que elijas. Después configura **Buscar actualizaciones automáticamente** y si quieres **Incluir versiones preliminares**. Selecciona **Buscar ahora** para hacer una comprobación en cualquier momento. Las versiones disponibles muestran sus notas. Las instalaciones de Windows y Linux AppImage ofrecen **Descargar** y **Reiniciar y actualizar**. Las instalaciones Debian usan **Ver notas de la versión** y luego una actualización desde el gestor de paquetes o un instalador `.deb` más reciente. Si una actualización impide que la aplicación se inicie, consulta [Recuperación tras actualizar la aplicación de escritorio](update-recovery.md).
+Las aplicaciones de escritorio instaladas pueden buscar versiones nuevas en **Configuración** → **Acerca de Warplyn** → **Actualizaciones**. Primero activa **Permitir acceso a la red para las actualizaciones**. Así Warplyn puede contactar con GitHub para consultar información pública de las versiones y descargar las actualizaciones que elijas. Después configura **Buscar actualizaciones automáticamente** y si quieres **Incluir versiones preliminares**. Selecciona **Buscar ahora** para hacer una comprobación en cualquier momento. Si hay una versión nueva, Warplyn muestra sus notas. Las instalaciones de Windows y Linux AppImage ofrecen **Descargar** y **Reiniciar y actualizar**. Las instalaciones Debian usan **Ver notas de la versión** y luego una actualización desde el gestor de paquetes o un instalador `.deb` más reciente. Si una actualización impide que la aplicación se inicie, consulta [Recuperación tras actualizar la aplicación de escritorio](update-recovery.md).
 
 ## Eliminar datos locales
 

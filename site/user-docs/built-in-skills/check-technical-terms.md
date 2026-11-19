@@ -4,7 +4,7 @@ description: "Use Check technical terms to compare IT terminology with relevant 
 
 # Check technical terms
 
-Use **Check technical terms** to review terminology in an IT *Article*. It looks for confused concepts, misleading acronym expansions, incorrect product or API names, and inconsistent names for the same concept. It compares usage with sources for the relevant domain and version, while allowing for local definitions and evolving terminology.
+Use **Check technical terms** to review terminology in an IT *Article*. It looks for concepts used interchangeably by mistake, misleading acronym expansions, incorrect product or API names, and inconsistent names for the same concept. It compares usage with sources for the relevant domain and version, while allowing for local definitions and evolving terminology.
 
 Open your *Article*. Select a passage if you want to focus the check. In the Assistant, open **Quick actions**, choose **Check technical terms**, then select **Send editorial request**. Open the completed result in **Fact Check** and inspect each *Finding*, its explanation, linked sources, and uncertainty.
 

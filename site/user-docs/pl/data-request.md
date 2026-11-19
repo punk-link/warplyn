@@ -4,7 +4,7 @@ description: "Skontaktuj się z Warplyn w sprawie swoich danych osobowych i zaż
 
 # Zażądaj dostępu do swoich danych lub ich usunięcia
 
-Napisz na adres [kirill.taran@punk.link](mailto:kirill.taran@punk.link), aby zapytać o dane osobowe otrzymane przez projekt Warplyn, zażądać dostępu do nich lub ich poprawienia albo usunięcia. Opisz, jakich danych lub interakcji dotyczy prośba. Właściciel projektu odpowie e-mailem i może poprosić o informacje potrzebne do odnalezienia danych lub zweryfikowania prośby.
+Napisz na adres [kirill.taran@punk.link](mailto:kirill.taran@punk.link), aby zapytać o dane osobowe otrzymane przez projekt Warplyn, zażądać dostępu do nich lub ich poprawienia albo usunięcia. Napisz, o jakie dane chodzi lub kiedy i w jaki sposób kontaktowałeś się z projektem. Właściciel projektu odpowie e-mailem i może poprosić o informacje potrzebne do odnalezienia danych lub zweryfikowania prośby.
 
 W pierwszej wiadomości nie umieszczaj treści *artykułu*, kluczy API, haseł ani dokumentów tożsamości.
 
@@ -16,7 +16,7 @@ Jeśli włączono udostępnianie danych diagnostycznych i statystyk użytkowania
 2. Wyślij ID na powyższy adres i opisz swoją prośbę.
 3. Aby zatrzymać przyszłe zbieranie danych, wyłącz **Udostępniaj dane diagnostyczne i dane użycia**.
 
-Skopiuj ID przed wyłączeniem udostępniania, ponieważ wyłączenie usuwa ID z Twojego urządzenia. Wyłączenie udostępniania nie może cofnąć już wysłanych zdarzeń. W przypadku żądania usunięcia właściciel projektu kasuje pasujący pseudonimowy wpis i potwierdza to e-mailem.
+Skopiuj ID przed wyłączeniem udostępniania, ponieważ wyłączenie usuwa ID z Twojego urządzenia. Zdarzenia wysłane przed wyłączeniem udostępniania pozostają zapisane. W przypadku żądania usunięcia właściciel projektu kasuje pasujący pseudonimowy wpis i potwierdza to e-mailem.
 
 Informacje o zbieranych polach i ustawieniach udostępniania znajdziesz w sekcji [Dane diagnostyczne i statystyki użytkowania](telemetry.md).
 

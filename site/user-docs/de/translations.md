@@ -1,10 +1,10 @@
 ---
-description: "Erstellen, vergleichen und aktualisieren Sie verknüpfte Übersetzungsartikel, wobei die Arbeit in jeder Sprache wiederherstellbar bleibt."
+description: "So erstellen, vergleichen und aktualisieren Sie Übersetzungen. Original und Übersetzung lassen sich unabhängig voneinander wiederherstellen."
 ---
 
 # Übersetzungen
 
-Eine *Übersetzung* ist ein separater, verknüpfter *Artikel*. Sie hat einen eigenen Titel, *Entwurf* und *Versionsverlauf*. Die Arbeit in einer Sprache überschreibt daher nicht den Quelltext.
+Warplyn legt jede *Übersetzung* als eigenen *Artikel* an und verknüpft sie mit dem Original. Die Übersetzung hat einen eigenen Titel, *Entwurf* und *Versionsverlauf*. Änderungen an der Übersetzung lassen das Original unverändert.
 
 ## Eine Übersetzung anfordern
 

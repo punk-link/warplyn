@@ -7,16 +7,16 @@ description: "桌面版更新失败时，使用先前版本和对应快照恢复
 预览版更新是可选的。如果更新后 Warplyn 无法启动，请重新安装先前的预览版，并恢复对应的更新前快照。
 
 ::: warning 避免打开较新的数据库
-不要用旧版本打开由较新预览版创建的数据库。请先恢复更新前记录的快照。
+不要用旧版本打开由较新预览版创建的数据库。请先恢复更新前创建的快照。
 :::
 
-1. 从其 [GitHub 发布页](https://github.com/punk-link/warplyn/releases)下载并重新安装先前的预览版。
-2. 恢复 Warplyn 在更新前记录的对应 SQLite 快照。
+1. 从 Warplyn 的 [GitHub 发布页](https://github.com/punk-link/warplyn/releases)下载并重新安装先前的预览版。
+2. 恢复 Warplyn 在更新前创建的对应 SQLite 快照。
 3. 启动先前的预览版，检查你的*文章*、*草稿*、*已保存版本*和设置。
 
 ## Linux AppImage
 
-请将 AppImage 放在可写目录中。运行要求、启动方式和可选桌面集成请参阅[安装 Warplyn](installation.md#linux-appimage)。AppImage 桌面安装验收仍未完成。
+请将 AppImage 放在可写目录中。运行要求、启动方式和可选桌面集成请参阅[安装 Warplyn](installation.md#linux-appimage)。AppImage 桌面安装仍在验证中。
 
 允许访问 GitHub 更新后，请选择 **下载**，然后选择 **重启并更新**。正常关闭应用不会安装已下载的更新。Debian 软件包仍通过软件包管理器更新。
 

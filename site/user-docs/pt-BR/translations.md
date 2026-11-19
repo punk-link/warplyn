@@ -1,10 +1,10 @@
 ---
-description: "Crie, compare e atualize artigos de tradução vinculados, mantendo o trabalho de cada idioma recuperável."
+description: "Crie, compare e atualize traduções dos seus artigos. Você pode recuperar cada texto separadamente."
 ---
 
 # Traduções
 
-Uma *tradução* é um *artigo* separado e vinculado ao original. Ela tem título, *rascunho* e histórico de *versões salvas* próprios, portanto o trabalho em um idioma não substitui o texto de origem.
+O Warplyn cria um *artigo* para cada *tradução* e o vincula ao original. A tradução tem título, *rascunho* e histórico de *versões salvas* próprios. Você pode editá-la sem alterar o original.
 
 ## Solicitar uma tradução
 

@@ -4,15 +4,15 @@ description: "Vérifiez les modifications proposées, parcourez l’historique d
 
 # Relire des articles
 
-L’assistant éditorial peut suggérer des modifications, mais vous décidez de celles qui entrent dans un *article*. **Examen des propositions** vous permet d’examiner les changements avant qu’ils deviennent une *version enregistrée*.
+L’assistant éditorial peut suggérer des modifications, mais vous décidez de celles qui entrent dans un *article*. Dans **Examen des propositions**, comparez les changements au texte d’origine et choisissez ceux qui figureront dans la nouvelle *version enregistrée*.
 
 [![Examen des propositions affiche trois modifications en attente, les textes Original et Proposition, les décisions individuelles et la commande Appliquer.](/images/proposal-review.png)](/images/proposal-review.png)
 
-*Exemple de Examen des propositions pour « La rivière au crépuscule ».*
+*Examen d’une proposition pour « La rivière au crépuscule ».*
 
 ## Vérifier une proposition {#review-a-proposal}
 
-Ouvrez **Examen des propositions** depuis la carte de résultat de l’assistant ou la barre d'onglets de l'espace de travail. Lisez les modifications et les avertissements sur les éléments à préserver. Passez de la comparaison côte à côte à la vue empilée si l’une est plus facile à lire. Activez **Mettre les modifications en évidence** pour mettre en évidence les formulations modifiées dans les deux versions. Avant d’accepter, vérifiez les noms, les nombres, les affirmations, les liens et la voix du texte modifié.
+Ouvrez **Examen des propositions** depuis la carte de résultat de l’assistant ou la barre d'onglets de l'espace de travail. Lisez les modifications et les avertissements sur les éléments à préserver. Passez de la comparaison côte à côte à la vue empilée si l’une est plus facile à lire. Activez **Mettre les modifications en évidence** pour repérer les passages qui diffèrent entre les deux versions. Avant d’accepter, vérifiez les noms, les nombres, les affirmations, les liens et la voix du texte modifié.
 
 Choisissez **Accepter** ou **Rejeter** pour chaque modification. Pour définir toutes les décisions à la fois, choisissez **Tout accepter** ou **Tout rejeter** dans **Tout décider…**. Sélectionnez ensuite **Appliquer** pour terminer la vérification. Le texte accepté crée une nouvelle *version enregistrée*. Si vous rejetez toutes les suggestions, Appliquer ferme la vérification sans modifier l’*article* ni créer de *version enregistrée*. **Tout réinitialiser** remet chaque suggestion à l’état En attente et conserve les modifications apportées au texte proposé. Les décisions seules ne modifient pas l’*article*. **Écarter la proposition** ferme la vérification sans appliquer le texte. Si une *proposition* ne peut pas être divisée sans risque, un avis vous demande de l’examiner dans son ensemble.
 
@@ -30,7 +30,7 @@ Choisissez **Restaurer** pour rétablir une version antérieure. Warplyn ajoute 
 
 ## Récupérer un brouillon {#recover-a-draft}
 
-Le point de contrôle contient le texte récupérable enregistré pendant que vous écrivez. Si le texte local de l’éditeur entre en conflit avec un point de contrôle enregistré ou avec la *version enregistrée* actuelle, Warplyn affiche le texte local conservé à côté des options enregistrées. Comparez-les avant de choisir **Conserver mon brouillon**, **Utiliser le dernier brouillon** ou **Utiliser la dernière version enregistrée**. Comme un choix enregistré peut remplacer le texte local, Warplyn vous demande de confirmer.
+Pendant que vous écrivez, Warplyn enregistre un point de contrôle qui vous permet de récupérer le *brouillon*. Si le texte local de l’éditeur entre en conflit avec un point de contrôle enregistré ou avec la *version enregistrée* actuelle, Warplyn affiche le texte de l’éditeur à côté des textes enregistrés que vous pouvez récupérer. Comparez-les avant de choisir **Conserver mon brouillon**, **Utiliser le dernier brouillon** ou **Utiliser la dernière version enregistrée**. Comme un choix enregistré peut remplacer le texte local, Warplyn vous demande de confirmer.
 
 ## Choisir comment l’assistant applique ses modifications
 

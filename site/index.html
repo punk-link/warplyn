@@ -55,6 +55,7 @@
     </script>
     <link rel="stylesheet" href="/tokens.css" />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/revision-demo.css" />
   </head>
   <body>
     <svg class="icon-sprite" aria-hidden="true" focusable="false">
@@ -263,14 +264,77 @@
       <section class="features section-wrap" id="features">
         <div class="section-heading">
           <p class="eyebrow">WHAT YOU CAN DO</p>
-          <h2>Good company<br />for the blank page.</h2>
+          <h2>Good company<br /> for the blank page.</h2>
           <p>
             Warplyn helps with the work around writing. Your voice and judgment
             stay at the center.
           </p>
         </div>
         <div class="feature-grid">
-          <article class="feature-card">
+          <section class="revision-demo" aria-label="Article revision demo">
+            <div class="app-window">
+              <div class="app-topbar">The River at Dusk</div>
+              <div class="revision-demo-stage">
+                <div data-revision-scene hidden>
+                  <p>The river carried its own light that evening—a slow silver threading through the willows.</p>
+                  <p>She sat on the bank and opened her notebook.</p>
+                </div>
+                <div data-revision-scene hidden>
+                  <p><mark>She sat on the bank and opened her notebook.</mark></p>
+                  <div class="revision-demo-panel">
+                    <strong>Editorial Assistant</strong>
+                    <p>Improve the flow. Keep the quiet mood.</p>
+                    <span class="revision-demo-action" data-demo-send>Send editorial request</span>
+                  </div>
+                </div>
+                <div data-revision-scene hidden>
+                  <p><mark>She sat on the bank and opened her notebook.</mark></p>
+                  <div class="revision-demo-panel">
+                    <strong>Editorial Assistant</strong>
+                    <p>Proposal ready to review</p>
+                    <span class="revision-demo-action" data-demo-open>Review proposal</span>
+                  </div>
+                </div>
+                <div data-revision-scene>
+                  <strong>Proposal Review</strong>
+                  <div class="revision-demo-comparison">
+                    <div class="revision-demo-panel">
+                      <strong>Original</strong>
+                      <p data-message="demoOriginalDiff">She <del>sat on the bank</del> and opened her notebook.</p>
+                    </div>
+                    <div class="revision-demo-panel">
+                      <strong>Proposed</strong>
+                      <p data-message="demoProposedDiff">She <ins>settled on the riverbank</ins> and opened her notebook.</p>
+                    </div>
+                  </div>
+                  <div class="revision-demo-decisions" hidden>
+                    <span class="revision-demo-action" data-demo-accept>Accept</span>
+                    <span class="revision-demo-action">Reject</span>
+                    <span class="revision-demo-action" data-demo-apply>Apply</span>
+                  </div>
+                </div>
+                <div data-revision-scene hidden>
+                  <strong>Saved Revision</strong>
+                  <p data-message="demoProposedDiff">She <ins>settled on the riverbank</ins> and opened her notebook.</p>
+                </div>
+              </div>
+              <div class="revision-demo-footer">
+                <p data-revision-caption>Review the proposal, accept the change, then apply it to your Article.</p>
+                <button class="button button-small" type="button" data-revision-playback hidden>Pause</button>
+              </div>
+            </div>
+            <div data-demo-copy hidden>
+              <span data-message="demoWrite">Write in your own voice.</span>
+              <span data-message="demoAsk">Ask for help with a passage.</span>
+              <span data-message="demoOpen">Open the completed proposal.</span>
+              <span data-message="demoCompare">Compare the proposed edit.</span>
+              <span data-message="demoDecide">You decide what changes.</span>
+              <span data-message="demoSaved">The accepted edit is now in your Article.</span>
+              <span data-message="demoResume">Resume</span>
+              <span data-message="demoApplied">Applied</span>
+            </div>
+          </section>
+          <article class="feature-card feature-card-draft">
             <span class="feature-number">01 / DRAFT</span>
             <svg class="feature-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path d="m5 19 3.2-.8L18.5 7.9a2.1 2.1 0 0 0-3-3L5.2 15.2zM13.8 6.6l3 3" />
@@ -505,6 +569,7 @@
       </div>
     </footer>
     <script type="module" src="/language-menu.mjs"></script>
+    <script type="module" src="/revision-demo.mjs"></script>
     <script>
       const sectionLinks = [...document.querySelectorAll('.site-header nav a[href^="#"]')];
       const sections = sectionLinks

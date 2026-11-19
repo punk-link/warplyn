@@ -6,9 +6,9 @@ description: "Learn what diagnostic and usage data Warplyn shares, what stays pr
 
 Warplyn's packaged Windows and Linux apps send pseudonymous reliability and usage events to PostHog Cloud in the United States (Virginia) when you enable sharing. Sharing is off by default. Please enable it to help us understand your experience and improve Warplyn. You can change your choice in **Settings** → **General** → **Privacy & diagnostics**.
 
-Turning sharing off stops future collection and clears queued events and the local Telemetry ID. Turning it on later creates a new ID. It cannot recall events already sent.
+Turning sharing off stops future collection and clears queued events and the local Telemetry ID. Turning it on later creates a new ID. Events already sent remain with the project.
 
-Pending events are kept in the app's local profile so Warplyn can retry when the connection returns. Events older than 24 hours are discarded when the app next checks the queue. Turning sharing off removes the queue.
+Pending events are kept in the app's local profile so Warplyn can try sending them again when the connection returns. Events older than 24 hours are discarded when the app next checks the queue. Turning sharing off removes the queue.
 
 [![Privacy and diagnostics settings showing the sharing toggle and Telemetry ID controls with the ID obscured.](/images/diagnostic-and-usage-data.png)](/images/diagnostic-and-usage-data.png)
 
@@ -50,4 +50,4 @@ The landing and plans pages use PostHog to measure visits, referral and campaign
 
 Website PostHog tracking uses no cookies or browser storage, creates no person profiles, and records no session replays or general click activity. PostHog estimates visitors using a server-generated hash. Website events remain separate from desktop Telemetry IDs, and the desktop sharing switch does not control website tracking.
 
-The landing pages and user guide also use Google Analytics, which may use cookies to measure visits and traffic sources. Both Google Analytics and PostHog tracking are skipped when your browser sends Do Not Track or Global Privacy Control. The cookieless behavior described above applies to PostHog.
+The landing pages and user guide also use Google Analytics, which may use cookies to measure visits and traffic sources. If your browser sends Do Not Track or Global Privacy Control, the site skips both Google Analytics and PostHog tracking. The cookieless behavior described above applies to PostHog.

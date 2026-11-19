@@ -6,7 +6,7 @@ description: "Use Criador de habilidades quando quiser explicitamente que o assi
 
 O assistente usa o Criador de habilidades integrado quando você pede explicitamente que crie, revise, restaure ou exclua uma *habilidade* reutilizável. Ele gerencia instruções locais em Markdown e mantém um histórico separado para cada *habilidade*.
 
-Descreva a tarefa recorrente e as regras ou referências que a *habilidade* deve seguir. O assistente pode fazer uma pergunta breve se uma finalidade ou um procedimento pouco claro puder mudar o resultado. Uma *habilidade* recém-criada fica disponível para solicitações futuras; criá-la não a executa no *artigo* atual.
+Descreva a tarefa recorrente e as regras ou referências que a *habilidade* deve seguir. O assistente pode fazer uma pergunta breve se uma finalidade ou um procedimento pouco claro puder mudar o resultado. Você pode usar a nova *habilidade* nas próximas solicitações. Ao criá-la, o assistente não a aplica ao *artigo* aberto.
 
 ::: tip Exemplo
 Peça: “Crie uma habilidade chamada ‘Revisão de linha para ficção tranquila’. Torne as frases da Ana mais concisas, preservando a voz dela, o cenário do rio e os acontecimentos da cena. Não acrescente detalhes; sinalize as passagens pouco claras.”

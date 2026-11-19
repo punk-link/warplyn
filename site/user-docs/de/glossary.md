@@ -4,15 +4,15 @@ description: "Definitionen zu Artikeln, Entwürfen, Versionen, Vorschlägen, Hin
 
 # Warplyn-Glossar
 
-Diese Begriffe beschreiben Konzepte, die Autoren sehen, sowie die Fachsprache des gesamten Schreibarbeitsbereichs.
+Hier finden Sie Begriffe aus Warplyn und dem Benutzerhandbuch.
 
 ## Artikel und Versionen
 
-- **Artikel**: eine unabhängig wiederherstellbare redaktionelle Arbeitseinheit. Warplyn verwendet „Artikel“ statt „Dokument“.
+- **Artikel**: ein Text in Ihrer Artikelbibliothek, den Sie unabhängig von anderen *Artikeln* wiederherstellen können. Warplyn verwendet „Artikel“ statt „Dokument“.
 - **Artikelbibliothek**: die lokale Sammlung von *Artikeln* des Autors. Der **aktuelle Artikel** ist im Arbeitsbereich geöffnet; eine **Artikelliste** zeigt die Sammlung.
 - **Entwurf**: *Artikel*-Text, der gerade bearbeitet, aber noch nicht als *Version* gespeichert wurde.
 - **Entwurfs-Prüfpunkt**: ein lokal gespeicherter, wiederherstellbarer und veränderlicher Zustand eines *Entwurfs*, der an eine Basis-*Version* gebunden ist. Er ist keine *Version*. Ein **aktueller Entwurf** basiert auf der aktuellen *Version* des *Artikels*; ein **veralteter Entwurf** basiert auf einer älteren *Version*.
-- **Version**: ein unveränderlicher gespeicherter Schnappschuss eines *Artikels*.
+- **Version**: der Text eines *Artikels* zum Zeitpunkt der Speicherung. Eine einmal gespeicherte *Version* bleibt unverändert.
 - **Version speichern**: das ausdrückliche Speichern eines aktuellen *Entwurfs* durch den Autor als neue *Version*. Dabei wird nur der passende *Entwurfs*-Prüfpunkt gelöscht.
 - **Vorschlag**: von KI generierte Inhalte oder Änderungen, die ausdrücklich vom Autor angenommen werden müssen.
 - **Basisversion eines Vorschlags**: die *Version*, die bei der Erstellung eines *Vorschlags* geprüft wurde. Ein *Vorschlag* wird veraltet, wenn er nicht mehr der aktuellen *Version* entspricht.
@@ -28,8 +28,8 @@ Diese Begriffe beschreiben Konzepte, die Autoren sehen, sowie die Fachsprache de
 - **Redaktionelle Anfrage**: ein einzelner Aufruf eines redaktionellen Vorgangs.
 - **Redaktionelle Sitzung**: die Interaktionsfolge und der Aktivitätsverlauf redaktioneller Anfragen.
 - **Redaktionelle Vorgabe**: Anweisungen oder Kontext, die der Autor bei einer redaktionellen Anfrage eingibt.
-- **Stil-Korpus**: lokale Schreibproben, die der Autor bereitstellt. Ein **Stilprofil** ist deren kompakte abgeleitete Darstellung.
-- **Workflow-Phase**: optionale, vom Autor gewählte Fortschrittsorientierung. Sie führt niemals KI aus und ändert keinen *Artikel*-Inhalt.
+- **Stil-Korpus**: lokale Schreibproben, die der Autor bereitstellt. Das **Stilprofil** fasst die Merkmale zusammen, die Warplyn aus diesen Schreibproben ableitet.
+- **Workflow-Phase**: eine optionale Angabe dazu, wie weit Sie mit einem *Artikel* sind. Sie führt niemals KI aus und ändert keinen *Artikel*-Inhalt.
 
 ## Veröffentlichung und Einstellungen
 
@@ -85,7 +85,7 @@ Redaktioneller Arbeitsbereich
 └──────────────────────────┴──────────────────────────────┴──────────────────────────┘
 ```
 
-In der ausgeklappten Ansicht ist die Fußzeile des Bibliothek-Panels der **Werkzeugbereich der Artikelbibliothek**. In seiner untersten Zeile stehen der Sprachcode des aktuellen *Artikels* und die Kennzeichnung **Lokal**. Die **Artikel-Statusleiste** unter der mittleren Artikelansicht zeigt den Speicherstatus.
+Unten im ausgeklappten Bibliothek-Panel finden Sie den **Werkzeugbereich der Artikelbibliothek**. In seiner untersten Zeile stehen der Sprachcode des aktuellen *Artikels* und die Kennzeichnung **Lokal**. Die **Artikel-Statusleiste** unter der mittleren Artikelansicht zeigt den Speicherstatus.
 
 ### Begriffe der Oberfläche
 

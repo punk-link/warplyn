@@ -4,15 +4,15 @@ description: "Poznaj definicje artykułów, szkiców, zapisanych wersji, propozy
 
 # Słownik Warplyn
 
-Poniższe terminy opisują pojęcia widoczne dla autorów oraz język domenowy stosowany w całym Warplyn.
+Tutaj znajdziesz znaczenie terminów używanych w Warplyn i w tym podręczniku.
 
 ## Artykuły i zapisane wersje
 
-- **Artykuł**: niezależnie odzyskiwalna jednostka pracy redakcyjnej. Warplyn używa terminu „artykuł”, a nie „dokument”.
+- **Artykuł**: tekst w bibliotece, który można odzyskać niezależnie od pozostałych artykułów. Warplyn używa terminu „artykuł”, a nie „dokument”.
 - **Biblioteka artykułów**: lokalny zbiór *artykułów* autora. **Bieżący artykuł** to artykuł otwarty w obszarze roboczym; **lista artykułów** przedstawia cały zbiór.
 - **Szkic**: tekst *artykułu*, który jest obecnie edytowany, ale nie został jeszcze zapisany jako *zapisana wersja*.
 - **Punkt kontrolny szkicu**: możliwy do odzyskania, zmienny stan *szkicu*, zapisany lokalnie i powiązany z bazową *zapisaną wersją*. Nie jest *zapisaną wersją*. **Bieżący szkic** bazuje na bieżącej *zapisanej wersji* *artykułu*; **nieaktualny szkic** bazuje na starszej *zapisanej wersji*.
-- **Zapisana wersja**: niezmienna zapisana migawka *artykułu*.
+- **Zapisana wersja**: treść *artykułu* z chwili zapisu. Po zapisaniu zawartość tej wersji pozostaje bez zmian.
 - **Zapisanie szkicu jako wersji**: jawne zapisanie przez autora bieżącego *szkicu* jako nowej *zapisanej wersji*. Usuwa wyłącznie odpowiadający mu punkt kontrolny *szkicu*.
 - **Propozycja**: treść lub zmiany wygenerowane przez AI, które wymagają wyraźnej zgody autora.
 - **Wersja źródłowa propozycji**: *zapisana wersja* sprawdzona przy tworzeniu *propozycji*. *Propozycja* staje się nieaktualna, gdy przestaje odpowiadać bieżącej *zapisanej wersji*.
@@ -28,7 +28,7 @@ Poniższe terminy opisują pojęcia widoczne dla autorów oraz język domenowy s
 - **Zlecenie redakcyjne**: pojedyncze uruchomienie operacji redakcyjnej.
 - **Sesja redakcyjna**: sekwencja interakcji i historia aktywności związana ze zleceniami redakcyjnymi.
 - **Wskazówki redakcyjne**: instrukcje lub kontekst wpisane przez autora i dołączone do zlecenia redakcyjnego.
-- **Korpus stylu**: lokalne próbki tekstów dostarczone przez autora. **Profil stylu** to ich zwięzła, wyprowadzona reprezentacja.
+- **Korpus stylu**: lokalne próbki tekstów dostarczone przez autora. **Profil stylu** podsumowuje cechy stylu rozpoznane przez Warplyn na podstawie tych próbek.
 - **Etap pracy**: opcjonalna wskazówka postępu wybrana przez autora. Nie uruchamia AI ani nie zmienia treści *artykułu*.
 
 ## Publikowanie i ustawienia

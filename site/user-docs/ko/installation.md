@@ -4,7 +4,7 @@ description: "Windows 또는 Linux에 Warplyn을 설치하고 글쓰기 작업 �
 
 # Warplyn 설치
 
-Warplyn은 Windows 11 x64와 Linux에서 사용할 수 있습니다. 최신 설치 파일은 [Warplyn 릴리스](https://github.com/punk-link/warplyn/releases)에서 다운로드하세요. Skladno를 사용 중이라면 [마이그레이션 가이드](migration.md)를 따르고, 복원된 작업을 확인할 때까지 기존 설치와 백업을 유지하세요.
+Warplyn은 Windows 11 x64와 Linux에서 사용할 수 있습니다. 최신 설치 파일은 [Warplyn 릴리스](https://github.com/punk-link/warplyn/releases)에서 다운로드하세요. Skladno를 사용 중이라면 [마이그레이션 가이드](migration.md)를 따르고, Warplyn에서 글과 설정을 제대로 복원했는지 확인할 때까지 Skladno를 삭제하지 말고 백업도 보관하세요.
 
 ## Windows
 
@@ -33,7 +33,7 @@ Ubuntu 22.04 x64를 주요 검증 대상으로 삼고 있으며, 다른 배포�
 
 4. 애플리케이션 메뉴에서 Warplyn을 엽니다.
 
-수동으로 업그레이드하려면 새 `.deb` 파일을 다운로드하고 해당 파일에 같은 `sudo apt install` 명령을 실행하세요. 다운로드만으로 자동 패키지 저장소가 구성되지는 않습니다. Apt가 선언된 종속성을 해결합니다. 종속성을 충족할 수 없다면 설치를 강제하지 마세요.
+수동으로 업그레이드하려면 새 `.deb` 파일을 다운로드하고 해당 파일에 같은 `sudo apt install` 명령을 실행하세요. 다운로드만으로 자동 패키지 저장소가 구성되지는 않습니다. Apt는 Warplyn에 필요한 패키지도 함께 설치합니다. 필요한 패키지를 설치할 수 없다면 Warplyn을 강제로 설치하지 마세요.
 
 기본적으로 글쓰기 데이터는 `~/.warplyn`에 저장됩니다. 업그레이드 전에 백업하세요. 애플리케이션을 다시 설치하거나 제거해도 이 폴더와 데스크톱 키링에 저장된 자격 증명은 보존됩니다.
 
@@ -47,7 +47,7 @@ x64 `.AppImage` 파일이 포함된 릴리스에서는 파일을 쓸 수 있는 
 
 Ubuntu 22.04 대상에서 필요한 데스크톱 종속성에는 `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0`, `xdg-utils`가 있습니다. GNOME Keyring이 Secret Service를 제공합니다. 일반적인 GNOME 설치에는 이러한 패키지 대부분이 포함됩니다. 다른 배포판은 패키지 이름이 다르므로 별도로 호환성을 확인해야 합니다.
 
-데스크톱 통합은 선택 사항입니다. 이미지의 전체 경로를 가리키는 런처를 만드세요. 업데이트할 때도 같은 경로를 유지해야 합니다. AppImage의 데스크톱 설치 승인은 아직 보류 중입니다. 주요 검증 대상은 Ubuntu 22.04 x64이며 Ubuntu 24.04 x64와 Fedora 43 x64는 추가 호환성 대상입니다. 이 대상으로 검증했다고 해서 모든 Linux를 지원하는 것은 아닙니다.
+데스크톱 통합은 선택 사항입니다. 이미지의 전체 경로를 가리키는 런처를 만드세요. 업데이트할 때도 같은 경로를 유지해야 합니다. AppImage를 데스크톱 앱으로 설치했을 때의 검증은 아직 끝나지 않았습니다. 주요 검증 대상은 Ubuntu 22.04 x64이며 Ubuntu 24.04 x64와 Fedora 43 x64는 추가 호환성 대상입니다. 이 대상으로 검증했다고 해서 모든 Linux를 지원하는 것은 아닙니다.
 
 다운로드, 재시작, 복구의 구체적인 단계는 [데스크톱 업데이트 복구](update-recovery.md)를 참조하세요.
 

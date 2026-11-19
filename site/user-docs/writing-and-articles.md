@@ -4,13 +4,13 @@ description: "Write and organize Articles, understand Draft saving, and set up l
 
 # Writing and organizing Articles
 
-An *Article* is a piece of writing in your Warplyn library. As you edit, Warplyn saves a recoverable *Draft* checkpoint. A *Revision* is a saved point in the *Article*'s history. This lets you keep working without treating every edit as a finished version.
+An *Article* is a piece of writing in your Warplyn library. As you edit, Warplyn saves a recoverable *Draft* checkpoint. A *Revision* is a saved point in the *Article*'s history. Save a *Revision* whenever you want to mark a point in the Article’s history.
 
 ## Write and save an Article
 
 Choose **New article** in the Library to begin. Rename the *Article* from its title field. Use the formatting toolbar to apply headings, lists, emphasis, links, quotes, and code. When you paste rich text, Warplyn keeps supported text formatting and removes unsafe or unsupported markup. It stores the *Article* as Markdown, so complex page layouts and embedded items do not carry over.
 
-Warplyn saves your current *Draft* automatically as you edit. A *Draft* checkpoint is recoverable working text, not a new item in Revision History. Check the save-state indicator in the Article Status Bar if you need to know whether recent edits have been checkpointed. Warplyn also saves a pending checkpoint when you switch *Articles* or open Settings.
+Warplyn saves your current *Draft* automatically as you edit. A *Draft* checkpoint is recoverable working text, not a new item in Revision History. Check the save-state indicator in the Article Status Bar if you need to know whether Warplyn has saved your latest edits for recovery. Warplyn also saves a pending checkpoint when you switch *Articles* or open Settings.
 
 [![Writing workspace showing The River at Dusk in the editor, formatting toolbar, Library, and Saved Draft indicator.](/images/writing-workspace.png)](/images/writing-workspace.png)
 
@@ -28,7 +28,7 @@ Choose **Archive Article** to remove an *Article* group from the active list whi
 
 The editor marks likely misspellings using your device's spelling support. In the desktop app, right-click a marked word to choose a suggested replacement or **Add to dictionary**. A replacement is an ordinary edit, so it can be undone and becomes part of the current *Draft*. Spelling checks stay on your device and do not send *Article* text to an AI provider.
 
-In desktop **Settings** → **Spelling**, use **Filter languages** to find a language, select it under **Prepare for offline writing**, then choose **Download dictionaries**. Wait for its status to show **Downloaded** before relying on it offline. **Available** means the language is supported; it does not confirm that its dictionary has finished downloading. Choose **Unload** to stop using a prepared dictionary for this session. Preparing dictionaries does not change an *Article*'s language. Downloads need internet access. On Windows, adding or removing personal words also affects the operating system dictionary and may affect other apps.
+In the desktop app, open **Settings** → **Spelling**. Use **Filter languages** to find a language, select it under **Prepare for offline writing**, then choose **Download dictionaries**. Wait for its status to show **Downloaded** before relying on it offline. **Available** means the language is supported; it does not confirm that its dictionary has finished downloading. Choose **Unload** to stop using a prepared dictionary for this session. Preparing dictionaries does not change an *Article*'s language. Downloads need internet access. On Windows, adding or removing personal words also affects the operating system dictionary and may affect other apps.
 
 In **Personal dictionary**, search for saved words or enter one word or technical term per line under **Words to add**, then choose **Add words**. You can add up to 500 words at a time. Remove saved words when you want spelling help to flag them again. The list is shared across *Articles* and languages. The browser app uses browser spelling settings and does not offer dictionary management.
 

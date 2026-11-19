@@ -4,7 +4,7 @@ description: "Use Translate text to prepare a complete Article translation for r
 
 # Translate text
 
-Use **Translate text** to prepare a translation of a complete *Article* in a selected language. It translates the title and body while preserving claims, numbers, voice, and Markdown formatting. This *Skill* uses the whole *Article*, even when you have selected a passage.
+Use **Translate text** to translate a complete *Article* into the language you choose. It translates the title and body while preserving claims, numbers, voice, and Markdown formatting. This *Skill* uses the whole *Article*, even when you have selected a passage.
 
 Open the *Article*'s **Translations** view and choose **New translation…**. Select a target language and confirm the request. If the source has unsaved edits, save them as a *Revision* first so the result is tied to the text you intend to translate.
 

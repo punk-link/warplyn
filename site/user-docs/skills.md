@@ -8,7 +8,7 @@ description: "Create and manage reusable Skills for your own writing tasks, and 
 
 ## Create and manage your own Skills
 
-Ask the Assistant to create a reusable *Skill* in plain language. Explain the repeated job and any rules or references it needs. If a missing detail would change the *Skill*, the Assistant asks a short follow-up instead of guessing.
+Ask the Assistant to create a reusable *Skill* in plain language. Describe the task you do regularly and any rules or references it needs. If a missing detail would change the *Skill*, the Assistant asks a short follow-up instead of guessing.
 
 ::: tip Example
 To revise fiction in the style of a quiet river scene, ask: “Create a *Skill* called ‘Quiet fiction line edit’. Tighten Ana’s sentences while preserving her voice, the river setting, and the scene’s events. Don’t add details; flag unclear passages instead.” The Assistant can reuse those instructions whenever you ask for a line edit.
@@ -18,7 +18,7 @@ To revise fiction in the style of a quiet river scene, ask: “Create a *Skill* 
 
 *Example Skill creation request in the Composer. Connect a provider before sending it.*
 
-After a successful creation, the *Skill* is available for new Assistant requests immediately. The creation request does not send your *Article* body to the model and does not change the *Article*, *Draft*, *Proposal*, or *Revision*.
+You can use the *Skill* in new requests as soon as the Assistant creates it. The creation request does not send your *Article* body to the model and does not change the *Article*, *Draft*, *Proposal*, or *Revision*.
 
 Each created *Skill* has a local, immutable *Skill Revision* history. This is separate from *Article* Revision history. You can also edit the local Markdown package directly. Warplyn refreshes the catalog for the next request. Removing its `SKILL.md` file removes it from the available *Skills* list.
 

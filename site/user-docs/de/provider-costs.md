@@ -4,17 +4,17 @@ description: "Erfahren Sie, wodurch Kosten für KI-Anfragen in Warplyn entstehen
 
 # Kosten von KI-Anbietern
 
-KI-Unterstützung ist optional. Warplyn stellt Ihnen Anfragen nicht in Rechnung. Ihr KI-Anbieter kann Ihrem Konto Kosten berechnen, wenn Warplyn eine Anfrage sendet.
+KI-Unterstützung ist optional. Warplyn stellt Ihnen Anfragen nicht in Rechnung. Wenn Warplyn eine Anfrage an Ihren KI-Anbieter sendet, kann der Anbieter dafür Gebühren berechnen.
 
 ## Was die Kosten beeinflusst
 
 Ihr Anbieter legt seine Preise selbst fest. Die Kosten einer Anfrage können abhängen von:
 
 - dem gewählten Anbieter und Modell
-- der Menge an *Artikel*-Text und Anweisungskontext in der Anfrage
+- dem Umfang des *Artikel*-Texts und der zusätzlichen Anweisungen in der Anfrage
 - der Menge an Text, die das Modell zurückgibt
 
-Text aus der Umgebung kann helfen, eine kurze Auswahl besser zu verstehen, führt aber dazu, dass auch nicht ausgewählte Texte übermittelt werden. Bei Anfragen mit Auswahl, die *Artikel*-Text benötigen, werden die ausgewählte Passage sowie bis zu 500 Zeichen davor und danach als schreibgeschützter Kontext gesendet – höchstens 1.000 zusätzliche Zeichen. Bearbeitungsziel ist nur die Auswahl. Ohne Auswahl kann die Anfrage den gesamten *Artikel* und relevanten Kontext umfassen. Eine engere Anfrage kann je nach Preisen des Anbieters weniger kosten.
+Text aus der Umgebung kann helfen, eine kurze Auswahl besser zu verstehen, führt aber dazu, dass auch nicht ausgewählte Texte übermittelt werden. Wenn die Anfrage Text aus dem *Artikel* benötigt und Sie eine Passage markiert haben, sendet Warplyn die Passage und bis zu 500 Zeichen auf jeder Seite. Die höchstens 1.000 zusätzlichen Zeichen dienen nur als Kontext. Bearbeitet werden kann nur die markierte Passage. Ohne Auswahl kann die Anfrage den gesamten *Artikel* und relevanten Kontext umfassen. Je nach Tarif kann eine kürzere Anfrage weniger kosten.
 
 ::: tip API-Abrechnung
 Ein Abonnement für den Chatdienst eines Anbieters umfasst möglicherweise keine API-Nutzung. Prüfen Sie vor dem Verbinden eines Schlüssels die aktuellen API-Preise und Abrechnungsbedingungen des Anbieters.
@@ -29,5 +29,5 @@ Prüfen Sie Nutzung, Gebühren, Warnungen und Ausgabenlimits im Konto Ihres Anbi
 Das für eine Anfrage verwendete Modell beeinflusst die Kosten. Wählen Sie unter **Einstellungen** → **KI-Assistent** ein **Standardmodell**, ein **App-Modell** und Modelle für bestimmte Aufgaben. Unter [KI-Anbieter und Modelle](providers.md) erfahren Sie, wie Sie diese einrichten.
 
 ::: tip Sie können ohne KI arbeiten
-Sie können *Artikel* auch ohne KI-Verbindung schreiben und verwalten. Bearbeiten, *Versionen* speichern und lokale Sicherungen verwenden sendet keine KI-Anfragen.
+Sie können *Artikel* auch ohne KI-Verbindung schreiben und verwalten. Zum Bearbeiten, Speichern von *Versionen* und Verwenden lokaler Sicherungen sind keine KI-Anfragen nötig.
 :::

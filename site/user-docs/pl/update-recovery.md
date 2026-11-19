@@ -4,7 +4,7 @@ description: "Odzyskaj Warplyn po nieudanej aktualizacji aplikacji desktopowej, 
 
 # Odzyskiwanie po aktualizacji aplikacji desktopowej
 
-Aktualizacje wersji preview są opcjonalne. Jeśli po aktualizacji Warplyn nie może się uruchomić, ponownie zainstaluj poprzednią wersję preview i przywróć odpowiadającą jej migawkę sprzed aktualizacji.
+Aktualizacje wersji preview są opcjonalne. Jeśli po aktualizacji Warplyn się nie uruchamia, zainstaluj ponownie poprzednią wersję preview. Następnie przywróć dane z migawki zapisanej przed tą aktualizacją.
 
 ::: warning Nie otwieraj nowszej bazy danych
 Nie otwieraj bazy danych utworzonej przez nowszą wersję preview w starszej wersji aplikacji. Najpierw przywróć migawkę zapisaną przed aktualizacją.
@@ -20,4 +20,4 @@ Przechowuj AppImage w folderze, do którego możesz zapisywać. Wymagania środo
 
 Po zezwoleniu na dostęp do aktualizacji GitHub wybierz **Pobierz**, a następnie **Uruchom ponownie i zaktualizuj**. Zwykłe zamknięcie aplikacji nie instaluje pobranej aktualizacji. Pakiety Debian nadal aktualizuje się za pomocą menedżera pakietów.
 
-Jeśli Warplyn nie uruchamia się po aktualizacji AppImage, zamknij aplikację. Poprzedni plik wykonywalny jest zachowywany obok obrazu z przyrostkiem `.previous`. Zgodnie z powyższym ostrzeżeniem przed uruchomieniem poprzedniej wersji przywróć odpowiadającą jej migawkę sprzed aktualizacji. Zachowaj oba pliki wykonywalne i migawkę do czasu pomyślnego odzyskania danych. Jeśli folder obrazu nie pozwala na zapis, przenieś obraz do folderu, którego jesteś właścicielem, lub ręcznie pobierz plik zastępczy. Nie wyłączaj piaskownicy Electron, aby uruchomić obraz.
+Jeśli Warplyn nie uruchamia się po aktualizacji AppImage, zamknij aplikację. Plik wykonywalny poprzedniej wersji znajdziesz w tym samym folderze co obraz. Jego nazwa kończy się na `.previous`. Zgodnie z powyższym ostrzeżeniem przed uruchomieniem poprzedniej wersji przywróć odpowiadającą jej migawkę sprzed aktualizacji. Zachowaj oba pliki wykonywalne i migawkę do czasu pomyślnego odzyskania danych. Jeśli nie masz prawa zapisu w folderze obrazu, przenieś obraz do własnego folderu lub pobierz plik zastępczy ręcznie. Nie wyłączaj piaskownicy Electron, aby uruchomić obraz.

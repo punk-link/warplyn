@@ -12,15 +12,15 @@ The Editorial Assistant can suggest changes, but you decide what enters an *Arti
 
 ## Review a Proposal
 
-Open **Proposal Review** from the Assistant result card or the Workspace Tab Bar. Read the changes and any preservation warnings. Switch between side-by-side and stacked comparison if one is easier to read, and turn **Highlight changes** on when you want changed wording marked in both versions. Check names, numbers, claims, links, and voice in the changed text before accepting it.
+Open **Proposal Review** from the Assistant result card or the Workspace Tab Bar. Read the changes and any warnings about details the edit may have altered. Switch between side-by-side and stacked comparison if one is easier to read, and turn **Highlight changes** on when you want changed wording marked in both versions. Check names, numbers, claims, links, and voice in the changed text before accepting it.
 
-Choose **Accept** or **Reject** for individual changes. Choose **Mark all accepted** or **Mark all rejected** from **Set all decisions…** to set every decision together. Then choose **Apply** to finish the review. Accepted text becomes a new *Revision*. If every suggestion is rejected, Apply dismisses the review without changing the *Article* or creating a *Revision*. **Reset all decisions** returns every suggestion to Pending and keeps your proposed-text edits. Choosing the decisions alone does not change the *Article*. **Dismiss proposal** clears the review without applying text. A *Proposal* that cannot be split safely will show a notice and require review as a whole.
+Choose **Accept** or **Reject** for individual changes. Choose **Mark all accepted** or **Mark all rejected** from **Set all decisions…** to accept or reject every change at once. Then choose **Apply** to finish the review. Accepted text becomes a new *Revision*. If every suggestion is rejected, Apply dismisses the review without changing the *Article* or creating a *Revision*. **Reset all decisions** returns every suggestion to Pending and keeps your proposed-text edits. Choosing the decisions alone does not change the *Article*. **Dismiss proposal** clears the review without applying text. A *Proposal* that cannot be split safely will show a notice and require review as a whole.
 
 ::: tip Review at your own pace
 You can edit proposed wording and switch comparison layouts before applying. Your decisions take effect only when you choose **Apply**.
 :::
 
-If Warplyn cannot safely apply selected changes, it explains when only accepting the whole *Proposal* is available. A stale *Proposal* was made from an earlier *Revision*. Its changes cannot be applied to the current text. Dismiss it or return to the matching history and make a fresh request.
+If Warplyn cannot safely apply selected changes, it tells you if you can only accept the *Proposal* as a whole. A stale *Proposal* was made from an earlier *Revision*. Its changes cannot be applied to the current text. Dismiss it or return to the matching history and make a fresh request.
 
 ## Browse or restore a Revision
 
@@ -34,10 +34,10 @@ A *Draft* checkpoint is the recoverable text saved while you edit. If local edit
 
 ## Choose how Assistant edits are applied
 
-New conversations use **Propose edits for review** by default. You can select **Apply edits directly** in the Composer when you want an explicitly requested edit applied without a *Proposal*. A successful direct edit appears as a new *Revision*. If you selected text, the edit stays within that selection. Direct edits are blocked when a *Draft* or changed *Revision* could make the replacement unsafe. Resolve your current work and ask again. Other generated results still require review.
+New conversations use **Propose edits for review** by default. You can select **Apply edits directly** in the Composer when you want an explicitly requested edit applied without a *Proposal*. A successful direct edit appears as a new *Revision*. If you selected text, the edit stays within that selection. Direct edits are blocked when a *Draft* or changed *Revision* could make the replacement unsafe. Resolve the *Draft* or *Revision* conflict before sending the request again. Other generated results still require review.
 
 Choose **Edit from here** on one of your earlier messages to continue the conversation from that point. Before you confirm **Restore conversation**, Warplyn lists later work that will be rejected, such as *Proposals*, *Findings*, or translation results. It also tells you if the *Article* will return to an earlier *Revision* or if unsent Composer text will be replaced. If a *Draft* needs attention, choose **Save current work and restore** or **Discard Draft and restore**. Later and current *Revisions* remain in Revision History. This action does not restore or change a *Skill*.
 
 ## Read Fact Check findings
 
-Open **Fact Check** to review advisory *Findings* and their sources. Acceptance decisions resolve a *Finding* without changing the *Article* or its verdict. Correction *Proposals* require review before their changes enter the text. See [Fact Check](fact-checking.md) for the full workflow, verdicts, acceptance choices, and rechecking earlier results.
+Open **Fact Check** to review advisory *Findings* and their sources. Accepting a *Finding* marks it as resolved without changing the *Article* or its verdict. Correction *Proposals* require review before their changes enter the text. See [Fact Check](fact-checking.md) for the full workflow, verdicts, acceptance choices, and rechecking earlier results.

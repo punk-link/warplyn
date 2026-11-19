@@ -12,4 +12,4 @@ Ouvrez **Actions rapides**, choisissez **Développer les idées**, ajoutez vos i
 Sélectionnez la scène où Ana s’assoit près de la rivière et demandez : « Donne-moi trois interprétations possibles de la relation d’Ana avec la rivière, en t’appuyant sur ce passage. »
 :::
 
-Les points proposés peuvent nécessiter une correction ou un autre angle. Vérifiez-les avant de les reprendre dans un *article*. Pour créer un brouillon complet à partir de contenu fourni, consultez [Transformer vos idées en brouillon](turn-ideas-into-a-draft.md).
+Relisez la liste avant de la reprendre dans un *article*. Vous voudrez peut-être préciser un point ou donner plus de place à une autre idée. Pour créer un brouillon complet à partir de contenu fourni, consultez [Transformer vos idées en brouillon](turn-ideas-into-a-draft.md).

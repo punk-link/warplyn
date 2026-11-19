@@ -8,9 +8,9 @@ A *translation* is a separate linked *Article*. It has its own title, *Draft*, a
 
 ## Request a translation
 
-Open the source *Article* and choose **New translation…** in **Translations**. The dialog may preselect the current *Article* language. If there is no viewed language to use, it offers the preferred languages from **Settings** → **Language defaults**. Select and confirm each target. Warplyn uses the whole *Article* for translation, even if you had selected a passage in the editor. If the source has unsaved edits, save them as a *Revision* first so the *translation* can identify the exact text it used.
+Open the source *Article* and choose **New translation…** in **Translations**. The dialog may preselect the current *Article* language. If there’s no language to preselect, the dialog offers your preferred languages from **Settings** → **Language defaults**. Select and confirm each target. Warplyn uses the whole *Article* for translation, even if you had selected a passage in the editor. If the source has unsaved edits, save them as a *Revision* first so the *translation* can identify the exact text it used.
 
-The Assistant creates a reviewable *translation* result for each language. Open a result to compare its title and text with the source. Choose **Side by side** to compare full passages, or **Aligned paragraphs** when you want corresponding paragraphs together. Protected text such as names, numbers, URLs, and code must remain intact. Warplyn marks results that change protected text or use an older source *Revision*. Review these notices before continuing.
+The Assistant prepares a *translation* for you to review in each target language. Open a result to compare its title and text with the source. Choose **Side by side** to compare full passages, or **Aligned paragraphs** when you want corresponding paragraphs together. Protected text such as names, numbers, URLs, and code must remain intact. Warplyn marks results that change protected text or use an older source *Revision*. Review these notices before continuing.
 
 ::: warning Save the source first
 A *translation* request uses a saved *Revision*. If the source has unsaved edits, save them as a *Revision* before requesting one so the result is tied to the text you intend.
@@ -18,7 +18,7 @@ A *translation* request uses a saved *Revision*. If the source has unsaved edits
 
 ## Create or update a translation Article
 
-When a result is ready, use **Edit** to open its linked *translation Article*. If one does not exist yet, Warplyn creates it. Review the *translation* and save its *Draft* or **Save revision** when you are ready. The source *Article* stays unchanged.
+When a result is ready, use **Edit** to open the linked *translation Article*. Warplyn creates one if needed. Review the *translation* and save its *Draft* or **Save revision** when you are ready. The source *Article* stays unchanged.
 
 To use a newer result for an existing *translation*, choose **Update** and confirm the target *Article*. Warplyn adds the translated text as a new *Revision* and keeps the *translation*'s title and earlier history. Update is blocked if the source or target changed since review, the target has an unsaved *Draft*, or the result no longer passes validation.
 

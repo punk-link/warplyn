@@ -4,7 +4,7 @@ description: "Escreva e organize artigos, entenda como os rascunhos são salvos 
 
 # Escrever e organizar artigos
 
-Um *artigo* é um texto na sua biblioteca do Warplyn. Enquanto você edita, o Warplyn salva um ponto de verificação recuperável do *rascunho*. Uma *versão salva* é um ponto do histórico do *artigo*. Assim, você pode continuar trabalhando sem tratar cada edição como uma versão final.
+Um *artigo* é um texto da sua biblioteca do Warplyn. Enquanto você escreve, o aplicativo salva o *rascunho* para que você possa recuperá-lo. Uma *versão salva* guarda no histórico o texto como ele estava no momento em que foi salvo.
 
 ## Escrever e salvar um artigo
 

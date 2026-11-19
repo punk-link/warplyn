@@ -4,7 +4,7 @@ description: "Vérifiez des affirmations factuelles, consultez les sources et le
 
 # Vérification des faits
 
-Utilisez **Vérifier les faits** pour rechercher des sources sur des affirmations vérifiables dans un *article*, comme des détails historiques ou des déclarations sur un lieu. L’assistant fournit des *observations* informatives avec des explications, des sources et le degré d’incertitude. Une vérification ne modifie pas votre texte.
+Utilisez **Vérifier les faits** pour rechercher des sources sur des affirmations vérifiables dans un *article*, comme des détails historiques ou des déclarations sur un lieu. Dans ses *observations*, l’assistant explique ses conclusions, cite ses sources et précise ce qui reste incertain. Une vérification ne modifie pas votre texte.
 
 La vérification des faits nécessite une [connexion et un modèle d’IA](providers.md) qui prennent en charge la recherche de sources. Des frais du fournisseur peuvent s’appliquer.
 
@@ -20,7 +20,7 @@ La vérification des faits nécessite une [connexion et un modèle d’IA](provi
 Dans « La rivière au crépuscule », Ana affirme que la pleine lune fera assez monter l’eau pour recouvrir le sentier. Vérifiez cette affirmation à l’aide de sources qui correspondent à la rivière et au cadre de l’histoire. Avant de modifier la scène, vérifiez que les sources parlent bien de cette rivière en particulier.
 :::
 
-Vous pouvez continuer à écrire ou naviguer ailleurs pendant la vérification. Si une vérification est incomplète, seules les *observations* terminées sont disponibles. Lancez une autre vérification pour les affirmations restantes.
+Pendant la vérification, vous pouvez continuer à écrire ou changer de vue. Si la vérification s’interrompt, vous pouvez consulter les *observations* déjà prêtes. Lancez une autre vérification pour les affirmations restantes.
 
 ## Lire le verdict et les sources
 
@@ -44,11 +44,11 @@ Pour une *observation* non résolue issue de la dernière vérification de la *v
 | **Accepter les éléments de preuve** | Enregistre que vous avez examiné et accepté les éléments présentés. L’*observation* affiche **Éléments de preuve acceptés**. |
 | **Proposer une correction** | Pour une affirmation **Contestée** ou **Invérifiable**, demande à l’assistant de préparer une *proposition* de correction. Examinez-la avant d’appliquer des modifications. |
 
-Les deux actions d’acceptation marquent l’*observation* comme résolue, suppriment ses boutons de décision et la retirent des éléments nécessitant votre attention dans la bibliothèque d’articles. Aucune des deux ne modifie l’*article* ni le verdict. Elles enregistrent des raisons différentes pour votre décision et ont le même effet sur le déroulement de la vérification.
+Dans les deux cas, Warplyn marque l’*observation* comme résolue. Les boutons de décision disparaissent et la bibliothèque d’articles ne la signale plus comme étant à traiter. Aucune des deux ne modifie l’*article* ni le verdict. Elles enregistrent des raisons différentes pour votre décision et ont le même effet sur le déroulement de la vérification.
 
-Par exemple, **Disputed · Éléments de preuve acceptés** signifie que la vérification a remis l’affirmation en question et que vous avez accepté les éléments présentés. Cela ne signifie pas que l’affirmation a été corrigée ou qu’elle est désormais étayée. Si le texte doit changer, modifiez l’*article* ou demandez une correction avant de résoudre l’*observation*.
+Par exemple, **Contestée · Éléments de preuve acceptés** signifie que la vérification a remis l’affirmation en question et que vous avez accepté les éléments présentés. Cela ne signifie pas que l’affirmation a été corrigée ou qu’elle est désormais étayée. Si le texte doit changer, modifiez l’*article* ou demandez une correction avant de résoudre l’*observation*.
 
-Pour demander plusieurs corrections à la fois, sélectionnez les affirmations **Contestée** ou **Invérifiable** non résolues, puis choisissez **Proposer des corrections**. Dans [Examen des propositions](reviewing-articles.md#review-a-proposal), examinez les formulations suggérées et appliquez les modifications que vous acceptez. Le texte accepté crée une nouvelle *version enregistrée*.
+Pour demander plusieurs corrections à la fois, sélectionnez les affirmations **Contestée** ou **Invérifiable** non résolues, puis choisissez **Proposer des corrections**. Dans [Examen des propositions](reviewing-articles.md#review-a-proposal), examinez les formulations suggérées et appliquez les modifications que vous acceptez. Warplyn enregistre le texte avec les modifications acceptées dans une nouvelle *version enregistrée*.
 
 ## Revérifier après des modifications
 
@@ -56,6 +56,6 @@ Les *observations* sont liées à la *version enregistrée* vérifiée. Lorsqu�
 
 Utilisez **Historique des vérifications des faits** pour consulter les vérifications précédentes. Elles sont en lecture seule. Seule la dernière vérification de la *version enregistrée* actuelle permet d’agir.
 
-Une vérification ultérieure peut réutiliser les éléments et les décisions d’acceptation si elle reconnaît un fait inchangé, même lorsque l’affirmation a été reformulée. Les résultats réutilisés affichent **Éléments de preuve réutilisés de la version** et conservent leur date de vérification d’origine. Si le sens factuel a changé, de nouvelles recherches peuvent être nécessaires.
+Une vérification ultérieure peut réutiliser les éléments et les décisions d’acceptation si elle reconnaît un fait inchangé, même lorsque l’affirmation a été reformulée. Les résultats réutilisés affichent **Éléments de preuve réutilisés de la version** et conservent leur date de vérification d’origine. Si la nouvelle formulation affirme autre chose, il faudra peut-être refaire la recherche.
 
 Relancer une vérification ne garantit pas que chaque affirmation inchangée fera l’objet d’une nouvelle recherche. Pour les informations susceptibles de changer, examinez les sources et les dates de vérification, puis demandez explicitement à l’assistant de vérifier l’affirmation à partir de sources actuelles.

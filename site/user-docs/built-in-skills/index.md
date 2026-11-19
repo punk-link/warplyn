@@ -6,7 +6,7 @@ description: "Choose a built-in Skill for drafting, revising, fact checking, sty
 
 Built-in *Skills* help the Editorial Assistant carry out common writing tasks. Choose an editorial *Skill* from **Quick actions**, or describe your request and let the Assistant infer a relevant *Skill*. A selected Skill chip can be sent by itself; add a message only when you have extra context or a constraint for the request. Select **Send editorial request** to start. To create or manage a reusable *Skill*, ask the Assistant directly; **Skill Creator** is not a Composer quick action.
 
-Each page explains what the *Skill* is for and what to review in its result. The Assistant prepares reviewable work; see [Editorial Assistant](../editorial-assistant.md) and [Reviewing Articles](../reviewing-articles.md) for how to work with results.
+Each page explains what the *Skill* is for and what to review in its result. To learn how to review and apply results, see [Editorial Assistant](../editorial-assistant.md) and [Reviewing Articles](../reviewing-articles.md).
 
 ## Draft and revise
 

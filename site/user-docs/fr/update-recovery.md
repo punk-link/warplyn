@@ -4,7 +4,7 @@ description: "Récupérez Warplyn après l’échec d’une mise à jour de bure
 
 # Récupération après une mise à jour de l’application de bureau
 
-Les mises à jour préliminaires sont facultatives. Si Warplyn ne démarre pas après une mise à jour, réinstallez la version préliminaire précédente et restaurez l’instantané correspondant, créé avant la mise à jour.
+Les mises à jour préliminaires sont facultatives. Si Warplyn ne démarre pas après une mise à jour, réinstallez la version préliminaire précédente. Restaurez ensuite vos données à partir de l’instantané que Warplyn a créé avant cette mise à jour.
 
 ::: warning N’ouvrez pas la base de données la plus récente
 N’ouvrez pas avec une ancienne version une base de données créée par une version préliminaire plus récente. Restaurez d’abord l’instantané enregistré avant la mise à jour.
@@ -16,8 +16,8 @@ N’ouvrez pas avec une ancienne version une base de données créée par une ve
 
 ## AppImage pour Linux
 
-Conservez votre AppImage dans un dossier où vous avez le droit d’écrire. Consultez [Installer Warplyn](installation.md#linux-appimage) pour connaître les exigences d’exécution, le lancement et l’intégration facultative au bureau. La validation de l’installation AppImage au bureau est en attente.
+Conservez votre AppImage dans un dossier où vous avez le droit d’écrire. Consultez [Installer Warplyn](installation.md#linux-appimage) pour connaître les prérequis, lancer AppImage et l’ajouter au menu des applications si vous le souhaitez. Les essais d’AppImage en tant qu’application de bureau installée ne sont pas encore terminés.
 
 Après avoir autorisé l’accès de mise à jour à GitHub, choisissez **Télécharger**, puis **Installer et relancer**. Une fermeture normale n’installe pas la mise à jour téléchargée. Les paquets Debian continuent d’utiliser le gestionnaire de paquets.
 
-Si une mise à jour AppImage ne démarre pas, fermez Warplyn. L’exécutable précédent est conservé à côté de l’image avec le suffixe `.previous`. En suivant l’avertissement ci-dessus, restaurez l’instantané correspondant créé avant la mise à jour avant de lancer la version précédente. Gardez les deux exécutables et l’instantané jusqu’à la réussite de la récupération. Si vous ne pouvez pas écrire dans le dossier de l’image, déplacez-la vers un dossier qui vous appartient ou téléchargez manuellement son remplacement. Ne désactivez pas le bac à sable d’Electron pour lancer l’image.
+Si Warplyn ne démarre pas après une mise à jour d’AppImage, fermez Warplyn. L’exécutable de la version précédente se trouve à côté de l’image et porte le suffixe `.previous`. Restaurez d’abord l’instantané enregistré avant la mise à jour, puis lancez la version précédente. Gardez les deux exécutables et l’instantané jusqu’à la réussite de la récupération. Si vous ne pouvez pas écrire dans le dossier de l’image, déplacez-la vers un dossier qui vous appartient ou téléchargez manuellement son remplacement. Ne désactivez pas le bac à sable d’Electron pour lancer l’image.

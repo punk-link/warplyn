@@ -4,7 +4,7 @@ description: "Scrivi e organizza gli articoli, scopri come si salvano le bozze e
 
 # Scrivere e organizzare gli articoli
 
-Un *articolo* è un testo nella tua raccolta Warplyn. Mentre lo modifichi, Warplyn salva un checkpoint recuperabile. Una *versione salvata* è un punto conservato nella cronologia dell’*articolo*. Così puoi continuare a lavorare senza considerare ogni modifica una versione definitiva.
+Un *articolo* è un testo nella tua libreria Warplyn. Mentre scrivi, Warplyn salva la *bozza* per permetterti di recuperarla. Una *versione salvata* conserva nella cronologia il testo com’era al momento del salvataggio.
 
 ## Scrivere e salvare un articolo
 

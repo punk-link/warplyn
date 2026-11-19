@@ -4,7 +4,7 @@ description: "Understand Warplyn's Articles, Drafts, Revisions, Proposals, Findi
 
 # Warplyn glossary
 
-These terms describe concepts visible to authors and the domain language used throughout Warplyn.
+This glossary explains terms you’ll see in Warplyn and throughout the user guide.
 
 ## Articles and revisions
 
@@ -25,10 +25,10 @@ These terms describe concepts visible to authors and the domain language used th
 - **Editorial capability**: a validated Warplyn operation that declares the *Article* context it may use, its prerequisites, and its result. Workspace Views and Assistant Skills can invoke the same capability.
 - **Skill**: a reusable instruction package that helps Assistant choose and sequence Editorial capabilities for an Author's request. A *Skill* grants no capability or permission. A **built-in Skill** ships with Warplyn. An **Author-created Skill** is a local Markdown package created in Assistant chat and has a separate *Skill Revision* history.
 - **Editorial operation**: an author-requested assistant activity, such as composing, smoothing, fact-checking, style review, or translation.
-- **Editorial request**: one invocation of an Editorial operation.
+- **Editorial request**: a request to perform an Editorial operation.
 - **Editorial session**: the interaction sequence and activity history for Editorial requests.
 - **Editorial guidance**: author-entered instructions or context supplied with an Editorial request.
-- **Style corpus**: local writing samples provided by the author. A **style profile** is their compact derived representation.
+- **Style corpus**: local writing samples provided by the author. A **style profile** summarizes the writing traits identified in those samples.
 - **Workflow stage**: optional, author-selected progress guidance. It never runs AI or changes *Article* content.
 
 ## Publishing and settings

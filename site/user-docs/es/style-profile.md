@@ -4,12 +4,12 @@ description: "Crea un perfil de estilo local a partir de tus textos y gestiona r
 
 # Perfil de estilo
 
-Usa el **Perfil de estilo** para proporcionar al asistente ejemplos de tus textos e indicaciones reutilizables. Las muestras permanecen en este dispositivo. No pasan a formar parte de ningún *artículo* ni *versión guardada*.
+En el **Perfil de estilo** puedes añadir muestras de tus textos y dejar indicaciones que el asistente pueda seguir en futuras revisiones. Las muestras permanecen en este dispositivo. No pasan a formar parte de ningún *artículo* ni *versión guardada*.
 
 Abre el **Perfil de estilo** desde el **área de utilidades de la Biblioteca de artículos**. Usa el menú lateral o, en una ventana estrecha, el selector de sección para elegir **Muestras de escritura**, **Reglas manuales** o **Reglas tipográficas**. El botón **Volver** te devuelve al *artículo* y a la vista que tenías abierta.
 
 ::: tip Elige por dónde empezar
-Añade muestras de escritura si quieres que se detecten características de voz, o añade **Reglas manuales** si ya sabes qué indicaciones dar. Puedes usar cualquiera de las dos opciones por separado.
+Añade muestras para que Warplyn identifique los rasgos de tu estilo. Si ya sabes qué indicaciones quieres dar, añádelas en **Reglas manuales**. Puedes usar cualquiera de las dos opciones por separado.
 :::
 
 ## Añadir muestras de escritura
@@ -22,7 +22,7 @@ Usa la casilla de la muestra para incluirla o excluirla del perfil. Si la excluy
 
 Usa **Reglas manuales** para describir preferencias que deba seguir el asistente. Por ejemplo, puedes pedirle que mantenga la narración en primera persona o que explique una abreviatura la primera vez que aparece. Puedes añadir indicaciones sin incluir muestras.
 
-Después de cambiar muestras o indicaciones, elige **Regenerar perfil** para actualizar las características detectadas. El perfil muestra qué muestras usó y cuándo se regeneró. Hasta entonces, las características detectadas pueden corresponder al conjunto anterior de muestras. Las *observaciones* de la revisión de estilo son orientativas y permanecen separadas del texto del *artículo*.
+Después de cambiar muestras o indicaciones, elige **Regenerar perfil** para actualizar las características detectadas. El perfil muestra qué muestras usó y cuándo se regeneró. Hasta que regeneres el perfil, los rasgos que aparecen pueden seguir basándose en las muestras anteriores. Las *observaciones* de la revisión de estilo son orientativas y permanecen separadas del texto del *artículo*.
 
 [![Pantalla de reglas manuales del Perfil de estilo con una regla global sobre el punto de vista de Ana y el control para regenerar el perfil.](/images/style-profile-rules.png)](/images/style-profile-rules.png)
 
@@ -48,7 +48,7 @@ Elige el idioma de escritura e indica si las reglas se aplican a todos los *art�
 
 Las reglas de un *artículo* heredan las convenciones guardadas para el idioma. Al editar una regla heredada, la sustituyes; al quitarla, la desactivas para ese ámbito. **Restaurar reglas heredadas** elimina esas sustituciones. Si cambias de idioma, las ediciones de reglas sin guardar se conservan mientras el Perfil de estilo siga abierto.
 
-Las reglas aparecen como resúmenes breves marcados **Guardada** o **Sin guardar**. Elige **Editar** para abrir una regla; solo se puede editar una a la vez. **Guardar** guarda el ámbito seleccionado. Guardar las preferencias de idioma también regenera localmente el *Perfil de estilo* a partir de las muestras incluidas y las indicaciones guardadas, incluidos los cambios en la inclusión de muestras. Las sustituciones específicas de un *artículo* se guardan para ese *artículo*. El texto sin guardar de otros formularios permanece sin guardar. Puedes usar reglas tipográficas explícitas sin muestras de escritura; las muestras son necesarias para deducir características de voz.
+Las reglas aparecen como resúmenes breves marcados **Guardada** o **Sin guardar**. Elige **Editar** para abrir una regla; solo se puede editar una a la vez. Selecciona **Guardar** para conservar las reglas del ámbito seleccionado. Al guardar las preferencias de idioma, Warplyn regenera el *Perfil de estilo* en tu dispositivo. Usa las muestras que estén seleccionadas en ese momento y las indicaciones guardadas. Las sustituciones específicas de un *artículo* se guardan para ese *artículo*. El texto sin guardar de otros formularios permanece sin guardar. Puedes usar reglas tipográficas explícitas sin muestras de escritura; las muestras son necesarias para deducir características de voz.
 
 Guarda el *borrador* actual y selecciona **Comprobar tipografía** para revisar el *artículo* seleccionado sin conexión de IA. La comprobación usa la *versión guardada* y el idioma que muestra la barra de estado. Al comprobarlo, elige ese mismo idioma en **Idioma tipográfico**. El código, las URL, los identificadores técnicos y los casos ambiguos de comillas permanecen sin cambios. Las reglas contextuales requieren una **Revisión del estilo de escritura** completa mediante el asistente. Si un idioma no tiene reglas mecánicas aplicables, no hay cobertura tipográfica local; añade y guarda tus propias reglas antes de comprobarlo.
 

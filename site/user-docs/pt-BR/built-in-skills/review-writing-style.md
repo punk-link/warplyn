@@ -16,4 +16,4 @@ Peça: “Compare esta passagem sobre Ana no rio com o ponto de vista próximo d
 Leia a *proposta* e os *apontamentos* que a sustentam. Cada *apontamento* deve indicar uma característica ou regra do perfil. Antes de aceitar alterações, decida quais sugestões se encaixam no *artigo*.
 :::
 
-A avaliação de estilo precisa de um *Perfil de estilo* disponível e de uma conexão de IA. Os exemplos de escrita originais não são enviados; o assistente usa o perfil compacto derivado localmente. A solicitação pode enviar o *artigo* ou a passagem selecionada ao provedor de IA configurado.
+A avaliação de estilo precisa de um *Perfil de estilo* disponível e de uma conexão de IA. Os exemplos de escrita ficam no seu dispositivo. O assistente usa o resumo que o Warplyn cria a partir desses textos. A solicitação pode enviar o *artigo* ou a passagem selecionada ao provedor de IA configurado.

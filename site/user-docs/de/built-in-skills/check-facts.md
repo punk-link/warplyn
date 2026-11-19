@@ -4,12 +4,12 @@ description: "Verwenden Sie „Fakten prüfen“, um überprüfbare Behauptungen
 
 # Fakten prüfen
 
-Verwenden Sie **Fakten prüfen**, wenn Sie Tatsachenbehauptungen in einem *Artikel* verifizieren möchten. Die Fähigkeit recherchiert Behauptungen anhand von Quellen und erstellt beratende *Hinweise*; sie schreibt den *Artikel* nicht um.
+Mit **Fakten prüfen** können Sie Aussagen in einem *Artikel* anhand von Quellen überprüfen lassen. Der Assistent fasst seine Ergebnisse in *Hinweisen* zusammen. Der Text bleibt unverändert.
 
 Öffnen Sie **Schnellaktionen**, wählen Sie **Fakten prüfen**, prüfen Sie die vom Assistenten ausgewählten Behauptungen und heben Sie die Auswahl für alle auf, die nicht geprüft werden sollen. Wählen Sie anschließend **Editorial-Anfrage senden**. Sie können eine Passage auswählen, um die Prüfung darauf einzugrenzen. Die Ergebnisse beziehen sich auf die gespeicherte *Version*, die geprüft wird.
 
 ::: tip Beispiel
-In einem Kapitel am Fluss sagt Ana, dass der Vollmond das Wasser so weit steigen lässt, dass der Weg überflutet wird. Bitten Sie **Fakten prüfen**, diese Einzelheit anhand von Quellen zum Schauplatz der Geschichte zu prüfen.
+In einem Kapitel am Fluss sagt Ana, dass der Vollmond das Wasser so weit steigen lässt, dass der Weg überflutet wird. Wählen Sie **Fakten prüfen** und bitten Sie den Assistenten, nach Quellen zum Schauplatz der Geschichte zu suchen.
 :::
 
 ::: tip Belege prüfen

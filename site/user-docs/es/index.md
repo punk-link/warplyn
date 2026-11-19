@@ -5,7 +5,7 @@ description: "Instala Warplyn, usa el asistente editorial y protege tus textos c
 
 # Guía de usuario de Warplyn
 
-Warplyn ofrece un espacio de trabajo local para desarrollar y revisar *artículos*, desde los primeros borradores hasta su revisión y edición. Usa esta guía para instalar la aplicación, organizar tu flujo de escritura, configurar las preferencias y consultar la documentación.
+Con Warplyn puedes escribir y revisar *artículos* en tu ordenador. Aquí encontrarás cómo instalar la aplicación, organizar tus textos y ajustar las preferencias.
 
 ## Instalación
 

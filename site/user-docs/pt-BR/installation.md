@@ -21,7 +21,7 @@ Uma assinatura digital usa um certificado de assinatura de código para identifi
 
 ## Debian e distribuições baseadas em Debian
 
-O Ubuntu 22.04 x64 é o principal alvo Debian validado; não há garantia para outras versões de distribuições. Use um sistema amd64 com uma sessão gráfica.
+O pacote Debian foi testado principalmente no Ubuntu 22.04 x64. A compatibilidade com outras versões ou distribuições pode variar. Use um sistema amd64 com uma sessão gráfica.
 
 1. Abra [Versões do Warplyn](https://github.com/punk-link/warplyn/releases).
 2. Em **Assets**, baixe o pacote `warplyn_VERSION_amd64.deb`.
@@ -33,7 +33,7 @@ O Ubuntu 22.04 x64 é o principal alvo Debian validado; não há garantia para o
 
 4. Abra o Warplyn pelo menu de aplicativos.
 
-Para atualizar manualmente, baixe o arquivo `.deb` mais recente e execute o mesmo comando `sudo apt install` com esse arquivo. O download não configura um repositório de pacotes automático. O Apt resolve as dependências declaradas; não force a instalação se elas não puderem ser satisfeitas.
+Para atualizar manualmente, baixe o arquivo `.deb` mais recente e execute o mesmo comando `sudo apt install` com esse arquivo. Baixar o pacote não adiciona um repositório de atualizações. O Apt instala os pacotes de que o Warplyn precisa. Se não conseguir instalá-los, não force a instalação.
 
 Por padrão, seus textos ficam armazenados em `~/.warplyn`. Faça uma cópia de segurança antes de atualizar. Reinstalar ou remover o aplicativo deve preservar essa pasta e as credenciais no chaveiro do desktop.
 
@@ -47,7 +47,7 @@ Nas versões que incluem um arquivo `.AppImage` x64, mantenha-o em uma pasta ond
 
 No alvo Ubuntu 22.04, as dependências desktop incluem `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` e `xdg-utils`. O GNOME Keyring fornece o Secret Service. Uma instalação normal do GNOME já inclui a maioria desses pacotes. Outras distribuições usam nomes de pacotes diferentes e precisam de suas próprias verificações de compatibilidade.
 
-A integração com o desktop é opcional: crie um iniciador apontando para o caminho completo da imagem. Mantenha esse caminho ao atualizar. A validação do AppImage no desktop ainda está pendente. Ubuntu 22.04 x64 é o principal alvo de validação; Ubuntu 24.04 x64 e Fedora 43 x64 são alvos adicionais de compatibilidade. Esses alvos não significam que todo Linux seja compatível.
+A integração com o desktop é opcional: crie um iniciador apontando para o caminho completo da imagem. Mantenha esse caminho ao atualizar. A validação do AppImage no desktop ainda está pendente. O principal ambiente de teste é o Ubuntu 22.04 x64. A verificação de compatibilidade também abrange o Ubuntu 24.04 x64 e o Fedora 43 x64. A compatibilidade com outras distribuições ainda não está confirmada.
 
 Consulte [Recuperação após atualização no desktop](update-recovery.md) para ver as etapas explícitas de download, reinicialização e recuperação.
 

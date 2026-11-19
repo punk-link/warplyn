@@ -5,7 +5,7 @@ description: "Warplyn installieren, den redaktionellen Assistenten verwenden und
 
 # Warplyn-Benutzerhandbuch
 
-Warplyn bietet einen lokalen Arbeitsbereich, in dem Sie *Artikel* entwickeln und überarbeiten können – vom ersten Entwurf bis zur Prüfung und Überarbeitung. In diesem Handbuch erfahren Sie, wie Sie die App installieren, Schreibabläufe gestalten, Einstellungen konfigurieren und Referenzinformationen finden.
+In Warplyn schreiben und überarbeiten Sie *Artikel*. Ihre Texte bleiben auf Ihrem Computer. Hier erfahren Sie, wie Sie Warplyn installieren, Ihre Artikel organisieren und die App einrichten.
 
 ## Installation
 

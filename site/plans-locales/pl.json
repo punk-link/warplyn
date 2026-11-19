@@ -32,7 +32,7 @@
   "plansHelpQuestion": "Gdzie uzyskam pomoc?",
   "plansHelpAnswer": "Przeczytaj <a href=\"/docs/index.html\">dokumentację</a> lub <a href=\"https://github.com/punk-link/warplyn/issues\">utwórz zgłoszenie na GitHubie</a>. Społeczność może pomóc w konfiguracji i zgłaszaniu problemów.",
   "plansNoCheckout": "POBIERZ BEZ PŁACENIA",
-  "plansNextIdea": "Przynieś tylko swój kolejny pomysł.",
+  "plansNextIdea": "Zacznij od pomysłu albo wróć do szkicu.",
   "plansBackHome": "Przeczytaj instrukcję instalacji",
   "plansFooterMotto": "Twoje pomysły, Twoim głosem."
 }

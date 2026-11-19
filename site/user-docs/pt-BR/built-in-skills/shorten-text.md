@@ -4,7 +4,7 @@ description: "Use Encurtar texto para remover repetições e excessos, preservan
 
 # Encurtar texto
 
-Use **Encurtar texto** quando quiser uma versão mais curta de um texto existente. O recurso corta repetições, conteúdo supérfluo e frases prolixas, preservando o sentido, as evidências, as incertezas e a voz.
+Use **Encurtar texto** quando quiser uma versão mais curta de um texto existente. O assistente tira repetições e palavras desnecessárias e enxuga frases longas. Ele preserva o sentido, as evidências, as ressalvas e sua voz.
 
 Abra **Ações rápidas**, escolha **Encurtar texto** e selecione **Enviar solicitação editorial**. Dê orientações sobre o que manter ou onde cortar. Selecione uma passagem para encurtar somente aquele texto; caso contrário, o assistente trabalhará no *artigo* inteiro.
 

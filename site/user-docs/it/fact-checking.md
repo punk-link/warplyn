@@ -4,7 +4,7 @@ description: "Verifica le affermazioni fattuali, esamina fonti e verdetti e deci
 
 # Verifica dei fatti
 
-Usa **Verifica i fatti** per cercare fonti su affermazioni verificabili contenute in un *articolo*, ad esempio dettagli storici o informazioni su un luogo. L’assistente restituisce *rilievi* informativi con spiegazioni, fonti e indicazioni sull’incertezza. La verifica non modifica il testo.
+Usa **Verifica i fatti** per cercare fonti su affermazioni verificabili contenute in un *articolo*, ad esempio dettagli storici o informazioni su un luogo. Nei *rilievi*, l’assistente spiega le sue conclusioni, cita le fonti e indica quali dubbi restano. La verifica non modifica il testo.
 
 La verifica dei fatti richiede una [connessione e un modello di IA](providers.md) che supportino la verifica con fonti. Il provider potrebbe applicare dei costi.
 
@@ -20,7 +20,7 @@ La verifica dei fatti richiede una [connessione e un modello di IA](providers.md
 In «Il fiume al crepuscolo», Ana dice che la luna piena farà salire l’acqua abbastanza da coprire il sentiero. Verifica l’affermazione con fonti pertinenti al fiume e all’ambientazione del racconto. Prima di cambiare la scena, controlla che le fonti descrivano proprio quel fiume.
 :::
 
-Puoi continuare a scrivere o spostarti altrove mentre la verifica è in corso. Se un’esecuzione è incompleta, sono disponibili solo i *rilievi* completati. Avvia un’altra verifica per le affermazioni rimaste.
+Mentre la verifica è in corso, puoi continuare a scrivere o passare a un’altra vista. Se la verifica si interrompe, puoi consultare i *rilievi* già pronti. Avvia un’altra verifica per le affermazioni rimaste.
 
 ## Leggere il verdetto e le fonti
 
@@ -44,11 +44,11 @@ Per un *rilievo* non risolto nell’ultima verifica della *versione salvata* att
 | **Accetta prove** | Registra che hai esaminato e accettato le prove. Il *rilievo* mostra **Prove accettate**. |
 | **Proponi correzione** | Per un’affermazione **Contestata** o **Non verificabile**, chiede all’assistente di preparare una *proposta* di correzione. Esaminala prima di applicare le modifiche. |
 
-Entrambe le azioni di accettazione contrassegnano il *rilievo* come risolto, rimuovono i relativi pulsanti decisionali e lo tolgono dagli elementi che richiedono attenzione nella libreria degli articoli. Nessuna delle due modifica l’*articolo* o il verdetto. Registrano motivazioni diverse per la decisione, ma hanno lo stesso effetto sul flusso di revisione.
+In entrambi i casi, Warplyn segna il *rilievo* come risolto. I pulsanti per decidere scompaiono e la libreria degli articoli smette di segnalarlo come da esaminare. Nessuna delle due modifica l’*articolo* o il verdetto. Registrano motivazioni diverse per la decisione, ma hanno lo stesso effetto sul flusso di revisione.
 
-Per esempio, **Disputed · Prove accettate** significa che la verifica ha contestato l’affermazione e tu hai accettato le prove presentate. **Non** significa che l’affermazione sia stata corretta o sia ora supportata. Se il testo va modificato, cambia l’*articolo* o chiedi una correzione prima di risolvere il *rilievo*.
+Per esempio, **Contestata · Prove accettate** significa che la verifica ha contestato l’affermazione e tu hai accettato le prove presentate. **Non** significa che l’affermazione sia stata corretta o sia ora supportata. Se il testo va modificato, cambia l’*articolo* o chiedi una correzione prima di risolvere il *rilievo*.
 
-Per richiedere più correzioni insieme, seleziona le affermazioni **Contestata** o **Non verificabile** non risolte e scegli **Proponi correzioni**. In [Revisione della proposta](reviewing-articles.md#review-a-proposal), esamina il testo suggerito e applica le modifiche che accetti. Il testo accettato crea una nuova *versione salvata*.
+Per richiedere più correzioni insieme, seleziona le affermazioni **Contestata** o **Non verificabile** non risolte e scegli **Proponi correzioni**. In [Revisione della proposta](reviewing-articles.md#review-a-proposal), esamina il testo suggerito e applica le modifiche che accetti. Warplyn registra il testo con le modifiche accettate in una nuova *versione salvata*.
 
 ## Ripetere la verifica dopo le modifiche
 
@@ -56,6 +56,6 @@ I *rilievi* appartengono alla *versione salvata* verificata. Quando diventa attu
 
 Usa **Cronologia delle verifiche dei fatti** per consultare le verifiche precedenti. Sono di sola lettura; puoi intervenire solo sull’ultima verifica della *versione salvata* attuale.
 
-Una verifica successiva può riutilizzare le prove e le decisioni di accettazione se riconosce un fatto invariato, anche quando l’affermazione è stata riformulata. I risultati riutilizzati mostrano **Prove riutilizzate dalla versione** e mantengono la data della verifica precedente. Se il significato fattuale è cambiato, potrebbe servire una nuova ricerca.
+Una verifica successiva può riutilizzare le prove e le decisioni di accettazione se riconosce un fatto invariato, anche quando l’affermazione è stata riformulata. I risultati riutilizzati mostrano **Prove riutilizzate dalla versione** e mantengono la data della verifica precedente. Se la nuova formulazione afferma qualcosa di diverso, potrebbe servire un’altra ricerca.
 
 Ripetere una verifica non garantisce nuove ricerche per ogni affermazione invariata. Per i dettagli che possono cambiare nel tempo, controlla le fonti e le date delle verifiche e chiedi esplicitamente all’assistente di verificare l’affermazione usando fonti aggiornate.

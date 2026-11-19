@@ -21,7 +21,7 @@ A digital signature uses a code-signing certificate to identify the publisher an
 
 ## Debian and Debian-based distributions
 
-Ubuntu 22.04 x64 is the primary validated Debian target; other distribution versions are not guaranteed. Use an amd64 system with a graphical desktop session.
+Ubuntu 22.04 x64 is the main test environment for the Debian package. Compatibility with other distributions or versions may vary. Use an amd64 system with a graphical desktop session.
 
 1. Open [Warplyn releases](https://github.com/punk-link/warplyn/releases).
 2. Under **Assets**, download the `warplyn_VERSION_amd64.deb` package.
@@ -33,7 +33,7 @@ Ubuntu 22.04 x64 is the primary validated Debian target; other distribution vers
 
 4. Open Warplyn from your applications menu.
 
-For a manual upgrade, download the newer `.deb` and run the same `sudo apt install` command with that file. The download does not configure an automatic package repository. Apt resolves declared dependencies; do not force installation if they cannot be satisfied.
+For a manual upgrade, download the newer `.deb` and run the same `sudo apt install` command with that file. Installing the package does not add a package repository. Apt checks and resolves dependencies. If it cannot resolve them, do not force the installation.
 
 Writing is stored in `~/.warplyn` by default. Back it up before upgrading. Reinstalling or removing the application should preserve this folder and credentials in your desktop keyring.
 
@@ -47,7 +47,7 @@ For releases that include an x64 `.AppImage` asset, keep it in a folder you can 
 
 On the Ubuntu 22.04 target, desktop dependencies include `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` and `xdg-utils`. GNOME Keyring supplies Secret Service. A normal GNOME installation provides most of these packages. Other distributions use different package names and require their own compatibility checks.
 
-Desktop integration is optional: create a launcher pointing to the full path of your image. Keep the same path when updating. AppImage desktop acceptance is pending. Ubuntu 22.04 x64 is the primary validation target; Ubuntu 24.04 x64 and Fedora 43 x64 are additional compatibility targets. These targets do not imply universal Linux support.
+To launch Warplyn from your desktop, create a launcher that points to the full path of the AppImage. Keep the same path when updating. Desktop testing of the AppImage is still in progress. Ubuntu 22.04 x64 is the primary validation target; Ubuntu 24.04 x64 and Fedora 43 x64 are additional compatibility targets. These targets do not imply universal Linux support.
 
 See [Desktop update recovery](update-recovery.md) for explicit download, restart and recovery steps.
 

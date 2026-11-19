@@ -1,5 +1,5 @@
 ---
-description: "Conecta un proveedor de IA con Warplyn, guarda tu clave API, elige modelos y conoce las comprobaciones de conexión y las funciones compatibles."
+description: "Cómo conectar Warplyn con un proveedor de IA, guardar tu clave API y elegir modelos para distintas tareas."
 ---
 
 # Proveedores y modelos de IA
@@ -17,9 +17,9 @@ En la aplicación de escritorio, abre **Configuración** → **Asistente de IA**
 Las claves API gestionadas requieren la aplicación de escritorio y un servicio de credenciales del sistema operativo disponible. En Linux, Secret Service debe estar desbloqueado. La aplicación web admite conexiones mediante variables de entorno, pero no puede gestionar credenciales del sistema operativo. El instalador no crea ni importa archivos `.env`.
 :::
 
-Al añadir una conexión con clave API, se comprueba la clave con el proveedor. Al añadir una conexión mediante variable de entorno, solo se guardan sus ajustes. Warplyn vuelve a contactar con el proveedor cuando actualizas los modelos o envías una solicitud de IA. Estas comprobaciones no incluyen contenido del *artículo*.
+Si añades la clave API directamente, Warplyn la comprueba con el proveedor. Si indicas una variable de entorno, al añadir la conexión Warplyn solo guarda sus ajustes. Warplyn vuelve a contactar con el proveedor cuando actualizas los modelos o envías una solicitud de IA. Estas comprobaciones no incluyen contenido del *artículo*.
 
-Las conexiones aparecen en **Configuración** → **Asistente de IA**. Usa **Activa**, **Activar** o **Desactivar** para decidir qué conexiones puede usar Warplyn en solicitudes nuevas. Elige **Cambiar nombre** para modificar el nombre local que se muestra, o selecciona **Quitar** y confirma para eliminar la conexión de Warplyn. Quitar una conexión mediante variable de entorno no elimina la variable ni su clave.
+Las conexiones aparecen en **Configuración** → **Asistente de IA**. Usa **Activa**, **Activar** o **Desactivar** para decidir qué conexiones puede usar Warplyn en solicitudes nuevas. Elige **Cambiar nombre** para cambiar el nombre que ves en Warplyn, o selecciona **Quitar** y confirma para eliminar la conexión de Warplyn. Quitar una conexión mediante variable de entorno no elimina la variable ni su clave.
 
 ::: tip Si falla la actualización de modelos
 Comprueba que la conexión esté **Activa**, que la clave guardada sea válida o que el servicio de la aplicación tenga disponible la variable de entorno, y que la cuenta del proveedor pueda acceder a su API.
@@ -31,10 +31,10 @@ Warplyn admite OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok y De
 
 En **Configuración** → **Asistente de IA**, selecciona **Actualizar modelos disponibles** y luego elige un **Modelo predeterminado**. Para usar otro modelo con una *habilidad* concreta, selecciónalo en **Modelos para tareas específicas**. Las tareas configuradas como **Usar modelo predeterminado** utilizan ese modelo.
 
-Actualiza la lista después de cambiar conexiones o cuando quieras consultar el catálogo actual de un proveedor. Usa **Buscar modelos**, **Filtrar modelos por proveedor** y **Favoritos** para acotar la lista. La selección de modelos se aplica a solicitudes futuras. Usa el **Nivel de razonamiento** cuando aparezca para un modelo de OpenAI; los niveles más altos pueden tardar más. El **Modelo de la aplicación**, opcional en los ajustes de IA, es independiente del modelo predeterminado y gestiona tareas auxiliares de Warplyn, como resúmenes y títulos.
+Actualiza la lista después de cambiar conexiones o cuando quieras consultar el catálogo actual de un proveedor. Usa **Buscar modelos**, **Filtrar modelos por proveedor** y **Favoritos** para acotar la lista. La selección de modelos se aplica a solicitudes futuras. Si el modelo de OpenAI ofrece un **Nivel de razonamiento**, puedes ajustarlo. Con un nivel más alto, la respuesta puede tardar más. El **Modelo de la aplicación**, opcional en los ajustes de IA, es independiente del modelo predeterminado y gestiona tareas auxiliares de Warplyn, como resúmenes y títulos.
 
 ::: tip Disponibilidad de modelos
-Las operaciones editoriales disponibles varían según el modelo. Algunos no admiten verificación de datos con fuentes, salida estructurada ni controles de razonamiento. Los modelos de OpenCode Zen dependen de las funciones y la disponibilidad de su catálogo.
+Las operaciones editoriales disponibles varían según el modelo. Algunos no admiten verificación de datos con fuentes, salida estructurada ni controles de razonamiento. Consulta el catálogo de OpenCode Zen para ver qué modelos ofrece y qué funciones admite cada uno.
 :::
 
 [![Ajustes del asistente de IA con conexiones de proveedores configuradas, opciones de claves y controles de modelo.](/images/ai-providers-and-models.png)](/images/ai-providers-and-models.png)
@@ -43,6 +43,6 @@ Las operaciones editoriales disponibles varían según el modelo. Algunos no adm
 
 ### Modelo de la aplicación
 
-El **Modelo de la aplicación** gestiona tareas auxiliares breves, como los resúmenes de *propuestas*, los títulos y la interpretación de la intención de una solicitud al asistente. Si no lo configuras, Warplyn usa el modelo predeterminado.
+El **Modelo de la aplicación** gestiona tareas auxiliares breves, como resumir *propuestas*, redactar títulos e identificar qué tarea le estás pidiendo al asistente. Si no lo configuras, Warplyn usa el modelo predeterminado.
 
 Elige un modelo de texto eficiente y de menor coste. **GPT-6 Luna** es una opción de OpenAI para estas tareas concretas ([detalles del modelo](https://developers.openai.com/api/docs/models/gpt-6-luna)). Si usas otro proveedor, elige un modelo comparable. Si los resultados no son suficientemente buenos, prueba con un modelo más potente.

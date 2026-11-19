@@ -5,7 +5,7 @@ description: "Installa Warplyn, usa l’assistente editoriale, configura i provi
 
 # Guida utente di Warplyn
 
-Warplyn offre un’area di lavoro locale per scrivere e rivedere gli *articoli*, dalle prime bozze alla revisione. Questa guida spiega come installare l’app, organizzare il lavoro di scrittura, configurare le impostazioni e consultare le informazioni di riferimento.
+Con Warplyn puoi scrivere e rivedere i tuoi *articoli* sul tuo computer. Qui trovi come installare l’app, organizzare i testi e regolare le impostazioni.
 
 ## Installazione
 

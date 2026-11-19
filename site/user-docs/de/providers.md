@@ -1,5 +1,5 @@
 ---
-description: "Verbinden Sie einen KI-Anbieter mit Warplyn, speichern Sie Ihren API-Schlüssel, wählen Sie Modelle und erfahren Sie mehr über Verbindungstests und unterstützte Funktionen."
+description: "So verbinden Sie Warplyn mit einem KI-Anbieter, hinterlegen Ihren API-Schlüssel und wählen Modelle für verschiedene Aufgaben."
 ---
 
 # KI-Anbieter und Modelle
@@ -17,7 +17,7 @@ Warplyn sendet KI-Anfragen an den Anbieter, den Sie unter **Einstellungen** → 
 Verwaltete API-Schlüssel erfordern die Desktop-App und einen verfügbaren Anmeldedatendienst des Betriebssystems. Unter Linux muss Secret Service entsperrt sein. Die Browser-App unterstützt Verbindungen über Umgebungsvariablen, kann aber keine Anmeldedaten des Betriebssystems verwalten. Das Installationsprogramm erstellt oder importiert keine `.env`-Datei.
 :::
 
-Beim Hinzufügen einer API-Schlüssel-Verbindung wird der Schlüssel beim Anbieter geprüft. Beim Hinzufügen einer Umgebungsvariablen-Verbindung werden nur die Einstellungen gespeichert. Warplyn kontaktiert den Anbieter erneut, wenn Sie Modelle aktualisieren oder eine KI-Anfrage senden. Diese Prüfungen enthalten keinen *Artikel*-Text.
+Wenn Sie den API-Schlüssel direkt hinterlegen, prüft Warplyn ihn beim Anbieter. Wenn Sie eine Umgebungsvariable angeben, speichert Warplyn beim Hinzufügen nur die Einstellungen. Warplyn kontaktiert den Anbieter erneut, wenn Sie Modelle aktualisieren oder eine KI-Anfrage senden. Diese Prüfungen enthalten keinen *Artikel*-Text.
 
 Verbindungen werden unter **Einstellungen** → **KI-Assistent** aufgelistet. Mit **Aktiv**, **Aktivieren** oder **Deaktivieren** legen Sie fest, welche Verbindungen Warplyn für neue Anfragen verwenden darf. Wählen Sie **Umbenennen**, um den lokalen Anzeigenamen zu ändern, oder **Entfernen** und bestätigen Sie, um die Verbindung aus Warplyn zu entfernen. Beim Entfernen einer Umgebungsvariablen-Verbindung werden weder die Variable noch ihr Schlüssel gelöscht.
 
@@ -29,12 +29,12 @@ Prüfen Sie, ob die Verbindung **Aktiv** ist, der gespeicherte Schlüssel gülti
 
 Warplyn unterstützt OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok und DeepSeek. Der Katalog von OpenCode Zen bietet außerdem Modelle anderer Anbieter.
 
-Wählen Sie unter **Einstellungen** → **KI-Assistent** die Option **Verfügbare Modelle aktualisieren** und anschließend ein **Standardmodell**. Wenn eine bestimmte *Fähigkeit* ein anderes Modell verwenden soll, wählen Sie es unter **Modelle für bestimmte Aufgaben** aus. Eine Aufgabe mit der Einstellung **Standardmodell verwenden** folgt dem Standardmodell.
+Wählen Sie unter **Einstellungen** → **KI-Assistent** die Option **Verfügbare Modelle aktualisieren** und anschließend ein **Standardmodell**. Wenn eine bestimmte *Fähigkeit* ein anderes Modell verwenden soll, wählen Sie es unter **Modelle für bestimmte Aufgaben** aus. Mit **Standardmodell verwenden** greift die Aufgabe auf das gewählte **Standardmodell** zurück.
 
-Aktualisieren Sie die Modellliste, nachdem Sie Verbindungen geändert haben oder wenn Sie den aktuellen Katalog eines Anbieters sehen möchten. Mit **Modelle suchen**, **Modelle nach Anbieter filtern** und **Favoriten** können Sie die Liste eingrenzen. Modellauswahlen gelten für künftige Anfragen. Bei einem ausgewählten OpenAI-Modell können Sie, sofern verfügbar, die **Reasoning-Stufe** einstellen; höhere Einstellungen können länger dauern. Das optionale **App-Modell** in den KI-Einstellungen ist vom Standardmodell getrennt und übernimmt Warplyn-Hilfsaufgaben wie Zusammenfassungen und Titel.
+Aktualisieren Sie die Modellliste, nachdem Sie Verbindungen geändert haben oder wenn Sie den aktuellen Katalog eines Anbieters sehen möchten. Mit **Modelle suchen**, **Modelle nach Anbieter filtern** und **Favoriten** können Sie die Liste eingrenzen. Modellauswahlen gelten für künftige Anfragen. Bei einem ausgewählten OpenAI-Modell können Sie, sofern verfügbar, die **Reasoning-Stufe** einstellen. Bei einer höheren Stufe kann die Antwort länger dauern. Das optionale **App-Modell** in den KI-Einstellungen ist vom Standardmodell getrennt und übernimmt Warplyn-Hilfsaufgaben wie Zusammenfassungen und Titel.
 
 ::: tip Modellverfügbarkeit
-Die verfügbaren redaktionellen Funktionen variieren je nach Modell. Einige Modelle unterstützen keine beleggestützte Faktenprüfung, strukturierte Ausgabe oder Reasoning-Steuerung. OpenCode-Zen-Modelle richten sich nach den Funktionen und der Verfügbarkeit ihres Katalogs.
+Die verfügbaren redaktionellen Funktionen variieren je nach Modell. Einige Modelle unterstützen keine beleggestützte Faktenprüfung, strukturierte Ausgabe oder Reasoning-Steuerung. Welche Modelle und Funktionen OpenCode Zen anbietet, entnehmen Sie dem Katalog des Anbieters.
 :::
 
 [![Einstellungen des KI-Assistenten mit konfigurierten Anbieter-Verbindungen, Auswahlmöglichkeiten für Schlüssel und Modellsteuerungen.](/images/ai-providers-and-models.png)](/images/ai-providers-and-models.png)

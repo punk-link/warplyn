@@ -17,7 +17,7 @@ Uma nova cópia `.skladno` inclui o banco de dados, as *habilidades* atuais do a
 :::
 
 ::: tip Limites de cópias de segurança no navegador
-As transferências pelo navegador aceitam arquivos de até 100 MB cada, com um total de 500 MB. Para dados locais maiores, use o aplicativo desktop.
+As transferências pelo navegador aceitam arquivos de até 100 MB cada, com um total de 500 MB. Se a sua cópia ultrapassar esses limites, use o aplicativo desktop.
 :::
 
 No aplicativo desktop, cada instantâneo do banco de dados tem uma pasta `.sqlite.skills` associada, com as *habilidades* atuais do autor, o histórico de *revisões da habilidade*, suas palavras pessoais de ortografia e um manifesto. Ao copiar ou restaurar um instantâneo, mantenha juntos o arquivo `.sqlite` e a pasta `.sqlite.skills`. Cópias de segurança do navegador não incluem palavras pessoais de ortografia.
@@ -26,14 +26,14 @@ Cópias antigas `.sqlite` contêm apenas o banco de dados. Ao restaurar uma dela
 
 ## Cópias de segurança automáticas
 
-Defina **Backups automáticos** como **Diário** para criar um instantâneo pouco depois que o Warplyn iniciar e, em seguida, a cada 24 horas enquanto permanecer aberto. No navegador, o Warplyn precisa de permissão para usar a pasta escolhida. Se uma cópia automática falhar, confira a pasta e crie uma cópia manual; a próxima tentativa agendada continuará ativada.
+Defina **Backups automáticos** como **Diário** para criar um instantâneo pouco depois que o Warplyn iniciar e, em seguida, a cada 24 horas enquanto permanecer aberto. No navegador, o Warplyn precisa de permissão para usar a pasta escolhida. Se uma cópia automática falhar, confira a pasta e faça uma cópia manual. O Warplyn volta a tentar no horário programado.
 
 **Retenção automática de backup** controla quantos instantâneos automáticos o Warplyn mantém. Ele remove apenas os instantâneos automáticos mais antigos; as cópias criadas manualmente são sempre mantidas.
 
 ## Restaurar uma cópia de segurança
 
 1. Em **Configurações** → **Dados e backups**, selecione **Restaurar um backup**.
-2. Escolha a cópia que deseja restaurar. O Warplyn verifica os arquivos e guarda uma cópia local de recuperação do banco de dados e dos arquivos de *habilidade* atuais.
+2. Escolha a cópia que deseja restaurar. O Warplyn verifica os arquivos do backup e guarda no seu dispositivo uma cópia do banco de dados e dos arquivos de *habilidade* atuais. Assim, é possível voltar ao estado anterior, se necessário.
 3. Quando a restauração terminar, confira seus *artigos* e *versões salvas*.
 
 Restaurar uma cópia `.skladno` ou um instantâneo do desktop com a pasta associada substitui o banco de dados e as *habilidades* salvas. Restaurar uma cópia antiga `.sqlite`, que contém apenas o banco de dados, substitui somente o banco de dados.
@@ -49,7 +49,7 @@ A restauração mantém as conexões de IA, credenciais e seleções de modelos 
 Use estas etapas somente para uma cópia `.sqlite` antiga. Mantenha o Warplyn fechado até recolocar o banco de dados.
 
 1. Faça uma cópia do banco de dados local atual.
-2. Copie a cópia de segurança para `skladno.sqlite` na pasta de dados configurada do Warplyn.
+2. Na pasta de dados do Warplyn, substitua o arquivo `skladno.sqlite` pela cópia de segurança.
 3. Inicie o Warplyn e confira seus *artigos* e *versões salvas*.
 
 Para restaurar uma cópia que inclua *habilidades*, use **Restaurar um backup** em **Configurações** para que o Warplyn também possa verificar e restaurar o manifesto e o histórico de *habilidades*.

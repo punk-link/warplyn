@@ -4,7 +4,7 @@ description: "Usa Trasformare le idee in una bozza per sviluppare appunti o un a
 
 # Trasformare le idee in una bozza
 
-Usa **Trasforma le idee in una bozza** quando hai del materiale di partenza ma ti serve una prima stesura coerente. Sviluppa le idee fornite in una narrazione lineare, preservandone il significato ed evitando affermazioni non supportate.
+Usa **Trasforma le idee in una bozza** quando hai del materiale di partenza ma ti serve una prima stesura coerente. L’assistente dà forma alle tue idee in un testo coerente. Ne conserva il senso ed evita di aggiungere affermazioni senza riscontro.
 
 Apri **Azioni rapide**, scegli **Trasforma le idee in una bozza**, spiega l’impostazione che desideri e seleziona **Invia richiesta editoriale**. Se hai selezionato un passaggio, la richiesta usa quel passaggio e il materiale che includi esplicitamente nel messaggio. Senza una selezione, può usare l’*articolo* attuale insieme alle tue indicazioni.
 

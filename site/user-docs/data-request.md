@@ -4,7 +4,7 @@ description: "Contact Warplyn about your personal data and request deletion of o
 
 # Request access to or deletion of your data
 
-Email [kirill.taran@punk.link](mailto:kirill.taran@punk.link) to ask about personal data received by the Warplyn project, request access or correction, or request deletion. Describe which data or interaction your request concerns. The project owner will reply by email and may ask for information needed to locate the data or verify the request.
+Email [kirill.taran@punk.link](mailto:kirill.taran@punk.link) to ask what personal data the Warplyn project has received or to request access, corrections, or deletion. Describe which data or interaction your request concerns. The project owner will reply by email and may ask for information needed to locate the data or verify the request.
 
 Do not include *Article* content, API keys, passwords, or identity documents in your initial email.
 
@@ -18,13 +18,13 @@ If you enabled diagnostic and usage sharing:
 
 Copy the ID before turning sharing off, because turning it off clears the ID from your device. Disabling sharing cannot recall events already sent. For deletion requests, the project owner deletes the matching pseudonymous record and confirms by email.
 
-See [diagnostic and usage data](telemetry.md) for the collected fields and sharing controls.
+See [diagnostic and usage data](telemetry.md) to see what Warplyn collects and how to change your sharing settings.
 
 ## Your writing and AI providers
 
 Your *Articles* and their history are stored locally. A request to the project owner does not delete files or app data on your computer. Keep a backup of writing you want to preserve before removing local data.
 
-When you use AI features, relevant text and context are sent to your chosen provider. Requests about data held by that provider need to be directed to the provider separately.
+When you use AI features, relevant text and context are sent to your chosen provider. Contact your provider directly about any data it holds.
 
 ## Website analytics
 
