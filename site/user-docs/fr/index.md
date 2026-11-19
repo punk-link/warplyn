@@ -5,7 +5,7 @@ description: "Installez Warplyn, utilisez l’assistant éditorial, configurez l
 
 # Guide d’utilisation de Warplyn
 
-Warplyn propose un espace de travail local pour rédiger et améliorer des *articles*, des premières ébauches à la révision. Ce guide vous aide à installer l’application, organiser votre travail d’écriture, configurer les paramètres et consulter les références.
+Avec Warplyn, vous rédigez et révisez vos *articles* sur votre ordinateur. Retrouvez ici les étapes d’installation, les conseils pour organiser vos textes et les réglages de l’application.
 
 ## Installation
 

@@ -12,4 +12,4 @@ Abra **Ações rápidas**, escolha **Desenvolva pontos-chave**, adicione orienta
 Selecione a cena em que Ana se senta perto do rio e peça: “Apresente três interpretações possíveis da relação de Ana com o rio, com base nesta passagem.”
 :::
 
-Os pontos retornados talvez precisem de correções ou de outra ênfase. Revise-os antes de usá-los em um *artigo*. Para criar um rascunho completo com base no material fornecido, consulte [Transformar ideias em um rascunho](turn-ideas-into-a-draft.md).
+Leia a lista antes de aproveitá-la no *artigo*. Talvez você queira esclarecer algum ponto ou dar mais destaque a outra ideia. Para criar um rascunho completo com base no material fornecido, consulte [Transformar ideias em um rascunho](turn-ideas-into-a-draft.md).

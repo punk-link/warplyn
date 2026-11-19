@@ -6,7 +6,7 @@ description: "Twórz automatyczne lub ręczne kopie zapasowe Warplyn, przywracaj
 
 ## Utwórz kopię zapasową
 
-W sekcji **Ustawienia** → **Dane i kopie** wybierz folder w polu **Folder kopii zapasowych**, a następnie wybierz **Utwórz kopię**. Obsługiwane przeglądarki proszą Warplyn o zgodę na zapisywanie kopii wyłącznie w tym folderze.
+W sekcji **Ustawienia** → **Dane i kopie** wybierz folder w polu **Folder kopii zapasowych**, a następnie wybierz **Utwórz kopię**. W obsługiwanej przeglądarce Warplyn poprosi Cię o zgodę na zapisywanie kopii wyłącznie w wybranym folderze.
 
 [![Ustawienia Data and backups z folderem kopii zapasowych, kontrolkami Utwórz kopię i Przywróć kopię oraz opcjami automatycznego tworzenia kopii.](/images/backups-and-recovery.png)](/images/backups-and-recovery.png)
 
@@ -17,7 +17,7 @@ Nowa kopia `.skladno` zawiera bazę danych, bieżące autorskie *umiejętności*
 :::
 
 ::: tip Ograniczenia kopii w przeglądarce
-Transfer kopii zapasowej w przeglądarce obsługuje pliki do 100 MB każdy i 500 MB łącznie. W przypadku większej ilości danych lokalnych użyj aplikacji desktopowej.
+Transfer kopii zapasowej w przeglądarce obsługuje pliki do 100 MB każdy i 500 MB łącznie. Jeśli kopia przekracza te limity, użyj aplikacji desktopowej.
 :::
 
 W aplikacji desktopowej każdej migawce bazy danych towarzyszy folder `.sqlite.skills` zawierający bieżące autorskie *umiejętności*, ich historię *zapisanych wersji umiejętności*, Twoje osobiste słowa ze słownika i manifest. Podczas kopiowania lub przywracania migawki zachowaj razem plik `.sqlite` i folder `.sqlite.skills`. Kopie tworzone w przeglądarce nie zawierają osobistych słów ze słownika.
@@ -26,14 +26,14 @@ Starsze kopie `.sqlite` zawierają tylko bazę danych. Ich przywrócenie zachowu
 
 ## Kopie automatyczne
 
-Ustaw **Automatyczne kopie zapasowe** na **Codziennie**, aby tworzyć migawkę krótko po uruchomieniu Warplyn, a następnie co 24 godziny, gdy aplikacja pozostaje otwarta. W przeglądarce Warplyn potrzebuje zgody na użycie wybranego folderu. Jeśli automatyczna kopia się nie powiedzie, sprawdź folder i utwórz kopię ręcznie; następna zaplanowana próba pozostanie aktywna.
+Ustaw **Automatyczne kopie zapasowe** na **Codziennie**, aby tworzyć migawkę krótko po uruchomieniu Warplyn, a następnie co 24 godziny, gdy aplikacja pozostaje otwarta. W przeglądarce Warplyn potrzebuje zgody na użycie wybranego folderu. Jeśli nie uda się utworzyć automatycznej kopii, sprawdź folder i utwórz kopię ręcznie. Warplyn ponowi próbę o wyznaczonej porze.
 
 **Przechowywanie automatycznych kopii** określa, ile automatycznych migawek zachowuje Warplyn. Usuwa tylko starsze automatyczne migawki; ręcznie utworzone kopie są zawsze zachowywane.
 
 ## Przywróć kopię zapasową
 
 1. W sekcji **Ustawienia** → **Dane i kopie** wybierz **Przywróć kopię**.
-2. Wybierz kopię do przywrócenia. Warplyn sprawdzi jej pliki i zachowa lokalną kopię odzyskiwania bieżącej bazy danych oraz plików *umiejętności*.
+2. Wybierz kopię do przywrócenia. Warplyn sprawdzi pliki kopii i zapisze na urządzeniu kopię bieżącej bazy danych oraz plików *umiejętności*. W razie potrzeby pozwoli ona wrócić do stanu sprzed przywrócenia.
 3. Po zakończeniu przywracania sprawdź swoje *artykuły* i *zapisane wersje*.
 
 Przywrócenie kopii `.skladno` lub migawki desktopowej wraz z dołączonym folderem zastępuje bazę danych i zapisane *umiejętności*. Przywrócenie starszej kopii `.sqlite` zawierającej tylko bazę zastępuje wyłącznie bazę danych.

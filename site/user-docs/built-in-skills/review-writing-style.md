@@ -4,7 +4,7 @@ description: "Use Review writing style to compare an Article with your local Sty
 
 # Review writing style
 
-Use **Review writing style** when you want to compare an *Article* with your saved *Style Profile*. The Assistant looks for concrete differences from the profile's voice characteristics and rules. A low-confidence profile is treated as tentative.
+Use **Review writing style** when you want to compare an *Article* with your saved *Style Profile*. The Assistant looks for concrete differences from the profile's voice characteristics and rules. The Assistant treats a profile with low confidence as tentative.
 
 Before sending the request, add writing samples or manual guidance in [Style Profile](../style-profile.md) and rebuild the profile. Then open **Quick actions**, choose **Review writing style**, and select **Send editorial request**. Select a passage to focus the review; otherwise, it uses the full *Article*.
 

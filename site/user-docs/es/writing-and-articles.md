@@ -4,7 +4,7 @@ description: "Escribe y organiza artículos, entiende cómo se guardan los borra
 
 # Escribir y organizar artículos
 
-Un *artículo* es un texto de tu biblioteca de Warplyn. Mientras lo editas, Warplyn guarda un punto de control que se puede recuperar. Una *versión guardada* es un punto conservado en el historial del *artículo*. Así puedes seguir trabajando sin tratar cada edición como una versión terminada.
+Un *artículo* es un texto de tu biblioteca de Warplyn. Mientras escribes, Warplyn guarda el *borrador* para que puedas recuperarlo. Una *versión guardada* conserva el texto tal como estaba en un momento concreto del historial.
 
 ## Escribir y guardar un artículo
 

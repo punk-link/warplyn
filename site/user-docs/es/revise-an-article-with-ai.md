@@ -4,9 +4,9 @@ description: "Revisa un artículo con IA en Warplyn: formula una solicitud concr
 
 # Revisar un artículo con IA y comprobar cada cambio
 
-Cuando una escena tiene los acontecimientos adecuados, pero el ritmo no termina de funcionar, el asistente editorial de Warplyn puede ayudarte a revisarla. Trabaja sobre un pasaje o un *artículo* completo, compara las formulaciones propuestas y aplica los cambios que quieras conservar.
+Si ya sabes qué ocurre en la escena, pero el ritmo aún no funciona, puedes pedir ayuda al asistente editorial. Trabaja sobre un pasaje o un *artículo* completo, compara las formulaciones propuestas y aplica los cambios que quieras conservar.
 
-Warplyn es un espacio de escritura de código abierto y con almacenamiento local para Windows y Linux. Tus textos permanecen en tu ordenador. La asistencia de IA requiere conexión a Internet y una conexión compatible con un proveedor, junto con tu clave API. El texto y el contexto pertinentes se envían a ese proveedor, y se aplican sus precios y políticas de datos.
+Warplyn es un espacio de escritura de código abierto y con almacenamiento local para Windows y Linux. Tus textos permanecen en tu ordenador. Para usar la IA necesitas conexión a Internet y una clave API de un proveedor compatible. Warplyn envía a ese proveedor el texto y el contexto necesarios para la solicitud. Se aplican sus tarifas y sus políticas de datos.
 
 ## Empieza con una solicitud concreta
 
@@ -14,7 +14,7 @@ Abre tu *artículo* y selecciona el pasaje que quieras revisar. En el cuadro de 
 
 > Mejora el ritmo sin perder el punto de vista de Ana ni la atmósfera tranquila. No añadas acontecimientos.
 
-Selecciona **Enviar solicitud editorial**. Warplyn envía la selección con hasta 500 caracteres a cada lado como contexto de solo lectura. Solo se puede sustituir el pasaje seleccionado. Antes de enviar textos sensibles, revisa la explicación del contexto en el cuadro de mensaje. Para obtener más información, consulta [Asistente editorial](editorial-assistant.md).
+Selecciona **Enviar solicitud editorial**. Warplyn envía la selección con hasta 500 caracteres a cada lado como contexto de solo lectura. Solo se puede sustituir el pasaje seleccionado. Si el texto contiene información sensible, lee el aviso del cuadro de mensaje. Ahí se indica qué texto se enviará. Para obtener más información, consulta [Asistente editorial](editorial-assistant.md).
 
 [![cuadro de mensaje de Warplyn con una solicitud de revisión de ficción.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
@@ -32,9 +32,9 @@ Elige **Aceptar** o **Rechazar** para cada cambio. Puedes editar el texto de **P
 
 ## Aplica los cambios y conserva el historial
 
-Elige **Aplicar** después de decidir sobre todos los cambios. El texto aceptado crea una nueva *versión guardada*. Si rechazas todos los cambios, el *artículo* no cambia y no se crea ninguna *versión guardada*. Las decisiones por sí solas no modifican tu texto.
+Elige **Aplicar** después de decidir sobre todos los cambios. Warplyn conserva el texto con los cambios aceptados en una nueva *versión guardada*. Si rechazas todos los cambios, el *artículo* no cambia y no se crea ninguna *versión guardada*. Las decisiones por sí solas no modifican tu texto.
 
-Abre el **Historial de versiones** para consultar versiones guardadas anteriores. Restaurar una añade otra *versión guardada* y conserva el historial intermedio. Consulta [Revisar artículos](reviewing-articles.md) para conocer las opciones de recuperación y las *propuestas* obsoletas.
+Abre el **Historial de versiones** para consultar versiones guardadas anteriores. Al restaurar una versión anterior, Warplyn crea otra *versión guardada* con ese texto. Las versiones intermedias quedan en el historial. Consulta [Revisar artículos](reviewing-articles.md) para conocer las opciones de recuperación y las *propuestas* obsoletas.
 
 Las revisiones de IA pueden no reflejar tu intención o cambiar detalles que querías conservar. Revisa el resultado antes de aplicarlo y, si hace falta, vuelve a pedirlo con una solicitud más concreta. Una solicitud cancelada o fallida no modifica el *artículo*.
 

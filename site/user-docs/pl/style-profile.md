@@ -4,12 +4,12 @@ description: "Utwórz lokalny Profil stylu na podstawie własnych tekstów i zar
 
 # Profil stylu
 
-Użyj **Profilu stylu**, aby przekazać asystentowi przykłady swoich tekstów i wielokrotnego użytku wskazówki. Próbki pozostają na tym urządzeniu. Nie stają się częścią *artykułu* ani *zapisanej wersji*.
+W sekcji **Profil stylu** możesz dodać próbki swoich tekstów i zapisać wskazówki, z których asystent będzie korzystać przy kolejnych poprawkach. Próbki pozostają na tym urządzeniu. Nie stają się częścią *artykułu* ani *zapisanej wersji*.
 
 Otwórz **Profil stylu** w obszarze narzędzi panelu biblioteki artykułów. Użyj menu bocznego lub selektora sekcji w wąskim oknie, aby wybrać **Próbki pisania**, **Reguły ręczne** albo **Reguły typograficzne**. Przycisk **Wróć** przenosi do *artykułu* i poprzednio otwartego widoku.
 
 ::: tip Wybierz punkt wyjścia
-Dodaj próbki tekstu, jeśli chcesz uzyskać wykryte cechy stylu, albo **Reguły ręczne**, jeśli wiesz już, jakie wskazówki przekazać. Możesz używać każdej z tych opcji niezależnie.
+Dodaj próbki, aby Warplyn rozpoznał cechy Twojego stylu. Jeśli wiesz, jakich zasad ma przestrzegać asystent, wpisz je w sekcji **Reguły ręczne**. Możesz używać każdej z tych opcji niezależnie.
 :::
 
 ## Dodaj próbki tekstu
@@ -48,7 +48,7 @@ Wybierz język pisania oraz zdecyduj, czy zasady mają dotyczyć wszystkich *art
 
 Zasady *artykułu* dziedziczą zapisane konwencje językowe. Edycja odziedziczonej zasady zastępuje ją; jej usunięcie wyłącza zasadę w danym zakresie. **Przywróć odziedziczone reguły** usuwa te nadpisania. Zmiana języka zachowuje niezapisane edycje zasad, gdy Profil stylu pozostaje otwarty.
 
-Zasady są wyświetlane jako krótkie podsumowania oznaczone **Zapisana** lub **Niezapisana**. Wybierz **Edytuj**, aby otworzyć zasadę; można edytować tylko jedną naraz. **Zapisz** zapisuje wybrany zakres. Zapisanie preferencji językowych przebudowuje również lokalnie *Profil stylu* na podstawie aktualnie uwzględnionych próbek i zapisanych wskazówek, w tym zmian dotyczących uwzględniania próbek. Nadpisania *artykułu* są zapisywane dla tego *artykułu*. Niezapisany tekst w innych formularzach nadal pozostaje niezapisany. Możesz stosować jawne zasady typografii bez próbek tekstu; próbki są potrzebne do wyprowadzenia cech stylu.
+Zasady są wyświetlane jako krótkie podsumowania oznaczone **Zapisana** lub **Niezapisana**. Wybierz **Edytuj**, aby otworzyć zasadę; można edytować tylko jedną naraz. Wybierz **Zapisz**, aby zachować reguły dla wybranego zakresu. Gdy zapiszesz ustawienia języka, Warplyn przebuduje też *profil stylu* na Twoim urządzeniu. Użyje próbek zaznaczonych w tym momencie oraz zapisanych wskazówek. Nadpisania *artykułu* są zapisywane dla tego *artykułu*. Niezapisany tekst w innych formularzach nadal pozostaje niezapisany. Możesz stosować jawne zasady typografii bez próbek tekstu; próbki są potrzebne do wyprowadzenia cech stylu.
 
 Zapisz bieżący *szkic*, a następnie wybierz **Sprawdź typografię**, aby sprawdzić wybrany *artykuł* bez połączenia AI. Sprawdzenie korzysta z zapisanej *wersji* i jej języka, widocznego na pasku stanu. Podczas sprawdzania wybierz ten sam język z listy **Język typografii**. Kod, adresy URL, identyfikatory techniczne i niejednoznaczne przypadki cudzysłowów pozostają bez zmian. Zasady kontekstowe wymagają uruchomienia przez asystenta pełnego sprawdzenia za pomocą **Przejrzyj styl pisania**. Dla języka bez odpowiednich reguł mechanicznych nie ma lokalnej obsługi typografii; przed sprawdzeniem dodaj i zapisz własne zasady.
 

@@ -16,4 +16,4 @@ Poproś: „Porównaj ten fragment o Anie nad rzeką z bliskim punktem widzenia 
 Przeczytaj *propozycję* i wspierające ją *uwagi*. Każda *uwaga* powinna wskazywać cechę lub zasadę profilu. Zdecyduj, które sugestie pasują do *artykułu*, zanim zaakceptujesz zmiany.
 :::
 
-Przegląd stylu wymaga dostępnego *Profil stylu* i połączenia AI. Surowe próbki tekstu nie są wysyłane; asystent korzysta ze zwięzłego profilu utworzonego lokalnie. Zlecenie może wysłać do skonfigurowanego dostawcy AI *artykuł* lub zaznaczony fragment.
+Do sprawdzenia stylu potrzebujesz *profilu stylu* oraz połączenia z AI. Próbki tekstu zostają na urządzeniu. Asystent korzysta z krótkiego profilu, który Warplyn tworzy na ich podstawie. Zlecenie może wysłać do skonfigurowanego dostawcy AI *artykuł* lub zaznaczony fragment.

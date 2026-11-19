@@ -12,4 +12,4 @@ Abre **Acciones rápidas**, elige **Desarrollar puntos clave**, añade las indic
 Selecciona la escena en la que Ana se sienta junto al río y pregunta: «Dame tres interpretaciones posibles de la relación de Ana con el río, basadas en este pasaje».
 :::
 
-Es posible que los puntos devueltos necesiten correcciones o un énfasis distinto. Revísalos antes de utilizarlos en un *artículo*. Para crear un borrador completo a partir del material proporcionado, consulta [Convertir ideas en un borrador](turn-ideas-into-a-draft.md).
+Lee la lista antes de usarla en un *artículo*. Quizá quieras corregir algún punto o dar más peso a otra idea. Para crear un borrador completo a partir del material proporcionado, consulta [Convertir ideas en un borrador](turn-ideas-into-a-draft.md).

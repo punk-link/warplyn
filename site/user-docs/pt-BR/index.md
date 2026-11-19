@@ -5,7 +5,7 @@ description: "Instale o Warplyn, use o Assistente Editorial, configure provedore
 
 # Guia do usuário do Warplyn
 
-O Warplyn oferece um espaço de trabalho local para desenvolver e aprimorar *artigos*, desde os primeiros rascunhos até a revisão e as versões salvas. Use este guia para instalar o aplicativo, criar fluxos de escrita, configurar as preferências e consultar materiais de referência.
+No Warplyn, você escreve e revisa seus *artigos* no próprio computador. Veja como instalar o aplicativo, organizar seus textos e ajustar as preferências.
 
 ## Instalação
 

@@ -4,7 +4,7 @@ description: "Usa Acortar texto para eliminar repeticiones y relleno sin perder 
 
 # Acortar texto
 
-Usa **Acortar texto** cuando quieras una versión más breve de una prosa existente. Elimina repeticiones, relleno y frases demasiado extensas, y conserva el sentido, las pruebas, la incertidumbre y la voz.
+Usa **Acortar texto** si quieres recortar un texto que ya has escrito. El asistente quita repeticiones y palabras de relleno, y acorta las frases largas. Conserva el sentido, las pruebas, los matices de duda y tu voz.
 
 Abre **Acciones rápidas**, elige **Acortar texto** y selecciona **Enviar solicitud editorial**. Indica qué se debe conservar o dónde conviene recortar. Selecciona un pasaje para acortar solo ese texto; de lo contrario, el asistente trabaja con el *artículo* completo.
 

@@ -1,5 +1,5 @@
 ---
-description: "Crea copias de seguridad automáticas o manuales de Warplyn, restaura tus textos y habilidades y recupérate de forma segura si algo falla."
+description: "Cómo hacer copias de seguridad de Warplyn, programarlas y recuperar tus textos y habilidades."
 ---
 
 # Copias de seguridad y recuperación
@@ -13,27 +13,27 @@ En **Configuración** → **Datos y copias de seguridad**, elige una **Carpeta d
 *Ajustes de datos y copias de seguridad en la aplicación de escritorio.*
 
 ::: tip Contenido de una copia de seguridad
-Una nueva copia `.skladno` incluye la base de datos, las *habilidades* actuales del Author, su historial de *versiones de habilidad* y un manifiesto de archivos. Las copias no incluyen archivos `.env` ni claves API.
+Una nueva copia `.skladno` incluye la base de datos, tus *habilidades* actuales, su historial de *versiones de habilidad* y un manifiesto de archivos. Las copias no incluyen archivos `.env` ni claves API.
 :::
 
 ::: tip Límites de las copias desde el navegador
-Las transferencias de copias en el navegador admiten archivos de hasta 100 MB cada uno y 500 MB en total. Para datos locales más grandes, usa la aplicación de escritorio.
+Las transferencias de copias en el navegador admiten archivos de hasta 100 MB cada uno y 500 MB en total. Si tu copia supera estos límites, usa la aplicación de escritorio.
 :::
 
-En la aplicación de escritorio, cada instantánea de la base de datos tiene al lado una carpeta `.sqlite.skills` con las *habilidades* actuales del Author, su historial de *versiones de habilidad*, tus palabras personales de ortografía y un manifiesto. Al copiar o restaurar una instantánea, conserva juntos el archivo `.sqlite` y la carpeta `.sqlite.skills`. Las copias del navegador no incluyen las palabras personales de ortografía.
+En la aplicación de escritorio, cada instantánea de la base de datos tiene al lado una carpeta `.sqlite.skills` con tus *habilidades* actuales, su historial de *versiones de habilidad*, tus palabras personales de ortografía y un manifiesto. Al copiar o restaurar una instantánea, conserva juntos el archivo `.sqlite` y la carpeta `.sqlite.skills`. Las copias del navegador no incluyen las palabras personales de ortografía.
 
 Las copias antiguas `.sqlite` solo contienen la base de datos. Al restaurar una, se conservan los archivos y el historial actuales de tus *habilidades*.
 
 ## Copias de seguridad automáticas
 
-Configura **Copias de seguridad automáticas** como **Diarias** para crear una instantánea poco después de iniciar Warplyn y, luego, cada 24 horas mientras siga abierta. En el navegador, Warplyn necesita permiso para usar la carpeta elegida. Si falla una copia automática, comprueba la carpeta y crea una manual; el siguiente intento programado seguirá activado.
+Configura **Copias de seguridad automáticas** como **Diarias** para crear una instantánea poco después de iniciar Warplyn y, luego, cada 24 horas mientras siga abierta. En el navegador, Warplyn necesita permiso para usar la carpeta elegida. Si falla una copia automática, comprueba la carpeta y haz una copia manual. Warplyn volverá a intentarlo a la hora prevista.
 
 **Retención de copias automáticas** controla cuántas instantáneas automáticas conserva Warplyn. Solo elimina las instantáneas automáticas más antiguas; las copias que creaste manualmente siempre se conservan.
 
 ## Restaurar una copia de seguridad
 
 1. En **Configuración** → **Datos y copias de seguridad**, selecciona **Restaurar una copia de seguridad**.
-2. Elige la copia que quieres restaurar. Warplyn comprueba sus archivos y guarda una copia de recuperación local de la base de datos y los archivos de *habilidades* actuales.
+2. Elige la copia que quieres restaurar. Warplyn comprueba los archivos y guarda en tu ordenador una copia de la base de datos y de tus *habilidades* actuales, por si necesitas volver al estado anterior.
 3. Cuando termine la restauración, comprueba tus *artículos* y *versiones guardadas*.
 
 Restaurar una copia `.skladno` o una instantánea de escritorio junto con su carpeta asociada reemplaza la base de datos y las *habilidades* guardadas. Restaurar una copia `.sqlite` antigua que solo contiene la base de datos reemplaza únicamente esa base de datos.
@@ -49,7 +49,7 @@ La restauración conserva las conexiones de IA, credenciales y selecciones de mo
 Sigue estos pasos únicamente para una copia antigua `.sqlite`. Mantén Warplyn cerrado hasta que la base de datos vuelva a estar en su sitio.
 
 1. Haz una copia de la base de datos local actual.
-2. Copia la copia de seguridad sobre `skladno.sqlite` en la carpeta de datos configurada de Warplyn.
+2. En la carpeta de datos de Warplyn, sustituye el archivo `skladno.sqlite` por la copia de seguridad.
 3. Inicia Warplyn y verifica tus *artículos* y *versiones guardadas*.
 
 Para restaurar una copia que incluya *habilidades*, usa **Restaurar una copia de seguridad** en **Configuración**. Así Warplyn también podrá comprobar y recuperar el manifiesto y el historial de *versiones de habilidad*.

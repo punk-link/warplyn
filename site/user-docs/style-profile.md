@@ -9,7 +9,7 @@ Use **Style Profile** to give the Assistant examples of your writing and reusabl
 Open **Style Profile** from the **Article Library utility area**. Use the side menu, or the section selector on a narrow window, to choose **Writing samples**, **Manual rules**, or **Typography rules**. **Back** returns to your *Article* and the view you left.
 
 ::: tip Choose a starting point
-Add writing samples when you want detected voice characteristics, or add **Manual rules** when you already know what guidance to give. You can use either one without the other.
+Add writing samples if you want the Assistant to identify features of your voice, or add **Manual rules** when you already know what guidance to give. You can use either one without the other.
 :::
 
 ## Add writing samples
@@ -48,8 +48,8 @@ Choose the writing language and whether rules apply to all *Articles* in that la
 
 *Article* rules inherit the saved language conventions. Editing an inherited rule overrides it; removing one disables it for that scope. **Restore inherited rules** clears those overrides. Switching languages retains unsaved rule edits while Style Profile remains open.
 
-Rules appear as compact summaries labeled **Saved** or **Unsaved**. Choose **Edit** to open a rule; only one rule is edited at a time. **Save** saves the selected scope. Saving language preferences also rebuilds the *Style Profile* locally from current included samples and saved guidance, including changes to sample inclusion. *Article* overrides are saved for that *Article*. Unsaved text in other forms stays unsaved. You can use explicit typography rules without writing samples; samples are needed to derive voice characteristics.
+Rules appear as compact summaries labeled **Saved** or **Unsaved**. Choose **Edit** to open a rule; only one rule is edited at a time. **Save** writes the rules for the selected language or *Article*. Saving language preferences also rebuilds the *Style Profile* locally from current included samples and saved guidance, including changes to sample inclusion. *Article* overrides are saved for that *Article*. Unsaved text in other forms stays unsaved. You can use explicit typography rules without writing samples; samples are needed to derive voice characteristics.
 
 Save the current *Draft*, then select **Check typography** to check the selected *Article* without an AI connection. The check uses the saved *Revision* and its language, shown in the status bar. Choose that same language in **Typography language** when checking. Code, URLs, technical identifiers, and ambiguous quotation cases remain unchanged. Contextual rules require a full **Review writing style** through the Assistant. A language without applicable mechanical rules has no local typography coverage; add and save your own rules before checking it.
 
-Open **Review Proposal** to inspect corrections and their supporting rules. Mark the corrections you want as accepted, then choose **Apply**. Accepted corrections create a *Revision*; rejecting every correction leaves the *Article* unchanged. Saving rules or running a check does not apply corrections. A review retains the language and rule definitions it used; a notice offers rerun after changing the language or applicable preferences. Typography does not detect language boundaries within mixed-language passages. Ambiguous cases remain unchanged.
+Open **Review Proposal** to inspect corrections and their supporting rules. Mark the corrections you want as accepted, then choose **Apply**. Accepted corrections create a *Revision*; rejecting every correction leaves the *Article* unchanged. Saving rules or running a check does not apply corrections. A review retains the language and rule definitions it used; if you change the language or applicable preferences, Warplyn offers to run the check again. Typography does not detect language boundaries within mixed-language passages. Ambiguous cases remain unchanged.

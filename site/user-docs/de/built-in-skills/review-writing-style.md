@@ -16,4 +16,4 @@ Fragen Sie: „Vergleiche diese Passage über Ana am Fluss mit der personalen Pe
 Lesen Sie den *Vorschlag* und die zugehörigen *Hinweise*. Jeder *Hinweis* sollte auf ein Merkmal oder eine Regel des Profils verweisen. Entscheiden Sie, welche Vorschläge zum *Artikel* passen, bevor Sie Änderungen annehmen.
 :::
 
-Für die Stilprüfung ist ein verfügbares *Stilprofil* und eine KI-Verbindung erforderlich. Die ursprünglichen Schreibproben werden nicht übermittelt; der Assistent verwendet das kompakte, lokal abgeleitete Profil. Die Anfrage kann den *Artikel* oder die ausgewählte Passage an Ihren konfigurierten KI-Anbieter senden.
+Für die Stilprüfung brauchen Sie ein *Stilprofil* und eine KI-Verbindung. Die Schreibproben bleiben auf Ihrem Gerät. Der Assistent arbeitet mit dem kurzen Profil, das Warplyn daraus erstellt. Die Anfrage kann den *Artikel* oder die ausgewählte Passage an Ihren konfigurierten KI-Anbieter senden.

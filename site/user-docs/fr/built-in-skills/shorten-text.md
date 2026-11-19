@@ -4,7 +4,7 @@ description: "Utilisez Raccourcir le texte pour supprimer les répétitions et l
 
 # Raccourcir un texte
 
-Utilisez **Raccourcir le texte** pour obtenir une version plus courte d’un texte existant. La compétence supprime les répétitions, les phrases de remplissage et les formulations trop longues tout en préservant le sens, les éléments étayant le texte, les incertitudes et la voix.
+Utilisez **Raccourcir le texte** pour obtenir une version plus courte d’un texte existant. L’assistant enlève les répétitions et les mots superflus, et resserre les formulations trop longues. Il conserve le sens, les éléments qui étayent le texte, les réserves et votre voix.
 
 Ouvrez **Actions rapides**, choisissez **Raccourcir le texte**, puis sélectionnez **Envoyer**. Indiquez ce qu’il faut conserver ou les passages à raccourcir. Sélectionnez un passage pour ne raccourcir que ce texte ; sinon, l’assistant travaille sur l’*article* entier.
 

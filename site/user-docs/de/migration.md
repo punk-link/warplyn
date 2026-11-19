@@ -1,5 +1,5 @@
 ---
-description: "Wechseln Sie mithilfe einer Sicherung von Skladno zu Warplyn und behalten Sie Ihre ursprüngliche Installation und Ihre Texte zur Wiederherstellung verfügbar."
+description: "Wechseln Sie mithilfe einer Sicherung von Skladno zu Warplyn und prüfen Sie anschließend, ob Ihre Daten vollständig wiederhergestellt wurden."
 ---
 
 # Von Skladno zu Warplyn wechseln
@@ -12,7 +12,7 @@ Wählen Sie vor der Migration unter **Einstellungen** → **Daten und Sicherunge
 
 ## Migrationsverfahren
 
-1. Schließen Sie in Skladno aktive KI-Arbeiten ab oder brechen Sie sie ab. Schließen Sie die App und öffnen Sie sie erneut, damit der neueste Prüfpunkt gespeichert wird. Nehmen Sie während der Sicherung keine externen Änderungen an den Dateien für *Fähigkeiten* des Authors vor.
+1. Warten Sie, bis laufende KI-Anfragen in Skladno abgeschlossen sind, oder brechen Sie sie ab. Schließen Sie die App und öffnen Sie sie erneut, damit der neueste Prüfpunkt gespeichert wird. Bearbeiten Sie die Dateien Ihrer *Fähigkeiten* während der Sicherung nicht in einem anderen Programm.
 2. Erstellen Sie in der laufenden Skladno-App eine manuelle Sicherung, auch wenn ein benutzerdefiniertes Datenverzeichnis verwendet wird. Bewahren Sie die `.sqlite`-Datei und den zugehörigen Ordner `.sqlite.skills` mit ihren ursprünglichen Namen zusammen auf. Schließen Sie Skladno nach der Sicherung.
 3. Installieren und öffnen Sie Warplyn mit einem eigenen, leeren Profil. Verwenden Sie niemals Ihr aktives Skladno-Datenverzeichnis.
 4. Wählen Sie unter **Einstellungen** → **Daten und Sicherungen** den Ordner mit der Migrationssicherung aus und wählen Sie **Sicherung wiederherstellen**. Wählen Sie den Skladno-Schnappschuss, bestätigen Sie das Ersetzen und warten Sie, bis Warplyn neu gestartet wurde. Wenn Warplyn bereits Inhalte enthält, erstellen Sie zuerst eine eigene Sicherung: Die Wiederherstellung ersetzt vorhandene Inhalte und führt Datenbanken nicht zusammen.
@@ -27,6 +27,6 @@ Native Sicherungen mit einem Ordner `.sqlite.skills` stellen die aktuellen *Fäh
 
 Behalten Sie Skladno installiert, bis Sie die Wiederherstellung überprüft haben. Die Apps synchronisieren spätere Änderungen nicht und führen sie nicht zusammen. Wenn Sie zu Skladno zurückkehren, entspricht es weiterhin dem Zustand vor der Migration.
 
-Falls die Wiederherstellung fehlschlägt, verwenden Sie weiterhin Skladno und bewahren Sie das ursprüngliche Sicherungspaar auf. Warplyn validiert die Sicherung und behält einen Wiederherstellungs-Schnappschuss des Ziels; schlägt der Start fehl, wird dieser Schnappschuss zurückgespielt. Beheben Sie das gemeldete Problem und versuchen Sie es erneut. Siehe [Sicherungen und Wiederherstellung](backups-and-recovery.md) und [Wiederherstellung nach Updates](update-recovery.md).
+Falls die Wiederherstellung fehlschlägt, arbeiten Sie in Skladno weiter. Bewahren Sie die ursprüngliche Sicherungsdatei und den zugehörigen Ordner auf. Warplyn prüft die Sicherung und legt einen Schnappschuss seiner bisherigen Daten an. Schlägt der Start nach der Wiederherstellung fehl, spielt Warplyn diesen Schnappschuss zurück. Beheben Sie das gemeldete Problem und versuchen Sie es erneut. Siehe [Sicherungen und Wiederherstellung](backups-and-recovery.md) und [Wiederherstellung nach Updates](update-recovery.md).
 
 Warplyn verwendet standardmäßig `~/.warplyn` und für einen benutzerdefinierten Ordner `WARPLYN_DATA_DIR`. `SKLADNO_DATA_DIR` wird für aktive Daten ignoriert. Pfade, die bekannte ältere Speicherorte überschneiden, werden abgelehnt. Verwenden Sie einen separaten leeren Ordner und stellen Sie die Sicherung wieder her, statt eine aktive SQLite-Datenbank zu kopieren.

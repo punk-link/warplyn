@@ -10,12 +10,12 @@ Verwenden Sie **In Datei speichern** und **Aus Datei laden**, um vollständige *
 
 1. Öffnen Sie den *Artikel*, den Sie speichern möchten.
 2. Wählen Sie im Artikelkopf neben **Version speichern** die Option **In Datei speichern**. Sie können auch in der Bibliothek mit der rechten Maustaste auf einen *Artikel* klicken und **In Datei speichern…** wählen, ohne ihn zu öffnen.
-3. Wählen Sie im Speicherdialog der Desktop-App im Dateityp-Menü Markdown, HTML, DOCX oder RTF. Legen Sie dann Dateinamen und Speicherort fest. Behalten Sie die passende Dateiendung bei. Wählen Sie in der Web-App **Dateiformat**, dann **Herunterladen**, und verwenden Sie die Download-Steuerung Ihres Browsers.
+3. Wählen Sie im Speicherdialog der Desktop-App im Dateityp-Menü Markdown, HTML, DOCX oder RTF. Legen Sie dann Dateinamen und Speicherort fest. Behalten Sie die passende Dateiendung bei. Wählen Sie in der Web-App **Dateiformat**, dann **Herunterladen**, um den Download im Browser zu starten.
 
-Die Datei enthält den gesamten aktuellen *Entwurf*, einschließlich nicht gespeicherter Änderungen. Eine Textauswahl begrenzt den gespeicherten Inhalt nicht. Diese Aktion erstellt keine *Version*. Mit **Version speichern** fügen Sie den aktuellen *Entwurf* weiterhin Ihrem Verlauf hinzu.
+Die Datei enthält den gesamten aktuellen *Entwurf*, einschließlich nicht gespeicherter Änderungen. Auch wenn Sie eine Passage markiert haben, speichert Warplyn den ganzen *Entwurf* in der Datei. Diese Aktion erstellt keine *Version*. Mit **Version speichern** fügen Sie den aktuellen *Entwurf* weiterhin Ihrem Verlauf hinzu.
 
-::: tip Sie benötigen eine portable Kopie Ihres Arbeitsbereichs?
-*Artikel*-Dateien enthalten nur den Text. Um Verlauf, Arbeit des Assistenten, *Fähigkeiten* und Einstellungen zu bewahren, erstellen Sie stattdessen eine [Sicherung](backups-and-recovery.md).
+::: tip Den gesamten Arbeitsbereich sichern
+*Artikel*-Dateien enthalten nur den Text. Wenn Sie auch den Verlauf, die Arbeit des Assistenten, Ihre *Fähigkeiten* und Einstellungen behalten möchten, erstellen Sie eine [Sicherung](backups-and-recovery.md).
 :::
 
 Die Web-App meldet **Artikel-Download gestartet**, sobald sie die Datei an den Browser übergibt. Prüfen Sie im Downloadbereich des Browsers, ob der Vorgang abgeschlossen wurde oder ein Fehler aufgetreten ist.
@@ -27,7 +27,7 @@ Die Web-App meldet **Artikel-Download gestartet**, sobald sie die Datei an den B
 3. Aktivieren Sie bei HTML, DOCX und RTF die Option **Importierten Artikel prüfen** und wählen Sie dann **Importieren**. Sie können die Prüfung abbrechen. Markdown wird direkt geöffnet.
 4. Warplyn öffnet den importierten Text als separaten *Artikel*. Der vorherige *Artikel* und sein wiederherstellbarer *Entwurf* bleiben in der Bibliothek verfügbar.
 
-Eine einleitende Überschrift der Ebene 1 wird als neuer Titel verwendet. Andernfalls verwendet Warplyn den Dateinamen ohne Endung. Die Überschrift bleibt im Text des *Artikels* erhalten. Wenn Sie dieselbe Datei erneut laden, wird ein weiterer unabhängiger *Artikel* erstellt.
+Beginnt der Text mit einer Überschrift der Ebene 1, übernimmt Warplyn sie als Titel. Andernfalls verwendet Warplyn den Dateinamen ohne Endung. Die Überschrift bleibt im Text des *Artikels* erhalten. Wenn Sie dieselbe Datei erneut laden, wird ein weiterer unabhängiger *Artikel* erstellt.
 
 ::: warning Beim Import wird ein separater Artikel erstellt
 Das Laden einer Datei ersetzt nicht den *Artikel*, von dem aus Sie den Dateiauswahldialog geöffnet haben. Prüfen Sie den importierten *Artikel* und verschieben oder löschen Sie bei Bedarf einen der beiden *Artikel*.
@@ -47,6 +47,6 @@ Sie können den Dateiauswahldialog schließen, ohne etwas zu importieren. Falls 
 
 Die Datei enthält den gesamten *Artikel* aus dieser *Version*, unabhängig von Ihrem aktuellen *Entwurf*. Der Export stellt die *Version* nicht wieder her und ändert den Verlauf nicht. Der vorgeschlagene Dateiname enthält die Versionsnummer.
 
-Für den Datei-Export gilt ebenfalls eine Grenze von 10 MiB. Falls das Speichern in der Desktop-App fehlschlägt, wählen Sie einen beschreibbaren Speicherort und versuchen Sie es erneut. Bei einem fehlgeschlagenen Ersetzen bleibt die vorhandene Zieldatei erhalten.
+Für den Datei-Export gilt ebenfalls eine Grenze von 10 MiB. Falls das Speichern in der Desktop-App fehlschlägt, wählen Sie einen beschreibbaren Speicherort und versuchen Sie es erneut. Falls Warplyn die vorhandene Datei nicht ersetzen kann, bleibt sie unverändert.
 
 Exportierte Dateien enthalten den Text des *Artikels*, nicht den vollständigen Verlauf, Unterhaltungen oder Einstellungen. Informationen zum Schutz des gesamten Arbeitsbereichs finden Sie unter [Sicherungen und Wiederherstellung](backups-and-recovery.md).

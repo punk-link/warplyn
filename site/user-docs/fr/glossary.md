@@ -4,15 +4,15 @@ description: "Définitions des articles, brouillons, versions enregistrées, pro
 
 # Glossaire de Warplyn
 
-Ces termes décrivent les concepts visibles pour les personnes qui écrivent et le vocabulaire de domaine employé dans Warplyn.
+Retrouvez ici les termes que vous rencontrez dans Warplyn et dans ce guide.
 
 ## Articles et versions
 
-- **Article** : unité de travail éditorial récupérable indépendamment. Warplyn utilise « article » plutôt que « document ».
+- **Article** : texte de votre bibliothèque que vous pouvez restaurer séparément. Warplyn utilise « article » plutôt que « document ».
 - **Bibliothèque d’articles** : collection locale d’*articles* de la personne autrice. L’**article actuel** est ouvert dans l’espace de travail ; la **liste d’articles** présente la collection.
 - **Brouillon** : texte d’un *article* en cours de modification qui n’a pas encore été enregistré comme *version enregistrée*.
 - **Point de contrôle du brouillon** : état récupérable et modifiable du *brouillon*, enregistré localement et lié à une *version enregistrée* de base. Ce n’est pas une *version enregistrée*. Un **brouillon actuel** est basé sur la *version enregistrée* actuelle de l’*article* ; un **brouillon obsolète** est basé sur une version antérieure.
-- **Version enregistrée** : instantané immuable d’un *article* enregistré.
+- **Version enregistrée** : texte d’un *article* tel qu’il était au moment de l’enregistrement. Une fois enregistrée, cette version ne change plus.
 - **Enregistrement d’une version** : action explicite de la personne autrice qui enregistre le *brouillon actuel* comme nouvelle *version enregistrée*. Elle efface uniquement le point de contrôle correspondant du *brouillon*.
 - **Proposition** : contenu ou modifications générés par l’IA qui nécessitent l’approbation explicite de la personne autrice.
 - **Version de base de la proposition** : *version enregistrée* examinée pour produire une *proposition*. Celle-ci devient obsolète lorsqu’elle ne correspond plus à la *version enregistrée* actuelle.
@@ -28,7 +28,7 @@ Ces termes décrivent les concepts visibles pour les personnes qui écrivent et 
 - **Demande éditoriale** : exécution d’une opération éditoriale.
 - **Session éditoriale** : séquence d’interactions et historique d’activité des demandes éditoriales.
 - **Consignes éditoriales** : instructions ou contexte fournis par la personne autrice avec une demande éditoriale.
-- **Corpus de style** : échantillons d’écriture locaux fournis par la personne autrice. Un **profil de style** est leur représentation résumée et dérivée.
+- **Corpus de style** : échantillons d’écriture locaux fournis par la personne autrice. Le **profil de style** résume les caractéristiques que Warplyn relève dans ces textes.
 - **Étape du flux de travail** : indication facultative sur l’avancement, choisie par la personne autrice. Elle ne lance jamais d’IA et ne modifie pas le contenu d’un *article*.
 
 ## Publication et paramètres
@@ -87,7 +87,7 @@ Espace de travail éditorial
 └──────────────────────────┴──────────────────────────────┴──────────────────────────┘
 ```
 
-Dans la disposition développée, le pied du panneau Bibliothèque est la **zone utilitaire du panneau de la bibliothèque d’articles**. Sa rangée inférieure indique le code de langue de l’*article* actuel et l’étiquette **Local**. La **barre d’état de l’article**, sous la vue centrale de l’article, indique l’état d’enregistrement.
+En bas du panneau de la bibliothèque, lorsqu’il est ouvert, se trouve la **zone utilitaire du panneau de la bibliothèque d’articles**. Sa rangée inférieure indique le code de langue de l’*article* actuel et l’étiquette **Local**. La **barre d’état de l’article**, sous la vue centrale de l’article, indique l’état d’enregistrement.
 
 ### Termes de l’interface
 

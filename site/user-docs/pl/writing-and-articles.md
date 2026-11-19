@@ -4,7 +4,7 @@ description: "Pisz i porządkuj artykuły, poznaj sposób zapisywania szkiców o
 
 # Pisanie i porządkowanie artykułów
 
-*Artykuł* to tekst w bibliotece Warplyn. Podczas edycji Warplyn zapisuje odzyskiwalny punkt kontrolny. *Zapisana wersja* to zapisany punkt w historii *artykułu*. Dzięki temu możesz kontynuować pracę, nie uznając każdej edycji za wersję ukończoną.
+*Artykuł* to tekst w bibliotece Warplyn. Podczas pisania Warplyn zapisuje *szkic*, żeby można go było odzyskać. *Zapisana wersja* zachowuje w historii artykułu tekst z chwili zapisu.
 
 ## Pisz i zapisuj artykuł
 

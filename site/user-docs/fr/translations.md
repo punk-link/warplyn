@@ -1,10 +1,10 @@
 ---
-description: "Créez, comparez et mettez à jour des articles de traduction liés, tout en gardant le travail de chaque langue récupérable."
+description: "Créez, comparez et mettez à jour les traductions de vos articles. Vous pouvez récupérer chaque texte séparément."
 ---
 
 # Traductions
 
-Une *traduction* est un *article* distinct lié à sa source. Elle possède son propre titre, son propre *brouillon* et son propre historique de *versions enregistrées*. Le travail réalisé dans une langue ne remplace donc pas le texte source.
+Warplyn crée un *article* pour chaque *traduction* et le relie à l’original. La traduction a son propre titre, son *brouillon* et son historique de *versions enregistrées*. Vous pouvez la modifier sans toucher au texte source.
 
 ## Demander une traduction
 

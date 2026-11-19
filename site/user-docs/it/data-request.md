@@ -16,15 +16,15 @@ Se hai attivato la condivisione di dati diagnostici e di utilizzo:
 2. Invia l’ID all’indirizzo sopra e descrivi la richiesta.
 3. Per interrompere la raccolta futura, disattiva **Condividi dati diagnostici e di utilizzo**.
 
-Copia l’ID prima di disattivare la condivisione, perché disattivandola l’ID viene cancellato dal dispositivo. Disattivare la condivisione non può richiamare gli eventi già inviati. Per le richieste di cancellazione, il responsabile del progetto elimina il record pseudonimizzato corrispondente e conferma l’operazione via email.
+Copia l’ID prima di disattivare la condivisione. Warplyn lo cancella dal dispositivo quando disattivi l’opzione. Gli eventi già inviati restano registrati. Per le richieste di cancellazione, il responsabile del progetto elimina il record pseudonimizzato corrispondente e conferma l’operazione via email.
 
-Consulta [dati diagnostici e di utilizzo](telemetry.md) per i campi raccolti e i controlli di condivisione.
+Consulta [dati diagnostici e di utilizzo](telemetry.md) per sapere quali dati Warplyn raccoglie e come attivare o disattivare la condivisione.
 
 ## I tuoi testi e i provider di IA
 
 I tuoi *articoli* e la relativa cronologia sono salvati localmente. Una richiesta al responsabile del progetto non elimina i file o i dati dell’app sul tuo computer. Prima di rimuovere i dati locali, conserva una copia di sicurezza dei testi che vuoi mantenere.
 
-Quando usi le funzionalità di IA, il testo e il contesto pertinenti vengono inviati al provider che hai scelto. Le richieste relative ai dati conservati da quel provider vanno rivolte separatamente al provider stesso.
+Quando usi le funzioni di IA, Warplyn invia al provider che hai scelto il testo e il contesto necessari per la richiesta. Per informazioni sui dati conservati dal provider, contattalo direttamente.
 
 ## Analytics del sito web
 

@@ -17,9 +17,9 @@ Nell’app desktop, apri **Impostazioni** → **Assistente IA**. In **Come vuoi 
 Le chiavi API gestite richiedono l’app desktop e un servizio credenziali del sistema operativo disponibile. Su Linux, Secret Service deve essere sbloccato. L’app nel browser supporta connessioni tramite variabili d’ambiente, ma non può gestire le credenziali del sistema operativo. Il programma di installazione non crea né importa un file `.env`.
 :::
 
-Aggiungere una connessione con chiave API ne verifica la validità presso il provider. Aggiungere una connessione tramite variabile d’ambiente salva solo le impostazioni. Warplyn contatta di nuovo il provider quando aggiorni l’elenco dei modelli o invii una richiesta di IA. Questi controlli non includono contenuti dell’*articolo*.
+Se inserisci direttamente la chiave API, Warplyn la verifica presso il provider. Se indichi una variabile d’ambiente, al momento di aggiungere la connessione Warplyn salva solo le impostazioni. Warplyn contatta di nuovo il provider quando aggiorni l’elenco dei modelli o invii una richiesta di IA. Questi controlli non includono contenuti dell’*articolo*.
 
-Le connessioni sono elencate in **Impostazioni** → **Assistente IA**. Usa **Attiva**, **Attiva** o **Disattiva** per decidere quali connessioni Warplyn può usare per le nuove richieste. Scegli **Rinomina** per cambiare il nome visualizzato localmente oppure **Rimuovi** e conferma per rimuovere la connessione da Warplyn. Rimuovere una connessione tramite variabile d’ambiente non elimina la variabile né la relativa chiave.
+Le connessioni sono elencate in **Impostazioni** → **Assistente IA**. Il badge **Attiva** indica che Warplyn può usare la connessione per le nuove richieste. Usa **Attiva** o **Disattiva** per cambiare lo stato della connessione. Scegli **Rinomina** per cambiare il nome visualizzato localmente oppure **Rimuovi** e conferma per rimuovere la connessione da Warplyn. Rimuovere una connessione tramite variabile d’ambiente non elimina la variabile né la relativa chiave.
 
 ::: tip Se l’aggiornamento dei modelli non riesce
 Controlla che la connessione sia **Attiva**, che la chiave salvata sia valida o che la variabile d’ambiente sia disponibile per il servizio applicativo, e che l’account del provider possa accedere alla sua API.
@@ -34,7 +34,7 @@ In **Impostazioni** → **Assistente IA**, seleziona **Aggiorna modelli**, quind
 Aggiorna l’elenco dei modelli dopo aver modificato le connessioni o quando vuoi consultare il catalogo attuale di un provider. Usa **Cerca modelli**, **Filtra modelli per fornitore** e **Preferiti** per restringere l’elenco. La scelta del modello si applica alle richieste successive. Usa **Livello di ragionamento**, quando compare per un modello OpenAI selezionato: impostazioni più alte possono richiedere più tempo. L’opzione facoltativa **Modello dell'app** nelle impostazioni di IA è separata dal modello predefinito e gestisce attività ausiliarie di Warplyn, come riepiloghi e titoli.
 
 ::: tip Disponibilità dei modelli
-Le operazioni editoriali disponibili variano in base al modello. Alcuni modelli non supportano la verifica dei fatti con fonti, l’output strutturato o i controlli di ragionamento. I modelli di OpenCode Zen dipendono dalle funzionalità e dalla disponibilità del relativo catalogo.
+Le operazioni editoriali disponibili variano in base al modello. Alcuni modelli non supportano la verifica dei fatti con fonti, l’output strutturato o i controlli di ragionamento. Consulta il catalogo di OpenCode Zen per vedere quali modelli sono disponibili e quali funzioni supportano.
 :::
 
 [![Impostazioni dell’assistente di IA con connessioni ai provider configurate, opzioni per impostare la chiave e controlli dei modelli.](/images/ai-providers-and-models.png)](/images/ai-providers-and-models.png)
@@ -43,6 +43,6 @@ Le operazioni editoriali disponibili variano in base al modello. Alcuni modelli 
 
 ### Modello dell’app
 
-L’**Modello dell'app** gestisce brevi attività ausiliarie, come i riepiloghi delle *proposte*, i titoli e l’interpretazione dell’intento delle richieste all’assistente. Se non lo imposti, Warplyn usa il modello predefinito.
+Il **Modello dell'app** riassume le *proposte*, suggerisce titoli e riconosce cosa chiedi all’assistente. Se non lo imposti, Warplyn usa il **Modello predefinito**.
 
 Scegli un modello testuale efficiente e meno costoso. **GPT-6 Luna** è una delle opzioni OpenAI per queste attività mirate ([dettagli del modello](https://developers.openai.com/api/docs/models/gpt-6-luna)). Con un altro provider, scegli un modello equivalente. Se i risultati non sono abbastanza buoni, prova un modello più potente.

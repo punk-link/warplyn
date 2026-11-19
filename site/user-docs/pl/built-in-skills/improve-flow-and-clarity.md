@@ -4,7 +4,7 @@ description: "Użyj Popraw płynność i jasność, aby poprawić strukturę, pr
 
 # Popraw płynność i jasność
 
-Użyj **Popraw płynność i jasność**, gdy trudno podążać za tekstem i chcesz uzyskać wyraźniejszą strukturę lub płynniejsze przejścia. Funkcja poprawia czytelność, zachowując znaczenie *artykułu*, jego twierdzenia, niepewność i styl.
+Użyj **Popraw płynność i jasność**, gdy trudno śledzić tok myśli lub gdy przejścia między fragmentami brzmią nienaturalnie. Funkcja poprawia czytelność, zachowując znaczenie *artykułu*, jego twierdzenia, niepewność i styl.
 
 Otwórz **Szybkie działania**, wybierz **Popraw płynność i jasność**, a następnie **Wyślij żądanie redakcyjne**. Możesz wskazać konkretny cel, na przykład wyjaśnienie, jak odkrycie wpływa na kolejny wybór bohatera. Zaznacz fragment, aby ograniczyć zastępowany tekst do tego miejsca; bez zaznaczenia asystent pracuje nad całym *artykułem*.
 

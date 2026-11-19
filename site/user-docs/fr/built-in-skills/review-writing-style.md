@@ -16,4 +16,4 @@ Demandez : « Compare ce passage sur Ana au bord de la rivière au point de vue 
 Lisez la *proposition* et les *observations* qui l’accompagnent. Chaque *observation* doit renvoyer à une caractéristique ou à une règle du profil. Avant d’accepter des modifications, décidez si chaque suggestion convient à l’*article*.
 :::
 
-La relecture du style nécessite un *Profil de style* disponible et une connexion à un fournisseur d’IA. Les échantillons d’écriture bruts ne sont pas transmis ; l’assistant utilise le profil compact calculé localement. La demande peut transmettre l’*article* ou le passage sélectionné au fournisseur d’IA configuré.
+La relecture du style nécessite un *Profil de style* disponible et une connexion à un fournisseur d’IA. Vos échantillons d’écriture restent sur votre appareil. L’assistant utilise le profil résumé que Warplyn établit à partir de ces textes. La demande peut transmettre l’*article* ou le passage sélectionné au fournisseur d’IA configuré.

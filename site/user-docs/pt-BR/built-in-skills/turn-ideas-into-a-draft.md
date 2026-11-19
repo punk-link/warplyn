@@ -4,7 +4,7 @@ description: "Use Transforme ideias em um rascunho para transformar anotações 
 
 # Transformar ideias em um rascunho
 
-Use **Transforme ideias em um rascunho** quando tiver material de origem, mas precisar de uma primeira versão coerente. O recurso desenvolve as ideias fornecidas em uma narrativa direta, preservando o sentido e evitando afirmações sem fundamento.
+Use **Transforme ideias em um rascunho** quando tiver material de origem, mas precisar de uma primeira versão coerente. O assistente dá forma às suas ideias em um texto que se lê do começo ao fim. Ele conserva o sentido das ideias e evita acrescentar afirmações sem fundamento.
 
 Abra **Ações rápidas**, escolha **Transforme ideias em um rascunho**, explique o que deseja e selecione **Enviar solicitação editorial**. Com uma passagem selecionada, a solicitação usa essa passagem e o material que você incluir explicitamente na mensagem. Sem seleção, pode usar o *artigo* atual junto com suas orientações.
 

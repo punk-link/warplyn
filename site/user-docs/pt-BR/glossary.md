@@ -4,15 +4,15 @@ description: "Entenda artigos, rascunhos, versões salvas, propostas, apontament
 
 # Glossário do Warplyn
 
-Estes termos descrevem conceitos visíveis para autores e a linguagem de domínio usada em todo o Warplyn.
+Este glossário explica os termos que aparecem no Warplyn e nos guias de uso.
 
 ## Artigos e versões
 
-- **Artigo**: unidade independente e recuperável de trabalho editorial. O Warplyn usa “artigo” em vez de “documento”.
+- **Artigo**: texto em que o autor trabalha e que pode recuperar de forma independente. O Warplyn usa “artigo” em vez de “documento”.
 - **Biblioteca de artigos**: coleção local de *artigos* do autor. O **artigo atual** está aberto no espaço de trabalho; a **lista de artigos** apresenta a coleção.
 - **Rascunho**: texto do *artigo* que está sendo editado, mas ainda não foi salvo como *versão salva*.
 - **Ponto de verificação do rascunho**: estado recuperável e editável do *rascunho*, salvo localmente e vinculado a uma *versão salva* de referência. Não é uma *versão salva*. O **rascunho atual** se baseia na *versão salva* atual do *artigo*; um **rascunho desatualizado** se baseia em uma *versão salva* anterior.
-- **Versão salva**: cópia imutável e salva de um *artigo*.
+- **Versão salva**: cópia de um *artigo* que fica registrada no histórico e não pode ser alterada.
 - **Salvar uma versão**: ação explícita do autor para salvar o *rascunho* atual como uma nova *versão salva*. Ela limpa apenas o ponto de verificação correspondente do *rascunho*.
 - **Proposta**: conteúdo ou alterações gerados por IA que precisam da aprovação explícita do autor.
 - **Versão de origem da proposta**: *versão salva* revisada para produzir uma *proposta*. A *proposta* fica desatualizada quando deixa de corresponder à *versão salva* atual.
@@ -28,7 +28,7 @@ Estes termos descrevem conceitos visíveis para autores e a linguagem de domíni
 - **Solicitação editorial**: uma execução de uma operação editorial.
 - **Sessão editorial**: sequência de interações e histórico de atividade das solicitações editoriais.
 - **Orientação editorial**: instruções ou contexto fornecidos pelo autor junto com uma solicitação editorial.
-- **Corpus de estilo**: exemplos de escrita locais fornecidos pelo autor. O **perfil de estilo** é uma representação compacta derivada desses exemplos.
+- **Corpus de estilo**: exemplos de escrita locais fornecidos pelo autor. O **perfil de estilo** resume as características identificadas nesses exemplos.
 - **Etapa do fluxo de trabalho**: orientação opcional de progresso escolhida pelo autor. Ela nunca executa IA nem altera o conteúdo de um *artigo*.
 
 ## Publicação e configurações
@@ -42,7 +42,7 @@ Estes termos descrevem conceitos visíveis para autores e a linguagem de domíni
 - **Preferência de modelo**: identificador do modelo padrão ou substituição específica para uma operação editorial.
 - **Idioma da interface**: idioma da interface do Warplyn, separado dos idiomas do *artigo* e das traduções.
 - **Idioma padrão do artigo**: idioma atribuído a um novo *artigo* quando nenhum é informado.
-- **Idiomas de tradução padrão**: idiomas ordenados que aparecem primeiro nas solicitações de tradução. Eles nunca iniciam traduções automaticamente.
+- **Idiomas de tradução padrão**: lista de idiomas que aparecem primeiro, na ordem definida pelo autor nas solicitações de tradução. Eles nunca iniciam traduções automaticamente.
 - **Destino da cópia de segurança**: diretório local em que o Warplyn grava cópias de segurança.
 - **Cópia de segurança**: cópia consistente dos dados locais em determinado momento, separada do banco de dados ativo e sem credenciais.
 - **Local dos dados**: diretório local ativo que contém os dados SQLite do Warplyn.
@@ -52,7 +52,7 @@ Estes termos descrevem conceitos visíveis para autores e a linguagem de domíni
 - **Atualização de segurança**: atualização do aplicativo cuja tag de lançamento termina com o sufixo `.security`. O Warplyn exibe um aviso, mas nunca força uma verificação, um download ou uma reinicialização.
 - **Atualização preparada**: atualização do aplicativo baixada, que aguarda o autor escolher **Reinicie e atualize**. Fechar o aplicativo normalmente não a aplica.
 - **Instantâneo pré-atualização**: cópia de segurança dos dados locais criada antes que o Warplyn aplique uma atualização preparada. Para restaurá-la, é necessária a versão anterior correspondente do aplicativo.
-- **Evento de diagnóstico**: registro local redigido do serviço, gravado nos logs do processo anfitrião para ajudar a diagnosticar a inicialização ou uma falha recuperável. Nunca inclui conteúdo privado de *artigos*, conteúdo de modelos nem valores de variáveis de ambiente.
+- **Evento de diagnóstico**: registro local do serviço com dados sensíveis omitidos, gravado nos logs do processo anfitrião para ajudar a diagnosticar a inicialização ou uma falha recuperável. Nunca inclui conteúdo privado de *artigos*, conteúdo de modelos nem valores de variáveis de ambiente.
 
 ## Interface
 

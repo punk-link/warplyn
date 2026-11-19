@@ -4,17 +4,17 @@ description: "Revise an Article with AI in Warplyn: focus a request, compare pro
 
 # Revise an Article with AI and review every change
 
-When a scene has the right events but the pacing feels uneven, Warplyn's Editorial Assistant can help you revise it. Work on a passage or a whole *Article*, compare the proposed wording, and apply the changes you want to keep.
+When you’re happy with what happens in a scene but the pacing feels uneven, Warplyn's Editorial Assistant can help you revise it. Work on a passage or a whole *Article*, compare the proposed wording, and apply the changes you want to keep.
 
-Warplyn is an open-source, local-first writing workspace for Windows and Linux. Your writing stays on your computer. AI assistance requires an internet connection and a supported provider connection with your API key. The relevant text and context go to that provider, whose pricing and data policies apply.
+Warplyn is an open-source, local-first writing workspace for Windows and Linux. Your writing stays on your computer. To use AI assistance, connect to the internet and set up a supported provider with your API key. The relevant text and context go to that provider, whose pricing and data policies apply.
 
 ## Start with a focused request
 
-Open your *Article* and select the passage you want to revise. In the Composer, describe what should improve and what should stay. For example, while working on The River at Dusk:
+Open your *Article* and select the passage you want to revise. In the Composer, describe what you want to improve and which details to keep. For example, while working on The River at Dusk:
 
 > Improve the flow while keeping Ana's point of view and the quiet mood. Don't add new events.
 
-Select **Send editorial request**. Warplyn sends the selection with up to 500 characters on either side as read-only context. Only the selected passage can be replaced. Check the Composer's context explanation before sending sensitive writing. For more detail, see [Editorial Assistant](editorial-assistant.md).
+Select **Send editorial request**. Warplyn sends the selection with up to 500 characters on either side as read-only context. Only the selected passage can be replaced. Before sending sensitive writing, read the notice in the Composer to see what text will be included. For more detail, see [Editorial Assistant](editorial-assistant.md).
 
 [![Warplyn's Composer with a fiction revision request.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 

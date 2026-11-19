@@ -1,5 +1,5 @@
 ---
-description: "Installa Warplyn su Windows o Linux con i pacchetti Debian o AppImage, poi configura l’area di lavoro per scrivere."
+description: "Installa Warplyn su Windows o Linux e configura l’app. Su Linux puoi scegliere tra un pacchetto Debian e un file AppImage."
 ---
 
 # Installare Warplyn
@@ -21,7 +21,7 @@ Una firma digitale usa un certificato di firma del codice per identificare il pu
 
 ## Debian e distribuzioni basate su Debian
 
-Ubuntu 22.04 x64 è il sistema Debian di riferimento convalidato; la compatibilità con altre versioni delle distribuzioni non è garantita. Usa un sistema amd64 con una sessione desktop grafica.
+Il pacchetto Debian è stato verificato soprattutto su Ubuntu 22.04 x64. La compatibilità con altre versioni o distribuzioni può variare. Usa un sistema amd64 con una sessione desktop grafica.
 
 1. Apri le [release di Warplyn](https://github.com/punk-link/warplyn/releases).
 2. In **Assets**, scarica il pacchetto `warplyn_VERSION_amd64.deb`.
@@ -33,7 +33,7 @@ Ubuntu 22.04 x64 è il sistema Debian di riferimento convalidato; la compatibili
 
 4. Apri Warplyn dal menu delle applicazioni.
 
-Per aggiornare manualmente, scarica il nuovo file `.deb` ed esegui lo stesso comando `sudo apt install` indicando quel file. Il download non configura un repository automatico di pacchetti. Apt risolve le dipendenze dichiarate; non forzare l’installazione se non possono essere soddisfatte.
+Per aggiornare manualmente, scarica il nuovo file `.deb` ed esegui lo stesso comando `sudo apt install` indicando quel file. Il download non configura un repository automatico di pacchetti. Apt installa i pacchetti necessari a Warplyn. Se non ci riesce, non forzare l’installazione.
 
 Per impostazione predefinita, i testi vengono salvati in `~/.warplyn`. Crea una copia di sicurezza prima di aggiornare. La reinstallazione o la rimozione dell’applicazione dovrebbe conservare questa cartella e le credenziali nel portachiavi del desktop.
 
@@ -47,7 +47,7 @@ Se una release include un file `.AppImage` x64, conservalo in una cartella in cu
 
 Per il sistema Ubuntu 22.04, le dipendenze desktop includono `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` e `xdg-utils`. GNOME Keyring fornisce Secret Service. Una normale installazione di GNOME include la maggior parte di questi pacchetti. Altre distribuzioni usano nomi di pacchetto diversi e richiedono verifiche di compatibilità specifiche.
 
-L’integrazione desktop è facoltativa: crea un launcher che punti al percorso completo dell’immagine. Mantieni lo stesso percorso durante gli aggiornamenti. La convalida dell’installazione desktop AppImage è in sospeso. Ubuntu 22.04 x64 è il sistema di riferimento principale; Ubuntu 24.04 x64 e Fedora 43 x64 sono sistemi di compatibilità aggiuntivi. Questo non implica il supporto universale di Linux.
+L’integrazione desktop è facoltativa: crea un launcher che punti al percorso completo dell’immagine. Mantieni lo stesso percorso durante gli aggiornamenti. Le verifiche di AppImage come applicazione desktop installata non sono ancora concluse. Il sistema di riferimento è Ubuntu 22.04 x64. Le verifiche di compatibilità riguardano anche Ubuntu 24.04 x64 e Fedora 43 x64. Questo non implica il supporto universale di Linux.
 
 Per le procedure di download, riavvio e ripristino, consulta [Ripristino dopo un aggiornamento dell’app desktop](update-recovery.md).
 

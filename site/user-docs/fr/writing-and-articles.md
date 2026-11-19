@@ -4,7 +4,7 @@ description: "Rédigez et organisez vos articles, comprenez l’enregistrement d
 
 # Rédiger et organiser des articles
 
-Un *article* est un texte de votre bibliothèque Warplyn. Pendant que vous le modifiez, Warplyn enregistre un point de contrôle récupérable du *brouillon*. Une *version enregistrée* est un état conservé dans l’historique de l’*article*. Vous pouvez ainsi continuer à écrire sans considérer chaque modification comme une version définitive.
+Un *article* est un texte de votre bibliothèque Warplyn. L’application enregistre votre *brouillon* au fil de l’écriture pour que vous puissiez le récupérer. Une *version enregistrée* conserve dans l’historique le texte tel qu’il était au moment de l’enregistrement.
 
 ## Rédiger et enregistrer un article
 

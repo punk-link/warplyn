@@ -4,17 +4,17 @@ description: "Consulta las definiciones de artículos, borradores, versiones gua
 
 # Glosario de Warplyn
 
-Estos términos describen conceptos visibles para quienes escriben y el vocabulario de dominio utilizado en Warplyn.
+Aquí encontrarás los términos que aparecen en Warplyn y en esta guía.
 
 ## Artículos y versiones
 
-- **Artículo**: unidad de trabajo editorial que puede recuperarse de forma independiente. Warplyn usa «artículo» en lugar de «documento».
+- **Artículo**: texto de tu biblioteca que puedes recuperar por separado. Warplyn usa «artículo» en lugar de «documento».
 - **Biblioteca de artículos**: colección local de *artículos* de la persona autora. El **artículo actual** está abierto en el espacio de trabajo; la **lista de artículos** muestra la colección.
 - **Borrador**: texto de un *artículo* que se está editando y aún no se ha guardado como *versión guardada*.
 - **Punto de control del borrador**: estado recuperable y modificable de un *borrador*, guardado localmente y vinculado a una *versión guardada* de base. No es una *versión guardada*. Un **borrador actual** se basa en la *versión guardada* actual del *artículo*; un **borrador obsoleto** se basa en una versión anterior.
-- **Versión guardada**: instantánea inmutable de un *artículo* guardada de forma permanente.
+- **Versión guardada**: texto de un *artículo* tal como estaba al guardarlo. Una vez guardada, esa versión ya no cambia.
 - **Guardar una versión**: acción explícita de la persona autora para guardar un *borrador actual* como una nueva *versión guardada*. Solo elimina el punto de control correspondiente del *borrador*.
-- **Propuesta**: contenido o cambios candidatos generados por IA que requieren la aprobación explícita de la persona autora.
+- **Propuesta**: texto o cambios que sugiere la IA y que la persona autora debe aprobar para incorporarlos al *artículo*.
 - **Versión de base de la propuesta**: *versión guardada* que se revisó para generar una *propuesta*. La *propuesta* queda obsoleta cuando deja de coincidir con la *versión guardada* actual.
 - **Selección de cambios**: parte de una *propuesta* que la persona autora decide aceptar. La aceptación crea una nueva *versión guardada*.
 - **Observación**: resultado informativo, como una comprobación de datos o una revisión de estilo, que no modifica un *artículo*.
@@ -28,7 +28,7 @@ Estos términos describen conceptos visibles para quienes escriben y el vocabula
 - **Solicitud editorial**: una ejecución de una operación editorial.
 - **Sesión editorial**: secuencia de interacciones e historial de actividad de las solicitudes editoriales.
 - **Indicaciones editoriales**: instrucciones o contexto que la persona autora proporciona con una solicitud editorial.
-- **Corpus de estilo**: muestras de escritura locales proporcionadas por la persona autora. Un **perfil de estilo** es su representación derivada y resumida.
+- **Corpus de estilo**: muestras de escritura locales proporcionadas por la persona autora. El **perfil de estilo** resume los rasgos de escritura que Warplyn identifica en esas muestras.
 - **Etapa del flujo de trabajo**: orientación opcional sobre el progreso, elegida por la persona autora. No ejecuta IA ni modifica el contenido de un *artículo*.
 
 ## Publicación y ajustes
@@ -87,7 +87,7 @@ Espacio de trabajo editorial
 └──────────────────────────┴──────────────────────────────┴──────────────────────────┘
 ```
 
-En la vista expandida, el pie del panel de la biblioteca es el **área de utilidades de la Biblioteca de artículos**. Su fila inferior muestra el código de idioma del *artículo* actual y la etiqueta **Local**. La **barra de estado del artículo**, debajo de la vista central, muestra el estado de guardado.
+En la parte inferior del panel de la biblioteca desplegado está el **área de utilidades de la Biblioteca de artículos**. Su fila inferior muestra el código de idioma del *artículo* actual y la etiqueta **Local**. La **barra de estado del artículo**, debajo de la vista central, muestra el estado de guardado.
 
 ### Términos de la interfaz
 

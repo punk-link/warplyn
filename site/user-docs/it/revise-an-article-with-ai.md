@@ -4,9 +4,9 @@ description: "Rivedi un articolo con l’IA in Warplyn: formula una richiesta mi
 
 # Rivedere un articolo con l’IA e controllare ogni modifica
 
-Quando una scena contiene gli eventi giusti ma il ritmo non funziona, l’Assistente editoriale di Warplyn può aiutarti a rivederla. Puoi lavorare su un passaggio o su un *articolo* intero, confrontare le formulazioni proposte e applicare le modifiche che vuoi conservare.
+Se in una scena succede quello che avevi in mente ma il ritmo non ti convince, chiedi all’Assistente editoriale di aiutarti a rivederla. Puoi lavorare su un passaggio o su un *articolo* intero, confrontare le formulazioni proposte e applicare le modifiche che vuoi conservare.
 
-Warplyn è un’area di scrittura open source e con dati locali, disponibile per Windows e Linux. I tuoi testi restano sul computer. L’assistenza con IA richiede una connessione a Internet, un provider supportato e la relativa chiave API. Il testo e il contesto pertinenti vengono inviati al provider, che applica le proprie tariffe e norme sui dati.
+Warplyn è un’area di scrittura open source e con dati locali, disponibile per Windows e Linux. I tuoi testi restano sul computer. L’assistenza con IA richiede una connessione a Internet, un provider supportato e la relativa chiave API. Warplyn invia al provider il testo e il contesto necessari per la richiesta. Si applicano le tariffe e le norme sui dati del provider.
 
 ## Inizia con una richiesta mirata
 
@@ -14,7 +14,7 @@ Apri il tuo *articolo* e seleziona il passaggio da rivedere. Nel campo di compos
 
 > Migliora la fluidità mantenendo il punto di vista di Ana e l’atmosfera tranquilla. Non aggiungere nuovi eventi.
 
-Seleziona **Invia richiesta editoriale**. Warplyn invia la selezione con fino a 500 caratteri precedenti e 500 successivi come contesto in sola lettura. Può essere sostituito solo il passaggio selezionato. Prima di inviare testi sensibili, controlla nel campo di composizione la spiegazione del contesto. Per maggiori dettagli, consulta [Assistente editoriale](editorial-assistant.md).
+Seleziona **Invia richiesta editoriale**. Warplyn invia la selezione con fino a 500 caratteri precedenti e 500 successivi come contesto in sola lettura. Può essere sostituito solo il passaggio selezionato. Prima di inviare un testo riservato, leggi l’avviso nel campo di composizione. Indica quale testo verrà inviato. Per maggiori dettagli, consulta [Assistente editoriale](editorial-assistant.md).
 
 [![campo di composizione di Warplyn con una richiesta di revisione di un testo narrativo.](/images/editorial-assistant-example.png)](/images/editorial-assistant-example.png)
 
@@ -32,7 +32,7 @@ Scegli **Accetta** o **Rifiuta** per ogni modifica. Puoi modificare il testo **P
 
 ## Applica le modifiche e conserva la cronologia
 
-Dopo aver deciso su ogni modifica, scegli **Applica**. Il testo accettato crea una nuova *versione salvata*. Rifiutando tutte le modifiche, l’*articolo* resta invariato e non viene creata alcuna *versione salvata*. Le decisioni da sole non modificano il testo.
+Dopo aver deciso su ogni modifica, scegli **Applica**. Warplyn registra il testo con le modifiche accettate come nuova *versione salvata*. Rifiutando tutte le modifiche, l’*articolo* resta invariato e non viene creata alcuna *versione salvata*. Le decisioni da sole non modificano il testo.
 
 Apri **Cronologia delle versioni** per consultare le versioni salvate precedenti. Ripristinarne una aggiunge un’altra *versione salvata* e conserva la cronologia intermedia. Consulta [Rivedere gli articoli](reviewing-articles.md) per le opzioni di ripristino e le *proposte* obsolete.
 

@@ -4,7 +4,7 @@ description: "Entre em contato com o Warplyn sobre seus dados pessoais e solicit
 
 # Solicitar acesso ou exclusão dos seus dados
 
-Envie um e-mail para [kirill.taran@punk.link](mailto:kirill.taran@punk.link) para perguntar sobre dados pessoais recebidos pelo projeto Warplyn, solicitar acesso ou correção, ou pedir a exclusão. Descreva a quais dados ou interações sua solicitação se refere. O responsável pelo projeto responderá por e-mail e poderá pedir informações necessárias para localizar os dados ou verificar a solicitação.
+Envie um e-mail para [kirill.taran@punk.link](mailto:kirill.taran@punk.link) para perguntar sobre dados pessoais recebidos pelo projeto Warplyn, solicitar acesso ou correção, ou pedir a exclusão. Informe quais dados você procura ou quando e como entrou em contato com o projeto. O responsável pelo projeto responderá por e-mail e poderá pedir informações necessárias para localizar os dados ou verificar a solicitação.
 
 Não inclua conteúdo de *artigos*, chaves de API, senhas nem documentos de identidade no primeiro e-mail.
 
@@ -16,15 +16,15 @@ Se você ativou o compartilhamento de dados de diagnóstico e uso:
 2. Envie o ID para o endereço acima e descreva sua solicitação.
 3. Para interromper a coleta futura, desative **Compartilhe dados de diagnóstico e uso**.
 
-Copie o ID antes de desativar o compartilhamento, pois isso apaga o ID do dispositivo. Desativar o compartilhamento não recupera eventos já enviados. Para solicitações de exclusão, o responsável pelo projeto apaga o registro pseudônimo correspondente e confirma por e-mail.
+Copie o ID antes de desativar o compartilhamento, pois isso apaga o ID do dispositivo. Os eventos enviados antes da desativação continuam registrados. Para solicitações de exclusão, o responsável pelo projeto apaga o registro pseudônimo correspondente e confirma por e-mail.
 
-Consulte [Dados de diagnóstico e uso](telemetry.md) para ver os campos coletados e os controles de compartilhamento.
+Consulte [Dados de diagnóstico e uso](telemetry.md) para saber quais dados o Warplyn coleta e como mudar a opção de compartilhamento.
 
 ## Seus textos e provedores de IA
 
 Seus *artigos* e o histórico deles ficam armazenados localmente. Uma solicitação ao responsável pelo projeto não apaga arquivos nem dados do aplicativo no seu computador. Antes de remover dados locais, faça uma cópia de segurança dos textos que deseja preservar.
 
-Ao usar recursos de IA, textos e contexto relevantes são enviados ao provedor escolhido. Solicitações sobre dados mantidos por esse provedor devem ser feitas diretamente a ele.
+Quando você usa recursos de IA, o Warplyn envia ao provedor escolhido o texto e o contexto necessários para atender à solicitação. Se quiser saber mais sobre os dados que o provedor guarda, fale diretamente com ele.
 
 ## Análise de uso do site
 

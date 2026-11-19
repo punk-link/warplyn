@@ -1,5 +1,5 @@
 ---
-description: "Recupera un aggiornamento desktop di Warplyn non riuscito usando la versione precedente e lo snapshot corrispondente."
+description: "Come ripristinare Warplyn dopo un aggiornamento non riuscito, usando la versione precedente e il relativo snapshot."
 ---
 
 # Ripristino degli aggiornamenti desktop
@@ -16,8 +16,8 @@ Non aprire con una versione precedente un database creato da una versione di ant
 
 ## Linux AppImage
 
-Conserva l’AppImage in una cartella in cui puoi scrivere. Consulta [Installare Warplyn](installation.md#linux-appimage) per i requisiti di runtime, l’avvio e l’integrazione desktop facoltativa. L’accettazione desktop dell’installazione AppImage è ancora in sospeso.
+Conserva l’AppImage in una cartella in cui puoi scrivere. Consulta [Installare Warplyn](installation.md#linux-appimage) per i requisiti di runtime, l’avvio e l’integrazione desktop facoltativa. Le verifiche di AppImage come applicazione desktop installata non sono ancora concluse.
 
 Dopo aver consentito l’accesso agli aggiornamenti tramite GitHub, usa **Scarica**, poi **Riavvia e aggiorna**. Una normale chiusura dell’app non installa l’aggiornamento scaricato. I pacchetti Debian continuano a usare il gestore pacchetti.
 
-Se un aggiornamento AppImage non si avvia, chiudi Warplyn. L’eseguibile precedente viene conservato accanto all’immagine con il suffisso `.previous`. Ripristina lo snapshot corrispondente, creato prima dell’aggiornamento, prima di avviare la versione precedente, seguendo l’avviso qui sopra. Conserva entrambi gli eseguibili e lo snapshot finché il ripristino non riesce. Se non puoi scrivere nella cartella dell’immagine, spostala in una cartella di tua proprietà oppure scarica manualmente la versione sostitutiva. Non disattivare la sandbox di Electron per avviare un’immagine.
+Se Warplyn non si avvia dopo un aggiornamento di AppImage, chiudi l’app. Trovi l’eseguibile della versione precedente accanto all’immagine, con il suffisso `.previous`. Ripristina lo snapshot salvato prima dell’aggiornamento, poi avvia la versione precedente. Conserva entrambi gli eseguibili e lo snapshot finché il ripristino non riesce. Se non puoi scrivere nella cartella dell’immagine, spostala in una cartella di tua proprietà oppure scarica manualmente la versione sostitutiva. Non disattivare la sandbox di Electron per avviare un’immagine.

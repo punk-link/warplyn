@@ -12,7 +12,7 @@ Use **Save to file** and **Load from file** to move whole *Articles* between War
 2. Choose **Save to file** beside **Save revision** in the Article header. You can also right-click an *Article* in the Library and choose **Save to file…** without opening it.
 3. In the desktop app's save window, select Markdown, HTML, DOCX, or RTF in the file type dropdown, then choose a filename and location. Keep the matching filename extension. In the web app, choose **File format**, then **Download** and use your browser's download controls.
 
-The file contains the entire current *Draft*, including unsaved edits. Highlighting text does not limit what is saved. This action does not create a *Revision*. **Save revision** remains the action for adding the current *Draft* to your history.
+The file contains the entire current *Draft*, including unsaved edits. The file includes the whole *Draft* even if you’ve selected a passage. To add the *Draft* to the Article’s history, choose **Save revision**.
 
 ::: tip Need a portable copy of your workspace?
 *Article* files contain writing only. To preserve history, Assistant work, *Skills*, and settings, create a [backup](backups-and-recovery.md) instead.
@@ -27,15 +27,15 @@ The web app reports **Article download started** when it hands the file to the b
 3. For HTML, DOCX, and RTF, check **Review imported Article**, then choose **Import**. You can cancel the review. Markdown opens directly.
 4. Warplyn opens the imported text as a separate *Article*. The previous *Article* and its recoverable *Draft* remain available in the Library.
 
-A leading level-one heading supplies the new title. Otherwise, Warplyn uses the filename without its extension. The heading stays in the *Article* body. Loading the same file again creates another independent *Article*.
+If the file starts with a level-one heading, Warplyn uses it as the new title. Otherwise, Warplyn uses the filename without its extension. The heading stays in the *Article* body. Loading the same file again creates another independent *Article*.
 
 ::: warning Import creates a separate Article
-Loading a file does not replace the *Article* you opened the picker from. Review the imported *Article*, then move or delete either *Article* if needed.
+Loading a file does not replace the *Article* that was open when you chose **Load from file**. Review the imported *Article*, then move or delete either *Article* if needed.
 :::
 
 Choose a file no larger than 10 MiB. Markdown and HTML must use UTF-8. DOCX and RTF work without Microsoft Office installed.
 
-Warplyn keeps paragraphs, headings, editable nested lists and numbering, bold, italic, strikethrough, safe links, quotes, code, and Unicode text where supported by the source format. Page layout, fonts, images, embedded objects, and complex format-specific features may be omitted or simplified. Table text becomes ordinary *Article* content. Check the import preview before continuing. Unsupported Markdown extensions may also lose formatting in the editor.
+Warplyn keeps paragraphs, headings, editable nested lists and numbering, bold, italic, strikethrough, safe links, quotes, code, and Unicode text where supported by the source format. Page layout, fonts, images, embedded objects, and complex format-specific features may be omitted or simplified. Text from tables becomes part of the *Article* body. Check the import preview before continuing. Unsupported Markdown extensions may also lose formatting in the editor.
 
 You can cancel the file picker without importing anything. If your current *Draft* cannot be saved for recovery, fix the save error and retry loading.
 

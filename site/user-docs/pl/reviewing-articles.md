@@ -4,7 +4,7 @@ description: "Sprawdzaj proponowane poprawki, przeglądaj historię artykułu i 
 
 # Recenzowanie artykułów
 
-Asystent redakcyjny może proponować zmiany, ale to Ty decydujesz, co trafi do *artykułu*. **Przegląd propozycji** pozwala sprawdzić zmiany, zanim staną się *zapisaną wersją*.
+Asystent redakcyjny może proponować zmiany, ale to Ty decydujesz, co trafi do *artykułu*. W widoku **Przegląd propozycji** porównasz poprawki z oryginałem i wybierzesz, które trafią do nowej *zapisanej wersji*.
 
 [![Widok Przegląd propozycji z trzema oczekującymi zmianami, tekstem Oryginał i Propozycja, indywidualnymi decyzjami oraz kontrolką Zastosuj.](/images/proposal-review.png)](/images/proposal-review.png)
 
@@ -30,7 +30,7 @@ Wybierz **Przywróć tę wersję**, aby ustawić wcześniejszą wersję jako bie
 
 ## Odzyskaj szkic {#recover-a-draft}
 
-Punkt kontrolny *szkicu* to tekst zachowywany podczas edycji, który można odzyskać. Jeśli lokalny tekst edytora jest niezgodny z zapisanym punktem kontrolnym albo bieżącą *zapisaną wersją*, Warplyn pokazuje zachowany tekst lokalny obok zapisanych opcji. Porównaj je i wybierz **Zachowaj mój szkic**, **Użyj najnowszego szkicu** lub **Użyj najnowszej zapisanej wersji**. Użycie zapisanej opcji może zastąpić tekst lokalny, dlatego Warplyn najpierw poprosi o potwierdzenie.
+Podczas edycji Warplyn zapisuje punkt kontrolny, z którego możesz odzyskać *szkic*. Jeśli lokalny tekst edytora jest niezgodny z zapisanym punktem kontrolnym albo bieżącą *zapisaną wersją*, Warplyn pokazuje tekst z edytora obok zapisanych wersji tekstu, które można odzyskać. Porównaj je i wybierz **Zachowaj mój szkic**, **Użyj najnowszego szkicu** lub **Użyj najnowszej zapisanej wersji**. Użycie zapisanej opcji może zastąpić tekst lokalny, dlatego Warplyn najpierw poprosi o potwierdzenie.
 
 ## Wybierz sposób stosowania poprawek asystenta
 

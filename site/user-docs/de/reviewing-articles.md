@@ -4,7 +4,7 @@ description: "Prüfen Sie vorgeschlagene Änderungen, sehen Sie den Artikelverla
 
 # Artikel prüfen
 
-Der redaktionelle Assistent kann Änderungen vorschlagen, doch Sie entscheiden, was in einen *Artikel* übernommen wird. Mit der **Vorschlagsprüfung** können Sie Änderungen ansehen, bevor sie zu einer *Version* werden.
+Der redaktionelle Assistent kann Änderungen vorschlagen, doch Sie entscheiden, was in einen *Artikel* übernommen wird. In der **Vorschlagsprüfung** vergleichen Sie die Änderungen mit dem Original. Die Änderungen, die Sie übernehmen, werden als neue *Version* gespeichert.
 
 [![Vorschlagsprüfung mit drei ausstehenden Änderungen, Original- und Vorschlagstext, einzelnen Entscheidungen und der Schaltfläche Anwenden.](/images/proposal-review.png)](/images/proposal-review.png)
 
@@ -20,17 +20,17 @@ Wählen Sie für einzelne Änderungen **Annehmen** oder **Ablehnen**. Mit **Alle
 Sie können den vorgeschlagenen Text bearbeiten und vor dem Anwenden das Vergleichslayout wechseln. Ihre Entscheidungen werden erst wirksam, wenn Sie **Anwenden** wählen.
 :::
 
-Wenn Warplyn ausgewählte Änderungen nicht sicher anwenden kann, wird erklärt, falls nur das Annehmen des gesamten *Vorschlags* möglich ist. Ein veralteter *Vorschlag* wurde auf Grundlage einer früheren *Version* erstellt. Seine Änderungen können nicht auf den aktuellen Text angewendet werden. Verwerfen Sie ihn oder kehren Sie zum passenden Verlauf zurück und stellen Sie eine neue Anfrage.
+Wenn Warplyn einzelne Änderungen nicht sicher anwenden kann, weist es darauf hin, falls Sie nur den gesamten *Vorschlag* annehmen können. Ein veralteter *Vorschlag* wurde auf Grundlage einer früheren *Version* erstellt. Seine Änderungen können nicht auf den aktuellen Text angewendet werden. Verwerfen Sie ihn oder kehren Sie zum passenden Verlauf zurück und stellen Sie eine neue Anfrage.
 
 ## Versionen ansehen oder wiederherstellen
 
-Öffnen Sie den **Versionsverlauf**, um gespeicherte Fassungen zu lesen. Wenn Sie eine *Version* auswählen, wird eine schreibgeschützte Vorschau geöffnet; Ihre aktuelle Arbeit bleibt unverändert. Als **Inaktiv** markierte *Versionen* gehören zu einem Verlaufspfad, der durch eine spätere Wiederherstellung ersetzt wurde. Sie können weiterhin angesehen oder wiederhergestellt werden.
+Öffnen Sie den **Versionsverlauf**, um gespeicherte Fassungen zu lesen. Wählen Sie eine *Version*, um sie in einer schreibgeschützten Vorschau zu lesen. Ihre aktuelle Arbeit bleibt unverändert. Als **Inaktiv** markierte *Versionen* gehören zu einem Verlaufspfad, der durch eine spätere Wiederherstellung ersetzt wurde. Sie können weiterhin angesehen oder wiederhergestellt werden.
 
 Wählen Sie **Diese Version wiederherstellen**, um eine frühere Fassung zum aktuellen Stand zu machen. Warplyn fügt eine neue *Version* mit diesem Text hinzu; der dazwischenliegende Verlauf wird nicht gelöscht. Wenn Sie einen unfertigen *Entwurf* haben, wählen Sie vor dem Wiederherstellen, ob Sie ihn als *Version* speichern oder verwerfen möchten.
 
 ## Einen Entwurf wiederherstellen {#recover-a-draft}
 
-Ein *Entwurfs*-Prüfpunkt ist wiederherstellbarer Text, der während der Bearbeitung gespeichert wird. Wenn lokaler Editor-Text nicht mit einem gespeicherten Prüfpunkt oder der aktuellen *Version* übereinstimmt, zeigt Warplyn den behaltenen lokalen Text neben den gespeicherten Optionen an. Vergleichen Sie die Fassungen und wählen Sie **Meinen Entwurf behalten**, **Letzten Entwurf verwenden** oder **Letzte Version verwenden**. Eine gespeicherte Auswahl kann den lokalen Text ersetzen; Warplyn bittet Sie daher vorher um Bestätigung.
+Während Sie schreiben, speichert Warplyn einen Prüfpunkt, aus dem sich der *Entwurf* wiederherstellen lässt. Wenn lokaler Editor-Text nicht mit einem gespeicherten Prüfpunkt oder der aktuellen *Version* übereinstimmt, zeigt Warplyn den Text aus dem Editor neben den gespeicherten Fassungen an. Vergleichen Sie die Fassungen und wählen Sie **Meinen Entwurf behalten**, **Letzten Entwurf verwenden** oder **Letzte Version verwenden**. Eine gespeicherte Auswahl kann den lokalen Text ersetzen; Warplyn bittet Sie daher vorher um Bestätigung.
 
 ## Festlegen, wie Änderungen des Assistenten angewendet werden
 

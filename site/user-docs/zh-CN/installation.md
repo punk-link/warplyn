@@ -21,7 +21,7 @@ Warplyn 支持 Windows 11 x64 和 Linux。请从 [Warplyn 发布页](https://git
 
 ## Debian 及基于 Debian 的发行版
 
-Ubuntu 22.04 x64 是主要验证的 Debian 目标环境；不保证其他发行版版本兼容。请使用带图形桌面会话的 amd64 系统。
+Debian 软件包主要在 Ubuntu 22.04 x64 上验证。其他发行版或版本的兼容性无法保证。请使用带图形桌面会话的 amd64 系统。
 
 1. 打开 [Warplyn 发布页](https://github.com/punk-link/warplyn/releases)。
 2. 在 **Assets** 下下载 `warplyn_VERSION_amd64.deb` 软件包。
@@ -33,7 +33,7 @@ Ubuntu 22.04 x64 是主要验证的 Debian 目标环境；不保证其他发行�
 
 4. 从应用程序菜单打开 Warplyn。
 
-若要手动升级，请下载较新的 `.deb` 文件，并使用该文件运行相同的 `sudo apt install` 命令。下载不会配置自动软件包仓库。Apt 会解析声明的依赖；如果无法满足依赖，请勿强制安装。
+若要手动升级，请下载较新的 `.deb` 文件，并使用该文件运行相同的 `sudo apt install` 命令。下载安装包不会添加软件源。Apt 会处理软件包声明的依赖；如果无法满足依赖，请勿强制安装。
 
 写作数据默认存储在 `~/.warplyn`。升级前请备份。重新安装或卸载应用应会保留此目录以及桌面密钥环中的凭据。
 
@@ -47,7 +47,7 @@ Ubuntu 22.04 x64 是主要验证的 Debian 目标环境；不保证其他发行�
 
 在 Ubuntu 22.04 目标环境中，桌面依赖包括 `libgtk-3-0`、`libnss3`、`libasound2`、`libatk-bridge2.0-0`、`libdrm2`、`libgbm1`、`libxkbcommon0`、`libnotify4`、`libxcb-dri3-0` 和 `xdg-utils`。GNOME Keyring 提供 Secret Service。常规 GNOME 安装通常包含其中大部分软件包。其他发行版使用不同的软件包名称，需要单独进行兼容性检查。
 
-桌面集成是可选的：创建一个指向映像完整路径的启动器。更新时请保持路径不变。AppImage 桌面版验收仍未完成。Ubuntu 22.04 x64 是主要验证目标；Ubuntu 24.04 x64 和 Fedora 43 x64 是其他兼容性目标。这些目标并不代表支持所有 Linux 发行版。
+如果想从桌面启动 Warplyn，可以创建一个指向 AppImage 完整路径的启动器。更新时请保持路径不变。AppImage 桌面版验收仍未完成。Ubuntu 22.04 x64 是主要验证目标；Ubuntu 24.04 x64 和 Fedora 43 x64 是其他兼容性目标。这些目标并不代表支持所有 Linux 发行版。
 
 有关明确的下载、重启和恢复步骤，请参阅[桌面版更新恢复](update-recovery.md)。
 
@@ -69,4 +69,4 @@ StartupWMClass=Warplyn
 
 若要使用 AI 功能，请前往 **设置** → **AI助理** 添加提供商连接。在 **设置** → **数据与备份** 中选择 **备份文件夹**，以保护你的*文章*。
 
-Warplyn 会在你的电脑上存储*文章*和检查点。AI 请求需要互联网连接，并会将相关的*文章*文本和上下文发送给你所选的提供商。该提供商的数据政策和收费标准适用。
+Warplyn 会在你的电脑上存储*文章*和检查点。AI 请求需要互联网连接，并会将相关的*文章*文本和上下文发送给你所选的提供商。数据处理和费用以该提供商的政策和收费标准为准。

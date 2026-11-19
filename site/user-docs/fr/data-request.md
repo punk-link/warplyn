@@ -4,7 +4,7 @@ description: "Contactez Warplyn au sujet de vos données personnelles et demande
 
 # Demander l’accès à vos données ou leur suppression
 
-Écrivez à [kirill.taran@punk.link](mailto:kirill.taran@punk.link) pour vous renseigner sur les données personnelles reçues par le projet Warplyn, demander l’accès à vos données, leur rectification ou leur suppression. Précisez les données ou l’interaction concernées. La personne responsable du projet vous répondra par e-mail et pourra demander les renseignements nécessaires pour localiser les données ou vérifier la demande.
+Écrivez à [kirill.taran@punk.link](mailto:kirill.taran@punk.link) pour vous renseigner sur les données personnelles reçues par le projet Warplyn, demander l’accès à vos données, leur rectification ou leur suppression. Indiquez de quelles données il s’agit ou à quand remonte votre échange avec le projet. La personne responsable du projet vous répondra par e-mail et pourra demander les renseignements nécessaires pour localiser les données ou vérifier la demande.
 
 Ne joignez pas de contenu d’*article*, de clés API, de mots de passe ni de pièces d’identité à votre premier e-mail.
 
@@ -16,15 +16,15 @@ Si vous avez activé le partage des données de diagnostic et d’utilisation :
 2. Envoyez l’identifiant à l’adresse ci-dessus et décrivez votre demande.
 3. Pour arrêter la collecte à venir, désactivez **Partager les données de diagnostic et d’utilisation**.
 
-Copiez l’identifiant avant de désactiver le partage, car cette action l’efface de votre appareil. Désactiver le partage ne peut pas retirer les événements déjà envoyés. Pour une demande de suppression, la personne responsable du projet supprime l’enregistrement pseudonymisé correspondant et vous le confirme par e-mail.
+Copiez l’identifiant avant de désactiver le partage, car cette action l’efface de votre appareil. Les événements déjà envoyés restent enregistrés après la désactivation. Pour une demande de suppression, la personne responsable du projet supprime l’enregistrement pseudonymisé correspondant et vous le confirme par e-mail.
 
-Consultez la page sur les [données de diagnostic et d’utilisation](telemetry.md) pour connaître les champs recueillis et les commandes de partage.
+Consultez la page sur les [données de diagnostic et d’utilisation](telemetry.md) pour savoir quelles données Warplyn recueille et comment activer ou désactiver le partage.
 
 ## Vos textes et les fournisseurs d’IA
 
 Vos *articles* et leur historique sont stockés localement. Une demande adressée à la personne responsable du projet ne supprime pas les fichiers ni les données de l’application sur votre ordinateur. Sauvegardez les textes que vous souhaitez conserver avant d’effacer les données locales.
 
-Lorsque vous utilisez des fonctions d’IA, le texte et le contexte pertinents sont transmis au fournisseur choisi. Pour toute demande concernant les données détenues par ce fournisseur, contactez-le séparément.
+Lorsque vous utilisez des fonctions d’IA, Warplyn transmet au fournisseur choisi le texte et le contexte dont il a besoin pour traiter la demande. Pour toute demande concernant les données détenues par ce fournisseur, contactez-le séparément.
 
 ## Analytique du site web
 

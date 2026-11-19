@@ -4,9 +4,9 @@ description: "Dowiedz się, jakie dane diagnostyczne i statystyki użytkowania u
 
 # Udostępnianie danych diagnostycznych i statystyk użytkowania
 
-Po włączeniu udostępniania spakowane aplikacje Warplyn dla Windows i Linux wysyłają pseudonimowe zdarzenia dotyczące niezawodności i użytkowania do PostHog Cloud w amerykańskim stanie Wirginia. Domyślnie udostępnianie jest wyłączone. Włącz je, aby pomóc nam poznać Twoje doświadczenia i ulepszać Warplyn. Swoją decyzję możesz zmienić w sekcji **Ustawienia** → **Ogólne** → **Prywatność i diagnostyka**.
+Jeśli włączysz udostępnianie, Warplyn dla Windows i Linux będzie przesyłać dane o działaniu i używaniu aplikacji do PostHog Cloud w Wirginii (USA). Zdarzenia są powiązane z pseudonimowym identyfikatorem. Domyślnie udostępnianie jest wyłączone. Włącz je, aby pomóc nam poznać Twoje doświadczenia i ulepszać Warplyn. Swoją decyzję możesz zmienić w sekcji **Ustawienia** → **Ogólne** → **Prywatność i diagnostyka**.
 
-Wyłączenie udostępniania zatrzymuje przyszłe zbieranie danych oraz usuwa oczekujące zdarzenia i lokalny Identyfikator telemetrii. Ponowne włączenie tworzy nowe ID. Nie można cofnąć zdarzeń już wysłanych.
+Po wyłączeniu udostępniania Warplyn przestaje zbierać dane i usuwa z urządzenia niewysłane zdarzenia oraz identyfikator telemetrii. Jeśli ponownie włączysz udostępnianie, aplikacja utworzy nowy identyfikator. Wysłane wcześniej zdarzenia pozostają zapisane.
 
 Oczekujące zdarzenia są przechowywane w lokalnym profilu aplikacji, aby Warplyn mógł ponowić wysyłkę po przywróceniu połączenia. Zdarzenia starsze niż 24 godziny są usuwane przy następnym sprawdzeniu kolejki przez aplikację. Wyłączenie udostępniania usuwa kolejkę.
 

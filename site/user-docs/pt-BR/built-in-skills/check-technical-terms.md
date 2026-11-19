@@ -4,7 +4,7 @@ description: "Use Verifique os termos técnicos para comparar a terminologia de 
 
 # Verificar termos técnicos
 
-Use **Verifique os termos técnicos** para revisar a terminologia de um *artigo* de TI. O recurso procura conceitos confundidos, expansões enganosas de siglas, nomes incorretos de produtos ou APIs e nomes inconsistentes para um mesmo conceito. Ele compara o uso com fontes do domínio e da versão relevantes, considerando definições locais e terminologia em evolução.
+Use **Verifique os termos técnicos** para revisar a terminologia de um *artigo* de TI. O assistente identifica conceitos trocados, siglas explicadas de forma incorreta e nomes errados de produtos ou APIs. Também aponta quando o texto usa nomes diferentes para o mesmo conceito. Ele compara o uso com fontes do domínio e da versão relevantes, considerando definições locais e terminologia em evolução.
 
 Abra seu *artigo*. Selecione uma passagem para direcionar a conferência, se desejar. No assistente, abra **Ações rápidas**, escolha **Verifique os termos técnicos** e selecione **Enviar solicitação editorial**. Abra o resultado concluído em **Verificação de fatos** e examine cada *apontamento*, sua explicação, as fontes vinculadas e as incertezas.
 

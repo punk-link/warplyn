@@ -17,7 +17,7 @@ W aplikacji desktopowej otwórz **Ustawienia** → **Asystent AI**. W sekcji **J
 Zarządzane klucze API wymagają aplikacji desktopowej i dostępnej usługi systemowego magazynu danych logowania. W systemie Linux usługa Secret Service musi być odblokowana. Aplikacja webowa obsługuje połączenia ze zmiennymi środowiskowymi, ale nie zarządza danymi logowania systemu operacyjnego. Instalator nie tworzy ani nie importuje pliku `.env`.
 :::
 
-Dodanie połączenia z kluczem API powoduje sprawdzenie klucza u dostawcy. Dodanie połączenia ze zmienną środowiskową zapisuje tylko jego ustawienia. Warplyn ponownie kontaktuje się z dostawcą podczas odświeżania modeli lub wysyłania zlecenia AI. Te kontrole nie obejmują treści *artykułu*.
+Jeśli podasz klucz API bezpośrednio, Warplyn sprawdzi u dostawcy, czy klucz działa. Jeśli podasz zmienną środowiskową, przy dodawaniu połączenia Warplyn zapisze tylko ustawienia. Warplyn ponownie kontaktuje się z dostawcą podczas odświeżania modeli lub wysyłania zlecenia AI. Te kontrole nie obejmują treści *artykułu*.
 
 Połączenia są wyświetlane w sekcji **Ustawienia** → **Asystent AI**. Użyj **Aktywne**, **Aktywuj** lub **Dezaktywuj**, aby określić, z których połączeń Warplyn może korzystać przy nowych zleceniach. Wybierz **Zmień nazwę**, aby zmienić lokalną nazwę połączenia, albo **Usuń** i potwierdź, aby usunąć je z Warplyn. Usunięcie połączenia ze zmienną środowiskową nie kasuje zmiennej ani klucza.
 
@@ -31,10 +31,10 @@ Warplyn obsługuje OpenAI, OpenCode Zen, Anthropic, Google Gemini API, xAI Grok 
 
 W sekcji **Ustawienia** → **Asystent AI** wybierz **Odśwież modele**, a następnie **Model domyślny**. Aby użyć innego modelu dla określonej *umiejętności*, wybierz go w sekcji **Modele do konkretnych zadań**. Zadanie ustawione na **Użyj modelu domyślnego** korzysta z modelu domyślnego.
 
-Odśwież listę modeli po zmianie połączeń albo gdy chcesz zobaczyć aktualny katalog dostawcy. Użyj opcji **Szukaj modeli**, **Filtruj modele według dostawcy** i **Ulubione**, aby zawęzić listę. Wybór modelu dotyczy przyszłych zleceń. **Poziom rozumowania** pojawia się dla obsługiwanych modeli OpenAI; wyższe ustawienia mogą wydłużyć czas działania. Opcjonalny **Model aplikacji** w ustawieniach AI jest niezależny od Model domyślny i obsługuje zadania pomocnicze Warplyn, takie jak streszczenia i tytuły.
+Odśwież listę modeli po zmianie połączeń albo gdy chcesz zobaczyć aktualny katalog dostawcy. Użyj opcji **Szukaj modeli**, **Filtruj modele według dostawcy** i **Ulubione**, aby zawęzić listę. Wybór modelu dotyczy przyszłych zleceń. **Poziom rozumowania** pojawia się dla obsługiwanych modeli OpenAI; wyższe ustawienia mogą wydłużyć czas działania. Do zadań pomocniczych, takich jak tworzenie streszczeń i tytułów, możesz wybrać osobny **Model aplikacji**.
 
 ::: tip Dostępność modeli
-Dostępne działania redakcyjne zależą od modelu. Niektóre modele nie obsługują weryfikacji faktów ze źródłami, ustrukturyzowanych wyników ani ustawień rozumowania. Modele OpenCode Zen podlegają możliwościom i dostępności swojego katalogu.
+Dostępne działania redakcyjne zależą od modelu. Niektóre modele nie obsługują weryfikacji faktów ze źródłami, ustrukturyzowanych wyników ani ustawień rozumowania. W katalogu OpenCode Zen sprawdzisz, jakie modele są dostępne i co potrafią.
 :::
 
 [![Ustawienia Asystent AI z skonfigurowanymi połączeniami z dostawcami, opcjami konfiguracji klucza i kontrolkami modeli.](/images/ai-providers-and-models.png)](/images/ai-providers-and-models.png)
@@ -43,6 +43,6 @@ Dostępne działania redakcyjne zależą od modelu. Niektóre modele nie obsług
 
 ### Model aplikacji
 
-**Model aplikacji** obsługuje krótkie zadania pomocnicze, takie jak podsumowania *propozycji*, tytuły i rozpoznawanie zamiaru zlecenia dla asystenta. Jeśli nie wybierzesz modelu, Warplyn korzysta z Model domyślny.
+**Model aplikacji** obsługuje krótkie zadania pomocnicze, takie jak podsumowania *propozycji*, tytuły i ustalanie, o co prosisz asystenta. Jeśli nie wybierzesz modelu do tych zadań, Warplyn użyje ustawienia **Model domyślny**.
 
 Wybierz wydajny model tekstowy o niższym koszcie. **GPT-6 Luna** to jedna z opcji OpenAI dla takich ukierunkowanych zadań ([szczegóły modelu](https://developers.openai.com/api/docs/models/gpt-6-luna)). W przypadku innego dostawcy wybierz porównywalny model. Jeśli wyniki nie są wystarczająco dobre, wypróbuj mocniejszy model.

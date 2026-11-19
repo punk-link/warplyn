@@ -21,7 +21,7 @@ Podpis cyfrowy wykorzystuje certyfikat podpisywania kodu, aby wskazać wydawcę 
 
 ## Debian i dystrybucje oparte na Debianie
 
-Ubuntu 22.04 x64 jest głównym zweryfikowanym celem dla Debiana; zgodność z innymi wersjami dystrybucji nie jest gwarantowana. Użyj systemu amd64 z graficznym środowiskiem pulpitu.
+Pakiet Debian testowano przede wszystkim na Ubuntu 22.04 x64. Zgodność z innymi wersjami i dystrybucjami może się różnić. Użyj systemu amd64 z graficznym środowiskiem pulpitu.
 
 1. Otwórz stronę [wydań Warplyn](https://github.com/punk-link/warplyn/releases).
 2. W sekcji **Assets** pobierz pakiet `warplyn_VERSION_amd64.deb`.
@@ -33,7 +33,7 @@ Ubuntu 22.04 x64 jest głównym zweryfikowanym celem dla Debiana; zgodność z i
 
 4. Otwórz Warplyn z menu aplikacji.
 
-Aby ręcznie zaktualizować aplikację, pobierz nowszy plik `.deb` i uruchom to samo polecenie `sudo apt install`, wskazując ten plik. Pobranie nie konfiguruje automatycznego repozytorium pakietów. Apt rozwiązuje zadeklarowane zależności; nie wymuszaj instalacji, jeśli nie da się ich spełnić.
+Aby ręcznie zaktualizować aplikację, pobierz nowszy plik `.deb` i uruchom to samo polecenie `sudo apt install`, wskazując ten plik. Pobranie pakietu nie dodaje repozytorium aktualizacji. Apt zainstaluje pakiety potrzebne do uruchomienia Warplyn. Jeśli nie może ich zainstalować, nie wymuszaj instalacji.
 
 Domyślnie teksty są przechowywane w `~/.warplyn`. Przed aktualizacją utwórz kopię zapasową. Ponowna instalacja lub usunięcie aplikacji powinny zachować ten folder i dane logowania w pęku kluczy pulpitu.
 
@@ -47,9 +47,9 @@ W wydaniach zawierających plik x64 `.AppImage` przechowuj go w folderze z prawe
 
 Na docelowym Ubuntu 22.04 zależności pulpitu obejmują `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` i `xdg-utils`. GNOME Keyring udostępnia usługę Secret Service. Standardowa instalacja GNOME zawiera większość tych pakietów. Inne dystrybucje używają odmiennych nazw pakietów i wymagają własnego sprawdzenia zgodności.
 
-Integracja z pulpitem jest opcjonalna: utwórz skrót wskazujący pełną ścieżkę do obrazu. Zachowaj tę samą ścieżkę podczas aktualizacji. Weryfikacja AppImage w środowisku pulpitu jest w toku. Ubuntu 22.04 x64 jest głównym celem weryfikacji; Ubuntu 24.04 x64 i Fedora 43 x64 to dodatkowe cele zgodności. Nie oznacza to uniwersalnej obsługi wszystkich dystrybucji Linux.
+Integracja z pulpitem jest opcjonalna: utwórz skrót wskazujący pełną ścieżkę do obrazu. Zachowaj tę samą ścieżkę podczas aktualizacji. Weryfikacja AppImage w środowisku pulpitu jest w toku. Głównym środowiskiem testowym jest Ubuntu 22.04 x64. Testy zgodności obejmują też Ubuntu 24.04 x64 i Fedorę 43 x64. Nie oznacza to uniwersalnej obsługi wszystkich dystrybucji Linux.
 
-Jawne kroki pobierania, ponownego uruchomienia i odzyskiwania opisano w sekcji [Odzyskiwanie po aktualizacji aplikacji desktopowej](update-recovery.md).
+Instrukcje pobierania aktualizacji, ponownego uruchamiania aplikacji i odzyskiwania danych znajdziesz w sekcji [Odzyskiwanie po aktualizacji aplikacji desktopowej](update-recovery.md).
 
 Aby dodać aplikację do menu, możesz zmienić nazwę obrazu na `Warplyn.AppImage` i umieścić go w folderze `Applications` w katalogu domowym. Jeśli nie istnieje, utwórz `~/.local/share/applications`, a następnie zapisz tam poniższy plik jako `warplyn.desktop`. Zastąp `YOUR_USER` nazwą użytkownika Linux albo użyj pełnej ścieżki do obrazu:
 

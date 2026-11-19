@@ -4,7 +4,7 @@ description: "Usa Verificare i termini tecnici per confrontare la terminologia i
 
 # Verificare i termini tecnici
 
-Usa **Verifica termini tecnici** per rivedere la terminologia informatica in un *articolo*. Individua concetti confusi, espansioni fuorvianti di acronimi, nomi errati di prodotti o API e nomi incoerenti per lo stesso concetto. Confronta gli usi con fonti pertinenti al settore e alla versione, tenendo conto delle definizioni locali e della terminologia in evoluzione.
+Usa **Verifica termini tecnici** per rivedere la terminologia informatica in un *articolo*. L’assistente segnala concetti scambiati tra loro, acronimi sciolti in modo errato e nomi inesatti di prodotti o API. Ti avvisa anche se usi termini diversi per lo stesso concetto. Confronta gli usi con fonti pertinenti al settore e alla versione, tenendo conto delle definizioni locali e della terminologia in evoluzione.
 
 Apri il tuo *articolo*. Seleziona un passaggio se vuoi concentrare la verifica. Nell’assistente, apri **Azioni rapide**, scegli **Verifica termini tecnici**, quindi seleziona **Invia richiesta editoriale**. Apri il risultato completato in **Verifica dei fatti** ed esamina ogni *rilievo*, la relativa spiegazione, le fonti collegate e il grado di incertezza.
 

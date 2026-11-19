@@ -4,12 +4,12 @@ description: "Erstellen Sie aus Ihren Texten ein lokales Stilprofil und verwalte
 
 # Stilprofil
 
-Verwenden Sie das **Stilprofil**, um dem Assistenten Beispiele Ihrer Texte und wiederverwendbare Hinweise bereitzustellen. Ihre Beispiele bleiben auf diesem Gerät. Sie werden weder Teil eines *Artikels* noch einer *Version*.
+Im **Stilprofil** hinterlegen Sie Schreibproben und Regeln, an denen sich der Assistent bei der Überarbeitung orientieren kann. Ihre Beispiele bleiben auf diesem Gerät. Sie werden weder Teil eines *Artikels* noch einer *Version*.
 
 Öffnen Sie das **Stilprofil** im **Werkzeugbereich der Artikelbibliothek**. Wählen Sie über das Seitenmenü oder bei schmalem Fenster über die Abschnittsauswahl **Schreibproben**, **Manuelle Regeln** oder **Typografieregeln**. Die Schaltfläche **Zurück** bringt Sie zu Ihrem *Artikel* und der zuvor geöffneten Ansicht zurück.
 
 ::: tip Einen Einstieg wählen
-Fügen Sie Schreibproben hinzu, wenn Sie erkannte Merkmale der Schreibstimme erhalten möchten, oder legen Sie unter **Manuelle Regeln** bereits bekannte Vorgaben fest. Beides kann unabhängig voneinander verwendet werden.
+Fügen Sie Schreibproben hinzu, damit Warplyn typische Merkmale Ihres Stils erkennen kann. Wenn Sie schon wissen, worauf der Assistent achten soll, können Sie direkt **Manuelle Regeln** festlegen. Beides kann unabhängig voneinander verwendet werden.
 :::
 
 ## Schreibproben hinzufügen
@@ -22,7 +22,7 @@ Fügen Sie Schreibproben hinzu, wenn Sie erkannte Merkmale der Schreibstimme erh
 
 Beschreiben Sie unter **Manuelle Regeln** Vorgaben, die der Assistent befolgen soll. Sie können ihn zum Beispiel bitten, in der Ich-Perspektive zu erzählen oder eine Abkürzung bei der ersten Verwendung zu erklären. Hinweise lassen sich auch ohne Schreibproben hinzufügen.
 
-Wählen Sie nach Änderungen an Proben oder Hinweisen **Profil neu erstellen**, um erkannte Merkmale zu aktualisieren. Das Profil zeigt, welche Proben verwendet wurden und wann es neu erstellt wurde. Bis dahin können erkannte Merkmale noch auf dem vorherigen Probensatz beruhen. Hinweise der Stilprüfung sind Empfehlungen und bleiben vom Text des *Artikels* getrennt.
+Wählen Sie nach Änderungen an Proben oder Hinweisen **Profil neu erstellen**, um erkannte Merkmale zu aktualisieren. Das Profil zeigt, welche Proben verwendet wurden und wann es neu erstellt wurde. Bis Sie das Profil neu erstellen, kann es noch Merkmale aus der bisherigen Auswahl anzeigen. Hinweise der Stilprüfung sind Empfehlungen und bleiben vom Text des *Artikels* getrennt.
 
 [![Ansicht „Manuelle Regeln“ im Stilprofil mit einer allgemeinen Regel zu Anas Perspektive und der Steuerung „Profil neu erstellen“.](/images/style-profile-rules.png)](/images/style-profile-rules.png)
 
@@ -44,11 +44,11 @@ Mit **Regel hinzufügen** legen Sie Anführungszeichen, Gedankenstriche im Flie�
 Wählen Sie die Schreibsprache und legen Sie fest, ob die Regeln für alle *Artikel* in dieser Sprache oder nur für den aktuellen *Artikel* gelten. Eine *Übersetzung* hat eine eigene Sprache und eigene Typografieeinstellungen.
 :::
 
-Unter **Konventionsvoreinstellung** sehen Sie Vorschauen regionaler Konventionen. Vorschauen mit dem Hinweis **Prüfung durch Muttersprachler ausstehend** können noch nicht angewendet werden; eigene Regeln lassen sich trotzdem konfigurieren. Regionale Konventionen gelten nicht automatisch für andere Regionen. Wenn frühere Regeln global galten, weist **Frühere Regeln in diese Sprache kopieren** eine Kopie zu, ohne die Originale zu löschen.
+Unter **Konventionsvoreinstellung** sehen Sie Vorschauen regionaler Konventionen. Vorschauen mit dem Hinweis **Prüfung durch Muttersprachler ausstehend** können noch nicht angewendet werden; eigene Regeln lassen sich trotzdem konfigurieren. Regionale Konventionen gelten nicht automatisch für andere Regionen. Wenn Ihre früheren Regeln für alle Sprachen galten, können Sie sie mit **Frühere Regeln in diese Sprache kopieren** für die ausgewählte Sprache übernehmen. Die ursprünglichen Regeln bleiben erhalten.
 
 *Artikel*-Regeln übernehmen die gespeicherten Sprachkonventionen. Wenn Sie eine übernommene Regel bearbeiten, wird sie überschrieben; wenn Sie sie entfernen, wird sie für diesen Geltungsbereich deaktiviert. **Übernommene Regeln wiederherstellen** löscht diese Überschreibungen. Beim Wechsel der Sprache bleiben ungespeicherte Regeländerungen erhalten, solange das Stilprofil geöffnet bleibt.
 
-Regeln werden als kurze Zusammenfassungen mit **Gespeichert** oder **Ungespeichert** angezeigt. Wählen Sie **Bearbeiten**, um eine Regel zu öffnen; es kann jeweils nur eine Regel bearbeitet werden. Mit **Speichern** sichern Sie den ausgewählten Geltungsbereich. Beim Speichern von Spracheinstellungen wird das *Stilprofil* lokal anhand der aktuell einbezogenen Proben und gespeicherten Hinweise neu erstellt, einschließlich Änderungen an der Probenauswahl. *Artikel*-Überschreibungen werden für den jeweiligen *Artikel* gespeichert. Ungespeicherter Text in anderen Formularen bleibt ungespeichert. Explizite Typografieregeln lassen sich ohne Schreibproben verwenden; Proben werden benötigt, um Merkmale der Schreibstimme abzuleiten.
+Regeln werden als kurze Zusammenfassungen mit **Gespeichert** oder **Ungespeichert** angezeigt. Wählen Sie **Bearbeiten**, um eine Regel zu öffnen; es kann jeweils nur eine Regel bearbeitet werden. Mit **Speichern** sichern Sie den ausgewählten Geltungsbereich. Wenn Sie die Spracheinstellungen speichern, erstellt Warplyn das *Stilprofil* auf Ihrem Gerät neu. Dafür verwendet es die derzeit ausgewählten Schreibproben und die gespeicherten Hinweise. *Artikel*-Überschreibungen werden für den jeweiligen *Artikel* gespeichert. Ungespeicherter Text in anderen Formularen bleibt ungespeichert. Explizite Typografieregeln lassen sich ohne Schreibproben verwenden; Proben werden benötigt, um Merkmale der Schreibstimme abzuleiten.
 
 Speichern Sie den aktuellen *Entwurf* und wählen Sie dann **Typografie prüfen**, um den ausgewählten *Artikel* ohne KI-Verbindung zu prüfen. Die Prüfung verwendet die gespeicherte *Version* und deren Sprache, die in der Statusleiste angezeigt wird. Wählen Sie für die Prüfung dieselbe Sprache unter **Typografiesprache**. Code, URLs, technische Bezeichner und mehrdeutige Fälle mit Anführungszeichen bleiben unverändert. Kontextbezogene Regeln erfordern eine vollständige **Prüfung des Schreibstils** durch den Assistenten. Für eine Sprache ohne passende mechanische Regeln gibt es keine lokale Typografieprüfung; fügen und speichern Sie eigene Regeln, bevor Sie sie prüfen.
 

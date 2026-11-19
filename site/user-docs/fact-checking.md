@@ -17,7 +17,7 @@ Fact checking needs an [AI connection and model](providers.md) that supports sou
 5. Open **Fact Check** to inspect the results for the saved *Revision* being checked.
 
 ::: tip Example
-In The River at Dusk, Ana says the full moon will raise the water enough to cover the path. Check that claim against sources relevant to the river and the story's setting. Read whether the sources describe that particular river before changing the scene.
+In The River at Dusk, Ana says the full moon will raise the water enough to cover the path. Check that claim against sources relevant to the river and the story's setting. Check whether the sources describe that particular river before changing the scene.
 :::
 
 You can keep writing or navigate elsewhere while the check runs. If a run is incomplete, only completed *Findings* are available. Request another check for the unfinished claims.
@@ -44,7 +44,7 @@ For an unresolved *Finding* in the latest check of the current *Revision*, choos
 | **Accept evidence** | Records that you reviewed and accepted the evidence. The *Finding* shows **Evidence accepted**. |
 | **Propose correction** | For a **Disputed** or **Unverifiable** claim, asks the Assistant to prepare a correction *Proposal*. Review it before applying changes. |
 
-Both acceptance actions mark the *Finding* as resolved, remove its decision buttons, and stop it requesting attention in the Article library. Neither changes the *Article* or the verdict. They record different reasons for your decision and otherwise have the same effect on the review workflow.
+Both acceptance actions mark the *Finding* as resolved, remove its decision buttons, and clear its flag in the Article library. Neither changes the *Article* or the verdict. They record different reasons for your decision and otherwise have the same effect on the review workflow.
 
 For example, **Disputed · Evidence accepted** means the check disputed the claim and you accepted the evidence it presented. It does **not** mean the claim has been corrected or is now supported. If the text needs changing, edit the *Article* or request a correction before resolving the *Finding*.
 

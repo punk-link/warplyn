@@ -12,4 +12,4 @@ Open **Quick actions**, choose **Improve flow and clarity**, and select **Send e
 Ask, "Suggest a small revision that makes the move from watching the current to opening the notebook clearer. Keep the scene's quiet mood and don't change any events."
 :::
 
-Review the *Proposal* for meaning, technical details, and author voice before applying it. For a request to cut length, use [Shorten text](shorten-text.md).
+Review the *Proposal* for meaning, technical details, and author voice before applying it. To make a passage shorter, use [Shorten text](shorten-text.md).

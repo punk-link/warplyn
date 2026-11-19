@@ -4,7 +4,7 @@ description: "了解 Warplyn 共享哪些诊断和使用数据、哪些内容保
 
 # 共享诊断和使用数据
 
-启用共享后，Warplyn 的 Windows 和 Linux 打包应用会将假名化的可靠性和使用事件发送到位于美国（弗吉尼亚州）的 PostHog Cloud。默认情况下，共享处于关闭状态。欢迎启用共享，帮助我们了解你的使用体验并改进 Warplyn。你可以在 **设置** → **常规** → **隐私与诊断** 中更改选择。
+启用共享后，Warplyn 的 Windows 和 Linux 桌面版会将假名化的可靠性和使用事件发送到位于美国（弗吉尼亚州）的 PostHog Cloud。默认情况下，共享处于关闭状态。欢迎启用共享，帮助我们了解你的使用体验并改进 Warplyn。你可以在 **设置** → **常规** → **隐私与诊断** 中更改选择。
 
 关闭共享会停止后续收集，并清除排队中的事件和本地遥测 ID。之后重新启用时会生成新的 ID。关闭共享无法撤回已发送的事件。
 
@@ -20,7 +20,7 @@ description: "了解 Warplyn 共享哪些诊断和使用数据、哪些内容保
 
 - 连接验证成功或失败，不包含连接名称或提供商详情；
 - 应用启动以及安全的启动、renderer 或子进程失败类别；
-- AI 操作和阶段的完成、失败或取消情况，包括失败类别以及可用时的 HTTP 状态；
+- AI 操作及各阶段是完成、失败还是取消。失败时记录类别，有 HTTP 状态码时也会一并记录；
 - 明确的*待审核提案*审阅和汇总的检查点；
 - 备份和恢复结果。
 
@@ -46,8 +46,8 @@ AI 操作和阶段事件可能包含一个随机 ID，用于关联同一操作�
 
 ## 网站分析 {#website-analytics}
 
-Landing 页面和方案页面使用 PostHog 统计访问、引荐和营销活动信息以及下载链接点击。PostHog 的下载事件包含按钮在页面中的位置。有人从 Landing 页面、方案页面或用户指南打开最新发布链接时，Google Analytics 也会记录 `download_clicked` 事件。这些点击并不能确认文件已下载或安装。
+网站首页和方案页面使用 PostHog 统计访问、引荐和营销活动信息以及下载链接点击。PostHog 的下载事件包含按钮在页面中的位置。有人从 网站首页、方案页面或用户指南打开最新发布链接时，Google Analytics 也会记录 `download_clicked` 事件。这些点击并不能确认文件已下载或安装。
 
 网站上的 PostHog 跟踪不使用 Cookie 或浏览器存储，不建立个人档案，也不记录会话回放或一般点击活动。PostHog 使用服务器生成的哈希估算访客数。网站事件与桌面版遥测 ID 分开，桌面版共享开关不会控制网站跟踪。
 
-Landing 页面和用户指南还使用 Google Analytics，它可能通过 Cookie 衡量访问量和流量来源。浏览器发送 Do Not Track 或 Global Privacy Control 信号时，Google Analytics 和 PostHog 跟踪都会跳过。上述无 Cookie 行为适用于 PostHog。
+网站首页和用户指南还使用 Google Analytics，它可能通过 Cookie 衡量访问量和流量来源。浏览器发送 Do Not Track 或 Global Privacy Control 信号时，Google Analytics 和 PostHog 都会停止收集这次访问的数据。上述无 Cookie 行为适用于 PostHog。

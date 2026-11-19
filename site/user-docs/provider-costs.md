@@ -4,7 +4,7 @@ description: "Understand what affects AI request costs in Warplyn, how API billi
 
 # AI provider costs
 
-AI assistance is optional. Warplyn does not bill you for requests. Your AI provider may charge your account when Warplyn sends one.
+AI assistance is optional. Warplyn does not bill you for requests. Your AI provider may charge you for requests Warplyn sends.
 
 ## What affects the cost
 
@@ -14,13 +14,13 @@ Your provider sets its own rates. A request's cost can depend on:
 - how much *Article* text and instruction context the request includes
 - how much text the model returns
 
-Nearby text can improve interpretation of a short selection, at the cost of sending some unselected writing. Selection requests that need *Article* text send the selected passage plus up to 500 characters before and 500 after it as read-only context, at most 1,000 extra characters. Only the selection is an edit target. Without a selection, the request may include the whole *Article* and relevant context. A narrower request can cost less, depending on provider rates.
+Text around a short selection can help the model understand the passage. When your request needs *Article* text, Warplyn sends the selected passage and up to 500 characters on each side as read-only context, for a maximum of 1,000 extra characters. Only the selected text can be edited. Without a selection, the request may include the whole *Article* and relevant context. A narrower request can cost less, depending on provider rates.
 
 ::: tip API billing
 A subscription to a provider's chat service may not include API use. Check the provider's current API pricing and billing terms before connecting a key.
 :::
 
-For routine work, such as smoothing a passage or making a focused revision, try a lower-cost model first. Use a more expensive model when the results show that the task needs one.
+For routine work, such as smoothing a passage or making a focused revision, try a lower-cost model first. Use a more expensive model if the lower-cost model can’t handle the task.
 
 ## Check your usage
 

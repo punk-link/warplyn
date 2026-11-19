@@ -9,7 +9,7 @@ Usa **Verifica i fatti** quando vuoi verificare affermazioni fattuali contenute 
 Apri **Azioni rapide**, scegli **Verifica i fatti**, rivedi le affermazioni selezionate dall’assistente e deseleziona quelle che non vuoi controllare. Poi seleziona **Invia richiesta editoriale**. Puoi selezionare un passaggio per concentrare la verifica. I risultati sono associati alla *versione salvata* sottoposta a verifica.
 
 ::: tip Esempio
-In un capitolo ambientato vicino al fiume, Ana dice che la luna piena farà salire l’acqua abbastanza da coprire il sentiero. Chiedi a **Verifica i fatti** di verificare questo dettaglio confrontandolo con fonti pertinenti all’ambientazione della storia.
+In un capitolo ambientato vicino al fiume, Ana dice che la luna piena farà salire l’acqua abbastanza da coprire il sentiero. Scegli **Verifica i fatti** e chiedi all’assistente di cercare fonti sul luogo in cui si svolge la storia.
 :::
 
 ::: tip Esaminare le prove

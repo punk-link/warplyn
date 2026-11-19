@@ -4,7 +4,7 @@ description: "Użyj Przetłumacz tekst, aby przygotować do sprawdzenia tłumacz
 
 # Przetłumacz tekst
 
-Użyj **Przetłumacz tekst**, aby przygotować tłumaczenie całego *artykułu* na wybrany język. Funkcja tłumaczy tytuł i treść, zachowując twierdzenia, liczby, styl i formatowanie Markdown. Ta *umiejętność* używa całego *artykułu*, nawet jeśli zaznaczono jego fragment.
+Użyj **Przetłumacz tekst**, aby przygotować tłumaczenie całego *artykułu* na wybrany język. Funkcja tłumaczy tytuł i treść, zachowując twierdzenia, liczby, styl i formatowanie Markdown. Nawet jeśli zaznaczysz fragment, asystent przetłumaczy cały *artykuł*.
 
 Otwórz widok **Tłumaczenia** w *artykule* i wybierz **Nowe tłumaczenie…**. Wybierz język docelowy i potwierdź zlecenie. Jeśli źródło zawiera niezapisane zmiany, najpierw zapisz je jako *zapisaną wersję*, aby wynik był powiązany z tekstem, który chcesz przetłumaczyć.
 
