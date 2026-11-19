@@ -1,13 +1,14 @@
 const steps = [
-    [0, 5000, "Write in your own voice."],
-    [1, 4400, "Ask for help with a passage.", "request"],
-    [2, 3000, "Open the completed proposal.", "open"],
-    [3, 7500, "Compare the proposed edit.", "review"],
-    [3, 1250, "You decide what changes.", "accept"],
-    [3, 1250, "You decide what changes.", "apply"],
-    [3, 700, "You decide what changes.", "applied"],
-    [4, 3000, "The accepted edit is now in your Article.", "saved"],
+    [0, 5000, "demoWrite"],
+    [1, 4400, "demoAsk", "request"],
+    [2, 3000, "demoOpen", "open"],
+    [3, 7500, "demoCompare", "review"],
+    [3, 1250, "demoDecide", "accept"],
+    [3, 1250, "demoDecide", "apply"],
+    [3, 700, "demoDecide", "applied"],
+    [4, 3000, "demoSaved", "saved"],
 ];
+const confirmedPrefix = "✓ ";
 
 
 function initializeRevisionDemo(demo, motion) {
@@ -18,11 +19,14 @@ function initializeRevisionDemo(demo, motion) {
     const accept = decisions.querySelector("[data-demo-accept]");
     const apply = decisions.querySelector("[data-demo-apply]");
     const fallbackCaption = caption.textContent;
-    for (const copy of new Set(steps.map(([, , text]) => text))) {
+    const [pauseLabel, acceptLabel, applyLabel] = [playback, accept, apply].map((element) => element.textContent);
+    const copy = Object.fromEntries([...demo.querySelectorAll("[data-demo-copy] [data-message]")]
+        .map((element) => [element.dataset.message, element.textContent]));
+    for (const key of new Set(steps.map(([, , message]) => message))) {
         const spacer = document.createElement("p");
         spacer.className = "revision-demo-caption-spacer";
         spacer.setAttribute("aria-hidden", "true");
-        spacer.textContent = copy;
+        spacer.textContent = copy[key];
         caption.after(spacer);
     }
 
@@ -34,7 +38,7 @@ function initializeRevisionDemo(demo, motion) {
 
     function schedule() {
         demo.classList.remove("revision-demo-paused");
-        playback.textContent = "Pause";
+        playback.textContent = pauseLabel;
         deadline = performance.now() + remaining;
         timer = setTimeout(() => show((step + 1) % steps.length), remaining);
     }
@@ -42,30 +46,30 @@ function initializeRevisionDemo(demo, motion) {
 
     function show(index) {
         step = index;
-        const [scene, duration, copy, action = "write"] = steps[step];
+        const [scene, duration, message, action = "write"] = steps[step];
         demo.dataset.revisionStep = action;
         scenes.forEach((element, position) => {
             element.hidden = position !== scene;
         });
         const accepted = action === "apply" || action === "applied";
         decisions.hidden = !["review", "accept", "apply", "applied"].includes(action);
-        accept.textContent = accepted ? "✓ Accept" : "Accept";
-        apply.textContent = action === "applied" ? "✓ Applied" : "Apply";
+        accept.textContent = accepted ? confirmedPrefix + acceptLabel : acceptLabel;
+        apply.textContent = action === "applied" ? confirmedPrefix + copy.demoApplied : applyLabel;
         apply.classList.toggle("revision-demo-action-current", accepted);
-        caption.textContent = copy;
+        caption.textContent = copy[message];
         remaining = duration;
         schedule();
     }
 
 
     playback.addEventListener("click", () => {
-        if (playback.textContent === "Resume") {
+        if (demo.classList.contains("revision-demo-paused")) {
             schedule();
         } else {
             clearTimeout(timer);
             demo.classList.add("revision-demo-paused");
             remaining = Math.max(0, deadline - performance.now());
-            playback.textContent = "Resume";
+            playback.textContent = copy.demoResume;
         }
     });
 
