@@ -95,8 +95,15 @@ function translateNode(node, context) {
             node.attrs.push({ name: "aria-current", value: "page" });
     }
 
-    for (const child of node.childNodes ?? [])
+    for (const child of node.childNodes ?? []) {
+        if (child.attrs?.some((attribute) => attribute.name === "data-english-only"))
+            continue;
+
         translateNode(child, context);
+    }
+
+    if (context.language !== "en" && node.childNodes)
+        node.childNodes = node.childNodes.filter((child) => !child.attrs?.some((attribute) => attribute.name === "data-english-only"));
 }
 
 
