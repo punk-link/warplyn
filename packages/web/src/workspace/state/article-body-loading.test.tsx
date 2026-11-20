@@ -1,7 +1,7 @@
 import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { IntlProvider } from "react-intl";
 import type { PropsWithChildren } from "react";
-import { summarizeArticle } from "@skladno/shared";
+import { createEditorNoteAnchor, resolveEditorNoteAnchor, summarizeArticle } from "@skladno/shared";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { messages } from "../../i18n/messages.js";
 import { NotificationProvider } from "../../notifications/NotificationProvider.js";
@@ -16,6 +16,21 @@ function Wrapper({ children }: PropsWithChildren) {
 
 describe("Article body loading", () => {
     afterEach(cleanup);
+
+    it("retains notes when promoting a source Revision and marks changed anchors stale", async () => {
+        const client = createFakeClient();
+        const source = createArticleFixture("source", "Source");
+        source.currentRevision.content = "Original passage";
+        source.editorNotes = [{ id: "note", text: "Check this", version: 1,
+            anchor: createEditorNoteAnchor(source.currentRevision.content, 0, 16, "Original passage") }];
+        client.listArticleSummaries = vi.fn().mockResolvedValue([summarizeArticle(source)]);
+        client.getArticle = vi.fn().mockResolvedValue(source);
+        const { result } = renderHook(() => useArticleWorkspace(client, source.id, vi.fn(), "en"), { wrapper: Wrapper });
+        await waitFor(() => expect(result.current.state).toBe("ready"));
+        act(() => result.current.updateRevision(source.id, { ...source.currentRevision, id: "next", content: "Changed passage" }));
+        expect(result.current.selectedArticle?.editorNotes).toEqual(source.editorNotes);
+        expect(resolveEditorNoteAnchor(result.current.content, source.editorNotes[0].anchor)).toBeUndefined();
+    });
 
     // Product scenarios: workspace.library.create-and-select, workspace.draft.flush-before-context-change
     it("keeps the newest Article first when leaving an unchanged older Draft", async () => {
