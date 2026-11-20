@@ -47,7 +47,7 @@ For releases that include an x64 `.AppImage` asset, keep it in a folder you can 
 
 On the Ubuntu 22.04 target, desktop dependencies include `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` and `xdg-utils`. GNOME Keyring supplies Secret Service. A normal GNOME installation provides most of these packages. Other distributions use different package names and require their own compatibility checks.
 
-To launch Warplyn from your desktop, create a launcher that points to the full path of the AppImage. Keep the same path when updating. Desktop testing of the AppImage is still in progress. Ubuntu 22.04 x64 is the primary validation target; Ubuntu 24.04 x64 and Fedora 43 x64 are additional compatibility targets. These targets do not imply universal Linux support.
+To launch Warplyn from your desktop, create a launcher that points to the full path of the AppImage. Keep the same path when updating. AppImage was validated on Ubuntu 22.04 x64 with GNOME, with compatibility checks on Ubuntu 24.04 x64 and Fedora 43 x64, both with GNOME.
 
 See [Desktop update recovery](update-recovery.md) for explicit download, restart and recovery steps.
 

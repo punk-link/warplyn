@@ -30,7 +30,7 @@ Migration uses explicit backup replacement and restart. Copy compatible database
 
 Native and browser restore preserve the destination's existing connections and model selections. A destination without connections imports only environment-variable names and references, marks the connections unchecked, and clears model selections. Resolve references using the destination environment; never import values or attach imported managed records to local keys. Source backups and OS credentials stay unchanged. New backups and recovery snapshots rebuild allowed connection metadata and erase discarded credential fields and bytes; they contain no API keys or environment-variable values.
 
-During public beta, supported installations receive a fresh installation identity and default-enabled telemetry; saved opt-out choices remain respected. The [runtime privacy policy](runtime-privacy-and-network-policy.md) owns that separate consent contract.
+Desktop telemetry is off by default. Existing explicit consent choices are preserved. The [runtime privacy policy](runtime-privacy-and-network-policy.md) owns that separate consent contract.
 
 ## Installation-local spelling data
 

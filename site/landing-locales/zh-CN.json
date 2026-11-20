@@ -3,7 +3,7 @@
   "description": "Warplyn 是适用于 Windows 和 Linux 的开源写作空间，以本地存储为基础。撰写和修改文章，需要帮助时再使用 AI 编辑助手。",
   "socialImage": "Warplyn 工作空间，展示文章和发给编辑助手的修改请求。",
   "schemaDescription": "以本地存储为基础的开源写作空间。按需使用编辑助手构思和修改文章，在应用更改前逐一审阅。",
-  "home": "Warplyn 首页，测试版",
+  "home": "Warplyn 首页",
   "mainNav": "主导航",
   "featuresNav": "你可以做什么",
   "privacyNav": "你的隐私",

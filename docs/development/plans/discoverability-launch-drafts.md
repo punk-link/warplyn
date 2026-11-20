@@ -35,7 +35,7 @@ Long description:
 >
 > Your writing is stored on your computer. AI assistance requires an internet connection and your own supported provider API key. Requests send the relevant text and context to that provider, whose pricing and data policies apply.
 >
-> Warplyn is in beta. Windows installers are unsigned. It helps you prepare writing for publication; you publish through your chosen platform.
+> Windows installers are unsigned. It helps you prepare writing for publication; you publish through your chosen platform.
 
 Use the existing Composer and Proposal Review screenshots if the form accepts them. The Composer image shows an earlier Skill name, so keep its explanatory caption or refresh it first. Avoid claiming full offline AI operation or compatibility with macOS.
 
@@ -61,7 +61,7 @@ Opening comment draft for the maintainer:
 >
 > Here is a walkthrough of a revision request and review: https://warplyn.com/docs/revise-an-article-with-ai.html
 >
-> The app is in beta and the Windows installer is unsigned. Feedback on writing, reviewing edits, and setup would be useful.
+> The Windows installer is unsigned. Feedback on writing, reviewing edits, and setup would be useful.
 
 Add a brief personal explanation of why you built it in your own words. The draft deliberately makes no claim about your motivations. Recheck the guidelines immediately before submission.
 

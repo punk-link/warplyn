@@ -3,7 +3,7 @@
   "description": "Warplynは、WindowsとLinux向けのオープンソースの執筆ワークスペースです。データはローカルに保存。記事の執筆と推敲に、必要なときだけAI編集アシスタントの支援を使えます。",
   "socialImage": "記事と編集アシスタントへの推敲依頼を表示したWarplynのワークスペース。",
   "schemaDescription": "ローカル保存を基本とするオープンソースの執筆ワークスペース。必要に応じて編集アシスタントと記事を構想・推敲し、変更内容を確認してから適用できます。",
-  "home": "Warplynホーム、ベータ版",
+  "home": "Warplynホーム",
   "mainNav": "メインナビゲーション",
   "featuresNav": "できること",
   "privacyNav": "プライバシー",

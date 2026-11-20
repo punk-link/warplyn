@@ -47,7 +47,7 @@ Si una versión incluye un archivo `.AppImage` x64, guárdalo en una carpeta en 
 
 En Ubuntu 22.04, para ejecutar Warplyn se necesitan, entre otros, estos paquetes: `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` y `xdg-utils`. GNOME Keyring proporciona Secret Service. Una instalación habitual de GNOME incluye la mayoría de estos paquetes. Otras distribuciones usan nombres de paquete distintos y requieren sus propias comprobaciones de compatibilidad.
 
-La integración con el escritorio es opcional: crea un lanzador que apunte a la ruta completa de la imagen. Mantén la misma ruta al actualizar. Las pruebas de AppImage como aplicación de escritorio instalada aún no han terminado. Se centran en Ubuntu 22.04 x64 e incluyen pruebas de compatibilidad con Ubuntu 24.04 x64 y Fedora 43 x64. La compatibilidad con otras distribuciones no está confirmada.
+La integración con el escritorio es opcional: crea un lanzador que apunte a la ruta completa de la imagen. Mantén la misma ruta al actualizar. AppImage se validó en Ubuntu 22.04 x64 con GNOME. También se comprobó la compatibilidad con Ubuntu 24.04 x64 y Fedora 43 x64, ambos con GNOME.
 
 Consulta [Recuperación tras actualizar la aplicación de escritorio](update-recovery.md) para ver los pasos de descarga, reinicio y recuperación.
 

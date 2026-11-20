@@ -47,7 +47,7 @@ W wydaniach zawierających plik x64 `.AppImage` przechowuj go w folderze z prawe
 
 Na docelowym Ubuntu 22.04 zależności pulpitu obejmują `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` i `xdg-utils`. GNOME Keyring udostępnia usługę Secret Service. Standardowa instalacja GNOME zawiera większość tych pakietów. Inne dystrybucje używają odmiennych nazw pakietów i wymagają własnego sprawdzenia zgodności.
 
-Integracja z pulpitem jest opcjonalna: utwórz skrót wskazujący pełną ścieżkę do obrazu. Zachowaj tę samą ścieżkę podczas aktualizacji. Weryfikacja AppImage w środowisku pulpitu jest w toku. Głównym środowiskiem testowym jest Ubuntu 22.04 x64. Testy zgodności obejmują też Ubuntu 24.04 x64 i Fedorę 43 x64. Nie oznacza to uniwersalnej obsługi wszystkich dystrybucji Linux.
+Integracja z pulpitem jest opcjonalna: utwórz skrót wskazujący pełną ścieżkę do obrazu. Zachowaj tę samą ścieżkę podczas aktualizacji. AppImage sprawdzono na Ubuntu 22.04 x64 z GNOME. Zgodność sprawdzono też na Ubuntu 24.04 x64 i Fedorze 43 x64, w obu przypadkach z GNOME.
 
 Instrukcje pobierania aktualizacji, ponownego uruchamiania aplikacji i odzyskiwania danych znajdziesz w sekcji [Odzyskiwanie po aktualizacji aplikacji desktopowej](update-recovery.md).
 

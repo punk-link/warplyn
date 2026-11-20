@@ -8,11 +8,11 @@ Linux x64 release assets include Debian and AppImage packages for the same versi
 
 Use GitHub Releases directly. Stable builds are releases; previews are prereleases with SemVer tags such as `v0.1.0-preview.2`. The exact optional security suffix is `.security`, for example `v0.1.1-preview.1.security`. Validate tags against package versions before publishing.
 
-Windows 11 x64 uses Squirrel.Windows for in-app download and apply. It requires the installer, full package, and `RELEASES` manifest; validate the complete uploaded asset set. Electron's public update service is not used. AppImage installed acceptance remains tracked in the [Linux follow-up](../plans/linux-appimage.md); Debian installation remains through the system package manager or manual `.deb` reinstall.
+Windows 11 x64 uses Squirrel.Windows for in-app download and apply. It requires the installer, full package, and `RELEASES` manifest; validate the complete uploaded asset set. Electron's public update service is not used. The [Linux installed acceptance record](../guides/linux-installed-acceptance.md) lists the validated environments. Debian upgrades use the system package manager or manual `.deb` reinstall.
 
 Warplyn uses only `punk-link/warplyn` and requires its own `com.warplyn.desktop-…-full.nupkg` or `warplyn_…_amd64.deb` asset identity. Skladno installers remain in `punk-link/skladno-legacy`. Inherited tags describe historical source and are not Warplyn downloads. Release workflows reject legacy product metadata before packaging or publishing.
 
-Stable and preview Windows releases remain unsigned until [signing work](https://github.com/punk-link/warplyn/issues/41) is complete. Do not describe HTTPS or package integrity as Authenticode publisher identity or promise general enterprise installation.
+Warplyn 1.0 and Windows prereleases ship unsigned. [Signing](https://github.com/punk-link/warplyn/issues/41) is deferred with no target date. Do not describe HTTPS or package integrity as Authenticode publisher identity or promise general enterprise installation.
 
 ## Permission, scheduling, and channels
 

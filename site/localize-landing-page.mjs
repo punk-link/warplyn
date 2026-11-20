@@ -7,7 +7,7 @@ const messageIds = new Map(Object.entries({ ...source, ...plansSource }).map(([i
 const whitespacePattern = /\s+/g;
 const letterPattern = /\p{L}/u;
 const technicalText = new Set([
-    "Warplyn", "Beta", "GitHub", "B", "I", "H₁", "H₂", "A",
+    "Warplyn", "GitHub", "B", "I", "H₁", "H₂", "A",
     "English", "Deutsch", "Español", "Français", "Italiano", "日本語", "한국어",
     "Polski", "Português (Brasil)", "Русский", "简体中文",
     "OpenAI", "Anthropic", "Google Gemini API", "xAI Grok", "DeepSeek", "OpenCode Zen",

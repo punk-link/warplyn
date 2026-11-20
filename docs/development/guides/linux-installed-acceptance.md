@@ -2,7 +2,7 @@
 
 ## AppImage acceptance for issue #54
 
-AppImage installed acceptance is pending. Per the implementation-session decision, WSL is used for automation; GNOME desktop acceptance remains a separate release gate. The primary target is Ubuntu 22.04.5 x64/GNOME/GNOME Keyring. Additional compatibility targets are Ubuntu 24.04 x64/GNOME and Fedora 43 x64/GNOME. No AppImage target is certified by the existing Debian results below. Record exact session, keyring, sandbox, spelling, dialogs, accessibility, upgrade data retention and failed-startup recovery results for each target, following the release guide.
+On November 19, 2026, the maintainer confirmed the remaining AppImage installed acceptance for [1.0 readiness](https://github.com/punk-link/warplyn/issues/101). The primary environment was Ubuntu 22.04.5 x64 with GNOME and GNOME Keyring. Compatibility checks covered Ubuntu 24.04 x64 and Fedora 43 x64 with GNOME. The confirmation covers desktop integration, accessibility, upgrade data retention, and failed-startup recovery. This is a maintainer-reported pass. Exact AppImage builds, hashes, and individual results were not attached to the sign-off. The earlier automation and startup observations below are historical.
 
 ### AppImage automation evidence, 2026-11-14
 
@@ -15,7 +15,11 @@ The uncommitted issue #54 implementation is based on source commit `1928980084dc
 - Core verification, 48 browser journeys, site build/metadata, product-model checks and final lint/type checks passed on Windows. Windows and WSL desktop gates each passed serially with 11 passed and one visible spelling test skipped. The WSL parallel run timed out in Assistant typing and native file export; a focused serial rerun and then the full serial gate passed without changing timeouts.
 - The packaged update journey exercised GitHub permission, compatible AppImage discovery, shared controls and rejection of a corrupt download through real IPC. Unit tests cover successful staging/replacement, retained executable recovery, wrong format/architecture, malformed metadata, redirects, checksum/truncation failures, and checkpoint/snapshot/preparation gates.
 
-Installed GNOME, keyring, accessibility, previous-preview upgrade and failed-startup recovery acceptance remain pending, as do the additional distribution targets. The older Debian evidence below does not satisfy those gates.
+At the time of this automation run, installed GNOME acceptance and the additional distribution checks were still pending.
+
+### AppImage update redirect regression, 2026-11-14
+
+An installed `0.8.4-preview.2` → `0.8.4-preview.3` drill exposed a failure when Electron used manual redirect mode for GitHub release downloads. The fix follows native redirects in the isolated update session and validates each destination before contact. The fixed build downloaded and verified the real preview asset. Core verification and the Windows and WSL packaged desktop gates passed, with one manual spelling check skipped on each platform. The affected preview required a one-time manual replacement before the installed update drill could continue.
 
 ### Wayland first-launch regression, 2026-11-14
 

@@ -112,7 +112,7 @@
             "title": "Accounts, sync, teams, analytics, direct publishing, imports, exports, and remaining alternate clients",
             "status": "deferred",
             "owners": ["AGENTS.md"],
-            "contract": "These capabilities remain outside the validated MVP editorial loop. Finite packaged telemetry and public website analytics are tracked separately. The Windows Electron updater is tracked as an implemented Application capability and Debian desktop support is tracked as a partial Application capability pending installed acceptance evidence; signed releases remain deferred to #168, and macOS, mobile, and browser-offline clients remain separate work.",
+            "contract": "These capabilities remain outside the validated MVP editorial loop. Finite packaged telemetry and public website analytics are tracked separately. The Windows Electron updater is tracked as an implemented Application capability and Debian and AppImage desktop support have recorded installed acceptance on the named Linux environments. Windows signing is deferred with no target date in warplyn#41, and macOS, mobile, and browser-offline clients remain separate work.",
             "persistence": "No persistence or network surface is introduced for deferred MVP work.",
             "tracking": "Future enhancements (post-MVP) milestone in AGENTS.md."
         }

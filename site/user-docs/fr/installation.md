@@ -47,7 +47,7 @@ Si une version comprend un fichier `.AppImage` x64, placez-le dans un dossier o�
 
 Pour la cible Ubuntu 22.04, les dépendances du bureau comprennent `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` et `xdg-utils`. GNOME Keyring fournit Secret Service. Une installation standard de GNOME fournit la plupart de ces paquets. Les autres distributions utilisent des noms de paquets différents et nécessitent leurs propres vérifications de compatibilité.
 
-L’intégration au bureau est facultative. Créez un lanceur qui pointe vers le chemin complet de votre image. Conservez ce même chemin lors des mises à jour. Les essais d’AppImage en tant qu’application de bureau installée ne sont pas encore terminés. Ils portent en priorité sur Ubuntu 22.04 x64, avec des essais de compatibilité prévus sous Ubuntu 24.04 x64 et Fedora 43 x64. Cela ne garantit pas la prise en charge de toutes les distributions Linux.
+L’intégration au bureau est facultative. Créez un lanceur qui pointe vers le chemin complet de votre image. Conservez ce même chemin lors des mises à jour. AppImage a été validé sous Ubuntu 22.04 x64 avec GNOME. La compatibilité a aussi été vérifiée sous Ubuntu 24.04 x64 et Fedora 43 x64, avec GNOME dans les deux cas.
 
 Consultez [Récupération après une mise à jour de l’application de bureau](update-recovery.md) pour les étapes de téléchargement, de redémarrage et de récupération.
 

@@ -44,7 +44,7 @@ Use synthetic/public input and an already approved connection for live measureme
 3. Use [fact-claim-matching.test.ts](../../../packages/server/src/infrastructure/editorial/workflows/fact-claim-matching.test.ts) to check avoided matching calls and preserved claim indices. Run focused tests using the [testing guide](../guides/testing.md#focused-tests). Assert call counts and completed results rather than wall-clock thresholds.
 4. Optimize only after timings identify the cost. Preserve source quality, uncertainty, citation validation, cancellation, and partial findings. Record before/after evidence; synthetic timings alone do not establish live-provider speedups.
 
-## Packaged beta telemetry
+## Packaged desktop telemetry
 
 Schema version 4 adds `connection_verification_finished`, containing only a completed or failed outcome. Explicit connection tests and managed connection creation capture consent before verification. Success is recorded only after the verified connection is saved. Events contain no provider, connection identifier, credential source, or error text. Existing installations without a new verification will not enter this onboarding step until they explicitly verify a connection again.
 

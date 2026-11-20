@@ -48,7 +48,7 @@ Preview your writing against your publishing preferences and length guidance, th
 
 ## Install Warplyn
 
-Warplyn targets **Windows 11 x64 and Linux**. Download the unsigned installers from [Warplyn releases](https://github.com/punk-link/warplyn/releases). Skladno users should follow the [migration guide](site/user-docs/migration.md) and keep their original installation and backups until the restore is verified.
+Warplyn targets **Windows 11 x64 and Linux x64**. Download the Windows installer, Debian package, or AppImage from [Warplyn releases](https://github.com/punk-link/warplyn/releases). The Windows installer is unsigned. Skladno users should follow the [migration guide](site/user-docs/migration.md) and keep their original installation and backups until the restore is verified.
 
 For Debian installation steps, see the [installation guide](https://warplyn.com/docs/installation.html).
 

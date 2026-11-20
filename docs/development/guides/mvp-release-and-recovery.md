@@ -1,6 +1,12 @@
-# MVP release, recovery, and limitations
+# Desktop release, recovery, and limitations
 
-Use this guide to prepare and verify the browser-based local-first MVP and unsigned Windows and Debian Electron previews. Ubuntu 22.04 x64 is the Linux release-validation baseline. Do not put credentials, an author's Article, or a production database in release evidence.
+Use this guide to prepare and verify stable and preview desktop releases for Windows 11 x64 and Linux x64. Ubuntu 22.04 x64 with GNOME is the Linux release-validation baseline. Do not put credentials, an author's Article, or a production database in release evidence.
+
+## 1.0 acceptance
+
+On November 19, 2026, the maintainer confirmed installed acceptance for Windows 11 x64, the Ubuntu Debian baseline, and the named Linux AppImage environments. Windows sign-off covers the clean-profile workflow, offline editing and interrupted AI operations, recovery and migration, the second-version update drill, and keyboard and screen-reader use. The Windows sign-off is maintainer-reported and does not include exact artifact versions or individual results. The [Linux record](linux-installed-acceptance.md) distinguishes the Debian evidence from the AppImage sign-off.
+
+[Issue #101](https://github.com/punk-link/warplyn/issues/101) records the acceptance decision. Windows 1.0 artifacts ship unsigned and desktop telemetry defaults to off. Existing explicit telemetry choices are preserved. [Windows signing](https://github.com/punk-link/warplyn/issues/41) is deferred with no target date.
 
 ## Release checklist
 
@@ -67,9 +73,9 @@ If backup creation fails, leave the active database alone, check the folder perm
 
 Verify local data and recovery against [ADR-005](../architecture/adr-005-article-state-and-consistency.md) and [ADR-006](../architecture/adr-006-sqlite-lifecycle-and-recovery.md). Verify diagnostics, AI completion and storage, and renderer isolation against [ADR-004](../architecture/adr-004-local-diagnostics.md), [ADR-007](../architecture/adr-007-completion-gated-editorial-engine.md), and [ADR-008](../architecture/adr-008-loopback-service-trust-boundary.md).
 
-The supported releases are the browser-based local-first MVP and the unsigned Windows and Debian previews described below. Ubuntu 22.04 x64 is the Linux release-validation baseline; compatible Debian-based distributions may use the same package. The [cross-cutting inventory](../product/cross-cutting-inventory.md) owns deferred product boundaries. Publishing profiles remain guidance and Copy remains the only publishing action.
+Desktop releases support Windows 11 x64 and the Linux x64 environments listed in the [Linux installed acceptance record](linux-installed-acceptance.md). The browser app is primarily for development. The [cross-cutting inventory](../product/cross-cutting-inventory.md) owns deferred product boundaries. Publishing profiles remain guidance and Copy remains the only publishing action.
 
-## Windows Electron preview
+## Windows Electron releases
 
 The release target is Windows 11 x64. Stable releases and prereleases are unsigned, so Windows may show a SmartScreen warning. GitHub release updates are optional and author-controlled. Stable builds default to stable-only updates, preview builds default to including prereleases, and About Settings can change the channel. Signing remains in [warplyn#41](https://github.com/punk-link/warplyn/issues/41). Native backup folder selection, Explorer reveal, and manual snapshots use the restricted desktop Settings client.
 
@@ -136,13 +142,13 @@ Exercise failed discovery, failed download, and failed snapshot paths. A failed 
 
 Mark the desktop pass failed if the renderer gains Node, filesystem, database, credential, or unrestricted IPC access; if generated content changes an Article without approval; or if install, upgrade, reinstall, or uninstall changes `.warplyn` data.
 
-## Debian Electron preview
+## Linux Electron releases
 
 `npm run make:electron:linux` also creates the x64 AppImage and checksum metadata under `packages/electron/out/make/appimage/x64`. Run `node scripts/validate-appimage.mjs` before uploading both files alongside Debian. The workflow runs packaged journeys for both formats. AppImage launch needs FUSE access and the desktop runtime dependencies; preserve sandboxing. A writable image folder is required for in-app replacement. Desktop integration is optional and should point to the stable installed image path.
 
-Use WSL for automated packaging and lifecycle checks only. Installed GNOME acceptance remains pending for AppImage. On Ubuntu 22.04.5 x64 with GNOME and GNOME Keyring, run a previous-preview-to-candidate update with disposable Article, Revision, Draft and Settings data. Explicitly download and restart, verify retained data and credentials, then exercise failed download, checkpoint, snapshot, replacement and upgraded startup. Recover with the retained `.previous` executable and its matching snapshot. Repeat Debian manual upgrades to verify format separation. Record hashes, versions, session, keyring, sandbox, spelling, dialogs, accessibility and recovery outcomes. Repeat compatibility checks on Ubuntu 24.04 x64/GNOME and Fedora 43 x64/GNOME before claiming support there.
+Use WSL for automated packaging and lifecycle checks only. On Ubuntu 22.04.5 x64 with GNOME and GNOME Keyring, update from an earlier AppImage with disposable Article, Revision, Draft and Settings data. Explicitly download and restart, verify retained data and credentials, then exercise failed download, checkpoint, snapshot, replacement and upgraded startup. Recover with the retained `.previous` executable and its matching snapshot. Repeat Debian manual upgrades to verify format separation. Record hashes, versions, session, keyring, sandbox, spelling, dialogs, accessibility and recovery outcomes. Repeat compatibility checks on Ubuntu 24.04 x64/GNOME and Fedora 43 x64/GNOME.
 
-The [Linux installed acceptance record](linux-installed-acceptance.md) owns the support matrix and pending release checks. Ubuntu 22.04 x64 is a validation target, not a completed support certification. Do not claim another distribution/version is supported without its completed record.
+The [Linux installed acceptance record](linux-installed-acceptance.md) owns the support matrix. Record installed results for any additional distribution or version before adding it to that matrix.
 
 The release-validation target is Ubuntu 22.04 x64. Compatible Debian-based distributions may install the same package when their glibc and Secret Service environment are compatible, but become guaranteed targets only after this pass succeeds there. Build the Debian package with `npm run make:electron:linux`. Install the `.deb` through the system package manager; About Settings can, with the author's permission, check GitHub for a newer matching Debian release and open its release notes. Installation remains a manual package-manager upgrade or `.deb` reinstall.
 

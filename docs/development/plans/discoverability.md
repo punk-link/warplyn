@@ -143,7 +143,7 @@ Use the workflow URL after these site changes deploy: `https://warplyn.com/docs/
 
 Suggested title: **Warplyn: an open-source writing workspace for Windows and Linux**
 
-Suggested description: Warplyn is an open-source, local-first writing workspace for Windows and Linux, with an AI Editorial Assistant when you want help. Compare proposed edits and apply the changes you want to keep, with recoverable Revision history. Writing stays on your computer; AI requests send relevant text and context to your chosen provider and require your API key. The project is MIT licensed and in beta; Windows installers are unsigned.
+Suggested description: Warplyn is an open-source, local-first writing workspace for Windows and Linux, with an AI Editorial Assistant when you want help. Compare proposed edits and apply the changes you want to keep, with recoverable Revision history. Writing stays on your computer; AI requests send relevant text and context to your chosen provider and require your API key. The project is MIT licensed. Windows installers are unsigned.
 
 Suggested first channels: AlternativeTo for an accurate product listing, and a writing or local-first community whose current self-promotion rules allow a workflow demonstration. Consider Show HN once the demo and installation path are ready. Check each channel's rules before submitting; avoid a simultaneous mass launch. Use existing aggregate pageview and download events to assess response rather than adding tracking identifiers.
 

@@ -47,7 +47,7 @@ Nas versões que incluem um arquivo `.AppImage` x64, mantenha-o em uma pasta ond
 
 No alvo Ubuntu 22.04, as dependências desktop incluem `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` e `xdg-utils`. O GNOME Keyring fornece o Secret Service. Uma instalação normal do GNOME já inclui a maioria desses pacotes. Outras distribuições usam nomes de pacotes diferentes e precisam de suas próprias verificações de compatibilidade.
 
-A integração com o desktop é opcional: crie um iniciador apontando para o caminho completo da imagem. Mantenha esse caminho ao atualizar. A validação do AppImage no desktop ainda está pendente. O principal ambiente de teste é o Ubuntu 22.04 x64. A verificação de compatibilidade também abrange o Ubuntu 24.04 x64 e o Fedora 43 x64. A compatibilidade com outras distribuições ainda não está confirmada.
+A integração com o desktop é opcional: crie um iniciador apontando para o caminho completo da imagem. Mantenha esse caminho ao atualizar. O AppImage foi validado no Ubuntu 22.04 x64 com GNOME. A compatibilidade também foi verificada no Ubuntu 24.04 x64 e no Fedora 43 x64, ambos com GNOME.
 
 Consulte [Recuperação após atualização no desktop](update-recovery.md) para ver as etapas explícitas de download, reinicialização e recuperação.
 

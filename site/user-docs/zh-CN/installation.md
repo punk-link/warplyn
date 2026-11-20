@@ -47,7 +47,7 @@ Debian 软件包主要在 Ubuntu 22.04 x64 上验证。其他发行版或版本�
 
 在 Ubuntu 22.04 目标环境中，桌面依赖包括 `libgtk-3-0`、`libnss3`、`libasound2`、`libatk-bridge2.0-0`、`libdrm2`、`libgbm1`、`libxkbcommon0`、`libnotify4`、`libxcb-dri3-0` 和 `xdg-utils`。GNOME Keyring 提供 Secret Service。常规 GNOME 安装通常包含其中大部分软件包。其他发行版使用不同的软件包名称，需要单独进行兼容性检查。
 
-如果想从桌面启动 Warplyn，可以创建一个指向 AppImage 完整路径的启动器。更新时请保持路径不变。AppImage 桌面版验收仍未完成。Ubuntu 22.04 x64 是主要验证目标；Ubuntu 24.04 x64 和 Fedora 43 x64 是其他兼容性目标。这些目标并不代表支持所有 Linux 发行版。
+如果想从桌面启动 Warplyn，可以创建一个指向 AppImage 完整路径的启动器。更新时请保持路径不变。AppImage 已在 Ubuntu 22.04 x64 的 GNOME 环境中验证，并已在 Ubuntu 24.04 x64 和 Fedora 43 x64 的 GNOME 环境中完成兼容性测试。
 
 有关明确的下载、重启和恢复步骤，请参阅[桌面版更新恢复](update-recovery.md)。
 

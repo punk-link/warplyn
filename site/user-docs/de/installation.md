@@ -47,7 +47,7 @@ Wenn ein Release eine x64-Datei mit der Endung `.AppImage` enthält, speichern S
 
 Zu den Desktop-Abhängigkeiten des Ubuntu-22.04-Ziels gehören `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0` und `xdg-utils`. GNOME Keyring stellt Secret Service bereit. Eine normale GNOME-Installation enthält die meisten dieser Pakete. Andere Distributionen verwenden andere Paketnamen und benötigen eigene Kompatibilitätsprüfungen.
 
-Die Desktop-Integration ist optional: Erstellen Sie einen Starter, der auf den vollständigen Pfad Ihres Images verweist. Behalten Sie beim Aktualisieren denselben Pfad bei. Die Tests für AppImage als installierte Desktop-Anwendung sind noch nicht abgeschlossen. Im Mittelpunkt steht Ubuntu 22.04 x64. Weitere Testziele sind Ubuntu 24.04 x64 und Fedora 43 x64. Die Kompatibilität mit anderen Distributionen ist damit nicht bestätigt.
+Die Desktop-Integration ist optional: Erstellen Sie einen Starter, der auf den vollständigen Pfad Ihres Images verweist. Behalten Sie beim Aktualisieren denselben Pfad bei. AppImage wurde unter Ubuntu 22.04 x64 mit GNOME geprüft. Kompatibilitätstests liefen auch unter Ubuntu 24.04 x64 und Fedora 43 x64, jeweils mit GNOME.
 
 Unter [Wiederherstellung nach Desktop-Updates](update-recovery.md) finden Sie die einzelnen Schritte zum Herunterladen, Neustarten und Wiederherstellen.
 

@@ -47,7 +47,7 @@ x64 `.AppImage` 파일이 포함된 릴리스에서는 파일을 쓸 수 있는 
 
 Ubuntu 22.04 대상에서 필요한 데스크톱 종속성에는 `libgtk-3-0`, `libnss3`, `libasound2`, `libatk-bridge2.0-0`, `libdrm2`, `libgbm1`, `libxkbcommon0`, `libnotify4`, `libxcb-dri3-0`, `xdg-utils`가 있습니다. GNOME Keyring이 Secret Service를 제공합니다. 일반적인 GNOME 설치에는 이러한 패키지 대부분이 포함됩니다. 다른 배포판은 패키지 이름이 다르므로 별도로 호환성을 확인해야 합니다.
 
-데스크톱 통합은 선택 사항입니다. 이미지의 전체 경로를 가리키는 런처를 만드세요. 업데이트할 때도 같은 경로를 유지해야 합니다. AppImage를 데스크톱 앱으로 설치했을 때의 검증은 아직 끝나지 않았습니다. 주요 검증 대상은 Ubuntu 22.04 x64이며 Ubuntu 24.04 x64와 Fedora 43 x64는 추가 호환성 대상입니다. 이 대상으로 검증했다고 해서 모든 Linux를 지원하는 것은 아닙니다.
+데스크톱 통합은 선택 사항입니다. 이미지의 전체 경로를 가리키는 런처를 만드세요. 업데이트할 때도 같은 경로를 유지해야 합니다. AppImage는 Ubuntu 22.04 x64의 GNOME 환경에서 검증했습니다. Ubuntu 24.04 x64와 Fedora 43 x64에서도 GNOME 환경의 호환성을 확인했습니다.
 
 다운로드, 재시작, 복구의 구체적인 단계는 [데스크톱 업데이트 복구](update-recovery.md)를 참조하세요.
 

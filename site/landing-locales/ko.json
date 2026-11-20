@@ -3,7 +3,7 @@
   "description": "Warplyn은 Windows와 Linux용 오픈 소스 글쓰기 공간으로, 데이터를 로컬에 저장합니다. 글을 쓰고 다듬으며, 도움이 필요할 때 AI 편집 어시스턴트를 이용하세요.",
   "socialImage": "글과 편집 어시스턴트에게 보낸 수정 요청이 표시된 Warplyn 작업 공간.",
   "schemaDescription": "로컬 저장을 기본으로 하는 오픈 소스 글쓰기 공간. 필요할 때 편집 어시스턴트의 도움으로 글을 발전시키고 다듬으며, 제안된 변경을 확인한 뒤 적용합니다.",
-  "home": "Warplyn 홈, 베타",
+  "home": "Warplyn 홈",
   "mainNav": "주 탐색",
   "featuresNav": "할 수 있는 일",
   "privacyNav": "개인정보 보호",

@@ -15,7 +15,7 @@ Use one failure-isolated diagnostics boundary. Write JSON Lines to stdout for su
 
 Exclude raw errors and stacks, request URLs and identifiers, request and model bodies, Article content, and environment-variable values. Diagnostic writer failures must not fail the application. Skladno creates no diagnostic log store or renderer settings control; hosts may retain process streams externally.
 
-Remote telemetry is a separate, finite contract. It never forwards local diagnostic context or process streams. Packaged beta consent, sender validation, and delivery restrictions are specified in the [runtime privacy and network policy](../reference/runtime-privacy-and-network-policy.md).
+Remote telemetry is a separate, finite contract. It never forwards local diagnostic context or process streams. Packaged desktop consent, sender validation, and delivery restrictions are specified in the [runtime privacy and network policy](../reference/runtime-privacy-and-network-policy.md).
 
 ## Consequences
 
