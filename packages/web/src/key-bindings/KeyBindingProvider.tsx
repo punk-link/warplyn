@@ -38,8 +38,8 @@ export function useKeyBindingDispatcher(overrides: KeyBindingOverrides | undefin
             if (!dispatcher.dispatch(event, scope) && reserveDesktopShortcuts && isReservedDesktopShortcut(event))
                 event.preventDefault();
         };
-        window.addEventListener("keydown", onKeyDown);
-        return () => window.removeEventListener("keydown", onKeyDown);
+        window.addEventListener("keydown", onKeyDown, true);
+        return () => window.removeEventListener("keydown", onKeyDown, true);
     }, [dispatcher, reserveDesktopShortcuts]);
 
     return dispatcher;

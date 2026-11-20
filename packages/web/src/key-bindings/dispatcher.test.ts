@@ -9,6 +9,19 @@ function createKeyboardEvent(key: string, options: Partial<Parameters<KeyBinding
 
 
 describe("KeyBindingDispatcher", () => {
+    it("recognizes letter shortcuts on a non-Latin keyboard layout", () => {
+        const dispatcher = new KeyBindingDispatcher();
+        const article = vi.fn();
+        const notes = vi.fn();
+        dispatcher.register(KEY_BINDING_COMMAND.NEW_ARTICLE, article);
+        dispatcher.register(KEY_BINDING_COMMAND.EDITOR_NOTES, notes);
+        const event = { ...createKeyboardEvent("т"), code: "KeyN" };
+        expect(dispatcher.dispatch(event)).toBe(true);
+        expect(dispatcher.dispatch({ ...event, altKey: true })).toBe(true);
+        expect(article).toHaveBeenCalledOnce();
+        expect(notes).toHaveBeenCalledOnce();
+    });
+
     it("opens Editor notes with Ctrl+Alt+N without taking New Article's shortcut", () => {
         const dispatcher = new KeyBindingDispatcher();
         const notes = vi.fn();
