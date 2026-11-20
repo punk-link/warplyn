@@ -1,5 +1,6 @@
 export const KEY_BINDING_COMMAND = {
     NEW_ARTICLE: "new_article",
+    EDITOR_NOTES: "editor_notes",
     SAVE_REVISION: "save_revision",
     SEARCH_ARTICLES: "search_articles",
     OPEN_SETTINGS: "open_settings",
@@ -64,6 +65,11 @@ function createKeyBinding(key: string, options: Partial<Omit<KeyBinding, "key">>
 
 
 export const keyBindingCommands = [
+    {
+        id: KEY_BINDING_COMMAND.EDITOR_NOTES, category: "editing", labelMessageId: "notes.title",
+        hintMessageId: "keyBindings.editingHint", defaultBinding: createKeyBinding("n", { alt: true }),
+        scope: "application", allowInEditable: true,
+    },
     { id: KEY_BINDING_COMMAND.NEW_ARTICLE, category: "general", labelMessageId: "keyBindings.newArticle", hintMessageId: "keyBindings.generalHint", defaultBinding: createKeyBinding("n"), scope: "application", allowInEditable: true },
     { id: KEY_BINDING_COMMAND.SAVE_REVISION, category: "general", labelMessageId: "keyBindings.saveRevision", hintMessageId: "keyBindings.generalHint", defaultBinding: createKeyBinding("s"), scope: "application", allowInEditable: true },
     { id: KEY_BINDING_COMMAND.SEARCH_ARTICLES, category: "general", labelMessageId: "keyBindings.searchArticles", hintMessageId: "keyBindings.generalHint", defaultBinding: createKeyBinding("f"), scope: "application", allowInEditable: true },

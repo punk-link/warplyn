@@ -15,6 +15,7 @@ export function TranslationLanguageInput({ label, placeholder, describedBy, valu
     const listId = useId();
     const [open, setOpen] = useState(false);
     const [upward, setUpward] = useState(false);
+    const [position, setPosition] = useState({ left: 0, top: 0, width: 0 });
     const [active, setActive] = useState(-1);
     const matches = options.filter((option) => option.toLocaleLowerCase().includes(value.trim().toLocaleLowerCase()));
     const visible = open && matches.length > 0;
@@ -27,9 +28,11 @@ export function TranslationLanguageInput({ label, placeholder, describedBy, valu
 
     const show = () => {
         const bounds = inputRef.current?.getBoundingClientRect();
-        const bottom = inputRef.current?.closest("dialog")?.getBoundingClientRect().bottom ?? window.innerHeight;
-        if (bounds)
-            setUpward(bottom - bounds.bottom < 200);
+        if (bounds) {
+            const opensUpward = window.innerHeight - bounds.bottom < 200;
+            setUpward(opensUpward);
+            setPosition({ left: bounds.left, top: opensUpward ? bounds.top : bounds.bottom, width: bounds.width });
+        }
 
         setOpen(true);
     };
@@ -64,7 +67,7 @@ export function TranslationLanguageInput({ label, placeholder, describedBy, valu
                 onChange={(event) => {
                     change(event.target.value);
                     setActive(-1);
-                    setOpen(true);
+                    show();
                 }}
                 onKeyDown={(event) => {
                     if (event.nativeEvent.isComposing)
@@ -95,10 +98,11 @@ export function TranslationLanguageInput({ label, placeholder, describedBy, valu
                     id={listId}
                     role="listbox"
                     aria-label={label}
-                    className={"absolute z-10 max-h-48 w-full overflow-y-auto rounded-control border border-border bg-surface-raised p-1 shadow-raised " +
+                    style={{ left: position.left, top: position.top, width: position.width }}
+                    className={"fixed z-10 max-h-48 overflow-y-auto rounded-control border border-border bg-surface-raised p-1 shadow-raised " +
                         "[scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 " +
                         "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full " +
-                        "[&::-webkit-scrollbar-thumb]:bg-border-strong " + (upward ? "bottom-full mb-1" : "top-full mt-1")}>
+                        "[&::-webkit-scrollbar-thumb]:bg-border-strong " + (upward ? "-translate-y-full -mt-1" : "mt-1")}>
                     {matches.map((option, index) => (
                         <button
                             key={option}
