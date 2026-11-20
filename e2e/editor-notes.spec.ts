@@ -24,6 +24,37 @@ async function selectPassage(editor: Locator, passage: string) {
 }
 
 
+test("removing editor notes keeps the list open", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
+    await page.goto("/");
+    await page.getByRole("button", { name: "New article", exact: true }).click();
+    const editor = page.getByRole("textbox", { name: "Article draft" });
+    await editor.fill("A synthetic passage.");
+    await page.getByRole("button", { name: "Save revision", exact: true }).click();
+    await selectPassage(editor, "A synthetic passage.");
+    const notes = page.getByRole("button", { name: "Editor notes", exact: true });
+    const dialog = page.getByRole("dialog", { name: "Editor notes", exact: true });
+    for (const guidance of ["Keep the voice.", "Check the verb."]) {
+        await notes.click();
+        await dialog.getByRole("textbox").fill(guidance);
+        await dialog.getByRole("button", { name: "Save note", exact: true }).click();
+        await expect(dialog.getByText(guidance, { exact: true })).toBeVisible();
+        await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+        await selectPassage(editor, "A synthetic passage.");
+    }
+
+    await notes.click();
+    await dialog.getByRole("button", { name: "Remove", exact: true }).first().click();
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText("Keep the voice.", { exact: true })).toHaveCount(0);
+    await expect(dialog.getByText("Check the verb.", { exact: true })).toBeVisible();
+    await dialog.getByRole("button", { name: "Edit note…", exact: true }).click();
+    await dialog.getByRole("button", { name: "Remove", exact: true }).click();
+    await expect(dialog.getByText("No editor notes yet.", { exact: true })).toBeVisible();
+    await expect(dialog.getByRole("textbox")).toHaveCount(0);
+});
+
+
 test("notes use quiet footnotes, persist, guide selection requests, and stay out of publication text", async ({ page, context }) => {
     test.setTimeout(60000);
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);

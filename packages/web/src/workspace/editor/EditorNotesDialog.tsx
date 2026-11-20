@@ -45,12 +45,10 @@ export function EditorNotesDialog({ binding, content, initialNote, capture, loca
 
         try {
             await binding.change(input);
-            if (input.kind === "save") {
+            if (input.kind === "save" || selected?.id === input.id) {
                 setSelected(undefined);
                 setText("");
                 setAnchor(undefined);
-            } else {
-                close();
             }
         } catch {
             setFailed(true);
