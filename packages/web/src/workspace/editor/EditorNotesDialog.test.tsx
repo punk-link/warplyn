@@ -7,6 +7,24 @@ import { EditorNotesDialog } from "./EditorNotesDialog.js";
 
 afterEach(resetWorkspaceTestEnvironment);
 
+it("opens note creation for selected text without hiding the existing notes", async () => {
+    const anchor = createEditorNoteAnchor("Source", 0, 6, "Source");
+    const note = { id: "existing", text: "Existing guidance", version: 1, anchor };
+    const change = vi.fn().mockResolvedValue(undefined);
+    renderLocalized(<EditorNotesDialog
+        binding={{ items: [note], change }}
+        content="Source"
+        capture={() => anchor}
+        locate={vi.fn()}
+        close={vi.fn()} />);
+    expect(screen.getByText("Existing guidance")).toBeTruthy();
+    fireEvent.change(screen.getByRole("textbox", { name: "Guidance for the Assistant" }), { target: { value: "New guidance" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save note" }));
+    await waitFor(() => expect(change).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "save", expectedVersion: 0, text: "New guidance", anchor,
+    })));
+});
+
 it("keeps Author guidance after a failed save and retries with the original note version", async () => {
     const note = { id: "note", text: "Original guidance", version: 3, anchor: createEditorNoteAnchor("Source", 0, 6, "Source") };
     const change = vi.fn().mockRejectedValueOnce(new Error("Synthetic conflict")).mockResolvedValue(undefined);
@@ -19,13 +37,17 @@ it("keeps Author guidance after a failed save and retries with the original note
         locate={vi.fn()}
         close={close} />);
     const field = screen.getByRole("textbox", { name: "Guidance for the Assistant" });
+    expect(document.activeElement).toBe(field);
+    expect(field).toHaveProperty("selectionStart", 0);
+    expect(field).toHaveProperty("selectionEnd", note.text.length);
     fireEvent.change(field, { target: { value: "Keep my revised guidance." } });
     fireEvent.click(screen.getByRole("button", { name: "Save note" }));
     await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("The note could not be updated."));
     expect(field).toHaveProperty("value", "Keep my revised guidance.");
     expect(close).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Save note" }));
-    await waitFor(() => expect(close).toHaveBeenCalledOnce());
+    await waitFor(() => expect(screen.queryByRole("textbox")).toBeNull());
+    expect(close).not.toHaveBeenCalled();
     expect(change).toHaveBeenLastCalledWith({
         kind: "save", id: "note", text: "Keep my revised guidance.", anchor: note.anchor, expectedVersion: 3,
     });

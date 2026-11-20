@@ -108,6 +108,10 @@ export function EditorNoteMarkers({ content }: { content: string }) {
                 key={marker.notes[0].id}
                 type="button"
                 data-editor-note-id={marker.notes[0].id}
+                title={marker.notes.map((markerNote) => {
+                    const note = context?.notes.find((item) => item.id === markerNote.id);
+                    return `${intl.formatNumber(markerNote.number)}. ${note?.text ?? ""}`;
+                }).join("\n\n")}
                 aria-label={marker.notes.length === 1
                     ? intl.formatMessage({ id: "notes.marker" }, { number: intl.formatNumber(marker.notes[0].number) })
                     : intl.formatMessage({ id: "notes.markers" }, {

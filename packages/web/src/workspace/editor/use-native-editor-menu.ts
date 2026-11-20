@@ -30,6 +30,7 @@ export function useNativeEditorMenu(editor: LexicalEditor, intl: IntlShape, skil
             { id: "lists", name: intl.formatMessage({ id: "editor.lists" }) },
             { id: "link", name: intl.formatMessage({ id: "editor.addLink" }) },
             { id: "editLink", name: intl.formatMessage({ id: "editor.editLink" }) },
+            { id: "note", name: intl.formatMessage({ id: "notes.add" }) },
         ]);
 
         const activate = (event: Event) => {

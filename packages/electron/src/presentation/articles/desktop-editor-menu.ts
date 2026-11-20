@@ -10,7 +10,8 @@ export async function getEditorMenuEntries(window: { webContents: Pick<BrowserWi
         return { skills: JSON.parse(root.dataset.editorSkills || '[]'), label: root.dataset.editorSkillsLabel, owner: root.dataset.editorMenuOwner,
             groups: JSON.parse(root.dataset.editorMenuGroups || '[]'),
             formats: [...shell.querySelectorAll('[data-editor-command]')].map(button => ({
-                id: button.dataset.editorCommand, name: button.getAttribute('aria-label'), checked: button.getAttribute('aria-pressed') === 'true' })),
+                id: button.dataset.editorCommand, name: button.getAttribute('aria-label') || button.textContent,
+                checked: button.getAttribute('aria-pressed') === 'true' })),
             blocks: [...shell.querySelectorAll('[data-editor-block-style] option')].map(option => ({
                 id: option.value, name: option.textContent, checked: option.selected })) };
     })()`);
@@ -70,6 +71,9 @@ export async function getEditorMenuEntries(window: { webContents: Pick<BrowserWi
 
     return [
         { type: "separator" },
+        ...formats.filter((format) => format.id === "note").map((format): MenuItemConstructorOptions => ({
+            label: label("note") || format.name, enabled: selected, click: () => dispatch("format", format.id),
+        })),
         { label: label("text"), submenu: formats.filter((format) => ["bold", "italic", "strikethrough", "code"].includes(format.id)).map(formatItem) },
         ...formats.filter((format) => format.id === "link").map(formatItem),
         { label: label("paragraph"), submenu: blocks },

@@ -228,7 +228,6 @@ export function ArticleEditorToolbar({ editor, openLink, children }: { editor: L
                 <option value="quote">{intl.formatMessage({ id: "editor.blockQuote" })}</option>
                 <option value="code">{intl.formatMessage({ id: "editor.codeBlock" })}</option>
             </select>
-            {children}
             {controls.map(([label, Icon, format, shortcut]) => {
                 const controlLabel = intl.formatMessage({ id: label });
                 return <IconButton
@@ -287,6 +286,10 @@ export function ArticleEditorToolbar({ editor, openLink, children }: { editor: L
                 onClick={() => applyList("number")}>
                 <NumberedListIcon />
             </IconButton>
+            {children && <>
+                <span aria-hidden="true" className="mx-2 h-6 shrink-0 border-l border-border" />
+                {children}
+            </>}
         </div>
     </div>;
 }

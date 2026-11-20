@@ -11,13 +11,18 @@ export function EditorNotesDialog({ binding, content, initialNote, capture, loca
     locate: (note: EditorNote) => void;
 }) {
     const intl = useIntl();
-    const [selected, setSelected] = useState(initialNote);
+    const [reattachment] = useState(capture);
+    const [selected, setSelected] = useState(() => {
+        if (initialNote || !reattachment)
+            return initialNote;
+
+        return { id: crypto.randomUUID(), version: 0, text: "", anchor: reattachment };
+    });
     const [text, setText] = useState(initialNote?.text ?? "");
     const [pending, setPending] = useState(false);
     const [failed, setFailed] = useState(false);
-    const [anchor, setAnchor] = useState(initialNote?.anchor);
+    const [anchor, setAnchor] = useState(selected?.anchor);
     const dialog = useRef<HTMLDialogElement>(null);
-    const [reattachment] = useState(capture);
 
     useLayoutEffect(() => {
         const element = dialog.current;
@@ -25,6 +30,10 @@ export function EditorNotesDialog({ binding, content, initialNote, capture, loca
             element.showModal();
         else
             element?.setAttribute("open", "");
+
+        const guidance = element?.querySelector("textarea");
+        guidance?.focus();
+        guidance?.select();
 
         return () => element?.close?.();
     }, []);
@@ -36,7 +45,13 @@ export function EditorNotesDialog({ binding, content, initialNote, capture, loca
 
         try {
             await binding.change(input);
-            close();
+            if (input.kind === "save") {
+                setSelected(undefined);
+                setText("");
+                setAnchor(undefined);
+            } else {
+                close();
+            }
         } catch {
             setFailed(true);
         } finally {
@@ -52,6 +67,8 @@ export function EditorNotesDialog({ binding, content, initialNote, capture, loca
     }
 
 
+    const selectedIndex = binding.items.findIndex((note) => note.id === selected?.id);
+
     return <Dialog
         ref={dialog}
         aria-labelledby="editor-notes-title"
@@ -63,24 +80,11 @@ export function EditorNotesDialog({ binding, content, initialNote, capture, loca
         className="w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl">
         <h2 id="editor-notes-title" className="text-base font-semibold">{intl.formatMessage({ id: "notes.title" })}</h2>
         <p className="mt-2 text-xs text-muted">{intl.formatMessage({ id: "notes.help" })}</p>
-        {!selected && (
-            <div className="mt-4 max-h-96 overflow-auto divide-y divide-border">
-                {binding.items.length === 0 && <p className="text-sm text-muted">{intl.formatMessage({ id: "notes.empty" })}</p>}
-                {binding.items.map((note, index) => (
-                    <div key={note.id} className="py-3">
-                        <Button variant="quiet" disabled={!resolveEditorNoteAnchor(content, note.anchor)} onClick={() => locate(note)}>
-                            {intl.formatNumber(index + 1)}. {note.anchor.preview}
-                        </Button>
-                        <p className="mt-1 whitespace-pre-wrap text-sm">{note.text}</p>
-                        {!resolveEditorNoteAnchor(content, note.anchor) &&
-                            <p className="mt-1 text-xs text-warning">{intl.formatMessage({ id: "notes.detached" })}</p>}
-                        <Button variant="quiet" onClick={() => edit(note)}>{intl.formatMessage({ id: "notes.edit" })}</Button>
-                    </div>
-                ))}
-            </div>
-        )}
+        {!reattachment && !selected && <p className="mt-4 text-xs text-muted">{intl.formatMessage({ id: "notes.select" })}</p>}
         {selected && anchor && <>
-            <blockquote className="mt-4 max-h-32 overflow-auto border-l-2 border-border pl-3 text-sm text-muted">{anchor.preview}</blockquote>
+            <blockquote className="mt-4 max-h-32 overflow-auto border-l-2 border-border pl-3 text-sm text-muted">
+                {selectedIndex >= 0 && `${intl.formatNumber(selectedIndex + 1)}. `}{anchor.preview}
+            </blockquote>
             {!resolveEditorNoteAnchor(content, anchor) && (
                 <div className="mt-2">
                     <p className="text-xs text-warning">{intl.formatMessage({ id: "notes.detached" })}</p>
@@ -102,22 +106,42 @@ export function EditorNotesDialog({ binding, content, initialNote, capture, loca
                     disabled={pending}
                     onChange={(event) => setText(event.target.value)} />
             </label>
-        </>}
-        {failed && <p role="alert" className="mt-3 text-sm text-danger">{intl.formatMessage({ id: "notes.failed" })}</p>}
-        <div className="mt-5 flex justify-end gap-2">
-            <Button variant="quiet" disabled={pending} onClick={close}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
-            {selected && selected.version > 0 && (
-                <Button variant="danger" disabled={pending} onClick={() => void change({
-                    kind: "remove", id: selected.id, expectedVersion: selected.version,
-                })}>{intl.formatMessage({ id: "notes.remove" })}
-                </Button>
-            )}
-            {selected && anchor && (
+            <div className="mt-3 flex justify-end gap-2">
                 <Button disabled={pending || !text.trim()} onClick={() => void change({
                     kind: "save", id: selected.id, expectedVersion: selected.version, text, anchor,
                 })}>{intl.formatMessage({ id: "notes.save" })}
                 </Button>
-            )}
+            </div>
+        </>}
+        <section className="mt-5 max-h-96 overflow-auto border-y border-border divide-y divide-border">
+            {binding.items.length === 0 && <p className="py-3 text-sm text-muted">{intl.formatMessage({ id: "notes.empty" })}</p>}
+            {binding.items.map((note, index) => (
+                <div key={note.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                    <div className="min-w-0 flex-1 basis-64">
+                        <Button
+                            variant="quiet"
+                            className="-ml-2 justify-start text-left !py-0"
+                            disabled={pending || !resolveEditorNoteAnchor(content, note.anchor)}
+                            onClick={() => locate(note)}>
+                            {intl.formatNumber(index + 1)}. {note.anchor.preview}
+                        </Button>
+                        <p className="whitespace-pre-wrap break-words text-sm">{note.text}</p>
+                        {!resolveEditorNoteAnchor(content, note.anchor) &&
+                        <p className="mt-1 text-xs text-warning">{intl.formatMessage({ id: "notes.detached" })}</p>}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                        <Button variant="quiet" disabled={pending} onClick={() => edit(note)}>{intl.formatMessage({ id: "notes.edit" })}</Button>
+                        <Button variant="quiet" disabled={pending} onClick={() => void change({
+                            kind: "remove", id: note.id, expectedVersion: note.version,
+                        })}>{intl.formatMessage({ id: "settings.remove" })}
+                        </Button>
+                    </div>
+                </div>
+            ))}
+        </section>
+        {failed && <p role="alert" className="mt-3 text-sm text-danger">{intl.formatMessage({ id: "notes.failed" })}</p>}
+        <div className="mt-5 flex justify-end gap-2">
+            <Button variant="quiet" disabled={pending} onClick={close}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
         </div>
     </Dialog>;
 }

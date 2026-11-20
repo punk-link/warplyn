@@ -10,21 +10,11 @@ export function EditorNoteControls() {
     if (!notes)
         return null;
 
-    return <>
-        <Button
-            variant="quiet"
-            data-editor-command="note"
-            disabled={!notes.canAdd}
-            title={intl.formatMessage({ id: notes.canAdd ? "notes.add" : "notes.select" })}
-            aria-label={intl.formatMessage({ id: "notes.add" })}
-            aria-describedby={!notes.canAdd ? "editor-note-selection-help" : undefined}
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={notes.add}>
-            {intl.formatMessage({ id: "notes.add" })}
-        </Button>
-        <span id="editor-note-selection-help" className="sr-only">{intl.formatMessage({ id: "notes.select" })}</span>
-        <Button variant="quiet" onClick={() => notes.open()}>
-            {intl.formatMessage({ id: "notes.count" }, { count: intl.formatNumber(notes.notes.length), separator: " · " })}
-        </Button>
-    </>;
+    return <Button
+        variant="quiet"
+        data-editor-command="note"
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={() => notes.open()}>
+        {intl.formatMessage({ id: "notes.title" })}
+    </Button>;
 }
