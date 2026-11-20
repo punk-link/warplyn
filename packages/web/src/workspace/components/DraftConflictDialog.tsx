@@ -53,7 +53,7 @@ export function DraftConflictDialog({ conflict, open, close, resolve }: {
             <Diff layout="columns" removed={conflict.localContent} added={latestContent} />
         </div>
         <div className="mt-5 flex flex-wrap justify-end gap-2">
-            <Button variant="quiet" onClick={close}>{intl.formatMessage({ id: "draftConflict.cancel" })}</Button>
+            <Button variant="secondary" onClick={close}>{intl.formatMessage({ id: "draftConflict.cancel" })}</Button>
             <Button variant="secondary" onClick={() => void resolve("keep")}>{intl.formatMessage({ id: "draftConflict.keepMine" })}</Button>
             {conflict.draft && <Button variant="secondary" onClick={() => confirmAndResolve("draft")}>{intl.formatMessage({ id: "draftConflict.useDraft" })}</Button>}
             <Button variant="danger" onClick={() => confirmAndResolve("revision")}>{intl.formatMessage({ id: "draftConflict.useRevision" })}</Button>

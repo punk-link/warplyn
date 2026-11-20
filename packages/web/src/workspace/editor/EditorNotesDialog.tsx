@@ -139,7 +139,7 @@ export function EditorNotesDialog({ binding, content, initialNote, capture, loca
         </section>
         {failed && <p role="alert" className="mt-3 text-sm text-danger">{intl.formatMessage({ id: "notes.failed" })}</p>}
         <div className="mt-5 flex justify-end gap-2">
-            <Button variant="quiet" disabled={pending} onClick={close}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
+            <Button variant="secondary" disabled={pending} onClick={close}>{intl.formatMessage({ id: "editor.cancel" })}</Button>
         </div>
     </Dialog>;
 }

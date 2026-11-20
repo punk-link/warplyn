@@ -64,7 +64,7 @@ function LinkDialog({ editor, close }: { editor: LexicalEditor; close: () => voi
         </label>
         {error && <p className="mt-2 text-xs text-danger" role="alert">{error}</p>}
         <div className="mt-5 flex justify-end gap-2">
-            <Button variant="quiet" onClick={() => {
+            <Button variant="secondary" onClick={() => {
                 close();
                 editor.focus();
             }}>{intl.formatMessage({ id: "editor.cancel" })}

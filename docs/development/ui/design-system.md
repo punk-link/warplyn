@@ -10,6 +10,8 @@ The [visual atlas](visual-atlas.md) maps typography, color, and visual roles to 
 
 ## Components and feedback
 
+Modal action priority is consistent across features: use `primary` for the main action, `secondary` for Cancel or Close and alternative actions, and `danger` for destructive confirmation. Place dismissal before the main action in the footer. Keep inline list actions `quiet` so they do not compete with the modal's main action. A dismissal-only footer still uses `secondary`.
+
 Reuse the shared primitives for controls, status, loading, empty states, tabs, temporary focused tasks, and diffs. Preserve their accessible names, keyboard behavior, loading behavior, reduced-motion treatment, and non-color state cues.
 
 `Button` uses compact horizontal and vertical padding by default without reducing its 36px minimum height. Set `compact={false}` only when an action needs wider horizontal padding. Use `IconButton` with a localized `label` for icon-only actions. Its `variant` selects `default`, `secondary`, `quiet`, `danger`, `danger-quiet`, or `toolbar`; `round` selects a circular control. Pass `aria-pressed` for toggle state and use the existing variant styling rather than repeating button classes in feature code. `IconButton` does not provide the loading state supported by `Button`; callers must preserve pending-action disabling where needed.
