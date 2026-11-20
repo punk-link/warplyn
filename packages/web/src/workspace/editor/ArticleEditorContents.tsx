@@ -8,6 +8,7 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import type { LexicalEditor } from "lexical";
 import { ArticleEditorLinkControl } from "./ArticleEditorLinkControl.js";
+import { EditorNoteMarkers } from "./EditorNoteMarkers.js";
 import { AssistantSelectionHighlight, EditorBridge, EditorSelectionBridge, SupportedPastePlugin, type AssistantSelectionSnapshot } from "./ArticleEditorPlugins.js";
 
 
@@ -37,6 +38,7 @@ export function ArticleEditorContents({ content, onChange, onSelectionChange, as
                     <EditorBridge content={content} onChange={onChange} onReady={setEditor} />
                     <EditorSelectionBridge onSelectionChange={onSelectionChange} />
                     <AssistantSelectionHighlight active={Boolean(assistantSelection)} />
+                    <EditorNoteMarkers content={content} />
                 </div>
             </div>
         </div>

@@ -38,6 +38,23 @@ import { ui } from "./ui.js";
 import { notifications } from "./notifications.js";
 
 export const pl: Record<MessageId, string> = {
+    "notes.markers": "Notatki redakcyjne {numbers}",
+    "notes.add": "Dodaj notatkę redakcyjną…",
+    "notes.title": "Notatki redakcyjne",
+    "notes.count": "Notatki redakcyjne{separator}{count}",
+    "notes.select": "Zaznacz tekst, aby dołączyć notatkę.",
+    "notes.help": "Dołączone notatki kierują pracą Asystenta nad fragmentami. Są przechowywane oddzielnie od tekstu artykułu.",
+    "notes.empty": "Brak notatek redakcyjnych.",
+    "notes.detached": "Wymaga ponownego przypisania",
+    "notes.edit": "Edytuj notatkę…",
+    "notes.reattach": "Dołącz do zaznaczonego tekstu",
+    "notes.reattachHelp": "Zaznacz nowy fragment w edytorze, a następnie otwórz ponownie tę notatkę, aby ją dołączyć.",
+    "notes.guidance": "Wskazówki dla Asystenta",
+    "notes.failed": "Nie udało się zmienić notatki. Zachowaj wskazówki, otwórz artykuł ponownie i spróbuj jeszcze raz.",
+    "notes.remove": "Usuń notatkę",
+    "notes.save": "Zapisz notatkę",
+    "notes.marker": "Notatka redakcyjna {number}",
+    "notes.included": "Notatki dołączone do tego żądania",
     ...electron,
     ...assistant,
     ...assistant2,

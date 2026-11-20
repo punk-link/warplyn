@@ -1,5 +1,6 @@
 import type { ArticleDraft } from "../draft/draft.js";
 import type { ArticleRevision } from "../revision/revision.js";
+import type { EditorNote, EditorNoteChange } from "../notes/editor-notes.js";
 
 
 export interface Article {
@@ -19,6 +20,7 @@ export interface Article {
     archived?: boolean;
     /** Only original Articles have a group pin position. */
     pinOrder?: number;
+    editorNotes?: EditorNote[];
 }
 
 
@@ -40,4 +42,5 @@ export interface UpdateArticleInput {
     title?: string;
     language?: string;
     publishingProfileId?: string;
+    editorNoteChange?: EditorNoteChange;
 }

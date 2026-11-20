@@ -6,6 +6,7 @@ import { Button, Dialog, Field } from "../../ui/primitives.js";
 import { isSupportedArticleLink } from "./paste-constants.js";
 import { ArticleEditorToolbar } from "./ArticleEditorToolbar.js";
 import { ArticleEditorContextMenu } from "./ArticleEditorContextMenu.js";
+import { EditorNoteControls } from "./EditorNoteControls.js";
 
 
 function LinkDialog({ editor, close }: { editor: LexicalEditor; close: () => void }) {
@@ -141,7 +142,9 @@ export function ArticleEditorLinkControl({ editor }: { editor: LexicalEditor }) 
     }, COMMAND_PRIORITY_HIGH), [editor, openLink]);
 
     return <>{open && <LinkDialog editor={editor} close={() => setOpen(false)} />}
-        <ArticleEditorToolbar editor={editor} openLink={openLink} />
+        <ArticleEditorToolbar editor={editor} openLink={openLink}>
+            <EditorNoteControls />
+        </ArticleEditorToolbar>
         <ArticleEditorContextMenu editor={editor} openLink={openLink} />
     </>;
 }

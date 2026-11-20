@@ -78,7 +78,8 @@ export class AssistantRequestPreparation {
         const { engine, usesCapabilityLoop, operation, ...skillRouting } = routing.value;
         return success({
             ...replay.value,
-            article: { content: articleContent, title: article.title, ...style.value, ...this.publishingLimit(article.publishingProfileId) },
+            article: { content: articleContent, title: article.title, editorNotes: article.editorNotes,
+                ...style.value, ...this.publishingLimit(article.publishingProfileId) },
             ...skillRouting,
             execution: { engine, usesCapabilityLoop, operation, capabilityActivities: [], pendingActions: [], authorizedActions: [],
                 ...(!usesCapabilityLoop && operation ? { completedCapability: getCapabilityForEditorialOperation(operation) } : {}) },

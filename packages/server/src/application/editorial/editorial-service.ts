@@ -29,6 +29,7 @@ import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import { captureOperationOutcome, runAiFailureStage } from "../telemetry/ai-failure-category.js";
 import { beginAiOperation, withAiOperation } from "../telemetry/ai-operation-context.js";
 import { reviewTypography } from "./style/typography-review.js";
+import { getEditorNoteGuidance } from "./editor-note-guidance.js";
 
 
 interface EditorialArticleStore {
@@ -79,7 +80,8 @@ function createEngineRequest(request: EditorialServiceRequest, context: Editoria
         article: request.articleContext.content ?? context.article.currentRevision.content,
         articleTitle: context.article.title,
         ...selectionContext(request),
-        authorContext: context.correction?.context ?? request.editorial.authorContext,
+        authorContext: (context.correction?.context ?? request.editorial.authorContext) +
+            getRequestEditorNoteGuidance(request, context.article),
         ...(request.editorial.skillId ? { skillId: request.editorial.skillId } : {}),
         ...(request.editorial.skill ? { skill: request.editorial.skill } : {}),
         ...(request.articleContext.targetArticleCharacterLimit ? { targetArticleCharacterLimit: request.articleContext.targetArticleCharacterLimit } : {}),
@@ -91,6 +93,24 @@ function createEngineRequest(request: EditorialServiceRequest, context: Editoria
             skipFactCheckClaim: request.factChecking?.skipClaim,
         } : {}),
     };
+}
+
+
+function getRequestEditorNoteGuidance(request: EditorialServiceRequest, article: Article): string {
+    if (request.editorial.editorNoteGuidance !== undefined)
+        return request.editorial.editorNoteGuidance;
+
+    const content = article.currentRevision.content;
+    if (!request.articleContext.selection)
+        return getEditorNoteGuidance(article.editorNotes ?? [], content, { kind: "article" });
+
+    const selected = request.articleContext.content;
+    const start = selected ? content.indexOf(selected) : -1;
+    if (!selected || start < 0 || content.lastIndexOf(selected) !== start)
+        return "";
+
+    return getEditorNoteGuidance(article.editorNotes ?? [], content,
+        { kind: "selection", startOffset: start, endOffset: start + selected.length });
 }
 
 

@@ -316,4 +316,16 @@ export const migrations = [
             description TEXT NOT NULL
         );`,
     },
+    {
+        version: 27,
+        name: "article_editor_notes",
+        sql: `CREATE TABLE article_editor_notes (
+            article_id TEXT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+            id TEXT NOT NULL,
+            text TEXT NOT NULL,
+            anchor_json TEXT NOT NULL,
+            version INTEGER NOT NULL,
+            PRIMARY KEY (article_id, id)
+        );`,
+    },
 ] as const;

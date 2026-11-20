@@ -38,6 +38,23 @@ import { ui } from "./ui.js";
 import { notifications } from "./notifications.js";
 
 export const it: Record<MessageId, string> = {
+    "notes.markers": "Note editoriali {numbers}",
+    "notes.add": "Aggiungi nota editoriale…",
+    "notes.title": "Note editoriali",
+    "notes.count": "Note editoriali{separator}{count}",
+    "notes.select": "Seleziona il testo per allegare una nota.",
+    "notes.help": "Le note allegate guidano l’Assistente quando lavora sui passaggi. Restano separate dal testo dell’articolo.",
+    "notes.empty": "Nessuna nota editoriale.",
+    "notes.detached": "Da ricollegare",
+    "notes.edit": "Modifica nota…",
+    "notes.reattach": "Allega al testo selezionato",
+    "notes.reattachHelp": "Seleziona il nuovo passaggio nell’editor, poi riapri questa nota per allegarla.",
+    "notes.guidance": "Indicazioni per l’Assistente",
+    "notes.failed": "Impossibile aggiornare la nota. Conserva le indicazioni, riapri l’articolo e riprova.",
+    "notes.remove": "Rimuovi nota",
+    "notes.save": "Salva nota",
+    "notes.marker": "Nota editoriale {number}",
+    "notes.included": "Note che accompagnano questa richiesta",
     ...electron,
     ...assistant,
     ...assistant2,

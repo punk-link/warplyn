@@ -14,6 +14,7 @@ import { getShortcutHint } from "../../../key-bindings/shortcut-hint.js";
 import type { AssistantSelectionScope } from "../../state/assistant-messages-state.js";
 import { AssistantQuickActions, SelectionChip } from "./AssistantComposerActions.js";
 import { AssistantSkillTagNode, type AssistantComposerSkill } from "./AssistantSkillTagNode.js";
+import { AssistantEditorNotes } from "./AssistantEditorNotes.js";
 import { ComposerBridge, PickerKeyboard, PlainTextPaste, type AssistantComposerValue, type AssistantSkillPickerControls } from "./assistant-composer-plugins.js";
 
 export type { AssistantComposerValue } from "./assistant-composer-plugins.js";
@@ -83,10 +84,11 @@ function AssistantEditModeControl({ mode, disabled, setMode }: { mode?: Assistan
 }
 
 
-export function AssistantComposer({ state, picker, actions }: {
+export function AssistantComposer({ state, picker, actions, editorNotes = [] }: {
     state: AssistantComposerState;
     picker: Parameters<typeof AssistantQuickActions>[0]["picker"];
     actions: AssistantComposerActions;
+    editorNotes?: readonly import("@skladno/shared").EditorNote[];
 }) {
     const { state: requestState, canSend, guidance, selectedSkill, skillOffset, caretOffset, selection, clearSelection, incompatibleSelectionSkill, editMode } = state;
     const { quickActionsOpen, availableSkills, activeSkillIndex, setQuickActionsOpen, selectSkill, focusQuickAction } = picker;
@@ -97,6 +99,7 @@ export function AssistantComposer({ state, picker, actions }: {
     const activeSkill = availableSkills[activeSkillIndex];
 
     return <footer data-focus-area="assistant-composer" className="shrink-0 border-t border-border px-4 py-3">
+        <AssistantEditorNotes notes={editorNotes} />
         {incompatibleSelectionSkill && <p className="mb-2 text-xs text-muted" role="status">{intl.formatMessage({ id: "assistant.selectionSkillUnavailable" })}</p>}
         <div className="flex min-h-25 flex-col rounded-control border border-border bg-surface-raised px-2 py-1" onClick={(event) => {
             if (event.target instanceof Element && !event.target.closest("button, select, label, [contenteditable]"))

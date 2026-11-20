@@ -90,6 +90,8 @@ In the expanded layout, the footer at the bottom of the Library panel is the **A
 
 ### Interface terms
 
+- **Editor note**: Author guidance attached to an Article passage and stored separately from its text. Relevant attached notes guide explicit Assistant requests. They are excluded from copied and exported Article text. A note whose passage cannot be identified needs reattachment.
+
 - **Editorial Workspace**: the main authoring screen containing the Article Library Panel, Article Workspace, and Editorial Assistant Panel.
 - **Article Library Panel**: Article search, the Article list, and workspace-level entry points. Its collapsed form is the **Navigation Rail**; its temporary small-screen form is the **Navigation Drawer**.
 - **Article Library utility area**: the footer of the expanded Article Library Panel containing Style Profile, Settings, an update control when relevant, and the current Article language code with the **Local** label.

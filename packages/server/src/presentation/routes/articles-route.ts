@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
-    APPLICATION_ERROR, HTTP_STATUS, normalizeArticleLanguage, isPublishLimitProfileId,
+    APPLICATION_ERROR, HTTP_STATUS, normalizeArticleLanguage, isPublishLimitProfileId, isEditorNoteChange,
     type AcceptProposalInput, type CreateArticleInput, type SaveArticleRevisionInput, type UpdateArticleInput,
 } from "@skladno/shared";
 
@@ -52,10 +52,14 @@ export async function updateArticleRoute(request: IncomingMessage, response: Ser
 
     const body = parseObject(await readJson(request));
     const title = body.title === undefined ? undefined : parseString(body.title, "title");
+    if (body.editorNoteChange !== undefined && !isEditorNoteChange(body.editorNoteChange))
+        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
     const language = parseLanguage(body.language);
     const publishingProfileId = parsePublishingProfile(body.publishingProfileId);
 
     const input: UpdateArticleInput = {
+        ...(body.editorNoteChange === undefined ? {} : { editorNoteChange: body.editorNoteChange }),
         ...(title === undefined ? {} : { title }),
         ...(language === undefined ? {} : { language }),
         ...(publishingProfileId === undefined ? {} : { publishingProfileId }),

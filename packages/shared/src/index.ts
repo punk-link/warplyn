@@ -306,3 +306,4 @@ export { createAssistantMessageHistoryPath } from "./assistant/assistant.js";
 
 export { success, failure, type Result } from "./cross-cutting/result.js";
 export { assistantActivityIds, type AssistantActivityId } from "./assistant/assistant-activity-id.js";
+export * from "./articles/notes/editor-notes.js";

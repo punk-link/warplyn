@@ -32,6 +32,24 @@ import { errorsMessages } from "./errors.js";
 import { electronMessages } from "./electron.js";
 
 export const de: Record<MessageId, string> = {
+    "notes.markers": "Redaktionsnotizen {numbers}",
+    "notes.add": "Redaktionsnotiz hinzufügen…",
+    "notes.title": "Redaktionsnotizen",
+    "notes.count": "Redaktionsnotizen{separator}{count}",
+    "notes.select": "Wählen Sie Text aus, um eine Notiz anzuhängen.",
+    "notes.help": "Angehängte Notizen leiten den Assistenten bei der Arbeit an diesen Passagen an. Sie bleiben vom Artikeltext getrennt.",
+    "notes.empty": "Noch keine Redaktionsnotizen.",
+    "notes.detached": "Erneut zuordnen",
+    "notes.edit": "Notiz bearbeiten…",
+    "notes.reattach": "An ausgewählten Text anhängen",
+    "notes.reattachHelp": "Wählen Sie die neue Passage im Editor aus und öffnen Sie diese Notiz erneut, um sie anzuhängen.",
+    "notes.guidance": "Anweisungen für den Assistenten",
+    "notes.failed":
+        "Die Notiz konnte nicht aktualisiert werden. Bewahren Sie Ihre Anweisungen auf, öffnen Sie den Artikel erneut und versuchen Sie es noch einmal.",
+    "notes.remove": "Notiz entfernen",
+    "notes.save": "Notiz speichern",
+    "notes.marker": "Redaktionsnotiz {number}",
+    "notes.included": "Notizen zu dieser Anfrage",
     ...articleMessages,
     ...articleFilesMessages,
     ...workspaceMessages,

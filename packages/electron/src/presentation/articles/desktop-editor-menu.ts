@@ -74,7 +74,10 @@ export async function getEditorMenuEntries(window: { webContents: Pick<BrowserWi
         ...formats.filter((format) => format.id === "link").map(formatItem),
         { label: label("paragraph"), submenu: blocks },
         { label: label("lists"), submenu: formats.filter((format) => ["bullet", "number"].includes(format.id)).map(formatItem) },
-        { type: "separator" }, { label: metadata.label, submenu: skillItems }
+        { type: "separator" }, { label: metadata.label, submenu: skillItems },
+        ...formats.filter((format) => format.id === "note").map((format): MenuItemConstructorOptions => ({
+            label: format.name, enabled: selected, click: () => dispatch("format", format.id),
+        }))
     ];
 }
 

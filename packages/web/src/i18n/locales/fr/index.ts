@@ -32,6 +32,23 @@ import { publishingMessages } from "./publishing.js";
 import { skillsMessages } from "./skills.js";
 
 export const fr: Record<MessageId, string> = {
+    "notes.markers": "Notes éditoriales {numbers}",
+    "notes.add": "Ajouter une note éditoriale…",
+    "notes.title": "Notes éditoriales",
+    "notes.count": "Notes éditoriales{separator}{count}",
+    "notes.select": "Sélectionnez du texte pour joindre une note.",
+    "notes.help": "Les notes jointes guident l’Assistant dans son travail sur ces passages. Elles restent séparées du texte de l’article.",
+    "notes.empty": "Aucune note éditoriale pour le moment.",
+    "notes.detached": "À rattacher",
+    "notes.edit": "Modifier la note…",
+    "notes.reattach": "Joindre au texte sélectionné",
+    "notes.reattachHelp": "Sélectionnez le nouveau passage dans l’éditeur, puis rouvrez cette note pour la joindre.",
+    "notes.guidance": "Consignes pour l’Assistant",
+    "notes.failed": "Impossible de mettre à jour la note. Conservez vos consignes, rouvrez l’article et réessayez.",
+    "notes.remove": "Supprimer la note",
+    "notes.save": "Enregistrer la note",
+    "notes.marker": "Note éditoriale {number}",
+    "notes.included": "Notes accompagnant cette demande",
     ...assistantMessages,
     ...previewMessages,
     ...editorMessages,

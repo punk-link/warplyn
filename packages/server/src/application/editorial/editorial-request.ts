@@ -17,6 +17,7 @@ export interface EditorialServiceRequest {
     editorial: {
         operation: EditorialOperation;
         authorContext: string;
+        editorNoteGuidance?: string;
         skillId?: string;
         skill?: SkillGuidance;
         reviewMode?: "typography";

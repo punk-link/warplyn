@@ -91,6 +91,7 @@ En bas du panneau de la bibliothèque, lorsqu’il est ouvert, se trouve la **zo
 
 ### Termes de l’interface
 
+- **Note éditoriale** : consignes de l’auteur jointes à un passage de l’*article* et enregistrées séparément de son texte. Les notes jointes pertinentes guident l’assistant lorsque l’auteur lui demande de travailler sur ce passage. Elles sont exclues du texte copié ou exporté de l’article. Si le passage ne peut plus être identifié, la note doit être rattachée.
 - **Espace de travail éditorial** : écran principal d’écriture contenant le panneau de la bibliothèque d’articles, l’espace de travail de l’article et le panneau de l’assistant éditorial.
 - **Panneau de la bibliothèque d’articles** : recherche d’articles, liste d’articles et accès aux fonctions de l’espace de travail. Lorsqu’il est replié, il devient la **barre de navigation** ; sur un petit écran, il s’ouvre temporairement sous la forme d’un **tiroir de navigation**.
 - **Zone utilitaire du panneau de la bibliothèque d’articles** : pied du panneau développé, qui contient le profil de style, les paramètres, une commande de mise à jour lorsqu’elle est pertinente et le code de langue de l’article actuel avec l’étiquette **Local**.

@@ -11,6 +11,23 @@ import { getElectronMessagesFor, INTERFACE_LOCALE } from "@skladno/shared";
 
 /** Complete translation draft; native-language review is pending. */
 export const ja: Record<MessageId, string> = {
+    "notes.markers": "編集メモ {numbers}",
+    "notes.add": "編集メモを追加…",
+    "notes.title": "編集メモ",
+    "notes.count": "編集メモ{separator}{count}",
+    "notes.select": "メモを添付するテキストを選択してください。",
+    "notes.help": "添付したメモは、その箇所に対するアシスタントの作業の指針になります。記事の本文とは別に保存されます。",
+    "notes.empty": "編集メモはまだありません。",
+    "notes.detached": "再添付が必要です",
+    "notes.edit": "メモを編集…",
+    "notes.reattach": "選択したテキストに添付",
+    "notes.reattachHelp": "エディターで新しい箇所を選択してから、このメモを開き直して添付してください。",
+    "notes.guidance": "アシスタントへの指示",
+    "notes.failed": "メモを更新できませんでした。指示を控えてから記事を開き直し、もう一度お試しください。",
+    "notes.remove": "メモを削除",
+    "notes.save": "メモを保存",
+    "notes.marker": "編集メモ {number}",
+    "notes.included": "このリクエストに添付するメモ",
     ...getElectronMessagesFor(INTERFACE_LOCALE.JA),
     ...jaWorkspace,
     ...jaAssistant,

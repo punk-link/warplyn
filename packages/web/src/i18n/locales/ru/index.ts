@@ -1,4 +1,5 @@
 import type { MessageId } from "../../messages.js";
+import { ruNotes } from "./notes.js";
 import { getElectronMessagesFor, INTERFACE_LOCALE } from "@skladno/shared";
 import { ruReview } from "./review.js";
 import { ruSettings } from "./settings.js";
@@ -9,6 +10,7 @@ import { ruPreview } from "./preview.js";
 
 /** Complete translation draft; native-language review is pending. */
 export const ru: Record<MessageId, string> = {
+    ...ruNotes,
     ...getElectronMessagesFor(INTERFACE_LOCALE.RU),
     ...ruReview,
     ...ruSettings,

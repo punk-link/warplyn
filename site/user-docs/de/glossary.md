@@ -89,6 +89,7 @@ Unten im ausgeklappten Bibliothek-Panel finden Sie den **Werkzeugbereich der Art
 
 ### Begriffe der Oberfläche
 
+- **Redaktionsnotiz**: Vorgaben des Autors, die an eine Passage des *Artikels* angehängt und getrennt vom Artikeltext gespeichert werden. Relevante angehängte Notizen leiten den Assistenten an, wenn der Autor ihn mit der Bearbeitung dieser Passage beauftragt. Sie werden beim Kopieren oder Exportieren des Artikeltextes nicht übernommen. Kann die Passage nicht mehr eindeutig erkannt werden, muss die Notiz erneut zugeordnet werden.
 - **Redaktioneller Arbeitsbereich**: Hauptansicht zum Schreiben mit Artikelbibliothek-Panel, Artikel-Arbeitsbereich und Assistentenbereich.
 - **Artikelbibliothek-Panel**: Artikelsuche, Artikelliste und Einstiegspunkte auf Arbeitsbereichsebene. Eingeklappt heißt es **Navigationsleiste**, auf kleinen Bildschirmen vorübergehend **Navigationsschublade**.
 - **Werkzeugbereich der Artikelbibliothek**: Fußzeile des ausgeklappten Artikelbibliothek-Panels mit Stilprofil, Einstellungen, gegebenenfalls Update-Steuerung sowie aktuellem Artikel-Sprachcode und Kennzeichnung **Lokal**.

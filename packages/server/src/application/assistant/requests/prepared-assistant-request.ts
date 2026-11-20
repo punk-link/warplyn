@@ -12,6 +12,7 @@ export interface PreparedAssistantRequest extends ReplayedAssistantRequest {
     article: {
         content: string;
         title: string;
+        editorNotes?: import("@skladno/shared").EditorNote[];
         publishingCharacterLimit?: number;
         styleContext?: { profile: import("@skladno/shared").StyleProfile; articleRules: string };
     };

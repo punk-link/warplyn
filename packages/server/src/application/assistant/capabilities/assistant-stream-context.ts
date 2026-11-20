@@ -1,4 +1,5 @@
 import { getSelectionContext } from "../../editorial/selection-context.js";
+import { getEditorNoteGuidance } from "../../editorial/editor-note-guidance.js";
 import { createSkillGuidance } from "../skills/create-skill-guidance.js";
 import type { PreparedAssistantRequest } from "../requests/prepared-assistant-request.js";
 import type { EditorialCapabilityDefinition } from "./editorial-capability-definition.js";
@@ -16,6 +17,7 @@ export function createAssistantStreamContext(
         ...(request.article.styleContext ? { styleContext: request.article.styleContext } : {}),
         editorial: {
             authorContext,
+            editorNoteGuidance: getEditorNoteGuidance(request.article.editorNotes ?? [], request.article.content, request.scope),
             ...(request.resolvedSkillId ? { skillId: request.resolvedSkillId } : {}),
             skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
             ...(input.operation ? { operation: input.operation as StreamContext["editorial"]["operation"] } : {}),

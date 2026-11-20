@@ -33,6 +33,23 @@ import { publishing } from "./publishing.js";
 import { skills } from "./skills.js";
 
 export const es: Record<MessageId, string> = {
+    "notes.markers": "Notas editoriales {numbers}",
+    "notes.add": "Añadir nota editorial…",
+    "notes.title": "Notas editoriales",
+    "notes.count": "Notas editoriales{separator}{count}",
+    "notes.select": "Selecciona texto para adjuntar una nota.",
+    "notes.help": "Las notas adjuntas orientan al Asistente al trabajar en esos pasajes. Se guardan por separado del texto del artículo.",
+    "notes.empty": "Aún no hay notas editoriales.",
+    "notes.detached": "Necesita vincularse de nuevo",
+    "notes.edit": "Editar nota…",
+    "notes.reattach": "Adjuntar al texto seleccionado",
+    "notes.reattachHelp": "Selecciona el nuevo pasaje en el editor y vuelve a abrir esta nota para adjuntarla.",
+    "notes.guidance": "Indicaciones para el Asistente",
+    "notes.failed": "No se pudo actualizar la nota. Conserva tus indicaciones, vuelve a abrir el artículo e inténtalo de nuevo.",
+    "notes.remove": "Eliminar nota",
+    "notes.save": "Guardar nota",
+    "notes.marker": "Nota editorial {number}",
+    "notes.included": "Notas que acompañan esta solicitud",
     ...preview,
     ...editor,
     ...typography,

@@ -102,6 +102,7 @@ export function WorkspaceViewRouter({ content, actions, navigation }: { content:
                 <div ref={editorSurface} hidden={reviewing} className={reviewing ? "hidden" : "min-h-0 flex-1 flex flex-col"}>
                     <ArticleEditorView
                         articleId={article.id}
+                        notes={{ items: article.editorNotes ?? [], change: (editorNoteChange) => workspace.updateArticle(article.id, { editorNoteChange }) }}
                         content={workspace.content}
                         setContent={workspace.setContent}
                         onSelectionChange={onSelectionChange}

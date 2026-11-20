@@ -20,6 +20,8 @@ Use the [Warplyn glossary](../../../site/user-docs/glossary.md) as the authority
 
 Preserve the glossary's distinctions in every locale. Keep qualifiers when shortening a term would make its meaning ambiguous.
 
+When adding or changing a glossary concept, update the English glossary and every translated glossary in the same change. Match each locale's interface terminology and preserve the same behavior and limitations across definitions.
+
 For each new locale, include a terminology record in the locale-specific issue. Map each glossary concept used in the interface to its approved local term, grammatical forms, capitalization conventions, and any context-specific variants. Include terms to avoid where a likely synonym would confuse two concepts. Obtain native-language review of this record before translating the catalog; keep it current when terminology changes. English uses the glossary as its terminology record.
 
 Keep contextual message IDs separate even when their English text matches. For example, `articleHeader.saveRevision` and `keyBindings.saveRevision` both refer to saving a Revision, but their translations may differ by context. Translate complete messages using the approved terminology; do not assemble sentences from separately translated term fragments. Inflection, word order, and capitalization follow the target language rather than English spelling rules.
@@ -28,7 +30,9 @@ Review terminology by concept across the complete locale, including existing mes
 
 ## Command labels
 
-Look up existing control labels by message ID and locale in the generated [UI terminology reference](../i18n/ui-terminology.md) before writing interface copy or instructions that name a control. Use the catalog wording when referring to that control. For an intentional rename, edit the catalogs and update references in the affected documentation. After changing a catalog, regenerate the reference with `npm run docs:i18n-terminology`.
+Look up existing control labels by message ID and locale in the generated [UI terminology reference](../i18n/ui-terminology.md) before writing interface copy or instructions that name a control. Use the catalog wording when referring to that control. For an intentional rename, edit the catalogs and update references in the affected documentation.
+
+For every Author-facing UI change, regenerate `docs/development/i18n/ui-terminology.md` with `npm run docs:i18n-terminology`, even when no catalog entries changed. Include any generated changes with the UI work. Before handoff, run `npm run docs:i18n-terminology -- --check` to verify that the reference is current. Do not edit the generated table manually; regeneration may leave it unchanged when the interface wording is unchanged.
 
 Prefer single-line button captions at supported widths. Let the surrounding row or help carry redundant context while keeping distinctions between actions clear. Review each workspace tab set together for parallel, similarly concise wording.
 

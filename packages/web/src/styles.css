@@ -102,3 +102,6 @@
         }
     }
 }
+::highlight(warplyn-editor-note) {
+    background-color: var(--color-brand-soft);
+}

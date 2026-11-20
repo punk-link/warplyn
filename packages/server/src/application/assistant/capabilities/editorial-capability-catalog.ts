@@ -112,6 +112,7 @@ function createEditorialRequest(input: StreamContext, operation: EditorialOperat
         editorial: {
             operation,
             authorContext: input.editorial.authorContext,
+            editorNoteGuidance: input.editorial.editorNoteGuidance,
             ...(input.editorial.skillId ? { skillId: input.editorial.skillId } : {}),
             ...(input.editorial.skill ? { skill: input.editorial.skill } : {}),
         },
