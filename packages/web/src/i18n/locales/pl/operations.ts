@@ -1,9 +1,10 @@
 import type { MessageId } from "../../messages.js";
 
-export const operations = {
-    "operations.thesisToNarrative": "Od tezy do narracji",
-    "operations.flowRevision": "Przegląd płynności",
+
+export const operationsMessages = {
     "operations.factCheck": "Weryfikacja faktów",
+    "operations.flowRevision": "Przegląd płynności",
     "operations.styleReview": "Przegląd stylu",
+    "operations.thesisToNarrative": "Od tezy do narracji",
     "operations.translation": "Tłumaczenie",
 } satisfies Partial<Record<MessageId, string>>;

@@ -1,16 +1,17 @@
 import type { MessageId } from "../../messages.js";
 
-export const publishing = {
-    "publishing.defaultProfile": "Używany jest domyślny profil publikacji.",
-    "publishing.charactersRemaining": "Pozostało {count} znaków (wskazówka)",
-    "publishing.charactersOverGuidance": "{count} znaków powyżej wskazówki",
-    "publishing.markdownCopied": "Skopiowano Markdown.",
-    "publishing.plainTextCopied": "Skopiowano zwykły tekst.",
-    "publishing.copyFailed": "Nie udało się skopiować. Spróbuj ponownie.",
-    "publishing.profileSaveFailed": "Nie udało się zapisać profilu publikacji.",
-    "publishing.default": "Domyślny",
-    "publishing.linkedInPost": "Post na LinkedIn",
-    "publishing.linkedInArticle": "Artykuł na LinkedIn",
-    "publishing.noRestrictions": "Bez ograniczeń",
+
+export const publishingMessages = {
     "publishing.characterCount": "{count} znaków",
+    "publishing.charactersOverGuidance": "{count} znaków powyżej wskazówki",
+    "publishing.charactersRemaining": "Pozostało {count} znaków (wskazówka)",
+    "publishing.copyFailed": "Nie udało się skopiować. Spróbuj ponownie.",
+    "publishing.default": "Domyślny",
+    "publishing.defaultProfile": "Używany jest domyślny profil publikacji.",
+    "publishing.linkedInArticle": "Artykuł na LinkedIn",
+    "publishing.linkedInPost": "Post na LinkedIn",
+    "publishing.markdownCopied": "Skopiowano Markdown.",
+    "publishing.noRestrictions": "Bez ograniczeń",
+    "publishing.plainTextCopied": "Skopiowano zwykły tekst.",
+    "publishing.profileSaveFailed": "Nie udało się zapisać profilu publikacji.",
 } satisfies Partial<Record<MessageId, string>>;

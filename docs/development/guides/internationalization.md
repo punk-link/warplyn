@@ -40,6 +40,8 @@ Append the single ellipsis character `…` to commands that require further Auth
 
 ## Enforcement
 
+`npm run lint` and core verification require identical relative files and per-file message keys across renderer locale folders, using English as the reference. Group messages by their ID namespace in every language; keep update and backup settings in `settings-updates.ts` and `settings-backups.ts` so the Settings catalog stays within the file-size limit. Add or move a group in all eleven locales together.
+
 Production components consume the application-level `I18nProvider`; fixed-locale or component-local providers are test-only. ESLint rejects uncatalogued JSX copy and literal user-visible attributes, production `IntlProvider` instances, and selectors coupled to localized accessible labels. Intentional product identity text uses the narrow repository allowlist; other exceptions require a local suppression with a reason.
 
 React Intl message IDs are typed from the canonical catalog. Prefer explicit `Record<DomainValue, MessageId>` mappings for domain-to-copy boundaries; do not build unchecked IDs from runtime strings. Catalog tests require every installed locale to contain exactly the canonical IDs with valid ICU syntax. A pseudo-locale component test verifies that core workspace surfaces inherit the surrounding provider and exposes hard-coded English or provider shadowing.

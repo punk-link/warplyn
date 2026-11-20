@@ -1,7 +1,8 @@
 import type { MessageId } from "../../messages.js";
 
-export const notifications = {
-    "notifications.viewport": "Powiadomienia",
-    "notifications.errorTitle": "Coś poszło nie tak",
+
+export const notificationsMessages = {
     "notifications.dismiss": "Zamknij powiadomienie: {title}",
+    "notifications.errorTitle": "Coś poszło nie tak",
+    "notifications.viewport": "Powiadomienia",
 } satisfies Partial<Record<MessageId, string>>;

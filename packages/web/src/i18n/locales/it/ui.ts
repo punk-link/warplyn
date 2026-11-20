@@ -1,12 +1,13 @@
 import type { MessageId } from "../../messages.js";
 
-export const ui = {
+
+export const uiMessages = {
+    "ui.added": "Aggiunto: ",
     "ui.loading": "Caricamento",
-    "ui.proposedChange": "Modifica di testo proposta",
-    "ui.original": "Originale",
-    "ui.proposed": "Proposto",
     "ui.noOriginal": "Nessun testo originale",
     "ui.noProposed": "Nessun testo proposto",
+    "ui.original": "Originale",
+    "ui.proposed": "Proposto",
+    "ui.proposedChange": "Modifica di testo proposta",
     "ui.removed": "Rimosso: ",
-    "ui.added": "Aggiunto: ",
 } satisfies Partial<Record<MessageId, string>>;

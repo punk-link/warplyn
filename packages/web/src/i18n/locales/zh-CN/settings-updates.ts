@@ -1,0 +1,30 @@
+import type { MessageId } from "../../messages.js";
+
+
+export const settingsUpdatesMessages = {
+    "settings.automaticUpdates": "自动检查更新",
+    "settings.automaticUpdatesHint": "Warplyn启动时检查GitHub，并在保持打开期间每天检查。只有在您选择“下载”后才会下载更新。",
+    "settings.checkNow": "立即检查",
+    "settings.restartAndUpdate": "重启并更新",
+    "settings.updateChanges": "{version}的更改",
+    "settings.updateChangesUnavailable": "无法获取发布详情，但仍可更新。",
+    "settings.updateNetworkAccess": "允许联网更新",
+    "settings.updateNetworkAccessHint": "允许Warplyn访问GitHub获取公开发布信息，以及您选择下载的更新。绝不发送文章内容、账户信息、设备标识符或分析数据。",
+    "settings.updateNetworkPermissionDescription": "Warplyn将访问api.github.com获取公开发布信息，不会发送文章内容、账户信息、设备标识符或分析数据。",
+    "settings.updateNetworkPermissionTitle": "允许Warplyn通过GitHub检查更新？",
+    "settings.updateRecovery": "更新恢复",
+    "settings.updateStatus": "更新状态",
+    "settings.updateStatusHint": "当前版本：{version}",
+    "settings.updateStatusUnavailableHint": "此版本支持更新时，更新设置才会生效。",
+    "settings.updates": "更新",
+    "settings.updatesAvailable": "版本{version}现已可用。",
+    "settings.updatesChecking": "正在检查更新…",
+    "settings.updatesCurrent": "您已使用最新版本。",
+    "settings.updatesError.apply_failed": "无法准备更新。请重试，或打开“更新恢复”获取帮助。",
+    "settings.updatesError.discovery_failed": "无法检查更新。请重试。",
+    "settings.updatesError.download_failed": "无法下载更新。请重试。",
+    "settings.updatesNetworkAccessRequired": "请允许联网以检查更新。",
+    "settings.updatesUnavailable": "此版本无法使用更新。",
+    "settings.viewReleaseNotes": "查看发布说明",
+    "settings.windowsUpdateDownloadHint": "下载更新也表示批准安装。下载完成后，下次打开Warplyn时会自动应用，包括正常关闭应用后再次打开。",
+} satisfies Partial<Record<MessageId, string>>;

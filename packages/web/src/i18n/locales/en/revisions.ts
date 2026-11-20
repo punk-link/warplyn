@@ -1,0 +1,28 @@
+import type { MessageId } from "../../messages.js";
+
+
+export const revisionsMessages = {
+    "revisions.acceptedProposal": "Accepted Proposal",
+    "revisions.articleContent": "Saved Article content",
+    "revisions.assistantEdit": "Assistant edit",
+    "revisions.author": "Author Revision",
+    "revisions.characterCount": "{count} characters",
+    "revisions.count": "{count, plural, =0 {No revisions} one {# revision} other {# revisions}}",
+    "revisions.current": "Current",
+    "revisions.currentExplanation": "This is the current Revision.",
+    "revisions.currentRevision": "Current Revision",
+    "revisions.empty": "Empty Revision",
+    "revisions.emptyContent": "This Revision has no saved Article text.",
+    "revisions.heading": "Revision History",
+    "revisions.historyNavigation": "Revision history",
+    "revisions.inactive": "Inactive",
+    "revisions.initial": "Initial Revision",
+    "revisions.restore": "Restore this revision",
+    "revisions.restored": "Restored Revision",
+    "revisions.restoredFromEarlier": "Restored from an earlier Revision",
+    "revisions.restoredTarget": "Restored Revision #{number}",
+    "revisions.restoredTargetDescribed": "Restored Revision #{number} — {description}",
+    "revisions.revision": "Revision",
+    "revisions.saved": "Saved Revision",
+    "revisions.select": "Select a Revision",
+} satisfies Partial<Record<MessageId, string>>;

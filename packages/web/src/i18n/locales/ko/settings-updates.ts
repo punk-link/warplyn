@@ -1,0 +1,30 @@
+import type { MessageId } from "../../messages.js";
+
+
+export const settingsUpdatesMessages = {
+    "settings.automaticUpdates": "자동으로 업데이트 확인",
+    "settings.automaticUpdatesHint": "Warplyn 시작 시와 앱이 열려 있는 동안 매일 GitHub를 확인합니다. 다운로드를 선택해야만 업데이트를 다운로드합니다.",
+    "settings.checkNow": "지금 확인",
+    "settings.restartAndUpdate": "다시 시작 및 업데이트",
+    "settings.updateChanges": "{version}의 변경 사항",
+    "settings.updateChangesUnavailable": "릴리스 세부 정보를 사용할 수 없습니다. 업데이트는 계속 진행할 수 있습니다.",
+    "settings.updateNetworkAccess": "업데이트를 위한 네트워크 접근 허용",
+    "settings.updateNetworkAccessHint": "Warplyn이 GitHub에서 공개 릴리스 정보와 선택한 업데이트를 다운로드하도록 허용합니다. 글 내용, 계정 정보, 기기 식별자, 분석 데이터는 보내지 않습니다.",
+    "settings.updateNetworkPermissionDescription": "Warplyn이 api.github.com에 접속해 공개 릴리스 정보를 가져옵니다. 글 내용, 계정 정보, 기기 식별자, 분석 데이터는 보내지 않습니다.",
+    "settings.updateNetworkPermissionTitle": "Warplyn이 GitHub에서 업데이트를 확인하도록 허용하시겠습니까?",
+    "settings.updateRecovery": "업데이트 복구",
+    "settings.updateStatus": "업데이트 상태",
+    "settings.updateStatusHint": "현재 버전: {version}",
+    "settings.updateStatusUnavailableHint": "이 버전이 업데이트를 지원할 때 업데이트 설정이 적용됩니다.",
+    "settings.updates": "업데이트",
+    "settings.updatesAvailable": "버전 {version}을 사용할 수 있습니다.",
+    "settings.updatesChecking": "업데이트 확인 중…",
+    "settings.updatesCurrent": "최신 버전입니다.",
+    "settings.updatesError.apply_failed": "업데이트를 준비하지 못했습니다. 다시 시도하거나 업데이트 복구 도움말을 여세요.",
+    "settings.updatesError.discovery_failed": "업데이트를 확인하지 못했습니다. 다시 시도하세요.",
+    "settings.updatesError.download_failed": "업데이트를 다운로드하지 못했습니다. 다시 시도하세요.",
+    "settings.updatesNetworkAccessRequired": "업데이트를 확인하려면 네트워크 접근을 허용하세요.",
+    "settings.updatesUnavailable": "이 버전에서는 업데이트를 사용할 수 없습니다.",
+    "settings.viewReleaseNotes": "릴리스 노트 보기",
+    "settings.windowsUpdateDownloadHint": "업데이트를 다운로드하면 설치도 승인됩니다. 다운로드 후 다음에 Warplyn을 열면 자동으로 적용됩니다. 앱을 정상적으로 닫은 경우에도 마찬가지입니다.",
+} satisfies Partial<Record<MessageId, string>>;
