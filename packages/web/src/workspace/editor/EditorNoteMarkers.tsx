@@ -114,7 +114,7 @@ export function EditorNoteMarkers({ content }: { content: string }) {
                         numbers: intl.formatList(marker.notes.map((note) => intl.formatNumber(note.number)), { type: "unit" }),
                     })}
                 style={{ left: marker.left, top: marker.top }}
-                className={("pointer-events-auto absolute inline-flex min-h-9 min-w-9 -translate-y-1 items-start rounded-control pl-1 " +
+                className={("pointer-events-auto absolute inline-flex min-h-9 min-w-9 -translate-y-1 cursor-pointer items-start rounded-control " +
                     "text-xs text-muted hover:text-brand focus-visible:outline focus-visible:outline-brand")}
                 onMouseEnter={() => highlight(...marker.ranges)}
                 onMouseLeave={() => {
