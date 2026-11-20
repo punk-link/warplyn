@@ -1,0 +1,21 @@
+{
+    "version": "1.0.0",
+    "previousTag": "v0.8.4",
+    "previousCommit": "adc134dbf3ed55f3eb01788504dd8396bca046ab",
+    "baseline": "published",
+    "sourceCommit": "380a5412adb22c655a3b6a920825cd30eedc7bb5",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Warplyn 1.0 is here!",
+            "commits": [
+                "380a5412adb22c655a3b6a920825cd30eedc7bb5"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
