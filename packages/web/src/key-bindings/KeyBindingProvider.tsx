@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
-import type { KeyBindingOverrides } from "@skladno/shared";
-import { KeyBindingDispatcher } from "./dispatcher.js";
+import { areKeyBindingsEqual, KEY_BINDING_COMMAND, resolveKeyBindings, type KeyBindingOverrides } from "@skladno/shared";
+import { getEventKeyBinding, KeyBindingDispatcher } from "./dispatcher.js";
 
 
 const reservedDesktopKeys = new Set(["a", "c", "m", "q", "s", "u", "v", "w", "x", "y", "z", "+", "=", "-", "0"]);
@@ -29,18 +29,34 @@ export function useKeyBindingDispatcher(overrides: KeyBindingOverrides | undefin
     }, [dispatcher, overrides]);
 
     useEffect(() => {
-        const onKeyDown = (event: KeyboardEvent) => {
+        const onKeyDown = (event: KeyboardEvent, capture = false) => {
+            const binding = getEventKeyBinding(event);
+            const notesBinding = resolveKeyBindings(overrides)[KEY_BINDING_COMMAND.EDITOR_NOTES];
+            const isNotes = Boolean(binding && notesBinding && areKeyBindingsEqual(binding, notesBinding));
+            if (capture !== isNotes)
+                return;
+
             if (event.defaultPrevented && !isClipboardShortcut(event))
                 return;
 
             const target = event.target;
             const scope = target instanceof HTMLElement && target.closest('[data-workspace-panel="editorial-assistant"]') ? "assistant" : "application";
-            if (!dispatcher.dispatch(event, scope) && reserveDesktopShortcuts && isReservedDesktopShortcut(event))
+            if (dispatcher.dispatch(event, scope))
+                event.stopPropagation();
+            else if (reserveDesktopShortcuts && isReservedDesktopShortcut(event))
                 event.preventDefault();
         };
-        window.addEventListener("keydown", onKeyDown, true);
-        return () => window.removeEventListener("keydown", onKeyDown, true);
-    }, [dispatcher, reserveDesktopShortcuts]);
+
+        const captureKeyDown = (event: KeyboardEvent) => onKeyDown(event, true);
+        const bubbleKeyDown = (event: KeyboardEvent) => onKeyDown(event);
+        window.addEventListener("keydown", captureKeyDown, true);
+        window.addEventListener("keydown", bubbleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", captureKeyDown, true);
+            window.removeEventListener("keydown", bubbleKeyDown);
+        };
+    }, [dispatcher, overrides, reserveDesktopShortcuts]);
 
     return dispatcher;
 }

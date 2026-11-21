@@ -9,15 +9,13 @@ it("handles modified letters before editable controls consume their input", () =
     result.current.register(KEY_BINDING_COMMAND.EDITOR_NOTES, open);
     const input = document.createElement("textarea");
     document.body.append(input);
-    const editor = vi.fn((event: KeyboardEvent) => {
-        expect(event.defaultPrevented).toBe(true);
-    });
+    const editor = vi.fn();
     input.addEventListener("keydown", editor);
     input.dispatchEvent(new KeyboardEvent("keydown", {
         key: "ñ", code: "KeyN", ctrlKey: true, altKey: true, bubbles: true, cancelable: true,
     }));
     expect(open).toHaveBeenCalledOnce();
-    expect(editor).toHaveBeenCalledOnce();
+    expect(editor).not.toHaveBeenCalled();
     input.remove();
     unmount();
 });

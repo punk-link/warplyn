@@ -30,7 +30,7 @@ export const KEY_BINDING_COMMAND = {
     TOGGLE_MAXIMIZE: "toggle_maximize",
     SEND_EDITORIAL_REQUEST: "send_editorial_request",
     STOP_EDITORIAL_REQUEST: "stop_editorial_request",
-} as const;
+} as const satisfies Record<string, string>;
 
 export type KeyBindingCommandId = typeof KEY_BINDING_COMMAND[keyof typeof KEY_BINDING_COMMAND];
 export type KeyBindingCategory = "general" | "editing" | "workspace" | "window" | "assistant";
