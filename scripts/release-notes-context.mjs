@@ -3,6 +3,7 @@ import { lstatSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { git, releaseCommits } from "./release-notes-range.mjs";
 import { productReleaseChanges } from "./release-notes-product-context.mjs";
+import { compactLocaleChanges } from "./release-notes-locale-context.mjs";
 
 
 const publicSourcePattern = /^(?:packages\/[^/]+\/src\/|product-model\/areas\/|site\/user-docs\/|scripts\/|\.github\/workflows\/|README\.md$)/;
@@ -43,7 +44,38 @@ export function collectReleaseContext(record, { workingTree = false, cwd = proce
         }
     }
 
-    const context = { previousTag: record.previousTag, version: record.version, history, changes };
-    assert(JSON.stringify(context).length <= 2_000_000, "Release context exceeds 2,000,000 characters. Prepare smaller releases or write notes manually.");
+    const historical = (ref, path) => {
+        const exists = git(["ls-tree", "--name-only", ref, "--", path], cwd);
+        return exists ? git(["show", `${ref}:${path}`], cwd) : "";
+    };
+    const current = (path) => {
+        if (!workingTree)
+            return historical(record.sourceCommit, path);
+
+        try {
+            return readFileSync(join(cwd, path), "utf8");
+        } catch (error) {
+            if (error.code === "ENOENT")
+                return "";
+
+            throw error;
+        }
+    };
+    const compacted = compactLocaleChanges(changes, (path) => historical(record.previousCommit, path), current);
+    if (workingTree) {
+        const pendingChanges = changes.filter((change) => change.uncommittedPatch)
+            .map((change) => ({ path: change.path, patch: change.uncommittedPatch }));
+        const summaries = compactLocaleChanges(pendingChanges, (path) => historical(record.sourceCommit, path), current);
+        for (const summary of summaries.filter((change) => !pending.has(change.path)))
+            compacted.push({ ...summary, uncommittedPatch: summary.patch });
+    }
+
+    const context = { previousTag: record.previousTag, version: record.version, history, changes: compacted };
+    const size = JSON.stringify(context).length;
+    const largest = compacted.map((change) => ({ path: change.path, size: JSON.stringify(change).length }))
+        .sort((a, b) => b.size - a.size).slice(0, 5).map((change) => `${change.path}: ${change.size}`).join(", ");
+    console.log(`Release context: ${record.previousTag} (${record.previousCommit}) -> ${record.sourceCommit}` +
+        `${workingTree ? " + working tree" : ""}; ${commits.length} commits; ${size} characters. Largest: ${largest}`);
+    assert(size <= 2_000_000, `Release context exceeds 2,000,000 characters. Largest sources: ${largest}. Use --manual to review these changes.`);
     return { context, commits };
 }
