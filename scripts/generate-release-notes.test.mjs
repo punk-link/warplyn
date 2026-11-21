@@ -36,6 +36,9 @@ test("generation uses the dedicated secret, disables storage, and validates stru
             assert.equal(request.text.format.strict, true);
             assert(request.text.format.schema.required.includes("security"));
             assert(request.instructions.includes("actual vulnerability"));
+            assert(request.instructions.includes("broken behavior shipped in the previous release identified by previousTag"));
+            assert(request.instructions.includes("Set bugFix=false and merge its correction"));
+            assert(request.instructions.includes("correct candidate classifications that treat an unshipped defect as a bug fix"));
             assert(!request.input.includes("test-secret"));
             return new Response(JSON.stringify(completed()));
         } });
