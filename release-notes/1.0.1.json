@@ -1,0 +1,55 @@
+{
+    "version": "1.0.1",
+    "previousTag": "v1.0.0",
+    "previousCommit": "5eec507638eeef47cc5728a9e2ccad86d7c296a6",
+    "baseline": "published",
+    "sourceCommit": "22c79f48899abcb93002d633b9da313ec3a75592",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Add Editor notes to attach guidance to passages without changing article text. Create and manage notes from the editor, and relevant attached notes can accompany Assistant work on those passages.",
+            "commits": [
+                "53b033460685a4252787477f10051229316310d8",
+                "543b662a08c6397b1969804ae794ac2937eee86a"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Open Editor notes with a keyboard shortcut.",
+            "commits": [
+                "362121a852ea0d0ff3c5e4b90a84a7b34df09fcc"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Editor notes now stay attached when you promote a Revision. Clicking a note marker opens its note, removing a note keeps the list open, and unsaved edits are protected when navigating the notes dialog.",
+            "commits": [
+                "462beb0c14034609164d0bc4c39abc92bea5209b",
+                "b1611e96135f6c064ecc31ec43f898d6fb786e94",
+                "25c6980db479998c39636e72741e3eddbd6d2846",
+                "7bdd32d0f72a7b20bcee7c720b6be599fcb5f136"
+            ]
+        },
+        {
+            "bugFix": true,
+            "text": "Letter shortcuts now work across keyboard layouts, and the Editor notes shortcut works when an editable control has focus.",
+            "commits": [
+                "5382f7ca08e36888a4ab1873f0161bba6867138e",
+                "42b14cc211662687b512feabc34fa8e3cc8fd703"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Scrollbars use quieter styling, and dialog dismissal actions use secondary styling.",
+            "commits": [
+                "7aff932f2212de616c7720616c934d1d337f49d8",
+                "bb2ee92d5e25e4249e8b6ffafdca22e01cc6f0e1"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
