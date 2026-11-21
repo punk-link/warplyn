@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const notesMessages = {
+    "notes.discardPrompt": "Odrzucić niezapisane zmiany notatki?",
+    "notes.discardChanges": "Odrzuć zmiany",
     "notes.add": "Dodaj notatkę redakcyjną…",
     "notes.count": "Notatki redakcyjne{separator}{count}",
     "notes.detached": "Wymaga ponownego przypisania",

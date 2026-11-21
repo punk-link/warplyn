@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const notesMessages = {
+    "notes.discardPrompt": "Отменить несохранённые изменения заметки?",
+    "notes.discardChanges": "Отменить изменения",
     "notes.add": "Добавить редакторскую заметку…",
     "notes.count": "Редакторские заметки{separator}{count}",
     "notes.detached": "Нужно прикрепить заново",

@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const notesMessages = {
+    "notes.discardPrompt": "放弃备注中未保存的更改？",
+    "notes.discardChanges": "放弃更改",
     "notes.add": "添加编辑备注…",
     "notes.count": "编辑备注{separator}{count}",
     "notes.detached": "需要重新关联",

@@ -9,6 +9,8 @@ export const messages = {
     "notes.count": "Editor notes{separator}{count}",
     "notes.select": "Select text to attach a note.",
     "notes.help": "Attached notes guide the Assistant when it works on their passages. Notes are separate from Article text.",
+    "notes.discardPrompt": "Discard unsaved note changes?",
+    "notes.discardChanges": "Discard changes",
     "notes.empty": "No editor notes yet.",
     "notes.detached": "Needs reattachment",
     "notes.edit": "Edit note…",

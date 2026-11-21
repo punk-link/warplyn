@@ -4,7 +4,8 @@ import { formatUiTerminologyTable } from "./format-ui-terminology-table.mjs";
 
 const guidePath = "docs/development/i18n/ui-terminology.md";
 const guide = (await readFile(guidePath, "utf8")).replaceAll("\r\n", "\n");
-const messageIds = [...guide.matchAll(/^\| `([^`]+)` \|/gm)].map((match) => match[1]);
+const terminologyRowPattern = /^\| `([^`]+)` \|/gm;
+const messageIds = [...guide.matchAll(terminologyRowPattern)].map((match) => match[1]);
 const catalogs = installedLocaleCatalogs.map((catalog) => ({
     ...catalog,
     messages: Object.fromEntries(messageIds.map((id) => [id, catalog.messages[id]])),

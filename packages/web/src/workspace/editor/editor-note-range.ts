@@ -74,6 +74,19 @@ export function getEditorNoteRange(editor: LexicalEditor, content: string, ancho
     if (!resolved || !root)
         return undefined;
 
+    const visible = root.textContent ?? "";
+    const visibleStart = visible.indexOf(anchor.quote);
+    if (anchor.quote === anchor.preview && visibleStart >= 0 && visible.lastIndexOf(anchor.quote) === visibleStart) {
+        const first = pointAtTextOffset(root, visibleStart);
+        const last = pointAtTextOffset(root, visibleStart + anchor.quote.length);
+        if (first && last) {
+            const range = document.createRange();
+            range.setStart(first.node, first.offset);
+            range.setEnd(last.node, last.offset);
+            return range;
+        }
+    }
+
     const nonce = crypto.randomUUID().replaceAll("-", "");
     const startMarker = `notestart${nonce}`;
     const endMarker = `noteend${nonce}`;

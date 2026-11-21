@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const notesMessages = {
+    "notes.discardPrompt": "Ungespeicherte Änderungen an der Notiz verwerfen?",
+    "notes.discardChanges": "Änderungen verwerfen",
     "notes.add": "Redaktionsnotiz hinzufügen…",
     "notes.count": "Redaktionsnotizen{separator}{count}",
     "notes.detached": "Erneut zuordnen",

@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const notesMessages = {
+    "notes.discardPrompt": "メモの未保存の変更を破棄しますか？",
+    "notes.discardChanges": "変更を破棄",
     "notes.add": "編集メモを追加…",
     "notes.count": "編集メモ{separator}{count}",
     "notes.detached": "再添付が必要です",

@@ -70,17 +70,18 @@ test("notes use quiet footnotes, persist, guide selection requests, and stay out
     const article = await (await created).json();
     const editor = page.getByRole("textbox", { name: "Article draft" });
     await expect(editor).toHaveText("");
-    await expect(page.getByRole("button", { name: "Add editor note…", exact: true })).toBeDisabled();
     await page.getByRole("combobox", { name: "Block style", exact: true }).focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("button", { name: "Editor notes · 0", exact: true })).toBeFocused();
+    await page.keyboard.press("ArrowLeft");
+    await expect(page.getByRole("button", { name: "Editor notes", exact: true })).toBeFocused();
     await editor.fill("The ledger is the shared repair log.\nThe record was useful.\nWe kept it dry.");
     await page.getByRole("button", { name: "Save revision", exact: true }).click();
     await selectPassage(editor, "The record was useful.");
-    await page.getByRole("button", { name: "Add editor note…", exact: true }).click();
+    await page.getByRole("button", { name: "Editor notes", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Editor notes", exact: true });
     await dialog.getByRole("textbox", { name: "Guidance for the Assistant" }).fill("Use ledger as the noun.");
     await dialog.getByRole("button", { name: "Save note", exact: true }).click();
+    await expect(dialog.getByRole("textbox")).toHaveCount(0);
+    await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
     const marker = page.getByRole("button", { name: "Editor note 1", exact: true });
     await expect(marker).toBeVisible();
     await editor.press("ArrowRight");
@@ -96,7 +97,16 @@ test("notes use quiet footnotes, persist, guide selection requests, and stay out
     expect(await page.evaluate(() => CSS.highlights.has("warplyn-editor-note"))).toBe(true);
     await marker.press("Enter");
     await expect(dialog.getByRole("textbox")).toHaveValue("Use ledger as the noun.");
+    await dialog.getByRole("textbox").fill("Unsaved guidance must remain available.");
     await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+    await expect(dialog.getByRole("alert")).toContainText("Discard unsaved note changes?");
+    await page.screenshot({ path: "test-results/editor-notes-unsaved.png" });
+    await page.keyboard.press("Escape");
+    await expect(dialog.getByRole("alert")).toHaveCount(0);
+    await expect(dialog.getByRole("textbox")).toHaveValue("Unsaved guidance must remain available.");
+    await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+    await dialog.getByRole("button", { name: "Discard changes", exact: true }).click();
+    await expect(dialog).not.toBeVisible();
 
     await selectPassage(editor, "We kept it dry.");
     await editor.click({ button: "right" });
@@ -104,7 +114,7 @@ test("notes use quiet footnotes, persist, guide selection requests, and stay out
     await dialog.getByRole("textbox").fill("Keep this private note separate.");
     await dialog.getByRole("button", { name: "Save note", exact: true }).click();
     await page.reload();
-    await expect(page.getByRole("button", { name: "Editor notes · 2", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Editor notes", exact: true })).toBeVisible();
     await expect(marker).toBeVisible();
     await expect(editor).not.toContainText("Use ledger");
 
@@ -135,16 +145,21 @@ test("notes use quiet footnotes, persist, guide selection requests, and stay out
 
     await editor.fill("Replacement passage.");
     await selectPassage(editor, "Replacement passage.");
-    await page.getByRole("button", { name: "Editor notes · 2", exact: true }).click();
+    await page.getByRole("button", { name: "Editor notes", exact: true }).click();
     await expect(dialog.getByText("Needs reattachment", { exact: true })).toHaveCount(2);
     await dialog.getByRole("button", { name: "Edit note…", exact: true }).first().click();
     await dialog.getByRole("button", { name: "Attach to selected text", exact: true }).click();
     await dialog.getByRole("button", { name: "Save note", exact: true }).click();
+    await expect(dialog.getByRole("textbox")).toHaveCount(0);
+    await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
     await expect(marker).toBeVisible();
     await marker.click();
     await dialog.getByRole("textbox").fill("Updated guidance.");
     await dialog.getByRole("button", { name: "Save note", exact: true }).click();
+    await expect(dialog.getByRole("textbox")).toHaveCount(0);
+    await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
     await marker.click();
-    await dialog.getByRole("button", { name: "Remove note", exact: true }).click();
-    await expect(page.getByRole("button", { name: "Editor notes · 1", exact: true })).toBeVisible();
+    await dialog.getByRole("button", { name: "Remove", exact: true }).first().click();
+    await expect(dialog.getByText("Updated guidance.", { exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Editor notes", exact: true })).toBeVisible();
 });

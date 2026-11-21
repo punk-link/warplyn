@@ -28,8 +28,11 @@ function isEditableTarget(target: EventTarget | null): boolean {
 
 export function getEventKeyBinding(event: Pick<KeyBindingEvent, "key" | "code" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey">) {
     let key = event.key;
-    if (key.length === 1 && !/^[a-z]$/i.test(key) && /^Key[A-Z]$/.test(event.code ?? ""))
+    const latinLetterPattern = /^[a-z]$/i;
+    const physicalLetterKeyPattern = /^Key[A-Z]$/;
+    if (key.length === 1 && !latinLetterPattern.test(key) && physicalLetterKeyPattern.test(event.code ?? ""))
         key = event.code!.slice(3).toLowerCase();
+
     return normalizeKeyBinding({ primary: event.ctrlKey || event.metaKey, shift: event.shiftKey, alt: event.altKey, key });
 }
 

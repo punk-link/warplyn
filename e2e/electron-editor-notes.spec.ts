@@ -28,10 +28,12 @@ test("packaged editor notes survive restart and the native menu handoff preserve
         await page.getByRole("button", { name: "Save revision", exact: true }).click();
         await editor.focus();
         await editor.press("ControlOrMeta+A");
-        await page.getByRole("button", { name: "Add editor note…", exact: true }).click();
+        await page.getByRole("button", { name: "Editor notes", exact: true }).click();
         let dialog = page.getByRole("dialog", { name: "Editor notes", exact: true });
         await dialog.getByRole("textbox").fill("Keep the Author's voice.");
         await dialog.getByRole("button", { name: "Save note", exact: true }).click();
+        await expect(dialog.getByRole("textbox")).toHaveCount(0);
+        await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
         await expect(page.getByRole("button", { name: "Editor note 1", exact: true })).toBeVisible();
         await editor.focus();
         await editor.press("ControlOrMeta+A");
@@ -47,7 +49,7 @@ test("packaged editor notes survive restart and the native menu handoff preserve
         page = app.page;
         editor = page.getByRole("textbox", { name: "Article draft" });
         await expect(editor).toHaveText("A synthetic passage.");
-        await page.getByRole("button", { name: "Editor notes 1, 2", exact: true }).click();
+        await page.getByRole("button", { name: "Editor notes", exact: true }).click();
         dialog = page.getByRole("dialog", { name: "Editor notes", exact: true });
         await expect(dialog.getByText("Keep the Author's voice.", { exact: true })).toBeVisible();
         await expect(dialog.getByText("Check the verb.", { exact: true })).toBeVisible();

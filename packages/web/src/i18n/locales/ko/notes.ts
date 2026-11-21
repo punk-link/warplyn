@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const notesMessages = {
+    "notes.discardPrompt": "메모의 저장하지 않은 변경 사항을 버릴까요?",
+    "notes.discardChanges": "변경 사항 버리기",
     "notes.add": "편집 메모 추가…",
     "notes.count": "편집 메모{separator}{count}",
     "notes.detached": "다시 연결해야 함",

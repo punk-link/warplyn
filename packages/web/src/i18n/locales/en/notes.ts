@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const notesMessages = {
+    "notes.discardPrompt": "Discard unsaved note changes?",
+    "notes.discardChanges": "Discard changes",
     "notes.add": "Add editor note…",
     "notes.count": "Editor notes{separator}{count}",
     "notes.detached": "Needs reattachment",

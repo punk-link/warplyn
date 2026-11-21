@@ -18,7 +18,7 @@ export function createAssistantSelectionReader(request: PreparedAssistantRequest
             signal.throwIfAborted();
             validate();
             const authorGuidance = getEditorNoteGuidance(request.article.editorNotes ?? [], request.article.content, scope);
-            
+
             return {
                 selectedSource: request.article.content.slice(scope.startOffset, scope.endOffset),
                 ...(authorGuidance ? { authorGuidance } : {}),

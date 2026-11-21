@@ -58,26 +58,31 @@ export function EditorNoteMarkers({ content }: { content: string }) {
         }
 
         let frame = 0;
+        let timer = 0;
         const update = () => {
             cancelAnimationFrame(frame);
-            frame = requestAnimationFrame(() => {
-                const bounds = container.current?.getBoundingClientRect();
-                if (!bounds)
-                    return;
+            window.clearTimeout(timer);
+            timer = window.setTimeout(() => {
+                frame = requestAnimationFrame(() => {
+                    const bounds = container.current?.getBoundingClientRect();
+                    if (!bounds)
+                        return;
 
-                const next = (context?.notes ?? []).flatMap((note, index) => {
-                    const range = getEditorNoteRange(editor, content, note.anchor);
-                    const rect = range?.getClientRects().item(range.getClientRects().length - 1);
-                    if (!range || !rect)
-                        return [];
+                    const next = (context?.notes ?? []).flatMap((note, index) => {
+                        const range = getEditorNoteRange(editor, content, note.anchor);
+                        const rect = range?.getClientRects().item(range.getClientRects().length - 1);
+                        if (!range || !rect)
+                            return [];
 
-                    return [{ id: note.id, number: index + 1, left: rect.right - bounds.left, top: rect.top - bounds.top, range }];
+                        return [{ id: note.id, number: index + 1, left: rect.right - bounds.left, top: rect.top - bounds.top, range }];
+                    });
+                    setMarkers(next);
+                    highlight();
                 });
-                setMarkers(next);
-                highlight();
-            });
+            }, 150);
         };
 
+        setMarkers([]);
         update();
 
         const unregister = editor.registerUpdateListener(({ dirtyElements, dirtyLeaves }) => {
@@ -95,6 +100,7 @@ export function EditorNoteMarkers({ content }: { content: string }) {
 
         return () => {
             cancelAnimationFrame(frame);
+            window.clearTimeout(timer);
             unregister();
             observer.disconnect();
             document.fonts?.removeEventListener("loadingdone", update);
