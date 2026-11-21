@@ -1,6 +1,6 @@
 import type { BuiltInSkillId } from "@skladno/shared";
 
-import { loadBuiltInSkillPackages } from "./built-in-skill-packages.js";
+import { loadBuiltInSkillPackages } from "../../../infrastructure/skills/built-in-skill-packages.js";
 
 
 export function getBuiltInSkillInstructions(skillId: BuiltInSkillId): string {

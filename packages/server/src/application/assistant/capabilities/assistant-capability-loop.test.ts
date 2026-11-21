@@ -14,7 +14,7 @@ import type { PreparedAssistantRequest } from "../requests/prepared-assistant-re
 import type { EditorialAssistantRequest } from "../../editorial/engine/editorial-assistant-request.js";
 import { EDITORIAL_ENGINE_EVENT } from "../../editorial/engine/editorial-engine-events.js";
 import { AuthorSkillService } from "../skills/author-skill-service.js";
-import { FileAssistantSkillSource } from "../skills/file-assistant-skill-source.js";
+import { FileAssistantSkillSource } from "../../../infrastructure/skills/file-assistant-skill-source.js";
 import { SkillRevisionStore } from "../../../infrastructure/skills/skill-revision-store.js";
 import { formatSelectionContext } from "../../editorial/selection-context.js";
 import { authorizeAssistantAction } from "./assistant-action-authorization.js";

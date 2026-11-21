@@ -1,4 +1,4 @@
-import { loadBuiltInSkillPackages } from "./built-in-skill-packages.js";
+import { loadBuiltInSkillPackages } from "../../../infrastructure/skills/built-in-skill-packages.js";
 import type { AssistantSkillSource } from "./assistant-skill-source.js";
 
 

@@ -5,10 +5,11 @@ import { join } from "node:path";
 import test from "node:test";
 
 import { FileAssistantSkillSource } from "./file-assistant-skill-source.js";
-import { parseSkillPackage } from "./skill-package-parser.js";
+import { loadSkillPackage } from "./load-skill-package.js";
 
 
-const validSkill = ("---\nid: author-review\nname: Author review\ndescription: Review a draft with the Author's editorial preferences.\nversion: 1\nreferences:\n  - " +
+const validSkill = ("---\nid: author-review\nname: Author review\n" +
+    "description: Review a draft with the Author's editorial preferences.\nversion: 1\nreferences:\n  - " +
     "references/guidance.md\n---\n# Review\n\nKeep the Author in control.\n");
 
 
@@ -33,7 +34,7 @@ test("Skill validation returns a renderer-owned message ID, not server-authored 
     const root = mkdtempSync(join(tmpdir(), "skladno-skills-"));
     try {
         writeFileSync(join(root, "SKILL.md"), "# Missing frontmatter");
-        const result = parseSkillPackage({ root, source: "author" });
+        const result = loadSkillPackage({ root, source: "author" });
         assert.deepEqual(result, { ok: false, issues: [{ code: "invalid_frontmatter", messageId: "skills.validation.invalid_frontmatter" }] });
     } finally {
         rmSync(root, { recursive: true, force: true });
@@ -68,7 +69,7 @@ test("Skill parsing rejects an oversized package before parsing its contents", (
     const root = mkdtempSync(join(tmpdir(), "skladno-skills-"));
     try {
         writeFileSync(join(root, "SKILL.md"), "x".repeat(96 * 1024 + 1));
-        assert.deepEqual(parseSkillPackage({ root, source: "author" }), {
+        assert.deepEqual(loadSkillPackage({ root, source: "author" }), {
             ok: false,
             issues: [{ code: "package_too_large", messageId: "skills.validation.package_too_large" }],
         });

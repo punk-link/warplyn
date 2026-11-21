@@ -24,11 +24,11 @@ import { AssistantRequestPreparation } from "./assistant/requests/assistant-requ
 import { getConversationHistory } from "./assistant/requests/conversation-history.js";
 import { AssistantSkillCatalog } from "./assistant/skills/assistant-skill-catalog.js";
 import { createBuiltInSkillSource } from "./assistant/skills/create-built-in-skill-source.js";
-import { FileAssistantSkillSource } from "./assistant/skills/file-assistant-skill-source.js";
+import { FileAssistantSkillSource } from "../infrastructure/skills/file-assistant-skill-source.js";
 import { AuthorSkillService } from "./assistant/skills/author-skill-service.js";
 import { SkillChangeJournal } from "../infrastructure/skills/skill-change-journal.js";
 import { dirname } from "node:path";
-import { loadBuiltInSkillPackages } from "./assistant/skills/built-in-skill-packages.js";
+import { loadBuiltInSkillPackages } from "../infrastructure/skills/built-in-skill-packages.js";
 import type { EditorialService } from "./editorial/editorial-service.js";
 import type { TelemetryObserver } from "./telemetry/telemetry-observer.js";
 import { CreateApplicationServicesOptions } from "./create-application-services-options.js";

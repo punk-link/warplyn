@@ -11,7 +11,7 @@ import {
 
 import { failure, success, type ApplicationResult } from "../errors/application-result.js";
 import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
-import { loadBuiltInSkillPackages } from "../assistant/skills/built-in-skill-packages.js";
+import { loadBuiltInSkillPackages } from "../../infrastructure/skills/built-in-skill-packages.js";
 import { createSkillGuidance } from "../assistant/skills/create-skill-guidance.js";
 import type { SkillGuidance } from "../assistant/skills/skill-guidance.js";
 import { formatSelectionContext, type SelectionContext } from "./selection-context.js";

@@ -4,14 +4,14 @@ import type { AuthorSkillRevision } from "./author-skill-revision.js";
 import type { AuthorSkillChange } from "./author-skill-change.js";
 import type { CommittedAuthorSkillChange } from "./committed-author-skill-change.js";
 import type { AuthorSkillChangeJournal, PendingSkillChange } from "./author-skill-change-journal.js";
-import { FileAssistantSkillSource } from "./file-assistant-skill-source.js";
+import type { AuthorSkillSource } from "./author-skill-source.js";
 import { success } from "../../errors/application-result.js";
 import { skillWriteFailure, unwrapSkillWrite, type SkillWriteResult } from "./skill-write-result.js";
 
 
 export class AuthorSkillService {
     constructor(
-        private readonly source: FileAssistantSkillSource,
+        private readonly source: AuthorSkillSource,
         private readonly revisions: AuthorSkillRevisionStore,
         private readonly journal?: AuthorSkillChangeJournal,
     ) { }

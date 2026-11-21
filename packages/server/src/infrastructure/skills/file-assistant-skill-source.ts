@@ -4,15 +4,16 @@ import { dirname, resolve } from "node:path";
 
 import type { AssistantSkillReference, AssistantSkillSummary } from "@skladno/shared";
 
-import type { AssistantSkillPackage } from "./assistant-skill-package.js";
-import type { AuthorSkillPackageStatus } from "./author-skill-package-status.js";
-import { normalizeSkillName } from "./normalize-skill-name.js";
-import { parseSkillPackage } from "./skill-package-parser.js";
-import { success } from "../../errors/application-result.js";
-import { skillWriteFailure, unwrapSkillWrite, type SkillWriteResult } from "./skill-write-result.js";
+import type { AssistantSkillPackage } from "../../application/assistant/skills/assistant-skill-package.js";
+import type { AuthorSkillPackageStatus } from "../../application/assistant/skills/author-skill-package-status.js";
+import { normalizeSkillName } from "../../application/assistant/skills/normalize-skill-name.js";
+import { loadSkillPackage } from "./load-skill-package.js";
+import { success } from "../../application/errors/application-result.js";
+import { skillWriteFailure, unwrapSkillWrite, type SkillWriteResult } from "../../application/assistant/skills/skill-write-result.js";
+import type { AuthorSkillSource } from "../../application/assistant/skills/author-skill-source.js";
 
 
-export class FileAssistantSkillSource {
+export class FileAssistantSkillSource implements AuthorSkillSource {
     private packages = new Map<string, AssistantSkillPackage>();
 
 
@@ -28,7 +29,8 @@ export class FileAssistantSkillSource {
 
     summaries(): readonly AssistantSkillSummary[] {
         this.refresh();
-        return [...this.packages.values()].map(({ reference, name, description, execution, scopes, presentation }) => ({ reference, name, description, execution, scopes, presentation }));
+        return [...this.packages.values()].map(({ reference, name, description, execution, scopes, presentation }) =>
+            ({ reference, name, description, execution, scopes, presentation }));
     }
 
 
@@ -99,7 +101,7 @@ export class FileAssistantSkillSource {
             return;
         }
 
-        const parsed = parseSkillPackage({ root: resolve(this.root, entry.name), source: this.id, reservedIds: reserved.ids, reservedNames: reserved.names });
+        const parsed = loadSkillPackage({ root: resolve(this.root, entry.name), source: this.id, reservedIds: reserved.ids, reservedNames: reserved.names });
         if (!parsed.ok) {
             this.invalid.push({ directory: entry.name, issues: parsed.issues });
             return;
@@ -128,7 +130,7 @@ export class FileAssistantSkillSource {
         this.refresh();
         const staged = `${root}.staged`;
         this.writeStaged(staged, input.files);
-        const parsed = parseSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
+        const parsed = loadSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
         if (!parsed.ok) {
             rmSync(staged, { recursive: true, force: true });
             return skillWriteFailure(parsed.issues[0]!.code);
@@ -166,7 +168,7 @@ export class FileAssistantSkillSource {
         const staged = `${root}.${randomUUID()}.staged`;
         try {
             this.writeStaged(staged, input.files);
-            const parsed = parseSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
+            const parsed = loadSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
             if (!parsed.ok)
                 return skillWriteFailure(parsed.issues[0]!.code);
 
@@ -197,7 +199,7 @@ export class FileAssistantSkillSource {
         const staged = `${this.packageRoot(input.directory)}.${randomUUID()}.staged`;
         try {
             this.writeStaged(staged, input.files);
-            const parsed = parseSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
+            const parsed = loadSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
             if (!parsed.ok || parsed.skillPackage.reference.id !== current.reference.id || !this.isAvailable(parsed.skillPackage, current.reference.id))
                 return skillWriteFailure(parsed.ok ? "invalid_metadata" : parsed.issues[0]!.code);
 
@@ -222,7 +224,7 @@ export class FileAssistantSkillSource {
 
         const staged = `${root}.staged`;
         this.writeStaged(staged, input.files);
-        const parsed = parseSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
+        const parsed = loadSkillPackage({ root: staged, source: this.id, reservedIds: this.reserved().ids, reservedNames: this.reserved().names });
         if (!parsed.ok || parsed.skillPackage.reference.id !== current.reference.id || !this.isAvailable(parsed.skillPackage, current.reference.id)) {
             rmSync(staged, { recursive: true, force: true });
             return skillWriteFailure(parsed.ok ? "invalid_metadata" : parsed.issues[0]!.code);
@@ -282,7 +284,7 @@ export class FileAssistantSkillSource {
 
     private loadByDirectory(directory: string): AssistantSkillPackage | undefined {
         const reserved = this.reserved();
-        const parsed = parseSkillPackage({ root: this.packageRoot(directory), source: this.id, reservedIds: reserved.ids, reservedNames: reserved.names });
+        const parsed = loadSkillPackage({ root: this.packageRoot(directory), source: this.id, reservedIds: reserved.ids, reservedNames: reserved.names });
         return parsed.ok ? parsed.skillPackage : undefined;
     }
 

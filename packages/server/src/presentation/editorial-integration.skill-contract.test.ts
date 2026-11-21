@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { loadBuiltInSkillPackages } from "../application/assistant/skills/built-in-skill-packages.js";
+import { loadBuiltInSkillPackages } from "../infrastructure/skills/built-in-skill-packages.js";
 import { CapabilityFixtureEngine, withService } from "./editorial-integration.test-utils.js";
 import type { EditorialAssistantRequest } from "../application/editorial/engine/editorial-assistant-request.js";
 

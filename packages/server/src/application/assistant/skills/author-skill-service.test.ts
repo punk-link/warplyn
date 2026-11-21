@@ -7,7 +7,7 @@ import test from "node:test";
 import { SkillRevisionStore } from "../../../infrastructure/skills/skill-revision-store.js";
 import { SkillChangeJournal } from "../../../infrastructure/skills/skill-change-journal.js";
 import { AuthorSkillService } from "./author-skill-service.js";
-import { FileAssistantSkillSource } from "./file-assistant-skill-source.js";
+import { FileAssistantSkillSource } from "../../../infrastructure/skills/file-assistant-skill-source.js";
 import { builtInSkillSource } from "./built-in-skill-source.js";
 
 

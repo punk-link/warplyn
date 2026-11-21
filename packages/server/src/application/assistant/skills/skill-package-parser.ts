@@ -1,6 +1,4 @@
 import { failure } from "@skladno/shared";
-import { lstatSync, readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
-import { dirname, relative, resolve, sep } from "node:path";
 import { parseDocument } from "yaml";
 
 import { createSkillPackage } from "./create-skill-package.js";
@@ -10,10 +8,8 @@ import type { SkillPackageIssue } from "./skill-package-issue.js";
 import type { SkillPackageParseResult } from "./skill-package-parse-result.js";
 
 
-const maximumPackageBytes = 96 * 1024;
 const maximumInstructionsBytes = 64 * 1024;
 const maximumReferenceCount = 8;
-const maximumReferenceBytes = 16 * 1024;
 const skillId = /^[a-z][a-z0-9_-]{2,63}$/;
 const supportedMetadata = new Set(["id", "name", "description", "version", "references", "execution", "scopes", "presentation"]);
 const messageIds: Record<SkillPackageIssue["code"], SkillPackageIssue["messageId"]> = {
@@ -77,57 +73,6 @@ function isSafeReferencePath(value: string): boolean {
 }
 
 
-function isInside(root: string, candidate: string): boolean {
-    const path = relative(root, candidate);
-    return path !== "" && !path.startsWith(`..${sep}`) && path !== "..";
-}
-
-
-function listFiles(root: string): string[] {
-    const files: string[] = [];
-    for (const entry of readdirSync(root, { withFileTypes: true })) {
-        const path = resolve(root, entry.name);
-        if (entry.isSymbolicLink())
-            throw new Error("unsafe_package");
-
-        if (entry.isDirectory()) {
-            files.push(...listFiles(path));
-            continue;
-        }
-
-        if (!entry.isFile())
-            throw new Error("unsafe_package");
-
-        files.push(path);
-    }
-
-    return files;
-}
-
-
-function readSkillFile(root: string, skillPath: string): string | SkillPackageParseResult {
-    try {
-        if (!lstatSync(root).isDirectory() || lstatSync(skillPath).isSymbolicLink() || !lstatSync(skillPath).isFile())
-            return issue("unsafe_package");
-
-        if (realpathSync(root) !== root || !isInside(root, realpathSync(skillPath)))
-            return issue("unsafe_package");
-    } catch {
-        return issue("unsafe_package");
-    }
-
-    try {
-        if (statSync(skillPath).size > maximumPackageBytes)
-            return issue("package_too_large");
-
-        const text = readFileSync(skillPath, "utf8");
-        return utf8Length(text) > maximumPackageBytes ? issue("package_too_large") : text;
-    } catch {
-        return issue("unsafe_package");
-    }
-}
-
-
 function readInstructions(text: string): { frontmatter: string; instructions: string } | SkillPackageParseResult {
     const parts = splitFrontmatter(text);
     if (!parts)
@@ -185,61 +130,15 @@ function readSkillMetadata(frontmatter: string, instructions: string, input: { r
 }
 
 
-function readSkillReference(root: string, reference: string): string | SkillPackageParseResult {
-    const path = resolve(root, reference);
-    try {
-        if (!isInside(root, path) || !lstatSync(path).isFile() || lstatSync(path).isSymbolicLink() || dirname(path) !== resolve(root, "references"))
-            return issue("unsafe_package");
-
-        if (statSync(path).size > maximumReferenceBytes)
-            return issue("invalid_reference");
-
-        return readFileSync(path, "utf8");
-    } catch {
-        return issue("invalid_reference");
-    }
-}
-
-
-function readSkillReferences(root: string, skillPath: string, text: string, metadata: ParsedSkillMetadata): string[] | SkillPackageParseResult {
-    let packageFiles: string[];
-    try {
-        packageFiles = listFiles(root);
-    } catch {
-        return issue("unsafe_package");
-    }
-
-    const expected = new Set([skillPath, ...metadata.references.map((reference) => resolve(root, reference))]);
-    if (packageFiles.some((path) => !expected.has(path)))
-        return issue("unsafe_package");
-
-    const loadedReferences: string[] = [];
-    let totalBytes = utf8Length(text);
-    for (const reference of metadata.references) {
-        const content = readSkillReference(root, reference);
-        if (typeof content !== "string")
-            return content;
-
-        totalBytes += Buffer.byteLength(content, "utf8");
-        loadedReferences.push(content);
-    }
-
-    if (totalBytes > maximumPackageBytes)
-        return issue("package_too_large");
-
-    return loadedReferences;
-}
-
-
-/** Parses the documented SKILL.md format. All filesystem paths remain server-owned. */
-export function parseSkillPackage(input: { root: string; source: string; reservedIds?: readonly string[]; reservedNames?: readonly string[] }): SkillPackageParseResult {
-    const root = resolve(input.root);
-    const skillPath = resolve(root, "SKILL.md");
-    const text = readSkillFile(root, skillPath);
-    if (typeof text !== "string")
-        return text;
-
-    const instructions = readInstructions(text);
+/** Parses skill content; the source owns safe reference loading. */
+export function parseSkillPackage(input: {
+    text: string;
+    source: string;
+    reservedIds?: readonly string[];
+    reservedNames?: readonly string[];
+    readReferences: (references: readonly string[]) => string[] | SkillPackageParseResult;
+}): SkillPackageParseResult {
+    const instructions = readInstructions(input.text);
     if ("ok" in instructions)
         return instructions;
 
@@ -247,7 +146,7 @@ export function parseSkillPackage(input: { root: string; source: string; reserve
     if ("ok" in metadata)
         return metadata;
 
-    const loadedReferences = readSkillReferences(root, skillPath, text, metadata);
+    const loadedReferences = input.readReferences(metadata.references);
     if (!Array.isArray(loadedReferences))
         return loadedReferences;
 
