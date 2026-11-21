@@ -1,3 +1,5 @@
+import { AssistantSkillCatalog } from "../application/assistant/skills/assistant-skill-catalog.js";
+import { builtInSkillSource } from "../infrastructure/skills/built-in-skill-source.js";
 import { randomUUID } from "node:crypto";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -44,6 +46,7 @@ test("AI connections share environment-variable names, activate independently, a
         aiModel: "gpt-5",
         aiSessionContinuationEnabled: false,
     }, editorial, createApplicationServices({
+        skills: { catalog: new AssistantSkillCatalog([builtInSkillSource]) },
         stores: {
             articles: repositories.articles,
             styleCorpus: repositories.styleCorpus,

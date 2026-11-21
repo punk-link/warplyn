@@ -1,3 +1,5 @@
+import { AssistantSkillCatalog } from "../application/assistant/skills/assistant-skill-catalog.js";
+import { builtInSkillSource } from "../infrastructure/skills/built-in-skill-source.js";
 import { randomUUID } from "node:crypto";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -280,6 +282,7 @@ const editorial = new EditorialService(
     { engines, sessionContinuationEnabled: false },
 );
 const services = createApplicationServices({
+    skills: { catalog: new AssistantSkillCatalog([builtInSkillSource]) },
     stores: { articles, styleCorpus, assistant, artifacts, engines, factChecks },
     settings: {
         settings,

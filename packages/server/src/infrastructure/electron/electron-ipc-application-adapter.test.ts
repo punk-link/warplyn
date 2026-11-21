@@ -1,3 +1,5 @@
+import { AssistantSkillCatalog } from "../../application/assistant/skills/assistant-skill-catalog.js";
+import { builtInSkillSource } from "../../infrastructure/skills/built-in-skill-source.js";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -62,6 +64,7 @@ function createAdapter(
     const persistence = createTestPersistence(database);
     const engines = { resolve: () => engine, resolveAssistant: () => engine };
     const services = createApplicationServices({
+        skills: { catalog: new AssistantSkillCatalog([builtInSkillSource]) },
         stores: { articles: persistence.articles, styleCorpus: persistence.styleCorpus, assistant: persistence.assistant, artifacts: persistence.editorialArtifacts, engines, factChecks: persistence.factChecks },
         settings: { settings: persistence.settings, dateTimeFormat: { read: async () => ({ locale: "en" }) }, models: { list: async () => [] }, createConnectionId: () => "connection" },
     });

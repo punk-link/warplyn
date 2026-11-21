@@ -3,7 +3,7 @@ import test from "node:test";
 import { BUILT_IN_SKILL } from "@skladno/shared";
 
 import { AssistantSkillCatalog } from "./assistant-skill-catalog.js";
-import { builtInSkillSource } from "./built-in-skill-source.js";
+import { builtInSkillSource } from "../../../infrastructure/skills/built-in-skill-source.js";
 
 
 test("built-in Skills publish compact discovery data and load versioned instructions only when selected", () => {

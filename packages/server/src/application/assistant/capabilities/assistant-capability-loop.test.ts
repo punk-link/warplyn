@@ -9,7 +9,7 @@ import { AssistantCapabilityLoop } from "./assistant-capability-loop.js";
 import { editorialCapabilityDefinitions } from "./editorial-capability-registry.js";
 import { AssistantSkillCatalog } from "../skills/assistant-skill-catalog.js";
 import type { AssistantSkillSource } from "../skills/assistant-skill-source.js";
-import { builtInSkillSource } from "../skills/built-in-skill-source.js";
+import { builtInSkillSource } from "../../../infrastructure/skills/built-in-skill-source.js";
 import type { PreparedAssistantRequest } from "../requests/prepared-assistant-request.js";
 import type { EditorialAssistantRequest } from "../../editorial/engine/editorial-assistant-request.js";
 import { EDITORIAL_ENGINE_EVENT } from "../../editorial/engine/editorial-engine-events.js";

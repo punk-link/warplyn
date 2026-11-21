@@ -18,7 +18,7 @@ import { createLocalService } from "./server.js";
 import { createApplicationServices } from "../application/create-application-services.js";
 import type { ApplicationServices } from "../application/application-services.js";
 import { openDatabase } from "../infrastructure/persistence/index.js";
-import { SkillRevisionStore } from "../infrastructure/skills/skill-revision-store.js";
+import { createLocalSkills } from "../create-local-skills.js";
 import { createTestPersistence, type TestPersistence } from "../test-support/test-persistence.js";
 
 
@@ -104,7 +104,7 @@ export async function withService(engine: EditorialEngine | undefined, run: (bas
             createConnectionId: () => "test-connection",
         },
         integration: { editorial, telemetry },
-        skillPackages: { authorRoot: join(directory, "skills"), revisions: new SkillRevisionStore(directory) },
+        skills: createLocalSkills(directory),
     });
     const service = createLocalService(config, editorial, services);
     service.listen(0, "127.0.0.1");

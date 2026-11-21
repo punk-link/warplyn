@@ -1,3 +1,5 @@
+import { AssistantSkillCatalog } from "../application/assistant/skills/assistant-skill-catalog.js";
+import { builtInSkillSource } from "../infrastructure/skills/built-in-skill-source.js";
 import { randomUUID } from "node:crypto";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -46,6 +48,7 @@ test("article API supports CRUD and revision-aware saves", async () => {
         aiModel: "gpt-5",
         aiSessionContinuationEnabled: false,
     }, editorial, createApplicationServices({
+        skills: { catalog: new AssistantSkillCatalog([builtInSkillSource]) },
         stores: { articles: repositories.articles, styleCorpus: repositories.styleCorpus, assistant: repositories.assistant, artifacts: repositories.editorialArtifacts, engines, factChecks: repositories.factChecks },
         settings: { settings: repositories.settings, dateTimeFormat: testDateTimeFormat, models: testModels, createConnectionId: testConnectionId },
     }), diagnostics);

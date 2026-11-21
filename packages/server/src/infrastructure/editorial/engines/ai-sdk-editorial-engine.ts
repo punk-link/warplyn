@@ -12,7 +12,8 @@ import { EditorialEngineError } from "../../../application/editorial/engine/edit
 import type { EditorialEngineRequest } from "../../../application/editorial/engine/editorial-engine-request.js";
 import { protectArticleSpans, restoreProtectedSpans } from "../../../application/editorial/translation/translation.js";
 import { authorControlInstruction, createEditorialMessages } from "../../../application/editorial/workflow-prompt.js";
-import { getBuiltInSkillInstructions } from "../../../application/assistant/skills/get-built-in-skill-instructions.js";
+import { builtInSkillSource } from "../../skills/built-in-skill-source.js";
+import { getBuiltInSkillInstructions } from "../../skills/get-built-in-skill-instructions.js";
 import { streamFactCheck } from "../workflows/fact-check-workflow.js";
 import type { FactCheckProvider } from "../models/fact-check-provider.js";
 import { getBoundedArticleContext } from "../models/editorial-context.js";
@@ -91,7 +92,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
                 surroundingArticleCharacterCount: request.surroundingArticleCharacterCount,
                 selectionContext: request.selectionContext,
                 targetArticleCharacterLimit: request.targetArticleCharacterLimit,
-            });
+            }, builtInSkillSource);
 
             yield* this.streamProposal(modelMessage, signal, request.previousResponseId);
         } catch (error) {
@@ -213,7 +214,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
                     skill: request.skill,
                     styleProfile: request.styleProfile,
                     articleStyleRules: request.articleStyleRules,
-                }),
+                }, builtInSkillSource),
                 signal,
                 previousResponseId: request.previousResponseId,
             }),
@@ -249,7 +250,7 @@ export class AiSdkEditorialEngine implements EditorialEngine {
             styleProfile: request.styleProfile,
             skill: request.skill,
             targetLanguage
-        });
+        }, builtInSkillSource);
         const result = await generateText({
             ...this.createGenerationOptions({
                 messages: editorialMessage,

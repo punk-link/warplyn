@@ -8,7 +8,7 @@ import { SkillRevisionStore } from "../../../infrastructure/skills/skill-revisio
 import { SkillChangeJournal } from "../../../infrastructure/skills/skill-change-journal.js";
 import { AuthorSkillService } from "./author-skill-service.js";
 import { FileAssistantSkillSource } from "../../../infrastructure/skills/file-assistant-skill-source.js";
-import { builtInSkillSource } from "./built-in-skill-source.js";
+import { builtInSkillSource } from "../../../infrastructure/skills/built-in-skill-source.js";
 
 
 const initial = "---\nid: author-review\nname: Author review\ndescription: Review a draft with the Author's editorial preferences.\nversion: 1\n---\n# Review\n";

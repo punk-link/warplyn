@@ -11,7 +11,7 @@ import {
 
 import { failure, success, type ApplicationResult } from "../errors/application-result.js";
 import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
-import { loadBuiltInSkillPackages } from "../../infrastructure/skills/built-in-skill-packages.js";
+import type { AssistantSkillSource } from "../assistant/skills/assistant-skill-source.js";
 import { createSkillGuidance } from "../assistant/skills/create-skill-guidance.js";
 import type { SkillGuidance } from "../assistant/skills/skill-guidance.js";
 import { formatSelectionContext, type SelectionContext } from "./selection-context.js";
@@ -39,12 +39,7 @@ export const authorControlInstruction = "Do not claim that you saved or changed 
 
 
 function getSkillInstructions(input: EditorialPromptInput): string {
-    return resolvePromptSkill(input)?.instructions ?? "";
-}
-
-
-function resolvePromptSkill(input: EditorialPromptInput): SkillGuidance | undefined {
-    return input.skill ?? createSkillGuidance(loadBuiltInSkillPackages().find((skill) => skill.reference.id === (input.skillId ?? editorialOperationSkillMap[input.operation])));
+    return input.skill?.instructions ?? "";
 }
 
 
@@ -209,7 +204,13 @@ function createReplacementPrompt(input: EditorialPromptInput): ModelMessage[] {
 }
 
 
-export function createEditorialMessages(input: EditorialPromptInput): ModelMessage[] {
+export function createEditorialMessages(input: EditorialPromptInput, builtIns: AssistantSkillSource): ModelMessage[] {
+    if (!input.skill) {
+        const skillId = input.skillId ?? editorialOperationSkillMap[input.operation];
+        const summary = builtIns.summaries().find((skill) => skill.reference.id === skillId);
+        input = { ...input, skill: createSkillGuidance(summary ? builtIns.load(summary.reference) : undefined) };
+    }
+
     const messages = unwrapApplicationResult(createSourceMessages(input));
     if (input.operation !== EDITORIAL_OPERATION.TRANSLATION && input.operation !== EDITORIAL_OPERATION.FACT_CHECK)
         messages.push({
@@ -232,8 +233,7 @@ export function createEditorialMessages(input: EditorialPromptInput): ModelMessa
 
 
 function createSourceMessages(input: EditorialPromptInput): ApplicationResult<ModelMessage[]> {
-    const skill = resolvePromptSkill(input);
-    input = { ...input, skill };
+    const skill = input.skill;
     if (skill?.execution.capability === "generate_proposal") {
         if (skill.execution.source === "author_or_article")
             return success(createTalkingPointsPrompt(input));

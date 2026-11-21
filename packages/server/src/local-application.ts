@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { dirname, join } from "node:path";
+import { dirname } from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { createApplicationServices } from "./application/create-application-services.js";
 import type { ApplicationServices } from "./application/application-services.js";
@@ -11,7 +11,7 @@ import { ConfiguredEditorialEngineResolver } from "./infrastructure/editorial/en
 import { SqliteBackupSnapshotCreator } from "./infrastructure/persistence/sqlite-backup-snapshot-creator.js";
 import { WindowsCredentialStore } from "./infrastructure/configuration/windows-credential-store.js";
 import { LinuxCredentialStore } from "./infrastructure/configuration/linux-credential-store.js";
-import { SkillRevisionStore } from "./infrastructure/skills/skill-revision-store.js";
+import { createLocalSkills } from "./create-local-skills.js";
 import type { CredentialStore } from "./application/settings/credential-store.js";
 import { ArticlesRepository, AssistantRepository, EditorialArtifactsRepository, EditorialSessionsRepository, FactChecksRepository, SettingsRepository, StyleCorpusRepository, openDatabase } from "./infrastructure/persistence/index.js";
 import type { TelemetryObserver } from "./application/telemetry/telemetry-observer.js";
@@ -50,6 +50,9 @@ export function createLocalApplication(config: ServerConfig = loadServerConfig()
 
     assistant.seedGreetings();
 
+    const skills = createLocalSkills(dirname(config.databasePath), skillPackages?.builtInRoot);
+    skills.authorSkills?.recoverIncompleteChanges((requestId) => assistant.getRequest(requestId)?.status === "completed");
+
     const editorial = new EditorialService(
         { articles, sessions: editorialSessions, styleCorpus, artifacts: editorialArtifacts, factChecks },
         { engines, sessionContinuationEnabled: config.aiSessionContinuationEnabled },
@@ -78,11 +81,7 @@ export function createLocalApplication(config: ServerConfig = loadServerConfig()
                 credentialStore,
             },
             integration: { editorial, telemetry },
-            skillPackages: {
-                ...skillPackages,
-                authorRoot: join(dirname(config.databasePath), "skills"),
-                revisions: new SkillRevisionStore(dirname(config.databasePath)),
-            },
+            skills,
         }),
         editorial,
         database,
