@@ -1,6 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import ts from "typescript";
 
 const repositoryRoot = process.cwd();
 const sourceRoot = path.join(repositoryRoot, "packages", "web", "src");
@@ -9,7 +10,7 @@ const boundaryRules = [
     {
         name: "cross-cutting renderer modules do not import feature modules",
         matchesSource: (file) => ["ui/", "i18n/", "key-bindings/", "notifications/"].some((prefix) => file.startsWith(prefix)),
-        matchesTarget: (file) => file.startsWith("settings/") || file.startsWith("workspace/") || file === "App",
+        matchesTarget: isFeatureModule,
     },
     {
         name: "workspace state does not import UI or feature rendering",
@@ -33,10 +34,16 @@ const boundaryRules = [
     },
     {
         name: "the application client does not import feature modules",
-        matchesSource: (file) => file === "application-client.ts",
-        matchesTarget: (file) => file.startsWith("settings/") || file.startsWith("workspace/"),
+        matchesSource: (file) => file === "application-client.ts" || file.startsWith("application/"),
+        matchesTarget: isFeatureModule,
     },
 ];
+
+
+function isFeatureModule(file) {
+    return file.startsWith("settings/") || file.startsWith("workspace/") ||
+        ["App", "ApplicationScreens", "QuickStartDialog"].includes(file);
+}
 
 
 async function collectSourceFiles(directory) {
@@ -78,14 +85,30 @@ function resolveRelativeImport(sourceFile, importPath) {
 }
 
 
-function findImports(source) {
-    const importPattern = /^\s*(?:import|export)\s+(?:(?:type\s+)?[\s\S]*?\s+from\s+)?["']([^"']+)["']\s*;?/gm;
+function findImports(source, filename) {
+    const parsed = ts.createSourceFile(filename, source, ts.ScriptTarget.Latest, true);
     const imports = [];
-    let match;
 
-    while ((match = importPattern.exec(source)))
-        imports.push({ path: match[1], line: source.slice(0, match.index).split("\n").length });
 
+    function visit(node) {
+        let specifier;
+        if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node))
+            specifier = node.moduleSpecifier;
+        else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword)
+            specifier = node.arguments[0];
+        else if (ts.isImportTypeNode(node) && ts.isLiteralTypeNode(node.argument))
+            specifier = node.argument.literal;
+        else if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference))
+            specifier = node.moduleReference.expression;
+
+        if (specifier && ts.isStringLiteralLike(specifier))
+            imports.push({ path: specifier.text, line: parsed.getLineAndCharacterOfPosition(specifier.getStart(parsed)).line + 1 });
+
+        ts.forEachChild(node, visit);
+    }
+
+
+    visit(parsed);
     return imports;
 }
 
@@ -98,7 +121,7 @@ async function checkBoundaries() {
         const sourcePath = relativeSourcePath(sourceFile);
         const source = await readFile(sourceFile, "utf8");
 
-        for (const imported of findImports(source)) {
+        for (const imported of findImports(source, sourcePath)) {
             const targetPath = resolveRelativeImport(sourcePath, imported.path);
             if (!targetPath)
                 continue;

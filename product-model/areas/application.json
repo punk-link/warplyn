@@ -62,7 +62,7 @@
             "status": "implemented",
             "owners": [
                 "packages/web/src/App.tsx",
-                "packages/web/src/application/QuickStartDialog.tsx",
+                "packages/web/src/QuickStartDialog.tsx",
                 "packages/web/src/settings/ApplicationSettings.tsx",
                 "packages/web/src/settings/components/AboutSettingsSection.tsx"
             ],
@@ -470,7 +470,7 @@
             "event": "The Author opens Warplyn.",
             "expected": ["The quick start opens with accessible controls and focus.", "An Author without a usable connection sees Add model key; an Author with one sees Start writing."],
             "forbidden": ["Blocking Article editing or storing credentials or Article data in browser storage."],
-            "evidence": { "kind": "automated", "path": "packages/web/src/application/QuickStartDialog.test.tsx" }
+            "evidence": { "kind": "automated", "path": "packages/web/src/QuickStartDialog.test.tsx" }
         },
         {
             "id": "application.quick-start-dismissal",
@@ -480,7 +480,7 @@
             "event": "The Author skips, closes, or presses Escape.",
             "expected": ["Only the versioned completion marker is stored.", "Later launches do not reopen the dialog automatically."],
             "forbidden": ["Changing an Article, Draft, Revision, or saved Settings."],
-            "evidence": { "kind": "automated", "path": "packages/web/src/application/QuickStartDialog.test.tsx" }
+            "evidence": { "kind": "automated", "path": "packages/web/src/QuickStartDialog.test.tsx" }
         },
         {
             "id": "application.quick-start-reopening",
@@ -490,7 +490,7 @@
             "event": "The Author selects Quick start in About Settings.",
             "expected": ["The dialog reopens without modifying the current Article or saved Settings."],
             "forbidden": ["Resetting the completion marker or creating Article history."],
-            "evidence": { "kind": "automated", "path": "packages/web/src/application/QuickStartDialog.test.tsx" }
+            "evidence": { "kind": "automated", "path": "packages/web/src/QuickStartDialog.test.tsx" }
         },
         {
             "id": "application.quick-start-ai-settings",
@@ -500,7 +500,7 @@
             "event": "The Author selects Add model key in the quick start.",
             "expected": ["The dialog closes and Providers Settings opens."],
             "forbidden": ["Handling or displaying a credential in the tutorial."],
-            "evidence": { "kind": "automated", "path": "packages/web/src/application/QuickStartDialog.test.tsx" }
+            "evidence": { "kind": "automated", "path": "packages/web/src/QuickStartDialog.test.tsx" }
         }
     ]
 }

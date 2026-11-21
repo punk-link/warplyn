@@ -1,10 +1,15 @@
 import { useLayoutEffect, useRef } from "react";
 import { useIntl } from "react-intl";
-import { Button, Dialog, IconButton } from "../ui/primitives.js";
-import { CloseIcon } from "../ui/icons.js";
+import { Button, Dialog, IconButton } from "./ui/primitives.js";
+import { CloseIcon } from "./ui/icons.js";
 
 
-export function QuickStartDialog({ hasUsableAiConnection, close, openModelSettings, startWriting }: { hasUsableAiConnection: boolean; close: () => void; openModelSettings: () => void; startWriting: () => void }) {
+export function QuickStartDialog({ hasUsableAiConnection, close, openModelSettings, startWriting }: {
+    hasUsableAiConnection: boolean;
+    close: () => void;
+    openModelSettings: () => void;
+    startWriting: () => void;
+}) {
     const intl = useIntl();
     const dialog = useRef<HTMLDialogElement>(null);
     const primaryAction = useRef<HTMLButtonElement>(null);

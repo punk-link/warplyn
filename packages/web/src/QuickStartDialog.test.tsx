@@ -3,8 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { defaultGeneralSettings, type ApplicationSettingsSnapshot } from "@skladno/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { App } from "../App.js";
-import { createFakeClient, resetWorkspaceTestEnvironment } from "../workspace/EditorialWorkspace.test-utils.js";
+import { App } from "./App.js";
+import { createFakeClient, resetWorkspaceTestEnvironment } from "./workspace/EditorialWorkspace.test-utils.js";
 
 
 describe("Quick start", () => {
@@ -22,7 +22,8 @@ describe("Quick start", () => {
 
     afterEach(resetWorkspaceTestEnvironment);
 
-    // Product scenarios: application.quick-start-initial-display, application.quick-start-dismissal, application.quick-start-reopening, application.quick-start-ai-settings
+    // Product scenarios: application.quick-start-initial-display, application.quick-start-dismissal
+    // Product scenarios: application.quick-start-reopening, application.quick-start-ai-settings
     it("guides first launch without changing workspace state", async () => {
         const user = userEvent.setup();
         const client = createFakeClient();
@@ -59,7 +60,15 @@ describe("Quick start", () => {
 
     it("waits for current connection readiness and starts writing from Settings", async () => {
         const client = createFakeClient();
-        client.getApplicationSettings = vi.fn().mockResolvedValue({ general: defaultGeneralSettings, connections: [{ id: "connection", provider: "openai", label: "Personal AI", credentialSource: { kind: "environment-variable", environmentVariableName: "AI_API_KEY" }, active: true, status: "connected" }], modelPreferences: { defaultModel: "", skillOverrides: {} }, backupPolicy: { schedule: "off", retention: { mode: "count", count: 7 } }, keyBindingOverrides: {} });
+        client.getApplicationSettings = vi.fn().mockResolvedValue({
+            general: defaultGeneralSettings,
+            connections: [{
+                id: "connection", provider: "openai", label: "Personal AI",
+                credentialSource: { kind: "environment-variable", environmentVariableName: "AI_API_KEY" }, active: true, status: "connected",
+            }],
+            modelPreferences: { defaultModel: "", skillOverrides: {} },
+            backupPolicy: { schedule: "off", retention: { mode: "count", count: 7 } }, keyBindingOverrides: {},
+        });
         const user = userEvent.setup();
         render(<App client={client} />);
         await user.click(await screen.findByRole("button", { name: "Start writing" }));
@@ -78,7 +87,15 @@ describe("Quick start", () => {
         render(<App client={client} />);
         expect(screen.queryByRole("dialog")).toBeNull();
         await waitFor(() => expect(pending.length).toBeGreaterThan(0));
-        pending.forEach((resolve) => resolve({ general: defaultGeneralSettings, connections: [{ id: "connection", provider: "openai", label: "Personal AI", credentialSource: { kind: "environment-variable", environmentVariableName: "AI_API_KEY" }, active: true, status: "connected" }], modelPreferences: { defaultModel: "", skillOverrides: {} }, backupPolicy: { schedule: "off", retention: { mode: "count", count: 7 } }, keyBindingOverrides: {} }));
+        pending.forEach((resolve) => resolve({
+            general: defaultGeneralSettings,
+            connections: [{
+                id: "connection", provider: "openai", label: "Personal AI",
+                credentialSource: { kind: "environment-variable", environmentVariableName: "AI_API_KEY" }, active: true, status: "connected",
+            }],
+            modelPreferences: { defaultModel: "", skillOverrides: {} },
+            backupPolicy: { schedule: "off", retention: { mode: "count", count: 7 } }, keyBindingOverrides: {},
+        }));
         expect(await screen.findByRole("button", { name: "Start writing" })).toBeTruthy();
     });
 
@@ -91,12 +108,19 @@ describe("Quick start", () => {
 
     it("refreshes readiness when reopened", async () => {
         const client = createFakeClient();
-        let settings: ApplicationSettingsSnapshot = { general: defaultGeneralSettings, connections: [], modelPreferences: { defaultModel: "", skillOverrides: {} }, backupPolicy: { schedule: "off", retention: { mode: "count", count: 7 } }, keyBindingOverrides: {} };
+        let settings: ApplicationSettingsSnapshot = {
+            general: defaultGeneralSettings, connections: [], modelPreferences: { defaultModel: "", skillOverrides: {} },
+            backupPolicy: { schedule: "off", retention: { mode: "count", count: 7 } }, keyBindingOverrides: {},
+        };
         client.getApplicationSettings = vi.fn().mockImplementation(() => Promise.resolve(settings));
         const user = userEvent.setup();
         render(<App client={client} />);
         await user.click(await screen.findByRole("button", { name: "Skip quick start" }));
-        settings = { ...settings, connections: [{ id: "connection", provider: "openai" as const, label: "Personal AI", credentialSource: { kind: "environment-variable" as const, environmentVariableName: "AI_API_KEY" }, active: true, status: "connected" as const }] };
+        settings = { ...settings, connections: [{
+            id: "connection", provider: "openai" as const, label: "Personal AI",
+            credentialSource: { kind: "environment-variable" as const, environmentVariableName: "AI_API_KEY" },
+            active: true, status: "connected" as const,
+        }] };
         await user.click((await screen.findAllByRole("button", { name: "Settings" })).at(-1)!);
         await user.selectOptions(screen.getByRole("combobox", { name: "Settings Navigation" }), "about");
         await user.click(screen.getByRole("button", { name: "Open quick start" }));

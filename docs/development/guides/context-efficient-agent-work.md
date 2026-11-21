@@ -20,6 +20,6 @@ Before implementing an existing plan, compare its assumptions and assignments wi
 
 Use agents when the user or an applicable instruction requests delegation and tasks have separate ownership. Record each task's owner, files, dependencies, deliverable, and verification. Give shared files one owner and integrate dependent edits in order. The main agent owns final verification. Follow the session's model and tool constraints; if a planned agent is unavailable, continue sequentially where authorized and report the limit.
 
-## Import-checker limitation
+## Renderer import boundaries
 
-The application-client-to-feature rule in `scripts/web-import-boundaries.mjs` still matches the former `application-client.ts` filename. Until that rule covers the current `application/` adapters, review their imports directly. Passing the checker alone does not prove this boundary. This is a maintenance limitation, not an architectural exception.
+`scripts/web-import-boundaries.mjs` checks production TypeScript modules, including static imports, re-exports, import types, and literal dynamic imports. Keep `packages/web/src/application/` for feature-independent clients and adapters; they cannot import Workspace, Settings, or application shell components. Application UI belongs outside that directory. The checker resolves relative module paths; review computed imports and any future path aliases separately.

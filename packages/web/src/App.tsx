@@ -9,7 +9,7 @@ import { useKeyBindingDispatcher } from "./key-bindings/KeyBindingProvider.js";
 import { AutomaticBackups } from "./settings/AutomaticBackups.js";
 import { FirstRunUpdatePermission } from "./settings/FirstRunUpdatePermission.js";
 import type { SettingsSection } from "./settings/settings-sections.js";
-import { QuickStartDialog } from "./application/QuickStartDialog.js";
+import { QuickStartDialog } from "./QuickStartDialog.js";
 import { desktopShellCommands, resolveTheme, type KeyBindingOverrides, type ResolvedTheme, type ThemePreference } from "@skladno/shared";
 
 const defaultClient = createRendererApplicationClient();

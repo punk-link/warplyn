@@ -20,6 +20,8 @@ The application shell chooses Workspace, Settings, and Style Profile screens. Wo
 
 UI accesses application behavior through the injected typed application client or narrow desktop clients. It does not call server routes or privileged modules directly. Cross-cutting renderer services do not import feature components or feature state.
 
+`packages/web/src/application/` owns feature-independent renderer clients and adapters. Application shell components, including Quick Start, live outside that directory. The import-boundary check enforces this direction for production modules.
+
 Prefer loading content on demand. List and navigation operations return only the metadata they need; full content loads when editing, previewing, comparing, or exporting requires it. Filter and limit data at the persistence layer before loading it into application memory or sending it to the renderer. Preserve Draft recovery, ignore stale loading responses, and provide clear loading and retry states. Eager loading is appropriate for small, bounded data or when it avoids noticeable interaction delays.
 
 Extract code for an independent caller, test contract, or visual responsibility. Keep local helpers beside their only caller and preserve established ownership when adding behavior. Reuse the typed ICU catalog, semantic tokens, shared UI primitives, and existing Article-changing state paths. Additional stores, clients, event buses, or runtime abstractions require a demonstrated need.
