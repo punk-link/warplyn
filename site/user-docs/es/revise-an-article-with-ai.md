@@ -8,6 +8,8 @@ Si ya sabes qué ocurre en la escena, pero el ritmo aún no funciona, puedes ped
 
 Warplyn es un espacio de escritura de código abierto y con almacenamiento local para Windows y Linux. Tus textos permanecen en tu ordenador. Para usar la IA necesitas conexión a Internet y una clave API de un proveedor compatible. Warplyn envía a ese proveedor el texto y el contexto necesarios para la solicitud. Se aplican sus tarifas y sus políticas de datos.
 
+Guarda las indicaciones recurrentes como [nota editorial](writing-and-articles.md#editor-notes) junto al pasaje. Revisa **Notas que acompañan esta solicitud** antes de enviar. Guardar una nota no inicia una solicitud.
+
 ## Empieza con una solicitud concreta
 
 Abre tu *artículo* y selecciona el pasaje que quieras revisar. En el cuadro de mensaje, describe qué debería mejorar y qué debe conservarse. Por ejemplo, al trabajar en «El río al anochecer»:

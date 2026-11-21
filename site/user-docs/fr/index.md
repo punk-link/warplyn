@@ -16,6 +16,7 @@ Avec Warplyn, vous rédigez et révisez vos *articles* sur votre ordinateur. Ret
 
 - [Réviser un article avec l’IA et vérifier chaque modification](revise-an-article-with-ai.md)
 - [Rédiger et organiser des articles](writing-and-articles.md)
+- [Conserver des consignes près d'un passage](writing-and-articles.md#editor-notes)
 - [Fichiers des articles](article-files.md)
 - [Assistant éditorial](editorial-assistant.md)
 - [Relire des articles](reviewing-articles.md)

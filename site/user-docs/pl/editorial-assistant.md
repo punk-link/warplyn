@@ -8,6 +8,8 @@ Korzystaj z asystenta redakcyjnego, gdy potrzebujesz pomocy w pisaniu, poprawian
 
 Zaznaczenie tekstu pozwala skupić poprawki na tym fragmencie. Definicje i wskazówki dotyczące stylu znajdujące się w pobliżu mogą pomóc asystentowi zinterpretować krótki fragment, ale ich udostępnienie ujawnia dostawcy także niezaznaczony tekst. Jeśli zaznaczysz fragment, a zlecenie wymaga tekstu *artykułu*, Warplyn wyśle zaznaczenie i do 500 znaków z każdej strony. Tekst wokół zaznaczenia służy wyłącznie jako kontekst. Zastąpić można wyłącznie zaznaczony fragment. Przed wysłaniem w polu wpisywania pojawi się wyjaśnienie; nie wysyłaj tekstu, jeśli sąsiadująca treść jest wrażliwa. Ogólne porady i zarządzanie *umiejętnościami* nie wymagają tego tekstu. Warplyn nigdy po cichu nie rozszerza kontekstu na cały *artykuł*. Jeśli kontekst jest niewystarczający, podaj odpowiedni fragment albo ponów prośbę z innym zaznaczeniem.
 
+Zachowaj powtarzające się wskazówki w [notatce redakcyjnej](writing-and-articles.md#editor-notes) przy fragmencie. Przed wysłaniem sprawdź **Notatki dołączone do tego żądania**. Samo zapisanie notatki nie rozpoczyna żądania.
+
 ::: tip Przykład
 Podczas poprawiania opowiadania zaznacz fragment i poproś: „Popraw płynność, zachowując punkt widzenia Any i spokojny nastrój. Nie dodawaj nowych wydarzeń”. Asystent przygotuje *propozycję* do sprawdzenia w widoku **Przegląd propozycji**. Możesz też poprosić o sprawdzenie, czy w rozdziale nie zmieniają się bez powodu czasy przeszły i teraźniejszy; uwagi z przeglądu stylu pojawią się na stronie **Profil stylu**.
 :::

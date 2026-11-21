@@ -6,6 +6,26 @@ description: "Escreva e organize artigos, entenda como os rascunhos são salvos 
 
 Um *artigo* é um texto da sua biblioteca do Warplyn. Enquanto você escreve, o aplicativo salva o *rascunho* para que você possa recuperá-lo. Uma *versão salva* guarda no histórico o texto como ele estava no momento em que foi salvo.
 
+## Guardar orientações junto a um trecho {#editor-notes}
+
+As *notas editoriais* guardam instruções ligadas a um trecho para futuros pedidos ao Assistente. Use-as para preservar o ponto de vista ou evitar que uma pista seja revelada cedo demais. Elas ficam separadas do texto do artigo e não aparecem no texto copiado ou exportado.
+
+Selecione o trecho no editor. Escolha **Adicionar nota editorial…** na barra de formatação ou no menu do botão direito. Escreva a instrução em **Orientações para o Assistente** e escolha **Salvar nota**. Salvar uma nota não inicia uma solicitação nem cria uma revisão do artigo.
+
+::: tip Exemplo de O rio ao anoitecer
+Selecione o parágrafo em que Ana percebe o barco: "Mantenha a incerteza de Ana sobre quem é o dono do barco. Preserve os sons do rio e não revele a identidade do passageiro." Depois, peça ao Assistente para melhorar o ritmo desse trecho.
+:::
+
+Abra **Notas editoriais** pela barra de formatação ou por um pequeno marcador numerado ao lado do texto. Passe o ponteiro sobre o marcador ou dê foco a ele pelo teclado para destacar o trecho temporariamente. Escolha a prévia na lista para localizar o trecho. Use **Editar nota…** e depois **Salvar nota** para alterar as orientações. O botão de remoção apaga apenas a nota.
+
+Salve as alterações antes de fechar a janela ou mudar de nota. Se houver alterações não salvas, cancele para continuar editando ou escolha **Descartar alterações** para descartá-las.
+
+O aviso **Precisa ser anexada novamente** significa que não é mais possível identificar o trecho original. A nota continua disponível, mas só volta a orientar o trabalho depois de ser anexada novamente. Feche a janela, selecione o novo trecho e reabra a nota por **Notas editoriais** e **Editar nota…**. Escolha **Anexar ao texto selecionado** e depois **Salvar nota**.
+
+As notas anexadas acompanham solicitações explícitas do Assistente que trabalham nos seus trechos. Com uma seleção, só são enviadas as notas de trechos que se sobrepõem ao texto selecionado. Confira **Notas que acompanham esta solicitação** no campo de mensagem antes de enviar. Escreva ali a tarefa imediata e deixe na nota as orientações que deseja manter.
+
+Para procedimentos reutilizáveis, consulte [Skills](skills.md); para amostras de escrita e orientações gerais, consulte [Perfil de estilo](style-profile.md).
+
 ## Escrever e salvar um artigo
 
 Escolha **Novo artigo** na biblioteca para começar. Renomeie o *artigo* pelo campo do título. Use a barra de formatação para aplicar títulos, listas, ênfase, links, citações e código. Ao colar texto formatado, o Warplyn mantém a formatação compatível e remove marcações inseguras ou sem suporte. O *artigo* é armazenado como Markdown, portanto layouts de página complexos e itens incorporados não são preservados.

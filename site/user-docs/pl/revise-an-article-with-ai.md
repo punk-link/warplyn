@@ -8,6 +8,8 @@ Jeśli przebieg sceny Ci odpowiada, ale tempo narracji sprawia wrażenie nierów
 
 Warplyn to lokalne środowisko do pisania na Windows i Linux, rozwijane jako open source. Twoje teksty pozostają na komputerze. Pomoc AI wymaga połączenia z internetem, obsługiwanego dostawcy i klucza API. Warplyn przekazuje dostawcy tekst i kontekst potrzebne do wykonania zlecenia. Obowiązują cennik i zasady ochrony danych dostawcy.
 
+Zachowaj powtarzające się wskazówki w [notatce redakcyjnej](writing-and-articles.md#editor-notes) przy fragmencie. Przed wysłaniem sprawdź **Notatki dołączone do tego żądania**. Samo zapisanie notatki nie rozpoczyna żądania.
+
 ## Zacznij od ukierunkowanego zlecenia
 
 Otwórz *artykuł* i zaznacz fragment, który chcesz poprawić. W polu wpisywania opisz, co należy ulepszyć i co zachować. Na przykład, pracując nad The River at Dusk:

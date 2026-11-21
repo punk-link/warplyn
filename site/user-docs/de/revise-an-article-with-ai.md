@@ -8,6 +8,8 @@ Wenn die Handlung einer Szene steht, das Tempo aber noch nicht stimmt, kann Ihne
 
 Warplyn ist ein quelloffener, lokal ausgerichteter Schreibarbeitsbereich für Windows und Linux. Ihre Texte bleiben auf Ihrem Computer. Für die KI-Unterstützung brauchen Sie eine Internetverbindung und einen API-Schlüssel eines unterstützten Anbieters. Warplyn sendet dem Anbieter den Text und den Kontext, die er für die Anfrage benötigt. Es gelten seine Preise und Datenschutzrichtlinien.
 
+Halte wiederkehrende Hinweise als [Redaktionsnotiz](writing-and-articles.md#editor-notes) an einer Passage fest. Prüfe vor dem Senden **Notizen zu dieser Anfrage**. Allein das Speichern einer Notiz startet keine Anfrage.
+
 ## Mit einer gezielten Anfrage beginnen
 
 Öffnen Sie Ihren *Artikel* und wählen Sie die zu überarbeitende Passage aus. Beschreiben Sie im Nachrichtenfeld, was verbessert werden und was erhalten bleiben soll. Zum Beispiel bei der Arbeit an „Der Fluss in der Abenddämmerung“:

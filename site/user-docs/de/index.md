@@ -16,6 +16,7 @@ In Warplyn schreiben und überarbeiten Sie *Artikel*. Ihre Texte bleiben auf Ihr
 
 - [Einen Artikel mit KI überarbeiten und jede Änderung prüfen](revise-an-article-with-ai.md)
 - [Artikel schreiben und organisieren](writing-and-articles.md)
+- [Hinweise zu einer Passage festhalten](writing-and-articles.md#editor-notes)
 - [Artikeldateien](article-files.md)
 - [Redaktioneller Assistent](editorial-assistant.md)
 - [Artikel prüfen](reviewing-articles.md)

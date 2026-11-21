@@ -16,6 +16,7 @@ No Warplyn, você escreve e revisa seus *artigos* no próprio computador. Veja c
 
 - [Revisar um artigo com IA e conferir cada alteração](revise-an-article-with-ai.md)
 - [Escrever e organizar artigos](writing-and-articles.md)
+- [Guardar orientações junto a um trecho](writing-and-articles.md#editor-notes)
 - [Arquivos de artigos](article-files.md)
 - [Assistente Editorial](editorial-assistant.md)
 - [Revisar artigos](reviewing-articles.md)

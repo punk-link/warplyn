@@ -16,6 +16,7 @@ description: "Установите Warplyn, пользуйтесь редакт�
 
 - [Редактировать статью с помощью ИИ и проверять каждое изменение](revise-an-article-with-ai.md)
 - [Писать статьи и организовывать их](writing-and-articles.md)
+- [Сохраните указания рядом с фрагментом](writing-and-articles.md#editor-notes)
 - [Файлы статей](article-files.md)
 - [Редакторский помощник](editorial-assistant.md)
 - [Проверка статей](reviewing-articles.md)

@@ -6,6 +6,26 @@ description: "Rédigez et organisez vos articles, comprenez l’enregistrement d
 
 Un *article* est un texte de votre bibliothèque Warplyn. L’application enregistre votre *brouillon* au fil de l’écriture pour que vous puissiez le récupérer. Une *version enregistrée* conserve dans l’historique le texte tel qu’il était au moment de l’enregistrement.
 
+## Conserver des consignes près d'un passage {#editor-notes}
+
+Les *notes éditoriales* conservent des consignes liées à un passage pour les prochaines demandes à l'Assistant. Elles permettent de préserver un point de vue ou de ne pas révéler un indice trop tôt. Elles restent séparées du texte de l'article et ne figurent pas dans le texte copié ou exporté.
+
+Sélectionnez le passage dans l'éditeur. Choisissez **Ajouter une note éditoriale…** dans la barre de mise en forme ou le menu contextuel. Saisissez votre consigne dans **Consignes pour l’Assistant**, puis choisissez **Enregistrer la note**. Enregistrer une note ne lance aucune demande et ne crée pas de révision de l'article.
+
+::: tip Exemple tiré de La rivière au crépuscule
+Sélectionnez le paragraphe où Ana aperçoit le bateau : "Ana doit rester incertaine de l'identité du propriétaire. Gardez les bruits de la rivière et ne révélez pas l'identité du passager." Demandez ensuite à l'Assistant d'améliorer le rythme de ce passage.
+:::
+
+Ouvrez **Notes éditoriales** dans la barre de mise en forme ou à l'aide d'un petit repère numéroté près du texte. Survolez un repère ou placez-y le focus au clavier pour surligner temporairement son passage. Dans la liste, choisissez l'aperçu pour retrouver le passage. Utilisez **Modifier la note…**, puis **Enregistrer la note** pour modifier la consigne. Le bouton de suppression retire uniquement la note.
+
+Enregistrez vos modifications avant de fermer la boîte de dialogue ou de changer de note. Si des modifications ne sont pas enregistrées, annulez pour continuer ou choisissez **Abandonner les modifications** pour les abandonner.
+
+La mention **À rattacher** signifie que le passage d'origine ne peut plus être identifié. La note reste disponible, mais ne guide plus le travail tant qu'elle n'est pas rattachée. Fermez la boîte de dialogue, sélectionnez le nouveau passage, puis rouvrez la note avec **Notes éditoriales** et **Modifier la note…**. Choisissez **Joindre au texte sélectionné**, puis **Enregistrer la note**.
+
+Les notes rattachées accompagnent les demandes explicites de l'Assistant qui portent sur leurs passages. Pour une sélection, seules les notes dont le passage recoupe cette sélection sont envoyées. Vérifiez **Notes accompagnant cette demande** dans le champ de demande avant l'envoi. Indiquez-y la tâche immédiate et gardez les consignes durables dans la note.
+
+Pour les procédures réutilisables, consultez [Skills](skills.md). Pour les exemples d'écriture et les consignes générales, consultez [Profil de style](style-profile.md).
+
 ## Rédiger et enregistrer un article
 
 Choisissez **Nouvel article** dans la bibliothèque pour commencer. Renommez l’*article* dans son champ de titre. Utilisez la barre de mise en forme pour ajouter des titres, des listes, de l’emphase, des liens, des citations et du code. Lorsque vous collez du texte mis en forme, Warplyn conserve les formats pris en charge et supprime les balises non sûres ou non prises en charge. Warplyn enregistre l’*article* en Markdown. Les mises en page complexes et les éléments intégrés ne sont donc pas conservés.

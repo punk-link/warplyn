@@ -16,6 +16,7 @@ Con Warplyn puedes escribir y revisar *artículos* en tu ordenador. Aquí encont
 
 - [Revisar un artículo con IA y comprobar cada cambio](revise-an-article-with-ai.md)
 - [Escribir y organizar artículos](writing-and-articles.md)
+- [Guardar indicaciones junto a un pasaje](writing-and-articles.md#editor-notes)
 - [Archivos de artículos](article-files.md)
 - [Asistente editorial](editorial-assistant.md)
 - [Revisar artículos](reviewing-articles.md)

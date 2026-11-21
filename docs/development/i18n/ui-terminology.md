@@ -12,6 +12,15 @@ Core verification checks this table after typecheck builds the shared package. R
 
 | Message ID | English | de | es | fr | it | ja | ko | pl | pt-BR | ru | zh-CN |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `notes.title` | Editor notes | Redaktionsnotizen | Notas editoriales | Notes éditoriales | Note editoriali | 編集メモ | 편집 메모 | Notatki redakcyjne | Notas editoriais | Редакторские заметки | 编辑备注 |
+| `notes.add` | Add editor note… | Redaktionsnotiz hinzufügen… | Añadir nota editorial… | Ajouter une note éditoriale… | Aggiungi nota editoriale… | 編集メモを追加… | 편집 메모 추가… | Dodaj notatkę redakcyjną… | Adicionar nota editorial… | Добавить редакторскую заметку… | 添加编辑备注… |
+| `notes.guidance` | Guidance for the Assistant | Anweisungen für den Assistenten | Indicaciones para el Asistente | Consignes pour l’Assistant | Indicazioni per l’Assistente | アシスタントへの指示 | 어시스턴트 지침 | Wskazówki dla Asystenta | Orientações para o Assistente | Указания для Ассистента | 给助手的指示 |
+| `notes.save` | Save note | Notiz speichern | Guardar nota | Enregistrer la note | Salva nota | メモを保存 | 메모 저장 | Zapisz notatkę | Salvar nota | Сохранить заметку | 保存备注 |
+| `notes.edit` | Edit note… | Notiz bearbeiten… | Editar nota… | Modifier la note… | Modifica nota… | メモを編集… | 메모 편집… | Edytuj notatkę… | Editar nota… | Изменить заметку… | 编辑备注… |
+| `notes.detached` | Needs reattachment | Erneut zuordnen | Necesita vincularse de nuevo | À rattacher | Da ricollegare | 再添付が必要です | 다시 연결해야 함 | Wymaga ponownego przypisania | Precisa ser anexada novamente | Нужно прикрепить заново | 需要重新关联 |
+| `notes.reattach` | Attach to selected text | An ausgewählten Text anhängen | Adjuntar al texto seleccionado | Joindre au texte sélectionné | Allega al testo selezionato | 選択したテキストに添付 | 선택한 텍스트에 첨부 | Dołącz do zaznaczonego tekstu | Anexar ao texto selecionado | Прикрепить к выделенному тексту | 附加到所选文本 |
+| `notes.discardChanges` | Discard changes | Änderungen verwerfen | Descartar cambios | Abandonner les modifications | Scarta modifiche | 変更を破棄 | 변경 사항 버리기 | Odrzuć zmiany | Descartar alterações | Отменить изменения | 放弃更改 |
+| `notes.included` | Notes accompanying this request | Notizen zu dieser Anfrage | Notas que acompañan esta solicitud | Notes accompagnant cette demande | Note che accompagnano questa richiesta | このリクエストに添付するメモ | 이 요청에 첨부되는 메모 | Notatki dołączone do tego żądania | Notas que acompanham esta solicitação | Заметки к этому запросу | 随此请求附加的备注 |
 | `articleFiles.download` | Download | Herunterladen | Descargar | Télécharger | Scarica | ダウンロード | 다운로드 | Pobierz | Download | Скачать | 下载 |
 | `articleFiles.downloadStarted` | Article download started | Download des Artikels gestartet | Descarga del artículo iniciada | Téléchargement de l’article lancé | Download dell'articolo avviato | 記事のダウンロードを開始しました | 글 다운로드를 시작했습니다 | Rozpoczęto pobieranie artykułu | O download do artigo foi iniciado | Скачивание статьи началось | 已开始下载文章 |
 | `articleFiles.format` | File format | Dateiformat | Formato de archivo | Format du fichier | Formato del file | ファイル形式 | 파일 형식 | Format pliku | Formato de arquivo | Формат файла | 文件格式 |

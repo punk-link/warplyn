@@ -20,6 +20,8 @@ Select **Send editorial request**. Warplyn sends the selection with up to 500 ch
 
 *An example request in the Composer. The screenshot shows an earlier Skill name.*
 
+If a passage has instructions you will need again, [save them as an Editor note](writing-and-articles.md#keep-passage-guidance-in-editor-notes). For example, attach "Do not reveal the passenger's identity" to Ana's description of the boat. The note stays outside the prose and guides later Assistant work on that passage.
+
 ## Compare the original and proposed wording
 
 When the request finishes, open **Proposal Review** from its result card. Compare **Original** and **Proposed**, checking that the revision keeps the scene's events, point of view, and voice.

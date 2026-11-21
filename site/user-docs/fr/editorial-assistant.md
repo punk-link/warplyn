@@ -8,6 +8,8 @@ Utilisez l’assistant éditorial pour rédiger, réviser, vérifier les faits, 
 
 La sélection de texte permet de limiter les modifications au passage choisi. Les définitions et les indices sur le ton dans les phrases voisines peuvent aider l’assistant à comprendre un court passage. Votre fournisseur peut donc recevoir du texte qui se trouve en dehors de la sélection. Si la demande nécessite le texte de l’*article*, Warplyn transmet le passage sélectionné et jusqu’à 500 caractères de chaque côté. Le texte voisin sert uniquement de contexte. Seul le passage sélectionné peut être remplacé. Une explication s’affiche dans la zone de saisie avant l’envoi. N’envoyez pas la demande si le texte voisin est sensible. Les conseils généraux et la gestion des *compétences* ne nécessitent pas ce texte. Warplyn n’élargit jamais discrètement la sélection à tout l’*article*. Si le contexte ne suffit pas, fournissez explicitement le passage pertinent ou faites une nouvelle demande avec une autre sélection.
 
+Gardez les consignes récurrentes dans une [note éditoriale](writing-and-articles.md#editor-notes) liée au passage. Vérifiez **Notes accompagnant cette demande** avant l'envoi. Enregistrer une note ne lance pas de demande.
+
 ::: tip Exemple
 Pour réviser une nouvelle, sélectionnez un passage et demandez : « Améliore la fluidité en gardant le point de vue d’Ana et l’atmosphère calme. N’ajoute aucun événement. » L’assistant prépare une *proposition* dans **Examen des propositions**. Vous pouvez aussi lui demander de repérer les changements de temps entre le passé et le présent dans un chapitre ; les *observations* de révision du style apparaissent dans **Profil de style**.
 :::

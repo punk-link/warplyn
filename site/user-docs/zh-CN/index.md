@@ -16,6 +16,7 @@ description: "安装 Warplyn，使用写作助理，配置 AI 提供商，并通
 
 - [使用 AI 修改文章并逐项审阅更改](revise-an-article-with-ai.md)
 - [撰写和整理文章](writing-and-articles.md)
+- [在段落旁保留写作要求](writing-and-articles.md#editor-notes)
 - [文章文件](article-files.md)
 - [写作助理](editorial-assistant.md)
 - [审阅文章](reviewing-articles.md)

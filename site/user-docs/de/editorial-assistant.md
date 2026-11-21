@@ -8,6 +8,8 @@ Nutzen Sie den Redaktionellen Assistenten, wenn Sie Hilfe beim Formulieren, Übe
 
 Wenn Sie Text auswählen, bleiben Änderungen auf diese Passage beschränkt. Definitionen und sprachliche Merkmale in den umliegenden Sätzen können dem Assistenten helfen, eine kurze Passage zu verstehen. Dafür kann Ihr Anbieter auch Text außerhalb der Auswahl erhalten. Wenn eine Anfrage Text aus dem *Artikel* benötigt, sendet Warplyn die ausgewählte Passage und bis zu 500 Zeichen auf jeder Seite. Der umliegende Text dient nur als Kontext. Ersetzt werden kann nur die ausgewählte Passage. Im Nachrichtenfeld wird vor dem Senden erklärt, welche Inhalte geteilt werden. Senden Sie die Anfrage nicht, wenn der umgebende Text vertraulich ist. Allgemeine Beratung und die Verwaltung von *Fähigkeiten* benötigen diesen Text nicht. Warplyn erweitert den Kontext niemals stillschweigend auf den gesamten *Artikel*. Reicht der Kontext nicht aus, fügen Sie die relevante Passage ausdrücklich ein oder stellen Sie mit einer anderen Auswahl eine neue Anfrage.
 
+Halte wiederkehrende Hinweise als [Redaktionsnotiz](writing-and-articles.md#editor-notes) an einer Passage fest. Prüfe vor dem Senden **Notizen zu dieser Anfrage**. Allein das Speichern einer Notiz startet keine Anfrage.
+
 ::: tip Beispiel
 Wählen Sie beim Überarbeiten einer Kurzgeschichte eine Passage aus und fragen Sie: „Verbessere den Lesefluss, aber behalte Anas Perspektive und die ruhige Stimmung bei. Füge keine neuen Ereignisse hinzu.“ Der Assistent erstellt einen *Vorschlag* für die **Vorschlagsprüfung**. Sie können ihn auch bitten, ein Kapitel auf Wechsel zwischen Vergangenheit und Gegenwart zu prüfen; Hinweise zur Stilprüfung erscheinen im **Stilprofil**.
 :::

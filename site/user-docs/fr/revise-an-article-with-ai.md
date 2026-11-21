@@ -8,6 +8,8 @@ Si le déroulement d’une scène vous convient mais que son rythme vous gêne, 
 
 Warplyn est un espace d’écriture open source qui conserve vos données localement, pour Windows et Linux. Vos textes restent sur votre ordinateur. Pour utiliser l’IA, vous avez besoin d’une connexion Internet et d’une clé API auprès d’un fournisseur pris en charge. Warplyn lui transmet le texte et le contexte nécessaires à votre demande. Les tarifs et les règles de traitement des données du fournisseur s’appliquent.
 
+Gardez les consignes récurrentes dans une [note éditoriale](writing-and-articles.md#editor-notes) liée au passage. Vérifiez **Notes accompagnant cette demande** avant l'envoi. Enregistrer une note ne lance pas de demande.
+
 ## Commencez par une demande précise
 
 Ouvrez votre *article* et sélectionnez le passage à réviser. Dans la zone de saisie, indiquez ce qui doit être amélioré et ce qui doit rester inchangé. Par exemple, pour travailler sur « La rivière au crépuscule » :

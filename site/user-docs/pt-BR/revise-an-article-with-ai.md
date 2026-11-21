@@ -8,6 +8,8 @@ Quando os acontecimentos de uma cena funcionam, mas a leitura perde o ritmo, o a
 
 O Warplyn é um espaço de escrita de código aberto e local, para Windows e Linux. Seus textos permanecem no computador. Para usar o assistente de IA, conecte-se à internet e configure um provedor compatível com sua chave de API. O Warplyn envia ao provedor o texto e o contexto necessários para a solicitação, conforme os preços e as políticas de dados do provedor.
 
+Guarde orientações recorrentes em uma [nota editorial](writing-and-articles.md#editor-notes) junto ao trecho. Confira **Notas que acompanham esta solicitação** antes de enviar. Salvar uma nota não inicia uma solicitação.
+
 ## Começar com um pedido específico
 
 Abra seu *artigo* e selecione a passagem que deseja revisar. No campo de mensagem, descreva o que deve melhorar e o que precisa ser mantido. Por exemplo, ao trabalhar em A correnteza ao entardecer:
