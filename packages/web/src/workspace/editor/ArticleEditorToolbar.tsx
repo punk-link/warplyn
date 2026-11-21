@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { $createCodeNode, CodeNode } from "@lexical/code";
 import { $isLinkNode } from "@lexical/link";
 import { $insertList, $isListNode, $removeList, type ListType } from "@lexical/list";
@@ -93,7 +93,7 @@ function getCurrentListType(editor: LexicalEditor): ListType | undefined {
 }
 
 
-export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEditor; openLink: () => void }) {
+export function ArticleEditorToolbar({ editor, openLink, children }: { editor: LexicalEditor; openLink: () => void; children?: ReactNode }) {
     const intl = useIntl();
     const [block, setBlock] = useState<BlockType>("paragraph");
     const [formats, setFormats] = useState<Set<string>>(new Set());
@@ -184,7 +184,7 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
 
 
     const handleKeyNavigation = (event: KeyboardEvent<HTMLDivElement>) => {
-        const items = [...event.currentTarget.querySelectorAll<HTMLElement>("a,button,select")];
+        const items = [...event.currentTarget.querySelectorAll<HTMLElement>("a,button:not(:disabled),select:not(:disabled)")];
         const index = items.indexOf(document.activeElement as HTMLElement);
 
         if (event.key === "Home") {
@@ -286,6 +286,10 @@ export function ArticleEditorToolbar({ editor, openLink }: { editor: LexicalEdit
                 onClick={() => applyList("number")}>
                 <NumberedListIcon />
             </IconButton>
+            {children && <>
+                <span aria-hidden="true" className="mx-2 h-6 shrink-0 border-l border-border" />
+                {children}
+            </>}
         </div>
     </div>;
 }

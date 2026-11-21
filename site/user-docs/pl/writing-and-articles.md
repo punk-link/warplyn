@@ -6,6 +6,26 @@ description: "Pisz i porządkuj artykuły, poznaj sposób zapisywania szkiców o
 
 *Artykuł* to tekst w bibliotece Warplyn. Podczas pisania Warplyn zapisuje *szkic*, żeby można go było odzyskać. *Zapisana wersja* zachowuje w historii artykułu tekst z chwili zapisu.
 
+## Zachowaj wskazówki przy fragmencie {#editor-notes}
+
+*Notatki redakcyjne* pozwalają zapisać przy fragmencie wskazówki do późniejszych zadań Asystenta. Przydają się, gdy chcesz zachować punkt widzenia lub nie zdradzić wskazówki zbyt wcześnie. Są przechowywane oddzielnie od tekstu artykułu i nie trafiają do kopiowanego ani eksportowanego tekstu.
+
+Zaznacz fragment w edytorze. Wybierz **Dodaj notatkę redakcyjną…** na pasku formatowania lub w menu pod prawym przyciskiem myszy. Wpisz instrukcję w polu **Wskazówki dla Asystenta**, a następnie wybierz **Zapisz notatkę**. Zapisanie notatki nie rozpoczyna żądania ani nie tworzy rewizji artykułu.
+
+::: tip Przykład z Rzeki o zmierzchu
+Zaznacz akapit, w którym Ana zauważa łódź: "Ana nadal nie wie, do kogo należy łódź. Zachowaj odgłosy rzeki i nie ujawniaj tożsamości pasażera." Później poproś Asystenta o poprawienie tempa tego fragmentu.
+:::
+
+Otwórz **Notatki redakcyjne** z paska formatowania lub małego numerowanego znacznika obok tekstu. Najedź na znacznik lub ustaw na nim fokus klawiaturą, aby chwilowo podświetlić fragment. Wybierz podgląd na liście, aby przejść do tego miejsca. Użyj **Edytuj notatkę…**, a potem **Zapisz notatkę**, aby zmienić wskazówki. Przycisk usuwania usuwa tylko notatkę.
+
+Zapisz zmiany przed zamknięciem okna lub przejściem do innej notatki. Jeśli są niezapisane zmiany, anuluj, aby kontynuować edycję, albo wybierz **Odrzuć zmiany**, aby je odrzucić.
+
+Komunikat **Wymaga ponownego przypisania** oznacza, że nie można już rozpoznać pierwotnego fragmentu. Notatka pozostaje dostępna, ale nie kieruje pracą do czasu ponownego dołączenia. Zamknij okno, zaznacz nowy fragment i ponownie otwórz notatkę przez **Notatki redakcyjne** i **Edytuj notatkę…**. Wybierz **Dołącz do zaznaczonego tekstu**, a następnie **Zapisz notatkę**.
+
+Dołączone notatki towarzyszą wyraźnym żądaniom Asystenta dotyczącym ich fragmentów. Przy zaznaczeniu wysyłane są tylko notatki do fragmentów nakładających się na zaznaczony tekst. Przed wysłaniem sprawdź **Notatki dołączone do tego żądania** w polu wiadomości. Wpisz tam bieżące zadanie, a w notatce zachowaj wskazówki na później.
+
+Procedury do ponownego użycia opisano w [Skills](skills.md), a próbki tekstu i ogólne wskazówki w [Profilu stylu](style-profile.md).
+
 ## Pisz i zapisuj artykuł
 
 Wybierz **Nowy artykuł** w bibliotece, aby rozpocząć. Zmień nazwę *artykułu* w polu tytułu. Za pomocą paska formatowania dodawaj nagłówki, listy, wyróżnienia, łącza, cytaty i kod. Po wklejeniu tekstu sformatowanego Warplyn zachowuje obsługiwane formatowanie i usuwa niebezpieczne lub nieobsługiwane znaczniki. *Artykuł* jest zapisywany jako Markdown, więc złożone układy stron i osadzone elementy nie zostaną przeniesione.

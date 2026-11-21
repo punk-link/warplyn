@@ -25,6 +25,7 @@ test("check mode detects stale tables without writing and accepts current LF and
     const current = readFileSync(guidePath, "utf8");
     assert.ok(current.includes("| Message ID | English | de | es | fr | it | ja | ko | pl | pt-BR | ru | zh-CN |"));
     assert.ok(current.endsWith("## Variable labels\n\nKeep this prose.\n"));
+    assert.ok(!current.includes("`article.defaultTitle`"));
     assert.equal(runGenerator(root, ["--check"]).status, 0);
     assert.equal(readFileSync(guidePath, "utf8"), current);
     const windowsText = current.replaceAll("\n", "\r\n");

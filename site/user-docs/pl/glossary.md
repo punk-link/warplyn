@@ -91,6 +91,7 @@ W rozwiniętym układzie stopka na dole panelu biblioteki artykułów to **obsza
 
 ### Terminy interfejsu
 
+- **Notatka redakcyjna**: wskazówki autora dołączone do fragmentu *artykułu* i zapisane oddzielnie od jego tekstu. Odpowiednie dołączone notatki kierują pracą asystenta, gdy autor zleca mu pracę nad danym fragmentem. Nie są uwzględniane w kopiowanym ani eksportowanym tekście artykułu. Jeśli nie można rozpoznać fragmentu, notatkę należy ponownie przypisać.
 - **Obszar roboczy redakcji**: główny ekran autora zawierający panel biblioteki artykułów, obszar roboczy artykułu i panel asystenta redakcyjnego.
 - **Panel biblioteki artykułów**: wyszukiwanie artykułów, lista artykułów i punkty wejścia na poziomie obszaru roboczego. Po zwinięciu staje się **paskiem nawigacyjnym**; tymczasowa wersja na małym ekranie to **wysuwany panel nawigacyjny**.
 - **Obszar narzędzi panelu biblioteki artykułów**: stopka rozwiniętego panelu biblioteki artykułów zawierająca Profil stylu, Ustawienia, odpowiedni element sterujący aktualizacją oraz kod języka bieżącego artykułu i etykietę **Lokalnie**.

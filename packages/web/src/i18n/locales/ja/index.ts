@@ -1,106 +1,71 @@
 import type { MessageId } from "../../messages.js";
-import { jaWorkspace } from "./workspace.js";
-import { jaAssistant } from "./assistant.js";
-import { jaReview } from "./review.js";
-import { jaSettings } from "./settings.js";
-import { jaData } from "./data.js";
-import { jaErrors } from "./errors.js";
-import { jaTypography } from "./typography.js";
-import { jaPreview } from "./preview.js";
-import { getElectronMessagesFor, INTERFACE_LOCALE } from "@skladno/shared";
+import { articleMessages } from "./article.js";
+import { articleFilesMessages } from "./articleFiles.js";
+import { articleHeaderMessages } from "./articleHeader.js";
+import { articleWorkspaceMessages } from "./articleWorkspace.js";
+import { assistantMessages } from "./assistant.js";
+import { draftConflictMessages } from "./draftConflict.js";
+import { draftSaveMessages } from "./draftSave.js";
+import { editorMessages } from "./editor.js";
+import { electronMessages } from "./electron.js";
+import { errorsMessages } from "./errors.js";
+import { keyBindingsMessages } from "./keyBindings.js";
+import { languagesMessages } from "./languages.js";
+import { navigationMessages } from "./navigation.js";
+import { notesMessages } from "./notes.js";
+import { notificationsMessages } from "./notifications.js";
+import { operationsMessages } from "./operations.js";
+import { previewMessages } from "./preview.js";
+import { publishingMessages } from "./publishing.js";
+import { quickStartMessages } from "./quickStart.js";
+import { revisionsMessages } from "./revisions.js";
+import { settingsUpdatesMessages } from "./settings-updates.js";
+import { settingsBackupsMessages } from "./settings-backups.js";
+import { settingsMessages } from "./settings.js";
+import { skillsMessages } from "./skills.js";
+import { spellingMessages } from "./spelling.js";
+import { statusMessages } from "./status.js";
+import { styleProfileMessages } from "./styleProfile.js";
+import { telemetryMessages } from "./telemetry.js";
+import { translationLanguagesMessages } from "./translationLanguages.js";
+import { typographyMessages } from "./typography.js";
+import { uiMessages } from "./ui.js";
+import { viewsMessages } from "./views.js";
+import { workspaceMessages } from "./workspace.js";
 
-/** Complete translation draft; native-language review is pending. */
+
 export const ja: Record<MessageId, string> = {
-    ...getElectronMessagesFor(INTERFACE_LOCALE.JA),
-    ...jaWorkspace,
-    ...jaAssistant,
-    ...jaReview,
-    ...jaSettings,
-    ...jaData,
-    ...jaErrors,
-    ...jaTypography,
-    ...jaPreview,
-    "article.defaultTitle": "無題の記事",
-    "articleFiles.save": "ファイルに保存",
-    "articleFiles.load": "ファイルから読み込む",
-    "articleFiles.menuSave": "ファイルに保存…",
-    "articleFiles.menuLoad": "ファイルから読み込む…",
-    "articleFiles.saved": "記事をファイルに保存しました",
-    "articleFiles.downloadStarted": "記事のダウンロードを開始しました",
-    "articleFiles.loaded": "ファイルから記事を読み込みました",
-    "articleFiles.loadFailed": "記事を読み込めませんでした。読み取り可能なMarkdown、HTML、DOCX、RTFファイルを選んで、もう一度お試しください。",
-    "articleFiles.saveFailed": "記事をファイルに保存できませんでした。書き込み可能な保存先を選んで、もう一度お試しください。",
-    "articleFiles.invalid": "有効な.md、.html、.docx、.rtfファイルを選んでください。MarkdownとHTMLの文字コードはUTF-8が必要です。",
-    "articleFiles.format": "ファイル形式",
-    "articleFiles.formatMarkdown": "Markdown (.md)",
-    "articleFiles.formatHtml": "HTML (.html)",
-    "articleFiles.formatDocx": "Word (.docx)",
-    "articleFiles.formatRtf": "リッチテキスト (.rtf)",
-    "articleFiles.review": "インポートする記事を確認",
-    "articleFiles.import": "インポート",
-    "articleFiles.download": "ダウンロード",
-    "articleFiles.tooLarge": "記事ファイルが10 MiBの上限を超えています。小さいファイルを選ぶか、記事を短くしてから保存してください。",
-    "workspace.tabs.write": "執筆",
-    "workspace.tabs.proposal": "提案",
-    "workspace.tabs.revisions": "履歴",
-    "workspace.tabs.factCheck": "事実確認",
-    "workspace.tabs.styleProfile": "文体",
-    "styleProfile.summary": "バージョン {version}{separator}確信度: {confidence}",
-    "styleProfile.none": "プロファイルはまだ作成されていません",
-    "styleProfile.outdated": "更新が必要",
-    "styleProfile.include": "含める",
-    "styleProfile.rules": "全体の文体ルール",
-    "typography.title": "組版ルール",
-    "typography.empty": "組版ルールはありません。句読点や空白を確認するためのルールを追加してください。",
-    "typography.add": "ルールを追加",
-    "typography.remove": "削除",
-    "typography.save": "保存",
-    "typography.edit": "編集",
-    "typography.closeEditor": "閉じる",
-    "typography.savedRule": "保存済み",
-    "typography.unsavedRule": "未保存",
-    "typography.check": "組版をチェック",
-    "typography.ruleNumber": "ルール {number}",
-    "typography.quotes": "引用符",
-    "typography.dash": "文章中のダッシュ",
-    "typography.ellipsis": "三点リーダー",
-    "typography.ellipsisSingle": "三点リーダー1文字、…",
-    "typography.ellipsisThree": "ピリオド3つ、...",
-    "typography.horizontal": "連続する空白",
-    "typography.outer": "外側の引用符",
-    "typography.nested": "内側の引用符",
-    "typography.spacing": "空白",
-    "typography.withSpaces": "空白あり",
-    "typography.withoutSpaces": "空白なし",
-    "settings.spelling": "スペルチェック",
-    "spelling.dictionaries": "言語辞書",
-    "spelling.preload": "オフライン執筆の準備",
-    "spelling.download": "辞書をダウンロード",
-    "spelling.languageVariant": "{language} ({code})",
-    "spelling.filterLanguages": "言語を絞り込む",
-    "spelling.noLanguages": "該当する言語はありません。",
-    "spelling.unverified": "利用可能",
-    "spelling.unloaded": "未読み込み",
-    "spelling.unload": "読み込みを解除",
-    "spelling.unloadLanguage": "{language}の辞書の読み込みを解除",
-    "spelling.preparing": "準備中",
-    "spelling.ready": "ダウンロード済み",
-    "spelling.failed": "利用できません。もう一度ダウンロードしてください。",
-    "spelling.personal": "ユーザー辞書",
-    "spelling.addWords": "追加する単語",
-    "spelling.add": "単語を追加",
-    "spelling.remove": "削除",
-    "spelling.removeWord": "ユーザー辞書から「{word}」を削除",
-    "spelling.savedWords": "登録済みの単語",
-    "spelling.search": "ユーザー辞書を検索",
-    "spelling.noWords": "該当する登録単語はありません。",
-    "spelling.loading": "スペルチェック設定を読み込み中…",
-    "spelling.loaded": "スペルチェック設定を読み込みました。",
-    "spelling.loadFailed": "スペルチェック設定を読み込めませんでした。もう一度読み込んでください。",
-    "spelling.retry": "再試行",
-    "spelling.working": "スペルチェック設定を更新中…",
-    "spelling.updated": "スペルチェック設定を更新しました。",
-    "settings.assistantRequestTimeout": "リクエストの制限時間",
-    "settings.requestTimeoutMinutes": "{minutes, plural, other {#分}}",
-    "settings.requestTimeoutUnlimited": "無制限",
+    ...articleMessages,
+    ...articleFilesMessages,
+    ...articleHeaderMessages,
+    ...articleWorkspaceMessages,
+    ...assistantMessages,
+    ...draftConflictMessages,
+    ...draftSaveMessages,
+    ...editorMessages,
+    ...electronMessages,
+    ...errorsMessages,
+    ...keyBindingsMessages,
+    ...languagesMessages,
+    ...navigationMessages,
+    ...notesMessages,
+    ...notificationsMessages,
+    ...operationsMessages,
+    ...previewMessages,
+    ...publishingMessages,
+    ...quickStartMessages,
+    ...revisionsMessages,
+    ...settingsMessages,
+    ...settingsBackupsMessages,
+    ...settingsUpdatesMessages,
+    ...skillsMessages,
+    ...spellingMessages,
+    ...statusMessages,
+    ...styleProfileMessages,
+    ...telemetryMessages,
+    ...translationLanguagesMessages,
+    ...typographyMessages,
+    ...uiMessages,
+    ...viewsMessages,
+    ...workspaceMessages,
 };

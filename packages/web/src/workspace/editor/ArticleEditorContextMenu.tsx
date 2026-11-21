@@ -11,11 +11,13 @@ import { ArticleEditorToolbar } from "./ArticleEditorToolbar.js";
 import { getDesktopSpellingClient } from "../../application/desktop-client.js";
 import { useNativeEditorMenu } from "./use-native-editor-menu.js";
 import { readEditorClipboard } from "./read-editor-clipboard.js";
+import { EditorNotesContext } from "./editor-notes-context.js";
 
 
 export function ArticleEditorContextMenu({ editor, openLink }: { editor: LexicalEditor; openLink: () => void }) {
     const intl = useIntl();
     const catalog = useContext(EditorSkillContext);
+    const notes = useContext(EditorNotesContext);
     const refresh = catalog?.refresh;
     const [position, setPosition] = useState<{ top: number; left: number }>();
     const [submenu, setSubmenu] = useState<"skills" | "formatting">();
@@ -115,6 +117,7 @@ export function ArticleEditorContextMenu({ editor, openLink }: { editor: Lexical
                 setSubmenu(undefined);
             }
         };
+
         document.addEventListener("pointerdown", dismiss);
         return () => document.removeEventListener("pointerdown", dismiss);
     }, [position]);
@@ -209,6 +212,18 @@ export function ArticleEditorContextMenu({ editor, openLink }: { editor: Lexical
             }
         }}>
         {!submenu && <>
+            {notes && (
+                <button
+                    role="menuitem"
+                    className={itemClass}
+                    disabled={!hasSelection}
+                    onClick={() => {
+                        restore();
+                        close(false);
+                        notes.add();
+                    }}>{intl.formatMessage({ id: "notes.add" })}
+                </button>
+            )}
             <button
                 role="menuitem"
                 className={itemClass}

@@ -12,6 +12,7 @@ export interface StreamContext {
     requestId: string;
     editorial: {
         authorContext: string;
+        editorNoteGuidance?: string;
         skillId?: string;
         skill?: SkillGuidance;
         operation?: Extract<EditorialOperation, "thesis_to_narrative" | "flow_revision">;

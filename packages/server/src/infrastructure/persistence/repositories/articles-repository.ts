@@ -18,6 +18,7 @@ import { validateProposalAcceptance } from "./proposal-acceptance-validation.js"
 import { listArticleSummaries, listRevisionSummaries } from "./article-summary-queries.js";
 import { setGeneratedArticleTitle } from "./article-title-query.js";
 import { discardArticleDraft, saveArticleDraft } from "./article-draft-operations.js";
+import { changeEditorNote, listEditorNotes } from "./editor-note-queries.js";
 
 
 export class ArticlesRepository {
@@ -106,7 +107,7 @@ export class ArticlesRepository {
 
     getArticle(articleId: string): Article | undefined {
         const row = this.database.prepare(`${articleSelect} WHERE a.id = ?`).get(articleId) as Row | undefined;
-        return row && mapArticleFromRow(row);
+        return row && { ...mapArticleFromRow(row), editorNotes: listEditorNotes(this.database, articleId) };
     }
 
 
@@ -120,6 +121,14 @@ export class ArticlesRepository {
 
         if (input.publishingProfileId !== undefined && !isPublishLimitProfileId(input.publishingProfileId))
             throwUnsupportedPublishingProfile();
+
+        if (input.editorNoteChange !== undefined) {
+            if (Object.keys(input).length !== 1)
+                throwInvalidArticleRequest();
+
+            changeEditorNote(this.database, articleId, input.editorNoteChange);
+            return this.getArticle(articleId)!;
+        }
 
         const assignments: string[] = [];
         const values: string[] = [];

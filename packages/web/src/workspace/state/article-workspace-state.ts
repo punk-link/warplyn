@@ -228,7 +228,8 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
 
     function updateRevision(articleId: string, revision: ArticleRevision) {
         draftLifecycle.send({ articleId, event: { type: "promoted", revisionId: revision.id, content: revision.content } });
-        replaceArticles((items) => items.map((article) => article.id === articleId ? withPromotedRevision(article, revision) : article));
+        replaceArticles((items) => items.map((article) => article.id === articleId
+            ? withPromotedRevision(loadedArticles.current.get(articleId) ?? article, revision) : article));
         notifyTitleGeneration(revision.titleGeneration, intl, notify);
     }
 

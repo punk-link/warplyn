@@ -14,6 +14,7 @@ import type { AssistantStore } from "./assistant-store.js";
 import { getConversationHistory } from "./requests/conversation-history.js";
 import type { PreparedAssistantRequest } from "./requests/prepared-assistant-request.js";
 import { getSelectionContext } from "../editorial/selection-context.js";
+import { getEditorNoteGuidance } from "../editorial/editor-note-guidance.js";
 
 
 export function streamAssistantEngineEvents(request: PreparedAssistantRequest, stores: { assistant: AssistantStore; styleCorpus: StyleCorpusStore; factChecks: FactChecksStore }, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
@@ -46,7 +47,7 @@ function prepareAssistantEngineStream(
             articleSelection: true,
             selectionContext: getSelectionContext(request.article.content, request.scope.startOffset, request.scope.endOffset),
         } : {}),
-        authorContext: request.authorMessage,
+        authorContext: request.authorMessage + getEditorNoteGuidance(request.article.editorNotes ?? [], request.article.content, request.scope),
         skillId: request.resolvedSkillId,
         skill: createSkillGuidance(request.resolvedSkill, request.loadedSkills),
         ...(request.scope.kind === "selection" ? { surroundingArticleCharacterCount: request.article.content.length - excerpt.length } : {}),
@@ -95,7 +96,7 @@ export function getAssistantArticleExcerpt(request: PreparedAssistantRequest): s
 
 function streamAssistantConversation(request: PreparedAssistantRequest, assistant: AssistantStore, excerpt: string, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
     return request.execution.engine.streamConversation({
-        message: request.authorMessage,
+        message: request.authorMessage + getEditorNoteGuidance(request.article.editorNotes ?? [], request.article.content, request.scope),
         article: excerpt,
         scope: request.scope.kind,
         ...(request.scope.kind === "selection" ? {

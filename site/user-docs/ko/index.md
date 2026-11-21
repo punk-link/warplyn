@@ -16,6 +16,7 @@ Warplyn에서는 내 컴퓨터에 글을 저장하고 다듬을 수 있습니다
 
 - [AI로 글을 수정하고 모든 변경 사항 검토하기](revise-an-article-with-ai.md)
 - [글 작성 및 정리](writing-and-articles.md)
+- [구절에 지침 남기기](writing-and-articles.md#editor-notes)
 - [글 파일](article-files.md)
 - [글쓰기 도우미](editorial-assistant.md)
 - [글 검토하기](reviewing-articles.md)

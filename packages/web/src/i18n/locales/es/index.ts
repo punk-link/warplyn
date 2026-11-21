@@ -1,68 +1,71 @@
 import type { MessageId } from "../../messages.js";
-import { preview } from "./preview.js";
-import { editor } from "./editor.js";
-import { typography } from "./typography.js";
-import { settings } from "./settings.js";
-import { settings2 } from "./settings-2.js";
-import { spelling } from "./spelling.js";
-import { errors } from "./errors.js";
-import { electron } from "./electron.js";
-import { article } from "./article.js";
-import { articleFiles } from "./articleFiles.js";
-import { workspace } from "./workspace.js";
-import { styleProfile } from "./styleProfile.js";
-import { status } from "./status.js";
-import { revisions } from "./revisions.js";
-import { navigation } from "./navigation.js";
-import { articleWorkspace } from "./articleWorkspace.js";
-import { draftSave } from "./draftSave.js";
-import { draftConflict } from "./draftConflict.js";
-import { articleHeader } from "./articleHeader.js";
-import { assistant } from "./assistant.js";
-import { operations } from "./operations.js";
-import { ui } from "./ui.js";
-import { notifications } from "./notifications.js";
-import { views } from "./views.js";
-import { views2 } from "./views-2.js";
-import { translationLanguages } from "./translationLanguages.js";
-import { keyBindings } from "./keyBindings.js";
-import { quickStart } from "./quickStart.js";
-import { languages } from "./languages.js";
-import { telemetry } from "./telemetry.js";
-import { publishing } from "./publishing.js";
-import { skills } from "./skills.js";
+import { articleMessages } from "./article.js";
+import { articleFilesMessages } from "./articleFiles.js";
+import { articleHeaderMessages } from "./articleHeader.js";
+import { articleWorkspaceMessages } from "./articleWorkspace.js";
+import { assistantMessages } from "./assistant.js";
+import { draftConflictMessages } from "./draftConflict.js";
+import { draftSaveMessages } from "./draftSave.js";
+import { editorMessages } from "./editor.js";
+import { electronMessages } from "./electron.js";
+import { errorsMessages } from "./errors.js";
+import { keyBindingsMessages } from "./keyBindings.js";
+import { languagesMessages } from "./languages.js";
+import { navigationMessages } from "./navigation.js";
+import { notesMessages } from "./notes.js";
+import { notificationsMessages } from "./notifications.js";
+import { operationsMessages } from "./operations.js";
+import { previewMessages } from "./preview.js";
+import { publishingMessages } from "./publishing.js";
+import { quickStartMessages } from "./quickStart.js";
+import { revisionsMessages } from "./revisions.js";
+import { settingsUpdatesMessages } from "./settings-updates.js";
+import { settingsBackupsMessages } from "./settings-backups.js";
+import { settingsMessages } from "./settings.js";
+import { skillsMessages } from "./skills.js";
+import { spellingMessages } from "./spelling.js";
+import { statusMessages } from "./status.js";
+import { styleProfileMessages } from "./styleProfile.js";
+import { telemetryMessages } from "./telemetry.js";
+import { translationLanguagesMessages } from "./translationLanguages.js";
+import { typographyMessages } from "./typography.js";
+import { uiMessages } from "./ui.js";
+import { viewsMessages } from "./views.js";
+import { workspaceMessages } from "./workspace.js";
+
 
 export const es: Record<MessageId, string> = {
-    ...preview,
-    ...editor,
-    ...typography,
-    ...settings,
-    ...settings2,
-    ...spelling,
-    ...errors,
-    ...electron,
-    ...article,
-    ...articleFiles,
-    ...workspace,
-    ...styleProfile,
-    ...status,
-    ...revisions,
-    ...navigation,
-    ...articleWorkspace,
-    ...draftSave,
-    ...draftConflict,
-    ...articleHeader,
-    ...assistant,
-    ...operations,
-    ...ui,
-    ...notifications,
-    ...views,
-    ...views2,
-    ...translationLanguages,
-    ...keyBindings,
-    ...quickStart,
-    ...languages,
-    ...telemetry,
-    ...publishing,
-    ...skills,
+    ...articleMessages,
+    ...articleFilesMessages,
+    ...articleHeaderMessages,
+    ...articleWorkspaceMessages,
+    ...assistantMessages,
+    ...draftConflictMessages,
+    ...draftSaveMessages,
+    ...editorMessages,
+    ...electronMessages,
+    ...errorsMessages,
+    ...keyBindingsMessages,
+    ...languagesMessages,
+    ...navigationMessages,
+    ...notesMessages,
+    ...notificationsMessages,
+    ...operationsMessages,
+    ...previewMessages,
+    ...publishingMessages,
+    ...quickStartMessages,
+    ...revisionsMessages,
+    ...settingsMessages,
+    ...settingsBackupsMessages,
+    ...settingsUpdatesMessages,
+    ...skillsMessages,
+    ...spellingMessages,
+    ...statusMessages,
+    ...styleProfileMessages,
+    ...telemetryMessages,
+    ...translationLanguagesMessages,
+    ...typographyMessages,
+    ...uiMessages,
+    ...viewsMessages,
+    ...workspaceMessages,
 };

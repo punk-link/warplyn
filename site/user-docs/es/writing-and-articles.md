@@ -6,6 +6,26 @@ description: "Escribe y organiza artículos, entiende cómo se guardan los borra
 
 Un *artículo* es un texto de tu biblioteca de Warplyn. Mientras escribes, Warplyn guarda el *borrador* para que puedas recuperarlo. Una *versión guardada* conserva el texto tal como estaba en un momento concreto del historial.
 
+## Guardar indicaciones junto a un pasaje {#editor-notes}
+
+Las *notas editoriales* guardan instrucciones para futuras tareas del Asistente junto a un pasaje. Úsalas para conservar el punto de vista o evitar que una pista se revele demasiado pronto. Se guardan por separado del texto del artículo y no aparecen al copiarlo o exportarlo.
+
+Selecciona el pasaje en el editor. Elige **Añadir nota editorial…** en la barra de formato o en el menú contextual. Escribe la instrucción en **Indicaciones para el Asistente** y elige **Guardar nota**. Guardar una nota no inicia una solicitud ni crea una versión guardada del artículo.
+
+::: tip Ejemplo de El río al anochecer
+Selecciona el párrafo donde Ana ve el bote: "Mantén la incertidumbre de Ana sobre quién es el dueño del bote. Conserva los sonidos del río y no reveles la identidad del pasajero." Más adelante, pide al Asistente que mejore el ritmo de ese pasaje.
+:::
+
+Abre **Notas editoriales** desde la barra de formato o desde un pequeño marcador numerado junto al texto. Al pasar el puntero sobre un marcador o enfocarlo con el teclado, el pasaje se resalta temporalmente. Elige la vista previa en la lista para localizarlo. Usa **Editar nota…** y después **Guardar nota** para cambiar las indicaciones. El botón de eliminar borra solo la nota.
+
+Guarda los cambios antes de cerrar el diálogo o cambiar de nota. Si hay cambios sin guardar, puedes cancelar para seguir editando o elegir **Descartar cambios** para salir sin guardarlos.
+
+Si aparece **Necesita vincularse de nuevo**, ya no se puede identificar el pasaje original. La nota se conserva, pero no orienta el trabajo hasta volver a adjuntarla. Cierra el diálogo, selecciona el nuevo pasaje y vuelve a abrir la nota desde **Notas editoriales** y **Editar nota…**. Elige **Adjuntar al texto seleccionado** y después **Guardar nota**.
+
+Las notas adjuntas acompañan las solicitudes explícitas del Asistente que trabajan en sus pasajes. Si seleccionas texto, solo se envían las notas que coinciden con esa selección. Revisa **Notas que acompañan esta solicitud** en el cuadro de solicitud antes de enviar. Escribe allí la tarea inmediata y reserva la nota para indicaciones que quieras conservar.
+
+Para procedimientos reutilizables, consulta [Skills](skills.md); para muestras de escritura y pautas generales, consulta [Perfil de estilo](style-profile.md).
+
 ## Escribir y guardar un artículo
 
 Elige **Nuevo artículo** en la Biblioteca para empezar. Cambia el nombre del *artículo* desde el campo de título. Usa la barra de formato para aplicar encabezados, listas, énfasis, enlaces, citas y código. Al pegar texto con formato, Warplyn conserva los formatos compatibles y elimina las marcas no seguras o no compatibles. Guarda el *artículo* como Markdown, por lo que no se conservan los diseños de página complejos ni los elementos incrustados.

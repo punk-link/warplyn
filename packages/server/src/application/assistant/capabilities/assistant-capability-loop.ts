@@ -31,8 +31,9 @@ import { resolveRequestSkill } from "../skills/resolve-request-skill.js";
 import { getSkillCapabilities, getSkillOrchestrationInstructions } from "../skills/skill-execution.js";
 import { createAssistantStreamContext } from "./assistant-stream-context.js";
 import { getAssistantArticleExcerpt } from "../assistant-engine-request.js";
-import { formatSelectionContext, getSelectionContext } from "../../editorial/selection-context.js";
+import { createAssistantSelectionReader } from "./assistant-selection-reader.js";
 import { getAssistantEditModeInstructions } from "./assistant-edit-mode-instructions.js";
+import { getEditorNoteGuidance } from "../../editorial/editor-note-guidance.js";
 
 
 export class AssistantCapabilityLoop {
@@ -191,28 +192,10 @@ export class AssistantCapabilityLoop {
         if (this.authorSkillActions)
             tools.push(...this.authorSkillActions.tools(request));
 
-        if (request.scope.kind === "selection" && request.resolvedSkill?.execution?.capability !== "manage_skills") {
-            const scope = request.scope;
-            tools.push({
-                capability: "read_selection",
-                description: "Read the selected source and bounded read-only neighboring context only when answering requires Article text. " +
-                    "Never use for greetings, general advice, or Skill management. No other Article text is available in selection scope.",
-                input: "none",
-                execute: async (_input, signal) => {
-                    signal.throwIfAborted();
-
-                    this.dependencies.capabilities!.read({
-                        capability: EDITORIAL_CAPABILITY.INSPECT_ARTICLE,
-                        context: { articleId: request.articleId, baseRevisionId: scope.baseRevisionId },
-                    });
-
-                    return {
-                        selectedSource: excerpt,
-                        readOnlyContext: formatSelectionContext(getSelectionContext(request.article.content, scope.startOffset, scope.endOffset)),
-                    };
-                },
-            });
-        }
+        tools.push(...createAssistantSelectionReader(request, () => this.dependencies.capabilities!.read({
+            capability: EDITORIAL_CAPABILITY.INSPECT_ARTICLE,
+            context: { articleId: request.articleId, baseRevisionId: request.scope.baseRevisionId },
+        })));
 
         return tools;
     }
@@ -278,6 +261,12 @@ export class AssistantCapabilityLoop {
         }
 
         this.completeCapability(request, definition);
+        if (definition.id === EDITORIAL_CAPABILITY.INSPECT_ARTICLE && typeof result === "object" && result !== null) {
+            const authorGuidance = getEditorNoteGuidance(request.article.editorNotes ?? [], request.article.content, request.scope);
+            if (authorGuidance)
+                return { ...result, authorGuidance };
+        }
+
         return result;
     }
 

@@ -16,6 +16,7 @@ Warplyn では、手元のパソコンで *記事*を書き、推敲できます
 
 - [AI で記事を改稿し、すべての変更を確認する](revise-an-article-with-ai.md)
 - [記事の執筆と整理](writing-and-articles.md)
+- [文章の一節に指示を残す](writing-and-articles.md#editor-notes)
 - [記事ファイル](article-files.md)
 - [編集アシスタント](editorial-assistant.md)
 - [記事のレビュー](reviewing-articles.md)

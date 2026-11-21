@@ -51,3 +51,20 @@ test("native menu validates renderer metadata and preserves Skill ordering and c
     assert.ok(scripts[1]?.includes('"editor-one"'));
     assert.deepEqual(await getEditorMenuEntries({ webContents: { executeJavaScript: async () => null } }, true), []);
 });
+
+
+test("native editor notes require a selection and dispatch to the owning editor", async () => {
+    for (const selected of [false, true]) {
+        const scripts: string[] = [];
+        const entries = await getEditorMenuEntries({ webContents: { executeJavaScript: async (script) => {
+            scripts.push(script);
+            return { skills: [], label: "Skills", owner: "note-editor", formats: [{ id: "note", name: "Add editor note…" }], blocks: [] };
+        } } }, selected);
+        const note = entries.find((entry) => entry.label === "Add editor note…");
+        assert.equal(note?.enabled, selected);
+        assert.ok(note?.click);
+        Reflect.apply(note.click, undefined, []);
+        assert.ok(scripts[1]?.includes('"kind":"format","id":"note"'));
+        assert.ok(scripts[1]?.includes('"note-editor"'));
+    }
+});

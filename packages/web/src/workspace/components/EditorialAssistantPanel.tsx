@@ -89,7 +89,10 @@ interface EditorialAssistantLayout {
 }
 
 
-export function EditorialAssistantPanel({ data, actions, layout }: { data: EditorialAssistantData; actions: EditorialAssistantActions; layout: EditorialAssistantLayout }) {
+export function EditorialAssistantPanel({ data, actions, layout, editorNotes }: {
+    data: EditorialAssistantData; actions: EditorialAssistantActions; layout: EditorialAssistantLayout;
+    editorNotes?: readonly import("@skladno/shared").EditorNote[];
+}) {
     const { articleId, state, message, errorDetails, activity, factCheckClaims, activeRequestId, translationLanguages = [], assistantMessages, streamedMessage, selection, generalSettings = defaultGeneralSettings, editMode, hasUnavailableAiConnection, checkpointPreview, restoredComposer, authorSkills } = data;
     const { onRequest, onCancel, onRetry, setClaimSelected, setEditMode, applyEdit, loadAuthorSkills, dispatcher, shortcutOverrides, openView, openSkillFolder, clearSelection, openSettings, previewCheckpoint, restoreCheckpoint, closeCheckpoint } = actions;
     const { collapsed, setCollapsed } = layout;
@@ -158,6 +161,7 @@ export function EditorialAssistantPanel({ data, actions, layout }: { data: Edito
             </div>
         )}
         <AssistantComposer
+            editorNotes={editorNotes}
             state={{ state, canSend: composerState.canSend, guidance: composerState.guidance, selectedSkill: composerState.selectedSkill, skillOffset: composerState.skillOffset, caretOffset: composerState.caretOffset, selection, clearSelection, incompatibleSelectionSkill: composerState.incompatibleSelectionSkill, editMode }}
             picker={{
                 quickActionsOpen: composerState.quickActionsOpen,

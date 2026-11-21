@@ -91,6 +91,7 @@ En la parte inferior del panel de la biblioteca desplegado está el **área de u
 
 ### Términos de la interfaz
 
+- **Nota editorial**: indicaciones del autor adjuntas a un pasaje del *artículo* y guardadas por separado de su texto. Las notas adjuntas pertinentes orientan al asistente cuando el autor le pide trabajar en ese pasaje. No se incluyen al copiar o exportar el texto del artículo. Si no se puede identificar el pasaje, la nota debe adjuntarse de nuevo.
 - **Espacio de trabajo editorial**: pantalla principal de escritura que contiene el Panel de biblioteca de artículos, el espacio de trabajo del artículo y el Panel del asistente editorial.
 - **Panel de biblioteca de artículos**: incluye la búsqueda de artículos, la lista de artículos y los accesos al espacio de trabajo. Al contraerse, se convierte en la **barra de navegación**; en pantallas pequeñas, aparece temporalmente como **cajón de navegación**.
 - **Área de utilidades de la Biblioteca de artículos**: pie del Panel de biblioteca de artículos expandido. Contiene Perfil de estilo, Configuración, un control de actualización cuando corresponde y el código de idioma del artículo actual con la etiqueta **Local**.

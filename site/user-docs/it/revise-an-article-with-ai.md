@@ -8,6 +8,8 @@ Se in una scena succede quello che avevi in mente ma il ritmo non ti convince, c
 
 Warplyn è un’area di scrittura open source e con dati locali, disponibile per Windows e Linux. I tuoi testi restano sul computer. L’assistenza con IA richiede una connessione a Internet, un provider supportato e la relativa chiave API. Warplyn invia al provider il testo e il contesto necessari per la richiesta. Si applicano le tariffe e le norme sui dati del provider.
 
+Conserva le indicazioni ricorrenti in una [nota editoriale](writing-and-articles.md#editor-notes) accanto al passaggio. Controlla **Note che accompagnano questa richiesta** prima dell'invio. Salvare una nota non avvia una richiesta.
+
 ## Inizia con una richiesta mirata
 
 Apri il tuo *articolo* e seleziona il passaggio da rivedere. Nel campo di composizione, descrivi cosa dovrebbe migliorare e cosa deve restare invariato. Per esempio, mentre lavori a «Il fiume al crepuscolo»:

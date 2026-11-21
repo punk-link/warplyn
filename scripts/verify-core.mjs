@@ -8,6 +8,7 @@ if (!process.env.npm_execpath)
 const comparison = getSourceChangeComparison();
 console.log(`Core verification comparison: ${comparison.description}`);
 const staticChecks = [
+    { name: "Locale topology", args: ["scripts/check-locale-topology.mjs"] },
     { name: "Product model", args: ["scripts/product-model.mjs", "check"] },
     { name: "Complexity and file length", args: ["scripts/complexity-check.mjs"] },
     { name: "Changed source line length", args: ["scripts/check-line-length.mjs"] },

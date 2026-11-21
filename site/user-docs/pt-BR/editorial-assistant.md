@@ -8,6 +8,8 @@ Use o assistente editorial quando quiser ajuda para redigir, revisar, conferir f
 
 Selecione um trecho para limitar as edições a essa passagem. Definições e marcas da voz narrativa no texto ao redor podem ajudar o assistente a interpretar seleções curtas. Para usar esse contexto, o Warplyn também precisa enviar ao provedor parte do texto que ficou fora da seleção. Quando uma solicitação com seleção precisa de texto do *artigo*, o Warplyn envia a seleção e até 500 caracteres antes e 500 depois, como contexto separado e somente para leitura. Apenas a passagem selecionada pode ser substituída. O campo de mensagem explica isso antes do envio; não envie se o texto ao redor for confidencial. Orientações gerais e o gerenciamento de *habilidades* não precisam desse texto. O Warplyn nunca amplia a seleção silenciosamente para incluir o *artigo* inteiro. Se faltar contexto, forneça explicitamente a passagem relevante ou faça outra solicitação com uma seleção diferente.
 
+Guarde orientações recorrentes em uma [nota editorial](writing-and-articles.md#editor-notes) junto ao trecho. Confira **Notas que acompanham esta solicitação** antes de enviar. Salvar uma nota não inicia uma solicitação.
+
 ::: tip Exemplo
 Ao revisar um conto, selecione uma passagem e peça: “Melhore o ritmo, mantendo o ponto de vista da Ana e o clima tranquilo. Não acrescente acontecimentos.” O assistente prepara uma *proposta* para **Revisão da proposta**. Você também pode pedir que ele avalie um capítulo em busca de mudanças entre o passado e o presente; os *apontamentos* da avaliação de estilo aparecem em **Perfil de estilo**.
 :::

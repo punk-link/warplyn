@@ -1,0 +1,30 @@
+import type { MessageId } from "../../messages.js";
+
+
+export const settingsUpdatesMessages = {
+    "settings.automaticUpdates": "更新を自動的に確認",
+    "settings.automaticUpdatesHint": "Warplynの起動時と、その後は開いている間に毎日GitHubを確認します。「ダウンロード」を選択した場合のみ更新を取得します。",
+    "settings.checkNow": "今すぐ確認",
+    "settings.restartAndUpdate": "再起動して更新",
+    "settings.updateChanges": "{version}の変更点",
+    "settings.updateChangesUnavailable": "リリースの詳細は表示できませんが、更新は可能です。",
+    "settings.updateNetworkAccess": "更新のためのネットワークアクセスを許可",
+    "settings.updateNetworkAccessHint": "GitHubに接続して公開リリース情報を確認し、選択した更新をダウンロードできるようにします。記事の内容、アカウント情報、端末識別子、分析データは送信しません。",
+    "settings.updateNetworkPermissionDescription": "公開リリース情報を取得するためapi.github.comに接続します。記事の内容、アカウント情報、端末識別子、分析データは送信しません。",
+    "settings.updateNetworkPermissionTitle": "WarplynがGitHubで更新を確認することを許可しますか？",
+    "settings.updateRecovery": "更新の復旧",
+    "settings.updateStatus": "更新の状態",
+    "settings.updateStatusHint": "現在のバージョン：{version}",
+    "settings.updateStatusUnavailableHint": "このバージョンが更新に対応している場合に適用されます。",
+    "settings.updates": "更新",
+    "settings.updatesAvailable": "バージョン{version}が利用できます。",
+    "settings.updatesChecking": "更新を確認中…",
+    "settings.updatesCurrent": "最新のリリースを使用しています。",
+    "settings.updatesError.apply_failed": "更新を準備できませんでした。再試行するか、「更新の復旧」を開いてください。",
+    "settings.updatesError.discovery_failed": "更新を確認できませんでした。もう一度お試しください。",
+    "settings.updatesError.download_failed": "更新をダウンロードできませんでした。もう一度お試しください。",
+    "settings.updatesNetworkAccessRequired": "更新を確認するにはネットワークアクセスを許可してください。",
+    "settings.updatesUnavailable": "このバージョンでは更新を利用できません。",
+    "settings.viewReleaseNotes": "更新内容",
+    "settings.windowsUpdateDownloadHint": "更新のダウンロードはインストールの承認も兼ねます。ダウンロード後は、通常の終了後も含め、次回Warplynを開いたときに自動的に適用されます。",
+} satisfies Partial<Record<MessageId, string>>;

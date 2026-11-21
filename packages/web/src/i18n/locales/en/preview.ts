@@ -1,0 +1,60 @@
+import type { MessageId } from "../../messages.js";
+
+
+export const previewMessages = {
+    "preview.3Revisions": "3 revisions",
+    "preview.articleTitle": "Article title",
+    "preview.articleUpdatedJustNow": "Article{separator}Updated just now",
+    "preview.assistantIsPreparingSuggestions": "Assistant is preparing suggestions",
+    "preview.assistantProgress": "Assistant progress",
+    "preview.cancel": "Cancel",
+    "preview.claimsAndSourcesAppearHereFor": "Claims and sources appear here for review.",
+    "preview.controls": "Controls",
+    "preview.createACheckpointToPreserveThis": "Create a checkpoint to preserve this version.",
+    "preview.createCheckpoint": "Create checkpoint",
+    "preview.deleteDraft": "Delete draft",
+    "preview.developerReference": "Developer reference",
+    "preview.draftContent": "Draft content",
+    "preview.draftSavedLocally": "Draft{separator}Saved locally",
+    "preview.english": "English",
+    "preview.espaol": "Español",
+    "preview.feedback": "Feedback",
+    "preview.feedbackAndReview": "Feedback and review",
+    "preview.fieldsAndChoices": "Fields and choices",
+    "preview.goodWritingGivesEachIdeaEnough": (
+        "Good writing gives each idea enough room to become clear. Quiet surfaces, readable type, and clear controls ke" +
+        "ep attention on the work."
+    ),
+    "preview.help": "Help",
+    "preview.keepRecoveryCheckpoints": "Keep recovery checkpoints",
+    "preview.language": "Language",
+    "preview.learnAboutFeedback": "Learn about feedback",
+    "preview.liveExamplesRenderedWithWarplynsShared": (
+        "Live examples rendered with Warplyn's shared React primitives and design tokens. Interact with the controls to" +
+        " see their real states."
+    ),
+    "preview.makeSpaceForTheImportantSentence": "Make space for the important sentence",
+    "preview.moreOptions": "More options",
+    "preview.noRevisionsYet": "No revisions yet",
+    "preview.openConfirmationDialog": "Open confirmation dialog",
+    "preview.pinArticle": "Pin Article",
+    "preview.previewNavigation": "Preview navigation",
+    "preview.recoveryStateIsSavedLocally": "Recovery state is saved locally.",
+    "preview.restoreRevision": "Restore Revision",
+    "preview.restoreThisRevision": "Restore this Revision?",
+    "preview.restoringAppendsANewRevisionExisting": "Restoring appends a new Revision. Existing history stays available.",
+    "preview.reviewChanges": "Review changes",
+    "preview.revisionHistory": "Revision history",
+    "preview.save": "Save",
+    "preview.saved": "Saved",
+    "preview.saving": "Saving",
+    "preview.suggestedChangesWaitForTheAuthors": "Suggested changes wait for the Author's decision.",
+    "preview.theOriginalWordingIsLessDirect": "The original wording is less direct.",
+    "preview.theRevisedWordingIsClearAnd": "The revised wording is clear and direct.",
+    "preview.thisResultNeedsAnotherLookBefore": "This result needs another look before you apply it.",
+    "preview.threeRevisionsPreserveThisArticlesHistory": "Three revisions preserve this Article's history.",
+    "preview.translationsStayRecoverableAsSeparateArticles": "Translations stay recoverable as separate Articles.",
+    "preview.uILanguagePreview": "UI language preview",
+    "preview.workspace": "Workspace",
+    "preview.yourDraftIsAvailableLocally": "Your Draft is available locally.",
+} satisfies Partial<Record<MessageId, string>>;

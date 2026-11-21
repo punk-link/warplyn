@@ -6,6 +6,26 @@ description: "Artikel schreiben und organisieren, das Speichern von Entwürfen v
 
 Ein *Artikel* ist ein Text in Ihrer Warplyn-Bibliothek. Beim Schreiben speichert Warplyn automatisch Ihren *Entwurf*, damit Sie ihn wiederherstellen können. Eine *Version* hält einen bestimmten Stand im Verlauf des Artikels fest.
 
+## Hinweise zu einer Passage festhalten {#editor-notes}
+
+Mit *Redaktionsnotizen* hältst du Anweisungen für spätere Arbeit mit dem Assistenten direkt an einer Passage fest. So kannst du etwa die Erzählperspektive schützen oder verhindern, dass ein Hinweis zu früh aufgelöst wird. Notizen bleiben vom Artikeltext getrennt und werden beim Kopieren und Exportieren nicht übernommen.
+
+Markiere die Passage im Editor. Wähle **Redaktionsnotiz hinzufügen…** in der Formatierungsleiste oder im Kontextmenü. Trage deine Anweisung unter **Anweisungen für den Assistenten** ein und wähle **Notiz speichern**. Das Speichern startet keine Anfrage und erstellt keine Artikelrevision.
+
+::: tip Beispiel aus The River at Dusk
+Markiere den Absatz, in dem Ana das Boot bemerkt: "Ana soll unsicher bleiben, wem das Boot gehört. Behalte die Flussgeräusche bei und verrate nicht, wer der Fahrgast ist." Bitte den Assistenten später, das Tempo dieser Passage zu verbessern.
+:::
+
+Öffne **Redaktionsnotizen** in der Formatierungsleiste oder über eine kleine nummerierte Markierung neben dem Text. Wenn du mit der Maus auf eine Markierung zeigst oder sie per Tastatur fokussierst, wird die Passage kurz hervorgehoben. Wähle die Textvorschau in der Liste, um zur Passage zu springen. Mit **Notiz bearbeiten…** und anschließend **Notiz speichern** änderst du die Anweisung. Über die Schaltfläche zum Entfernen löschst du nur die Notiz.
+
+Speichere Änderungen, bevor du den Dialog schließt oder eine andere Notiz öffnest. Bei ungespeicherten Änderungen kannst du abbrechen und weiterarbeiten oder mit **Änderungen verwerfen** die Änderungen verwerfen.
+
+Bei **Erneut zuordnen** lässt sich die ursprüngliche Passage nicht mehr zuordnen. Die Notiz bleibt erhalten, wird aber erst nach erneutem Anhängen berücksichtigt. Schließe den Dialog, markiere die neue Passage und öffne die Notiz über **Redaktionsnotizen** und **Notiz bearbeiten…** erneut. Wähle **An ausgewählten Text anhängen** und dann **Notiz speichern**.
+
+Angehängte Notizen begleiten ausdrückliche Assistentenaufträge zu ihren Passagen. Bei einer Auswahl werden nur Notizen zu überlappenden Passagen mitgesendet. Prüfe vor dem Senden **Notizen zu dieser Anfrage** im Eingabefeld. Formuliere den aktuellen Auftrag dort und bewahre dauerhafte Hinweise in der Notiz auf.
+
+Für wiederverwendbare Abläufe siehe [Skills](skills.md), für Schreibproben und allgemeine Stilvorgaben das [Stilprofil](style-profile.md).
+
 ## Einen Artikel schreiben und speichern
 
 Wählen Sie in der Bibliothek **Neuer Artikel**, um zu beginnen. Benennen Sie den *Artikel* über sein Titelfeld um. Verwenden Sie die Formatierungsleiste für Überschriften, Listen, Hervorhebungen, Links, Zitate und Code. Wenn Sie formatierten Text einfügen, behält Warplyn unterstützte Formatierungen bei und entfernt unsichere oder nicht unterstützte Markierungen. Der *Artikel* wird als Markdown gespeichert; komplexe Seitenlayouts und eingebettete Elemente werden daher nicht übernommen.

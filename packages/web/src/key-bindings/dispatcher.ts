@@ -3,6 +3,7 @@ import { keyBindingCommands, areKeyBindingsEqual, normalizeKeyBinding, resolveKe
 
 export interface KeyBindingEvent {
     key: string;
+    code?: string;
     ctrlKey: boolean;
     metaKey: boolean;
     shiftKey: boolean;
@@ -25,8 +26,14 @@ function isEditableTarget(target: EventTarget | null): boolean {
 }
 
 
-export function getEventKeyBinding(event: Pick<KeyBindingEvent, "key" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey">) {
-    return normalizeKeyBinding({ primary: event.ctrlKey || event.metaKey, shift: event.shiftKey, alt: event.altKey, key: event.key });
+export function getEventKeyBinding(event: Pick<KeyBindingEvent, "key" | "code" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey">) {
+    let key = event.key;
+    const latinLetterPattern = /^[a-z]$/i;
+    const physicalLetterKeyPattern = /^Key[A-Z]$/;
+    if (key.length === 1 && !latinLetterPattern.test(key) && physicalLetterKeyPattern.test(event.code ?? ""))
+        key = event.code!.slice(3).toLowerCase();
+
+    return normalizeKeyBinding({ primary: event.ctrlKey || event.metaKey, shift: event.shiftKey, alt: event.altKey, key });
 }
 
 

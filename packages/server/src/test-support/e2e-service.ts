@@ -83,6 +83,15 @@ class E2eFixtureEngine implements EditorialEngine {
 
 
     async *stream(request: EditorialEngineRequest, signal: AbortSignal): AsyncIterable<EditorialEngineEvent> {
+        if (request.authorContext.startsWith("E2E edit with editor notes")) {
+            assert.equal(request.article, "The record was useful.");
+            assert.ok(request.authorContext.includes("Use ledger as the noun."));
+            assert.ok(!request.authorContext.includes("Keep this private note separate."));
+            yield { type: "completed", responseId: "editor-notes-replacement", text: "The ledger helped." };
+
+            return;
+        }
+
         if (request.authorContext === "E2E edit bounded selection") {
             assert.equal(request.article, "The record was useful.");
             assert.equal(request.selectionContext?.preceding.trim(), "The ledger is the shared repair log.");

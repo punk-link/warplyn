@@ -8,6 +8,8 @@ Usa l’Assistente editoriale quando vuoi aiuto per scrivere, rivedere, verifica
 
 Selezionare del testo permette di concentrare le modifiche su quel passaggio. Le definizioni vicine e gli indizi sul tono possono aiutare l’assistente a interpretare selezioni brevi, ma condividerli rivela al provider anche il testo non selezionato. Se la richiesta richiede il testo dell’*articolo*, Warplyn invia il brano selezionato e fino a 500 caratteri per lato. Il testo che precede e segue il brano serve solo come contesto. Può essere sostituito solo il passaggio selezionato. Prima dell’invio, nel campo di composizione viene spiegato questo comportamento; non inviare la richiesta se il testo circostante è sensibile. I consigli generali e la gestione delle *abilità* non richiedono questo testo. Warplyn non estende mai di nascosto la selezione all’intero *articolo*. Se il contesto non basta, fornisci esplicitamente il passaggio pertinente oppure riprova con una selezione diversa.
 
+Conserva le indicazioni ricorrenti in una [nota editoriale](writing-and-articles.md#editor-notes) accanto al passaggio. Controlla **Note che accompagnano questa richiesta** prima dell'invio. Salvare una nota non avvia una richiesta.
+
 ::: tip Esempio
 Per rivedere un racconto breve, seleziona un passaggio e chiedi: «Migliora la fluidità mantenendo il punto di vista di Ana e l’atmosfera tranquilla. Non aggiungere nuovi eventi». L’assistente prepara una *proposta* in **Revisione della proposta**. Puoi anche chiedergli di trovare i passaggi dal passato al presente in un capitolo; i *rilievi* della revisione di stile compaiono in **Profilo di stile**.
 :::

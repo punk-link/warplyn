@@ -8,6 +8,8 @@ Use the Editorial Assistant when you want help composing, revising, checking fac
 
 Selecting text keeps edits focused on that passage. Nearby definitions and voice cues can help the Assistant interpret short selections, but sharing them also reveals unselected text to your provider. When a selection request needs *Article* text, Warplyn sends the selection plus up to 500 characters before it and 500 after it as separate, read-only context. Only the selected passage can be replaced. The Composer shows what will be sent. If the surrounding text is sensitive, leave the request unsent. General advice and *Skill* management do not need this text. Warplyn never silently expands to the whole *Article*. If context is insufficient, supply the relevant passage explicitly or ask again with a different selection.
 
+For guidance you want to keep beside a passage, [add an Editor note](writing-and-articles.md#keep-passage-guidance-in-editor-notes). Attached notes accompany requests that work on their passages. Check **Notes accompanying this request** in the Composer before sending; saving a note alone does not start work.
+
 ::: tip Example
 While revising a short story, select a passage and ask: “Improve the flow while keeping Ana’s point of view and the quiet mood. Don’t add new events.” The Assistant prepares a *Proposal* for **Proposal Review**. You could also ask it to review a chapter for shifts between past and present tense; style review *Findings* appear in **Style Profile**.
 :::

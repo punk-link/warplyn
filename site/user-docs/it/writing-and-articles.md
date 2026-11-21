@@ -6,6 +6,26 @@ description: "Scrivi e organizza gli articoli, scopri come si salvano le bozze e
 
 Un *articolo* è un testo nella tua libreria Warplyn. Mentre scrivi, Warplyn salva la *bozza* per permetterti di recuperarla. Una *versione salvata* conserva nella cronologia il testo com’era al momento del salvataggio.
 
+## Conservare indicazioni accanto a un passaggio {#editor-notes}
+
+Le *note editoriali* conservano istruzioni legate a un passaggio per le richieste future all'Assistente. Sono utili per mantenere il punto di vista o evitare di svelare un indizio troppo presto. Restano separate dal testo dell'articolo e non compaiono nel testo copiato o esportato.
+
+Seleziona il passaggio nell'editor. Scegli **Aggiungi nota editoriale…** nella barra di formattazione o nel menu contestuale. Scrivi l'istruzione in **Indicazioni per l’Assistente**, poi scegli **Salva nota**. Salvare una nota non avvia una richiesta e non crea una revisione dell'articolo.
+
+::: tip Esempio da Il fiume al crepuscolo
+Seleziona il paragrafo in cui Ana nota la barca: "Mantieni l'incertezza di Ana su chi possiede la barca. Conserva i suoni del fiume e non svelare l'identità del passeggero." In seguito, chiedi all'Assistente di migliorare il ritmo del passaggio.
+:::
+
+Apri **Note editoriali** dalla barra di formattazione o da un piccolo indicatore numerato accanto al testo. Passa il puntatore sull'indicatore o raggiungilo con la tastiera per evidenziare temporaneamente il passaggio. Nell'elenco, scegli l'anteprima per ritrovarlo. Usa **Modifica nota…** e poi **Salva nota** per cambiare le indicazioni. Il pulsante di rimozione elimina solo la nota.
+
+Salva le modifiche prima di chiudere la finestra o cambiare nota. Se ci sono modifiche non salvate, annulla per continuare oppure scegli **Scarta modifiche** per abbandonarle.
+
+Se compare **Da ricollegare**, il passaggio originale non è più identificabile. La nota rimane disponibile, ma non guida il lavoro finché non la ricolleghi. Chiudi la finestra, seleziona il nuovo passaggio e riapri la nota da **Note editoriali** e **Modifica nota…**. Scegli **Allega al testo selezionato**, poi **Salva nota**.
+
+Le note collegate accompagnano le richieste esplicite dell'Assistente che riguardano i loro passaggi. Con una selezione vengono inviate solo le note relative ai passaggi che la intersecano. Controlla **Note che accompagnano questa richiesta** nel campo della richiesta prima dell'invio. Scrivi lì il compito immediato e conserva nella nota le indicazioni da riutilizzare.
+
+Per le procedure riutilizzabili, vedi [Skills](skills.md); per esempi di scrittura e indicazioni generali, vedi [Profilo di stile](style-profile.md).
+
 ## Scrivere e salvare un articolo
 
 Per iniziare, scegli **Nuovo articolo** nella libreria. Rinomina l’*articolo* dal campo del titolo. Usa la barra di formattazione per applicare titoli, elenchi, enfasi, link, citazioni e codice. Quando incolli testo formattato, Warplyn mantiene la formattazione supportata e rimuove il markup non sicuro o non supportato. L’*articolo* viene salvato come Markdown, quindi impaginazioni complesse ed elementi incorporati non vengono mantenuti.

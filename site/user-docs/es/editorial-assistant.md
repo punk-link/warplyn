@@ -8,6 +8,8 @@ Usa el asistente editorial cuando necesites ayuda para redactar, revisar, verifi
 
 Seleccionar texto permite limitar los cambios a ese pasaje. Las definiciones y los rasgos de estilo de las frases cercanas pueden ayudar al asistente a entender un pasaje breve. Para ello, el proveedor puede recibir parte del texto que queda fuera de la selección. Si la solicitud necesita texto del *artículo*, Warplyn envía el pasaje seleccionado y hasta 500 caracteres a cada lado. El texto de alrededor solo sirve como contexto. Solo se puede sustituir el pasaje seleccionado. El cuadro de mensaje lo explica antes del envío; no envíes la solicitud si el texto cercano es sensible. Los consejos generales y la gestión de *habilidades* no necesitan este texto. Warplyn nunca amplía silenciosamente el contexto al *artículo* completo. Si el contexto no basta, incluye explícitamente el pasaje pertinente o vuelve a preguntar con otra selección.
 
+Guarda las indicaciones recurrentes como [nota editorial](writing-and-articles.md#editor-notes) junto al pasaje. Revisa **Notas que acompañan esta solicitud** antes de enviar. Guardar una nota no inicia una solicitud.
+
 ::: tip Ejemplo
 Al revisar un relato, selecciona un pasaje y pregunta: «Mejora el ritmo sin perder el punto de vista de Ana ni la atmósfera tranquila. No añadas acontecimientos». El asistente prepara una *propuesta* para la **Revisión de propuestas**. También puedes pedirle que busque cambios entre pasado y presente en un capítulo; las *observaciones* de la revisión de estilo aparecen en el **Perfil de estilo**.
 :::

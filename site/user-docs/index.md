@@ -16,6 +16,7 @@ Warplyn gives you a local-first workspace for developing and refining *Articles*
 
 - [Revise an Article with AI and review every change](revise-an-article-with-ai.md)
 - [Writing and organizing Articles](writing-and-articles.md)
+- [Editor notes: keep guidance beside a passage](writing-and-articles.md#keep-passage-guidance-in-editor-notes)
 - [Article files](article-files.md)
 - [Editorial Assistant](editorial-assistant.md)
 - [Reviewing Articles](reviewing-articles.md)

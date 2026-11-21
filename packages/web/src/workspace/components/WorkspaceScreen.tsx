@@ -1,4 +1,5 @@
 import type { AssistantSkillSummary, GeneralSettings, KeyBindingOverrides } from "@skladno/shared";
+import { getRelevantEditorNotes } from "@skladno/shared";
 import { useState, type ReactNode } from "react";
 import { useIntl } from "react-intl";
 import { EditorSkillContext } from "../editor/editor-skill-context.js";
@@ -116,6 +117,8 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                     }} />,
                 assistant: <EditorialAssistantPanel
                     key={workspace.selectedArticle?.id}
+                    editorNotes={getRelevantEditorNotes(workspace.selectedArticle?.editorNotes ?? [], workspace.content,
+                        assistantSelection ? { kind: "selection", ...assistantSelection } : { kind: "article" })}
                     data={{
                         articleId: workspace.selectedArticle?.id,
                         currentRevisionId: workspace.selectedArticle?.currentRevisionId,

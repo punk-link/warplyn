@@ -3,6 +3,25 @@ import { defaultInterfaceLocale, getElectronMessagesFor } from "@skladno/shared"
 
 /** Canonical application-owned messages. IDs are stable; English is the source text. */
 export const messages = {
+    "notes.markers": "Editor notes {numbers}",
+    "notes.add": "Add editor note…",
+    "notes.title": "Editor notes",
+    "notes.count": "Editor notes{separator}{count}",
+    "notes.select": "Select text to attach a note.",
+    "notes.help": "Attached notes guide the Assistant when it works on their passages. Notes are separate from Article text.",
+    "notes.discardPrompt": "Discard unsaved note changes?",
+    "notes.discardChanges": "Discard changes",
+    "notes.empty": "No editor notes yet.",
+    "notes.detached": "Needs reattachment",
+    "notes.edit": "Edit note…",
+    "notes.reattach": "Attach to selected text",
+    "notes.reattachHelp": "Select the replacement passage in the editor, then reopen this note to attach it.",
+    "notes.guidance": "Guidance for the Assistant",
+    "notes.failed": "The note could not be updated. Keep your guidance, reopen the Article, and try again.",
+    "notes.remove": "Remove note",
+    "notes.save": "Save note",
+    "notes.marker": "Editor note {number}",
+    "notes.included": "Notes accompanying this request",
     "preview.developerReference": "Developer reference",
     "preview.uILanguagePreview": "UI language preview",
     "preview.liveExamplesRenderedWithWarplynsShared":

@@ -90,6 +90,7 @@ Nel layout espanso, il piè di pagina del pannello della biblioteca è l’**are
 
 ### Termini dell’interfaccia
 
+- **Nota editoriale**: indicazioni dell’autore allegate a un passaggio dell’*articolo* e salvate separatamente dal testo. Le note allegate pertinenti guidano l’assistente quando l’autore gli chiede di lavorare su quel passaggio. Non vengono incluse nel testo dell’articolo copiato o esportato. Se il passaggio non può più essere identificato, la nota deve essere ricollegata.
 - **Area di lavoro editoriale**: schermata principale di scrittura che contiene il pannello della biblioteca di articoli, l’area di lavoro dell’articolo e il pannello dell’assistente editoriale.
 - **Pannello della biblioteca articoli**: ricerca degli articoli, elenco degli articoli e punti di accesso a livello di area di lavoro. Quando è compresso diventa la **barra di navigazione**; sugli schermi piccoli appare temporaneamente come **cassetto di navigazione**.
 - **Area strumenti della biblioteca di articoli**: piè di pagina del pannello espanso, che contiene Profilo di stile, Impostazioni, un controllo degli aggiornamenti quando pertinente e il codice della lingua dell’articolo attuale con l’etichetta **Locale**.

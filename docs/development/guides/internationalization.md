@@ -20,6 +20,8 @@ Use the [Warplyn glossary](../../../site/user-docs/glossary.md) as the authority
 
 Preserve the glossary's distinctions in every locale. Keep qualifiers when shortening a term would make its meaning ambiguous.
 
+When adding or changing a glossary concept, update the English glossary and every translated glossary in the same change. Match each locale's interface terminology and preserve the same behavior and limitations across definitions.
+
 For each new locale, include a terminology record in the locale-specific issue. Map each glossary concept used in the interface to its approved local term, grammatical forms, capitalization conventions, and any context-specific variants. Include terms to avoid where a likely synonym would confuse two concepts. Obtain native-language review of this record before translating the catalog; keep it current when terminology changes. English uses the glossary as its terminology record.
 
 Keep contextual message IDs separate even when their English text matches. For example, `articleHeader.saveRevision` and `keyBindings.saveRevision` both refer to saving a Revision, but their translations may differ by context. Translate complete messages using the approved terminology; do not assemble sentences from separately translated term fragments. Inflection, word order, and capitalization follow the target language rather than English spelling rules.
@@ -28,13 +30,17 @@ Review terminology by concept across the complete locale, including existing mes
 
 ## Command labels
 
-Look up existing control labels by message ID and locale in the generated [UI terminology reference](../i18n/ui-terminology.md) before writing interface copy or instructions that name a control. Use the catalog wording when referring to that control. For an intentional rename, edit the catalogs and update references in the affected documentation. After changing a catalog, regenerate the reference with `npm run docs:i18n-terminology`.
+Look up existing control labels by message ID and locale in the generated [UI terminology reference](../i18n/ui-terminology.md) before writing interface copy or instructions that name a control. Use the catalog wording when referring to that control. For an intentional rename, edit the catalogs and update references in the affected documentation.
+
+For every Author-facing UI change, regenerate `docs/development/i18n/ui-terminology.md` with `npm run docs:i18n-terminology`, even when no catalog entries changed. Include any generated changes with the UI work. Before handoff, run `npm run docs:i18n-terminology -- --check` to verify that the reference is current. Do not edit the generated table manually; regeneration may leave it unchanged when the interface wording is unchanged.
 
 Prefer single-line button captions at supported widths. Let the surrounding row or help carry redundant context while keeping distinctions between actions clear. Review each workspace tab set together for parallel, similarly concise wording.
 
 Append the single ellipsis character `…` to commands that require further Author input, such as choosing a file or entering options, before completing. Use matching wording and punctuation in menus, button labels, and tooltips. The file commands are `Save to file…` and `Load from file…` in both desktop and browser. Immediate actions and commands that only ask for confirmation, such as Archive and Delete, use plain labels without an ellipsis.
 
 ## Enforcement
+
+`npm run lint` and core verification require identical relative files and per-file message keys across renderer locale folders, using English as the reference. Group messages by their ID namespace in every language; keep update and backup settings in `settings-updates.ts` and `settings-backups.ts` so the Settings catalog stays within the file-size limit. Add or move a group in all eleven locales together.
 
 Production components consume the application-level `I18nProvider`; fixed-locale or component-local providers are test-only. ESLint rejects uncatalogued JSX copy and literal user-visible attributes, production `IntlProvider` instances, and selectors coupled to localized accessible labels. Intentional product identity text uses the narrow repository allowlist; other exceptions require a local suppression with a reason.
 

@@ -233,6 +233,9 @@ function useWorkspaceShortcuts({ dispatcher, screen, actions, layout, save, open
 
         const unregister = [
             dispatcher.register(KEY_BINDING_COMMAND.NEW_ARTICLE, () => void shortcutActions.current.createBlank()),
+            dispatcher.register(KEY_BINDING_COMMAND.EDITOR_NOTES, () => {
+                document.querySelector<HTMLButtonElement>('button[data-editor-command="note"]')?.click();
+            }),
             dispatcher.register(KEY_BINDING_COMMAND.SAVE_REVISION, () => void shortcutActions.current.save().catch(() => undefined)),
             dispatcher.register(KEY_BINDING_COMMAND.OPEN_SETTINGS, () => shortcutActions.current.enterSettings()),
             dispatcher.register(KEY_BINDING_COMMAND.TOGGLE_FOCUS_MODE, toggleFocusMode),

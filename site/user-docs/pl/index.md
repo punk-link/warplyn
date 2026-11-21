@@ -16,6 +16,7 @@ W Warplyn piszesz i redagujesz *artykuły* na swoim komputerze. Tu znajdziesz in
 
 - [Popraw artykuł z pomocą AI i sprawdź każdą zmianę](revise-an-article-with-ai.md)
 - [Pisanie i porządkowanie artykułów](writing-and-articles.md)
+- [Zachowaj wskazówki przy fragmencie](writing-and-articles.md#editor-notes)
 - [Pliki artykułów](article-files.md)
 - [Asystent redakcyjny](editorial-assistant.md)
 - [Recenzowanie artykułów](reviewing-articles.md)

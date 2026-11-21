@@ -91,6 +91,7 @@ No layout aberto, o rodapé na parte inferior do painel da biblioteca é a **ár
 
 ### Termos da interface
 
+- **Nota editorial**: orientações do autor anexadas a um trecho do *artigo* e armazenadas separadamente do texto. As notas anexadas pertinentes orientam o assistente quando o autor solicita um trabalho nesse trecho. Elas não são incluídas ao copiar ou exportar o texto do artigo. Se não for possível identificar o trecho, a nota precisa ser anexada novamente.
 - **Espaço de trabalho editorial**: tela principal de escrita, que contém o Painel da Biblioteca de Artigos, o espaço de trabalho do artigo e o Painel do Assistente Editorial.
 - **Painel da Biblioteca de Artigos**: busca de artigos, lista de artigos e pontos de acesso ao espaço de trabalho. Quando recolhido, torna-se a **barra de navegação**; em telas pequenas, sua versão temporária é o **painel lateral de navegação**.
 - **Área de utilitários do painel da Biblioteca de Artigos**: rodapé do painel aberto, com Perfil de estilo, Configurações, um controle de atualização quando relevante e o código de idioma do *artigo* atual com o rótulo **Local**.
