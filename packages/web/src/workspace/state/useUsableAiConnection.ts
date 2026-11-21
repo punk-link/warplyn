@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { EditorialWorkspaceClient } from "../../application/client.js";
 
 
-export function useUsableAiConnection(client: EditorialWorkspaceClient, screen: string) {
+export function useUsableAiConnection(client: EditorialWorkspaceClient, active: boolean) {
     const [hasUsableAiConnection, setHasUsableAiConnection] = useState<boolean>();
 
     useEffect(() => {
@@ -15,7 +15,7 @@ export function useUsableAiConnection(client: EditorialWorkspaceClient, screen: 
         return () => {
             cancelled = true;
         };
-    }, [client, screen]);
+    }, [client, active]);
 
     return hasUsableAiConnection;
 }

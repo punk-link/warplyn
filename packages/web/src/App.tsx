@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import type { EditorialWorkspaceClient } from "./application/client.js";
 import { createRendererApplicationClient, getDesktopShellClient, getDesktopUpdateClient } from "./application/desktop-client.js";
-import { EditorialWorkspaceProvider } from "./workspace/EditorialWorkspace.js";
+import { ApplicationScreens } from "./ApplicationScreens.js";
+import type { ApplicationScreen } from "./application-screen.js";
 import { I18nProvider } from "./i18n/I18nProvider.js";
 import { NotificationProvider } from "./notifications/NotificationProvider.js";
 import { useKeyBindingDispatcher } from "./key-bindings/KeyBindingProvider.js";
@@ -48,7 +49,7 @@ function useThemeAppearance(theme: ThemePreference): void {
 
 
 export function App({ client = defaultClient }: { client?: EditorialWorkspaceClient }) {
-    const [screen, setScreen] = useState<"editorial-workspace" | "application-settings" | "style-profile">("editorial-workspace");
+    const [screen, setScreen] = useState<ApplicationScreen>("editorial-workspace");
     const [settingsSection, setSettingsSection] = useState<SettingsSection>("general");
     const [keyBindingOverrides, setKeyBindingOverrides] = useState<KeyBindingOverrides>();
     const [theme, setTheme] = useState<ThemePreference>("system");
@@ -120,7 +121,7 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
         <NotificationProvider>
             <AutomaticBackups client={client} />
             <FirstRunUpdatePermission ready={!quickStartOpen} />
-            <EditorialWorkspaceProvider
+            <ApplicationScreens
                 context={{ client, screen, settingsSection }}
                 navigation={{ openSettings: () => {
                     setSettingsSection("general");

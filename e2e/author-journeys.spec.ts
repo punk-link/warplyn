@@ -330,6 +330,35 @@ test("critical local-first author journeys use deterministic provider output", a
 });
 
 
+test("Draft persistence and a pending Assistant request survive Settings and Style Profile navigation", async ({ page }) => {
+    await page.goto("/");
+    await createArticle(page);
+    await page.getByRole("combobox", { name: "Editorial guidance" }).fill("wait");
+    await page.getByRole("button", { name: "Quick actions" }).click();
+    await page.getByRole("option", { name: "Improve flow and clarity" }).click();
+    await page.getByRole("button", { name: "Send editorial request" }).click();
+    await expect(page.getByRole("button", { name: "Stop request" })).toBeVisible();
+
+    const draft = "Writing continues while the Assistant waits.";
+    const checkpointed = page.waitForResponse((response) => response.url().includes("/draft") && response.request().method() === "PUT");
+    await page.getByRole("textbox", { name: "Article draft" }).fill(draft);
+    await page.getByRole("button", { name: "Settings", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "General", exact: true })).toBeVisible();
+    await checkpointed;
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText(draft);
+    await expect(page.getByRole("button", { name: "Stop request" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Style Profile", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Style Profile", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText(draft);
+    await page.getByRole("button", { name: "Stop request" }).click();
+    await page.reload();
+    await expect(page.getByRole("textbox", { name: "Article draft" })).toHaveText(draft);
+});
+
+
 test("a cancelled assistant stream does not change the Article", async ({ page }) => {
     await page.goto("/");
     await createArticle(page);

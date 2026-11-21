@@ -4,7 +4,7 @@ import type { ArticleRevision } from "@skladno/shared";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "../App.js";
-import { getArticleContentForWorkspace, sortArticlesByActivity } from "./EditorialWorkspace.js";
+import { getArticleContentForWorkspace, sortArticlesByActivity } from "./state/article-workspace-state.js";
 import { createArticleFixture, createFakeClient, resetWorkspaceTestEnvironment } from "./EditorialWorkspace.test-utils.js";
 
 

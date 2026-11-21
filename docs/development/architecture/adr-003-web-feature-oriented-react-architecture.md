@@ -16,6 +16,8 @@ Organize the renderer by feature, then by responsibility.
 
 Views and components render prepared state and invoke explicit callbacks. Feature state owns browser-side loading, recovery, streams, and workflow coordination. Screen roots compose these responsibilities.
 
+The application shell chooses Workspace, Settings, and Style Profile screens. Workspace state remains mounted across those transitions so Draft checkpoints, background requests, and desktop close handling keep their lifetime. Workspace views receive prepared state; Workspace state receives activation and navigation callbacks without importing Settings or application screen names.
+
 UI accesses application behavior through the injected typed application client or narrow desktop clients. It does not call server routes or privileged modules directly. Cross-cutting renderer services do not import feature components or feature state.
 
 Prefer loading content on demand. List and navigation operations return only the metadata they need; full content loads when editing, previewing, comparing, or exporting requires it. Filter and limit data at the persistence layer before loading it into application memory or sending it to the renderer. Preserve Draft recovery, ignore stale loading responses, and provide clear loading and retry states. Eager loading is appropriate for small, bounded data or when it avoids noticeable interaction delays.
