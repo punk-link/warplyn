@@ -18,7 +18,7 @@ export interface ArticleRevision {
     description?: string;
     provenance: Record<string, unknown>;
     restoredFromRevisionId?: string;
-    titleGeneration?: { status: "generated"; title: string } | { status: "insufficient-context" | "failed" };
+    titleGeneration?: { status: "generated"; title: string } | { status: "pending" | "insufficient-context" | "failed" };
 }
 
 

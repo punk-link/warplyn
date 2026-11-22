@@ -11,6 +11,7 @@ import { cacheArticleUpdate } from "./article-body-cache.js";
 import { createArticleWorkspaceActions } from "./article-workspace-actions.js";
 import { getArticleContentForWorkspace, sortArticlesByActivity, withoutDraft, withPromotedRevision } from "./article-workspace-articles.js";
 import { notifyTitleGeneration } from "./article-title-notification.js";
+import { usePendingArticleTitles } from "./use-pending-article-titles.js";
 
 export { getArticleContentForWorkspace, sortArticlesByActivity } from "./article-workspace-articles.js";
 
@@ -50,6 +51,9 @@ export function useArticleWorkspace(client: EditorialWorkspaceClient, preferredS
         articlesRef.current = next;
         setArticles(next);
     }
+
+
+    usePendingArticleTitles(client, articles, loadedArticles, replaceArticles);
 
 
     const loadArticle = useCallback(async (articleId: string): Promise<Article> => {

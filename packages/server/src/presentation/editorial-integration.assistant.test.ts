@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { setImmediate } from "node:timers/promises";
 import { EDITORIAL_OPERATION, HTTP_METHOD } from "@skladno/shared";
 import type { AssistantActionIntentVerifier } from "../application/editorial/assistant-action-intent-verifier.js";
 import type { EditorialEngine } from "../application/editorial/engine/editorial-engine.js";
@@ -35,11 +36,14 @@ test("an untagged selected edit uses the Article selection instead of asking for
         verify: async (message, action, input) => message === "Change ё to е" && action === "apply_article_edit" && (input.target === "selection" || input.target === "article"),
         verifyReplacement: async () => false,
     };
+    let finishDescription: (description: string) => void = () => undefined;
     const descriptions: RevisionDescriptionGenerator = { generate: async (before, after, locale) => {
         assert.equal(before, "ещё, потом");
         assert.equal(after, "еще, потом");
         assert.equal(locale, "ru");
-        return "Changed ё to е";
+        return new Promise<string>((resolve) => {
+            finishDescription = resolve;
+        });
     } };
 
     await withService(engine, async (baseUrl, repositories) => {
@@ -53,6 +57,9 @@ test("an untagged selected edit uses the Article selection instead of asking for
         const typeTextDeltaPattern = /"type":"text_delta"/;
         assert.doesNotMatch(events, typeTextDeltaPattern);
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.content, "еще, потом");
+        assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.description, undefined);
+        finishDescription("Changed ё to е");
+        await setImmediate();
         assert.equal(repositories.articles.getArticle(article.id)?.currentRevision.description, "Changed ё to е");
 
         const protectedArticle = repositories.articleService.createArticle({ title: "Code", content: "Use `ё` here." });

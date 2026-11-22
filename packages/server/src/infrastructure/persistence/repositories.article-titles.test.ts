@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { setImmediate } from "node:timers/promises";
 import { ArticleService } from "../../application/articles/article-service.js";
 import { withRepository } from "./repositories.test-utils.js";
 
@@ -18,7 +19,9 @@ test("promotion generates missing metadata once, preserving immutable history an
         return "Huertos de la comunidad";
     } }));
     const revision = await service.saveRevisionWithDescription(article.id, { baseRevisionId: article.currentRevisionId, content }, new AbortController().signal);
-    assert.deepEqual(revision.titleGeneration, { status: "generated", title: "Huertos de la comunidad" });
+    assert.equal(revision.titleGeneration?.status, "pending");
+    await setImmediate();
+    assert.deepEqual(service.getArticle(article.id)?.currentRevision.titleGeneration, { status: "generated", title: "Huertos de la comunidad" });
     assert.equal(articles.getArticle(article.id)?.title, "Huertos de la comunidad");
     assert.equal(articles.getRevision(article.id, revision.id)?.titleGeneration, undefined);
     assert.equal(articles.listRevisions(article.id).length, 2);
@@ -60,7 +63,8 @@ test("failed, unavailable, malformed and cancelled generation never blocks a com
             return outcome === "cancelled" ? "Community gardens" : outcome;
         } }));
         const revision = await service.saveRevisionWithDescription(article.id, { baseRevisionId: article.currentRevisionId, content }, controller.signal);
-        assert.equal(revision.titleGeneration?.status, "failed");
+        await setImmediate();
+        assert.equal(service.getArticle(article.id)?.currentRevision.titleGeneration?.status, "failed");
         assert.equal(articles.getArticle(article.id)?.title, "");
         assert.equal(articles.getArticle(article.id)?.currentRevisionId, revision.id);
         assert.equal(articles.listRevisions(article.id).length, 2);
@@ -76,7 +80,7 @@ test("delayed results cannot overwrite Author metadata, newer Revisions or delet
             finish = resolve;
         }) }));
         const pending = service.saveRevisionWithDescription(article.id, { baseRevisionId: article.currentRevisionId, content }, new AbortController().signal);
-        await new Promise<void>((resolve) => setImmediate(resolve));
+        await setImmediate();
         if (action === "rename")
             articles.updateArticle(article.id, { title: "Author title" });
 
@@ -87,7 +91,8 @@ test("delayed results cannot overwrite Author metadata, newer Revisions or delet
             articles.deleteArticle(article.id);
 
         finish("Community gardens");
-        assert.equal((await pending).titleGeneration, undefined);
+        assert.equal((await pending).titleGeneration?.status, "pending");
+        await setImmediate();
         let expectedTitle: string | undefined = "";
         if (action === "rename")
             expectedTitle = "Author title";
@@ -110,9 +115,13 @@ test("acceptance and restoration retry untitled Articles after an unsuccessful p
         return "Community gardens";
     } }));
     const accepted = await service.acceptProposalWithDescription(article.id, { baseRevisionId: article.currentRevisionId, content, provenance: {} }, new AbortController().signal);
-    assert.equal(accepted.titleGeneration?.status, "failed");
+    assert.equal(accepted.titleGeneration?.status, "pending");
+    await setImmediate();
+    assert.equal(service.getArticle(article.id)?.currentRevision.titleGeneration?.status, "failed");
     const restored = await service.restoreRevisionWithTitle(article.id, article.currentRevisionId);
-    assert.equal(restored.titleGeneration?.status, "generated");
+    assert.equal(restored.titleGeneration?.status, "pending");
+    await setImmediate();
+    assert.equal(service.getArticle(article.id)?.currentRevision.titleGeneration?.status, "generated");
     assert.equal(articles.getArticle(article.id)?.title, "Community gardens");
     assert.equal(calls, 2);
 }));
@@ -127,6 +136,8 @@ test("bounded context cannot leak the tail or turn protected values into new cla
         return "Community gardens in 20";
     } }));
     const revision = await service.saveRevisionWithDescription(article.id, { baseRevisionId: article.currentRevisionId, content: source }, new AbortController().signal);
-    assert.equal(revision.titleGeneration?.status, "failed");
+    assert.equal(revision.titleGeneration?.status, "pending");
+    await setImmediate();
+    assert.equal(service.getArticle(article.id)?.currentRevision.titleGeneration?.status, "failed");
     assert.equal(articles.getArticle(article.id)?.title, "");
 }));

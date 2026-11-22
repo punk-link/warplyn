@@ -1,6 +1,36 @@
 import { expect, test } from "@playwright/test";
 
 
+test("pending titles leave saving, Draft checkpoints and navigation available", async ({ page, request }) => {
+    await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
+    await page.goto("/");
+    const createdResponse = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");
+    await page.getByRole("button", { name: "New article" }).click();
+    const created = await (await createdResponse).json();
+    const editor = page.getByRole("textbox", { name: "Article draft" });
+    const content = "Delayed title generation. Community gardens give neighbors a place to grow fresh vegetables together. " +
+        "Shared tools and weekly meetings help new gardeners learn practical skills and build lasting friendships.";
+    await editor.fill(content);
+    const savedResponse = page.waitForResponse((response) => response.url().endsWith(`/articles/${created.id}/revisions`) &&
+        response.request().method() === "POST");
+    await page.getByRole("button", { name: "Save revision" }).click();
+    const revision = await (await savedResponse).json();
+    expect(revision.titleGeneration.status).toBe("pending");
+    await expect(page.getByRole("button", { name: "Rename article: Untitled article" })).toBeVisible();
+    await editor.fill(`${content} Keep typing.`);
+    const nextResponse = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");
+    await page.getByRole("button", { name: "New article" }).click();
+    const next = await (await nextResponse).json();
+    await expect(editor).toBeEmpty();
+    await expect.poll(async () => (await (await request.get(`http://127.0.0.1:8787/api/articles/${created.id}`)).json()).draft?.content)
+        .toBe(`${content} Keep typing.`);
+    await expect.poll(async () => (await (await request.get(`http://127.0.0.1:8787/api/articles/${created.id}`)).json()).title,
+        { timeout: 10000 }).toBe("Community gardens");
+    await request.delete(`http://127.0.0.1:8787/api/articles/${created.id}`);
+    await request.delete(`http://127.0.0.1:8787/api/articles/${next.id}`);
+});
+
+
 test("missing title is generated after saving and persists without another Revision", async ({ page, request }) => {
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");

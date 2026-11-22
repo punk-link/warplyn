@@ -24,13 +24,14 @@ import { persistInterruptedFactCheck } from "./requests/interrupted-fact-check.j
 import { selectCompletedFactCheck, selectFactCheckFindings } from "./requests/assistant-selected-fact-check.js";
 import { getAssistantRequestErrorCode } from "./requests/assistant-request-error-code.js";
 import type { SettingsStore } from "../settings/settings-store.js";
+import { normalizeGeneralSettings } from "../settings/application-settings-normalizers.js";
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 import { AssistantEditError } from "./assistant-store.js";
 import { streamAssistantEngineEvents } from "./assistant-engine-request.js";
 import { AssistantClaimSelection } from "./requests/assistant-claim-selection.js";
 import { createEditorialActivityEvent, getAssistantInitialEvents } from "./requests/assistant-initial-events.js";
 import { AssistantEditService } from "./assistant-edit-service.js";
-import { completePromotedEditTitle } from "./completion/complete-promoted-edit-title.js";
+import { completePromotedEdit } from "./completion/complete-promoted-edit.js";
 
 
 export type { AssistantServiceRequest } from "./requests/assistant-service-request.js";
@@ -130,6 +131,7 @@ export class AssistantService {
 
             const prepared = result.value;
             prepared.editMode = this.getEditMode(prepared.articleId);
+            prepared.interfaceLocale ??= normalizeGeneralSettings(this.stores.settings.getSetting("application-general")?.value).interfaceLocale;
             this.startedAt.set(prepared.requestId, observed);
             return prepared;
         } catch (error) {
@@ -156,7 +158,7 @@ export class AssistantService {
             yield* getAssistantInitialEvents(request);
 
             for await (const event of streamWithAssistantDeadline((requestSignal) => this.streamRequestCompletion(request, requestSignal), signal, getAssistantRequestTimeoutMs(this.stores.settings))) {
-                yield await completePromotedEditTitle(event, request.articleId, signal, this.articles);
+                yield completePromotedEdit(event, request, this.articles);
             }
 
             captureAssistantOutcome(observed, "completed");
@@ -273,7 +275,7 @@ export class AssistantService {
     private async *completeAssistantEvents(request: PreparedAssistantRequest, event: Extract<EditorialEngineEvent, { type: "completed" }>, signal: AbortSignal): AsyncIterable<AssistantEvent> {
         signal.throwIfAborted();
 
-        unwrapApplicationResult(await authorizeCompletedEdit(request, event, signal, this.capabilityLoop, this.articles, this.stores.settings));
+        unwrapApplicationResult(await authorizeCompletedEdit(request, event, signal, this.capabilityLoop));
         signal.throwIfAborted();
 
         const kind = request.directEditAuthorized && getEditCandidate(request, event) ? "edit_applied" : getResponseKind(request.execution.completedCapability);

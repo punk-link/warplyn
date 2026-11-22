@@ -20,7 +20,6 @@ export interface PreparedAssistantRequest extends ReplayedAssistantRequest {
     editIntentAuthorized?: boolean;
     directEditAuthorized?: boolean;
     editCandidateAuthorized?: boolean;
-    editDescription?: string;
     resolvedSkillId?: string;
     resolvedSkill?: AssistantSkillPackage;
     loadedSkills?: AssistantSkillPackage[];

@@ -5,38 +5,104 @@ import type { ArticleTitleGenerator } from "../editorial/article-title-generator
 import { protectArticleSpans } from "../editorial/translation/translation.js";
 
 
+interface TitlePromotion {
+    id: string;
+    articleId: string;
+    titleGeneration: ArticleRevision["titleGeneration"];
+    cancellation: AbortController;
+}
+
+
 export class ArticleTitleService {
+    private readonly promotions = new Map<string, TitlePromotion>();
+
+
     constructor(private readonly store: ArticleStore, private readonly resolveGenerator: () => ArticleTitleGenerator | undefined) { }
 
 
-    async completePromotion(revision: ArticleRevision, signal: AbortSignal): Promise<ArticleRevision> {
+    getPromotion(revision: ArticleRevision): ArticleRevision {
+        const titleGeneration = this.getGeneration(revision.articleId, revision.id);
+        return titleGeneration ? { ...revision, titleGeneration } : revision;
+    }
+
+
+    getGeneration(articleId: string, revisionId: string): ArticleRevision["titleGeneration"] {
+        const promotion = this.promotions.get(articleId);
+        return promotion?.id === revisionId ? promotion.titleGeneration : undefined;
+    }
+
+
+    forget(articleId: string): void {
+        this.promotions.get(articleId)?.cancellation.abort();
+        this.promotions.delete(articleId);
+    }
+
+
+    completePromotion(revision: ArticleRevision, signal: AbortSignal): ArticleRevision {
+        try {
+            return this.startPromotion(revision, signal);
+        } catch {
+            return revision;
+        }
+    }
+
+
+    private startPromotion(revision: ArticleRevision, signal: AbortSignal): ArticleRevision {
         const article = this.store.getArticle(revision.articleId);
         if (!article || article.title.trim() || article.currentRevisionId !== revision.id)
             return revision;
 
+        const existing = this.promotions.get(revision.articleId);
+        if (existing?.id === revision.id)
+            return { ...revision, titleGeneration: existing.titleGeneration };
+
+        this.forget(revision.articleId);
         const content = Array.from(revision.content).slice(0, 12000).join("");
         if (!hasTitleContext(content))
             return { ...revision, titleGeneration: { status: "insufficient-context" } };
 
+        const pending: TitlePromotion = {
+            id: revision.id, articleId: revision.articleId, titleGeneration: { status: "pending" }, cancellation: new AbortController(),
+        };
+        this.promotions.set(revision.articleId, pending);
+        void this.generateTitle(pending, content, article.language, signal);
+
+        return { ...revision, titleGeneration: pending.titleGeneration };
+    }
+
+
+    private async generateTitle(revision: TitlePromotion, content: string, language: string | undefined, signal: AbortSignal): Promise<void> {
+        const boundedSignal = AbortSignal.any([signal, revision.cancellation.signal, AbortSignal.timeout(15000)]);
+        const fail = () => this.finishPromotion(revision, { status: "failed" });
+        boundedSignal.addEventListener("abort", fail, { once: true });
         try {
+            boundedSignal.throwIfAborted();
             const generator = this.resolveGenerator();
-            if (!generator)
-                return { ...revision, titleGeneration: { status: "failed" } };
+            if (!generator) {
+                fail();
+                return;
+            }
 
-            const boundedSignal = AbortSignal.any([signal, AbortSignal.timeout(15000)]);
+            const title = (await generator.generate(content, boundedSignal, language)).trim();
             boundedSignal.throwIfAborted();
-            const title = (await generator.generate(content, boundedSignal, article.language)).trim();
-            boundedSignal.throwIfAborted();
-            if (!isValidTitle(title, content))
-                return { ...revision, titleGeneration: { status: "failed" } };
+            if (!isValidTitle(title, content)) {
+                fail();
+                return;
+            }
 
-            if (!this.store.setGeneratedTitle(revision.articleId, revision.id, title))
-                return revision;
-
-            return { ...revision, titleGeneration: { status: "generated", title } };
+            const updated = this.store.setGeneratedTitle(revision.articleId, revision.id, title);
+            this.finishPromotion(revision, updated ? { status: "generated", title } : undefined);
         } catch {
-            return { ...revision, titleGeneration: { status: "failed" } };
+            fail();
+        } finally {
+            boundedSignal.removeEventListener("abort", fail);
         }
+    }
+
+
+    private finishPromotion(revision: TitlePromotion, titleGeneration: ArticleRevision["titleGeneration"]): void {
+        if (this.promotions.get(revision.articleId) === revision)
+            this.promotions.set(revision.articleId, { ...revision, titleGeneration });
     }
 }
 

@@ -140,7 +140,6 @@ export class AssistantCompletion {
             proposalContent: directEdit ? undefined : result?.proposal,
             editorialArtifactId: artifact.id,
             ...(editCandidate ? { editCandidate, directEdit } : {}),
-            ...(directEdit && request.editDescription ? { editDescription: request.editDescription } : {})
         };
         const message = this.dependencies.assistant.completeRequest(reply);
 

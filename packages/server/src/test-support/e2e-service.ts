@@ -268,6 +268,9 @@ const engines: EditorialEngineResolver = {
     resolve: () => fixtureEngine, resolveAssistant: () => fixtureEngine, resolveAssistantActionIntentVerifier: () => editVerifier,
     resolveArticleTitleGenerator: () => ({
         generate: async (content) => {
+            if (content.includes("Delayed title generation"))
+                await new Promise((resolve) => setTimeout(resolve, 5000));
+
             if (content.includes("Title generation unavailable"))
                 throw new Error("Fixture title generation failed");
 

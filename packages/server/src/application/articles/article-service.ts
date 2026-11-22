@@ -31,7 +31,9 @@ export class ArticleService {
 
 
     listArticleSummaries() {
-        return this.store.listArticleSummaries();
+        return this.store.listArticleSummaries().map((article) => ({
+            ...article, titleGeneration: this.titles.getGeneration(article.id, article.currentRevisionId),
+        }));
     }
 
 
@@ -54,17 +56,23 @@ export class ArticleService {
 
 
     getArticle(articleId: string): Article | undefined {
-        return this.store.getArticle(articleId);
+        const article = this.store.getArticle(articleId);
+        return article && { ...article, currentRevision: this.titles.getPromotion(article.currentRevision) };
     }
 
 
     updateArticle(articleId: string, input: UpdateArticleInput): Article {
-        return this.store.updateArticle(articleId, input);
+        const article = this.store.updateArticle(articleId, input);
+        if (input.title !== undefined || input.language !== undefined)
+            this.titles.forget(articleId);
+
+        return article;
     }
 
 
     deleteArticle(articleId: string): void {
         this.store.deleteArticle(articleId);
+        this.titles.forget(articleId);
     }
 
 
@@ -106,12 +114,13 @@ export class ArticleService {
     private async promoteSavedRevision(
         articleId: string, input: SaveArticleRevisionInput, signal: AbortSignal,
     ): Promise<ArticleOperationResult<ArticleRevision>> {
-        const description = await this.describeChange(articleId, input.content, input.interfaceLocale ?? defaultInterfaceLocale, signal);
-        const revision = runArticleOperation(() => this.store.saveRevision(articleId, input, description));
+        const previousContent = this.store.getArticle(articleId)?.currentRevision.content ?? "";
+        const revision = runArticleOperation(() => this.store.saveRevision(articleId, input));
         if (!revision.ok)
             return revision;
 
-        return success(await this.completeRevisionPromotion(revision.value, signal));
+        this.describeRevision(revision.value, previousContent, input.interfaceLocale ?? defaultInterfaceLocale, signal);
+        return success(this.completeRevisionPromotion(revision.value, signal));
     }
 
 
@@ -143,17 +152,23 @@ export class ArticleService {
         if (!revision.ok)
             return revision;
 
-        void this.describeAcceptedRevision(revision.value, previousContent, input.interfaceLocale ?? defaultInterfaceLocale, signal);
+        this.describeRevision(revision.value, previousContent, input.interfaceLocale ?? defaultInterfaceLocale, signal);
 
-        return success(await this.completeRevisionPromotion(revision.value, signal));
+        return success(this.completeRevisionPromotion(revision.value, signal));
     }
 
 
-    private async describeAcceptedRevision(revision: ArticleRevision, previousContent: string, locale: string, signal: AbortSignal): Promise<void> {
+    describeRevision(revision: ArticleRevision, previousContent: string, locale: string, signal: AbortSignal): void {
+        void this.generateRevisionDescription(revision, previousContent, locale, signal);
+    }
+
+
+    private async generateRevisionDescription(revision: ArticleRevision, previousContent: string, locale: string, signal: AbortSignal): Promise<void> {
         try {
             const boundedSignal = AbortSignal.any([signal, AbortSignal.timeout(15000)]);
             boundedSignal.throwIfAborted();
-            const description = await this.tryGenerateRevisionDescription(previousContent, revision.content, locale, boundedSignal);
+            const generated = await this.revisionDescriptionGenerator?.()?.generate(previousContent, revision.content, locale, boundedSignal);
+            const description = generated?.trim();
             boundedSignal.throwIfAborted();
             if (description)
                 this.store.setGeneratedRevisionDescription(revision.articleId, revision.id, description);
@@ -163,12 +178,12 @@ export class ArticleService {
     }
 
 
-    restoreRevisionWithTitle(articleId: string, revisionId: string): Promise<ArticleRevision> {
+    async restoreRevisionWithTitle(articleId: string, revisionId: string): Promise<ArticleRevision> {
         return this.completeRevisionPromotion(this.restoreRevision(articleId, revisionId), new AbortController().signal);
     }
 
 
-    completeRevisionPromotion(revision: ArticleRevision, signal: AbortSignal): Promise<ArticleRevision> {
+    completeRevisionPromotion(revision: ArticleRevision, signal: AbortSignal): ArticleRevision {
         return this.titles.completePromotion(revision, signal);
     }
 
@@ -182,26 +197,6 @@ export class ArticleService {
         } catch (error) {
             capture({ kind: "recovery_finished", recovery: "revision", outcome: "failed", failure: "unknown" });
             throw error;
-        }
-    }
-
-
-    private describeChange(articleId: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string | undefined> {
-        const previousContent = this.store.getArticle(articleId)?.currentRevision.content ?? "";
-        return this.describeContentChange(previousContent, content, interfaceLocale, signal);
-    }
-
-
-    describeContentChange(previousContent: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string | undefined> {
-        return this.tryGenerateRevisionDescription(previousContent, content, interfaceLocale, signal);
-    }
-
-
-    private async tryGenerateRevisionDescription(previousContent: string, content: string, interfaceLocale: string, signal: AbortSignal): Promise<string | undefined> {
-        try {
-            return (await this.revisionDescriptionGenerator?.()?.generate(previousContent, content, interfaceLocale, signal))?.trim() || undefined;
-        } catch {
-            return undefined;
         }
     }
 }

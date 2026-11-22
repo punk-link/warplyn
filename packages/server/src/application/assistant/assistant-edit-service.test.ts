@@ -16,11 +16,10 @@ function fixture(context: TestContext) {
     const calls = { describe: 0, apply: 0, promote: 0 };
     const articles = {
         getArticle: () => stores.articles.getArticle(article.id),
-        describeContentChange: async () => {
+        describeRevision: () => {
             calls.describe++;
-            return "Description";
         },
-        completeRevisionPromotion: async (revision: typeof article.currentRevision) => {
+        completeRevisionPromotion: (revision: typeof article.currentRevision) => {
             calls.promote++;
             return revision;
         },
@@ -46,7 +45,7 @@ test("edit preview failures stop description, persistence, and promotion", async
 });
 
 
-test("edit commit conflicts stop promotion after description and retain public status", async (context) => {
+test("edit commit conflicts stop metadata generation and retain public status", async (context) => {
     const { stores, article, calls, service } = fixture(context);
     stores.assistant.previewEdit = () => ({ previousContent: "Original", content: "Changed" });
     stores.assistant.applyEdit = () => {
@@ -55,7 +54,7 @@ test("edit commit conflicts stop promotion after description and retain public s
     };
     await assert.rejects(service.applyEdit(article.id, "edit"), (error: unknown) =>
         error instanceof ApplicationServiceError && error.code === APPLICATION_ERROR.ASSISTANT_EDIT_CONFLICT && error.status === 409);
-    assert.deepEqual(calls, { describe: 1, apply: 1, promote: 0 });
+    assert.deepEqual(calls, { describe: 0, apply: 1, promote: 0 });
     assert.equal(stores.articles.getArticle(article.id)?.currentRevision.content, "Original");
 });
 

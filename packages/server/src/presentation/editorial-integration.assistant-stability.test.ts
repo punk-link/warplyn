@@ -101,7 +101,7 @@ for (const duplicate of [false, true]) {
 
 
 // Product scenario: editorial-workflows.assistant-request-timeout
-for (const stage of ["replacement", "intent", "description"] as const) {
+for (const stage of ["replacement", "intent"] as const) {
     test(`the request deadline includes ${stage} verification and discards late completion`, async (context) => {
         let release: () => void = () => undefined;
         let started: () => void = () => undefined;
@@ -150,14 +150,46 @@ for (const stage of ["replacement", "intent", "description"] as const) {
         }, false, {
             verify: async (_message, _capability, _input, signal) => stage === "intent" ? wait(signal) : true,
             verifyReplacement: async (_message, _source, _replacement, _target, signal) => stage === "replacement" ? wait(signal) : true,
-        }, undefined, { generate: async (_before, _after, _locale, signal) => {
-            if (stage === "description")
-                await wait(signal);
-
-            return "Improved clarity";
-        } });
+        });
     });
 }
+
+
+test("supporting descriptions cannot extend or fail a committed Assistant request", async (context) => {
+    let release: (description: string) => void = () => undefined;
+    const pending = new Promise<string>((resolve) => {
+        release = resolve;
+    });
+    const engine = new CapabilityFixtureEngine([{ type: "completed", responseId: "proposal", text: "Clearer wording." }]);
+    await withService(engine, async (_url, persistence, services) => {
+        persistence.settings.saveSetting("application-general", { interfaceLocale: "es" });
+        const article = services.articles.createArticle({ title: "Synthetic", content: "Original wording." });
+        services.assistant.setEditMode(article.id, "direct");
+        const request = services.assistant.prepare({
+            kind: "new", requestId: "background-description", articleId: article.id, authorMessage: "Improve clarity.",
+            explicitSkillId: "flow_and_clarity", scope: { kind: "article", baseRevisionId: article.currentRevisionId },
+        });
+        const controller = new AbortController();
+        context.mock.timers.enable({ apis: ["setTimeout"] });
+        const events: AssistantEvent[] = [];
+        for await (const event of services.assistant.stream(request, controller.signal))
+            events.push(event);
+
+        assert.equal(events.at(-1)?.type, "completed");
+        assert.equal(services.articles.getArticle(article.id)?.currentRevision.content, "Clearer wording.");
+        assert.equal(services.articles.getArticle(article.id)?.currentRevision.description, undefined);
+        context.mock.timers.tick(120_000);
+        controller.abort();
+        release("Improved clarity");
+        await new Promise<void>((resolve) => setImmediate(resolve));
+        context.mock.timers.reset();
+        assert.equal(persistence.assistant.getRequest(request.requestId)?.status, "completed");
+        assert.equal(services.articles.getArticle(article.id)?.currentRevision.description, "Improved clarity");
+    }, false, { verify: async () => true, verifyReplacement: async () => true }, undefined, { generate: async (_before, _after, locale) => {
+        assert.equal(locale, "es");
+        return pending;
+    } });
+});
 
 
 test("delivering a committed completion cannot turn it into a cancelled request", async (context) => {

@@ -12,7 +12,11 @@ import { AssistantCheckpointError, AssistantEditError, type AssistantStore } fro
 
 
 export class AssistantEditService {
-    constructor(private readonly assistant: AssistantStore, private readonly settings: SettingsStore, private readonly articles: Pick<ArticleService, "describeContentChange" | "completeRevisionPromotion" | "getArticle">) { }
+    constructor(
+        private readonly assistant: AssistantStore,
+        private readonly settings: SettingsStore,
+        private readonly articles: Pick<ArticleService, "describeRevision" | "completeRevisionPromotion" | "getArticle">,
+    ) { }
 
 
     getEditMode(articleId: string): AssistantEditMode {
@@ -37,15 +41,14 @@ export class AssistantEditService {
             return preview;
 
         const locale = normalizeGeneralSettings(this.settings.getSetting("application-general")?.value).interfaceLocale;
-        const description = preview.value
-            ? await this.articles.describeContentChange(preview.value.previousContent, preview.value.content, locale, new AbortController().signal)
-            : undefined;
-
-        const revision = this.runEditOperation(() => this.assistant.applyEdit(articleId, messageId, description));
+        const revision = this.runEditOperation(() => this.assistant.applyEdit(articleId, messageId));
         if (!revision.ok)
             return revision;
 
-        return success(await this.articles.completeRevisionPromotion(revision.value, new AbortController().signal));
+        if (preview.value)
+            this.articles.describeRevision(revision.value, preview.value.previousContent, locale, new AbortController().signal);
+
+        return success(this.articles.completeRevisionPromotion(revision.value, new AbortController().signal));
     }
 
 
@@ -74,7 +77,7 @@ export class AssistantEditService {
 
         const result = restored.value;
         if (result.article.currentRevisionId !== previousRevisionId) {
-            const revision = await this.articles.completeRevisionPromotion(result.article.currentRevision, new AbortController().signal);
+            const revision = this.articles.completeRevisionPromotion(result.article.currentRevision, new AbortController().signal);
             const article = this.articles.getArticle(articleId) ?? result.article;
             result.article = article.currentRevisionId === revision.id ? { ...article, currentRevision: revision } : article;
         }
