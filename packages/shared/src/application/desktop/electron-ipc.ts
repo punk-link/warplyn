@@ -47,6 +47,8 @@ export const ELECTRON_APPLICATION_METHOD = {
     summarizeProposal: "summarizeProposal",
     restoreRevision: "restoreRevision",
     listAssistantSkills: "listAssistantSkills",
+    getAssistantSkillRecovery: "getAssistantSkillRecovery",
+    retryAssistantSkillRecovery: "retryAssistantSkillRecovery",
     listAssistantMessageHistory: "listAssistantMessageHistory",
     listAssistantMessages: "listAssistantMessages",
     setAssistantClaimSelected: "setAssistantClaimSelected",

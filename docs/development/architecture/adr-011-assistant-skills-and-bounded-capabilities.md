@@ -28,6 +28,8 @@ Built-in and Author packages use the same validated execution metadata and catal
 
 Author Skill mutation requires an explicit action and target, concurrency validation, immutable Skill history, and recovery of incomplete writes. Article and Skill histories remain separate; chat checkpoint restoration does not change Skills.
 
+Startup recovery isolates failures from Article access and built-in Skills. A known conflicting change quarantines its Author Skill; unreadable journal entries or journal storage failures quarantine Author Skills conservatively. Quarantined Skills are unavailable for discovery, loading, and mutation, while preserved history remains readable. Recovery never discards damaged evidence or overwrites unrelated external edits. AI Assistant Settings exposes safe status, retry, and backup access through the same finite HTTP and IPC contracts. Retry targets quarantined changes and cannot roll back unrelated active changes.
+
 [ADR-007](adr-007-completion-gated-editorial-engine.md) owns completion, artifact execution, deadlines, and the Fact Check exception. [ADR-005](adr-005-article-state-and-consistency.md) owns all Article changes, including explicitly authorized conversational edits. Model tool calls and Skills cannot grant Article-acceptance authority.
 
 Keep progress quiet and renderer-safe. Completed artifacts provide explicit handoffs to their owning Workspace Views without changing the current View automatically. Dedicated Views remain usable independently of chat. Persist only minimal local capability activity, excluding private context and raw provider data.

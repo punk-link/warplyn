@@ -164,9 +164,13 @@ test("recovery leaves an unrelated external Skill edit untouched", () => {
         service.commitChange({ kind: "create", skillId: "author-review", skillMarkdown: initial }, "incomplete-request");
         writeFileSync(join(root, "skills", "author-review", "SKILL.md"), external);
 
-        const skillPackageConflictPattern = /skill_package_conflict/;
-        assert.throws(() => service.recoverIncompleteChanges(() => false), skillPackageConflictPattern);
-        assert.equal(service.readCurrent("author-review")?.files["SKILL.md"], external);
+        assert.deepEqual(service.recoverIncompleteChanges(() => false), {
+            kind: "blocked", skillIds: ["author-review"], allAuthorSkills: false,
+        });
+        assert.equal(source.readFiles("author-review")?.["SKILL.md"], external);
+        assert.equal(service.readCurrent("author-review"), undefined);
+        assert.deepEqual(service.summaries(), []);
+        assert.equal(service.listRevisions("author-review").length, 1);
         assert.equal(journal.list().length, 1);
     } finally {
         rmSync(root, { recursive: true, force: true });

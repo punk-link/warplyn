@@ -8,6 +8,7 @@ import type { FactCheckService } from "./editorial/fact-checking/fact-check-serv
 import type { EditorialCapabilityCatalog } from "./assistant/capabilities/editorial-capability-catalog.js";
 import type { AssistantSkillCatalog } from "./assistant/skills/assistant-skill-catalog.js";
 import type { AuthorSkillService } from "./assistant/skills/author-skill-service.js";
+import type { AssistantSkillRecoveryService } from "./assistant/skills/assistant-skill-recovery-service.js";
 
 
 export interface ApplicationServices {
@@ -21,4 +22,5 @@ export interface ApplicationServices {
     capabilities?: EditorialCapabilityCatalog;
     skills: AssistantSkillCatalog;
     authorSkills?: AuthorSkillService;
+    skillRecovery: AssistantSkillRecoveryService;
 }

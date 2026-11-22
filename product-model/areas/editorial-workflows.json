@@ -35,7 +35,7 @@
             "title": "Model-selected Skills and Author-requested Skill creation",
             "status": "implemented",
             "owners": ["packages/server/src/application/assistant/capabilities/assistant-capability-loop.ts", "packages/server/src/application/assistant/skills/author-skill-service.ts", "packages/server/src/infrastructure/editorial/adapters/ai-sdk-assistant.ts", "packages/server/src/infrastructure/skills/skill-revision-store.ts"],
-            "contract": "An untagged Assistant request uses the configured Assistant model and the discoverable Skill catalog rather than a default editorial workflow. The model may load a relevant Skill and, only for an explicit Author request, create or manage a validated local Markdown Skill through bounded server tools. Revision, restoration, and deletion require the exact Author-requested action and target plus the expected current package hash. Selecting Skill Creator keeps the Article as the chat host without promoting its Draft or using an Article selection as request context. The initial Assistant turn receives no Article body; a later classified editorial capability receives only the context it needs. Creator uncertainty remains conversational. Creation makes a valid Skill available immediately without a separate preview, Install action, or Draft trial. Invalid packages return a specific correction. The selected Creator path changes no Article content, Draft, Proposal, or Revision. Restoring an Assistant chat checkpoint does not change Skills. Built-in and Author packages share validated execution contracts, supported scopes, and reusable Proposal result policies. Explicit and inferred selection capture package guidance and identity for the run; complementary Skills cannot replace the primary contract. The catalog drives picker names, scope filtering, and per-Skill model settings, including custom IDs. Slash search uses names without synonym metadata. Skill Creator documents and generates the execution metadata; legacy packages remain supported.",
+            "contract": "An untagged Assistant request uses the configured Assistant model and the discoverable Skill catalog rather than a default editorial workflow. The model may load a relevant Skill and, only for an explicit Author request, create or manage a validated local Markdown Skill through bounded server tools. Revision, restoration, and deletion require the exact Author-requested action and target plus the expected current package hash. Selecting Skill Creator keeps the Article as the chat host without promoting its Draft or using an Article selection as request context. The initial Assistant turn receives no Article body; a later classified editorial capability receives only the context it needs. Creator uncertainty remains conversational. Creation makes a valid Skill available immediately without a separate preview, Install action, or Draft trial. Invalid packages return a specific correction. The selected Creator path changes no Article content, Draft, Proposal, or Revision. Restoring an Assistant chat checkpoint does not change Skills. Built-in and Author packages share validated execution contracts, supported scopes, and reusable Proposal result policies. Explicit and inferred selection capture package guidance and identity for the run; complementary Skills cannot replace the primary contract. The catalog drives picker names, scope filtering, and per-Skill model settings, including custom IDs. Slash search uses names without synonym metadata. Skill Creator documents and generates the execution metadata; legacy packages remain supported. Startup recovery isolates unresolved Author Skill changes without blocking Articles or built-in Skills. A known conflict disables that Skill; unreadable or unidentifiable journal data disables Author Skills conservatively. Conflicting files, Skill history, and journal evidence remain preserved. AI Assistant Settings reports recovery status, offers a safe retry and access to Data & backups, and refreshes discovery after recovery. Retry does not roll back unrelated active changes.",
             "persistence": "Completed creation, revision, or restoration makes the local Skill immediately discoverable and records an immutable file-backed Skill Revision. Deletion removes the live package while retaining history; an explicit Skill Revision restoration can recover it. Incomplete or failed Assistant runs leave no new installed Skill or Skill Revision. Startup recovery reconciles interrupted Skill writes with the durable Assistant request status. Skill Revision history is separate from Article history."
         },
         {
@@ -134,6 +134,34 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "editorial-workflows.skill-recovery-isolation",
+            "title": "Unresolved Author Skill recovery does not prevent local startup",
+            "capabilityIds": ["editorial-workflows.author-skill-creation"],
+            "preconditions": ["An interrupted Author Skill change conflicts with external edits, or journal data is unreadable."],
+            "event": "Warplyn starts and the Author retries recovery.",
+            "expected": [
+                "Articles and built-in Skills remain usable; a known conflict disables only that Author Skill.",
+                "Unidentifiable journal data disables Author Skills without changing preserved files or history.",
+                "Retry recovers only quarantined changes and leaves unrelated active changes alone."
+            ],
+            "forbidden": ["Overwriting external edits, discarding damaged evidence, or aborting startup solely because Skill recovery failed."],
+            "evidence": { "kind": "automated", "path": "packages/server/src/local-application.skill-recovery.test.ts" }
+        },
+        {
+            "id": "editorial-workflows.skill-recovery-controls",
+            "title": "Authors can review Skill recovery and retry without leaving their writing behind",
+            "capabilityIds": ["editorial-workflows.author-skill-creation"],
+            "preconditions": ["Author Skills are quarantined after startup recovery."],
+            "event": "The Author opens the recovery notice and uses AI Assistant Settings.",
+            "expected": [
+                "A localized warning explains that Articles, built-in Skills, files, and history remain available or preserved.",
+                "Recovery controls offer retry and access to Data & backups; successful recovery refreshes Skill discovery.",
+                "Retry failures keep the recovery controls available and show a safe next step."
+            ],
+            "forbidden": ["Exposing journal paths, raw errors or Skill contents, or reloading Article state during retry."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/ApplicationScreens.skill-recovery.test.tsx" }
+        },
         {
             "id": "editorial-workflows.proposal-body-only",
             "title": "Copied Article titles cannot become body Proposals",

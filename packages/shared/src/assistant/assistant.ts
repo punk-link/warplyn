@@ -3,6 +3,7 @@ export type { BuiltInSkillId } from "./assistant-skills.js";
 export { defaultSkillExecution, isSkillExecution, type SkillExecution } from "./skill-execution.js";
 import type { AssistantEvent } from "./assistant-events.js";
 import type { Article } from "../articles/article/article.js";
+import type { AssistantSkillRecoveryStatus } from "./assistant-skill-recovery.js";
 
 
 export type AssistantRequestScope =
@@ -183,6 +184,7 @@ export const createAssistantMessageHistoryPath = (articleId: string) => `${creat
 export const createAssistantRequestsPath = (articleId: string) => `/api/articles/${encodeURIComponent(articleId)}/assistant/requests`;
 export const createAssistantClaimSelectionPath = (articleId: string, requestId: string) => `${createAssistantRequestsPath(articleId)}/${encodeURIComponent(requestId)}/claims/selection`;
 export const assistantSkillsPath = "/api/assistant/skills";
+export const assistantSkillRecoveryPath = "/api/assistant/skills/recovery";
 export const createAssistantTranslationRejectionPath = (articleId: string, editorialArtifactId: string) => `${createAssistantMessagesPath(articleId)}/${encodeURIComponent(editorialArtifactId)}/translation-rejection`;
 export const createAssistantCheckpointPreviewPath = (articleId: string, messageId: string) => `${createAssistantMessagesPath(articleId)}/${encodeURIComponent(messageId)}/checkpoint`;
 export const createAssistantCheckpointRestorePath = (articleId: string, messageId: string) => `${createAssistantCheckpointPreviewPath(articleId, messageId)}/restore`;
@@ -268,6 +270,8 @@ export interface AssistantClient {
     setAssistantEditMode(articleId: string, mode: AssistantEditMode): Promise<AssistantEditMode>;
     applyAssistantEdit(articleId: string, messageId: string): Promise<import("../articles/revision/revision.js").ArticleRevision>;
     listAssistantSkills(): Promise<AssistantSkillSummary[]>;
+    getAssistantSkillRecovery(): Promise<AssistantSkillRecoveryStatus>;
+    retryAssistantSkillRecovery(): Promise<AssistantSkillRecoveryStatus>;
     streamAssistantRequest(articleId: string, input: StartAssistantRequest, onEvent: (event: AssistantEvent) => void, signal?: AbortSignal): Promise<void>;
     rejectTranslation(articleId: string, editorialArtifactId: string): Promise<void>;
     previewAssistantCheckpoint(articleId: string, messageId: string): Promise<AssistantCheckpointPreview>;

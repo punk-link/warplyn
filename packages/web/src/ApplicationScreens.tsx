@@ -9,6 +9,7 @@ import { ActivityIndicator, Banner } from "./ui/primitives.js";
 import { EditorialWorkspace } from "./workspace/EditorialWorkspace.js";
 import { StyleProfileScreen } from "./workspace/components/StyleProfileScreen.js";
 import { useEditorialWorkspace } from "./workspace/state/use-editorial-workspace.js";
+import { useSkillRecovery } from "./settings/use-skill-recovery.js";
 
 
 interface ApplicationScreenContext {
@@ -23,6 +24,7 @@ interface ApplicationScreenNavigation {
     openStyleProfile: () => void;
     openModelSettings: () => void;
     openQuickStart: () => void;
+    openSkillRecovery: () => void;
     backToWorkspace: () => void;
 }
 
@@ -50,6 +52,7 @@ export function ApplicationScreens({ context, navigation, bindings, updates }: {
     const { client, screen, settingsSection } = context;
     const intl = useIntl();
     const model = useEditorialWorkspace({ client, active: screen === "editorial-workspace", navigation, bindings });
+    const skillRecovery = useSkillRecovery(client, navigation.openSkillRecovery, model.environment.loadAuthorSkills);
     const { workspace, editorial, revisions, generalSettings, assistant, layout } = model.content;
 
     if (workspace.state === "loading")
@@ -71,7 +74,8 @@ export function ApplicationScreens({ context, navigation, bindings, updates }: {
             onThemeApplied={bindings.onThemeApplied}
             focusUpdates={updates.focusUpdates}
             onUpdatesFocused={updates.onUpdatesFocused}
-            openQuickStart={navigation.openQuickStart} />;
+            openQuickStart={navigation.openQuickStart}
+            skillRecovery={skillRecovery} />;
 
     if (screen === "style-profile")
         return <StyleProfileScreen

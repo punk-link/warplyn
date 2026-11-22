@@ -2,6 +2,17 @@ import type { MessageId } from "../../messages.js";
 
 
 export const skillsMessages = {
+    "skills.recovery.title": "Odzyskiwanie Skills Autora",
+    "skills.recovery.message": (
+        "Dotknięte problemem Skills Autora są niedostępne. Ich pliki i historia zostały zachowane. Rozwiąż " +
+        "konflikty w plikach Skills lub przywróć kopię zapasową, a następnie ponów odzyskiwanie. Artykuły i " +
+        "wbudowane Skills pozostają dostępne."
+    ),
+    "skills.recovery.retry": "Ponów odzyskiwanie",
+    "skills.recovery.review": "Sprawdź odzyskiwanie",
+    "skills.recovery.ready": "Skills Autora są dostępne.",
+    "skills.recovery.loadFailed": "Nie udało się sprawdzić odzyskiwania Skills. Spróbuj ponownie lub otwórz Warplyn jeszcze raz.",
+    "skills.recovery.retryFailed": "Nie udało się ponowić odzyskiwania Skills. Pliki zostały zachowane. Spróbuj ponownie lub przywróć kopię zapasową.",
     "skills.loadFailed": "Nie udało się wczytać umiejętności. Ponów wczytywanie lub otwórz ponownie ustawienia AI.",
     "skills.validation.invalid_frontmatter": (
         "Plik SKILL.md tej umiejętności nie ma poprawnego bloku szczegółów na początku. Dodaj identyfikator, nazwę, opi" +

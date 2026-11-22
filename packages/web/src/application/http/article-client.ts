@@ -1,6 +1,8 @@
 import { createAssistantMessageHistoryPath,
     acceptProposalPath,
     assistantSkillsPath,
+    assistantSkillRecoveryPath,
+    type AssistantSkillRecoveryStatus,
     createArticleArchivePath,
     createArticleDraftPath,
     createArticlePinPath,
@@ -74,6 +76,16 @@ export abstract class HttpArticleClient extends HttpSettingsClient {
 
     async listAssistantSkills(): Promise<AssistantSkillSummary[]> {
         return this.request<AssistantSkillSummary[]>(assistantSkillsPath);
+    }
+
+
+    async getAssistantSkillRecovery(): Promise<AssistantSkillRecoveryStatus> {
+        return this.request<AssistantSkillRecoveryStatus>(assistantSkillRecoveryPath);
+    }
+
+
+    async retryAssistantSkillRecovery(): Promise<AssistantSkillRecoveryStatus> {
+        return this.request<AssistantSkillRecoveryStatus>(assistantSkillRecoveryPath, { method: HTTP_METHOD.POST });
     }
 
 

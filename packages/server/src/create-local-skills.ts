@@ -14,8 +14,6 @@ export function createLocalSkills(dataDirectory: string, builtInRoot?: string): 
         const summaries = builtIns.summaries();
         return { ids: summaries.map((skill) => skill.reference.id), names: summaries.map((skill) => skill.name) };
     });
-    return {
-        catalog: new AssistantSkillCatalog([builtIns, authorSource]),
-        authorSkills: new AuthorSkillService(authorSource, new SkillRevisionStore(dataDirectory), new SkillChangeJournal(dataDirectory)),
-    };
+    const authorSkills = new AuthorSkillService(authorSource, new SkillRevisionStore(dataDirectory), new SkillChangeJournal(dataDirectory));
+    return { catalog: new AssistantSkillCatalog([builtIns, authorSkills]), authorSkills };
 }

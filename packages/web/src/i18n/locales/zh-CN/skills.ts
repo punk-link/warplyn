@@ -2,6 +2,13 @@ import type { MessageId } from "../../messages.js";
 
 
 export const skillsMessages = {
+    "skills.recovery.title": "作者技能恢复",
+    "skills.recovery.message": "受影响的作者技能暂不可用，其文件和历史记录均已保留。请解决技能文件中的冲突或还原备份，然后重试恢复。文章和内置技能仍可使用。",
+    "skills.recovery.retry": "重试恢复",
+    "skills.recovery.review": "查看恢复",
+    "skills.recovery.ready": "作者技能可用。",
+    "skills.recovery.loadFailed": "无法检查技能恢复状态。请重试或重新打开 Warplyn。",
+    "skills.recovery.retryFailed": "无法重试技能恢复。文件已保留。请重试或还原备份。",
     "skills.loadFailed": "无法加载技能。请重新加载或重新打开AI设置。",
     "skills.validation.invalid_frontmatter": "此技能的SKILL.md文件顶部缺少有效的详情块。请添加ID、名称、说明和版本后重试。",
     "skills.validation.invalid_instructions": "请添加此技能应遵循的Markdown指示，并将长度控制在支持范围内。",

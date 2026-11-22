@@ -74,6 +74,8 @@ export function createFakeClient(): EditorialWorkspaceClient {
         saveArticleRevision: vi.fn(),
         listArticleRevisions: vi.fn().mockResolvedValue([]),
         listAssistantSkills: vi.fn().mockResolvedValue(skillCatalogFixture),
+        getAssistantSkillRecovery: vi.fn().mockResolvedValue({ kind: "ready" }),
+        retryAssistantSkillRecovery: vi.fn().mockResolvedValue({ kind: "ready" }),
         listAssistantMessages: vi.fn().mockResolvedValue([]),
         getAssistantEditMode: vi.fn().mockResolvedValue("review"),
         setAssistantEditMode: vi.fn().mockResolvedValue("direct"),

@@ -230,6 +230,7 @@ export {
     ASSISTANT_EVENT,
     BUILT_IN_SKILL,
     assistantSkillsPath,
+    assistantSkillRecoveryPath,
     createAssistantMessagesPath,
     createAssistantRequestsPath,
     createAssistantClaimSelectionPath,
@@ -307,3 +308,4 @@ export { createAssistantMessageHistoryPath } from "./assistant/assistant.js";
 export { success, failure, type Result } from "./cross-cutting/result.js";
 export { assistantActivityIds, type AssistantActivityId } from "./assistant/assistant-activity-id.js";
 export * from "./articles/notes/editor-notes.js";
+export type { AssistantSkillRecoveryStatus } from "./assistant/assistant-skill-recovery.js";

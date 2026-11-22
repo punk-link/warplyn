@@ -1,3 +1,6 @@
+import type { AuthorSkillJournalEntry } from "./author-skill-journal-entry.js";
+
+
 export interface PendingSkillChange {
     requestId: string;
     skillId: string;
@@ -8,6 +11,6 @@ export interface PendingSkillChange {
 
 export interface AuthorSkillChangeJournal {
     begin(change: PendingSkillChange): void;
-    list(): readonly PendingSkillChange[];
+    list(): readonly AuthorSkillJournalEntry[];
     remove(requestId: string): void;
 }

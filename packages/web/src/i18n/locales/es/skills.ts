@@ -2,6 +2,20 @@ import type { MessageId } from "../../messages.js";
 
 
 export const skillsMessages = {
+    "skills.recovery.title": "Recuperación de Skills del Autor",
+    "skills.recovery.message": (
+        "Los Skills del Autor afectados no están disponibles. Sus archivos e historial se conservan. Resolvé " +
+        "los conflictos en los archivos de Skills o restaurá una copia de seguridad y volvé a intentar la " +
+        "recuperación. Tus Artículos y los Skills incluidos siguen disponibles."
+    ),
+    "skills.recovery.retry": "Reintentar recuperación",
+    "skills.recovery.review": "Revisar recuperación",
+    "skills.recovery.ready": "Los Skills del Autor están disponibles.",
+    "skills.recovery.loadFailed": "No se pudo comprobar la recuperación de Skills. Intentá de nuevo o volvé a abrir Warplyn.",
+    "skills.recovery.retryFailed": (
+        "No se pudo reintentar la recuperación de Skills. Tus archivos se conservan. Intentá de nuevo o " +
+        "restaurá una copia de seguridad."
+    ),
     "skills.loadFailed": "No se pudieron cargar las habilidades. Vuelve a cargarlas o abre de nuevo la configuración de IA.",
     "skills.validation.invalid_frontmatter": (
         "El archivo SKILL.md de esta habilidad no tiene un bloque de detalles válido al inicio. Añade su ID, nombre, de" +

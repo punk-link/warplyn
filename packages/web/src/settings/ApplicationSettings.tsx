@@ -12,6 +12,8 @@ import { SettingsNavigation } from "./components/SettingsNavigation.js";
 import { AboutSettingsSection } from "./components/AboutSettingsSection.js";
 import { AiSettingsSection } from "./components/AiSettingsSection.js";
 import { AssistantBehaviorSettings } from "./components/AssistantBehaviorSettings.js";
+import { SkillRecoverySettings } from "./components/SkillRecoverySettings.js";
+import type { useSkillRecovery } from "./use-skill-recovery.js";
 import { DataBackupsSettingsSection } from "./components/DataBackupsSettingsSection.js";
 import { GeneralSettingsSection } from "./components/GeneralSettingsSection.js";
 import { KeyBindingSettings } from "./components/KeyBindingSettings.js";
@@ -23,7 +25,17 @@ import { useAiSettingsController } from "./use-ai-settings-controller.js";
 import { settingsFocusAreas, useFocusAreaNavigation } from "../ui/focus-area-navigation.js";
 
 
-export function ApplicationSettings(props: { client: EditorialWorkspaceClient; back: () => void; initialSection?: SettingsSection; onKeyBindingsUpdated?: (overrides: KeyBindingOverrides) => void; onThemeApplied?: (theme: GeneralSettings["theme"]) => void; focusUpdates?: boolean; onUpdatesFocused?: () => void; openQuickStart?: () => void }) {
+export function ApplicationSettings(props: {
+    client: EditorialWorkspaceClient;
+    back: () => void;
+    initialSection?: SettingsSection;
+    onKeyBindingsUpdated?: (overrides: KeyBindingOverrides) => void;
+    onThemeApplied?: (theme: GeneralSettings["theme"]) => void;
+    focusUpdates?: boolean;
+    onUpdatesFocused?: () => void;
+    openQuickStart?: () => void;
+    skillRecovery?: ReturnType<typeof useSkillRecovery>;
+}) {
     const setInterfaceLocale = useContext(InterfaceLocaleContext);
     const { client, back, initialSection = "general", onKeyBindingsUpdated, onThemeApplied, focusUpdates = false, onUpdatesFocused, openQuickStart } = props;
     const intl = useIntl();
@@ -177,7 +189,10 @@ export function ApplicationSettings(props: { client: EditorialWorkspaceClient; b
                 save={saveKeyBindingOverrides} />;
             break;
         case "ai":
-            sectionContent = <AssistantBehaviorSettings general={general} save={saveGeneral} />;
+            sectionContent = <>
+                {props.skillRecovery && <SkillRecoverySettings recovery={props.skillRecovery} openBackups={() => setSection("backups")} />}
+                <AssistantBehaviorSettings general={general} save={saveGeneral} />
+            </>;
             break;
         case "providers":
             sectionContent = <AiSettingsSection

@@ -2,6 +2,20 @@ import type { MessageId } from "../../messages.js";
 
 
 export const skillsMessages = {
+    "skills.recovery.title": "Wiederherstellung eigener Skills",
+    "skills.recovery.message": (
+        "Betroffene eigene Skills sind nicht verfügbar. Ihre Dateien und ihr Verlauf bleiben erhalten. Behebe " +
+        "die Konflikte in den Skill-Dateien oder stelle eine Sicherung wieder her und versuche die " +
+        "Wiederherstellung erneut. Artikel und integrierte Skills bleiben verfügbar."
+    ),
+    "skills.recovery.retry": "Wiederherstellung erneut versuchen",
+    "skills.recovery.review": "Wiederherstellung prüfen",
+    "skills.recovery.ready": "Eigene Skills sind verfügbar.",
+    "skills.recovery.loadFailed": "Die Skill-Wiederherstellung konnte nicht geprüft werden. Versuche es erneut oder öffne Warplyn neu.",
+    "skills.recovery.retryFailed": (
+        "Die Skill-Wiederherstellung konnte nicht erneut ausgeführt werden. Deine Dateien bleiben erhalten. " +
+        "Versuche es erneut oder stelle eine Sicherung wieder her."
+    ),
     "skills.loadFailed": "Fähigkeiten konnten nicht geladen werden. Versuchen Sie es erneut oder öffnen Sie die KI-Einstellungen noch einmal.",
     "skills.validation.invalid_frontmatter": (
         "Der SKILL.md-Datei dieser Fähigkeit fehlt ein gültiger Metadatenblock am Anfang. Fügen Sie ID, Name," +

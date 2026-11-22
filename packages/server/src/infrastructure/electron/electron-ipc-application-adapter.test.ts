@@ -41,7 +41,12 @@ class FakeIpcMain implements ElectronIpcMain {
     invoke<Method extends ElectronApplicationMethod>(
         request: { method: Method; args: ElectronApplicationArguments<Method> }
     ): Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method> {
-        return this.handlers.get(ELECTRON_IPC_CHANNEL.invoke)!({ sender: { send: () => undefined } }, request) as Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method>;
+        return this.invokeRaw(request) as Promise<ElectronInvokeResult<Method>> | ElectronInvokeResult<Method>;
+    }
+
+
+    invokeRaw(request: unknown): Promise<ElectronInvokeResult> | ElectronInvokeResult {
+        return this.handlers.get(ELECTRON_IPC_CHANNEL.invoke)!({ sender: { send: () => undefined } }, request);
     }
 
 
@@ -290,6 +295,21 @@ test("Electron IPC rejects invalid publishing settings before persistence", asyn
         adapter.close();
     }
 });
+
+test("Skill recovery uses finite zero-argument IPC methods", async () => {
+    const adapter = createAdapter();
+    try {
+        for (const method of ["getAssistantSkillRecovery", "retryAssistantSkillRecovery"] as const) {
+            assert.deepEqual(await adapter.ipcMain.invoke({ method, args: [] }), { ok: true, value: { kind: "ready" } });
+            assert.deepEqual(await adapter.ipcMain.invokeRaw({ method, args: ["untrusted path"] }), {
+                ok: false, error: { code: APPLICATION_ERROR.INVALID_REQUEST, status: HTTP_STATUS.BAD_REQUEST },
+            });
+        }
+    } finally {
+        adapter.close();
+    }
+});
+
 
 test("Electron summary reads load scoped bodies and reject malformed identifiers", async () => {
     const adapter = createAdapter();

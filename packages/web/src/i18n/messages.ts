@@ -1227,6 +1227,17 @@ export const messages = {
     "errors.assistantRetryInvalid": "That Assistant action can't be retried. Start it again from the Assistant.",
     "errors.assistantCoordinatorFailed": "Couldn't finish that Assistant action. Your Article was not changed. Try again.",
     "skills.loadFailed": "Couldn't load Skills. Retry loading them or reopen AI Settings.",
+    "skills.recovery.title": "Author Skill recovery",
+    "skills.recovery.message": (
+        "Affected Author Skills are unavailable. Their files and history are preserved. Resolve the " +
+        "conflicting Skill files or restore a backup, then retry recovery. Your Articles and built-in Skills " +
+        "remain available."
+    ),
+    "skills.recovery.retry": "Retry recovery",
+    "skills.recovery.review": "Review recovery",
+    "skills.recovery.ready": "Author Skills are available.",
+    "skills.recovery.loadFailed": "Couldn't check Skill recovery. Try again or reopen Warplyn.",
+    "skills.recovery.retryFailed": "Couldn't retry Skill recovery. Your files are preserved. Try again or restore a backup.",
     "skills.validation.invalid_frontmatter": "This Skill's SKILL.md file is missing a valid details block at the top. Add its ID, name, description, and version, then try again.",
     "skills.validation.invalid_metadata": "Review this Skill's details. Use a unique lowercase ID, a clear name and description, a numeric version, and supported scope and execution settings.",
     "skills.validation.invalid_instructions": "Add the Markdown guidance this Skill should follow. Keep the instructions within the supported size.",

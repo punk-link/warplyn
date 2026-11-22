@@ -28,6 +28,7 @@ function mapSkillWriteFailure(error: unknown): Extract<ApplicationResult<never>,
         unsafe_package: APPLICATION_ERROR.SKILL_UNSAFE_PACKAGE,
         package_too_large: APPLICATION_ERROR.SKILL_PACKAGE_TOO_LARGE,
         skill_package_conflict: APPLICATION_ERROR.SKILL_PACKAGE_CONFLICT,
+        skill_recovery_required: APPLICATION_ERROR.SKILL_RECOVERY_REQUIRED,
         skill_revision_conflict: APPLICATION_ERROR.SKILL_PACKAGE_CONFLICT,
         skill_revision_not_found: APPLICATION_ERROR.SKILL_REVISION_NOT_FOUND,
     };
@@ -36,7 +37,8 @@ function mapSkillWriteFailure(error: unknown): Extract<ApplicationResult<never>,
     if (!code)
         throw error;
 
-    return failure(code, code === APPLICATION_ERROR.SKILL_PACKAGE_CONFLICT ? "conflict" : "invalid");
+    const conflict = code === APPLICATION_ERROR.SKILL_PACKAGE_CONFLICT || code === APPLICATION_ERROR.SKILL_RECOVERY_REQUIRED;
+    return failure(code, conflict ? "conflict" : "invalid");
 }
 
 

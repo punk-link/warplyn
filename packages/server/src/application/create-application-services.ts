@@ -25,6 +25,7 @@ import { getConversationHistory } from "./assistant/requests/conversation-histor
 import type { EditorialService } from "./editorial/editorial-service.js";
 import type { TelemetryObserver } from "./telemetry/telemetry-observer.js";
 import { CreateApplicationServicesOptions } from "./create-application-services-options.js";
+import { AssistantSkillRecoveryService } from "./assistant/skills/assistant-skill-recovery-service.js";
 
 
 export interface ApplicationServiceStores {
@@ -78,6 +79,7 @@ export function createApplicationServices({
         proposalSummaries: new ProposalSummaryService(stores.engines, stores.artifacts),
         factChecks: factCheckService,
         skills,
+        skillRecovery: new AssistantSkillRecoveryService(authorSkillService, stores.assistant),
         ...(authorSkillService ? { authorSkills: authorSkillService } : {}),
         ...(capabilities ? { capabilities } : {}),
     };

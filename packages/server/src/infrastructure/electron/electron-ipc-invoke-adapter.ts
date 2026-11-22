@@ -61,6 +61,18 @@ function setAssistantClaimSelected(args: readonly unknown[], services: Applicati
 }
 
 
+function invokeSkillRecovery(
+    method: typeof ELECTRON_APPLICATION_METHOD.getAssistantSkillRecovery | typeof ELECTRON_APPLICATION_METHOD.retryAssistantSkillRecovery,
+    args: readonly unknown[],
+    recovery: ApplicationServices["skillRecovery"],
+) {
+    if (args.length !== 0)
+        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
+    return method === ELECTRON_APPLICATION_METHOD.getAssistantSkillRecovery ? recovery.status() : recovery.retry();
+}
+
+
 async function invokeApplicationMethod(
     method: ElectronApplicationMethod, args: readonly unknown[], services: ApplicationServices, now: () => string,
     onInterfaceLocaleChanged?: (locale: InterfaceLocale) => void,
@@ -146,6 +158,9 @@ async function invokeApplicationMethod(
             return services.articles.restoreRevisionWithTitle(String(args[0]), String(args[1]));
         case ELECTRON_APPLICATION_METHOD.listAssistantSkills:
             return services.skills.discover();
+        case ELECTRON_APPLICATION_METHOD.getAssistantSkillRecovery:
+        case ELECTRON_APPLICATION_METHOD.retryAssistantSkillRecovery:
+            return invokeSkillRecovery(method, args, services.skillRecovery);
         case ELECTRON_APPLICATION_METHOD.listAssistantMessageHistory:
             return services.assistant.listMessageHistory(readIdentifier(args[0]));
         case ELECTRON_APPLICATION_METHOD.listAssistantMessages:

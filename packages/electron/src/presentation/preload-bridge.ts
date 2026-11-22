@@ -183,6 +183,8 @@ export function createElectronApplicationClient(ipcRenderer: ElectronIpcRenderer
         summarizeProposal: (articleId, input) => invoke(ELECTRON_APPLICATION_METHOD.summarizeProposal, articleId, input),
         restoreRevision: (articleId, revisionId) => invoke(ELECTRON_APPLICATION_METHOD.restoreRevision, articleId, revisionId),
         listAssistantSkills: () => invoke(ELECTRON_APPLICATION_METHOD.listAssistantSkills),
+        getAssistantSkillRecovery: () => invoke(ELECTRON_APPLICATION_METHOD.getAssistantSkillRecovery),
+        retryAssistantSkillRecovery: () => invoke(ELECTRON_APPLICATION_METHOD.retryAssistantSkillRecovery),
         listAssistantMessageHistory: (articleId) => invoke(ELECTRON_APPLICATION_METHOD.listAssistantMessageHistory, articleId),
         listAssistantMessages: (articleId) => invoke(ELECTRON_APPLICATION_METHOD.listAssistantMessages, articleId),
         getAssistantEditMode: (articleId) => invoke(ELECTRON_APPLICATION_METHOD.getAssistantEditMode, articleId),

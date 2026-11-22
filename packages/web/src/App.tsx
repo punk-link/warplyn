@@ -127,6 +127,10 @@ export function App({ client = defaultClient }: { client?: EditorialWorkspaceCli
                     setSettingsSection("general");
                     setScreen("application-settings");
                 }, openStyleProfile: () => setScreen("style-profile"), openModelSettings, openQuickStart,
+                openSkillRecovery: () => {
+                    setSettingsSection("ai");
+                    setScreen("application-settings");
+                },
                 backToWorkspace: () => setScreen("editorial-workspace") }}
                 bindings={{ dispatcher, keyBindingOverrides: keyBindingOverrides ?? {}, onKeyBindingsUpdated: setKeyBindingOverrides, onThemeApplied: setTheme }}
                 updates={{ focusUpdates, onUpdatesFocused: () => setFocusUpdates(false) }}

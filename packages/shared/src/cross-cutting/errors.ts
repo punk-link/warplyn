@@ -65,6 +65,7 @@ export const APPLICATION_ERROR_BY_AREA = {
         SKILL_UNSAFE_PACKAGE: "skill_unsafe_package",
         SKILL_PACKAGE_TOO_LARGE: "skill_package_too_large",
         SKILL_PACKAGE_CONFLICT: "skill_package_conflict",
+        SKILL_RECOVERY_REQUIRED: "skill_recovery_required",
         SKILL_REVISION_NOT_FOUND: "skill_revision_not_found",
     },
 } as const;

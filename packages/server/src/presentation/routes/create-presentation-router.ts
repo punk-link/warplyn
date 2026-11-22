@@ -1,6 +1,7 @@
 import { acceptProposalPath, aiAppModelPath, aiConnectionsPath, aiModelPreferencesPath, aiModelsPath, applicationSettingsPath, assistantSkillsPath, backupExportsPath, backupImportsPath, createArticleArchivePath, createArticleDraftPath, createArticlePinPath, createArticleRevisionsPath, articlesPath, createArticleStyleCorpusSnapshotPath, createArticleStyleRulesPath, createAssistantApplyEditPath, createAssistantClaimSelectionPath, createAssistantEditModePath, createAssistantCheckpointPreviewPath, createAssistantCheckpointRestorePath, createAssistantMessagesPath, createAssistantRequestsPath, createAssistantTranslationRejectionPath, backupsPath, createEditorialPath, createFactCheckResolutionPath, createFactChecksPath, HTTP_METHOD, healthPath, keyBindingsPath, pinnedArticleOrderPath, createProposalSummariesPath, publishSettingsPath, restoreBackupPath, restoreRevisionPath, styleCorpusPath, styleCorpusRebuildPath, styleCorpusRulesPath } from "@skladno/shared";
 
 import type { ApplicationServices } from "../../application/application-services.js";
+import { assistantSkillRecoveryPath } from "@skladno/shared";
 import { styleCorpusTypographyPath } from "@skladno/shared";
 import { createArticleTypographyReviewPath } from "@skladno/shared";
 import { readJson, writeJson } from "../transport/json.js";
@@ -71,6 +72,12 @@ export function createPresentationRouter(editorial: EditorialService, services: 
 
     router.register(HTTP_METHOD.GET, healthPath, (_request, response) => handleHealthRoute(response));
     router.register(HTTP_METHOD.GET, assistantSkillsPath, (_request, response) => listAssistantSkillsRoute(response, skills));
+    router.register(HTTP_METHOD.GET, assistantSkillRecoveryPath, (_request, response) => {
+        writeJson(response, HTTP_STATUS.OK, services.skillRecovery.status());
+    });
+    router.register(HTTP_METHOD.POST, assistantSkillRecoveryPath, (_request, response) => {
+        writeJson(response, HTTP_STATUS.OK, services.skillRecovery.retry());
+    });
     router.register(HTTP_METHOD.GET, ASSISTANT_MESSAGES_PATH, (_request, response, parameters) => listAssistantMessagesRoute(response, parameters[0]!, assistant));
     router.register(HTTP_METHOD.GET, ASSISTANT_EDIT_MODE_PATH, (_request, response, parameters) => getAssistantEditModeRoute(response, parameters[0]!, assistant));
     router.register(HTTP_METHOD.PUT, ASSISTANT_EDIT_MODE_PATH, (request, response, parameters) => setAssistantEditModeRoute(request, response, parameters[0]!, assistant));

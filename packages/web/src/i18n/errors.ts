@@ -52,6 +52,7 @@ const errorMessages: Record<ApplicationErrorCode, MessageId> = {
     assistant_retry_invalid: "errors.assistantRetryInvalid",
     assistant_coordinator_failed: "errors.assistantCoordinatorFailed",
     skill_invalid_frontmatter: "skills.validation.invalid_frontmatter",
+    skill_recovery_required: "skills.recovery.message",
     skill_invalid_metadata: "skills.validation.invalid_metadata",
     skill_invalid_instructions: "skills.validation.invalid_instructions",
     skill_invalid_reference: "skills.validation.invalid_reference",

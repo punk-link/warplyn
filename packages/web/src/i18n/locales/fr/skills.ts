@@ -2,6 +2,17 @@ import type { MessageId } from "../../messages.js";
 
 
 export const skillsMessages = {
+    "skills.recovery.title": "Récupération des Skills de l’Auteur",
+    "skills.recovery.message": (
+        "Les Skills de l’Auteur concernés sont indisponibles. Leurs fichiers et leur historique sont " +
+        "conservés. Résolvez les conflits dans les fichiers des Skills ou restaurez une sauvegarde, puis " +
+        "relancez la récupération. Vos Articles et les Skills intégrés restent disponibles."
+    ),
+    "skills.recovery.retry": "Réessayer la récupération",
+    "skills.recovery.review": "Examiner la récupération",
+    "skills.recovery.ready": "Les Skills de l’Auteur sont disponibles.",
+    "skills.recovery.loadFailed": "Impossible de vérifier la récupération des Skills. Réessayez ou rouvrez Warplyn.",
+    "skills.recovery.retryFailed": "Impossible de relancer la récupération des Skills. Vos fichiers sont conservés. Réessayez ou restaurez une sauvegarde.",
     "skills.loadFailed": "Impossible de charger les compétences. Réessayez ou rouvrez les paramètres d’IA.",
     "skills.validation.invalid_frontmatter": (
         "Le fichier SKILL.md de cette compétence ne contient pas de bloc de métadonnées valide en tête. Ajout" +
