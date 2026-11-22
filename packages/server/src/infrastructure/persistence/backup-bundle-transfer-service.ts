@@ -97,7 +97,7 @@ export async function validateBackupBundle(directory: string, manifest: BackupBu
 }
 
 
-export class BackupBundleTransfers {
+export class BackupBundleTransferService {
     private readonly sessions = new Map<string, Session>();
 
 

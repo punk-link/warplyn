@@ -10,7 +10,7 @@ function getRouteParameters(path: RegExp | string, pathname: string): string[] |
 }
 
 
-export class Router {
+export class HttpRouter {
     private readonly routes: {
         method: string;
         path: RegExp | string;

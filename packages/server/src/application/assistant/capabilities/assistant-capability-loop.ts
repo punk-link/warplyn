@@ -20,12 +20,12 @@ import type { AssistantStore } from "../assistant-store.js";
 import type { EditorialEngineResolver } from "../../editorial/engine/editorial-engine-resolver.js";
 import type { ConversationHistory } from "../requests/conversation-history.js";
 import { AssistantSkillCatalog } from "../skills/assistant-skill-catalog.js";
-import { AssistantToolProgress } from "./assistant-tool-progress.js";
+import { AssistantToolProgressTracker } from "./assistant-tool-progress-tracker.js";
 import { captureArtifactProgress } from "./assistant-artifact-progress.js";
 import type { AuthorSkillService } from "../skills/author-skill-service.js";
 import { AuthorSkillChatActions } from "../skills/author-skill-chat-actions.js";
 import type { CommittedAuthorSkillChange } from "../skills/committed-author-skill-change.js";
-import { AssistantArtifactExecution } from "./assistant-artifact-execution.js";
+import { AssistantArtifactExecutor } from "./assistant-artifact-executor.js";
 import { getExactCharacterReplacement } from "./assistant-character-replacement.js";
 import { resolveRequestSkill } from "../skills/resolve-request-skill.js";
 import { getSkillCapabilities, getSkillOrchestrationInstructions } from "../skills/skill-execution.js";
@@ -104,7 +104,7 @@ export class AssistantCapabilityLoop {
 
         const authorContext = request.authorMessage;
         let primary: CompletionEvent | undefined;
-        const progress = new AssistantToolProgress();
+        const progress = new AssistantToolProgressTracker();
         const tools = this.createCapabilityTools(request, excerpt, authorContext, () => primary, (event) => {
             primary = event;
         }, (event) => progress.push(event));
@@ -167,7 +167,7 @@ export class AssistantCapabilityLoop {
         const definitions = request.scope.kind === "selection"
             ? this.dependencies.capabilities.getDefinitions().filter((definition) => definition.execution === "artifact" && definition.selectionCompatible)
             : this.dependencies.capabilities.getDefinitions();
-        const artifact = new AssistantArtifactExecution();
+        const artifact = new AssistantArtifactExecutor();
         const tools: EditorialAssistantTool[] = definitions.map((definition) => ({
             capability: definition.id,
             description: definition.activity,

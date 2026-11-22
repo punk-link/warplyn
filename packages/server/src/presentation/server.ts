@@ -7,7 +7,7 @@ import { ArticleRevisionConflictError } from "../application/articles/article-re
 import type { EditorialService } from "../application/editorial/editorial-service.js";
 import type { ServerConfig } from "../infrastructure/configuration/config.js";
 import type { LocalDiagnostics } from "../infrastructure/diagnostics/local-diagnostics.js";
-import type { BackupBundleTransfers } from "../infrastructure/persistence/backup-bundle.js";
+import type { BackupBundleTransferService } from "../infrastructure/persistence/backup-bundle-transfer-service.js";
 import { ApplicationServiceError } from "./errors/application-error.js";
 import { createPresentationRouter } from "./routes/create-presentation-router.js";
 import { writeJson } from "./transport/json.js";
@@ -79,7 +79,7 @@ function writeRequestError(error: unknown, request: IncomingMessage, response: S
 }
 
 
-export function createLocalService(config: ServerConfig, editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics, current = () => ({ editorial, services }), restoreBackup?: (snapshot: Uint8Array) => Promise<void>, backupTransfers?: BackupBundleTransfers) {
+export function createLocalService(config: ServerConfig, editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics, current = () => ({ editorial, services }), restoreBackup?: (snapshot: Uint8Array) => Promise<void>, backupTransfers?: BackupBundleTransferService) {
     return createServer(async (request, response) => {
         if (!isPermittedOrigin(request, config)) {
             writeJson(response, HTTP_STATUS.FORBIDDEN, { error: { code: APPLICATION_ERROR.ORIGIN_NOT_PERMITTED } });

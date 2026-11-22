@@ -2,7 +2,7 @@ import { EDITORIAL_ENGINE_ERROR } from "../../editorial/engine/editorial-engine-
 import { EditorialEngineError } from "../../editorial/engine/editorial-engine-error.js";
 
 
-export class AssistantArtifactExecution {
+export class AssistantArtifactExecutor {
     private call?: { key: string; result: Promise<unknown> };
 
 

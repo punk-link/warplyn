@@ -2,7 +2,7 @@ import type { DesktopSpellingSnapshot, DictionaryState } from "@skladno/shared";
 import { readRuntimeSettings, updateRuntimeSettings } from "../runtime/runtime-settings.js";
 
 
-export class SpellingDictionaryPreparation {
+export class SpellingDictionaryPreparer {
     private readonly states = new Map<string, DictionaryState>();
 
 

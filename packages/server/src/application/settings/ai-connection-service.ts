@@ -7,7 +7,7 @@ import type { CredentialStore } from "./credential-store.js";
 import { normalizeAiConnections, prepareEnvironmentVariableName } from "./application-settings-normalizers.js";
 
 
-export class AiConnectionOperations {
+export class AiConnectionService {
     constructor(
         private readonly settings: SettingsStore,
         private readonly models: AvailableModelsProvider,

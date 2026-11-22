@@ -2,11 +2,11 @@ import { APPLICATION_ERROR, HTTP_METHOD, HTTP_STATUS, articleSummariesPath, arti
 import type { AssistantService } from "../../application/assistant/assistant-service.js";
 import type { ArticleService } from "../../application/articles/article-service.js";
 import { ApplicationServiceError } from "../errors/application-error.js";
-import type { Router } from "../router.js";
+import type { HttpRouter } from "../http-router.js";
 import { writeJson } from "../transport/json.js";
 
 
-export function registerArticleHistoryReadRoutes(router: Router, articles: ArticleService, assistant: AssistantService): void {
+export function registerArticleHistoryReadRoutes(router: HttpRouter, articles: ArticleService, assistant: AssistantService): void {
     const assistantMessageHistoryPathPattern = new RegExp(`^${articlesPath}/([^/]+)/assistant/messages/history$`);
     router.register(HTTP_METHOD.GET, assistantMessageHistoryPathPattern, (_request, response, parameters) => writeJson(response, HTTP_STATUS.OK, assistant.listMessageHistory(parameters[0])));
     const articlePath = new RegExp(`^${articlesPath}/([^/]+)$`);

@@ -1,6 +1,6 @@
 import type { AssistantSkillReference, AssistantSkillRecoveryStatus } from "@skladno/shared";
 import type { AssistantSkillSource } from "./assistant-skill-source.js";
-import { AuthorSkillRecovery } from "./author-skill-recovery.js";
+import { AuthorSkillRecoveryManager } from "./author-skill-recovery-manager.js";
 import { withNextSkillVersion, withSkillVersionAfterHistory } from "./author-skill-versioning.js";
 import type { AssistantSkillPackage } from "./assistant-skill-package.js";
 import type { AuthorSkillRevisionStore } from "./author-skill-revision-store.js";
@@ -14,7 +14,7 @@ import { skillWriteFailure, unwrapSkillWrite, type SkillWriteResult } from "./sk
 
 
 export class AuthorSkillService implements AssistantSkillSource {
-    private readonly recovery: AuthorSkillRecovery;
+    private readonly recovery: AuthorSkillRecoveryManager;
 
 
     constructor(
@@ -22,7 +22,7 @@ export class AuthorSkillService implements AssistantSkillSource {
         private readonly revisions: AuthorSkillRevisionStore,
         private readonly journal?: AuthorSkillChangeJournal,
     ) {
-        this.recovery = new AuthorSkillRecovery(source, revisions, journal);
+        this.recovery = new AuthorSkillRecoveryManager(source, revisions, journal);
     }
 
 

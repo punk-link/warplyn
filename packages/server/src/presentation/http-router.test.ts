@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import test from "node:test";
 
-import { Router } from "./router.js";
+import { HttpRouter } from "./http-router.js";
 
 
-test("Router dispatches one matching method and decodes route parameters", async () => {
-    const router = new Router();
+test("HttpRouter dispatches one matching method and decodes route parameters", async () => {
+    const router = new HttpRouter();
     let articleId: string | undefined;
     const apiArticlesPattern = /^\/api\/articles\/([^/]+)$/;
     router.register("GET", apiArticlesPattern, (_request, _response, parameters) => {

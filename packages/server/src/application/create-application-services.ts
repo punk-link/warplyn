@@ -19,8 +19,8 @@ import type { SystemDateTimeFormatProvider } from "./settings/system-date-time-f
 import type { CredentialStore } from "./settings/credential-store.js";
 import { EditorialCapabilityCatalog } from "./assistant/capabilities/editorial-capability-catalog.js";
 import { AssistantCapabilityLoop } from "./assistant/capabilities/assistant-capability-loop.js";
-import { AssistantCompletion } from "./assistant/completion/assistant-completion.js";
-import { AssistantRequestPreparation } from "./assistant/requests/assistant-request-preparation.js";
+import { AssistantCompletionService } from "./assistant/completion/assistant-completion-service.js";
+import { AssistantRequestPreparer } from "./assistant/requests/assistant-request-preparer.js";
 import { getConversationHistory } from "./assistant/requests/conversation-history.js";
 import type { EditorialService } from "./editorial/editorial-service.js";
 import type { TelemetryObserver } from "./telemetry/telemetry-observer.js";
@@ -65,9 +65,9 @@ export function createApplicationServices({
     const capabilities = integration.editorial
         ? new EditorialCapabilityCatalog(articleService, stores.artifacts, publishing, integration.editorial, styleCorpusService, factChecks, stores.assistant)
         : undefined;
-    const preparation = new AssistantRequestPreparation({ articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus, engines: stores.engines, capabilities, skills });
+    const preparation = new AssistantRequestPreparer({ articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus, engines: stores.engines, capabilities, skills });
     const capabilityLoop = new AssistantCapabilityLoop({ assistant: stores.assistant, engines: stores.engines, capabilities, authorSkills: authorSkillService, skills, conversationHistory: (articleId, limit) => getConversationHistory(stores.assistant, articleId, limit) });
-    const completion = new AssistantCompletion({ articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus, artifacts: stores.artifacts, factChecks, capabilities });
+    const completion = new AssistantCompletionService({ articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus, artifacts: stores.artifacts, factChecks, capabilities });
 
     return {
         articles: articleService,

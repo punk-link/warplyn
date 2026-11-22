@@ -7,7 +7,7 @@ import type { EditorialEngine } from "../../editorial/engine/editorial-engine.js
 import { ApplicationServiceError } from "../../errors/application-service-error.js";
 import { AssistantSkillCatalog } from "../skills/assistant-skill-catalog.js";
 import type { AssistantSkillPackage } from "../skills/assistant-skill-package.js";
-import { AssistantRequestPreparation } from "./assistant-request-preparation.js";
+import { AssistantRequestPreparer } from "./assistant-request-preparer.js";
 import { assistantPreparationError } from "./assistant-preparation-error.js";
 import type { AssistantServiceRequest } from "./assistant-service-request.js";
 
@@ -37,7 +37,7 @@ function fixture(context: TestContext) {
     };
     const engines = { resolve, resolveAssistant: resolve };
     const dependencies = { articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus, engines, skills };
-    const preparation = new AssistantRequestPreparation(dependencies);
+    const preparation = new AssistantRequestPreparer(dependencies);
     return { database, stores, article, request, skill, dependencies, preparation, resolutions: () => resolutions };
 }
 
@@ -87,7 +87,7 @@ test("prerequisite failures stop before engine resolution and preserve failure p
 
 test("routing returns missing configuration, target language, and style corpus failures", (context) => {
     const { preparation, dependencies, request, skill } = fixture(context);
-    const missing = new AssistantRequestPreparation({ ...dependencies, engines: { resolve: () => undefined } });
+    const missing = new AssistantRequestPreparer({ ...dependencies, engines: { resolve: () => undefined } });
     assert.deepEqual(missing.prepare(request), { ok: false, code: APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING });
     assert.deepEqual(missing.prepare({ ...request, explicitSkillId: "skill" }),
         { ok: false, code: APPLICATION_ERROR.EDITORIAL_CONFIGURATION_MISSING });
@@ -118,7 +118,7 @@ test("retry reconstructs original scope and content only for failed or cancelled
 test("unexpected store and resolver errors propagate unchanged even with an expected domain code", (context) => {
     const { dependencies, request } = fixture(context);
     const error = new ApplicationServiceError(APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID, HTTP_STATUS.BAD_REQUEST);
-    const resolver = new AssistantRequestPreparation({ ...dependencies, engines: { resolve: () => undefined,
+    const resolver = new AssistantRequestPreparer({ ...dependencies, engines: { resolve: () => undefined,
         resolveAssistant: () => {
             throw error;
         } } });
@@ -126,7 +126,7 @@ test("unexpected store and resolver errors propagate unchanged even with an expe
     dependencies.articles.getArticle = () => {
         throw error;
     };
-    assert.throws(() => new AssistantRequestPreparation(dependencies).prepare(request), (actual) => actual === error);
+    assert.throws(() => new AssistantRequestPreparer(dependencies).prepare(request), (actual) => actual === error);
 });
 
 

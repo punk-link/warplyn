@@ -8,7 +8,7 @@ import { createLocalApplication } from "./local-application.js";
 import { createLocalService } from "./presentation/server.js";
 import { validateDatabaseSnapshot } from "./infrastructure/persistence/database.js";
 import { restoreConnectionSettings } from "./infrastructure/persistence/backup-connection-settings.js";
-import { BackupBundleTransfers } from "./infrastructure/persistence/backup-bundle.js";
+import { BackupBundleTransferService } from "./infrastructure/persistence/backup-bundle-transfer-service.js";
 import { completeBrowserRestoreRecovery, prepareBrowserRestoreRecovery, recoverPendingBrowserRestore, removeDatabaseFiles } from "./infrastructure/persistence/browser-restore-recovery.js";
 
 const diagnostics = createLocalDiagnostics();
@@ -89,7 +89,7 @@ async function start(): Promise<void> {
         }
 
 
-        const backupTransfers = new BackupBundleTransfers(dirname(config.databasePath),
+        const backupTransfers = new BackupBundleTransferService(dirname(config.databasePath),
             () => application.services.settings.createBackup(),
             async (directory) => restoreBackup(readFileSync(join(directory, "database.sqlite")), directory));
         const service = createLocalService(config, application.editorial, application.services, diagnostics, () => application, restoreBackup, backupTransfers);

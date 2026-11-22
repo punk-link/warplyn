@@ -1,7 +1,7 @@
 import type { EditorialEngineEvent } from "../../editorial/engine/editorial-engine-event.js";
 
 
-export class AssistantToolProgress {
+export class AssistantToolProgressTracker {
     // ponytail: Foreground events queue in memory; add backpressure if long model streams make this measurable.
     private readonly queuedEvents: EditorialEngineEvent[] = [];
 
