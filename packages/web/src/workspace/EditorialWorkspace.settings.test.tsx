@@ -63,6 +63,7 @@ describe("Editorial Workspace settings", () => {
     it("opens Application Settings without replacing the workspace with an empty view", async () => {
         const user = userEvent.setup();
         render(<App client={createFakeClient()} />);
+        await screen.findByRole("heading", { name: "First Article" });
         await user.click((await screen.findAllByRole("button", { name: getMessage("navigation.settings") })).at(-1)!);
         expect(screen.getByRole("heading", { name: getMessage("settings.general") })).toBeTruthy();
         expect(screen.getByText("Preferred appearance")).toBeTruthy();
@@ -101,6 +102,7 @@ describe("Editorial Workspace settings", () => {
         client.updateGeneralSettings = vi.fn().mockRejectedValue(new Error("private settings detail"));
         const user = userEvent.setup();
         render(<App client={client} />);
+        await screen.findByRole("heading", { name: "First Article" });
         await user.click((await screen.findAllByRole("button", { name: getMessage("navigation.settings") })).at(-1)!);
         const appearance = screen.getByText("Preferred appearance").closest("section")?.querySelector("select");
         await user.selectOptions(appearance!, "dark");

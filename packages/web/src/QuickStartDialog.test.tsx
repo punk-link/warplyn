@@ -43,6 +43,7 @@ describe("Quick start", () => {
         render(<App client={client} />);
         expect(screen.queryByRole("dialog")).toBeNull();
 
+        await screen.findByRole("heading", { name: "First Article" });
         await user.click((await screen.findAllByRole("button", { name: "Settings" })).at(-1)!);
         await user.selectOptions(screen.getByRole("combobox", { name: "Settings Navigation" }), "about");
         const openQuickStart = screen.getByRole("button", { name: "Open quick start" });
@@ -72,6 +73,7 @@ describe("Quick start", () => {
         const user = userEvent.setup();
         render(<App client={client} />);
         await user.click(await screen.findByRole("button", { name: "Start writing" }));
+        await screen.findByRole("heading", { name: "First Article" });
         await user.click((await screen.findAllByRole("button", { name: "Settings" })).at(-1)!);
         await user.selectOptions(screen.getByRole("combobox", { name: "Settings Navigation" }), "about");
         await user.click(screen.getByRole("button", { name: "Open quick start" }));
@@ -116,6 +118,7 @@ describe("Quick start", () => {
         const user = userEvent.setup();
         render(<App client={client} />);
         await user.click(await screen.findByRole("button", { name: "Skip quick start" }));
+        await screen.findByRole("heading", { name: "First Article" });
         settings = { ...settings, connections: [{
             id: "connection", provider: "openai" as const, label: "Personal AI",
             credentialSource: { kind: "environment-variable" as const, environmentVariableName: "AI_API_KEY" },

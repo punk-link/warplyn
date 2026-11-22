@@ -44,6 +44,7 @@
             "status": "implemented",
             "owners": [
                 "packages/web/src/App.tsx",
+                "packages/web/src/ApplicationScreens.tsx",
                 "packages/web/src/workspace/EditorialWorkspace.tsx",
                 "packages/web/src/workspace/state/useWorkspaceGeneralSettings.ts",
                 "packages/web/src/workspace/components/StyleProfileScreen.tsx",
@@ -52,8 +53,8 @@
                 "packages/web/src/settings/ApplicationSettings.tsx",
                 "packages/web/src/settings/components/SettingsNavigation.tsx"
             ],
-            "contract": "Application Settings and Style Profile are standalone application screens with a labeled back action. Style Profile opens from the Library, its shortcut, and Assistant result links, preserves the selected Article and Workspace View, and remains usable without an Article. Its sidebar selects Detected characteristics, Typography rules, Manual rules, and Writing samples; narrow screens use a section selector. Switching sections preserves unfinished forms and resets the single content pane's scroll position. Neither screen belongs to Article Revision history.",
-            "persistence": "Screen selection is renderer state; Application Settings persist through their dedicated service contracts."
+            "contract": "Application Settings and Style Profile are standalone application screens with a labeled back action. Article loading and errors apply only to the Workspace. Settings and Style Profile remain accessible independently, including a visible Settings action on Workspace loading and error screens. Late Article results do not replace the selected screen or Settings section. Style Profile opens from the Library, its shortcut, and Assistant result links, preserves the selected Article and Workspace View, and remains usable without an Article. Its sidebar selects Detected characteristics, Typography rules, Manual rules, and Writing samples; narrow screens use a section selector. Switching sections preserves unfinished forms and resets the single content pane's scroll position. Neither screen belongs to Article Revision history.",
+            "persistence": "Screen selection is renderer state; Application Settings persist through their dedicated service contracts. The Workspace remains mounted across navigation so recovered Drafts and background work survive."
         },
         {
             "id": "application.quick-start-tutorial",
@@ -174,6 +175,16 @@
         }
     ],
     "scenarios": [
+        {
+            "id": "application.settings-independent-of-articles",
+            "title": "Settings remains usable while Articles load or fail",
+            "capabilityIds": ["application.workspace-and-settings-screens"],
+            "preconditions": ["Article list or body loading is pending or has failed."],
+            "event": "The Author opens Settings, changes section, and returns to the Workspace after a late Article result.",
+            "expected": ["Settings and Data & backups remain reachable without waiting for Article loading. Late success or failure leaves the selected Settings section open. Returning to the Workspace exposes its own loading, error or recovered Draft state. Style Profile remains independently reachable through its shortcut."],
+            "forbidden": ["Article availability blocking Settings or replacing the open screen, and remounting Workspace state solely to navigate between screens."],
+            "evidence": { "kind": "automated", "path": "packages/web/src/ApplicationScreens.availability.test.tsx" }
+        },
         {
             "id": "application.release-summary-evidence",
             "title": "Release summaries use the reviewed reachable commit range",

@@ -18,6 +18,8 @@ Views and components render prepared state and invoke explicit callbacks. Featur
 
 The application shell chooses Workspace, Settings, and Style Profile screens. Workspace state remains mounted across those transitions so Draft checkpoints, background requests, and desktop close handling keep their lifetime. Workspace views receive prepared state; Workspace state receives activation and navigation callbacks without importing Settings or application screen names.
 
+Apply availability gates to the screen that needs the unavailable data. Article loading and errors gate the Workspace view, while Settings and Style Profile render independently. Workspace loading and error views expose Settings directly. A late Article result updates Workspace state without replacing the open application screen or Settings section.
+
 UI accesses application behavior through the injected typed application client or narrow desktop clients. It does not call server routes or privileged modules directly. Cross-cutting renderer services do not import feature components or feature state.
 
 `packages/web/src/application/` owns feature-independent renderer clients and adapters. Application shell components, including Quick Start, live outside that directory. The import-boundary check enforces this direction for production modules.

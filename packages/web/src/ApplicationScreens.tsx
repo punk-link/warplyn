@@ -5,7 +5,7 @@ import type { ApplicationScreen } from "./application-screen.js";
 import type { KeyBindingDispatcher } from "./key-bindings/dispatcher.js";
 import { ApplicationSettings } from "./settings/ApplicationSettings.js";
 import type { SettingsSection } from "./settings/settings-sections.js";
-import { ActivityIndicator, Banner } from "./ui/primitives.js";
+import { ActivityIndicator, Banner, Button } from "./ui/primitives.js";
 import { EditorialWorkspace } from "./workspace/EditorialWorkspace.js";
 import { StyleProfileScreen } from "./workspace/components/StyleProfileScreen.js";
 import { useEditorialWorkspace } from "./workspace/state/use-editorial-workspace.js";
@@ -50,20 +50,9 @@ export function ApplicationScreens({ context, navigation, bindings, updates }: {
     updates: ApplicationScreenUpdates;
 }) {
     const { client, screen, settingsSection } = context;
-    const intl = useIntl();
     const model = useEditorialWorkspace({ client, active: screen === "editorial-workspace", navigation, bindings });
     const skillRecovery = useSkillRecovery(client, navigation.openSkillRecovery, model.environment.loadAuthorSkills);
     const { workspace, editorial, revisions, generalSettings, assistant, layout } = model.content;
-
-    if (workspace.state === "loading")
-        return <main className="grid min-h-screen place-items-center text-muted" role="status">
-            <span className="inline-flex items-center gap-2"><ActivityIndicator />{intl.formatMessage({ id: "workspace.loadingArticles" })}</span>
-        </main>;
-
-    if (workspace.state === "error")
-        return <main className="grid min-h-screen place-items-center">
-            <Banner tone="error" role="alert">{workspace.message}</Banner>
-        </main>;
 
     if (screen === "application-settings")
         return <ApplicationSettings
@@ -86,5 +75,29 @@ export function ApplicationScreens({ context, navigation, bindings, updates }: {
                 navigation.backToWorkspace();
             }} />;
 
+    if (workspace.state !== "ready")
+        return <WorkspaceAvailability state={workspace.state} message={workspace.message} openSettings={model.actions.openSettings} />;
+
     return <EditorialWorkspace model={model} />;
+}
+
+
+function WorkspaceAvailability({ state, message, openSettings }: {
+    state: "loading" | "error";
+    message: string;
+    openSettings: () => void;
+}) {
+    const intl = useIntl();
+    return <main className="grid min-h-screen place-items-center">
+        <div className="flex max-w-xl flex-col items-center gap-4 p-6">
+            {state === "loading" ? (
+                <span role="status" className="inline-flex items-center gap-2 text-muted">
+                    <ActivityIndicator />{intl.formatMessage({ id: "workspace.loadingArticles" })}
+                </span>
+            ) : (
+                <Banner tone="error" role="alert">{message}</Banner>
+            )}
+            <Button variant="secondary" onClick={openSettings}>{intl.formatMessage({ id: "navigation.settings" })}</Button>
+        </div>
+    </main>;
 }
