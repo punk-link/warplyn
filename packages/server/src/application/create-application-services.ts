@@ -65,9 +65,15 @@ export function createApplicationServices({
     const capabilities = integration.editorial
         ? new EditorialCapabilityCatalog(articleService, stores.artifacts, publishing, integration.editorial, styleCorpusService, factChecks, stores.assistant)
         : undefined;
-    const preparation = new AssistantRequestPreparer({ articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus, engines: stores.engines, capabilities, skills });
+    const preparation = new AssistantRequestPreparer({
+        articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus,
+        engines: stores.engines, capabilities, skills,
+    });
     const capabilityLoop = new AssistantCapabilityLoop({ assistant: stores.assistant, engines: stores.engines, capabilities, authorSkills: authorSkillService, skills, conversationHistory: (articleId, limit) => getConversationHistory(stores.assistant, articleId, limit) });
-    const completion = new AssistantCompletionService({ articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus, artifacts: stores.artifacts, factChecks, capabilities });
+    const completion = new AssistantCompletionService({
+        articles: stores.articles, assistant: stores.assistant, styleCorpus: stores.styleCorpus,
+        artifacts: stores.artifacts, factChecks, capabilities,
+    });
 
     return {
         articles: articleService,

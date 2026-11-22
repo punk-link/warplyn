@@ -300,7 +300,11 @@ export class AssistantService {
     }
 
 
-    private persistAssistantCompletionService(request: PreparedAssistantRequest, event: Extract<EditorialEngineEvent, { type: "completed" }>, createdSkill: ReturnType<AssistantCapabilityLoop["commitPendingSkill"]>): ReturnType<AssistantCompletionService["persist"]> {
+    private persistAssistantCompletionService(
+        request: PreparedAssistantRequest,
+        event: Extract<EditorialEngineEvent, { type: "completed" }>,
+        createdSkill: ReturnType<AssistantCapabilityLoop["commitPendingSkill"]>,
+    ): ReturnType<AssistantCompletionService["persist"]> {
         try {
             return this.completion.persist(request, event);
         } catch (error) {

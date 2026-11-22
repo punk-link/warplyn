@@ -5,7 +5,12 @@ import type { AssistantCompletionService } from "../completion/assistant-complet
 import type { PreparedAssistantRequest } from "./prepared-assistant-request.js";
 
 
-export function persistInterruptedFactCheck(error: unknown, request: PreparedAssistantRequest, signal: AbortSignal, completion: AssistantCompletionService): ReturnType<AssistantCompletionService["persistPartialFactCheck"]> | undefined {
+export function persistInterruptedFactCheck(
+    error: unknown,
+    request: PreparedAssistantRequest,
+    signal: AbortSignal,
+    completion: AssistantCompletionService,
+): ReturnType<AssistantCompletionService["persistPartialFactCheck"]> | undefined {
     if (error instanceof ApplicationServiceError && error.code !== APPLICATION_ERROR.ASSISTANT_REQUEST_TIMED_OUT)
         return undefined;
 

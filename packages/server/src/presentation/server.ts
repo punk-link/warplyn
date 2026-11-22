@@ -79,7 +79,11 @@ function writeRequestError(error: unknown, request: IncomingMessage, response: S
 }
 
 
-export function createLocalService(config: ServerConfig, editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics, current = () => ({ editorial, services }), restoreBackup?: (snapshot: Uint8Array) => Promise<void>, backupTransfers?: BackupBundleTransferService) {
+export function createLocalService(
+    config: ServerConfig, editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics,
+    current = () => ({ editorial, services }), restoreBackup?: (snapshot: Uint8Array) => Promise<void>,
+    backupTransfers?: BackupBundleTransferService,
+) {
     return createServer(async (request, response) => {
         if (!isPermittedOrigin(request, config)) {
             writeJson(response, HTTP_STATUS.FORBIDDEN, { error: { code: APPLICATION_ERROR.ORIGIN_NOT_PERMITTED } });

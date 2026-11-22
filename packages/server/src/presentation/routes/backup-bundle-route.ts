@@ -39,7 +39,9 @@ export async function beginBackupImportRoute(request: IncomingMessage, response:
 }
 
 
-export async function writeBackupImportRoute(request: IncomingMessage, response: ServerResponse, transfers: BackupBundleTransferService, id: string, index: string): Promise<void> {
+export async function writeBackupImportRoute(
+    request: IncomingMessage, response: ServerResponse, transfers: BackupBundleTransferService, id: string, index: string,
+): Promise<void> {
     await transfers.writeImport(id, requestedIndex(index), await readBinary(request));
     response.writeHead(HTTP_STATUS.NO_CONTENT);
     response.end();

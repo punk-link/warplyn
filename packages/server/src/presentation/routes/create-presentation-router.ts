@@ -65,7 +65,10 @@ const BACKUP_IMPORT_FILE_PATH = createRoutePattern(`${backupImportsPath}/${ROUTE
 const BACKUP_IMPORT_RESTORE_PATH = createRoutePattern(`${backupImportsPath}/${ROUTE_PARAMETER}/restore`);
 
 
-export function createPresentationRouter(editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics, restoreBackup?: (snapshot: Uint8Array) => Promise<void>, backupTransfers?: BackupBundleTransferService): HttpRouter {
+export function createPresentationRouter(
+    editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics,
+    restoreBackup?: (snapshot: Uint8Array) => Promise<void>, backupTransfers?: BackupBundleTransferService,
+): HttpRouter {
     const { articles, assistant, factChecks, proposalSummaries, publishing, settings, skills, styleCorpus } = services;
     const router = new HttpRouter();
     registerArticleHistoryReadRoutes(router, articles, assistant);
