@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const navigationMessages = {
+    "navigation.regenerateTitle": "タイトルを再生成",
+    "navigation.clearNotification": "通知を消去",
     "navigation.archive": "アーカイブ",
     "navigation.archived": "アーカイブ ({count})",
     "navigation.articleLibrary": "記事ライブラリパネル",

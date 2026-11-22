@@ -10,6 +10,7 @@ interface TitlePromotion {
     articleId: string;
     titleGeneration: ArticleRevision["titleGeneration"];
     cancellation: AbortController;
+    expectedTitle: string;
 }
 
 
@@ -47,9 +48,15 @@ export class ArticleTitleService {
     }
 
 
-    private startPromotion(revision: ArticleRevision, signal: AbortSignal): ArticleRevision {
+    regenerate(revision: ArticleRevision): ArticleRevision {
+        this.forget(revision.articleId);
+        return this.startPromotion(revision, new AbortController().signal, true);
+    }
+
+
+    private startPromotion(revision: ArticleRevision, signal: AbortSignal, regenerate = false): ArticleRevision {
         const article = this.store.getArticle(revision.articleId);
-        if (!article || article.title.trim() || article.currentRevisionId !== revision.id)
+        if (!article || (!regenerate && article.title.trim()) || article.currentRevisionId !== revision.id)
             return revision;
 
         const existing = this.promotions.get(revision.articleId);
@@ -63,6 +70,7 @@ export class ArticleTitleService {
 
         const pending: TitlePromotion = {
             id: revision.id, articleId: revision.articleId, titleGeneration: { status: "pending" }, cancellation: new AbortController(),
+            expectedTitle: article.title,
         };
         this.promotions.set(revision.articleId, pending);
         void this.generateTitle(pending, content, article.language, signal);
@@ -90,7 +98,7 @@ export class ArticleTitleService {
                 return;
             }
 
-            const updated = this.store.setGeneratedTitle(revision.articleId, revision.id, title);
+            const updated = this.store.setGeneratedTitle(revision.articleId, revision.id, title, revision.expectedTitle);
             this.finishPromotion(revision, updated ? { status: "generated", title } : undefined);
         } catch {
             fail();

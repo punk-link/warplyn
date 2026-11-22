@@ -12,6 +12,34 @@ afterEach(() => {
 });
 
 
+it("clears a source group's notifications across reloads and shows new responses", async () => {
+    const client = createFakeClient();
+    const source = createArticleFixture("one", "One");
+    const child = { ...createArticleFixture("two", "Two"), sourceArticleId: "one" };
+    const articles = [source, child];
+    let latestResponse = "2026:first";
+    client.listArticleSummaries = vi.fn(async () => articles.map((article) => ({ ...article,
+        attention: { review: true, translation: false, findings: false, failed: false, latestResponse },
+    })));
+    const requests = { stateByArticle: { one: "idle" as const }, messagesByArticle: {} };
+    const first = renderHook(() => useArticleAttention(client, articles, requests));
+    await waitFor(() => expect(first.result.current.byArticle.two?.review).toBe(true));
+    act(() => first.result.current.clearNotification("one"));
+    expect(first.result.current.byArticle.one).toMatchObject({ review: false, unread: false });
+    expect(first.result.current.byArticle.two).toMatchObject({ review: false, unread: false });
+    first.unmount();
+    const restartedRequests = { stateByArticle: {}, messagesByArticle: {} };
+    const restarted = renderHook(() => useArticleAttention(client, articles, restartedRequests));
+    await waitFor(() => expect(client.listArticleSummaries).toHaveBeenCalledTimes(2));
+    expect(restarted.result.current.byArticle.one?.review).toBe(false);
+    latestResponse = "2026:second";
+    await act(async () => {
+        window.dispatchEvent(new Event("focus"));
+    });
+    await waitFor(() => expect(restarted.result.current.byArticle.one?.unread).toBe(true));
+});
+
+
 it("retains attention after refresh failure and keeps read receipts in memory when storage fails", async () => {
     const client = createFakeClient();
     const articles = [createArticleFixture("one", "One")];

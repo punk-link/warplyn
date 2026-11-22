@@ -156,8 +156,8 @@ export class ArticlesRepository {
     }
 
 
-    setGeneratedTitle(articleId: string, revisionId: string, title: string): boolean {
-        return setGeneratedArticleTitle(this.database, articleId, revisionId, title);
+    setGeneratedTitle(articleId: string, revisionId: string, title: string, expectedTitle?: string): boolean {
+        return setGeneratedArticleTitle(this.database, articleId, revisionId, title, expectedTitle);
     }
 
 

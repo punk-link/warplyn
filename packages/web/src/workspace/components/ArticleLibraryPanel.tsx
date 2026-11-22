@@ -9,7 +9,7 @@ import { ArticleLibraryNavigation } from "./ArticleLibraryNavigation.js";
 import { ArticleLibraryRowLabel } from "./ArticleLibraryRowLabel.js";
 import { ArticleLibraryRowMenu } from "./ArticleLibraryRowMenu.js";
 import type { ArticleFilesState } from "../state/article-files-state.js";
-import { combineArticleAttention, type ArticleAttention } from "../state/article-attention.js";
+import { combineArticleAttention, hasDismissibleArticleAttention, type ArticleAttention } from "../state/article-attention.js";
 
 
 function groupArticleChildren(articles: readonly ArticleSummary[]): Map<string, ArticleSummary[]> {
@@ -48,6 +48,8 @@ interface ArticleLibraryActions {
 
 
 interface ArticleLibraryMutations {
+    regenerateTitle?: (articleId: string) => Promise<void>;
+    clearNotification?: (articleId: string) => void;
     remove?: (articleId: string) => Promise<void>;
     setArchived?: (articleId: string, archived: boolean) => Promise<void>;
     setPinned?: (articleId: string, pinned: boolean) => Promise<void>;
@@ -81,6 +83,7 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
     const [query, setQuery] = useState("");
     const [archivedOpen, setArchivedOpen] = useState(false);
     const [menuArticleId, setMenuArticleId] = useState<string>();
+    const [menuPosition, setMenuPosition] = useState<{ x: number; y: number }>();
     const [deleteTarget, setDeleteTarget] = useState<ArticleSummary>();
     const [draggedArticleId, setDraggedArticleId] = useState<string>();
     const menuRef = useRef<HTMLDivElement>(null);
@@ -172,6 +175,8 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
             tone = "bg-brand-soft text-ink";
 
         const canReorder = !child && article.pinOrder !== undefined && !article.archived;
+        const canClearNotification = [article, ...getChildArticles(article.id)]
+            .some((item) => hasDismissibleArticleAttention(data.attention?.[item.id]));
         return <div
             key={article.id}
             draggable={canReorder}
@@ -192,11 +197,13 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                 }}
                 onContextMenu={(event) => {
                     event.preventDefault();
+                    setMenuPosition({ x: event.clientX, y: event.clientY });
                     setMenuArticleId(article.id);
                 }}
                 onKeyDown={(event) => {
                     if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) {
                         event.preventDefault();
+                        setMenuPosition(undefined);
                         setMenuArticleId(article.id);
                     }
                 }}
@@ -216,6 +223,9 @@ export function ArticleLibraryPanel({ data, navigation, mutations, files, respon
                 <ArticleLibraryRowMenu
                     article={article}
                     anchor={triggerRefs.current.get(article.id)}
+                    pointerPosition={menuPosition}
+                    clearNotification={canClearNotification ? mutations.clearNotification : undefined}
+                    regenerateTitle={mutations.regenerateTitle}
                     canReorder={canReorder}
                     pinnedRoots={pinnedRoots}
                     menuRef={menuRef}

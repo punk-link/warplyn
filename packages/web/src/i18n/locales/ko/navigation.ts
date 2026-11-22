@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const navigationMessages = {
+    "navigation.regenerateTitle": "제목 다시 생성",
+    "navigation.clearNotification": "알림 지우기",
     "navigation.archive": "보관",
     "navigation.archived": "보관됨 ({count})",
     "navigation.articleLibrary": "글 라이브러리 패널",

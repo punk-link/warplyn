@@ -1,6 +1,8 @@
 
 
 export const navigationMessages = {
+    "navigation.regenerateTitle": "Regenerate title",
+    "navigation.clearNotification": "Clear notification",
     "navigation.archive": "Archive",
     "navigation.archived": "Archived ({count})",
     "navigation.articleLibrary": "Article Library Panel",

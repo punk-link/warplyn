@@ -9,6 +9,29 @@ const content = ("Community gardens give neighbors a place to grow fresh vegetab
     "practical skills and build lasting friendships.");
 
 
+test("explicit regeneration retains the old title until completion and protects later Author edits", () => withRepository(async ({ articles, assistant }) => {
+    const article = articles.createArticle({ title: "Original title", content });
+    let finish: (title: string) => void = () => undefined;
+    const service = new ArticleService(articles, assistant, undefined, undefined, () => ({
+        generate: () => new Promise<string>((resolve) => {
+            finish = resolve;
+        }),
+    }));
+    const pending = service.updateArticle(article.id, { regenerateTitle: true });
+    assert.equal(pending.title, "Original title");
+    assert.equal(pending.currentRevision.titleGeneration?.status, "pending");
+    finish("Community gardens");
+    await setImmediate();
+    assert.equal(service.getArticle(article.id)?.title, "Community gardens");
+    assert.equal(articles.listRevisions(article.id).length, 1);
+    service.updateArticle(article.id, { regenerateTitle: true });
+    service.updateArticle(article.id, { title: "Author choice" });
+    finish("Shared gardens");
+    await setImmediate();
+    assert.equal(service.getArticle(article.id)?.title, "Author choice");
+}));
+
+
 test("promotion generates missing metadata once, preserving immutable history and language", () => withRepository(async ({ articles, assistant }) => {
     const article = articles.createArticle({ title: "", content: "", language: "es" });
     let calls = 0;

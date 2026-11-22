@@ -95,9 +95,11 @@ export function createArticleWorkspaceActions(options: ArticleWorkspaceActionsOp
     }
 
 
-    async function updateArticle(articleId: string, input: UpdateArticleInput) {
+    async function persistArticleUpdate(articleId: string, input: UpdateArticleInput) {
         const article = await client.updateArticle(articleId, input);
-        replaceArticles((items) => items.map((item) => item.id === articleId ? article : item));
+        const updated = { ...article, titleGeneration: article.currentRevision.titleGeneration };
+        replaceArticles((items) => items.map((item) => item.id === articleId ? updated : item));
+        return updated;
     }
 
 
@@ -163,5 +165,11 @@ export function createArticleWorkspaceActions(options: ArticleWorkspaceActionsOp
     }
 
 
-    return { resolveConflict, create, updateArticle, refreshArticle, remove, setArchived, setPinned, reorderPinned };
+    return {
+        resolveConflict, create, refreshArticle, remove, setArchived, setPinned, reorderPinned,
+        updateArticle: async (articleId: string, input: UpdateArticleInput) => {
+            await persistArticleUpdate(articleId, input);
+        },
+        regenerateTitle: (articleId: string) => persistArticleUpdate(articleId, { regenerateTitle: true }),
+    };
 }

@@ -21,6 +21,7 @@ import { TelemetryInvitation } from "./TelemetryInvitation.js";
 import { useNotifications } from "../../notifications/NotificationProvider.js";
 import { getDesktopSettingsClient } from "../../application/desktop-client.js";
 import type { ArticleAttention } from "../state/article-attention.js";
+import { notifyTitleGeneration } from "../state/article-title-notification.js";
 
 
 interface WorkspaceScreenContent {
@@ -38,6 +39,7 @@ interface WorkspaceScreenContent {
 
 
 interface WorkspaceScreenActions {
+    clearNotification: (articleId: string) => void;
     openStyleProfile: () => void;
     createBlank: () => Promise<unknown>;
     runFactCheck: () => void;
@@ -74,7 +76,7 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
     const { createBlank, runFactCheck, runTranslation, rejectTranslation, openSettings, openStyleProfile, openModelSettings } = actions;
     const { dispatcher, shortcutOverrides, hasUsableAiConnection, loadAuthorSkills, overlays } = environment;
     const { assistantSelection, onSelectionChange, clearAssistantSelection } = selection;
-    const { notifyError } = useNotifications();
+    const { notifyError, notify } = useNotifications();
     const intl = useIntl();
     const desktop = getDesktopSettingsClient();
     const [prepared, setPrepared] = useState<{ articleId: string | undefined; skill: AssistantSkillSummary; immediate: boolean }>();
@@ -112,6 +114,11 @@ export function WorkspaceScreen({ content, actions, environment, selection }: {
                         createBlank, openStyleProfile, openSettings, dispatcher, shortcutOverrides
                     }}
                     mutations={{
+                        regenerateTitle: async (articleId) => {
+                            const article = await workspace.regenerateTitle(articleId);
+                            notifyTitleGeneration(article.titleGeneration, intl, notify);
+                        },
+                        clearNotification: actions.clearNotification,
                         remove: workspace.remove, setArchived: workspace.setArchived, setPinned: workspace.setPinned,
                         reorderPinned: workspace.reorderPinned, notifyError
                     }} />,

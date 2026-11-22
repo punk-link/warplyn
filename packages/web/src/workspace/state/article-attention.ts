@@ -15,3 +15,8 @@ export function combineArticleAttention(items: (ArticleAttention | undefined)[])
         findings: items.some((item) => item?.findings), unread: items.some((item) => item?.unread),
     };
 }
+
+
+export function hasDismissibleArticleAttention(attention: ArticleAttention | undefined): boolean {
+    return Boolean(attention && (attention.failed || attention.review || attention.translation || attention.findings || attention.unread));
+}
