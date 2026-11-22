@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const draftConflictMessages = {
@@ -12,4 +11,4 @@ export const draftConflictMessages = {
     "draftConflict.keepMine": "Keep my Draft",
     "draftConflict.useDraft": "Use latest Draft",
     "draftConflict.useRevision": "Use latest Revision",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

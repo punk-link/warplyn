@@ -1,6 +1,6 @@
 import type { Session } from "electron";
 import { isPersonalSpellingWord, type DesktopSpellingSnapshot, type DictionaryState } from "@skladno/shared";
-import { SpellingDictionaryPreparation } from "./spelling-dictionary-preparation.js";
+import { SpellingDictionaryPreparer } from "./spelling-dictionary-preparer.js";
 
 type DictionaryEvent = "spellcheck-dictionary-initialized" | "spellcheck-dictionary-download-begin" | "spellcheck-dictionary-download-failure";
 type NativeSpellingSession = Pick<Session, "availableSpellCheckerLanguages" | "setSpellCheckerEnabled" | "setSpellCheckerLanguages" | "listWordsInSpellCheckerDictionary" | "addWordToSpellCheckerDictionary" | "removeWordFromSpellCheckerDictionary"> & {
@@ -10,7 +10,7 @@ type NativeSpellingSession = Pick<Session, "availableSpellCheckerLanguages" | "s
 
 
 export class SpellingSession {
-    private readonly preparation: SpellingDictionaryPreparation;
+    private readonly preparation: SpellingDictionaryPreparer;
 
 
     private readonly fallback: string[];
@@ -30,7 +30,7 @@ export class SpellingSession {
 
     constructor(private readonly session: NativeSpellingSession, runtimePath: string, private readonly platform: string, preferredLanguages: string[]) {
         this.fallback = this.resolveFallback(preferredLanguages);
-        this.preparation = new SpellingDictionaryPreparation(runtimePath, this.supported);
+        this.preparation = new SpellingDictionaryPreparer(runtimePath, this.supported);
         session.on("spellcheck-dictionary-initialized", this.initialized);
         session.on("spellcheck-dictionary-download-begin", this.downloading);
         session.on("spellcheck-dictionary-download-failure", this.failed);

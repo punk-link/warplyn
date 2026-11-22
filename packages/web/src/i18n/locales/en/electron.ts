@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const electronMessages = {
@@ -41,4 +40,4 @@ export const electronMessages = {
     "electron.spelling.addWord": "Add to dictionary",
     "electron.startFailed.message": "Check that the local data directory is available, then try again.",
     "electron.startFailed.title": "Warplyn could not start",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

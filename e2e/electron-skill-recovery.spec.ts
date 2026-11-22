@@ -28,7 +28,13 @@ test("packaged startup quarantines a damaged journal while preserving Articles a
         } finally {
             application.database.close();
         }
-    `, data], { stdio: "pipe" });
+    `, data], {
+        stdio: "pipe",
+        env: {
+            ...process.env,
+            WARPLYN_BUILT_IN_SKILLS_DIR: resolve("packages/server/src/application/assistant/skills/built-in"),
+        },
+    });
 
     mkdirSync(join(data, "skill-staging"));
     const damaged = join(data, "skill-staging", "damaged.json");

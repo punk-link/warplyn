@@ -39,6 +39,7 @@ export interface CreateArticleInput {
 
 /** An Article-level change that never affects its immutable Revision history. */
 export interface UpdateArticleInput {
+    regenerateTitle?: boolean;
     title?: string;
     language?: string;
     publishingProfileId?: string;

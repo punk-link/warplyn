@@ -1,7 +1,8 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const navigationMessages = {
+    "navigation.regenerateTitle": "Regenerate title",
+    "navigation.clearNotification": "Clear notification",
     "navigation.archive": "Archive",
     "navigation.archived": "Archived ({count})",
     "navigation.articleLibrary": "Article Library Panel",
@@ -45,4 +46,4 @@ export const navigationMessages = {
     "navigation.updatedHours": "{count} hr",
     "navigation.updatedJustNow": "Just now",
     "navigation.updatedMinutes": "{count} min",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

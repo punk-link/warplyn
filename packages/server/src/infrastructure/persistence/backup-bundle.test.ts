@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { BackupBundleTransfers } from "./backup-bundle.js";
+import { BackupBundleTransferService } from "./backup-bundle-transfer-service.js";
 import { openDatabase } from "./database.js";
 import { SqliteBackupSnapshotCreator } from "./sqlite-backup-snapshot-creator.js";
 
@@ -21,7 +21,7 @@ test("exports and imports a database with current and deleted Skill history", as
         writeFileSync(join(revision, "SKILL.md"), "deleted history");
         writeFileSync(join(installed, "SKILL.md"), "current skill");
         const snapshotCreator = new SqliteBackupSnapshotCreator(database);
-        const transfers = new BackupBundleTransfers(root, () => snapshotCreator.createTemporary(), async (directory) => {
+        const transfers = new BackupBundleTransferService(root, () => snapshotCreator.createTemporary(), async (directory) => {
             assert.equal(readFileSync(join(directory, "skills", "current", "SKILL.md"), "utf8"), "current skill");
             assert.equal(readFileSync(join(directory, "skill-history", "deleted", "revision-1", "SKILL.md"), "utf8"), "deleted history");
             restored = true;
@@ -51,7 +51,7 @@ test("rejects a modified bundle before restoring", async () => {
     let restored = false;
     try {
         const snapshotCreator = new SqliteBackupSnapshotCreator(database);
-        const transfers = new BackupBundleTransfers(root, () => snapshotCreator.createTemporary(), async () => {
+        const transfers = new BackupBundleTransferService(root, () => snapshotCreator.createTemporary(), async () => {
             restored = true;
         });
         const { id, manifest } = await transfers.createExport();
@@ -71,7 +71,7 @@ test("rejects a modified bundle before restoring", async () => {
 
 
 test("rejects a browser bundle beyond the transfer limit", async () => {
-    const transfers = new BackupBundleTransfers("unused", () => {
+    const transfers = new BackupBundleTransferService("unused", () => {
         throw new Error("unused");
     }, async () => undefined);
     const backupBundleInvalidPattern = /backup_bundle_invalid_manifest/;

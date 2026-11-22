@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const navigationMessages = {
+    "navigation.regenerateTitle": "Rigenera titolo",
+    "navigation.clearNotification": "Cancella notifica",
     "navigation.archive": "Archivia",
     "navigation.archived": "Archiviati ({count})",
     "navigation.articleLibrary": "Pannello della biblioteca articoli",

@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const notesMessages = {
@@ -21,4 +20,4 @@ export const notesMessages = {
     "notes.save": "Save note",
     "notes.select": "Select text to attach a note.",
     "notes.title": "Editor notes",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

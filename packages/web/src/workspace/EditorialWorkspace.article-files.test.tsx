@@ -97,7 +97,9 @@ describe("Article file actions", () => {
         const row = screen.getByRole("button", { name: secondArticlePattern });
         fireEvent.contextMenu(row);
         const menu = screen.getByRole("menu", { name: "Second Article" });
-        expect(within(menu).getAllByRole("menuitem").map((item) => item.textContent)).toEqual(["Save to file…", "Load from file…", "Pin", "Archive", "Delete"]);
+        expect(within(menu).getAllByRole("menuitem").map((item) => item.textContent)).toEqual([
+            "Save to file…", "Load from file…", "Pin", "Archive", "Regenerate title", "Delete",
+        ]);
         expect(within(menu).getByRole("separator")).toBeTruthy();
         await userEvent.click(screen.getByRole("menuitem", { name: "Save to file…" }));
         await waitFor(() => expect(files.saveFile).toHaveBeenCalledWith({ ticket: "test-save", format: "markdown" }, new TextEncoder().encode("Whole recoverable second Draft")));

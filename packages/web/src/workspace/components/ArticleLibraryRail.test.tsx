@@ -6,6 +6,7 @@ import type { ArticleSummary } from "@skladno/shared";
 import { messages } from "../../i18n/messages.js";
 import { KeyBindingDispatcher } from "../../key-bindings/dispatcher.js";
 import { ArticleLibraryPanel } from "./ArticleLibraryPanel.js";
+import type { ArticleAttention } from "../state/article-attention.js";
 
 
 // Product scenarios: workspace.library.rail-navigation
@@ -20,16 +21,21 @@ const archived: ArticleSummary = { ...original, id: "archived", title: "Archived
 const translation: ArticleSummary = { ...archived, id: "translation", title: "Spanish edition", language: "es", sourceArticleId: archived.id };
 
 
-function setup({ articles = [original, recent, archived, translation], collapsed = true, responsiveCollapsed }: { articles?: ArticleSummary[]; collapsed?: boolean; responsiveCollapsed?: boolean } = {}) {
+function setup({ articles = [original, recent, archived, translation], collapsed = true, responsiveCollapsed, attention }: {
+    articles?: ArticleSummary[]; collapsed?: boolean; responsiveCollapsed?: boolean; attention?: Record<string, ArticleAttention>;
+} = {}) {
     const navigation = {
         selectArticle: vi.fn(), setCollapsed: vi.fn(), createBlank: vi.fn().mockResolvedValue(undefined),
         openStyleProfile: vi.fn(), openSettings: vi.fn(), dispatcher: new KeyBindingDispatcher(),
     };
-    const mutations = { setArchived: vi.fn().mockResolvedValue(undefined), setPinned: vi.fn().mockResolvedValue(undefined) };
+    const mutations = {
+        setArchived: vi.fn().mockResolvedValue(undefined), setPinned: vi.fn().mockResolvedValue(undefined),
+        clearNotification: vi.fn(), regenerateTitle: vi.fn().mockResolvedValue(undefined),
+    };
     const panel = (isCollapsed: boolean) => (
         <IntlProvider locale="en" messages={messages}>
             <ArticleLibraryPanel
-                data={{ articles, selectedArticleId: original.id, collapsed: isCollapsed, language: "en" }}
+                data={{ articles, selectedArticleId: original.id, collapsed: isCollapsed, language: "en", attention }}
                 navigation={navigation}
                 mutations={mutations}
                 responsiveCollapsed={responsiveCollapsed} />
@@ -43,6 +49,58 @@ function setup({ articles = [original, recent, archived, translation], collapsed
 
 describe("Library Rail", () => {
     afterEach(cleanup);
+
+
+    it("targets context-menu notification clearing and title regeneration without selecting the Article", async () => {
+        const user = userEvent.setup();
+        const { mutations, navigation } = setup({ collapsed: false, attention: {
+            recent: { running: false, failed: false, review: true, translation: false, findings: false, unread: false },
+        } });
+        const recentStoryPattern = /Recent story/;
+        const row = screen.getByRole("button", { name: recentStoryPattern });
+        fireEvent.contextMenu(row);
+        await user.click(screen.getByRole("menuitem", { name: "Clear notification" }));
+        expect(mutations.clearNotification).toHaveBeenCalledWith(recent.id);
+        expect(screen.queryByRole("menu")).toBeNull();
+        fireEvent.contextMenu(row);
+        await user.click(screen.getByRole("menuitem", { name: "Regenerate title" }));
+        expect(mutations.regenerateTitle).toHaveBeenCalledWith(recent.id);
+        expect(navigation.selectArticle).not.toHaveBeenCalled();
+    });
+
+
+    it.each([false, true])("hides notification clearing without dismissible attention, running=%s", (running) => {
+        setup({ collapsed: false, attention: {
+            recent: { running, failed: false, review: false, translation: false, findings: false, unread: false },
+        } });
+        const recentStoryPattern = /Recent story/;
+        fireEvent.contextMenu(screen.getByRole("button", { name: recentStoryPattern }));
+        expect(screen.queryByRole("menuitem", { name: "Clear notification" })).toBeNull();
+    });
+
+
+    it("offers notification clearing for attention in a source Article's translation", () => {
+        setup({ collapsed: false, articles: [recent, { ...translation, sourceArticleId: recent.id }], attention: {
+            translation: { running: false, failed: false, review: false, translation: true, findings: false, unread: false },
+        } });
+        const recentStoryPattern = /Recent story/;
+        fireEvent.contextMenu(screen.getByRole("button", { name: recentStoryPattern }));
+        expect(screen.getByRole("menuitem", { name: "Clear notification" })).toBeTruthy();
+    });
+
+
+    it("positions pointer menus at the cursor and keyboard menus at the Article row", () => {
+        setup({ collapsed: false });
+        const recentStoryPattern = /Recent story/;
+        const row = screen.getByRole("button", { name: recentStoryPattern });
+        vi.spyOn(row, "getBoundingClientRect").mockReturnValue({ left: 20, bottom: 80 } as DOMRect);
+        fireEvent.contextMenu(row, { clientX: 180, clientY: 240 });
+        expect(screen.getByRole("menu").style.left).toBe("180px");
+        expect(screen.getByRole("menu").style.top).toBe("240px");
+        fireEvent.keyDown(row, { key: "F10", shiftKey: true });
+        expect(screen.getByRole("menu").style.left).toBe("20px");
+        expect(screen.getByRole("menu").style.top).toBe("80px");
+    });
 
 
     it("offers creation and opens pinned/recent Articles without expanding the Rail", async () => {

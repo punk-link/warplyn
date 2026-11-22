@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const assistantMessages = {
@@ -148,4 +147,4 @@ export const assistantMessages = {
     "assistant.translationTarget": "in {language}",
     "assistant.viewFindings": "View Findings",
     "assistant.workingFor": "Working for {duration}",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

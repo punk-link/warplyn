@@ -20,7 +20,7 @@ import { failure as applicationFailure, type ApplicationResult } from "../../err
 import { applicationFailureError, unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 
 
-export class AssistantRequestPreparation {
+export class AssistantRequestPreparer {
     constructor(private readonly dependencies: {
         articles: ArticleStore;
         assistant: AssistantStore;

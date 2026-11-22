@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const articleHeaderMessages = {
@@ -34,4 +33,4 @@ export const articleHeaderMessages = {
     "articleHeader.translate": "Translation",
     "articleHeader.unarchiveArticle": "Unarchive Article",
     "articleHeader.workflow": "Suggested editorial workflow",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

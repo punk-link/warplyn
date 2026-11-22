@@ -10,7 +10,7 @@ import type { AvailableModelsProvider } from "./available-models-provider.js";
 import type { BackupSnapshotCreator } from "./backup-snapshot-creator.js";
 import type { SettingsStore } from "./settings-store.js";
 import type { SystemDateTimeFormatProvider } from "./system-date-time-format-provider.js";
-import { AiConnectionOperations } from "./ai-connection-operations.js";
+import { AiConnectionService } from "./ai-connection-service.js";
 import type { CredentialStore } from "./credential-store.js";
 import {
     prepareGeneralSettings, prepareKeyBindingOverrides, normalizeAiConnections,
@@ -19,7 +19,7 @@ import {
 
 
 export class ApplicationSettingsService {
-    private readonly connections: AiConnectionOperations;
+    private readonly connections: AiConnectionService;
 
 
     private readonly pendingBackups = new Set<ReturnType<BackupSnapshotCreator["createTemporary"]>>();
@@ -34,7 +34,7 @@ export class ApplicationSettingsService {
         credentialStore?: CredentialStore,
         telemetry?: TelemetryCaptureSource,
     ) {
-        this.connections = new AiConnectionOperations(settings, models, createConnectionId, credentialStore, telemetry);
+        this.connections = new AiConnectionService(settings, models, createConnectionId, credentialStore, telemetry);
     }
 
 

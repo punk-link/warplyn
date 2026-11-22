@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const telemetryMessages = {
@@ -6,4 +5,4 @@ export const telemetryMessages = {
     "telemetry.enable": "Enable sharing",
     "telemetry.invitation": "Please enable telemetry to help us understand your experience and improve Warplyn. Sharing is optional and off by default.",
     "telemetry.learnMore": "Learn more",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

@@ -4,7 +4,7 @@ import { failure, success, type ApplicationResult } from "../../errors/applicati
 import { unwrapApplicationResult } from "../../errors/unwrap-application-result.js";
 
 
-export class AssistantClaimSelection {
+export class AssistantClaimSelector {
     private readonly active = new Map<string, { articleId: string; skipped: Set<string>; pending: Set<string> }>();
 
 

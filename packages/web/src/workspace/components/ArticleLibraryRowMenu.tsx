@@ -2,11 +2,15 @@ import { useLayoutEffect, useState, type KeyboardEvent, type RefObject } from "r
 import { createPortal } from "react-dom";
 import type { ArticleSummary } from "@skladno/shared";
 import { useIntl } from "react-intl";
-import { ArchiveIcon, ArrowLeftIcon, DeleteIcon, LoadFileIcon, PinIcon, SaveFileIcon } from "../../ui/icons.js";
+import { ArchiveIcon, ArrowLeftIcon, CloseIcon, DeleteIcon, LoadFileIcon, PinIcon, SaveFileIcon, ArticleIcon } from "../../ui/icons.js";
 import type { ArticleFilesState } from "../state/article-files-state.js";
 
 
-export function ArticleLibraryRowMenu({ article, anchor, canReorder, pinnedRoots, menuRef, handleMenuKeyDown, movePinned, run, setDeleteTarget, closeMenu, setPinned, setArchived, files, runFile }: {
+export function ArticleLibraryRowMenu({ article, anchor, canReorder, pinnedRoots, menuRef, handleMenuKeyDown, movePinned, run, setDeleteTarget,
+    closeMenu, setPinned, setArchived, files, runFile, clearNotification, regenerateTitle, pointerPosition }: {
+    pointerPosition?: { x: number; y: number };
+    regenerateTitle?: (articleId: string) => Promise<void>;
+    clearNotification?: (articleId: string) => void;
     article: ArticleSummary;
     anchor: HTMLButtonElement | undefined;
     canReorder: boolean;
@@ -30,10 +34,10 @@ export function ArticleLibraryRowMenu({ article, anchor, canReorder, pinnedRoots
 
         const rect = anchor.getBoundingClientRect();
         setPosition({
-            top: Math.max(0, Math.min(rect.bottom, window.innerHeight - menuRef.current.offsetHeight)),
-            left: Math.max(0, Math.min(rect.left, window.innerWidth - menuRef.current.offsetWidth)),
+            top: Math.max(0, Math.min(pointerPosition?.y ?? rect.bottom, window.innerHeight - menuRef.current.offsetHeight)),
+            left: Math.max(0, Math.min(pointerPosition?.x ?? rect.left, window.innerWidth - menuRef.current.offsetWidth)),
         });
-    }, [anchor, menuRef]);
+    }, [anchor, menuRef, pointerPosition]);
 
     return createPortal(<div
         ref={menuRef}
@@ -103,6 +107,28 @@ export function ArticleLibraryRowMenu({ article, anchor, canReorder, pinnedRoots
                     className="size-3 shrink-0 -rotate-90" />{intl.formatMessage({ id: "navigation.movePinnedDown" })}
             </button>
         </>}
+        {regenerateTitle && (
+            <button
+                className="flex min-h-7 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs hover:bg-brand-soft focus:outline-none"
+                type="button"
+                role="menuitem"
+                disabled={article.titleGeneration?.status === "pending"}
+                onClick={() => run(() => regenerateTitle(article.id))}>
+                <ArticleIcon className="size-3 shrink-0" />{intl.formatMessage({ id: "navigation.regenerateTitle" })}
+            </button>
+        )}
+        {clearNotification && (
+            <button
+                className="flex min-h-7 w-full items-center gap-2 rounded-control px-2 py-1 text-left text-xs hover:bg-brand-soft focus:outline-none"
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                    clearNotification(article.id);
+                    closeMenu();
+                }}>
+                <CloseIcon className="size-3 shrink-0" />{intl.formatMessage({ id: "navigation.clearNotification" })}
+            </button>
+        )}
         <button
             className="flex min-h-7 w-full py-1 pointer-coarse:min-h-9 items-center gap-2 rounded-control px-2 text-left text-xs text-danger hover:bg-danger-soft focus:outline-none"
             type="button"

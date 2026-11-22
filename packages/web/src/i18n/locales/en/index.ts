@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 import { articleMessages } from "./article.js";
 import { articleFilesMessages } from "./articleFiles.js";
 import { articleHeaderMessages } from "./articleHeader.js";
@@ -34,7 +33,7 @@ import { viewsMessages } from "./views.js";
 import { workspaceMessages } from "./workspace.js";
 
 
-export const en: Record<MessageId, string> = {
+export const en = {
     ...articleMessages,
     ...articleFilesMessages,
     ...articleHeaderMessages,
@@ -68,4 +67,4 @@ export const en: Record<MessageId, string> = {
     ...uiMessages,
     ...viewsMessages,
     ...workspaceMessages,
-};
+} satisfies Record<string, string>;

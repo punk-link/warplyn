@@ -46,4 +46,17 @@ test("Library attention follows background work and survives viewing a pending P
     await row.click();
     await expect(row.getByRole("img", { name: unseenAssistantResponseNamePattern })).toHaveCount(0);
     await expect(row.getByRole("img", { name: "Changes awaiting review", exact: true })).toBeVisible();
+    const pointer = await row.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return { x: Math.round(rect.left + 24), y: Math.round(rect.top + 12) };
+    });
+    await page.mouse.click(pointer.x, pointer.y, { button: "right" });
+    await expect(page.getByRole("menu")).toHaveCSS("left", `${pointer.x}px`);
+    await expect(page.getByRole("menu")).toHaveCSS("top", `${pointer.y}px`);
+    await page.getByRole("menuitem", { name: "Clear notification", exact: true }).click();
+    await expect(row.getByRole("img")).toHaveCount(0);
+    await page.reload();
+    await expect(row.getByRole("img")).toHaveCount(0);
+    await row.click({ button: "right" });
+    await expect(page.getByRole("menuitem", { name: "Clear notification", exact: true })).toHaveCount(0);
 });

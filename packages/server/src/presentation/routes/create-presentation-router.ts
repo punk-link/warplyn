@@ -9,8 +9,8 @@ import { HTTP_STATUS } from "@skladno/shared";
 import { updateTypographyRulesRoute } from "./style-corpus-route.js";
 import type { EditorialService } from "../../application/editorial/editorial-service.js";
 import type { LocalDiagnostics } from "../../infrastructure/diagnostics/local-diagnostics.js";
-import type { BackupBundleTransfers } from "../../infrastructure/persistence/backup-bundle.js";
-import { Router } from "../router.js";
+import type { BackupBundleTransferService } from "../../infrastructure/persistence/backup-bundle-transfer-service.js";
+import { HttpRouter } from "../http-router.js";
 import { acceptProposalRoute, createArticleRoute, deleteArticleRoute, discardDraftRoute, listArticlesRoute, listRevisionsRoute, reorderPinnedArticlesRoute, restoreRevisionRoute, saveDraftRoute, saveRevisionRoute, setArticleArchivedRoute, setArticlePinnedRoute, updateArticleRoute } from "./articles-route.js";
 import { applyAssistantEditRoute, createAssistantRequestRoute, getAssistantEditModeRoute, listAssistantMessagesRoute, listAssistantSkillsRoute, previewAssistantCheckpointRoute, rejectAssistantTranslationRoute, restoreAssistantCheckpointRoute, setAssistantEditModeRoute, setAssistantClaimSelectedRoute } from "./assistant-route.js";
 import { handleEditorialRoute } from "./editorial-route.js";
@@ -65,9 +65,12 @@ const BACKUP_IMPORT_FILE_PATH = createRoutePattern(`${backupImportsPath}/${ROUTE
 const BACKUP_IMPORT_RESTORE_PATH = createRoutePattern(`${backupImportsPath}/${ROUTE_PARAMETER}/restore`);
 
 
-export function createPresentationRouter(editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics, restoreBackup?: (snapshot: Uint8Array) => Promise<void>, backupTransfers?: BackupBundleTransfers): Router {
+export function createPresentationRouter(
+    editorial: EditorialService, services: ApplicationServices, diagnostics?: LocalDiagnostics,
+    restoreBackup?: (snapshot: Uint8Array) => Promise<void>, backupTransfers?: BackupBundleTransferService,
+): HttpRouter {
     const { articles, assistant, factChecks, proposalSummaries, publishing, settings, skills, styleCorpus } = services;
-    const router = new Router();
+    const router = new HttpRouter();
     registerArticleHistoryReadRoutes(router, articles, assistant);
 
     router.register(HTTP_METHOD.GET, healthPath, (_request, response) => handleHealthRoute(response));

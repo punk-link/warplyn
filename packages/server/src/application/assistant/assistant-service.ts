@@ -1,10 +1,10 @@
 import { APPLICATION_ERROR, ASSISTANT_EVENT, HTTP_STATUS, type AssistantEvent, type AssistantMessage, type TimedTelemetryCapture } from "@skladno/shared";
 
 import { AssistantCapabilityLoop } from "./capabilities/assistant-capability-loop.js";
-import { AssistantCompletion, getEditCandidate, getResponseKind } from "./completion/assistant-completion.js";
+import { AssistantCompletionService, getEditCandidate, getResponseKind } from "./completion/assistant-completion-service.js";
 import { authorizeCompletedEdit } from "./completion/authorize-completed-edit.js";
 import { unwrapApplicationResult } from "../errors/unwrap-application-result.js";
-import { AssistantRequestPreparation } from "./requests/assistant-request-preparation.js";
+import { AssistantRequestPreparer } from "./requests/assistant-request-preparer.js";
 import { assistantPreparationError } from "./requests/assistant-preparation-error.js";
 import { capturePreparationFailure } from "./requests/capture-preparation-failure.js";
 import type { FactChecksStore } from "./fact-checks-store.js";
@@ -28,7 +28,7 @@ import { normalizeGeneralSettings } from "../settings/application-settings-norma
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 import { AssistantEditError } from "./assistant-store.js";
 import { streamAssistantEngineEvents } from "./assistant-engine-request.js";
-import { AssistantClaimSelection } from "./requests/assistant-claim-selection.js";
+import { AssistantClaimSelector } from "./requests/assistant-claim-selector.js";
 import { createEditorialActivityEvent, getAssistantInitialEvents } from "./requests/assistant-initial-events.js";
 import { AssistantEditService } from "./assistant-edit-service.js";
 import { completePromotedEdit } from "./completion/complete-promoted-edit.js";
@@ -50,16 +50,16 @@ export class AssistantService {
     private readonly startedAt = new Map<string, ReturnType<typeof beginAiOperation>>();
 
 
-    private readonly claimSelection = new AssistantClaimSelection();
+    private readonly claimSelection = new AssistantClaimSelector();
 
 
-    private readonly preparation: AssistantRequestPreparation;
+    private readonly preparation: AssistantRequestPreparer;
 
 
     private readonly capabilityLoop: AssistantCapabilityLoop;
 
 
-    private readonly completion: AssistantCompletion;
+    private readonly completion: AssistantCompletionService;
 
 
     private readonly edits: AssistantEditService;
@@ -69,9 +69,9 @@ export class AssistantService {
         private readonly stores: AssistantServiceStores,
         private readonly articles: ConstructorParameters<typeof AssistantEditService>[2],
         private readonly telemetry: TelemetryObserver | undefined,
-        preparation: AssistantRequestPreparation,
+        preparation: AssistantRequestPreparer,
         capabilityLoop: AssistantCapabilityLoop,
-        completion: AssistantCompletion,
+        completion: AssistantCompletionService,
     ) {
         this.preparation = preparation;
         this.capabilityLoop = capabilityLoop;
@@ -163,7 +163,7 @@ export class AssistantService {
 
             captureAssistantOutcome(observed, "completed");
         } catch (error) {
-            let partial: ReturnType<AssistantCompletion["persistPartialFactCheck"]> | undefined;
+            let partial: ReturnType<AssistantCompletionService["persistPartialFactCheck"]> | undefined;
             try {
                 request.execution.partialFactCheck = selectFactCheckFindings(request.execution.partialFactCheck, request.execution.skipFactCheckClaim);
 
@@ -291,7 +291,7 @@ export class AssistantService {
         yield { type: ASSISTANT_EVENT.STAGED_COMPLETION, requestId: request.requestId, completion: { responseKind: kind } };
         signal.throwIfAborted();
         const createdSkill = this.capabilityLoop.commitPendingSkill(request);
-        const completion = this.persistAssistantCompletion(request, selectedEvent, createdSkill);
+        const completion = this.persistAssistantCompletionService(request, selectedEvent, createdSkill);
 
         if (createdSkill)
             this.capabilityLoop.finishPendingSkillBestEffort(request.requestId);
@@ -300,7 +300,11 @@ export class AssistantService {
     }
 
 
-    private persistAssistantCompletion(request: PreparedAssistantRequest, event: Extract<EditorialEngineEvent, { type: "completed" }>, createdSkill: ReturnType<AssistantCapabilityLoop["commitPendingSkill"]>): ReturnType<AssistantCompletion["persist"]> {
+    private persistAssistantCompletionService(
+        request: PreparedAssistantRequest,
+        event: Extract<EditorialEngineEvent, { type: "completed" }>,
+        createdSkill: ReturnType<AssistantCapabilityLoop["commitPendingSkill"]>,
+    ): ReturnType<AssistantCompletionService["persist"]> {
         try {
             return this.completion.persist(request, event);
         } catch (error) {

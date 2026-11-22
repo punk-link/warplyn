@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const settingsMessages = {
@@ -246,4 +245,4 @@ export const settingsMessages = {
     "settings.useConnection": "Use this connection",
     "settings.useConnectionShort": "Use this",
     "settings.useDefaultModel": "Use default model",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

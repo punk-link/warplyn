@@ -52,6 +52,9 @@ export async function updateArticleRoute(request: IncomingMessage, response: Ser
 
     const body = parseObject(await readJson(request));
     const title = body.title === undefined ? undefined : parseString(body.title, "title");
+    if (body.regenerateTitle !== undefined && typeof body.regenerateTitle !== "boolean")
+        throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
+
     if (body.editorNoteChange !== undefined && !isEditorNoteChange(body.editorNoteChange))
         throw new ApplicationServiceError(APPLICATION_ERROR.INVALID_REQUEST, HTTP_STATUS.BAD_REQUEST);
 
@@ -59,6 +62,7 @@ export async function updateArticleRoute(request: IncomingMessage, response: Ser
     const publishingProfileId = parsePublishingProfile(body.publishingProfileId);
 
     const input: UpdateArticleInput = {
+        ...(body.regenerateTitle === undefined ? {} : { regenerateTitle: body.regenerateTitle as boolean }),
         ...(body.editorNoteChange === undefined ? {} : { editorNoteChange: body.editorNoteChange }),
         ...(title === undefined ? {} : { title }),
         ...(language === undefined ? {} : { language }),

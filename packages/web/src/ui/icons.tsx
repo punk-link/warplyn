@@ -285,12 +285,12 @@ export function SaveIcon(props: SVGProps<SVGSVGElement>) {
 
 
 export function SaveFileIcon(props: SVGProps<SVGSVGElement>) {
-    return <Icon strokeWidth="1.8" {...props}><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4" /></Icon>;
+    return <Icon strokeWidth="1.8" {...props}><path d="M5 3h9l5 5v13H5zM14 3v5h5M12 11v7m-3-3 3 3 3-3" /></Icon>;
 }
 
 
 export function LoadFileIcon(props: SVGProps<SVGSVGElement>) {
-    return <Icon strokeWidth="1.8" {...props}><path d="M12 15V3m-4 4 4-4 4 4M4 16v4h16v-4" /></Icon>;
+    return <Icon strokeWidth="1.8" {...props}><path d="M5 3h9l5 5v13H5zM14 3v5h5M12 17v-7m-3 3 3-3 3 3" /></Icon>;
 }
 
 

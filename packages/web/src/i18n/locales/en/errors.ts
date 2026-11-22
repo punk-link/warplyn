@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const errorsMessages = {
@@ -73,4 +72,4 @@ export const errorsMessages = {
     "errors.styleCorpusRequired": "Add at least one style corpus item before checking style.",
     "errors.targetLanguageRequired": "Choose a target language before requesting a translation.",
     "errors.unsupportedPublishingProfile": "Choose a supported publishing profile.",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

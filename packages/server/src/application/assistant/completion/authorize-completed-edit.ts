@@ -4,7 +4,7 @@ import { requiresProposalReview, validateProposalResult } from "../../editorial/
 import type { AssistantCapabilityLoop } from "../capabilities/assistant-capability-loop.js";
 import { getAssistantArticleExcerpt } from "../assistant-engine-request.js";
 import type { PreparedAssistantRequest } from "../requests/prepared-assistant-request.js";
-import { getEditCandidate } from "./assistant-completion.js";
+import { getEditCandidate } from "./assistant-completion-service.js";
 import type { CompletionEvent } from "./completion-event.js";
 
 

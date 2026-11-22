@@ -5,7 +5,7 @@ import type { AuthorSkillChangeJournal, PendingSkillChange } from "./author-skil
 import { unwrapSkillWrite, skillWriteFailure } from "./skill-write-result.js";
 
 
-export class AuthorSkillRecovery {
+export class AuthorSkillRecoveryManager {
     private blocked = new Set<string>();
 
 

@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const styleProfileMessages = {
@@ -76,4 +75,4 @@ export const styleProfileMessages = {
     "styleProfile.upload": "Upload .txt / .md",
     "styleProfile.words": "{count, plural, one {# word} other {# words}}",
     "styleProfile.writingSamples": "Writing samples",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

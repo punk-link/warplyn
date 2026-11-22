@@ -2,6 +2,8 @@ import type { MessageId } from "../../messages.js";
 
 
 export const navigationMessages = {
+    "navigation.regenerateTitle": "重新生成标题",
+    "navigation.clearNotification": "清除通知",
     "navigation.archive": "归档",
     "navigation.archived": "已归档 ({count})",
     "navigation.articleLibrary": "文章库面板",

@@ -66,6 +66,11 @@ export class ArticleService {
         if (input.title !== undefined || input.language !== undefined)
             this.titles.forget(articleId);
 
+        if (input.regenerateTitle) {
+            const revision = this.titles.regenerate(article.currentRevision);
+            return { ...article, currentRevision: revision };
+        }
+
         return article;
     }
 

@@ -3,7 +3,7 @@ import test from "node:test";
 import { APPLICATION_ERROR, type TelemetryEvent } from "@skladno/shared";
 import { ApplicationServiceError } from "../errors/application-service-error.js";
 import { ApplicationSettingsService } from "./application-settings-service.js";
-import { AiConnectionOperations } from "./ai-connection-operations.js";
+import { AiConnectionService } from "./ai-connection-service.js";
 
 
 function fixture() {
@@ -45,7 +45,7 @@ function fixture() {
     return { records, calls, settings, events, models, disableTelemetry: () => {
         enabled = false;
     },
-    operations: new AiConnectionOperations(settings, models, createId, credentials, telemetry),
+    operations: new AiConnectionService(settings, models, createId, credentials, telemetry),
     service: new ApplicationSettingsService(settings, { read: async () => ({}) }, models, createId, undefined, credentials) };
 }
 

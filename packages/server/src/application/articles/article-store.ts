@@ -8,7 +8,7 @@ export interface ArticleStore {
     createArticle(input: CreateArticleInput): Article;
     getArticle(articleId: string): Article | undefined;
     updateArticle(articleId: string, input: UpdateArticleInput): Article;
-    setGeneratedTitle(articleId: string, revisionId: string, title: string): boolean;
+    setGeneratedTitle(articleId: string, revisionId: string, title: string, expectedTitle?: string): boolean;
     setGeneratedRevisionDescription(articleId: string, revisionId: string, description: string): void;
     deleteArticle(articleId: string): void;
     setArticleArchived(articleId: string, archived: boolean): Article[];

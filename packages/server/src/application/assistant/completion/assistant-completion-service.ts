@@ -58,7 +58,7 @@ export function getResponseKind(capability?: string): AssistantResponseKind {
 }
 
 
-export class AssistantCompletion {
+export class AssistantCompletionService {
     constructor(private readonly dependencies: {
         articles: ArticleStore;
         assistant: AssistantStore;

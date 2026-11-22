@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const statusMessages = {
@@ -15,4 +14,4 @@ export const statusMessages = {
     "status.updateReady": "Update is ready to restart",
     "status.windowsUpdateAvailable": "Download update {version} and approve automatic installation the next time you open Warplyn",
     "status.windowsUpdateReady": "Update downloaded. It will apply automatically the next time you open Warplyn.",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

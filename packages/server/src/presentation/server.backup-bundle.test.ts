@@ -6,7 +6,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { backupExportsPath, backupImportsPath, type BackupBundleManifest } from "@skladno/shared";
 
-import { BackupBundleTransfers } from "../infrastructure/persistence/backup-bundle.js";
+import { BackupBundleTransferService } from "../infrastructure/persistence/backup-bundle-transfer-service.js";
 import { createLocalApplication } from "../local-application.js";
 import { createLocalService } from "./server.js";
 
@@ -22,7 +22,7 @@ test("browser backup routes transfer a verified Skill bundle through opaque IDs"
     mkdirSync(skill, { recursive: true });
     writeFileSync(join(skill, "SKILL.md"), "skill content");
     let restored = false;
-    const transfers = new BackupBundleTransfers(root, () => application.services.settings.createBackup(), async () => {
+    const transfers = new BackupBundleTransferService(root, () => application.services.settings.createBackup(), async () => {
         restored = true;
     });
     const service = createLocalService(config, application.editorial, application.services, undefined, undefined, undefined, transfers);

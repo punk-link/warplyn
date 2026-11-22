@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const settingsUpdatesMessages = {
@@ -39,4 +38,4 @@ export const settingsUpdatesMessages = {
         "Downloading an update also approves installation. Once downloaded, it will apply automatically the n" +
         "ext time you open Warplyn, including after closing the app normally."
     ),
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

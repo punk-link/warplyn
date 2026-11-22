@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const uiMessages = {
@@ -10,4 +9,4 @@ export const uiMessages = {
     "ui.proposed": "Proposed",
     "ui.proposedChange": "Proposed text change",
     "ui.removed": "Removed: ",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

@@ -49,6 +49,14 @@ test("missing title is generated after saving and persists without another Revis
     const revisions = await (await request.get(`http://127.0.0.1:8787/api/articles/${created.id}/revisions`)).json();
     expect(revisions).toHaveLength(2);
     expect(revisions.every((revision: { titleGeneration?: unknown }) => revision.titleGeneration === undefined)).toBe(true);
+    await request.patch(`http://127.0.0.1:8787/api/articles/${created.id}`, { data: { title: "Author title" } });
+    await page.reload();
+    const authorTitlePattern = /Author title/;
+    await page.locator('[data-workspace-panel="article-library"]').getByRole("button", { name: authorTitlePattern }).click({ button: "right" });
+    await page.getByRole("menuitem", { name: "Regenerate title", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Rename article: Community gardens" })).toBeVisible();
+    const afterRegeneration = await (await request.get(`http://127.0.0.1:8787/api/articles/${created.id}/revisions`)).json();
+    expect(afterRegeneration).toHaveLength(2);
     await request.delete(`http://127.0.0.1:8787/api/articles/${created.id}`);
 });
 
@@ -63,7 +71,7 @@ test("insufficient context and provider failure preserve saved text with actiona
     await editor.fill("Brief note");
     await page.getByRole("button", { name: "Save revision" }).click();
     await expect(page.getByText("Add more detail and save another Revision, or rename the Article yourself.")).toBeVisible();
-    await page.getByRole("button", { name: "Dismiss notification: Revision saved without an Article title" }).click();
+    await page.getByRole("button", { name: "Dismiss notification: Could not generate an Article title" }).click();
     const content = ("Title generation unavailable. Community gardens give neighbors a place to grow fresh vegetables together. Shared tools and weekly meetings " +
         "help new gardeners learn practical skills and build lasting friendships.");
     await editor.fill(content);

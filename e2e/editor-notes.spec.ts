@@ -31,6 +31,7 @@ test("removing editor notes keeps the list open", async ({ page }) => {
     const editor = page.getByRole("textbox", { name: "Article draft" });
     await editor.fill("A synthetic passage.");
     await page.getByRole("button", { name: "Save revision", exact: true }).click();
+    await expect(editor).toHaveText("A synthetic passage.");
     await selectPassage(editor, "A synthetic passage.");
     const notes = page.getByRole("button", { name: "Editor notes", exact: true });
     const dialog = page.getByRole("dialog", { name: "Editor notes", exact: true });
