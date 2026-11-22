@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const settingsBackupsMessages = {
@@ -54,4 +53,4 @@ export const settingsBackupsMessages = {
     "settings.retention": "Automatic backup retention",
     "settings.retentionHint": "Controls how many automatic backups Warplyn keeps. Manual backups are never removed automatically.",
     "settings.revealBackupFolder": "Reveal folder",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const skillsMessages = {
@@ -35,4 +34,4 @@ export const skillsMessages = {
         "Warplyn can't use this Skill package because it includes an unsupported file or file location. Keep only SKILL" +
         ".md and declared Markdown references."
     ),
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

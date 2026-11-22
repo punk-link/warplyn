@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const articleFilesMessages = {
@@ -25,4 +24,4 @@ export const articleFilesMessages = {
     "articleFiles.saveFailed": "Couldn't save the Article to file. Choose a writable location and try again.",
     "articleFiles.saved": "Article saved to file",
     "articleFiles.tooLarge": "This Article file exceeds the 10 MiB limit. Choose a smaller file or shorten the Article before saving.",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

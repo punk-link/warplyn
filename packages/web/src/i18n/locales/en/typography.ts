@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const typographyMessages = {
@@ -124,4 +123,4 @@ export const typographyMessages = {
     "typography.validation.limit": "Keep at most 30 rules before saving.",
     "typography.withSpaces": "With spaces",
     "typography.withoutSpaces": "Without spaces",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

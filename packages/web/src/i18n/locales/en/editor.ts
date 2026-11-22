@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const editorMessages = {
@@ -38,4 +37,4 @@ export const editorMessages = {
     "editor.skills": "Skills",
     "editor.strikethrough": "Strikethrough",
     "editor.url": "URL",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const keyBindingsMessages = {
@@ -37,4 +36,4 @@ export const keyBindingsMessages = {
     "keyBindings.workspaceHint": "Switches workspace presentation without changing your Article.",
     "keyBindings.zoomIn": "Zoom in",
     "keyBindings.zoomOut": "Zoom out",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

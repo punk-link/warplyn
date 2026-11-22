@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const previewMessages = {
@@ -57,4 +56,4 @@ export const previewMessages = {
     "preview.uILanguagePreview": "UI language preview",
     "preview.workspace": "Workspace",
     "preview.yourDraftIsAvailableLocally": "Your Draft is available locally.",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

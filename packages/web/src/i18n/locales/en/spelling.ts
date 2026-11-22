@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const spellingMessages = {
@@ -59,4 +58,4 @@ export const spellingMessages = {
         "tries stay here for correction or retry."
     ),
     "spelling.working": "Updating spelling settings…",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

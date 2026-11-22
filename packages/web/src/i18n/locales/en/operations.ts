@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const operationsMessages = {
@@ -7,4 +6,4 @@ export const operationsMessages = {
     "operations.styleReview": "Style review",
     "operations.thesisToNarrative": "Thesis to narrative",
     "operations.translation": "Translation",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

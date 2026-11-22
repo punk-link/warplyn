@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const workspaceMessages = {
@@ -42,4 +41,4 @@ export const workspaceMessages = {
     "workspace.tabs.translations": "Translations",
     "workspace.tabs.write": "Write",
     "workspace.updateArticleFailed": "Couldn't update this Article. Your latest changes are still in the editor. Try again.",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

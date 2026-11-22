@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const revisionsMessages = {
@@ -25,4 +24,4 @@ export const revisionsMessages = {
     "revisions.revision": "Revision",
     "revisions.saved": "Saved Revision",
     "revisions.select": "Select a Revision",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const languagesMessages = {
@@ -9,4 +8,4 @@ export const languagesMessages = {
     "languages.portuguese": "Portuguese",
     "languages.russian": "Russian",
     "languages.spanish": "Spanish",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

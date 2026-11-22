@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const publishingMessages = {
@@ -14,4 +13,4 @@ export const publishingMessages = {
     "publishing.noRestrictions": "No restrictions",
     "publishing.plainTextCopied": "Plain text copied.",
     "publishing.profileSaveFailed": "Couldn’t save the publishing profile.",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

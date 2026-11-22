@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const viewsMessages = {
@@ -200,4 +199,4 @@ export const viewsMessages = {
     "views.warning.number": "Numeric values changed—verify every number.",
     "views.warning.url": "URLs changed—verify every link.",
     "views.writingSample": "Writing sample",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;

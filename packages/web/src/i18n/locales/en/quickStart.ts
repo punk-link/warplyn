@@ -1,4 +1,3 @@
-import type { MessageId } from "../../messages.js";
 
 
 export const quickStartMessages = {
@@ -23,4 +22,4 @@ export const quickStartMessages = {
         "state and Revision history."
     ),
     "quickStart.write.title": "Write an Article.",
-} satisfies Partial<Record<MessageId, string>>;
+} satisfies Record<string, string>;
