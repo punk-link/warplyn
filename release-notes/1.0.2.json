@@ -1,0 +1,58 @@
+{
+    "version": "1.0.2",
+    "previousTag": "v1.0.1",
+    "previousCommit": "23149892b09935f4c4a1041f14e6f3f5ca4c9664",
+    "baseline": "published",
+    "sourceCommit": "ad893b899360d6cf5380a490a644177d4b4fb83a",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Your workspace stays mounted as you move between screens, preserving your place and ongoing work. Settings remains accessible while Articles load or when loading fails.",
+            "commits": [
+                "a1a1c5000d752a605783f0c22622a5a899b0aab3",
+                "2517f5fd037f8dbf788105c91f09d0690eb16300"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "If an Author Skill change is interrupted, Settings shows its recovery status and offers a retry. Affected Skills stay unavailable until recovery succeeds, while Articles and built-in Skills remain available.",
+            "commits": [
+                "7ac268ca6c66f6f805a6027ab95bc47019d76efc"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "You can regenerate an Article title from the Library and clear current attention for an Article and its translations without resolving the underlying review work.",
+            "commits": [
+                "c69b1251dc106aee797b289d3b7a21281d6d7c18"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Saving work no longer has to wait for generated titles or Revision descriptions; that metadata can finish in the background.",
+            "commits": [
+                "fb6891f5f5931b96786625a0c977b6b5f2fa9a0e"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "When optional telemetry is enabled, successful Assistant and text generation work can report the configured provider and model identifiers separately.",
+            "commits": [
+                "7fee6cdc8fa9d5990e3c73a743ca118b19d49d76",
+                "1df2ddc3e7c4537427f2cf66bee798067ea70842"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Save and Load controls have clearer file action icons.",
+            "commits": [
+                "2567b60adb09c36bcfefa7e244848a0ec65bd822"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
