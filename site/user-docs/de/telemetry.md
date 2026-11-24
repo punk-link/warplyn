@@ -18,6 +18,7 @@ Ausstehende Ereignisse werden im lokalen App-Profil gespeichert, damit Warplyn s
 
 Die Ereignisse umfassen:
 
+- Nach erfolgreichen KI-Vorgängen werden auch die konfigurierten Anbieter- und Modellkennungen geteilt, sofern die Freigabe vor dem Vorgang aktiviert war und beim Abschluss weiterhin aktiv ist. Die Nutzung von Assistent und Textgenerierung wird getrennt erfasst. Diese Ereignisse enthalten keine Prompts, generierten Texte, Tokenzahlen oder Artikel- oder Anfrage-IDs.
 - erfolgreiche oder fehlgeschlagene Verbindungsprüfungen, jedoch keine Verbindungsnamen oder Anbieterangaben
 - App-Starts sowie sichere Kategorien von Start-, Renderer- oder Kindprozessfehlern
 - abgeschlossene, fehlgeschlagene oder abgebrochene KI-Vorgänge und deren Phasen, einschließlich Fehlerkategorie und, falls verfügbar, HTTP-Status

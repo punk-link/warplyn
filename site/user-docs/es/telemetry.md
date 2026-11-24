@@ -18,6 +18,7 @@ Los eventos pendientes se guardan en el perfil local de la aplicación para que 
 
 Los eventos abarcan:
 
+- También se comparten los identificadores del proveedor y del modelo configurados tras operaciones de IA exitosas, solo si el envío estaba activado antes de la operación y sigue activado al finalizar. El uso del Asistente y de la generación de texto se registra por separado. Estos eventos no incluyen instrucciones, texto generado, cantidades de tokens ni identificadores de artículos o solicitudes.
 - la verificación completada o fallida de una conexión, sin nombres de conexiones ni datos del proveedor
 - el inicio de la aplicación y categorías seguras de fallos de inicio, del proceso de renderizado o de procesos secundarios
 - las operaciones de IA completadas, fallidas o canceladas y sus etapas, incluida una categoría de error y el estado HTTP cuando está disponible

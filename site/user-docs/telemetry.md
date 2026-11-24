@@ -18,6 +18,7 @@ Pending events are kept in the app's local profile so Warplyn can try sending th
 
 Events cover:
 
+- Configured provider and model identifiers are also shared after successful AI operations, only when sharing was enabled before the operation and remains enabled at completion. Assistant and Text Generation usage are reported separately. Model usage events contain no prompts, generated text, token counts, or Article or request IDs.
 - completed or failed connection verification, without connection names or provider details
 - app starts and safe startup, renderer, or child-process failure categories
 - completed, failed, or cancelled AI operations and stages, including a failure category and HTTP status when available

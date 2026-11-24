@@ -18,6 +18,7 @@ Os eventos pendentes ficam no perfil local do aplicativo para que o Warplyn poss
 
 Os eventos abrangem:
 
+- Os identificadores do provedor e do modelo configurados também são compartilhados após operações de IA bem-sucedidas, somente se o compartilhamento estava ativado antes da operação e continua ativado na conclusão. O uso do Assistente e da geração de texto é registrado separadamente. Esses eventos não incluem instruções, texto gerado, contagens de tokens nem identificadores de artigos ou solicitações.
 - verificações de conexão concluídas ou com falha, sem nomes de conexão nem detalhes do provedor
 - inicializações do aplicativo e categorias seguras de falha na inicialização, no renderer ou em processos filhos
 - operações e etapas de IA concluídas, com falha ou canceladas, incluindo a categoria da falha e o status HTTP quando disponível

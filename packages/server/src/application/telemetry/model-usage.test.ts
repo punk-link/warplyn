@@ -48,5 +48,5 @@ test("model usage contains only validated configured identifiers and isolates de
         }, "assistant");
     }
 
-    assert.equal(events.length, 32);
+    assert.equal(events.length, 42);
 });

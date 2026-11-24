@@ -40,6 +40,58 @@ function scheduler() {
 }
 
 
+test("model limits count only accepted consent-bound captures and reset on opt-out", () => {
+    const root = mkdtempSync(join(tmpdir(), "warplyn-model-consent-"));
+    const events: unknown[] = [];
+    let accepting = true;
+    const owner = createTelemetryOwner({ runtimePath: join(root, "runtime-settings.json"), delivery: {
+        supported: true,
+        capture: (event) => {
+            if (!accepting)
+                return false;
+
+            events.push(event);
+            return true;
+        },
+        start: () => undefined,
+        stop: () => undefined,
+        suspend: () => undefined,
+    } });
+    const captureModel = (model: string) => owner.beginCapture()({
+        kind: "model_used", operation: "assistant", provider: "openai", model,
+    });
+    try {
+        for (let index = 0; index < 32; index++)
+            captureModel(`disabled-${index}`);
+
+        owner.setConsent(true);
+        events.length = 0;
+        accepting = false;
+        for (let index = 0; index < 32; index++)
+            captureModel(`rejected-${index}`);
+
+        accepting = true;
+        for (let index = 0; index < 32; index++)
+            captureModel(`accepted-${index}`);
+
+        captureModel("over-limit");
+        assert.equal(events.length, 32);
+        captureModel("accepted-0");
+        assert.equal(events.length, 33);
+        const staleCapture = owner.beginCapture();
+        owner.setConsent(false);
+        owner.setConsent(true);
+        events.length = 0;
+        staleCapture({ kind: "model_used", operation: "assistant", provider: "openai", model: "stale" });
+        captureModel("fresh");
+        assert.deepEqual(events, [{ kind: "model_used", operation: "assistant", provider: "openai", model: "fresh" }]);
+    } finally {
+        owner.dispose();
+        rmSync(root, { recursive: true, force: true });
+    }
+});
+
+
 function createTelemetryEvent() {
     return { kind: "app_failure", source: "startup", failure: "unknown" } as const;
 }

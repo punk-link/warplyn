@@ -18,6 +18,7 @@ Les événements en attente sont conservés dans le profil local de l’applicat
 
 Les événements concernent :
 
+- Les identifiants du fournisseur et du modèle configurés sont aussi partagés après une opération d’IA réussie, uniquement si le partage était activé avant l’opération et le reste à la fin. L’utilisation de l’Assistant et de la génération de texte est comptabilisée séparément. Ces événements ne contiennent ni instructions, ni texte généré, ni nombre de jetons, ni identifiants d’articles ou de requêtes.
 - la vérification réussie ou échouée d’une connexion, sans nom de connexion ni détail sur le fournisseur ;
 - les démarrages de l’application et des catégories sûres d’échec au démarrage, dans le moteur de rendu ou dans un processus enfant ;
 - les opérations d’IA et leurs étapes, qu’elles soient terminées, échouées ou annulées, avec une catégorie d’échec et, si disponible, le statut HTTP ;

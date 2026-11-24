@@ -1,8 +1,6 @@
 import { isTelemetryEvent, type TimedTelemetryCapture } from "@skladno/shared";
 import type { EditorialEngine } from "../editorial/engine/editorial-engine.js";
 
-const models = new Set<string>();
-
 
 export function captureModelUsage(observed: TimedTelemetryCapture, engine: EditorialEngine,
     operation: "assistant" | "text_generation"): void {
@@ -14,11 +12,6 @@ export function captureModelUsage(observed: TimedTelemetryCapture, engine: Edito
     if (!isTelemetryEvent(event))
         return;
 
-    const key = JSON.stringify([operation, scope.provider, scope.model]);
-    if (!models.has(key) && models.size >= 32)
-        return;
-
-    models.add(key);
     try {
         observed.capture(event);
     } catch {
