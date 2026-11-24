@@ -27,8 +27,11 @@ async function selectPassage(editor: Locator, passage: string) {
 test("removing editor notes keeps the list open", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("skladno.quick-start.v1", "complete"));
     await page.goto("/");
+    const created = page.waitForResponse((response) => response.url().endsWith("/api/articles") && response.request().method() === "POST");
     await page.getByRole("button", { name: "New article", exact: true }).click();
+    await created;
     const editor = page.getByRole("textbox", { name: "Article draft" });
+    await expect(editor).toHaveText("");
     await editor.fill("A synthetic passage.");
     await page.getByRole("button", { name: "Save revision", exact: true }).click();
     await expect(editor).toHaveText("A synthetic passage.");
