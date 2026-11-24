@@ -19,6 +19,7 @@ import type { StyleCorpusStore } from "../editorial/style/style-corpus-store.js"
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import { captureAssistantOutcome, getAiFailureCategory, withAiFailureStage } from "../telemetry/ai-failure-category.js";
 import { beginAiOperation, withAiOperation } from "../telemetry/ai-operation-context.js";
+import { captureModelUsage } from "../telemetry/model-usage.js";
 import { getAssistantRequestTimeoutMs, streamWithAssistantDeadline } from "./requests/assistant-request-deadline.js";
 import { persistInterruptedFactCheck } from "./requests/interrupted-fact-check.js";
 import { selectCompletedFactCheck, selectFactCheckFindings } from "./requests/assistant-selected-fact-check.js";
@@ -162,6 +163,8 @@ export class AssistantService {
             }
 
             captureAssistantOutcome(observed, "completed");
+            if (!signal.aborted)
+                captureModelUsage(observed, request.execution.engine, "assistant");
         } catch (error) {
             let partial: ReturnType<AssistantCompletionService["persistPartialFactCheck"]> | undefined;
             try {

@@ -1,4 +1,4 @@
-export const telemetrySchemaVersion = 4;
+export const telemetrySchemaVersion = 5;
 
 export type TelemetryFailureCategory = "configuration" | "network" | "persistence" | "cancelled" | "unknown";
 export type TelemetryOperation = "assistant" | "thesis_to_narrative" | "flow_revision" | "fact_check" | "style_review" | "translation";
@@ -8,6 +8,7 @@ export type TelemetryAiStage = "assistant_step" | "editorial_generation" | "acti
 export type TelemetryAiFailure = "provider" | "network" | "invalid_output" | "incomplete_stream" | "session_expired" | "unknown";
 
 export type TelemetryEvent =
+    | { kind: "model_used"; operation: "assistant" | "text_generation"; provider: string; model: string }
     | { kind: "app_session_started" }
     | { kind: "connection_verification_finished"; outcome: "completed" | "failed" }
     | { kind: "ai_operation_finished"; operation: TelemetryOperation; outcome: "completed" | "failed" | "cancelled";
@@ -160,12 +161,21 @@ function isRecoveryFinished(candidate: Record<string, unknown>): boolean {
 }
 
 
+function isTelemetryIdentifier(value: unknown): value is string {
+    return typeof value === "string" && value.trim().length > 0 && value.length <= 256;
+}
+
+
 export function isTelemetryEvent(value: unknown): value is TelemetryEvent {
     const candidate = parseTelemetryRecord(value);
     if (!candidate || typeof candidate.kind !== "string")
         return false;
 
     switch (candidate.kind) {
+        case "model_used":
+            return hasOnly(candidate, ["kind", "operation", "provider", "model"]) &&
+                (candidate.operation === "assistant" || candidate.operation === "text_generation") &&
+                isTelemetryIdentifier(candidate.provider) && isTelemetryIdentifier(candidate.model);
         case "connection_verification_finished":
             return hasOnly(candidate, ["kind", "outcome"]) && (candidate.outcome === "completed" || candidate.outcome === "failed");
         case "app_session_started":

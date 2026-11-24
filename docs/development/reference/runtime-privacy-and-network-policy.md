@@ -46,6 +46,8 @@ Use synthetic/public input and an already approved connection for live measureme
 
 ## Packaged desktop telemetry
 
+Schema version 5 adds `model_used` after successful explicit Assistant or direct Editorial completion. Its finite operation category distinguishes `assistant` from `text_generation`, including when both use the same model. It contains the exact configured provider and model. Both identifiers must be nonempty strings of at most 256 characters; telemetry imposes no provider list or model naming format. No connection, Article, request, operation, or user identifier, content, token usage, or raw provider payload enters this event. At most 32 distinct operation/provider/model combinations are reported per server process. Captures retain the operation's initial consent generation; existing opt-out clearing, packaged-only delivery, queue bounds, and best-effort failure isolation apply. Local-only engines emit no model event.
+
 Schema version 4 adds `connection_verification_finished`, containing only a completed or failed outcome. Explicit connection tests and managed connection creation capture consent before verification. Success is recorded only after the verified connection is saved. Events contain no provider, connection identifier, credential source, or error text. Existing installations without a new verification will not enter this onboarding step until they explicitly verify a connection again.
 
 Remote telemetry is separate from local diagnostics and uses only a versioned allowlisted contract. It never forwards diagnostic context or stdout/stderr. Consent is installation-local and default-off; Authors can enable or revoke it at any time, and existing granted and denied preferences are preserved.

@@ -28,6 +28,7 @@ import type { FactCheckRunStore } from "./fact-checking/fact-check-run-store.js"
 import type { TelemetryObserver } from "../telemetry/telemetry-observer.js";
 import { captureOperationOutcome, runAiFailureStage } from "../telemetry/ai-failure-category.js";
 import { beginAiOperation, withAiOperation } from "../telemetry/ai-operation-context.js";
+import { captureModelUsage } from "../telemetry/model-usage.js";
 import { reviewTypography } from "./style/typography-review.js";
 import { getEditorNoteGuidance } from "./editor-note-guidance.js";
 
@@ -237,6 +238,8 @@ export class EditorialService {
             }
 
             captureOperationOutcome(observed, request.editorial.operation, signal.aborted);
+            if (!signal.aborted)
+                captureModelUsage(observed, context.engine, "text_generation");
         } catch (error) {
             if (error instanceof EditorialEngineError && error.code === EDITORIAL_ENGINE_ERROR.SESSION_EXPIRED)
                 this.stores.sessions.removeEditorialSession(request.articleContext.articleId);

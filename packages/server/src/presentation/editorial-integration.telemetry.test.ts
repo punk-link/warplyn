@@ -29,9 +29,15 @@ test("server records one private-content-free terminal event for each explicit A
 
     assert.deepEqual(events.map((event) => ({ kind: event.kind, operation: event.kind === "ai_operation_finished" ? event.operation : undefined, outcome: event.kind === "ai_operation_finished" ? event.outcome : undefined })), [
         { kind: "ai_operation_finished", operation: "flow_revision", outcome: "completed" },
+        { kind: "model_used", operation: undefined, outcome: undefined },
         { kind: "ai_operation_finished", operation: "assistant", outcome: "completed" },
+        { kind: "model_used", operation: undefined, outcome: undefined },
     ]);
     const privateTitleArticlePattern = /Private (title|Article content|prompt|generated output)/;
+    assert.deepEqual(events.filter((event) => event.kind === "model_used"), [
+        { kind: "model_used", operation: "text_generation", provider: "openai", model: "gpt-5" },
+        { kind: "model_used", operation: "assistant", provider: "openai", model: "gpt-5" },
+    ]);
     assert.doesNotMatch(JSON.stringify(events), privateTitleArticlePattern);
 });
 
