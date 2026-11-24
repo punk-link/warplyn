@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type TelemetryConsent, type TelemetryEvent } from "@skladno/shared";
+import { isTelemetryEvent, type TelemetryConsent, type TelemetryEvent } from "@skladno/shared";
 import { readRuntimeSettings, updateRuntimeSettings } from "../runtime/runtime-settings.js";
 import { type TelemetryDelivery } from "./telemetry-delivery.js";
 
@@ -17,6 +17,7 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
     delivery: TelemetryDelivery;
 }) {
     let state: OwnerState = { generation: 0, sessionStartedGeneration: -1, disposed: false };
+    const models = new Set<string>();
 
     const initial = getTelemetryConsent();
 
@@ -35,6 +36,7 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
 
 
     function stop(): void {
+        models.clear();
         state = { ...state, generation: state.generation + 1 };
         delivery.stop();
     }
@@ -48,8 +50,18 @@ export function createTelemetryOwner({ runtimePath, delivery }: {
         if (event.kind === "app_session_started" && state.sessionStartedGeneration === state.generation)
             return;
 
+        if (!isTelemetryEvent(event))
+            return;
+
+        const modelKey = event.kind === "model_used" ? JSON.stringify([event.operation, event.provider, event.model]) : undefined;
+        if (modelKey !== undefined && !models.has(modelKey) && models.size >= 32)
+            return;
+
         if (!delivery.capture(event, runtime.telemetry.installationId))
             return;
+
+        if (modelKey !== undefined)
+            models.add(modelKey);
 
         if (event.kind === "app_session_started")
             state = { ...state, sessionStartedGeneration: state.generation };

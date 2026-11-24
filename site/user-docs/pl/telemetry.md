@@ -18,6 +18,7 @@ Oczekujące zdarzenia są przechowywane w lokalnym profilu aplikacji, aby Warply
 
 Zdarzenia obejmują:
 
+- Po udanych operacjach AI udostępniane są też identyfikatory skonfigurowanego dostawcy i modelu, tylko jeśli udostępnianie było włączone przed operacją i pozostaje włączone przy jej zakończeniu. Użycie Asystenta i generowania tekstu jest rejestrowane oddzielnie. Te zdarzenia nie zawierają poleceń, wygenerowanego tekstu, liczby tokenów ani identyfikatorów artykułów lub żądań.
 - zakończoną powodzeniem lub nieudaną weryfikację połączenia, bez nazw połączeń i szczegółów dostawcy
 - uruchomienia aplikacji oraz kategorie bezpiecznych awarii podczas startu, w rendererze lub procesie potomnym
 - ukończone, nieudane lub anulowane działania i etapy AI, w tym kategorię awarii i — jeśli jest dostępny — status HTTP

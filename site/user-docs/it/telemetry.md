@@ -18,6 +18,7 @@ Gli eventi in attesa restano nel profilo locale dell’app, così Warplyn può r
 
 Gli eventi riguardano:
 
+- Dopo le operazioni di IA riuscite vengono condivisi anche gli identificativi del provider e del modello configurati, solo se la condivisione era attiva prima dell’operazione e lo è ancora al termine. L’uso dell’Assistente e della generazione di testo viene registrato separatamente. Questi eventi non contengono istruzioni, testo generato, conteggi di token o identificativi di articoli o richieste.
 - verifiche di connessione completate o non riuscite, senza nomi delle connessioni o dettagli sui provider
 - avvii dell’app e categorie sicure di errori di avvio, del renderer o dei processi secondari
 - operazioni di IA e fasi completate, non riuscite o annullate, con una categoria di errore e, se disponibile, lo stato HTTP

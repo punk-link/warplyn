@@ -166,6 +166,20 @@ function isTelemetryIdentifier(value: unknown): value is string {
 }
 
 
+function isAiStageFinished(candidate: Record<string, unknown>): boolean {
+    return hasOnly(candidate, ["kind", "stage", "outcome", "elapsedMs", "failure", "httpStatus", "operationId"]) &&
+        typeof candidate.stage === "string" &&
+        ["assistant_step", "editorial_generation", "action_intent_verification", "replacement_verification",
+            "request_preparation", "assistant_orchestration", "tool_execution", "output_validation", "completion"].includes(candidate.stage) &&
+        (candidate.outcome === "completed" || candidate.outcome === "failed" || candidate.outcome === "cancelled") &&
+        isDuration(candidate.elapsedMs) && isOperationId(candidate.operationId) &&
+        (candidate.failure === undefined || isTelemetryAiFailure(candidate.failure)) &&
+        (candidate.httpStatus === undefined || typeof candidate.httpStatus === "number" && Number.isInteger(candidate.httpStatus) &&
+            candidate.httpStatus >= 400 && candidate.httpStatus <= 599) &&
+        (candidate.outcome === "failed" || candidate.failure === undefined && candidate.httpStatus === undefined);
+}
+
+
 export function isTelemetryEvent(value: unknown): value is TelemetryEvent {
     const candidate = parseTelemetryRecord(value);
     if (!candidate || typeof candidate.kind !== "string")
@@ -187,16 +201,7 @@ export function isTelemetryEvent(value: unknown): value is TelemetryEvent {
         case "ai_operation_finished":
             return isAiOperationFinished(candidate);
         case "ai_stage_finished":
-            return hasOnly(candidate, ["kind", "stage", "outcome", "elapsedMs", "failure", "httpStatus", "operationId"]) &&
-                typeof candidate.stage === "string" &&
-                ["assistant_step", "editorial_generation", "action_intent_verification", "replacement_verification",
-                    "request_preparation", "assistant_orchestration", "tool_execution", "output_validation", "completion"].includes(candidate.stage) &&
-                (candidate.outcome === "completed" || candidate.outcome === "failed" || candidate.outcome === "cancelled") &&
-                isDuration(candidate.elapsedMs) && isOperationId(candidate.operationId) &&
-                (candidate.failure === undefined || isTelemetryAiFailure(candidate.failure)) &&
-                (candidate.httpStatus === undefined || typeof candidate.httpStatus === "number" && Number.isInteger(candidate.httpStatus) &&
-                    candidate.httpStatus >= 400 && candidate.httpStatus <= 599) &&
-                (candidate.outcome === "failed" || candidate.failure === undefined && candidate.httpStatus === undefined);
+            return isAiStageFinished(candidate);
         case "draft_checkpoint_finished":
             return isDraftCheckpointFinished(candidate);
         case "backup_finished":
