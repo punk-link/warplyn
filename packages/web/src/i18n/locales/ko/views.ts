@@ -8,6 +8,7 @@ export const viewsMessages = {
     "views.acceptFactEvidence": "근거 수락",
     "views.acceptSelected": "선택 항목 수락",
     "views.addToCorpus": "자료 모음에 추가",
+    "views.autoScrollNextChange": "다음 변경 사항으로 자동 스크롤",
     "views.applyProposal": "적용",
     "views.changeNavigation": "변경 사항 탐색",
     "views.changeType.addition": "추가{separator}변경 {index}/{total}",

@@ -4,13 +4,14 @@ import { type TextProposal } from "@skladno/shared";
 import { Banner, Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import { presentProposalReview, type ProposalDecision } from "./proposal-review-presentation.js";
-import { AssistantIcon, ChevronRightIcon, CloseIcon, HighlightChangesIcon, SideBySideIcon, StackedDiffIcon } from "../../ui/icons.js";
+import { AssistantIcon, ChevronRightIcon, CloseIcon, HighlightChangesIcon, Icon, SideBySideIcon, StackedDiffIcon } from "../../ui/icons.js";
 import { ProposalChangeSupport } from "./ProposalChangeSupport.js";
 import { ProposalChangeDiff } from "./ProposalChangeDiff.js";
 import { ProposalDecisionMenu } from "./ProposalDecisionMenu.js";
 
 
 function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDisplayMode, highlightChanges, setHighlightChanges,
+    autoScroll, setAutoScroll,
     rejectAll, markAllAccepted, resetAllDecisions, applyDecisions, acceptanceBlocked, bulkBlocked, allResolved,
     moveChange, openWrite, openAssistant, dismissProposal }: {
     presentation: ReturnType<typeof presentProposalReview>;
@@ -20,6 +21,8 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
     setDisplayMode: (mode: "side-by-side" | "stacked") => void;
     highlightChanges: boolean;
     setHighlightChanges: (update: (current: boolean) => boolean) => void;
+    autoScroll: boolean;
+    setAutoScroll: (enabled: boolean) => void;
     rejectAll: () => void;
     markAllAccepted: () => void;
     resetAllDecisions: () => void;
@@ -106,6 +109,15 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
                                 title={intl.formatMessage({ id: "views.nextChange" })}
                                 onClick={() => moveChange(1)}><ChevronRightIcon className="size-4" />
                             </IconButton>
+                            <IconButton
+                                variant="quiet"
+                                className="aria-pressed:bg-brand-soft aria-pressed:text-brand"
+                                label={intl.formatMessage({ id: "views.autoScrollNextChange" })}
+                                title={intl.formatMessage({ id: "views.autoScrollNextChange" })}
+                                aria-pressed={autoScroll}
+                                onClick={() => setAutoScroll(!autoScroll)}>
+                                <Icon width="16" height="16" strokeWidth="1.8"><path d="m5 5 6 7-6 7m5-14 6 7-6 7" /></Icon>
+                            </IconButton>
                         </nav>
                     )}
                     <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
@@ -171,6 +183,7 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
     const [displayMode, setDisplayMode] = useViewPreference<"side-by-side" | "stacked">("proposal.layout", "side-by-side", ["side-by-side", "stacked"]);
     const [highlightChanges, setHighlightChanges] = useViewPreference("proposal.highlight-changes", false, [false, true]);
     const [currentChange, setCurrentChange] = useState<number>();
+    const [autoScroll, setAutoScroll] = useState(false);
 
 
     function moveChange(direction: -1 | 1) {
@@ -178,6 +191,15 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
         const card = cards.current[index];
 
         setCurrentChange(index);
+        card?.scrollIntoView({ behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+        card?.focus({ preventScroll: true });
+    }
+
+    function moveToNextChange(index: number) {
+        const nextIndex = (index + 1) % cards.current.length;
+        const card = cards.current[nextIndex];
+
+        setCurrentChange(nextIndex);
         card?.scrollIntoView({ behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
         card?.focus({ preventScroll: true });
     }
@@ -207,6 +229,8 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
             setDisplayMode={setDisplayMode}
             highlightChanges={highlightChanges}
             setHighlightChanges={setHighlightChanges}
+            autoScroll={autoScroll}
+            setAutoScroll={setAutoScroll}
             rejectAll={rejectAll}
             markAllAccepted={markAllAccepted}
             resetAllDecisions={resetAllDecisions}
@@ -271,7 +295,11 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                                                 variant="secondary"
                                                 state={decision === "rejected" ? "error" : "default"}
                                                 disabled={acceptanceBlocked || !presentation.reliable}
-                                                onClick={() => setDecision(change.id, "rejected")}
+                                                onClick={() => {
+                                                    setDecision(change.id, "rejected");
+                                                    if (autoScroll)
+                                                        moveToNextChange(index);
+                                                }}
                                             >
                                                 {intl.formatMessage({ id: "views.rejectChange" })}
                                             </Button>
@@ -279,7 +307,11 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                                                 variant="secondary"
                                                 state={decision === "accepted" ? "success" : "default"}
                                                 disabled={acceptanceBlocked || !presentation.reliable}
-                                                onClick={() => setDecision(change.id, "accepted")}
+                                                onClick={() => {
+                                                    setDecision(change.id, "accepted");
+                                                    if (autoScroll)
+                                                        moveToNextChange(index);
+                                                }}
                                             >
                                                 {intl.formatMessage({ id: "views.acceptChange" })}
                                             </Button>

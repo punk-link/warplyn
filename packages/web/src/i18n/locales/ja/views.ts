@@ -8,6 +8,7 @@ export const viewsMessages = {
     "views.acceptFactEvidence": "根拠を採用",
     "views.acceptSelected": "選択した変更を採用",
     "views.addToCorpus": "コーパスに追加",
+    "views.autoScrollNextChange": "次の変更へ自動スクロール",
     "views.applyProposal": "適用",
     "views.changeNavigation": "変更の移動",
     "views.changeType.addition": "追加{separator}変更{index}/{total}",

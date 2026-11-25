@@ -8,6 +8,7 @@ export const viewsMessages = {
     "views.acceptFactEvidence": "接受证据",
     "views.acceptSelected": "接受所选更改",
     "views.addToCorpus": "添加到语料库",
+    "views.autoScrollNextChange": "自动滚动到下一个更改",
     "views.applyProposal": "应用",
     "views.changeNavigation": "更改导航",
     "views.changeType.addition": "添加{separator}更改{index}/{total}",

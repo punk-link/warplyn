@@ -8,6 +8,7 @@ export const viewsMessages = {
     "views.acceptFactEvidence": "Принять доказательства",
     "views.acceptSelected": "Принять выбранное",
     "views.addToCorpus": "Добавить в корпус",
+    "views.autoScrollNextChange": "Автоматически прокручивать к следующему изменению",
     "views.applyProposal": "Применить",
     "views.changeNavigation": "Навигация по изменениям",
     "views.changeType.addition": "Добавление{separator}Изменение {index} из {total}",

@@ -8,6 +8,7 @@ export const viewsMessages = {
     "views.acceptFactEvidence": "Aceptar pruebas",
     "views.acceptSelected": "Aceptar cambios seleccionados",
     "views.addToCorpus": "Añadir al corpus",
+    "views.autoScrollNextChange": "Desplazarse automáticamente al siguiente cambio",
     "views.applyProposal": "Aplicar",
     "views.changeNavigation": "Navegación entre cambios",
     "views.changeType.addition": "Adición{separator}Cambio {index} de {total}",
