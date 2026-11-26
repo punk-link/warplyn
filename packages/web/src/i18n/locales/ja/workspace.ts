@@ -2,6 +2,7 @@ import type { MessageId } from "../../messages.js";
 
 
 export const workspaceMessages = {
+    "workspace.saveProposalReviewFailed": "提案のレビューを保存できませんでした。アプリを閉じる前に、もう一度変更してください。",
     "workspace.acceptProposalFailed": "提案を採用できませんでした。記事は変更されていません。もう一度お試しください。",
     "workspace.addModelKey": "モデルのキーを追加",
     "workspace.aiConnectionCapabilities": "記事の執筆、保存、整理、コピーと、ローカルでの組版チェックは引き続き利用できます。アシスタントへの依頼、翻訳、ファクトチェック、文体全体のレビューには、対応するローカルモデルも含め、モデルの接続設定が必要です。",

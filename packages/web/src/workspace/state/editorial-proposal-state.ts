@@ -9,12 +9,15 @@ import { useEditorialResults } from "./editorial-results-state.js";
 import { canRecoverProposal } from "./proposal-recovery.js";
 import { useProposalEdits } from "./proposal-edit-state.js";
 import { restoredRevisionAcceptance } from "./proposal-acceptance-recovery.js";
+import { loadProposalDecisions, loadProposalReplacements, saveProposalReplacements } from "./proposal-decision-storage.js";
+import { useNotifications } from "../../notifications/NotificationProvider.js";
 
 export { withFindingFreshness } from "./editorial-results-state.js";
 
 
 export function useEditorialProposal(client: EditorialWorkspaceClient, workspace: ArticleWorkspaceState, openWrite: () => void) {
     const intl = useIntl();
+    const { notifyError } = useNotifications();
     const [proposal, setProposal] = useState("");
     const [base, setBase] = useState<ProposalBase>();
     const [decisions, setDecisions] = useState<Record<string, ProposalDecision>>({});
@@ -72,7 +75,8 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
                 } : {}),
             });
 
-            setDecisions(acceptance ?? {});
+            setDecisions(acceptance ?? loadProposalDecisions({ articleId, content: result.baseContent,
+                revisionId: result.baseRevisionId, editorialArtifactId: result.editorialArtifactId, recoveredAt: result.createdAt }));
             setProposal(result.proposal);
             setStyleReview(articleId, result.baseRevisionId, result.styleReview);
         }).catch(() => {
@@ -94,8 +98,19 @@ export function useEditorialProposal(client: EditorialWorkspaceClient, workspace
         [proposalArticleId, baseContent, proposal, articleId]);
     const accepted = base?.accepted === true;
     const stale = Boolean(workspace.selectedArticle && base?.articleId === workspace.selectedArticle.id && base.revisionId !== workspace.selectedArticle.currentRevisionId && !accepted);
-    const edits = useProposalEdits(review, accepted || stale || state === "streaming", base?.acceptedReplacements,
-        base?.editorialArtifactId ?? base?.recoveredAt);
+    const recoveredReplacements = useMemo(() => base?.acceptedReplacements ?? (base ? loadProposalReplacements(base) : {}), [base]);
+    const edits = useProposalEdits(review, accepted || stale || state === "streaming", recoveredReplacements,
+        base?.editorialArtifactId ?? base?.recoveredAt, (replacements) => {
+            try {
+                if (base)
+                    saveProposalReplacements(base, replacements);
+
+                return true;
+            } catch (error) {
+                notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.saveProposalReviewFailed" }) });
+                return false;
+            }
+        });
 
     const summaries = useProposalSummaries(client, intl, {
         state,

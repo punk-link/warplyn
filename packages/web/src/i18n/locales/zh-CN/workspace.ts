@@ -2,6 +2,7 @@ import type { MessageId } from "../../messages.js";
 
 
 export const workspaceMessages = {
+    "workspace.saveProposalReviewFailed": "无法保存提案审阅。请在关闭应用前重试更改。",
     "workspace.acceptProposalFailed": "无法接受此提案。文章未更改。请重试。",
     "workspace.addModelKey": "添加模型密钥",
     "workspace.aiConnectionCapabilities": "您仍可撰写、保存、整理和复制文章，以及在本地检查排版。写作助理请求、翻译、事实核查和完整风格审查需要配置模型连接，也支持兼容的本地模型。",

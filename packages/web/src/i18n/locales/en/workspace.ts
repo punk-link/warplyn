@@ -1,6 +1,7 @@
 
 
 export const workspaceMessages = {
+    "workspace.saveProposalReviewFailed": "Couldn't save this proposal review. Try the change again before closing the app.",
     "workspace.acceptProposalFailed": "Couldn't accept this Proposal. Your Article was not changed. Try again.",
     "workspace.addModelKey": "Add model key",
     "workspace.aiConnectionCapabilities": (
