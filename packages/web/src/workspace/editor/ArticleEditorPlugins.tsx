@@ -25,7 +25,15 @@ export function EditorBridge({ content, onChange, onReady }: { content: string; 
             return;
 
         emitted.current = content;
-        editor.update(() => importArticleMarkdown(content), { tag: "article-external" });
+        const scroller = editor.getRootElement()?.closest<HTMLElement>("[data-focus-area=article-editor]");
+        const scrollTop = scroller?.scrollTop;
+        editor.update(() => importArticleMarkdown(content), {
+            tag: ["article-external", "skip-scroll-into-view", "skip-dom-selection"],
+            onUpdate: () => {
+                if (scroller && scrollTop !== undefined)
+                    scroller.scrollTop = scrollTop;
+            },
+        });
         editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
     }, [content, editor]);
 
