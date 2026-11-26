@@ -59,6 +59,9 @@ function DesktopUpdateControl({ client, className }: { client: DesktopUpdateClie
         return null;
 
     const label = updateLabel(state, intl);
+    const title = "summary" in state
+        ? `${label}\n\n${intl.formatMessage({ id: "settings.updateChanges" }, { version: state.version })}\n${state.summary || intl.formatMessage({ id: "settings.updateChangesUnavailable" })}`
+        : label;
     const warning = "security" in state && state.security;
     return <button
         className={[
@@ -69,7 +72,7 @@ function DesktopUpdateControl({ client, className }: { client: DesktopUpdateClie
         ].join(" ")}
         type="button"
         aria-label={label}
-        title={label}
+        title={title}
         disabled={pending || state.kind === "checking" || state.kind === "downloading"}
         aria-busy={pending || state.kind === "checking" || state.kind === "downloading" || undefined}
         onClick={() => void activate()}>
