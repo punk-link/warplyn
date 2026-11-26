@@ -142,6 +142,7 @@ function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDis
     </header>;
 }
 
+
 interface ProposalReviewData {
     review: TextProposal | undefined;
     accepted?: boolean;
@@ -180,7 +181,6 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
     useEffect(() => {
         reviewRegion.current?.focus({ preventScroll: true });
     }, []);
-
     const [displayMode, setDisplayMode] = useViewPreference<"side-by-side" | "stacked">("proposal.layout", "side-by-side", ["side-by-side", "stacked"]);
     const [highlightChanges, setHighlightChanges] = useViewPreference("proposal.highlight-changes", false, [false, true]);
     const [currentChange, setCurrentChange] = useState<number>();
@@ -347,5 +347,3 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
         </div>
     </div>;
 }
-
-
