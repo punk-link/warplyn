@@ -15,6 +15,13 @@ export function AssistantActivityTrail({ activity, running, onToggle }: {
     const earlier = steps.filter((_, index) => index !== currentIndex);
     const interrupted = !running && activity.status === "started";
 
+    if (steps.length <= 1)
+        return <div className="flex min-h-9 items-center gap-1 text-xs leading-5 text-muted" role="status">
+            {running && activity.status === "started" && <ActivityIndicator />}
+            {!running && activity.status === "completed" && <StatusIcon tone="success" className="size-3 shrink-0" aria-hidden="true" />}
+            <span>{formatAssistantActivity(activity.id, intl)}</span>
+        </div>;
+
     return <details className="group text-xs leading-5 text-muted" onToggle={onToggle}>
         <summary className="flex min-h-9 w-fit cursor-pointer list-none items-center gap-1 hover:text-ink [&::-webkit-details-marker]:hidden">
             <ChevronRightIcon className="size-3 shrink-0 transition-transform group-open:rotate-90" aria-hidden="true" />

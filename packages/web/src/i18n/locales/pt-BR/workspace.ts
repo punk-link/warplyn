@@ -2,6 +2,7 @@ import type { MessageId } from "../../messages.js";
 
 
 export const workspaceMessages = {
+    "workspace.saveProposalReviewFailed": "Não foi possível salvar a revisão da proposta. Tente a alteração novamente antes de fechar o aplicativo.",
     "workspace.acceptProposalFailed": "Não foi possível aceitar esta proposta. Seu artigo não foi alterado. Tente novamente.",
     "workspace.addModelKey": "Adicionar chave de modelo",
     "workspace.aiConnectionCapabilities": (

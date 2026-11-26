@@ -24,6 +24,8 @@ import type { useEditorialResults } from "./editorial-results-state.js";
 import { canRecoverProposal } from "./proposal-recovery.js";
 import type { useProposalEdits } from "./proposal-edit-state.js";
 import { restoredAcceptance, restoredProposalBase } from "./proposal-acceptance-recovery.js";
+import { loadProposalDecisions, saveProposalDecisions } from "./proposal-decision-storage.js";
+import { findLatestRestorableProposal } from "./latest-restorable-proposal.js";
 
 type EditorialResultsState = ReturnType<typeof useEditorialResults>;
 
@@ -87,16 +89,6 @@ function acceptedProposalContent(base: ProposalBase, review: TextProposal, ids: 
     }
 
     return whole ? review.proposedContent : applyProposalChanges(review, ids);
-}
-
-
-function findLatestRestorableProposal(messages: AssistantMessage[] | undefined): AssistantMessage | undefined {
-    const items = messages ?? [];
-    for (let index = items.length - 1; index >= 0; index -= 1) {
-        const message = items[index];
-        if (message.responseKind !== "translation_proposal_prepared" && message.proposalContent && message.baseRevisionId && message.baseRevisionContent)
-            return message;
-    }
 }
 
 
@@ -257,26 +249,36 @@ export function useProposalActions({ client, workspace, openWrite, intl, proposa
         setProposal(message.proposalContent!);
         setProposalSummaries(Object.fromEntries((message.proposalSummaries ?? []).map((summary) => [summary.changeId, summary.summary])));
         setProposalSummaryLocale(message.proposalSummaryLocale);
-        setDecisions(acceptance ?? {});
+        setDecisions(acceptance ?? loadProposalDecisions(restoredProposalBase(article, message, false)));
 
     }, [replaceTranslations, restoredArticleIds, recoveredDates, recovery, base, setBase, setDecisions,
         setProposal, setProposalSummaries, setProposalSummaryLocale, workspace.selectedArticle]);
 
+    const updateDecisions = (next: Record<string, ProposalDecision>) => {
+        try {
+            if (base)
+                saveProposalDecisions(base, next);
+
+            setDecisions(next);
+        } catch (error) {
+            notifyError(error, { fallbackMessage: intl.formatMessage({ id: "workspace.saveProposalReviewFailed" }) });
+        }
+    };
     const setDecision = (id: string, decision: ProposalDecision) => {
         if (!accepted && !stale && !edits.submitting)
-            setDecisions((current) => ({ ...current, [id]: decision }));
+            updateDecisions({ ...decisions, [id]: decision });
     };
 
     const markAllAccepted = () => {
         if (accepted || stale || edits.submitting)
             return;
 
-        setDecisions(Object.fromEntries((review?.changes ?? []).map((change) => [change.id, "accepted"])));
+        updateDecisions(Object.fromEntries((review?.changes ?? []).map((change) => [change.id, "accepted"])));
     };
 
     const resetAllDecisions = () => {
         if (!accepted && !stale && !edits.submitting)
-            setDecisions({});
+            updateDecisions({});
     };
 
     const applyDecisions = async () => {
@@ -295,7 +297,7 @@ export function useProposalActions({ client, workspace, openWrite, intl, proposa
         if (accepted || stale || edits.submitting)
             return;
 
-        setDecisions(Object.fromEntries((review?.changes ?? []).map((change) => [change.id, "rejected"])));
+        updateDecisions(Object.fromEntries((review?.changes ?? []).map((change) => [change.id, "rejected"])));
         void beginBestEffortTelemetryCapture(telemetry).then((generation) => captureBestEffortTelemetry(telemetry, { kind: "proposal_reviewed", decision: "rejected" }, generation));
     };
     const dismissProposal = () => {

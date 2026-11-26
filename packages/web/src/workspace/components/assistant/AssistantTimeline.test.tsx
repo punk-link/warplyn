@@ -1,7 +1,7 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { defaultGeneralSettings, type AssistantCapabilityActivity, type AssistantMessage, type AssistantSkillSummary, type FactCheckClaimPreview, type GeneralSettings } from "@skladno/shared";
 import { messages } from "../../../i18n/messages.js";
 import { getMessage } from "../../../i18n/test-message.js";
@@ -36,6 +36,8 @@ function AssistantTimeline({ state, message, errorDetails, activity, factCheckCl
 
 
 describe("AssistantTimeline", () => {
+    afterEach(cleanup);
+
     it("removes proposal review after dismissal while preserving completed history", () => {
         const data = {
             state: "idle" as const, message: "", collapsed: false,
@@ -68,7 +70,7 @@ describe("AssistantTimeline", () => {
                 activity: { id: "proposalReady", status: "completed", steps: [{ id: "proposalReady", status: "completed" }] },
             }} actions={{}} />
         </IntlProvider>);
-        const trail = screen.getByText("Proposal ready to review").closest("details")!;
+        const trail = screen.getByText("Proposal ready to review").closest("[role='status']")!;
         const response = trail.closest("article")!;
         expect(response).toBeTruthy();
         expect(response.lastElementChild?.textContent).toContain("Completed");

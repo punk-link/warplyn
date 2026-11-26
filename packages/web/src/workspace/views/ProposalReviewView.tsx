@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useViewPreference } from "../state/useViewPreference.js";
 import { type TextProposal } from "@skladno/shared";
-import { Banner, Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
+import { Button, EmptyState, IconButton, Status } from "../../ui/primitives.js";
 import { useIntl } from "react-intl";
 import { presentProposalReview, type ProposalDecision } from "./proposal-review-presentation.js";
-import { AssistantIcon, ChevronRightIcon, CloseIcon, HighlightChangesIcon, Icon, SideBySideIcon, StackedDiffIcon } from "../../ui/icons.js";
+import { AssistantIcon, ChevronRightIcon, HighlightChangesIcon, Icon, SideBySideIcon, StackedDiffIcon } from "../../ui/icons.js";
 import { ProposalChangeSupport } from "./ProposalChangeSupport.js";
 import { ProposalChangeDiff } from "./ProposalChangeDiff.js";
 import { ProposalDecisionMenu } from "./ProposalDecisionMenu.js";
+import { ProposalFallbackDiff, ProposalWarnings } from "./ProposalReviewDetails.js";
 
 
 function ProposalReviewHeader({ presentation, counts, stale, displayMode, setDisplayMode, highlightChanges, setHighlightChanges,
@@ -195,6 +196,7 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
         card?.focus({ preventScroll: true });
     }
 
+
     function moveToNextChange(index: number) {
         const nextIndex = (index + 1) % cards.current.length;
         const card = cards.current[nextIndex];
@@ -213,7 +215,6 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
     const acceptanceBlocked = accepted || stale || data.edits.submitting || data.generating === true ||
         (!presentation.reliable && counts.accepted > 0 && counts.accepted !== presentation.changes.length);
     const allResolved = counts.pending === 0 && presentation.changes.length > 0;
-
     return <div
         ref={reviewRegion}
         tabIndex={-1}
@@ -268,7 +269,6 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                                 pending: "border-border bg-surface-raised"
                             };
                             const decisionClasses = decisionStyles[decision];
-
                             return (
                                 <article
                                     key={change.id}
@@ -345,37 +345,5 @@ export function ProposalReviewView({ data, actions }: { data: ProposalReviewData
                 }
             </div>
         </div>
-    </div>;
-}
-
-
-function ProposalFallbackDiff({ review, reliable, stale, displayMode, highlight }: { review: TextProposal; reliable: boolean; stale: boolean; displayMode: "side-by-side" | "stacked"; highlight: boolean }) {
-    const intl = useIntl();
-    if (reliable && !stale)
-        return null;
-
-    return <div className="mt-4">
-        {!reliable && <Banner className="mb-3" tone="warning">{intl.formatMessage({ id: "views.proposalFallback" })}</Banner>}
-        <ProposalChangeDiff
-            original={review.baseContent}
-            proposed={review.proposedContent}
-            layout={displayMode === "side-by-side" ? "columns" : "stacked"}
-            highlight={highlight} />
-    </div>;
-}
-
-
-function ProposalWarnings({ warnings, dismissed, dismiss }: { warnings: ReturnType<typeof presentProposalReview>["warnings"]; dismissed: boolean; dismiss: () => void }) {
-    const intl = useIntl();
-    if (!warnings.length || dismissed)
-        return null;
-
-    return <div className="relative mb-4">
-        <Status label={intl.formatMessage({ id: "views.preservationWarnings" })} tone="warning">
-            <ul className="mt-1 list-disc pl-4 pr-8">
-                {warnings.map((warning) => <li key={warning}>{intl.formatMessage({ id: `views.warning.${warning}` as never })}</li>)}
-            </ul>
-        </Status>
-        <IconButton className="absolute right-2 top-2" label={intl.formatMessage({ id: "views.dismissPreservationWarnings" })} onClick={dismiss}><CloseIcon className="size-4" /></IconButton>
     </div>;
 }

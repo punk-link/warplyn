@@ -2,7 +2,8 @@ import { useMemo, useRef, useState } from "react";
 import { applyProposalChanges, withProposalReplacements, type TextProposal } from "@skladno/shared";
 
 
-export function useProposalEdits(review: TextProposal | undefined, blocked: boolean, recovered?: Record<string, string>, identity?: string) {
+export function useProposalEdits(review: TextProposal | undefined, blocked: boolean, recovered?: Record<string, string>, identity?: string,
+    persist?: (replacements: Record<string, string>) => boolean) {
     const [draft, setDraft] = useState({ source: review, identity, replacements: recovered ?? {} });
     const [submitting, setSubmitting] = useState(false);
     const submittingRef = useRef(false);
@@ -19,7 +20,11 @@ export function useProposalEdits(review: TextProposal | undefined, blocked: bool
         if (blocked || submittingRef.current || !reliable || !review?.changes.some((change) => change.id === id))
             return;
 
-        setDraft((current) => ({ source: review, identity, replacements: { ...current.replacements, [id]: text } }));
+        const next = { ...replacements, [id]: text };
+        if (persist && !persist(next))
+            return;
+
+        setDraft({ source: review, identity, replacements: next });
     }
 
 

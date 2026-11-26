@@ -2,6 +2,7 @@ import type { MessageId } from "../../messages.js";
 
 
 export const workspaceMessages = {
+    "workspace.saveProposalReviewFailed": "제안 검토를 저장하지 못했습니다. 앱을 닫기 전에 변경을 다시 시도하세요.",
     "workspace.acceptProposalFailed": "제안을 수락하지 못했습니다. 글은 변경되지 않았습니다. 다시 시도하세요.",
     "workspace.addModelKey": "모델 키 추가",
     "workspace.aiConnectionCapabilities": (

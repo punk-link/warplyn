@@ -33,6 +33,22 @@ function proposalClient() {
 describe("Author edits in Proposal Review", () => {
     afterEach(resetWorkspaceTestEnvironment);
 
+    it("restores decisions and manual replacements after remounting the application", async () => {
+        const client = proposalClient();
+        const user = userEvent.setup();
+        const mounted = render(<App client={client} />);
+        fireEvent.change(await screen.findByRole("textbox", { name: "Proposed text for change 1" }),
+            { target: { value: "Recovered Author wording" } });
+        await user.click(within(screen.getAllByRole("article")[0]!).getByRole("button", { name: "Accept" }));
+        await user.click(within(screen.getAllByRole("article")[1]!).getByRole("button", { name: "Reject" }));
+        mounted.unmount();
+        render(<App client={client} />);
+        expect(await screen.findByRole("textbox", { name: "Proposed text for change 1" })).toHaveValue("Recovered Author wording");
+        expect(screen.getByText("Accepted", { exact: true })).toBeVisible();
+        expect(screen.getByText("Rejected", { exact: true })).toBeVisible();
+        expect(client.acceptProposal).not.toHaveBeenCalled();
+    });
+
     it("leaves a review when its Revision changes and preserves Author wording in the earlier suggestion", async () => {
         Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440, writable: true });
         const client = proposalClient();
