@@ -18,7 +18,7 @@ export function ArticleEditorContents({ content, onChange, onSelectionChange, as
     return <>{editor && <ArticleEditorLinkControl editor={editor} />}
         <div data-focus-area="article-editor" className={("min-h-0 flex-1 overflow-y-auto bg-editor-surface [scrollbar-color:var(--color-border-strong)_transparent] [scrollbar-width:thin] " +
             "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-strong")}>
-            <div className="min-h-full px-8 py-7">
+            <div className="min-h-full px-8 pt-7 pb-32">
                 <div className="relative mx-auto w-full max-w-3xl">
                     <RichTextPlugin contentEditable={<ContentEditable
                         spellCheck={true}
