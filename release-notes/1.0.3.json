@@ -1,0 +1,43 @@
+{
+    "version": "1.0.3",
+    "previousTag": "v1.0.2",
+    "previousCommit": "37a3557f1f712cb12a941622f581093e5ae148f9",
+    "baseline": "published",
+    "sourceCommit": "1d74a2fc8d02bffc80b64b7cb7efb58dc5de3f90",
+    "reviewed": true,
+    "maintenanceOnly": false,
+    "entries": [
+        {
+            "bugFix": false,
+            "text": "Proposal review decisions and your edited wording now survive an application restart.",
+            "commits": [
+                "7e5e5b97686da6c2f1d6854f34099ee1b17eb4db",
+                "1d74a2fc8d02bffc80b64b7cb7efb58dc5de3f90"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Turn on auto-scroll to move to the next proposal change after accepting or rejecting one.",
+            "commits": [
+                "77ea8bbb32ceb693e20348633a29b9eec9aa63ad"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Single-step assistant activity appears inline, without an expandable activity list.",
+            "commits": [
+                "b6bf0542d2afc7b7f240b2a77749704b664b3d57"
+            ]
+        },
+        {
+            "bugFix": false,
+            "text": "Extra space below the article text makes it easier to scroll the final lines into view.",
+            "commits": [
+                "9b387923f1def815699d9d7b22a1866e87454ba1"
+            ]
+        }
+    ],
+    "security": false,
+    "securityReason": "",
+    "securityCommits": []
+}
