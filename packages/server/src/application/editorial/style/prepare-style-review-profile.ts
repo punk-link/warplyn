@@ -82,7 +82,7 @@ export function prepareStyleContext(
             return success(undefined);
 
         const typography = prepareStyleTypography(profile, normalizeWritingLanguage(targetLanguage));
-        return typography.ok ? success({ profile: typography.value, articleRules: "" }) : typography;
+        return typography.ok ? success({ profile: typography.value, articleRules: store.getArticleStyleRules(article.id) }) : typography;
     }
 
     if (editorial.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)

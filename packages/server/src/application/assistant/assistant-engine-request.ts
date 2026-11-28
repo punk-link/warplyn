@@ -32,7 +32,8 @@ function prepareAssistantEngineStream(
     if (!request.execution.operation)
         throw new EditorialEngineError(EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT, EDITORIAL_ENGINE_ERROR.INVALID_OUTPUT);
 
-    const style = request.execution.operation === EDITORIAL_OPERATION.STYLE_REVIEW ? request.article.styleContext : undefined;
+    const styleOperations: readonly string[] = [EDITORIAL_OPERATION.STYLE_REVIEW, EDITORIAL_OPERATION.TRANSLATION];
+    const style = styleOperations.includes(request.execution.operation) ? request.article.styleContext : undefined;
     if (request.execution.operation === EDITORIAL_OPERATION.STYLE_REVIEW && !style)
         return failure(APPLICATION_ERROR.STYLE_CORPUS_REQUIRED);
 
@@ -62,6 +63,9 @@ function prepareAssistantEngineStream(
             skipFactCheckClaim: request.execution.skipFactCheckClaim,
         } : {})
     }, signal);
+
+    if (request.execution.operation !== EDITORIAL_OPERATION.STYLE_REVIEW)
+        return success(events);
 
     return success(profile ? streamTypographyReviewedEvents(events, excerpt, profile, articleRules, signal) : events);
 }

@@ -158,18 +158,47 @@ function createStyleReviewPrompt(input: EditorialPromptInput): ApplicationResult
 }
 
 
+function createTranslationStyleSections(input: EditorialPromptInput): string[] {
+    const typography = input.styleProfile?.rules.typography
+        .filter((rule) => rule.definition.kind === "contextual")
+        .map((rule) => `${typographyRuleId(rule)}: ${typographyRuleLabel(rule)}`).join("\n");
+    const sections: string[] = [];
+    if (typography)
+        sections.push(`Supplied typography rules (use only if applicable to target language):\n${typography}`);
+
+    if (input.styleProfile)
+        sections.push(
+            `Global rules:\n${formatNumberedRules(input.styleProfile.rules.manual, "global-rule")}`,
+            `Learned traits (confidence: ${input.styleProfile.confidence}):\n${formatStyleTraits(input.styleProfile)}`,
+            `Phrases to avoid when applicable to target language:\n${input.styleProfile.phrasesToAvoid.join("\n")}`,
+        );
+
+    sections.push(`Article rules:\n${formatNumberedRules(input.articleStyleRules ?? "", "article-rule")}`);
+    return sections;
+}
+
+
+function createTranslationInstructions(input: EditorialPromptInput): string {
+    const preservation = "Preserve meaning, claims, numbers, URLs, code, technical terms, and Author voice.";
+    const precedence = "For conflicting style guidance, current translation instructions take precedence over Article rules, " +
+        "then global rules, then learned traits.";
+    const languageApplicability = "Apply language-specific rules only when applicable to the target language. " +
+        "Do not impose source-language typography on the translation. Respect target-language vocabulary, " +
+        "sentence complexity, tone, and proficiency preferences.";
+    const traitConfidence = "Low-confidence learned traits are tentative. ";
+    const policy = [preservation, precedence, languageApplicability, traitConfidence].join(" ");
+    return [getSkillInstructions(input), policy, ...createTranslationStyleSections(input)].join("\n\n");
+}
+
+
 function createTranslationPrompt(input: EditorialPromptInput): ApplicationResult<ModelMessage[]> {
     if (!input.targetLanguage?.trim())
         return failure(APPLICATION_ERROR.TARGET_LANGUAGE_REQUIRED);
 
-    const typography = input.styleProfile?.rules.typography
-        .filter((rule) => rule.definition.kind === "contextual")
-        .map((rule) => `${typographyRuleId(rule)}: ${typographyRuleLabel(rule)}`).join("\n");
-
     return success([
         {
             role: "system",
-            content: getSkillInstructions(input) + (typography ? `\n\nTarget language typography rules:\n${typography}` : "")
+            content: createTranslationInstructions(input)
         },
         {
             role: "user",
