@@ -44,3 +44,6 @@ Providers can change without changing application behavior. Completion checks ad
 
 Test completion, cancellation, invalid streams, safe errors, scoped continuation, and the Fact Check exception. [Assistant execution and recovery](../reference/assistant-execution-and-recovery.md) owns model routing and continuation eligibility. [ADR-005](adr-005-article-state-and-consistency.md) owns Article changes; use the [testing guide](../guides/testing.md).
 
+
+Translation uses compact Style Profile rules, learned traits, and Article rules without corpus samples. Current translation instructions override Article rules, then global rules, then learned traits. Low-confidence traits are tentative. Language-specific guidance applies only to the target language, including vocabulary, complexity, tone, proficiency, and typography. Translation remains available without a profile.
+

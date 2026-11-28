@@ -222,6 +222,43 @@ test("flow-revision prompt asks for a full-text proposal rather than feedback", 
 });
 
 
+test("translation includes explicit preferences and tentative learned traits", () => {
+    const prompt = getPromptText({
+        operation: EDITORIAL_OPERATION.TRANSLATION,
+        targetLanguage: "English",
+        article: "Source text.",
+        authorContext: "Use formal language today.",
+        articleStyleRules: "Use simple sentences.",
+        styleProfile: {
+            version: 1, corpusItemCount: 1, characterCount: 120, confidence: "low",
+            updatedAt: "2026-07-28T00:00:00.000Z",
+            traits: [{ id: "tone", label: "Conversational", evidence: "Observed locally." }],
+            phrasesToAvoid: [], contributorIds: ["private-sample-id"],
+            rules: { manual: "keep my level of English; do not overcomplicate", typography: [] },
+        },
+    });
+    for (const text of ["keep my level of English; do not overcomplicate", "Use simple sentences.",
+        "Conversational", "Low-confidence learned traits are tentative", "current translation instructions take precedence",
+        "only when applicable to the target language", "Use formal language today."])
+        assert.ok(prompt.includes(text), text);
+
+    assert.ok(!prompt.includes("private-sample-id"));
+});
+
+test("translation policy wording and section order remain stable without a profile", () => {
+    const prompt = getPromptText({
+        operation: EDITORIAL_OPERATION.TRANSLATION, targetLanguage: "English",
+        article: "Source.", authorContext: "",
+    });
+    const policy = "Preserve meaning, claims, numbers, URLs, code, technical terms, and Author voice. " +
+        "For conflicting style guidance, current translation instructions take precedence over Article rules, " +
+        "then global rules, then learned traits. Apply language-specific rules only when applicable to the target language. " +
+        "Do not impose source-language typography on the translation. Respect target-language vocabulary, " +
+        "sentence complexity, tone, and proficiency preferences. Low-confidence learned traits are tentative. " +
+        "\n\nArticle rules:\nNone.";
+    assert.ok(prompt.includes(policy));
+});
+
 test("style review sends a compact profile rather than raw corpus text", async () => {
     const prompt = getPromptText({
         operation: EDITORIAL_OPERATION.STYLE_REVIEW,

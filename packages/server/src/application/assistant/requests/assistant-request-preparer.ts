@@ -1,4 +1,4 @@
-import { success, failure } from "@skladno/shared";
+import { success, failure, EDITORIAL_OPERATION, normalizeWritingLanguage } from "@skladno/shared";
 import { APPLICATION_ERROR, getPublishLimitProfile, isPublishLimitProfileId, type AssistantMessage, type EditorialOperation } from "@skladno/shared";
 
 import type { ArticleStore } from "../../articles/article-store.js";
@@ -71,7 +71,9 @@ export class AssistantRequestPreparer {
         if (!resolvedValidation.ok)
             return resolvedValidation;
 
-        const style = this.captureStyle(article);
+        const styleArticle = routing.value.operation === EDITORIAL_OPERATION.TRANSLATION
+            ? { id: article.id, language: normalizeWritingLanguage(replay.value.targetLanguage) } : article;
+        const style = this.captureStyle(styleArticle, routing.value.operation === EDITORIAL_OPERATION.TRANSLATION);
         if (!style.ok)
             return style;
 
@@ -87,13 +89,15 @@ export class AssistantRequestPreparer {
     }
 
 
-    private captureStyle(article: { id: string; language?: string }): AssistantPreparationResult<Pick<PreparedAssistantRequest["article"], "styleContext">> {
+    private captureStyle(
+        article: { id: string; language?: string }, translation = false,
+    ): AssistantPreparationResult<Pick<PreparedAssistantRequest["article"], "styleContext">> {
         const corpus = this.dependencies.styleCorpus.getStyleCorpus();
         if (corpus.status !== "ready" || !corpus.profile)
             return success({});
 
         const capturedProfile = corpus.profile;
-        const typography = this.dependencies.styleCorpus.getArticleTypography(article.id);
+        const typography = translation ? undefined : this.dependencies.styleCorpus.getArticleTypography(article.id);
         const profile = preparationStep(prepareStyleTypography(
             capturedProfile, article.language, typography), APPLICATION_ERROR.TYPOGRAPHY_RULES_INVALID);
         if (!profile.ok)
